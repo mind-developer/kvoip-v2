@@ -9,6 +9,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
+import '~/utils/i18n';
+
 export const App = () => {
   return (
     <RecoilRoot>

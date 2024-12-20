@@ -103,6 +103,7 @@
     "graphql-upload": "^13.0.0",
     "graphql-yoga": "^4.0.4",
     "hex-rgb": "^5.0.0",
+    "i18next": "^24.2.0",
     "iframe-resizer-react": "^1.1.0",
     "immer": "^10.0.2",
     "jest-mock-extended": "^3.0.4",
