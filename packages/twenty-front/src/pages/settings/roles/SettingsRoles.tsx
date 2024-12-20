@@ -10,13 +10,13 @@ import { useDeleteRole } from '@/settings/roles/hooks/useDeleteRole';
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
 import { useUpdateRole } from '@/settings/roles/hooks/useUpdateRole';
 import {
-    ActionType,
-    SettingsRoleFieldActionDropdown,
+  ActionType,
+  SettingsRoleFieldActionDropdown,
 } from '@/settings/roles/role-details/SettingsRoleFieldActionDropdown';
 import { SettingsRoleFieldDisabledActionDropdown } from '@/settings/roles/role-details/SettingsRoleFieldDisabledActionDropdown';
 import {
-    SettingsRoleItemTableRow,
-    StyledRoleTableRow,
+  SettingsRoleItemTableRow,
+  StyledRoleTableRow,
 } from '@/settings/roles/role-details/SettingsRoleItemTableRow';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -69,14 +69,18 @@ export const SettingsRoles = () => {
     <SubMenuTopBarContainer 
         links={[
         {
-            children: 'New',
-            href: getSettingsPagePath(SettingsPath.NewRole),
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Roles',
+          href: getSettingsPagePath(SettingsPath.MembersRoles),
         },
         ]} 
-        title="Settings">
+        title="Roles">
       <SettingsPageContainer>
         <SettingsHeaderContainer>
-          <StyledH1Title title={t('roles')} />
+          <StyledH1Title title={''} />
           <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewRole)}>
             <Button
               Icon={IconPlus}
