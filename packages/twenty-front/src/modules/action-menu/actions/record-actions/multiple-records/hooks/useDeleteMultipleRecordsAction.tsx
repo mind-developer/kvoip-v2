@@ -11,9 +11,10 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -60,15 +61,18 @@ export const useDeleteMultipleRecordsAction = ({
     objectMetadataItem,
   );
 
-  const { fetchAllRecordIds } = useFetchAllRecordIds({
+  const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
+    limit: DEFAULT_QUERY_PAGE_SIZE,
+    recordGqlFields: { id: true },
   });
 
   const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
-    const recordIdsToDelete = await fetchAllRecordIds();
+    const recordsToDelete = await fetchAllRecordIds();
+    const recordIdsToDelete = recordsToDelete.map((record) => record.id);
 
     resetTableRowSelection();
 
@@ -114,7 +118,8 @@ export const useDeleteMultipleRecordsAction = ({
         type: ActionMenuEntryType.Standard,
         scope: ActionMenuEntryScope.RecordSelection,
         key: 'delete-multiple-records',
-        label: 'Delete',
+        label: 'Delete records',
+        shortLabel: 'Delete',
         position,
         Icon: IconTrash,
         accent: 'danger',
