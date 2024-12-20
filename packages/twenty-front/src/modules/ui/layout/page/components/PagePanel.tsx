@@ -2,12 +2,14 @@ import styled from '@emotion/styled';
 import React from 'react';
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  /* background: ${({ theme }) => theme.background.primary}; */
+  background-color: 'tomato';
+  background: 'green';
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   height: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   width: 100%;
 `;
 
