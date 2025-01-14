@@ -68,7 +68,7 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres-spilo:${TAG}
+    image: kvoipcrm/twenty-postgres-spilo:${TAG}
     volumes:
       - db-data:/home/postgres/pgdata
     environment:
