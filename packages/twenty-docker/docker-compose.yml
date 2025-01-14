@@ -14,7 +14,7 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: kvoip/kvoip:${TAG}
+    image: twentycrm/twenty:${TAG}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
@@ -46,7 +46,7 @@ services:
     restart: always
 
   worker:
-    image: kvoipcrm/kvoip:${TAG}
+    image: twentycrm/twenty:${TAG}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5433}/default
