@@ -1,5 +1,5 @@
 version: "3.9"
-name: twenty
+name: kvoip
 
 services:
   change-vol-ownership:
@@ -14,17 +14,17 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: twentycrm/twenty:${TAG}
+    image: kvoip/kvoip:${TAG}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
     ports:
-      - "3000:3000"
+      - "3000:3443"
     environment:
-      PORT: 3000
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      PORT: 3443
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5433}/default
       SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6380}
 
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
       STORAGE_TYPE: ${STORAGE_TYPE}
@@ -39,19 +39,19 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
+      test: curl --fail http://localhost:3443/healthz
       interval: 5s
       timeout: 5s
       retries: 10
     restart: always
 
   worker:
-    image: twentycrm/twenty:${TAG}
+    image: kvoipcrm/kvoip:${TAG}
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5433}/default
       SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6380}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}

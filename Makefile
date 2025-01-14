@@ -5,7 +5,7 @@ postgres-on-docker:
 	-e PGPASSWORD_SUPERUSER=postgres \
 	-e ALLOW_NOSSL=true \
 	-v twenty_db_data:/home/postgres/pgdata \
-	-p 5432:5432 \
+	-p 5432:5433 \
 	twentycrm/twenty-postgres-spilo:latest
 	@echo "Waiting for PostgreSQL to be ready..."
 	@until docker exec twenty_pg psql -U postgres -d postgres \
