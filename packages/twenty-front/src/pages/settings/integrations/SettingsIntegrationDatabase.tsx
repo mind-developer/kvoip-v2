@@ -5,13 +5,13 @@ import { H2Title, Section } from 'twenty-ui';
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
-import { SettigsIntegrationStripeConnectionsListCard } from '@/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard';
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettigsIntegrationStripeConnectionsListCard } from '@/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -66,7 +66,10 @@ export const SettingsIntegrationDatabase = () => {
             description={`Connect or access your ${integration.text} data`}
           />
           {databaseKey === 'stripe' ? (
-            <SettigsIntegrationStripeConnectionsListCard />
+            <SettigsIntegrationStripeConnectionsListCard
+              integration={integration}
+              connections={connections}
+            />
           ) : (
             <SettingsIntegrationDatabaseConnectionsListCard
               integration={integration}

@@ -22,12 +22,12 @@ import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integ
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -59,12 +59,6 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
-        ApprovedAccessDomain,
-        TwoFactorMethod,
-        WhatsappIntegration,
-        Sector,
-        Agent,
-        Inbox,
         StripeIntegration,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',

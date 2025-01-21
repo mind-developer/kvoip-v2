@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { CreateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/create-stripe-integration.input';
-import { UpdateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/update-stripe-integration.input';
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CreateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/create-stripe-integration.input';
+import { UpdateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/update-stripe-integration.input';
+import { EnvironmentService } from '../../environment/environment.service';
 
 @Injectable()
 export class StripeIntegrationService {
@@ -66,6 +66,8 @@ export class StripeIntegrationService {
       relations: ['workspace'],
     });
 
+    console.log('teste', result);
+
     return result;
   }
 
@@ -96,16 +98,16 @@ export class StripeIntegrationService {
     return updatedIntegration;
   }
 
-  async remove(accountId: string): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     const stripeIntegration = await this.stripeIntegrationRepository.findOne({
-      where: { accountId: accountId.toString() },
+      where: { id },
     });
 
     if (!stripeIntegration) {
       throw new Error('Integration not found');
     }
 
-    await this.stripeIntegrationRepository.delete(stripeIntegration.id);
+    await this.stripeIntegrationRepository.delete(id);
 
     return true;
   }

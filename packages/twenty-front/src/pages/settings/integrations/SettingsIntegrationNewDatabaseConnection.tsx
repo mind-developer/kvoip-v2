@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsIntegrationDatabaseConnectionForm,
@@ -21,15 +20,19 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { H2Title, Section } from 'twenty-ui';
+import { useTranslation } from 'react-i18next';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import SripeLoginButton from './stripe/components/SripeLoginButton';
+import {
+  StripeContext,
+  StripeIntegrationContextType,
+} from './stripe/context/StripeContext';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import SripeLoginButton from './stripe/components/SripeLoginButton';
-
-import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const createRemoteServerInputPostgresSchema =
   settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
@@ -73,6 +76,7 @@ type SettingsIntegrationNewConnectionFormValues =
   | SettingsIntegrationNewConnectionStripeFormValues;
 
 export const SettingsIntegrationNewDatabaseConnection = () => {
+  const { t } = useTranslation();
   const { databaseKey = '' } = useParams();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
@@ -85,7 +89,9 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   const { createOneDatabaseConnection } = useCreateOneDatabaseConnection();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { stripeLogin } = useStripeLogin();
+  const { stripeLogin } = useContext(
+    StripeContext,
+  ) as StripeIntegrationContextType;
 
   const isIntegrationEnabled = useIsSettingsIntegrationEnabled(databaseKey);
 
@@ -149,8 +155,8 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       : databaseKey === 'whatsapp'
         ? 'WhatsApp Inbox'
         : databaseKey === 'stripe'
-          ? 'Stripe Connection'
-          : 'Stripe Connection';
+          ? 'Stripe Connect'
+          : t('connectANewDatabase');
 
   const description =
     databaseKey === 'messenger'
@@ -158,8 +164,8 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       : databaseKey === 'whatsapp'
         ? 'Start supporting your customers via WhatsApp'
         : databaseKey === 'stripe'
-          ? 'Add new stripe connection'
-          : 'Add new connection';
+          ? ''
+          : t('connectANewDatabaseDescription');
 
   return (
     <SubMenuTopBarContainer
@@ -200,33 +206,33 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
             <Breadcrumb
               links={[
                 {
-                  children: 'Integrations',
+                  children: t('integrations'),
                   href: settingsIntegrationsPagePath,
                 },
                 {
                   children: integration.text,
                   href: `${settingsIntegrationsPagePath}/${databaseKey}`,
                 },
-                { children: 'New' },
+                { children: t('new') },
               ]}
             />
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() =>
-                navigate(SettingsPath.IntegrationDatabase, {
-                  databaseKey,
-                })
+                navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
               }
               onSave={handleSave}
             />
           </SettingsHeaderContainer>
           <Section>
             <H2Title title={title} description={description} />
+
             {databaseKey === 'whatsapp' && (
               <SettingsIntegrationDatabaseConnectionForm
                 databaseKey={databaseKey}
               />
             )}
+
             {databaseKey === 'stripe' && (
               <SripeLoginButton onClick={stripeLogin} />
             )}

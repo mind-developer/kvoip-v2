@@ -11,9 +11,15 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
+import { messages as enMessages } from '../../../locales/en/messages';
+import { messages as frMessages } from '../../../locales/fr/messages';
+import StripeProvider from '~/pages/settings/integrations/stripe/context/StripeContext';
 
-initialI18nActivate();
+i18n.load({
+  en: enMessages,
+  fr: frMessages,
+});
+i18n.activate('fr');
 
 export const App = () => {
   return (
@@ -25,13 +31,15 @@ export const App = () => {
               <RecoilDebugObserverEffect />
               <ApolloDevLogEffect />
               <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                <IconsProvider>
-                  <ExceptionHandlerProvider>
-                    <HelmetProvider>
-                      <AppRouter />
-                    </HelmetProvider>
-                  </ExceptionHandlerProvider>
-                </IconsProvider>
+                <StripeProvider>
+                  <IconsProvider>
+                    <ExceptionHandlerProvider>
+                      <HelmetProvider>
+                        <AppRouter />
+                      </HelmetProvider>
+                    </ExceptionHandlerProvider>
+                  </IconsProvider>
+                </StripeProvider>
               </SnackBarProviderScope>
             </CaptchaProvider>
           </I18nProvider>

@@ -84,8 +84,6 @@ import { StripeModule } from './stripe/stripe.module';
     ActorModule,
     TelemetryModule,
     AdminPanelModule,
-    LabModule,
-    RoleModule,
     StripeModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,

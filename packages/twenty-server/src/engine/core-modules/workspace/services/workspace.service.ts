@@ -14,7 +14,6 @@ import { CustomDomainService } from 'src/engine/core-modules/domain-manager/serv
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -44,6 +43,8 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { FeatureFlagEntity } from '../../feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from '../../feature-flag/enums/feature-flag-key.enum';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -63,15 +64,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
-    private readonly domainManagerService: DomainManagerService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly permissionsService: PermissionsService,
-    private readonly customDomainService: CustomDomainService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
-    private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super(workspaceRepository);
   }
@@ -282,7 +276,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     const stripeFeatureFlag = this.featureFlagRepository.create({
       key: FeatureFlagKey.IsStripeIntegrationEnabled,
-      workspaceId: workspace.id,
+      workspaceId: user.currentWorkspace.id,
       value: true,
     });
 

@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client';
 import { REMOVE_STRIPE_INTEGRATION } from '~/pages/settings/integrations/stripe/graphql/mutation/removeStripeIntegration';
 
 interface ToggleStripeIntegration {
-  deleteStripeIntegration: (accountId: string) => Promise<void>;
+  deleteStripeIntegration: (id: string) => Promise<void>;
 }
 
 export const useRemoveStripeIntegration = (): ToggleStripeIntegration => {
@@ -23,10 +23,10 @@ export const useRemoveStripeIntegration = (): ToggleStripeIntegration => {
     },
   });
 
-  const deleteStripeIntegration = async (accountId: string) => {
+  const deleteStripeIntegration = async (id: string) => {
     await removeStripeIntegration({
       variables: {
-        accountId,
+        id,
       },
     });
   };
