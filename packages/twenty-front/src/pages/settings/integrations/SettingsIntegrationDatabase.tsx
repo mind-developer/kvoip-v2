@@ -12,6 +12,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettigsIntegrationStripeConnectionsListCard } from '@/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
@@ -63,10 +64,17 @@ export const SettingsIntegrationDatabase = () => {
             title={`${integration.text} database`}
             description={`Connect or access your ${integration.text} data`}
           />
-          <SettingsIntegrationDatabaseConnectionsListCard
-            integration={integration}
-            connections={connections}
-          />
+          {databaseKey === 'stripe' ? (
+            <SettigsIntegrationStripeConnectionsListCard
+              integration={integration}
+              connections={connections}
+            />
+          ) : (
+            <SettingsIntegrationDatabaseConnectionsListCard
+              integration={integration}
+              connections={connections}
+            />
+          )}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

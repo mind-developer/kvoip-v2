@@ -48,6 +48,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { FileModule } from './file/file.module';
     ActorModule,
     TelemetryModule,
     AdminPanelModule,
+    StripeModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     FileStorageModule.forRootAsync({
@@ -125,6 +127,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    StripeModule,
   ],
 })
 export class CoreEngineModule {}

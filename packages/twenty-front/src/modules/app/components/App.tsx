@@ -13,6 +13,7 @@ import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
 import { messages as enMessages } from '../../../locales/en/messages';
 import { messages as frMessages } from '../../../locales/fr/messages';
+import StripeProvider from '~/pages/settings/integrations/stripe/context/StripeContext';
 
 i18n.load({
   en: enMessages,
@@ -30,13 +31,15 @@ export const App = () => {
               <RecoilDebugObserverEffect />
               <ApolloDevLogEffect />
               <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                <IconsProvider>
-                  <ExceptionHandlerProvider>
-                    <HelmetProvider>
-                      <AppRouter />
-                    </HelmetProvider>
-                  </ExceptionHandlerProvider>
-                </IconsProvider>
+                <StripeProvider>
+                  <IconsProvider>
+                    <ExceptionHandlerProvider>
+                      <HelmetProvider>
+                        <AppRouter />
+                      </HelmetProvider>
+                    </ExceptionHandlerProvider>
+                  </IconsProvider>
+                </StripeProvider>
               </SnackBarProviderScope>
             </CaptchaProvider>
           </I18nProvider>

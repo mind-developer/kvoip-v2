@@ -23,6 +23,8 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { FeatureFlagEntity } from '../../feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from '../../feature-flag/enums/feature-flag-key.enum';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -40,6 +42,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super(workspaceRepository);
   }
@@ -116,6 +120,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
+
+    const stripeFeatureFlag = this.featureFlagRepository.create({
+      key: FeatureFlagKey.IsStripeIntegrationEnabled,
+      workspaceId: user.currentWorkspace.id,
+      value: true,
+    });
+
+    await this.featureFlagRepository.save(stripeFeatureFlag);
 
     return await this.workspaceRepository.findOneBy({
       id: workspace.id,
