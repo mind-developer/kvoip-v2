@@ -16,6 +16,8 @@ export const useMatchingCommandMenuCommands = ({
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
     peopleCommands,
+    chargeCommands,
+    integrationCommands,
     companyCommands,
     opportunityCommands,
     noteCommands,
@@ -52,6 +54,8 @@ export const useMatchingCommandMenuCommands = ({
     !opportunityCommands?.length &&
     !noteCommands?.length &&
     !tasksCommands?.length &&
+    !chargeCommands?.length &&
+    !integrationCommands?.length &&
     !customObjectCommands?.length;
 
   return {
@@ -65,6 +69,8 @@ export const useMatchingCommandMenuCommands = ({
     matchingNavigateCommand,
     peopleCommands,
     companyCommands,
+    chargeCommands,
+    integrationCommands,
     opportunityCommands,
     noteCommands,
     tasksCommands,

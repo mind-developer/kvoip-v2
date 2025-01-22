@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -26,6 +27,7 @@ export class WorkspaceManagerService {
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   /**
@@ -114,6 +116,8 @@ export class WorkspaceManagerService {
       dataSourceMetadata.schema,
       createdObjectMetadata,
       isWorkflowEnabled,
+      this.moduleRef,
+      workspaceId,
     );
   }
 

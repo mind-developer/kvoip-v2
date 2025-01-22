@@ -73,6 +73,8 @@ export const CommandMenu = () => {
     matchingNavigateCommand,
     peopleCommands,
     companyCommands,
+    chargeCommands,
+    integrationCommands,
     opportunityCommands,
     noteCommands,
     tasksCommands,
@@ -93,6 +95,8 @@ export const CommandMenu = () => {
     .concat(noteCommands)
     .concat(tasksCommands)
     .concat(customObjectCommands)
+    .concat(chargeCommands)
+    .concat(integrationCommands)
     .filter(isDefined);
 
   const selectableItemIds = selectableItems.map((item) => item.id);
@@ -141,6 +145,14 @@ export const CommandMenu = () => {
     {
       heading: 'Tasks',
       items: tasksCommands,
+    },
+    {
+      heading: 'Charge',
+      items: chargeCommands,
+    },
+    {
+      heading: 'Integration',
+      items: integrationCommands,
     },
     {
       heading: 'Custom Objects',

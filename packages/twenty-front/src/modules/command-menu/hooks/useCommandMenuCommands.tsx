@@ -164,6 +164,28 @@ export const useCommandMenuCommands = () => {
     limit: 3,
   });
 
+  // const { records: charges } = useFindManyRecords({
+  //   skip: !isCommandMenuOpened,
+  //   objectNameSingular: CoreObjectNameSingular.Charge,
+  //   filter: commandMenuSearch
+  //     ? {
+  //         product: { ilike: `%${commandMenuSearch}%` },
+  //       }
+  //     : undefined,
+  //   limit: 3,
+  // });
+
+  // const { records: integrations } = useFindManyRecords({
+  //   skip: !isCommandMenuOpened,
+  //   objectNameSingular: CoreObjectNameSingular.Integration,
+  //   filter: commandMenuSearch
+  //     ? {
+  //         name: { ilike: `%${commandMenuSearch}%` },
+  //       }
+  //     : undefined,
+  //   limit: 3,
+  // });
+
   const people = matchesSearchFilterObjectRecords.people?.map(
     (people) => people.record,
   );
@@ -172,6 +194,14 @@ export const useCommandMenuCommands = () => {
   );
   const opportunities = matchesSearchFilterObjectRecords.opportunities?.map(
     (opportunities) => opportunities.record,
+  );
+
+  const charges = matchesSearchFilterObjectRecords.charges?.map(
+    (charges) => charges.record,
+  );
+
+  const integrations = matchesSearchFilterObjectRecords.integrations?.map(
+    (integrations) => integrations.record,
   );
 
   const peopleCommands = useMemo(
@@ -191,6 +221,44 @@ export const useCommandMenuCommands = () => {
         ),
       })),
     [people],
+  );
+
+  const chargeCommands = useMemo(
+    () =>
+      charges.map(({ id, product }) => ({
+        id,
+        label: product,
+        to: `object/charge/${id}`,
+        shouldCloseCommandMenuOnClick: true,
+        Icon: () => (
+          <Avatar
+            type="rounded"
+            placeholderColorSeed={id}
+            placeholder={product ?? ''}
+            avatarUrl={null}
+          />
+        ),
+      })),
+    [charges],
+  );
+
+  const integrationCommands = useMemo(
+    () =>
+      integrations.map(({ id, name }) => ({
+        id,
+        label: name,
+        to: `object/integration/${id}`,
+        shouldCloseCommandMenuOnClick: true,
+        Icon: () => (
+          <Avatar
+            type="rounded"
+            placeholderColorSeed={id}
+            placeholder={name ?? ''}
+            avatarUrl={null}
+          />
+        ),
+      })),
+    [integrations],
   );
 
   const companyCommands = useMemo(
@@ -266,6 +334,8 @@ export const useCommandMenuCommands = () => {
             CoreObjectNamePlural.Person,
             CoreObjectNamePlural.Opportunity,
             CoreObjectNamePlural.Company,
+            CoreObjectNamePlural.Charge,
+            CoreObjectNamePlural.Integration,
           ].includes(namePlural as CoreObjectNamePlural) && !isEmpty(records),
       ),
     );
@@ -308,6 +378,8 @@ export const useCommandMenuCommands = () => {
     companyCommands,
     opportunityCommands,
     noteCommands,
+    chargeCommands,
+    integrationCommands,
     tasksCommands,
     customObjectCommands,
     isLoading,
