@@ -15,7 +15,15 @@ export const useMatchingCommandMenuCommands = ({
     actionGlobalCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
-    fallbackCommands,
+    peopleCommands,
+    chargeCommands,
+    integrationCommands,
+    companyCommands,
+    opportunityCommands,
+    noteCommands,
+    tasksCommands,
+    customObjectCommands,
+    isLoading,
   } = useCommandMenuCommands();
 
   const matchingNavigateCommands = matchCommands(navigateCommands);
@@ -43,8 +51,15 @@ export const useMatchingCommandMenuCommands = ({
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
     !matchingWorkflowRunGlobalCommands.length &&
-    !matchingStandardActionObjectCommands.length &&
-    !matchingNavigateCommands.length;
+    !matchingNavigateCommand.length &&
+    !peopleCommands?.length &&
+    !companyCommands?.length &&
+    !opportunityCommands?.length &&
+    !noteCommands?.length &&
+    !tasksCommands?.length &&
+    !chargeCommands?.length &&
+    !integrationCommands?.length &&
+    !customObjectCommands?.length;
 
   return {
     noResults,
@@ -53,7 +68,14 @@ export const useMatchingCommandMenuCommands = ({
     matchingWorkflowRunRecordSelectionCommands,
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommands,
-    fallbackCommands: noResults ? fallbackCommands : [],
+    matchingNavigateCommand,
+    peopleCommands,
+    companyCommands,
+    chargeCommands,
+    integrationCommands,
+    opportunityCommands,
+    noteCommands,
+    tasksCommands,
+    customObjectCommands,
   };
 };

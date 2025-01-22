@@ -135,7 +135,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   //Relations
   @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.company,
+    standardId: CHARGE_STANDARD_FIELD_IDS.customer,
     type: RelationMetadataType.MANY_TO_ONE,
     label: msg`Customer`,
     description: msg`Customer linked to the charge`,
@@ -150,7 +150,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.person,
+    standardId: CHARGE_STANDARD_FIELD_IDS.people,
     type: RelationMetadataType.MANY_TO_ONE,
     label: msg`Contact`,
     description: msg`Person linked to the charge`,

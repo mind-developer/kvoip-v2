@@ -30,20 +30,36 @@ export const CommandMenu = () => {
     matchingWorkflowRunRecordSelectionCommands,
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommands,
-    fallbackCommands,
+    matchingNavigateCommand,
+    peopleCommands,
+    companyCommands,
+    chargeCommands,
+    integrationCommands,
+    opportunityCommands,
+    noteCommands,
+    tasksCommands,
+    customObjectCommands,
   } = useMatchingCommandMenuCommands({
     commandMenuSearch,
   });
 
-  const previousContextStoreCurrentObjectMetadataItemId =
-    useRecoilComponentValueV2(
-      contextStoreCurrentObjectMetadataItemIdComponentState,
-      'command-menu-previous',
-    );
+  const selectableItems = copilotCommands
+    .concat(matchingStandardActionRecordSelectionCommands)
+    .concat(matchingWorkflowRunRecordSelectionCommands)
+    .concat(matchingStandardActionGlobalCommands)
+    .concat(matchingWorkflowRunGlobalCommands)
+    .concat(matchingNavigateCommand)
+    .concat(peopleCommands)
+    .concat(companyCommands)
+    .concat(opportunityCommands)
+    .concat(noteCommands)
+    .concat(tasksCommands)
+    .concat(customObjectCommands)
+    .concat(chargeCommands)
+    .concat(integrationCommands)
+    .filter(isDefined);
 
-  const { objectMetadataItem: currentObjectMetadataItem } =
-    useContextStoreObjectMetadataItemOrThrow();
+  const selectableItemIds = selectableItems.map((item) => item.id);
 
   const commandGroups: CommandGroupConfig[] = [
     {
@@ -66,17 +82,31 @@ export const CommandMenu = () => {
       heading: t`Search ''${commandMenuSearch}'' with...`,
       items: fallbackCommands,
     },
+    {
+      heading: 'Opportunities',
+      items: opportunityCommands,
+    },
+    {
+      heading: 'Notes',
+      items: noteCommands,
+    },
+    {
+      heading: 'Tasks',
+      items: tasksCommands,
+    },
+    {
+      heading: 'Charge',
+      items: chargeCommands,
+    },
+    {
+      heading: 'Integration',
+      items: integrationCommands,
+    },
+    {
+      heading: 'Custom Objects',
+      items: customObjectCommands,
+    },
   ];
-
-  const selectableItems: Command[] = commandGroups.flatMap(
-    (group) => group.items ?? [],
-  );
-
-  const selectableItemIds = selectableItems.map((item) => item.id);
-
-  if (isDefined(previousContextStoreCurrentObjectMetadataItemId)) {
-    selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
-  }
 
   return (
     <CommandMenuList

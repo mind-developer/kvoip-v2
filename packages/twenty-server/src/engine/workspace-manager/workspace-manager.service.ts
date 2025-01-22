@@ -1,14 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
-import {
-  SEED_ACME_WORKSPACE_ID,
-  SEED_APPLE_WORKSPACE_ID,
-} from 'src/database/typeorm-seeds/core/workspaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -56,12 +48,6 @@ export class WorkspaceManagerService {
     private readonly userRoleService: UserRoleService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly moduleRef: ModuleRef,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
-    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   /**
@@ -202,6 +188,7 @@ export class WorkspaceManagerService {
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      isWorkflowEnabled,
       this.moduleRef,
       workspaceId,
     );

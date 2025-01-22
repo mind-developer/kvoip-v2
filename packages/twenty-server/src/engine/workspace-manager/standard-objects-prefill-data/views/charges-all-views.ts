@@ -1,15 +1,13 @@
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
 import { CHARGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-
 export const chargesAllView = (
-  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
-) => {
+    objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  ) => {
   return {
     name: 'All',
-    objectMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].id,
+    objectMetadataId: objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -65,20 +63,22 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.company
+            CHARGE_STANDARD_FIELD_IDS.customer
           ],
         position: 5,
         isVisible: true,
         size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.person
+            CHARGE_STANDARD_FIELD_IDS.people
           ],
         position: 6,
         isVisible: true,
         size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
       {
         fieldMetadataId:
@@ -88,6 +88,7 @@ export const chargesAllView = (
         position: 7,
         isVisible: true,
         size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
     ],
   };

@@ -8,13 +8,14 @@ import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-worksp
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
-
 import { integrationPrefillData } from './integration';
+import { ModuleRef } from '@nestjs/core';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
+  isWorkflowEnabled: boolean,
   moduleRef: ModuleRef,
   workspaceId: string,
 ) => {
@@ -42,6 +43,12 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
+    await integrationPrefillData(
+      entityManager,
+      schemaName,
+      moduleRef,
+      workspaceId,
+    );
     await integrationPrefillData(
       entityManager,
       schemaName,
