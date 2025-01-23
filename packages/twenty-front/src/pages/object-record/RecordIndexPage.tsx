@@ -11,6 +11,7 @@ import { PermissionErrorFallback } from '@/error-handler/components/PermissionEr
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
@@ -85,33 +86,37 @@ export const RecordIndexPage = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{
-              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-            }}
+          <RecordFiltersComponentInstanceContext.Provider
+            value={{ instanceId: recordIndexId }}
           >
-            <ActionMenuComponentInstanceContext.Provider
+            <ContextStoreComponentInstanceContext.Provider
               value={{
                 instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
               }}
             >
-              <PageTitle title={`${capitalize(objectNamePlural)}`} />
-              <RecordIndexPageHeader />
-              <PageBody>
-              {currentRole &&
+              <ActionMenuComponentInstanceContext.Provider
+                value={{
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                }}
+              >
+                <PageTitle title={`${capitalize(objectNamePlural)}`} />
+                <RecordIndexPageHeader />
+                <PageBody>
+                {currentRole &&
                  hasPermission(['create', 'view', 'edit', 'delete']) ? (
-                <StyledIndexContainer>
-                  <RecordIndexContainerContextStoreObjectMetadataEffect />
-                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                  <MainContextStoreComponentInstanceIdSetterEffect />
-                  <RecordIndexContainer />
-                </StyledIndexContainer>
-              ): (
-                <PermissionErrorFallback />
-              )}
-              </PageBody>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
+                  <StyledIndexContainer>
+                    <RecordIndexContainerContextStoreObjectMetadataEffect />
+                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                    <MainContextStoreComponentInstanceIdSetterEffect />
+                    <RecordIndexContainer />
+                  </StyledIndexContainer>
+                  ): (
+                    <PermissionErrorFallback />
+                  )}
+                </PageBody>
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>
     </PageContainer>

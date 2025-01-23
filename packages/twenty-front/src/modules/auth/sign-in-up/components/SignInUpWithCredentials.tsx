@@ -9,7 +9,7 @@ import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailFi
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { captchaState } from '@/client-config/states/captchaState';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -31,7 +31,7 @@ export const SignInUpWithCredentials = () => {
 
   const signInUpStep = useRecoilValue(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captchaProvider = useRecoilValue(captchaProviderState);
+  const captcha = useRecoilValue(captchaState);
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
@@ -88,7 +88,7 @@ export const SignInUpWithCredentials = () => {
 
   const shouldWaitForCaptchaToken =
     signInUpStep !== SignInUpStep.Init &&
-    isDefined(captchaProvider?.provider) &&
+    isDefined(captcha?.provider) &&
     isRequestingCaptchaToken;
 
   const isEmailStepSubmitButtonDisabledCondition =
