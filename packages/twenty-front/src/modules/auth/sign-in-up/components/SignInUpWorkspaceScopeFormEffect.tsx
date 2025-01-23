@@ -7,7 +7,6 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
-W
 
 const searchParams = new URLSearchParams(window.location.search);
 const email = searchParams.get('email');
