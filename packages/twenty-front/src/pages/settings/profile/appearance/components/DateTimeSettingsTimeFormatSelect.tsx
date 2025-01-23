@@ -17,13 +17,30 @@ export const DateTimeSettingsTimeFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsTimeFormatSelectProps) => {
+  const { t } = useTranslation();
   const systemTimeZone = detectTimeZone();
 
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
 
   const systemTimeFormat = TimeFormat[detectTimeFormat()];
 
-  const { t } = useTranslation();
+  const systemTimeFormatLabel = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    systemTimeFormat,
+  );
+
+  const hour24Label = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    TimeFormat.HOUR_24,
+  );
+
+  const hour12Label = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    TimeFormat.HOUR_12,
+  );
 
   return (
     <Select
@@ -35,27 +52,15 @@ export const DateTimeSettingsTimeFormatSelect = ({
       value={value}
       options={[
         {
-          label: `${t('systemSettings')} - ${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            systemTimeFormat,
-          )}`,
+          label:`${t('System Settings')} - ${systemTimeFormatLabel}`,
           value: TimeFormat.SYSTEM,
         },
         {
-          label: `24h (${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            TimeFormat.HOUR_24,
-          )})`,
+          label: `24h (${hour24Label})`,
           value: TimeFormat.HOUR_24,
         },
         {
-          label: `12h (${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            TimeFormat.HOUR_12,
-          )})`,
+          label: `12h (${hour12Label})`,
           value: TimeFormat.HOUR_12,
         },
       ]}

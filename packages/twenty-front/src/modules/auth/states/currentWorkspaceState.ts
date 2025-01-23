@@ -11,6 +11,7 @@ export type CurrentWorkspace = Pick<
   | 'allowImpersonation'
   | 'featureFlags'
   | 'activationStatus'
+  | 'billingSubscriptions'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
@@ -20,6 +21,7 @@ export type CurrentWorkspace = Pick<
   | 'hasValidEntrepriseKey'
   | 'subdomain'
   | 'metadataVersion'
+  | 'creatorEmail'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

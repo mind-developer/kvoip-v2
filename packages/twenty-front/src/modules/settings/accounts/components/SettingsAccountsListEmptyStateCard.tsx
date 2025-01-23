@@ -47,7 +47,7 @@ export const SettingsAccountsListEmptyStateCard = ({
         {currentWorkspace?.isGoogleAuthEnabled && (
           <Button
             Icon={IconGoogle}
-            title="Connect with Google"
+            title={t`Connect with Google`}
             variant="secondary"
             onClick={() => triggerApisOAuth('google')}
           />
@@ -55,7 +55,7 @@ export const SettingsAccountsListEmptyStateCard = ({
         {isMicrosoftSyncEnabled && currentWorkspace?.isMicrosoftAuthEnabled && (
           <Button
             Icon={IconMicrosoft}
-            title="Connect with Microsoft"
+            title={t`Connect with Microsoft`}
             variant="secondary"
             onClick={() => triggerApisOAuth('microsoft')}
           />

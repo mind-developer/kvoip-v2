@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkspaceInviteHashValidInput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash.input';
-import { WorkspaceInviteTokenInput } from 'src/engine/core-modules/auth/dto/workspace-invite-token.input';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -35,7 +33,6 @@ export class MemberWorkspaceUpdateRoleResponse extends WorkspaceMemberWorkspaceE
   roleId: string;
 }
 
-
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => UserWorkspace)
 export class UserWorkspaceResolver {
@@ -48,38 +45,7 @@ export class UserWorkspaceResolver {
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
-  @Mutation(() => User)
-  async addUserToWorkspace(
-    @AuthUser() user: User,
-    @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      inviteHash: workspaceInviteHashValidInput.inviteHash,
-    });
-
-    if (!workspace) {
-      return;
-    }
-
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      workspace.id,
-      user.email,
-    );
-
-    return await this.userWorkspaceService.addUserToWorkspace(user, workspace);
-  }
-
-  @Mutation(() => User)
-  async addUserToWorkspaceByInviteToken(
-    @AuthUser() user: User,
-    @Args() workspaceInviteTokenInput: WorkspaceInviteTokenInput,
-  ) {
-    return this.userWorkspaceService.addUserToWorkspaceByInviteToken(
-      workspaceInviteTokenInput.inviteToken,
-      user,
-    );
-  }
-
+  
   @Mutation(() => MemberWorkspaceToggleStatusResponse)
   async toggleMemberStatus(
     @AuthUser() { id: userAuthId }: User,

@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -12,27 +11,26 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTranslation } from 'react-i18next';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
 type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
 
   const { t } = useTranslation();
 
   const { createOneObjectMetadataItem, findManyRecordsCache } =
     useCreateOneObjectMetadataItem();
-
-  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
   const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
     mode: 'onTouched',
@@ -51,9 +49,10 @@ export const SettingsNewObject = () => {
       );
 
       navigate(
+        response ? SettingsPath.ObjectDetail : SettingsPath.Objects,
         response
-          ? `${settingsObjectsPagePath}/${response.createOneObject.namePlural}`
-          : settingsObjectsPagePath,
+          ? { objectNamePlural: response.createOneObject.namePlural }
+          : undefined,
       );
 
       await findManyRecordsCache();
@@ -71,12 +70,12 @@ export const SettingsNewObject = () => {
         title={t('newObject')}
         links={[
           {
-            children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
             children: t('objects'),
-            href: settingsObjectsPagePath,
+            href: getSettingsPath(SettingsPath.Objects),
           },
           { children: t('new') },
         ]}
@@ -84,7 +83,7 @@ export const SettingsNewObject = () => {
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
-            onCancel={() => navigate(settingsObjectsPagePath)}
+            onCancel={() => navigate(SettingsPath.Objects)}
             onSave={formConfig.handleSubmit(handleSave)}
           />
         }

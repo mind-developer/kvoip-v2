@@ -11,25 +11,26 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTranslation } from 'react-i18next';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import packageJson from '../../../package.json';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { t } = useTranslation();
+
   return (
     <SubMenuTopBarContainer
-      title={t("general")}
+      title={t('general')}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: `Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: t('general') },
       ]}
@@ -50,8 +51,11 @@ export const SettingsWorkspace = () => {
                 title={t('domain')}
                 description={t('subdomainSettingsWorkspaceDescription')}
               />
-              <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
-                <SettingsCard title={t('customizeDomain')} Icon={<IconWorld />} />
+              <UndecoratedLink to={getSettingsPath(SettingsPath.Domain)}>
+                <SettingsCard
+                  title={t('customizeDomain')}
+                  Icon={<IconWorld />}
+                />
               </UndecoratedLink>
             </Section>
             <Section>

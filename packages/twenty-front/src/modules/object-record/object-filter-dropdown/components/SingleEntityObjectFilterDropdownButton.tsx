@@ -16,7 +16,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useTranslation } from 'react-i18next';
-import { getOperandsForFilterDefinition } from '../utils/getOperandsForFilterType';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
@@ -50,7 +50,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
 
   React.useEffect(() => {
     setFilterDefinitionUsedInDropdown(availableFilterDefinition);
-    const defaultOperand = getOperandsForFilterDefinition(
+    const defaultOperand = getRecordFilterOperandsForRecordFilterDefinition(
       availableFilterDefinition,
     )[0];
     setSelectedOperandInDropdown(defaultOperand);

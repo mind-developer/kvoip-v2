@@ -2,13 +2,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -29,16 +29,17 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
   const { t } = useTranslation();
+
   return (
     <SubMenuTopBarContainer
-      title={t('developers')}
+    title={t('developers')}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t('developers')},
+        { children: t('developers') },
       ]}
     >
       <SettingsPageContainer>
@@ -55,7 +56,7 @@ export const SettingsDevelopers = () => {
                 title={t('createApiKey')}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/api-keys/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
               />
             </StyledButtonContainer>
           </Section>
@@ -71,7 +72,7 @@ export const SettingsDevelopers = () => {
                 title={t('createWebhook')}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/webhooks/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
               />
             </StyledButtonContainer>
           </Section>

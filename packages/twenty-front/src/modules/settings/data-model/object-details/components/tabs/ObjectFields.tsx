@@ -17,13 +17,15 @@ type ObjectFieldsProps = {
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
+
   const { t } = useTranslation();
+  const objectLabelSingular = objectMetadataItem.labelSingular;
 
   return (
     <Section>
       <H2Title
         title={t('fields')}
-        description={t('fieldsDescription', { objectMetadata: objectMetadataItem.labelSingular})}
+        description={t('fieldsDescription', { objectMetadata: objectLabelSingular})}
       />
       <SettingsObjectFieldTable
         objectMetadataItem={objectMetadataItem}

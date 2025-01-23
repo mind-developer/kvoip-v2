@@ -6,6 +6,7 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
 import { useTranslation } from 'react-i18next';
 
+
 type DateTimeSettingsDateFormatSelectProps = {
   value: DateFormat;
   onChange: (nextValue: DateFormat) => void;
@@ -18,12 +19,17 @@ export const DateTimeSettingsDateFormatSelect = ({
   value,
 }: DateTimeSettingsDateFormatSelectProps) => {
   const systemTimeZone = detectTimeZone();
+  const { t } = useTranslation();
 
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
 
   const systemDateFormat = DateFormat[detectDateFormat()];
 
-  const { t } = useTranslation();
+  const systemDateFormatLabel = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    systemDateFormat,
+  );
 
   return (
     <Select
@@ -35,11 +41,7 @@ export const DateTimeSettingsDateFormatSelect = ({
       value={value}
       options={[
         {
-          label: `${t('systemSettings')} - ${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            systemDateFormat,
-          )}`,
+          label: `${t('System settings')} - ${systemDateFormatLabel}`,
           value: DateFormat.SYSTEM,
         },
         {

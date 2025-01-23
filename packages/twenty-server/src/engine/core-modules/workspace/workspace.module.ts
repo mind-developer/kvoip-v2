@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -6,6 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -30,6 +32,7 @@ import { WorkspaceService } from './services/workspace.service';
 @Module({
   imports: [
     TypeORMModule,
+    TypeOrmModule.forFeature([BillingSubscription], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         DomainManagerModule,

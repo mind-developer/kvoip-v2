@@ -12,7 +12,6 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
-  isWorkflowEnabled: boolean,
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     if (!object.standardId) {
@@ -44,7 +43,6 @@ export const standardObjectsPrefillData = async (
       entityManager,
       schemaName,
       objectMetadataMap,
-      isWorkflowEnabled,
     );
 
     await seedWorkspaceFavorites(

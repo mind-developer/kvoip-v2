@@ -7,6 +7,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
+
 export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
     useState(false);

@@ -11,7 +11,6 @@ import { RadioGroup } from '@/ui/input/components/RadioGroup';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -35,6 +34,7 @@ import { useTheme } from '@emotion/react';
 import { formatDistanceToNow } from 'date-fns';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -141,7 +141,7 @@ export const SettingsNewMember = () => {
         links={[
             {
               children: t('members'),
-              href: getSettingsPagePath(SettingsPath.WorkspaceMembersPage),
+              href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
             },
             { children: t('addMembersToWorkspace') },
         ]}>

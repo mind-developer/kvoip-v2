@@ -18,7 +18,6 @@ import {
   SettingsRoleItemTableRow,
   StyledRoleTableRow,
 } from '@/settings/roles/role-details/SettingsRoleItemTableRow';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -28,6 +27,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useTranslation } from 'react-i18next';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 
 const StyledH1Title = styled(H1Title)`
@@ -48,7 +48,7 @@ export const SettingsRoles = () => {
 
   // TODO: when integrating with the backend, redo the paths so that they are standardized in lower case (Problems with : { children: `${roleSlug}` })
   const handleEditRole = (roleName: string, action: ActionType) => {
-    const path = getSettingsPagePath(SettingsPath.EditRole).replace(
+    const path = getSettingsPath(SettingsPath.EditRole).replace(
       ':roleSlug',
       roleName,
     )
@@ -70,18 +70,18 @@ export const SettingsRoles = () => {
         links={[
         {
             children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Roles',
-          href: getSettingsPagePath(SettingsPath.MembersRoles),
+          href: getSettingsPath(SettingsPath.MembersRoles),
         },
         ]} 
         title="Roles">
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title={''} />
-          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewRole)}>
+          <UndecoratedLink to={getSettingsPath(SettingsPath.NewRole)}>
             <Button
               Icon={IconPlus}
               title={t('newRole')}

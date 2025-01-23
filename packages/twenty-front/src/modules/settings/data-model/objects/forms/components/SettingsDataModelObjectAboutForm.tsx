@@ -221,6 +221,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disableEdition}
+            onBlur={onBlur}
           />
         )}
       />

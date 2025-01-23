@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -8,23 +7,24 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
-import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
+import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTranslation } from 'react-i18next';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsDevelopersApiKeysNew = () => {
+  const { t } = useTranslation();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const navigate = useNavigate();
-  const setApiKeyToken = useSetRecoilState(apiKeyTokenState);
+  const navigateSettings = useNavigateSettings();
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
@@ -37,7 +37,13 @@ export const SettingsDevelopersApiKeysNew = () => {
     objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
-  const { t } = useTranslation();
+  const setApiKeyTokenCallback = useRecoilCallback(
+    ({ set }) =>
+      (apiKeyId: string, token: string) => {
+        set(apiKeyTokenFamilyState(apiKeyId), token);
+      },
+    [],
+  );
 
   const handleSave = async () => {
     const expiresAt = DateTime.now()
@@ -59,31 +65,37 @@ export const SettingsDevelopersApiKeysNew = () => {
         expiresAt: expiresAt,
       },
     });
+
     if (isDefined(tokenData.data?.generateApiKeyToken)) {
-      setApiKeyToken(tokenData.data.generateApiKeyToken.token);
-      navigate(`/settings/developers/api-keys/${newApiKey.id}`);
+      setApiKeyTokenCallback(
+        newApiKey.id,
+        tokenData.data.generateApiKeyToken.token,
+      );
+      navigateSettings(SettingsPath.DevelopersApiKeyDetail, {
+        apiKeyId: newApiKey.id,
+      });
     }
   };
   const canSave = !!formValues.name && createOneApiKey;
   return (
     <SubMenuTopBarContainer
-      title="New key"
+      title={t`New key`}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: t('developers'),
-          href: getSettingsPagePath(SettingsPath.Developers),
+          href: getSettingsPath(SettingsPath.Developers),
         },
-        { children: t('newKey') },
+        { children: t`New Key` },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate('/settings/developers');
+            navigateSettings(SettingsPath.Developers);
           }}
           onSave={handleSave}
         />

@@ -48,9 +48,10 @@ export const RecordIndexPageHeader = () => {
     isDefined(objectMetadataItem) &&
     isObjectMetadataReadOnly(objectMetadataItem);
 
-  const shouldDisplayAddButton = 
-    hasPermission(['create']) && (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
-    !isObjectMetadataItemReadOnly;
+  const shouldDisplayAddButton =
+  hasPermission(['create']) && (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
+    !isObjectMetadataItemReadOnly &&
+    !isCommandMenuV2Enabled;
 
   const isTable = recordIndexViewType === ViewType.Table;
 

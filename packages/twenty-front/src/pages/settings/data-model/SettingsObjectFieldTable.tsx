@@ -12,6 +12,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,63 +21,65 @@ import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
-const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectDetailTableItem> =
-  {
-    tableId: 'settingsObjectDetail',
-    fields: [
-      {
-        fieldLabel: 'Name',
-        fieldName: 'label',
-        fieldType: 'string',
-        align: 'left',
-      },
-      {
-        fieldLabel: 'Field type',
-        fieldName: 'fieldType',
-        fieldType: 'string',
-        align: 'left',
-      },
-      {
-        fieldLabel: 'Data type',
-        fieldName: 'dataType',
-        fieldType: 'string',
-        align: 'left',
-      },
-    ],
-    initialSort: {
+const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD = (
+  t: (literals: TemplateStringsArray) => string,
+): TableMetadata<SettingsObjectDetailTableItem> => ({
+  tableId: 'settingsObjectDetail',
+  fields: [
+    {
+      fieldLabel: t`Name`,
       fieldName: 'label',
-      orderBy: 'AscNullsLast',
+      fieldType: 'string',
+      align: 'left',
     },
-  };
+    {
+      fieldLabel: t`Field type`,
+      fieldName: 'fieldType',
+      fieldType: 'string',
+      align: 'left',
+    },
+    {
+      fieldLabel: t`Data type`,
+      fieldName: 'dataType',
+      fieldType: 'string',
+      align: 'left',
+    },
+  ],
+  initialSort: {
+    fieldName: 'label',
+    orderBy: 'AscNullsLast',
+  },
+});
 
-const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObjectDetailTableItem> =
-  {
-    tableId: 'settingsObjectDetail',
-    fields: [
-      {
-        fieldLabel: 'Name',
-        fieldName: 'label',
-        fieldType: 'string',
-        align: 'left',
-      },
-      {
-        fieldLabel: 'Identifier',
-        fieldName: 'identifierType',
-        fieldType: 'string',
-        align: 'left',
-      },
-      {
-        fieldLabel: 'Data type',
-        fieldName: 'dataType',
-        fieldType: 'string',
-        align: 'left',
-      },
-    ],
-    initialSort: {
+const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM = (
+  t: (literals: TemplateStringsArray) => string,
+): TableMetadata<SettingsObjectDetailTableItem> => ({
+  tableId: 'settingsObjectDetail',
+  fields: [
+    {
+      fieldLabel: t`Name`,
       fieldName: 'label',
-      orderBy: 'AscNullsLast',
+      fieldType: 'string',
+      align: 'left',
     },
-  };
+    {
+      fieldLabel: t`Identifier`,
+      fieldName: 'identifierType',
+      fieldType: 'string',
+      align: 'left',
+    },
+    {
+      fieldLabel: t`Data type`,
+      fieldName: 'dataType',
+      fieldType: 'string',
+      align: 'left',
+    },
+  ],
+  initialSort: {
+    fieldName: 'label',
+    orderBy: 'AscNullsLast',
+  },
+});
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -93,10 +96,11 @@ export const SettingsObjectFieldTable = ({
   mode,
 }: SettingsObjectFieldTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-
+  const { t } = useLingui();
+  const { t: tFromReactI18n } = useTranslation();
   const tableMetadata = objectMetadataItem.isCustom
-    ? SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM
-    : SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD;
+    ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM(t)
+    : GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD(t);
 
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
@@ -106,8 +110,6 @@ export const SettingsObjectFieldTable = ({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );
-
-  const { t } = useTranslation();
 
   useEffect(() => {
     setSettingsObjectFields(objectMetadataItem.fields);
@@ -179,7 +181,7 @@ export const SettingsObjectFieldTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder={t('searchField')}
+        placeholder={tFromReactI18n('searchField')}
         value={searchTerm}
         onChange={setSearchTerm}
       />
@@ -189,7 +191,7 @@ export const SettingsObjectFieldTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={t(item.fieldLabel.toLowerCase().replace(" ", ""))}
+              label={tFromReactI18n(item.fieldLabel.toLowerCase().replace(" ", ""))}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}
             />
@@ -197,7 +199,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title={t('active')}>
+          <TableSection title={tFromReactI18n('active')}>
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -211,7 +213,7 @@ export const SettingsObjectFieldTable = ({
         {isNonEmptyArray(filteredDisabledItems) && (
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title={t('inactive')}
+            title={tFromReactI18n('inactive')}
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

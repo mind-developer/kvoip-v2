@@ -1,12 +1,18 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings } from 'twenty-ui';
+import {
+  IconRobot,
+  IconSearch,
+  IconSettings,
+  getOsControlSymbol,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -16,6 +22,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
@@ -48,17 +55,25 @@ export const MainNavigationDrawerItems = () => {
             label={t('search')}
             Icon={IconSearch}
             onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
+            keyboard={[getOsControlSymbol(), 'K']}
           />
           <NavigationDrawerItem
             label={t('settings')}
-            to={'/settings/profile'}
+            to={getSettingsPath(SettingsPath.ProfilePage)}
             onClick={() => {
               setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
               setIsNavigationDrawerExpanded(true);
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
             Icon={IconSettings}
+          />
+          <NavigationDrawerItem
+            label="Bot"
+            to={'/chatbot'}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconRobot}
           />
         </StyledMainSection>
       )}

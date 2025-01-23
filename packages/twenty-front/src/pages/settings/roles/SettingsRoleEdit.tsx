@@ -15,7 +15,6 @@ import {
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
 import { useUpdateRole } from '@/settings/roles/hooks/useUpdateRole';
 import { Role } from '@/settings/roles/types/Role';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,6 +24,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const editRoleFormSchema = z.object({}).merge(SettingsRoleFormSchema).extend({
   id: z.string(),
@@ -47,7 +47,7 @@ export const SettingsRoleEdit = () => {
   const slug = roles.find((role) => role.name === roleSlug);
   const activeRole = slug;
 
-  const settingsRolesPagePath = getSettingsPagePath(SettingsPath.MembersRoles);
+  const settingsRolesPagePath = getSettingsPath(SettingsPath.MembersRoles);
 
   const formConfig = useForm<SettingsEditRoleSchemaValues>({
     mode: 'onTouched',
@@ -109,11 +109,11 @@ export const SettingsRoleEdit = () => {
         links={[
           {
               children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.Workspace),
           },
           {
             children: 'Roles',
-            href: getSettingsPagePath(SettingsPath.MembersRoles),
+            href: getSettingsPath(SettingsPath.MembersRoles),
           },
           ]} 
           title={t("editRole")}>

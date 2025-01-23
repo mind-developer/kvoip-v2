@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next';
 export const MultipleFiltersButton = () => {
   const { resetFilterDropdown } = useResetFilterDropdown();
 
-  const { toggleDropdown } = useDropdown(OBJECT_FILTER_DROPDOWN_ID);
-
   const { t } = useTranslation();
+  const { toggleDropdown, isDropdownOpen } = useDropdown(
+    OBJECT_FILTER_DROPDOWN_ID,
+  );
 
   const handleClick = () => {
     toggleDropdown();
@@ -17,7 +18,10 @@ export const MultipleFiltersButton = () => {
   };
 
   return (
-    <StyledHeaderDropdownButton onClick={handleClick}>
+    <StyledHeaderDropdownButton
+      onClick={handleClick}
+      isUnfolded={isDropdownOpen}
+    >
       {t('filter')}
     </StyledHeaderDropdownButton>
   );

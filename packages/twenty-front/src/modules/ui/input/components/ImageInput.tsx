@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -153,7 +154,7 @@ export const ImageInput = ({
               Icon={IconX}
               onClick={onAbort}
               variant="secondary"
-              title="Abort"
+              title={t('abort')}
               disabled={!pictureURI || disabled}
             />
           ) : (
@@ -161,7 +162,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title="Upload"
+              title={t('upload')}
               disabled={disabled}
             />
           )}

@@ -81,8 +81,8 @@ const StyledInputsContainer = styled.div`
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
   .filter(
     ([value]) =>
-      RelationDefinitionType.OneToOne !== value &&
-      RelationDefinitionType.ManyToMany !== value,
+      RelationDefinitionType.ONE_TO_ONE !== value &&
+      RelationDefinitionType.MANY_TO_MANY !== value,
   )
   .map(([value, { label, Icon }]) => ({
     label,
@@ -94,6 +94,7 @@ export const SettingsDataModelFieldRelationForm = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
+  const { t } = useTranslation();
   const { control, watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { getIcon } = useIcons();
@@ -125,7 +126,6 @@ export const SettingsDataModelFieldRelationForm = ({
 
   const isMobile = useIsMobile();
 
-  const { t } = useTranslation();
 
   return (
     <StyledContainer>
@@ -171,7 +171,7 @@ export const SettingsDataModelFieldRelationForm = ({
       </StyledSelectsContainer>
       <StyledInputsLabel>
         {t('fieldOn')}{' '}
-        {selectedRelationType === RelationDefinitionType.ManyToOne
+        {selectedRelationType === RelationDefinitionType.MANY_TO_ONE
           ? selectedObjectMetadataItem?.labelSingular
           : selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>

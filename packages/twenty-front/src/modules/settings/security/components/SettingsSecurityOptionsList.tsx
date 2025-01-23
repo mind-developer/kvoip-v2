@@ -25,6 +25,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 `;
 
 export const SettingsSecurityOptionsList = () => {
+
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
@@ -46,13 +47,13 @@ export const SettingsSecurityOptionsList = () => {
     authProvider: keyof Omit<AuthProviders, '__typename' | 'magicLink' | 'sso'>,
   ) => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(t`User is not logged in`);
     }
 
     const key = `is${capitalize(authProvider)}AuthEnabled`;
 
     if (!isValidAuthProvider(key)) {
-      throw new Error('Invalid auth provider');
+      throw new Error(t`Invalid auth provider`);
     }
 
     const allAuthProvidersEnabled = [
@@ -68,7 +69,7 @@ export const SettingsSecurityOptionsList = () => {
         1
     ) {
       return enqueueSnackBar(
-        'At least one authentication method must be enabled',
+        t`At least one authentication method must be enabled`,
         {
           variant: SnackBarVariant.Error,
         },
@@ -101,7 +102,7 @@ export const SettingsSecurityOptionsList = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(t`User is not logged in`);
       }
       await updateWorkspace({
         variables: {

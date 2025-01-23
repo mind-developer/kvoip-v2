@@ -14,6 +14,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -58,6 +59,8 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
+  const { t } = useLingui();
+
   const { onItemClick } = useCommandMenuOnItemClick();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
@@ -103,62 +106,62 @@ export const CommandMenu = () => {
 
   const commandGroups: CommandGroupConfig[] = [
     {
-      heading: 'Copilot',
+      heading: t`Copilot`,
       items: copilotCommands,
       show: true
     },
     {
-      heading: 'Record Selection',
+      heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionCommands,
       show: true
     },
     {
-      heading: 'Workflow Record Selection',
+      heading: t`Workflow Record Selection`,
       items: matchingWorkflowRunRecordSelectionCommands,
       show: true
     },
     {
-      heading: 'View',
+      heading: t`View`,
       items: matchingStandardActionGlobalCommands,
       show: true
     },
     {
-      heading: 'Workflows',
+      heading: t`Workflows`,
       items: matchingWorkflowRunGlobalCommands,
       show: true
     },
     {
-      heading: 'Navigate',
+      heading: t`Navigate`,
       items: matchingNavigateCommand,
       show: true
     },
     {
-      heading: 'People',
+      heading: t`People`,
       items: peopleCommands,
       show: hasPermission(['create', 'view', 'edit', 'delete'], 'people') ?? false
     },
     {
-      heading: 'Companies',
+      heading: t`Companies`,
       items: companyCommands,
       show: hasPermission(['create', 'view', 'edit', 'delete'], 'companies') ?? false
     },
     {
-      heading: 'Opportunities',
+      heading: t`Opportunities`,
       items: opportunityCommands,
       show: hasPermission(['create', 'view', 'edit', 'delete'], 'opportunities') ?? false
     },
     {
-      heading: 'Notes',
+      heading: t`Notes`,
       items: noteCommands,
       show: hasPermission(['create', 'view', 'edit', 'delete'], 'notes') ?? false
     },
     {
-      heading: 'Tasks',
+      heading: t`Tasks`,
       items: tasksCommands,
       show: hasPermission(['create', 'view', 'edit', 'delete'], 'tasks') ?? false
     },
     {
-      heading: 'Custom Objects',
+      heading: t`Custom Objects`,
       items: customObjectCommands,
       show: true
     },

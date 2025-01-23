@@ -7,7 +7,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRoleAboutForm } from '@/settings/roles/forms/SettingsRoleAboutForm';
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
 import { useUpdateRole } from '@/settings/roles/hooks/useUpdateRole';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,6 +15,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useTranslation } from 'react-i18next';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsRoleView = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const SettingsRoleView = () => {
   const slug = roles.find((role) => role.name === roleSlug);
   const activeRole = slug;
 
-  const settingsRolesPagePath = getSettingsPagePath(SettingsPath.MembersRoles);
+  const settingsRolesPagePath = getSettingsPath(SettingsPath.MembersRoles);
 
   const handleDisable = async () => {
     try {
@@ -53,7 +53,7 @@ export const SettingsRoleView = () => {
         links={[
             {
                 children: 'New',
-                href: getSettingsPagePath(SettingsPath.NewRole),
+                href: getSettingsPath(SettingsPath.NewRole),
             },
         ]}  
         title="Settings">

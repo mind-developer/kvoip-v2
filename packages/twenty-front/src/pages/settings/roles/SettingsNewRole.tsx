@@ -12,7 +12,7 @@ import {
 } from '@/settings/roles/forms/SettingsRoleAboutForm';
 import { useCreateRole } from '@/settings/roles/hooks/useCreateRole';
 import { CreateRoleInput, Role } from '@/settings/roles/types/Role';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newRoleFormSchema = SettingsRoleFormSchema.extend({
   workspaceId: z.string(),
@@ -53,7 +54,7 @@ export const SettingsNewRole = () => {
   const { isValid, isSubmitting } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
 
-  const settingsRolesPagePath = getSettingsPagePath(SettingsPath.MembersRoles);
+  const settingsRolesPagePath = getSettingsPath(SettingsPath.MembersRoles);
 
   const [selectedReportRole, setSelectedReportRole] = useState('');
 
@@ -85,11 +86,11 @@ export const SettingsNewRole = () => {
         links={[
         {
             children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Roles',
-          href: getSettingsPagePath(SettingsPath.MembersRoles),
+          href: getSettingsPath(SettingsPath.MembersRoles),
         },
         ]} 
         title={t("newRole")}>

@@ -1,10 +1,10 @@
 import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTranslation } from 'react-i18next';
 import { Section } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useTranslation();
@@ -14,11 +14,11 @@ export const SettingsAccountsEmails = () => {
     links={[
       {
         children: t('user'),
-        href: getSettingsPagePath(SettingsPath.ProfilePage),
+        href: getSettingsPath(SettingsPath.ProfilePage),
       },
       {
         children: t('account'),
-        href: getSettingsPagePath(SettingsPath.Accounts),
+        href: getSettingsPath(SettingsPath.Accounts),
       },
       { children: t('emails') },
     ]}
