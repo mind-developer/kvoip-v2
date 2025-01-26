@@ -44,7 +44,7 @@ import {
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -460,7 +460,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain?: string;
+    subdomain: string;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

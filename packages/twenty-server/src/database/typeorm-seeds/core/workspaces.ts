@@ -23,6 +23,7 @@ export const seedWorkspaces = async (
       | 'logo'
       | 'subdomain'
       | 'activationStatus'
+      | 'creatorEmail'
     >;
   } = {
     [SEED_APPLE_WORKSPACE_ID]: {
@@ -33,6 +34,7 @@ export const seedWorkspaces = async (
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
+      creatorEmail: 'tim@apple.dev',
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
@@ -42,6 +44,7 @@ export const seedWorkspaces = async (
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
+      creatorEmail: 'tim@apple.dev',
     },
   };
 
@@ -56,6 +59,7 @@ export const seedWorkspaces = async (
       'inviteHash',
       'logo',
       'activationStatus',
+      'creatorEmail'
     ])
     .orIgnore()
     .values(workspaces[workspaceId])

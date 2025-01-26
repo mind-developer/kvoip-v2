@@ -17,4 +17,4 @@ postgres-on-docker:
 		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 
 redis-on-docker:
-	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
+	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:lates

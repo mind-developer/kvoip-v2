@@ -50,6 +50,10 @@ export class Workspace {
   inviteHash?: string;
 
   @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorEmail: string;
+
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
 
@@ -98,10 +102,6 @@ export class Workspace {
     default: WorkspaceActivationStatus.INACTIVE,
   })
   activationStatus: WorkspaceActivationStatus;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  creatorEmail: string;
 
   @OneToMany(
     () => PostgresCredentials,
