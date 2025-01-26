@@ -85,6 +85,8 @@ export class UserWorkspaceResolver {
       roleId,
     );
 
+    await this.userWorkspaceService.updateUserWorkspaceRole(userId, workspaceId, roleId);
+
     return await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
   }
 }

@@ -77,10 +77,10 @@ export const SettingsRoles = () => {
           href: getSettingsPath(SettingsPath.MembersRoles),
         },
         ]} 
-        title="Roles">
+        title="">
       <SettingsPageContainer>
         <SettingsHeaderContainer>
-          <StyledH1Title title={''} />
+          <StyledH1Title title={t('roles')} />
           <UndecoratedLink to={getSettingsPath(SettingsPath.NewRole)}>
             <Button
               Icon={IconPlus}

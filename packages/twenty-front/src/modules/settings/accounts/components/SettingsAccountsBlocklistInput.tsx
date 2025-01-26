@@ -33,25 +33,25 @@ export const SettingsAccountsBlocklistInput = ({
   updateBlockedEmailList,
   blockedEmailOrDomainList,
 }: SettingsAccountsBlocklistInputProps) => {
-
+  const { t } = useTranslation();
   const validationSchema = (blockedEmailOrDomainList: string[]) =>
     z
       .object({
         emailOrDomain: z
           .string()
           .trim()
-          .email(t`Invalid email or domain`)
+          .email(t(`Invalid email or domain`))
           .or(
             z
               .string()
               .refine(
                 (value) => value.startsWith('@') && isDomain(value.slice(1)),
-                t`Invalid email or domain`,
+                t(`Invalid email or domain`),
               ),
           )
           .refine(
             (value) => !blockedEmailOrDomainList.includes(value),
-            t`Email or domain is already in blocklist`,
+            t(`Email or domain is already in blocklist`),
           ),
       })
       .required();
@@ -64,7 +64,7 @@ export const SettingsAccountsBlocklistInput = ({
     },
   });
 
-  const { t } = useTranslation();
+
 
   const submit = handleSubmit((data) => {
     updateBlockedEmailList(data.emailOrDomain);

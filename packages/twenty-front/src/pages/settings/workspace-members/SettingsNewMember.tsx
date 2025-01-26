@@ -8,8 +8,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -20,8 +18,6 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { isNonEmptyArray } from '@sniptt/guards';
 // import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 // import { useRecoilValue } from 'recoil';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -29,11 +25,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import { formatDistanceToNow } from 'date-fns';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
@@ -82,31 +76,24 @@ export const SettingsNewMember = () => {
   const theme = useTheme();
 
   const [selectedRole, setSelectedRole] = useState('');
-  // const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { roles } = useFindAllRoles();
-
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
 
   const { resendInvitation } = useResendWorkspaceInvitation();
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
 
-  useGetWorkspaceInvitationsQuery({
-      onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-      });
-      },
-      onCompleted: (data) => {
-      setWorkspaceInvitations(data?.findWorkspaceInvitations ?? []);
-      },
-  });
+  // useGetWorkspaceInvitationsQuery({
+  //     onError: (error: Error) => {
+  //     enqueueSnackBar(error.message, {
+  //         variant: SnackBarVariant.Error,
+  //     });
+  //     },
+  //     onCompleted: (data) => {
+  //     setWorkspaceInvitations(data?.findWorkspaceInvitations ?? []);
+  //     },
+  // });
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
   const result = await deleteWorkspaceInvitation({ appTokenId });

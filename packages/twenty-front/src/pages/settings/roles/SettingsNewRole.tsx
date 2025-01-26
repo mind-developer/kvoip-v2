@@ -8,7 +8,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsRoleAboutForm,
-  SettingsRoleFormSchema,
+  SettingsRoleFormSchema
 } from '@/settings/roles/forms/SettingsRoleAboutForm';
 import { useCreateRole } from '@/settings/roles/hooks/useCreateRole';
 import { CreateRoleInput, Role } from '@/settings/roles/types/Role';
@@ -17,12 +17,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useTranslation } from 'react-i18next';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { H1Title } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newRoleFormSchema = SettingsRoleFormSchema.extend({
@@ -30,6 +31,10 @@ const newRoleFormSchema = SettingsRoleFormSchema.extend({
 });
 
 type SettingsNewRoleSchemaValues = z.infer<typeof newRoleFormSchema>;
+
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
+`;
 
 export const SettingsNewRole = () => {
   const { t } = useTranslation();
@@ -92,19 +97,14 @@ export const SettingsNewRole = () => {
           children: 'Roles',
           href: getSettingsPath(SettingsPath.MembersRoles),
         },
+        {
+          children: t('rolesDescription')
+        }
         ]} 
-        title={t("newRole")}>
+        title={""}>
         <SettingsPageContainer >
           <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: t('roles'),
-                  href: settingsRolesPagePath,
-                },
-                { children: t('rolesDescription') },
-              ]}
-            />
+            <StyledH1Title title={t("newRole")} />
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}

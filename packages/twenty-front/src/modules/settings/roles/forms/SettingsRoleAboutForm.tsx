@@ -4,8 +4,6 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SettingsRolePermissionsTable } from '@/settings/roles/forms/components/SettingsRolePermissionsTable';
 import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
@@ -19,7 +17,6 @@ import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from '@/ui/layout/section/components/Section';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTranslation } from 'react-i18next';
 
 const permissionsSchema = z.object({
@@ -98,11 +95,6 @@ export const SettingsRoleAboutForm = ({
   const { getIcon } = useIcons();
 
   const { roles } = useFindAllRoles();
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
-
-  // const [assignRecord, setAssignRecord] = useState('');
   const [accessWorkspace, setAccessWorkspace] = useState<boolean>(false);
   const [copyPermissions, setCopyPermissions] = useState('');
   const [permissions, setPermissions] = useState<PermissionWithoutId[]>([]);
@@ -157,7 +149,7 @@ export const SettingsRoleAboutForm = ({
 
   return (
     <>
-      <Section >
+      <Section>
         <H2Title title={t('about')} />
         <StyledInputsContainer>
           <StyledInputContainer>

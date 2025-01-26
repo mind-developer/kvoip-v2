@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -593,8 +593,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
-  authorizeApp: AuthorizeApp;
   assignRoleToUser: User;
+  authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
@@ -635,15 +635,16 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  toggleMemberStatus: MemberWorkspaceToggleStatusResponse;
+  toggleRoleStatus: Role;
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
   updateLabPublicFeatureFlag: Scalars['Boolean'];
+  updateMemberRole: MemberWorkspaceUpdateRoleResponse;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
-  toggleMemberStatus: MemberWorkspaceToggleStatusResponse;
-  toggleRoleStatus: Role;
   updateRole: Role;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
@@ -664,6 +665,11 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAssignRoleToUserArgs = {
+  roleId: Scalars['ID'];
 };
 
 
@@ -842,9 +848,21 @@ export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
+  roleId?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationToggleMemberStatusArgs = {
+  userId: Scalars['ID'];
+  workspaceId: Scalars['ID'];
+};
+
+
+export type MutationToggleRoleStatusArgs = {
+  roleId: Scalars['ID'];
 };
 
 
@@ -858,20 +876,13 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
 
-export type MutationToggleMemberStatusArgs = {
-  userId: Scalars['ID'];
-  workspaceId: Scalars['ID'];
-};
 
-
-export type MutationToggleRoleStatusArgs = {
-  roleId: Scalars['ID'];
-};
 export type MutationUpdateMemberRoleArgs = {
   roleId: Scalars['ID'];
   userId: Scalars['ID'];
   workspaceId: Scalars['ID'];
 };
+
 
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
@@ -1244,13 +1255,6 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean'];
 };
 
-export type RunWorkflowVersionInput = {
-  /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
-};
-
 export type Role = {
   __typename?: 'Role';
   canAccessWorkspaceSettings: Scalars['Boolean'];
@@ -1266,6 +1270,13 @@ export type Role = {
   updatedAt: Scalars['DateTime'];
   users: Array<UserWorkspace>;
   workspace: Workspace;
+};
+
+export type RunWorkflowVersionInput = {
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
 };
 
 export type SsoConnection = {
@@ -1952,8 +1963,6 @@ export type ObjectFilter = {
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
-
-
 export type Relation = {
   __typename?: 'relation';
   createdAt: Scalars['DateTime'];
@@ -2239,31 +2248,6 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
 
-export type CreateOidcIdentityProviderMutationVariables = Exact<{
-  input: SetupOidcSsoInput;
-}>;
-
-
-export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
-
-export type CreateSamlIdentityProviderMutationVariables = Exact<{
-  input: SetupSamlSsoInput;
-}>;
-
-
-export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
-
-export type DeleteSsoIdentityProviderMutationVariables = Exact<{
-  input: DeleteSsoInput;
-}>;
-
-
-export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
-
-export type EditSsoIdentityProviderMutationVariables = Exact<{
-  input: EditSsoInput;
-}>;
-
 export type CreateRoleMutationVariables = Exact<{
   createRoleInput: CreateRoleInput;
 }>;
@@ -2331,6 +2315,31 @@ export type FindOneRoleQueryVariables = Exact<{
 
 export type FindOneRoleQuery = { __typename?: 'Query', findOneRole: { __typename?: 'Role', id: any, icon: string, name: string, description: string, isActive: boolean } };
 
+export type CreateOidcIdentityProviderMutationVariables = Exact<{
+  input: SetupOidcSsoInput;
+}>;
+
+
+export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+
+export type CreateSamlIdentityProviderMutationVariables = Exact<{
+  input: SetupSamlSsoInput;
+}>;
+
+
+export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+
+export type DeleteSsoIdentityProviderMutationVariables = Exact<{
+  input: DeleteSsoInput;
+}>;
+
+
+export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
+
+export type EditSsoIdentityProviderMutationVariables = Exact<{
+  input: EditSsoInput;
+}>;
+
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
@@ -2339,7 +2348,7 @@ export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: 
 
 export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEntrepriseKey: boolean, creatorEmail?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null, subdomain: string } | null }> };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEntrepriseKey: boolean, creatorEmail?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null, subdomain: string } | null, role?: { __typename?: 'Role', id: any, name: string, description: string, canAccessWorkspaceSettings: boolean, isActive: boolean, isCustom: boolean, icon: string, createdAt: string, updatedAt: string, permissions: Array<{ __typename?: 'Permission', id: any, tableName: string, canCreate: boolean, canEdit: boolean, canView: boolean, canDelete: boolean }> } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2356,7 +2365,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEntrepriseKey: boolean, creatorEmail?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null, subdomain: string } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEntrepriseKey: boolean, creatorEmail?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null, subdomain: string } | null, role?: { __typename?: 'Role', id: any, name: string, description: string, canAccessWorkspaceSettings: boolean, isActive: boolean, isCustom: boolean, icon: string, createdAt: string, updatedAt: string, permissions: Array<{ __typename?: 'Permission', id: any, tableName: string, canCreate: boolean, canEdit: boolean, canView: boolean, canDelete: boolean }> } | null }> } };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3299,7 +3308,7 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $roleId: String) {
   signUp(
     email: $email
     password: $password
@@ -3307,6 +3316,7 @@ export const SignUpDocument = gql`
     workspacePersonalInviteToken: $workspacePersonalInviteToken
     captchaToken: $captchaToken
     workspaceId: $workspaceId
+    roleId: $roleId
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3339,6 +3349,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      workspacePersonalInviteToken: // value for 'workspacePersonalInviteToken'
  *      captchaToken: // value for 'captchaToken'
  *      workspaceId: // value for 'workspaceId'
+ *      roleId: // value for 'roleId'
  *   },
  * });
  */
@@ -3952,6 +3963,389 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const CreateRoleDocument = gql`
+    mutation CreateRole($createRoleInput: CreateRoleInput!) {
+  createRole(createRoleInput: $createRoleInput) {
+    id
+    name
+    description
+    canAccessWorkspaceSettings
+    createdAt
+    updatedAt
+    reportsTo {
+      id
+      name
+    }
+    permissions {
+      id
+      canCreate
+      canDelete
+      canEdit
+      canView
+      tableName
+    }
+    workspace {
+      id
+    }
+  }
+}
+    `;
+export type CreateRoleMutationFn = Apollo.MutationFunction<CreateRoleMutation, CreateRoleMutationVariables>;
+
+/**
+ * __useCreateRoleMutation__
+ *
+ * To run a mutation, you first call `useCreateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRoleMutation, { data, loading, error }] = useCreateRoleMutation({
+ *   variables: {
+ *      createRoleInput: // value for 'createRoleInput'
+ *   },
+ * });
+ */
+export function useCreateRoleMutation(baseOptions?: Apollo.MutationHookOptions<CreateRoleMutation, CreateRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateRoleMutation, CreateRoleMutationVariables>(CreateRoleDocument, options);
+      }
+export type CreateRoleMutationHookResult = ReturnType<typeof useCreateRoleMutation>;
+export type CreateRoleMutationResult = Apollo.MutationResult<CreateRoleMutation>;
+export type CreateRoleMutationOptions = Apollo.BaseMutationOptions<CreateRoleMutation, CreateRoleMutationVariables>;
+export const DeleteRoleDocument = gql`
+    mutation DeleteRole($roleId: ID!) {
+  deleteRole(roleId: $roleId) {
+    id
+  }
+}
+    `;
+export type DeleteRoleMutationFn = Apollo.MutationFunction<DeleteRoleMutation, DeleteRoleMutationVariables>;
+
+/**
+ * __useDeleteRoleMutation__
+ *
+ * To run a mutation, you first call `useDeleteRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRoleMutation, { data, loading, error }] = useDeleteRoleMutation({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *   },
+ * });
+ */
+export function useDeleteRoleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoleMutation, DeleteRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRoleMutation, DeleteRoleMutationVariables>(DeleteRoleDocument, options);
+      }
+export type DeleteRoleMutationHookResult = ReturnType<typeof useDeleteRoleMutation>;
+export type DeleteRoleMutationResult = Apollo.MutationResult<DeleteRoleMutation>;
+export type DeleteRoleMutationOptions = Apollo.BaseMutationOptions<DeleteRoleMutation, DeleteRoleMutationVariables>;
+export const UpdateRoleDocument = gql`
+    mutation UpdateRole($updateRoleId: ID!, $updateRoleInput: UpdateRoleInput!) {
+  updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
+    id
+    name
+    description
+    canAccessWorkspaceSettings
+    icon
+    permissions {
+      id
+      tableName
+      canCreate
+      canEdit
+      canView
+      canDelete
+    }
+    reportsTo {
+      id
+      name
+    }
+    workspace {
+      id
+      displayName
+    }
+    isActive
+  }
+}
+    `;
+export type UpdateRoleMutationFn = Apollo.MutationFunction<UpdateRoleMutation, UpdateRoleMutationVariables>;
+
+/**
+ * __useUpdateRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRoleMutation, { data, loading, error }] = useUpdateRoleMutation({
+ *   variables: {
+ *      updateRoleId: // value for 'updateRoleId'
+ *      updateRoleInput: // value for 'updateRoleInput'
+ *   },
+ * });
+ */
+export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoleMutation, UpdateRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, options);
+      }
+export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
+export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>;
+export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
+export const ToggleRoleStatusDocument = gql`
+    mutation ToggleRoleStatus($roleId: ID!) {
+  toggleRoleStatus(roleId: $roleId) {
+    id
+    isActive
+  }
+}
+    `;
+export type ToggleRoleStatusMutationFn = Apollo.MutationFunction<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>;
+
+/**
+ * __useToggleRoleStatusMutation__
+ *
+ * To run a mutation, you first call `useToggleRoleStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleRoleStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleRoleStatusMutation, { data, loading, error }] = useToggleRoleStatusMutation({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *   },
+ * });
+ */
+export function useToggleRoleStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>(ToggleRoleStatusDocument, options);
+      }
+export type ToggleRoleStatusMutationHookResult = ReturnType<typeof useToggleRoleStatusMutation>;
+export type ToggleRoleStatusMutationResult = Apollo.MutationResult<ToggleRoleStatusMutation>;
+export type ToggleRoleStatusMutationOptions = Apollo.BaseMutationOptions<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>;
+export const ToggleMemberStatusDocument = gql`
+    mutation ToggleMemberStatus($userId: ID!, $workspaceId: ID!) {
+  toggleMemberStatus(userId: $userId, workspaceId: $workspaceId) {
+    id
+    status
+  }
+}
+    `;
+export type ToggleMemberStatusMutationFn = Apollo.MutationFunction<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>;
+
+/**
+ * __useToggleMemberStatusMutation__
+ *
+ * To run a mutation, you first call `useToggleMemberStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleMemberStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleMemberStatusMutation, { data, loading, error }] = useToggleMemberStatusMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useToggleMemberStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>(ToggleMemberStatusDocument, options);
+      }
+export type ToggleMemberStatusMutationHookResult = ReturnType<typeof useToggleMemberStatusMutation>;
+export type ToggleMemberStatusMutationResult = Apollo.MutationResult<ToggleMemberStatusMutation>;
+export type ToggleMemberStatusMutationOptions = Apollo.BaseMutationOptions<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>;
+export const UpdateMemberRoleDocument = gql`
+    mutation UpdateMemberRole($roleId: ID!, $userId: ID!, $workspaceId: ID!) {
+  updateMemberRole(roleId: $roleId, userId: $userId, workspaceId: $workspaceId) {
+    id
+    roleId
+  }
+}
+    `;
+export type UpdateMemberRoleMutationFn = Apollo.MutationFunction<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>;
+
+/**
+ * __useUpdateMemberRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateMemberRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMemberRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMemberRoleMutation, { data, loading, error }] = useUpdateMemberRoleMutation({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *      userId: // value for 'userId'
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useUpdateMemberRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>(UpdateMemberRoleDocument, options);
+      }
+export type UpdateMemberRoleMutationHookResult = ReturnType<typeof useUpdateMemberRoleMutation>;
+export type UpdateMemberRoleMutationResult = Apollo.MutationResult<UpdateMemberRoleMutation>;
+export type UpdateMemberRoleMutationOptions = Apollo.BaseMutationOptions<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>;
+export const GetAllInvitedMembersDocument = gql`
+    query GetAllInvitedMembers($workspaceId: ID!) {
+  getAllInvitedMembers(workspaceId: $workspaceId) {
+    id
+    email
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetAllInvitedMembersQuery__
+ *
+ * To run a query within a React component, call `useGetAllInvitedMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllInvitedMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllInvitedMembersQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllInvitedMembersQuery(baseOptions: Apollo.QueryHookOptions<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>(GetAllInvitedMembersDocument, options);
+      }
+export function useGetAllInvitedMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>(GetAllInvitedMembersDocument, options);
+        }
+export type GetAllInvitedMembersQueryHookResult = ReturnType<typeof useGetAllInvitedMembersQuery>;
+export type GetAllInvitedMembersLazyQueryHookResult = ReturnType<typeof useGetAllInvitedMembersLazyQuery>;
+export type GetAllInvitedMembersQueryResult = Apollo.QueryResult<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>;
+export const GetAllRolesDocument = gql`
+    query GetAllRoles($workspaceId: ID!) {
+  findAllRoles(workspaceId: $workspaceId) {
+    id
+    name
+    description
+    canAccessWorkspaceSettings
+    reportsTo {
+      id
+    }
+    icon
+    isCustom
+    isActive
+    workspace {
+      id
+      displayName
+    }
+    users {
+      id
+    }
+    permissions {
+      id
+      tableName
+      canCreate
+      canEdit
+      canView
+      canDelete
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetAllRolesQuery__
+ *
+ * To run a query within a React component, call `useGetAllRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllRolesQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllRolesQuery(baseOptions: Apollo.QueryHookOptions<GetAllRolesQuery, GetAllRolesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllRolesQuery, GetAllRolesQueryVariables>(GetAllRolesDocument, options);
+      }
+export function useGetAllRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRolesQuery, GetAllRolesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllRolesQuery, GetAllRolesQueryVariables>(GetAllRolesDocument, options);
+        }
+export type GetAllRolesQueryHookResult = ReturnType<typeof useGetAllRolesQuery>;
+export type GetAllRolesLazyQueryHookResult = ReturnType<typeof useGetAllRolesLazyQuery>;
+export type GetAllRolesQueryResult = Apollo.QueryResult<GetAllRolesQuery, GetAllRolesQueryVariables>;
+export const FindOneRoleDocument = gql`
+    query FindOneRole($roleId: ID!) {
+  findOneRole(roleId: $roleId) {
+    id
+    icon
+    name
+    description
+    isActive
+  }
+}
+    `;
+
+/**
+ * __useFindOneRoleQuery__
+ *
+ * To run a query within a React component, call `useFindOneRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneRoleQuery({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *   },
+ * });
+ */
+export function useFindOneRoleQuery(baseOptions: Apollo.QueryHookOptions<FindOneRoleQuery, FindOneRoleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneRoleQuery, FindOneRoleQueryVariables>(FindOneRoleDocument, options);
+      }
+export function useFindOneRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneRoleQuery, FindOneRoleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneRoleQuery, FindOneRoleQueryVariables>(FindOneRoleDocument, options);
+        }
+export type FindOneRoleQueryHookResult = ReturnType<typeof useFindOneRoleQuery>;
+export type FindOneRoleLazyQueryHookResult = ReturnType<typeof useFindOneRoleLazyQuery>;
+export type FindOneRoleQueryResult = Apollo.QueryResult<FindOneRoleQuery, FindOneRoleQueryVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {
@@ -4829,387 +5223,3 @@ export function useGetWorkspaceFromInviteHashLazyQuery(baseOptions?: Apollo.Lazy
 export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashQuery>;
 export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
 export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
-
-export const CreateRoleDocument = gql`
-    mutation CreateRole($createRoleInput: CreateRoleInput!) {
-  createRole(createRoleInput: $createRoleInput) {
-    id
-    name
-    description
-    canAccessWorkspaceSettings
-    createdAt
-    updatedAt
-    reportsTo {
-      id
-      name
-    }
-    permissions {
-      id
-      canCreate
-      canDelete
-      canEdit
-      canView
-      tableName
-    }
-    workspace {
-      id
-    }
-  }
-}
-    `;
-export type CreateRoleMutationFn = Apollo.MutationFunction<CreateRoleMutation, CreateRoleMutationVariables>;
-
-/**
- * __useCreateRoleMutation__
- *
- * To run a mutation, you first call `useCreateRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateRoleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createRoleMutation, { data, loading, error }] = useCreateRoleMutation({
- *   variables: {
- *      createRoleInput: // value for 'createRoleInput'
- *   },
- * });
- */
-export function useCreateRoleMutation(baseOptions?: Apollo.MutationHookOptions<CreateRoleMutation, CreateRoleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateRoleMutation, CreateRoleMutationVariables>(CreateRoleDocument, options);
-      }
-export type CreateRoleMutationHookResult = ReturnType<typeof useCreateRoleMutation>;
-export type CreateRoleMutationResult = Apollo.MutationResult<CreateRoleMutation>;
-export type CreateRoleMutationOptions = Apollo.BaseMutationOptions<CreateRoleMutation, CreateRoleMutationVariables>;
-export const DeleteRoleDocument = gql`
-    mutation DeleteRole($roleId: ID!) {
-  deleteRole(roleId: $roleId) {
-    id
-  }
-}
-    `;
-export type DeleteRoleMutationFn = Apollo.MutationFunction<DeleteRoleMutation, DeleteRoleMutationVariables>;
-
-/**
- * __useDeleteRoleMutation__
- *
- * To run a mutation, you first call `useDeleteRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRoleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteRoleMutation, { data, loading, error }] = useDeleteRoleMutation({
- *   variables: {
- *      roleId: // value for 'roleId'
- *   },
- * });
- */
-export function useDeleteRoleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRoleMutation, DeleteRoleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteRoleMutation, DeleteRoleMutationVariables>(DeleteRoleDocument, options);
-      }
-export type DeleteRoleMutationHookResult = ReturnType<typeof useDeleteRoleMutation>;
-export type DeleteRoleMutationResult = Apollo.MutationResult<DeleteRoleMutation>;
-export type DeleteRoleMutationOptions = Apollo.BaseMutationOptions<DeleteRoleMutation, DeleteRoleMutationVariables>;
-export const UpdateRoleDocument = gql`
-    mutation UpdateRole($updateRoleId: ID!, $updateRoleInput: UpdateRoleInput!) {
-  updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
-    id
-    name
-    description
-    canAccessWorkspaceSettings
-    icon
-    permissions {
-      id
-      tableName
-      canCreate
-      canEdit
-      canView
-      canDelete
-    }
-    reportsTo {
-      id
-      name
-    }
-    workspace {
-      id
-      displayName
-    }
-    isActive
-  }
-}
-    `;
-export type UpdateRoleMutationFn = Apollo.MutationFunction<UpdateRoleMutation, UpdateRoleMutationVariables>;
-
-/**
- * __useUpdateRoleMutation__
- *
- * To run a mutation, you first call `useUpdateRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRoleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRoleMutation, { data, loading, error }] = useUpdateRoleMutation({
- *   variables: {
- *      updateRoleId: // value for 'updateRoleId'
- *      updateRoleInput: // value for 'updateRoleInput'
- *   },
- * });
- */
-export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRoleMutation, UpdateRoleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, options);
-      }
-export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
-export type UpdateRoleMutationResult = Apollo.MutationResult<UpdateRoleMutation>;
-export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<UpdateRoleMutation, UpdateRoleMutationVariables>;
-export const ToggleRoleStatusDocument = gql`
-    mutation ToggleRoleStatus($roleId: ID!) {
-  toggleRoleStatus(roleId: $roleId) {
-    id
-    isActive
-  }
-}
-    `;
-export type ToggleRoleStatusMutationFn = Apollo.MutationFunction<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>;
-
-/**
- * __useToggleRoleStatusMutation__
- *
- * To run a mutation, you first call `useToggleRoleStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleRoleStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleRoleStatusMutation, { data, loading, error }] = useToggleRoleStatusMutation({
- *   variables: {
- *      roleId: // value for 'roleId'
- *   },
- * });
- */
-export function useToggleRoleStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>(ToggleRoleStatusDocument, options);
-      }
-export type ToggleRoleStatusMutationHookResult = ReturnType<typeof useToggleRoleStatusMutation>;
-export type ToggleRoleStatusMutationResult = Apollo.MutationResult<ToggleRoleStatusMutation>;
-export type ToggleRoleStatusMutationOptions = Apollo.BaseMutationOptions<ToggleRoleStatusMutation, ToggleRoleStatusMutationVariables>;
-export const ToggleMemberStatusDocument = gql`
-    mutation ToggleMemberStatus($userId: ID!, $workspaceId: ID!) {
-  toggleMemberStatus(userId: $userId, workspaceId: $workspaceId) {
-    id
-    status
-  }
-}
-    `;
-export type ToggleMemberStatusMutationFn = Apollo.MutationFunction<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>;
-
-/**
- * __useToggleMemberStatusMutation__
- *
- * To run a mutation, you first call `useToggleMemberStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleMemberStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleMemberStatusMutation, { data, loading, error }] = useToggleMemberStatusMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useToggleMemberStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>(ToggleMemberStatusDocument, options);
-      }
-export type ToggleMemberStatusMutationHookResult = ReturnType<typeof useToggleMemberStatusMutation>;
-export type ToggleMemberStatusMutationResult = Apollo.MutationResult<ToggleMemberStatusMutation>;
-export type ToggleMemberStatusMutationOptions = Apollo.BaseMutationOptions<ToggleMemberStatusMutation, ToggleMemberStatusMutationVariables>;
-export const UpdateMemberRoleDocument = gql`
-    mutation UpdateMemberRole($roleId: ID!, $userId: ID!, $workspaceId: ID!) {
-  updateMemberRole(roleId: $roleId, userId: $userId, workspaceId: $workspaceId) {
-    id
-    roleId
-  }
-}
-    `;
-export type UpdateMemberRoleMutationFn = Apollo.MutationFunction<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>;
-
-/**
- * __useUpdateMemberRoleMutation__
- *
- * To run a mutation, you first call `useUpdateMemberRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMemberRoleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMemberRoleMutation, { data, loading, error }] = useUpdateMemberRoleMutation({
- *   variables: {
- *      roleId: // value for 'roleId'
- *      userId: // value for 'userId'
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useUpdateMemberRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>(UpdateMemberRoleDocument, options);
-      }
-export type UpdateMemberRoleMutationHookResult = ReturnType<typeof useUpdateMemberRoleMutation>;
-export type UpdateMemberRoleMutationResult = Apollo.MutationResult<UpdateMemberRoleMutation>;
-export type UpdateMemberRoleMutationOptions = Apollo.BaseMutationOptions<UpdateMemberRoleMutation, UpdateMemberRoleMutationVariables>;
-export const GetAllInvitedMembersDocument = gql`
-    query GetAllInvitedMembers($workspaceId: ID!) {
-  getAllInvitedMembers(workspaceId: $workspaceId) {
-    id
-    email
-    createdAt
-  }
-}
-    `;
-
-/**
- * __useGetAllInvitedMembersQuery__
- *
- * To run a query within a React component, call `useGetAllInvitedMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllInvitedMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllInvitedMembersQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetAllInvitedMembersQuery(baseOptions: Apollo.QueryHookOptions<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>(GetAllInvitedMembersDocument, options);
-      }
-export function useGetAllInvitedMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>(GetAllInvitedMembersDocument, options);
-        }
-export type GetAllInvitedMembersQueryHookResult = ReturnType<typeof useGetAllInvitedMembersQuery>;
-export type GetAllInvitedMembersLazyQueryHookResult = ReturnType<typeof useGetAllInvitedMembersLazyQuery>;
-export type GetAllInvitedMembersQueryResult = Apollo.QueryResult<GetAllInvitedMembersQuery, GetAllInvitedMembersQueryVariables>;
-export const GetAllRolesDocument = gql`
-    query GetAllRoles($workspaceId: ID!) {
-  findAllRoles(workspaceId: $workspaceId) {
-    id
-    name
-    description
-    canAccessWorkspaceSettings
-    reportsTo {
-      id
-    }
-    icon
-    isCustom
-    isActive
-    workspace {
-      id
-      displayName
-    }
-    users {
-      id
-    }
-    permissions {
-      id
-      tableName
-      canCreate
-      canEdit
-      canView
-      canDelete
-    }
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useGetAllRolesQuery__
- *
- * To run a query within a React component, call `useGetAllRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllRolesQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetAllRolesQuery(baseOptions: Apollo.QueryHookOptions<GetAllRolesQuery, GetAllRolesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllRolesQuery, GetAllRolesQueryVariables>(GetAllRolesDocument, options);
-      }
-export function useGetAllRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllRolesQuery, GetAllRolesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllRolesQuery, GetAllRolesQueryVariables>(GetAllRolesDocument, options);
-        }
-export type GetAllRolesQueryHookResult = ReturnType<typeof useGetAllRolesQuery>;
-export type GetAllRolesLazyQueryHookResult = ReturnType<typeof useGetAllRolesLazyQuery>;
-export type GetAllRolesQueryResult = Apollo.QueryResult<GetAllRolesQuery, GetAllRolesQueryVariables>;
-export const FindOneRoleDocument = gql`
-    query FindOneRole($roleId: ID!) {
-  findOneRole(roleId: $roleId) {
-    id
-    icon
-    name
-    description
-    isActive
-  }
-}
-    `;
-
-/**
- * __useFindOneRoleQuery__
- *
- * To run a query within a React component, call `useFindOneRoleQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneRoleQuery({
- *   variables: {
- *      roleId: // value for 'roleId'
- *   },
- * });
- */
-export function useFindOneRoleQuery(baseOptions: Apollo.QueryHookOptions<FindOneRoleQuery, FindOneRoleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneRoleQuery, FindOneRoleQueryVariables>(FindOneRoleDocument, options);
-      }
-export function useFindOneRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneRoleQuery, FindOneRoleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneRoleQuery, FindOneRoleQueryVariables>(FindOneRoleDocument, options);
-        }
-export type FindOneRoleQueryHookResult = ReturnType<typeof useFindOneRoleQuery>;
-export type FindOneRoleLazyQueryHookResult = ReturnType<typeof useFindOneRoleLazyQuery>;
-export type FindOneRoleQueryResult = Apollo.QueryResult<FindOneRoleQuery, FindOneRoleQueryVariables>;

@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive } from 'twenty-ui';
+import { H1Title, H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -21,7 +21,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -32,6 +32,10 @@ const editRoleFormSchema = z.object({}).merge(SettingsRoleFormSchema).extend({
 });
 
 type SettingsEditRoleSchemaValues = z.infer<typeof editRoleFormSchema>;
+
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
+`;
 
 export const SettingsRoleEdit = () => {
   const { t } = useTranslation();
@@ -44,7 +48,7 @@ export const SettingsRoleEdit = () => {
 
   const { roleSlug } = useParams<{ roleSlug?: string }>();
 
-  const slug = roles.find((role) => role.name === roleSlug);
+  const slug = roles?.find((role) => role.name === roleSlug);
   const activeRole = slug;
 
   const settingsRolesPagePath = getSettingsPath(SettingsPath.MembersRoles);
@@ -116,18 +120,10 @@ export const SettingsRoleEdit = () => {
             href: getSettingsPath(SettingsPath.MembersRoles),
           },
           ]} 
-          title={t("editRole")}>
+          title={""}>
         <SettingsPageContainer>
           <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: t('roles'),
-                  href: `${settingsRolesPagePath}`,
-                },
-                { children: `${roleSlug}` },
-              ]}
-            />
+          <StyledH1Title title={t("editRole")} />
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}

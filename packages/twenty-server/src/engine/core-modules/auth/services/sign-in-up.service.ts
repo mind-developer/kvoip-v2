@@ -185,6 +185,7 @@ export class SignInUpService {
     const updatedUser = await this.signInUpOnExistingWorkspace({
       workspace: invitationValidation.workspace,
       userData: params.userData,
+      roleId: params.userData.type === 'newUserWithPicture' ? params.userData.newUserWithPicture.roleId : ""
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -217,6 +218,7 @@ export class SignInUpService {
   async signInUpOnExistingWorkspace(
     params: {
       workspace: Workspace;
+      roleId?: string;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
     workspaceValidator.assertIsActive(
@@ -238,6 +240,7 @@ export class SignInUpService {
     const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
       currentUser,
       params.workspace,
+      params.roleId
     );
 
     const user = Object.assign(currentUser, updatedUser);

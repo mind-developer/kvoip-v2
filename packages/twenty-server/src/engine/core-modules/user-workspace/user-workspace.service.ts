@@ -198,28 +198,16 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     }));
   }
 
-  
-  async updateWorkspaceMember(
-    workspaceId: string,
-    user: User,
-    roleId?: string,
-  ) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
+  async updateUserWorkspaceRole(userId: string, workspaceId: string, roleId: string) {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        workspaceId
+      }  
+    })
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."workspaceMember"
-          SET "roleId" = $1
-          WHERE "userId" = $2`,
-      [roleId ?? '', user.id],
-    );
-    const workspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId"='${user.id}'`,
-    );
+    userWorkspace && await this.userWorkspaceRepository.update(userWorkspace.id, {...userWorkspace, role: { id: roleId } })
   }
+
+  
 }

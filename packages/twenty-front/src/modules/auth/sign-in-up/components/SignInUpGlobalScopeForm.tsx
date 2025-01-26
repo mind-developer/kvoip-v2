@@ -53,7 +53,6 @@ export const SignInUpGlobalScopeForm = () => {
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
-  console.log('IS REQUEST CAPTCHA', isRequestingCaptchaToken, isRequestingCaptchaTokenState)
 
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();

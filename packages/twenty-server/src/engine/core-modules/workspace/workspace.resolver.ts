@@ -91,10 +91,19 @@ export class WorkspaceResolver {
     @AuthUser() user: User,
     @OriginHeader() origin: string,
   ) {
+
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 

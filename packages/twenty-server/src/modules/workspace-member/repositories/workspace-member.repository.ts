@@ -103,6 +103,7 @@ export class WorkspaceMemberRepository {
     workspaceId: string,
     newRoleId: string,
   ) {
+  
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -119,10 +120,13 @@ export class WorkspaceMemberRepository {
       );
     }
 
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."workspaceMember" SET "roleId" = $1 WHERE "id" = $2`,
-      [newRoleId, workspaceMemberId],
-      workspaceId,
-    );
+    if(newRoleId){
+      await this.workspaceDataSourceService.executeRawQuery(
+        `UPDATE ${dataSourceSchema}."workspaceMember" SET "roleId" = $1 WHERE "id" = $2`,
+        [newRoleId, workspaceMemberId],
+        workspaceId,
+      );
+    }
+
   }
 }

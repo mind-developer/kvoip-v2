@@ -16,10 +16,12 @@ export type SignInUpNewUserPayload = {
   lastName?: string | null;
   picture?: string | null;
   passwordHash?: string | null;
+  roleId?: string;
 };
 
 export type PartialUserWithPicture = {
   picture?: string;
+  roleId?: string;
 } & Partial<User>;
 
 export type ExistingUserOrNewUser = {
