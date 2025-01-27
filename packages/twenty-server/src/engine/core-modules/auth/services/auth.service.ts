@@ -26,7 +26,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
@@ -113,7 +113,10 @@ export class AuthService {
     );
   }
 
-  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+  async getLoginTokenFromCredentials(
+    input: GetLoginTokenFromCredentialsInput,
+    targetWorkspace: Workspace,
+  ) {
     if (!targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
         'Email/Password auth is not enabled for this workspace',
@@ -123,7 +126,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: {
-        email: challengeInput.email,
+        email: input.email,
       },
       relations: ['workspaces'],
     });
@@ -144,10 +147,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await compareHash(
-      challengeInput.password,
-      user.passwordHash,
-    );
+    const isValid = await compareHash(input.password, user.passwordHash);
 
     if (!isValid) {
       throw new AuthException(

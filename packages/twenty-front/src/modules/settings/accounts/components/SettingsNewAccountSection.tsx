@@ -11,7 +11,7 @@ export const SettingsNewAccountSection = () => {
         title={t('newAccount')}
         description={t('newAccountDescription')}
       />
-      <SettingsAccountsListEmptyStateCard label={t('connectGoogleAccount')} />
+      <SettingsAccountsListEmptyStateCard label={t(`Choose your provider`)} />
     </Section>
   );
 };
