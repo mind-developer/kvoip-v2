@@ -499,6 +499,15 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   SSL_CERT_PATH: string;
+
+  // Meta
+  @IsString()
+  @IsOptional()
+  META_API_URL: string;
+
+  @IsString()
+  @IsOptional()
+  META_WEBHOOK_URL: string;
 }
 
 export const validate = (
