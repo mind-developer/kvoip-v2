@@ -14,7 +14,7 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: twentycrm/twenty:${TAG:-latest}
+    image: kvoipcrm/v2:${TAG:-latest}
     container_name: kvoipv2-server
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
@@ -35,6 +35,8 @@ services:
       APP_SECRET: ${APP_SECRET}
 
       FRONT_BASE_URL: ${SERVER_URL}
+
+      DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -45,7 +47,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: always
+    restart: on-failure
 
   worker:
     container_name: kvoipv2-worker
