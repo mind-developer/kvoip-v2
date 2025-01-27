@@ -1,7 +1,8 @@
-name: twenty
+name: kvoipv2
 
 services:
   change-vol-ownership:
+    container_name: kvoipv2-change-vol-ownership
     image: ubuntu
     user: root
     volumes:
@@ -14,14 +15,15 @@ services:
 
   server:
     image: twentycrm/twenty:${TAG:-latest}
+    container_name: kvoipv2-server
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
     ports:
-      - "3000:3000"
+      - "${SERVER_PORT}:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5433}/${PG_DATABASE}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -44,6 +46,7 @@ services:
     restart: always
 
   worker:
+    container_name: kvoipv2-worker
     image: twentycrm/twenty:${TAG:-latest}
     command: ["yarn", "worker:prod"]
     environment:
@@ -66,26 +69,30 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres-spilo:${TAG:-latest}
+    container_name: kvoipv2-pg
+    image: ankane/pgvector:latest
     volumes:
-      - db-data:/home/postgres/pgdata
+      - kvoipv2_db_data:/home/postgres/pgdata
+      - ./kvoip-postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
-      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
-      ALLOW_NOSSL: "true"
-      SPILO_PROVIDER: "local"
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${PG_DATABASE:-postgres}
+    ports: 
+      - "5433:5432"
     healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h db -d postgres
       interval: 5s
       timeout: 5s
       retries: 10
     restart: always
 
   redis:
+    container_name: kvoipv2-redis
     image: redis
     restart: always
 
 volumes:
   docker-data:
-  db-data:
+  kvoipv2_db_data:
   server-local-data:
