@@ -162,7 +162,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title={t('upload')}
+              title={'Upload'}
               disabled={disabled}
             />
           )}

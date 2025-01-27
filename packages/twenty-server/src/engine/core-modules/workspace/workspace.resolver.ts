@@ -109,18 +109,20 @@ export class WorkspaceResolver {
 
     const result = await this.workspaceService.activateWorkspace(user, workspace, data);
 
-    const dataSourceMetadata = await this.workspaceService.getDataSourceMetadata(workspace.id);
-    const defaultRole = await this.workspaceService.getDefaultRole(workspace.id);
-    if(dataSourceMetadata && defaultRole){
-      const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-      await workspaceDataSource?.query(
-        `UPDATE ${dataSourceMetadata.schema}."workspaceMember"
-            SET "roleId" = $1
-            WHERE "userId" = $2`,
-        [defaultRole.id, user.id],
-      );
-    }
+    setTimeout(async () => {
+      const dataSourceMetadata = await this.workspaceService.getDataSourceMetadata(workspace.id);
+      const defaultRole = await this.workspaceService.getDefaultRole(workspace.id);
+      if(dataSourceMetadata && defaultRole){
+        const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
+        await workspaceDataSource?.query(
+          `UPDATE ${dataSourceMetadata.schema}."workspaceMember"
+              SET "roleId" = $1
+              WHERE "userId" = $2`,
+          [defaultRole.id, user.id],
+        );
+      }
+    }, 1000);
     return result
   }
 
