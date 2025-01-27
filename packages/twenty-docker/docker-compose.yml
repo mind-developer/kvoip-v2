@@ -72,7 +72,7 @@ services:
     container_name: kvoipv2-pg
     image: ankane/pgvector:latest
     volumes:
-      - kvoipv2_db_data:/home/postgres/pgdata
+      - db_data:/home/postgres/pgdata
       - ./kvoip-postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
@@ -94,5 +94,5 @@ services:
 
 volumes:
   docker-data:
-  kvoipv2_db_data:
+  db_data:
   server-local-data:
