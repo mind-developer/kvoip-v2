@@ -149,7 +149,6 @@ export const queries = {
         id
         displayName
         logo
-        domainName
         inviteHash
         allowImpersonation
         activationStatus
@@ -183,7 +182,6 @@ export const queries = {
           id
           logo
           displayName
-          domainName
           subdomain
         }
       }
@@ -301,7 +299,6 @@ export const responseData = {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
         logo: null,
-        domainName: 'test',
         inviteHash: 'test-hash',
         allowImpersonation: false,
         activationStatus: 'active',
