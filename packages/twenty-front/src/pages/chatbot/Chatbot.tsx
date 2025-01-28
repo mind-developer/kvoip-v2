@@ -10,8 +10,7 @@ import { REACT_APP_CHATBOT_BASE_URL } from '~/config';
 export const Chatbot = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  if (!REACT_APP_CHATBOT_BASE_URL)
-    throw new Error('App is missing Chatbot environment configuration.');
+  const chatbotBaseUrl = import.meta.env.REACT_APP_CHATBOT_BASE_URL;
 
   return (
     <ChatbotPageContainer>
