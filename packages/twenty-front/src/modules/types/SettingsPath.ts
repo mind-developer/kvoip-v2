@@ -36,4 +36,10 @@ export enum SettingsPath {
   AdminPanel = 'admin-panel',
   FeatureFlags = 'admin-panel/feature-flags',
   Lab = 'lab',
+  MembersRoles = 'roles',
+  NewRole = 'roles/new',
+  EditRole = 'roles/:roleSlug/edit',
+  ViewRole = 'roles/:roleSlug/view',
+  RoleOverview = 'roles/overview',
+  NewMember = 'workspace-members/new',
 }

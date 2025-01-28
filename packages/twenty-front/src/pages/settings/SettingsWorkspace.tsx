@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import {
   GithubVersionLink,
@@ -17,52 +16,53 @@ import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImperso
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import packageJson from '../../../package.json';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <SubMenuTopBarContainer
-      title={t`General`}
+      title={t('general')}
       links={[
         {
-          children: t`Workspace`,
+          children: `Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`General` },
+        { children: t('general') },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title={t`Picture`} />
+          <H2Title title={t('picture')} />
           <WorkspaceLogoUploader />
         </Section>
         <Section>
-          <H2Title title={t`Name`} description={t`Name of your workspace`} />
+          <H2Title title={t('name')} description={t('nameProfileDescription')} />
           <NameField />
         </Section>
         {isMultiWorkspaceEnabled && (
           <>
             <Section>
               <H2Title
-                title={t`Domain`}
-                description={t`Edit your subdomain name or set a custom domain.`}
+                title={t('domain')}
+                description={t('subdomainSettingsWorkspaceDescription')}
               />
               <UndecoratedLink to={getSettingsPath(SettingsPath.Domain)}>
                 <SettingsCard
-                  title={t`Customize Domain`}
+                  title={t('customizeDomain')}
                   Icon={<IconWorld />}
                 />
               </UndecoratedLink>
             </Section>
             <Section>
               <H2Title
-                title={t`Support`}
+                title={t('support')}
                 adornment={<ToggleImpersonate />}
-                description={t`Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time.`}
+                description={t('supportDescription')}
               />
             </Section>
           </>

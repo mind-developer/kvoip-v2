@@ -8,6 +8,7 @@ export const SIGN_UP = gql`
     $workspacePersonalInviteToken: String = null
     $captchaToken: String
     $workspaceId: String
+    $roleId: String
   ) {
     signUp(
       email: $email
@@ -16,6 +17,7 @@ export const SIGN_UP = gql`
       workspacePersonalInviteToken: $workspacePersonalInviteToken
       captchaToken: $captchaToken
       workspaceId: $workspaceId
+      roleId: $roleId
     ) {
       loginToken {
         ...AuthTokenFragment

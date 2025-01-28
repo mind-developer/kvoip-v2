@@ -15,6 +15,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useTranslation } from 'react-i18next';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
@@ -42,6 +43,8 @@ export const SingleEntityObjectFilterDropdownButton = ({
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
   );
+
+  const { t } = useTranslation();
 
   const availableFilterDefinition = availableFilterDefinitions[0];
 
@@ -76,7 +79,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
               }
             />
           ) : (
-            'Filter'
+            t('filter')
           )}
           <IconChevronDown size={theme.icon.size.md} />
         </StyledHeaderDropdownButton>

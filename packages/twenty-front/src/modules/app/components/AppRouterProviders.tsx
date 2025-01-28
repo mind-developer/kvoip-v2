@@ -2,6 +2,7 @@ import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
+import { PermissionsProvider } from '@/auth/components/PermissionsProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
@@ -43,34 +44,36 @@ export const AppRouterProviders = () => {
             <WorkspaceProviderEffect />
             <UserProvider>
               <AuthProvider>
-                <ApolloMetadataClientProvider>
-                  <ObjectMetadataItemsProvider>
-                    <ObjectMetadataItemsGater>
-                      <PrefetchDataProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                      </PrefetchDataProvider>
-                    </ObjectMetadataItemsGater>
-                    <PageChangeEffect />
-                    {isNonEmptyString(objectNamePlural) && (
-                      <ContextStoreViewIdEffect
-                        objectNamePlural={objectNamePlural}
-                      />
-                    )}
-                  </ObjectMetadataItemsProvider>
-                </ApolloMetadataClientProvider>
+                <PermissionsProvider>
+                  <ApolloMetadataClientProvider>
+                    <ObjectMetadataItemsProvider>
+                      <ObjectMetadataItemsGater>
+                        <PrefetchDataProvider>
+                          <UserThemeProviderEffect />
+                          <SnackBarProvider>
+                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogManagerScope>
+                          </SnackBarProvider>
+                        </PrefetchDataProvider>
+                      </ObjectMetadataItemsGater>
+                      <PageChangeEffect />
+                      {isNonEmptyString(objectNamePlural) && (
+                        <ContextStoreViewIdEffect
+                          objectNamePlural={objectNamePlural}
+                        />
+                      )}
+                    </ObjectMetadataItemsProvider>
+                  </ApolloMetadataClientProvider>
+                </PermissionsProvider>
               </AuthProvider>
             </UserProvider>
           </ChromeExtensionSidecarProvider>

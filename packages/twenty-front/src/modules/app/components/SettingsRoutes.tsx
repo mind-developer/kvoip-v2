@@ -116,6 +116,36 @@ const SettingsWorkspaceMembers = lazy(() =>
   })),
 );
 
+const SettingsNewMember = lazy(() =>
+  import('~/pages/settings/workspace-members/SettingsNewMember').then((module) => ({
+    default: module.SettingsNewMember,
+  })),
+);
+
+const SettingsRoles = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
+    default: module.SettingsRoles,
+  })),
+);
+
+const SettingsRolesOverview = lazy(() =>
+  import('~/pages/settings/roles/SettingsRolesOverview').then((module) => ({
+    default: module.SettingsRolesOverview,
+  })),
+);
+
+const SettingsNewRole = lazy(() =>
+  import('~/pages/settings/roles/SettingsNewRole').then((module) => ({
+    default: module.SettingsNewRole,
+  })),
+);
+
+const SettingsEditRole = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
+  })),
+);
+
 const SettingsProfile = lazy(() =>
   import('~/pages/settings/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
@@ -292,6 +322,26 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
+      />
+      <Route
+        path={SettingsPath.NewMember}
+        element={<SettingsNewMember />}
+      />
+      <Route
+        path={SettingsPath.MembersRoles}
+        element={<SettingsRoles />}
+      />
+        <Route
+        path={SettingsPath.RoleOverview}
+        element={<SettingsRolesOverview />}
+      />
+      <Route
+        path={SettingsPath.NewRole}
+        element={<SettingsNewRole />}
+      />
+      <Route
+        path={SettingsPath.EditRole}
+        element={<SettingsEditRole />}
       />
       <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
       <Route path={SettingsPath.Objects} element={<SettingsObjects />} />

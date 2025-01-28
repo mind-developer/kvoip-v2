@@ -18,6 +18,8 @@ i18n.load({
 });
 i18n.activate('en');
 
+import '~/utils/i18n';
+
 export const App = () => {
   return (
     <RecoilRoot>

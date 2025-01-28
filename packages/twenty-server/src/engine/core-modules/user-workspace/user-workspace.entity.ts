@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Role } from 'src/engine/core-modules/role/role.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -60,6 +61,9 @@ export class UserWorkspace {
   @Field({ nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
+  @Field(() => Role, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Relation<Role>;
 
   @OneToMany(
     () => TwoFactorMethod,

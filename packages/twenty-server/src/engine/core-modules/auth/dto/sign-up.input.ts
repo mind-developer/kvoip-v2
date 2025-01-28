@@ -33,4 +33,9 @@ export class SignUpInput {
   @IsString()
   @IsOptional()
   captchaToken?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  roleId?: string;
 }

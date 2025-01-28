@@ -23,7 +23,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans, useTranslation } from 'react-i18next';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -43,7 +43,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
-  const { t } = useLingui();
+  const { t } = useTranslation();
   const { enqueueSnackBar } = useSnackBar();
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
@@ -93,7 +93,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         navigate(SettingsPath.Developers);
       }
     } catch (err) {
-      enqueueSnackBar(t`Error deleting api key: ${err}`, {
+      enqueueSnackBar(`Error deleting api key: ${err}`, {
         variant: SnackBarVariant.Error,
       });
     } finally {
@@ -145,7 +145,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch (err) {
-      enqueueSnackBar(t`Error regenerating api key: ${err}`, {
+      enqueueSnackBar(`Error regenerating api key: ${err}`, {
         variant: SnackBarVariant.Error,
       });
     } finally {
@@ -166,10 +166,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`Developers`,
+              children: t('Developers'),
               href: getSettingsPath(SettingsPath.Developers),
             },
-            { children: t`${apiKeyName} API Key` },
+            { children: `${apiKeyName} API Key` },
           ]}
         >
           <SettingsPageContainer>
@@ -177,16 +177,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
               {apiKeyToken ? (
                 <>
                   <H2Title
-                    title={t`API Key`}
-                    description={t`Copy this key as it will not be visible again`}
+                    title={t('apiKey')}
+                    description={t('apiKeyDescription')}
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
                 </>
               ) : (
                 <>
                   <H2Title
-                    title={t`API Key`}
-                    description={t`Regenerate an API key`}
+                    title={t('apiKey')}
+                    description={t('regenerateApiKey')}
                   />
                   <StyledInputContainer>
                     <Button
@@ -206,7 +206,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               )}
             </Section>
             <Section>
-              <H2Title title={t`Name`} description={t`Name of your API key`} />
+              <H2Title title={t('name')} description={t('apiKeyNameDescription')} />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKeyData?.id}
@@ -216,11 +216,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title={t`Expiration`}
-                description={t`When the key will be disabled`}
+                title={t('expiration')}
+                description={t('disableKeyDescription')}
               />
               <TextInput
-                placeholder={t`E.g. backoffice integration`}
+                placeholder={t('egBackoffice')}
                 value={formatExpiration(
                   apiKeyData?.expiresAt || '',
                   true,
@@ -232,13 +232,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title={t`Danger zone`}
-                description={t`Delete this integration`}
+                title={t('dangerZone')}
+                description={t('deleteIntegration')}
               />
               <Button
                 accent="danger"
                 variant="secondary"
-                title={t`Delete`}
+                title={t('delete')}
                 Icon={IconTrash}
                 onClick={() => setIsDeleteApiKeyModalOpen(true)}
               />
@@ -251,14 +251,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmationValue={confirmationValue}
         isOpen={isDeleteApiKeyModalOpen}
         setIsOpen={setIsDeleteApiKeyModalOpen}
-        title={t`Delete API key`}
-        subtitle={
-          <Trans>
-            Please type {`"${confirmationValue}"`} to confirm you want to delete
+        title={`Delete API key`}
+        subtitle={`
+            Please type ${confirmationValue} to confirm you want to delete
             this API Key. Be aware that any script using this key will stop
             working.
-          </Trans>
-        }
+        `}
         onConfirmClick={deleteIntegration}
         deleteButtonText="Delete"
         loading={isLoading}

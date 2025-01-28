@@ -6,7 +6,7 @@ import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'twenty-ui';
 import { isDomain } from '~/utils/is-domain';
 
@@ -33,26 +33,25 @@ export const SettingsAccountsBlocklistInput = ({
   updateBlockedEmailList,
   blockedEmailOrDomainList,
 }: SettingsAccountsBlocklistInputProps) => {
-  const { t } = useLingui();
-
+  const { t } = useTranslation();
   const validationSchema = (blockedEmailOrDomainList: string[]) =>
     z
       .object({
         emailOrDomain: z
           .string()
           .trim()
-          .email(t`Invalid email or domain`)
+          .email(t(`Invalid email or domain`))
           .or(
             z
               .string()
               .refine(
                 (value) => value.startsWith('@') && isDomain(value.slice(1)),
-                t`Invalid email or domain`,
+                t(`Invalid email or domain`),
               ),
           )
           .refine(
             (value) => !blockedEmailOrDomainList.includes(value),
-            t`Email or domain is already in blocklist`,
+            t(`Email or domain is already in blocklist`),
           ),
       })
       .required();
@@ -64,6 +63,8 @@ export const SettingsAccountsBlocklistInput = ({
       emailOrDomain: '',
     },
   });
+
+
 
   const submit = handleSubmit((data) => {
     updateBlockedEmailList(data.emailOrDomain);
@@ -102,7 +103,7 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title={t`Add to blocklist`} type="submit" />
+        <Button title={t('blocklistAddButton')} type="submit" />
       </StyledContainer>
     </form>
   );

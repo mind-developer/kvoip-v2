@@ -9,6 +9,7 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import styled from '@emotion/styled';
 import { FormProvider } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
 
@@ -25,6 +26,8 @@ export const SignInUpWorkspaceScopeForm = () => {
   const { handleResetPassword } = useHandleResetPassword();
 
   const { signInUpStep } = useSignInUp(form);
+
+  const { t } = useTranslation();
 
   return (
     <>
@@ -50,7 +53,7 @@ export const SignInUpWorkspaceScopeForm = () => {
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
-          Forgot your password?
+          {t('forgotYourPassword')}
         </ActionLink>
       )}
     </>

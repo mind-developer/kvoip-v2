@@ -11,6 +11,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewType } from '@/views/types/ViewType';
+import { useTranslation } from 'react-i18next';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -25,7 +26,7 @@ export const ObjectOptionsDropdown = ({
 }: ObjectOptionsDropdownProps) => {
   const { currentContentId, handleContentChange, handleResetContent } =
     useCurrentContentId<ObjectOptionsContentId>();
-
+  const { t } = useTranslation();
   const { isDropdownOpen } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
 
   return (
@@ -36,7 +37,7 @@ export const ObjectOptionsDropdown = ({
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
         <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
-          Options
+          {t('options')}
         </StyledHeaderDropdownButton>
       }
       onClose={handleResetContent}

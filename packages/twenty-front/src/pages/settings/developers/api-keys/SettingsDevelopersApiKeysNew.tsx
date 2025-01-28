@@ -13,7 +13,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
@@ -22,7 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsDevelopersApiKeysNew = () => {
-  const { t } = useLingui();
+  const { t } = useTranslation();
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigateSettings = useNavigateSettings();
   const [formValues, setFormValues] = useState<{
@@ -86,7 +86,7 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Developers`,
+          children: t('developers'),
           href: getSettingsPath(SettingsPath.Developers),
         },
         { children: t`New Key` },
@@ -103,9 +103,9 @@ export const SettingsDevelopersApiKeysNew = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title={t`Name`} description={t`Name of your API key`} />
+          <H2Title title={t('name')} description={t('apiKeyNameDescription')} />
           <TextInput
-            placeholder={t`E.g. backoffice integration`}
+            placeholder={t('egBackoffice')}
             value={formValues.name}
             onKeyDown={(e) => {
               if (e.key === Key.Enter) {
@@ -123,8 +123,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         </Section>
         <Section>
           <H2Title
-            title={t`Expiration Date`}
-            description={t`When the API key will expire.`}
+            title={t('expirationDate')}
+            description={t('expirationDateDescription')}
           />
           <Select
             dropdownId="object-field-type-select"

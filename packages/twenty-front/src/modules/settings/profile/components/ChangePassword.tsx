@@ -4,13 +4,13 @@ import { Button, H2Title } from 'twenty-ui';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 export const ChangePassword = () => {
-  const { t } = useLingui();
-
   const { enqueueSnackBar } = useSnackBar();
+
+  const { t } = useTranslation();
 
   const currentUser = useRecoilValue(currentUserState);
 
@@ -18,7 +18,7 @@ export const ChangePassword = () => {
 
   const handlePasswordResetClick = async () => {
     if (!currentUser?.email) {
-      enqueueSnackBar(t`Invalid email`, {
+      enqueueSnackBar(t('invalidEmail'), {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -31,11 +31,11 @@ export const ChangePassword = () => {
         },
       });
       if (data?.emailPasswordResetLink?.success === true) {
-        enqueueSnackBar(t`Password reset link has been sent to the email`, {
+        enqueueSnackBar(t('changePasswordResetLink'), {
           variant: SnackBarVariant.Success,
         });
       } else {
-        enqueueSnackBar(t`There was an issue`, {
+        enqueueSnackBar(t('commonError'), {
           variant: SnackBarVariant.Error,
         });
       }
@@ -49,13 +49,13 @@ export const ChangePassword = () => {
   return (
     <>
       <H2Title
-        title={t`Change Password`}
-        description={t`Receive an email containing password update link`}
+        title={t('changePassword')}
+        description={t('changePasswordDescription')}
       />
       <Button
         onClick={handlePasswordResetClick}
         variant="secondary"
-        title={t`Change Password`}
+        title={t('changePassword')}
       />
     </>
   );

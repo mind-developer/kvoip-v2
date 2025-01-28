@@ -1,12 +1,13 @@
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type SignInUpBaseParams = {
   invitation?: AppToken;
   workspace?: Workspace | null;
   billingCheckoutSessionState?: string | null;
+  roleId?: string;
 };
 
 export type SignInUpNewUserPayload = {
@@ -15,10 +16,12 @@ export type SignInUpNewUserPayload = {
   lastName?: string | null;
   picture?: string | null;
   passwordHash?: string | null;
+  roleId?: string;
 };
 
 export type PartialUserWithPicture = {
   picture?: string;
+  roleId?: string;
 } & Partial<User>;
 
 export type ExistingUserOrNewUser = {

@@ -16,6 +16,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Button,
@@ -53,7 +54,7 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
-
+  const { t } = useTranslation();
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -145,7 +146,7 @@ export const SettingsObjectDetailPage = () => {
             children: 'Workspace',
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
+          { children: t('objects'), href: getSettingsPath(SettingsPath.Objects) },
           {
             children: objectMetadataItem.labelPlural,
           },
@@ -154,7 +155,7 @@ export const SettingsObjectDetailPage = () => {
           activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
             <UndecoratedLink to={'./new-field/select'}>
               <Button
-                title="New Field"
+                title={t('newField')}
                 variant="primary"
                 size="small"
                 accent="blue"

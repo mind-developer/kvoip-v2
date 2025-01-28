@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -107,8 +107,8 @@ export const ImageInput = ({
   disabled = false,
   className,
 }: ImageInputProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
+  const { t } = useTranslation();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
@@ -154,7 +154,7 @@ export const ImageInput = ({
               Icon={IconX}
               onClick={onAbort}
               variant="secondary"
-              title={t`Abort`}
+              title={t('abort')}
               disabled={!pictureURI || disabled}
             />
           ) : (
@@ -162,7 +162,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title={t`Upload`}
+              title={'Upload'}
               disabled={disabled}
             />
           )}
@@ -170,12 +170,12 @@ export const ImageInput = ({
             Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
-            title={t`Remove`}
+            title={t('remove')}
             disabled={!pictureURI || disabled}
           />
         </StyledButtonContainer>
         <StyledText>
-          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
+          {t('supportedFilesDescription')}
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

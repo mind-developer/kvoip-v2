@@ -5,11 +5,10 @@ import { Button, H2Title } from 'twenty-ui';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 export const DeleteAccount = () => {
-  const { t } = useLingui();
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
@@ -18,6 +17,8 @@ export const DeleteAccount = () => {
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
 
+  const { t } = useTranslation();
+  
   const deleteAccount = async () => {
     await deleteUserAccount();
     await signOut();
@@ -26,15 +27,15 @@ export const DeleteAccount = () => {
   return (
     <>
       <H2Title
-        title={t`Danger zone`}
-        description={t`Delete account and all the associated data`}
+        title={t('dangerZone')}
+        description={t('dangerZoneProfileDescription')}
       />
 
       <Button
         accent="danger"
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant="secondary"
-        title={t`Delete account`}
+        title={t('deleteAccountButtonText')}
       />
 
       <ConfirmationModal
@@ -42,15 +43,14 @@ export const DeleteAccount = () => {
         confirmationPlaceholder={userEmail ?? ''}
         isOpen={isDeleteAccountModalOpen}
         setIsOpen={setIsDeleteAccountModalOpen}
-        title={t`Account Deletion`}
+        title={t('deleteAccountTitle')}
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire account. <br /> Please type in your email to confirm.
+            {t('deleteAccountWarning')} <br /> {t('confirmEmail')}
           </>
         }
         onConfirmClick={deleteAccount}
-        deleteButtonText={t`Delete account`}
+        deleteButtonText={t('deleteAccountButtonText')}
       />
     </>
   );

@@ -25,7 +25,7 @@ services:
       PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5433}/${PG_DATABASE}
       SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6380}
 
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
@@ -47,7 +47,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
+      test: curl --fail http://localhost:3443/healthz
       interval: 5s
       timeout: 5s
       retries: 10
@@ -60,7 +60,7 @@ services:
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE}
       SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6380}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}

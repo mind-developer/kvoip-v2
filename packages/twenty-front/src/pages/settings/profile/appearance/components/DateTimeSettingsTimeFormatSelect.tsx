@@ -4,7 +4,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 
 type DateTimeSettingsTimeFormatSelectProps = {
   value: TimeFormat;
@@ -17,7 +17,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsTimeFormatSelectProps) => {
-  const { t } = useLingui();
+  const { t } = useTranslation();
   const systemTimeZone = detectTimeZone();
 
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
@@ -46,21 +46,21 @@ export const DateTimeSettingsTimeFormatSelect = ({
     <Select
       dropdownId="datetime-settings-time-format"
       dropdownWidth={218}
-      label={t`Time format`}
+      label={t('timeFormat')}
       dropdownWidthAuto
       fullWidth
       value={value}
       options={[
         {
-          label: t`System Settings - ${systemTimeFormatLabel}`,
+          label:`${t('System Settings')} - ${systemTimeFormatLabel}`,
           value: TimeFormat.SYSTEM,
         },
         {
-          label: t`24h (${hour24Label})`,
+          label: `24h (${hour24Label})`,
           value: TimeFormat.HOUR_24,
         },
         {
-          label: t`12h (${hour12Label})`,
+          label: `12h (${hour12Label})`,
           value: TimeFormat.HOUR_12,
         },
       ]}

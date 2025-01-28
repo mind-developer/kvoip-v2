@@ -2,22 +2,25 @@ import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/co
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const SettingsAccountsEmails = () => (
+export const SettingsAccountsEmails = () => {
+  const { t } = useTranslation();
+  return(
   <SubMenuTopBarContainer
-    title="Emails"
+    title={t('emails')}
     links={[
       {
-        children: 'User',
+        children: t('user'),
         href: getSettingsPath(SettingsPath.ProfilePage),
       },
       {
-        children: 'Accounts',
+        children: t('account'),
         href: getSettingsPath(SettingsPath.Accounts),
       },
-      { children: 'Emails' },
+      { children: t('emails') },
     ]}
   >
     <SettingsPageContainer>
@@ -26,4 +29,4 @@ export const SettingsAccountsEmails = () => (
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
-);
+)};

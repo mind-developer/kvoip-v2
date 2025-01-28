@@ -11,8 +11,9 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { MainNavigationDrawerItems } from '@/navigation/components/MainNavigationDrawerItems';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsToggle } from 'twenty-ui';
 
 export type AppNavigationDrawerProps = {
@@ -29,17 +30,21 @@ export const AppNavigationDrawer = ({
     isAdvancedModeEnabledState,
   );
 
-  const { t } = useLingui();
-
+  const { t } = useTranslation();
+  const { currentRole } = usePermissions();
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
-        title: t`Exit Settings`,
+        title: t('exitSettings'),
         children: <SettingsNavigationDrawerItems />,
         footer: (
-          <AdvancedSettingsToggle
+          currentRole?.canAccessWorkspaceSettings ?
+           <AdvancedSettingsToggle
+            label={t('advanced')}
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-          />
+            /> 
+            :
+            <></>
         ),
         logo: '',
       }

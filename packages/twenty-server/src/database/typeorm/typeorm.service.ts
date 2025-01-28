@@ -13,7 +13,9 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { Permission } from 'src/engine/core-modules/permission/permission.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { Role } from 'src/engine/core-modules/role/role.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -36,6 +38,8 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         User,
         Workspace,
         UserWorkspace,
+        Role,
+        Permission,
         AppToken,
         KeyValuePair,
         FeatureFlagEntity,

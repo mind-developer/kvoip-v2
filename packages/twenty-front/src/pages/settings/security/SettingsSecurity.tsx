@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -8,6 +8,7 @@ import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/comp
 import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
@@ -26,7 +27,7 @@ const StyledSSOSection = styled(Section)`
 `;
 
 export const SettingsSecurity = () => {
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <SubMenuTopBarContainer
@@ -37,7 +38,7 @@ export const SettingsSecurity = () => {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: <Trans>Security</Trans> },
+        { children: t('security') },
       ]}
     >
       <SettingsPageContainer>
@@ -60,8 +61,8 @@ export const SettingsSecurity = () => {
           <Section>
             <StyledContainer>
               <H2Title
-                title={t`Authentication`}
-                description={t`Customize your workspace security`}
+                title={t('authentication')}
+                description={t('customizeWorkspaceSecurity')}
               />
               <SettingsSecurityOptionsList />
             </StyledContainer>

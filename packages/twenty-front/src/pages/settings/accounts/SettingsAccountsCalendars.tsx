@@ -2,26 +2,26 @@ import { SettingsAccountsCalendarChannelsContainer } from '@/settings/accounts/c
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccountsCalendars = () => {
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <SubMenuTopBarContainer
-      title={t`Calendars`}
+      title={t('calendars')}
       links={[
         {
-          children: <Trans>User</Trans>,
+          children: t('user'),
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: <Trans>Accounts</Trans>,
+          children: t('account'),
           href: getSettingsPath(SettingsPath.Accounts),
         },
-        { children: <Trans>Calendars</Trans> },
+        { children: t('calendars') },
       ]}
     >
       <SettingsPageContainer>

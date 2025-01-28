@@ -21,6 +21,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTranslation } from 'react-i18next';
 import { isDefined } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -59,6 +60,8 @@ type ObjectFilterDropdownFilterSelectProps = {
 export const ObjectFilterDropdownFilterSelect = ({
   isAdvancedFilterButtonVisible,
 }: ObjectFilterDropdownFilterSelectProps) => {
+  const { t } = useTranslation();
+  
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
@@ -166,7 +169,7 @@ export const ObjectFilterDropdownFilterSelect = ({
       <StyledInput
         value={objectFilterDropdownSearchInput}
         autoFocus
-        placeholder="Search fields"
+        placeholder={t('searchFields')}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setObjectFilterDropdownSearchInput(event.target.value)
         }

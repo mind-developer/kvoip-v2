@@ -7,7 +7,7 @@ import { SettingsDataModelCardTitle } from '@/settings/data-model/components/Set
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
-import { Trans } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
@@ -37,6 +37,8 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
   onBlur,
 }: SettingsDataModelObjectSettingsFormCardProps) => {
+  const { t } = useTranslation();
+
   const labelIdentifierFieldMetadataItem = useMemo(() => {
     return getLabelIdentifierFieldMetadataItem({
       fields: objectMetadataItem.fields,
@@ -49,7 +51,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
     <Card fullWidth>
       <StyledTopCardContent divider>
         <SettingsDataModelCardTitle>
-          <Trans>Preview</Trans>
+          {t('preview')}
         </SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard

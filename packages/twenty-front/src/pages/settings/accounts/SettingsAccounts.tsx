@@ -14,12 +14,13 @@ import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccounts = () => {
-  const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { t } = useTranslation();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -37,13 +38,13 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Account`}
+      title={t('account')}
       links={[
         {
-          children: t`User`,
+          children: t('user'),
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        { children: t`Account` },
+        { children: t('account') },
       ]}
     >
       <SettingsPageContainer>
@@ -53,8 +54,8 @@ export const SettingsAccounts = () => {
           <>
             <Section>
               <H2Title
-                title={t`Connected accounts`}
-                description={t`Manage your internet accounts.`}
+                title={t('accountTitle')}
+                description={t('accountDescription')}
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={accounts}

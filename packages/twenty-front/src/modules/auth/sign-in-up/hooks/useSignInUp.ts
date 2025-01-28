@@ -32,13 +32,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
+  const roleId = searchParams.get('roleId') ?? undefined;
   const {
     signInWithCredentials,
     signUpWithCredentials,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
-
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const { readCaptchaToken } = useReadCaptchaToken();
 
@@ -113,6 +112,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             workspaceInviteHash,
             workspacePersonalInviteToken,
             token,
+            roleId
           );
         }
       } catch (err: any) {

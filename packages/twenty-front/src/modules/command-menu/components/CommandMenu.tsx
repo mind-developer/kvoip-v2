@@ -1,3 +1,4 @@
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -27,6 +28,7 @@ const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 type CommandGroupConfig = {
   heading: string;
   items?: Command[];
+  show?: boolean;
 };
 
 const StyledList = styled.div`
@@ -71,6 +73,8 @@ export const CommandMenu = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const isMobile = useIsMobile();
+
+  const { hasPermission } = usePermissions();
 
   const {
     isNoResults,
@@ -122,50 +126,62 @@ export const CommandMenu = () => {
     {
       heading: t`Copilot`,
       items: copilotCommands,
+      show: true
     },
     {
       heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionCommands,
+      show: true
     },
     {
       heading: t`Workflow Record Selection`,
       items: matchingWorkflowRunRecordSelectionCommands,
+      show: true
     },
     {
       heading: t`View`,
       items: matchingStandardActionGlobalCommands,
+      show: true
     },
     {
       heading: t`Workflows`,
       items: matchingWorkflowRunGlobalCommands,
+      show: true
     },
     {
       heading: t`Navigate`,
       items: matchingNavigateCommand,
+      show: true
     },
     {
       heading: t`People`,
       items: peopleCommands,
+      show: hasPermission(['create', 'view', 'edit', 'delete'], 'people') ?? false
     },
     {
       heading: t`Companies`,
       items: companyCommands,
+      show: hasPermission(['create', 'view', 'edit', 'delete'], 'companies') ?? false
     },
     {
       heading: t`Opportunities`,
       items: opportunityCommands,
+      show: hasPermission(['create', 'view', 'edit', 'delete'], 'opportunities') ?? false
     },
     {
       heading: t`Notes`,
       items: noteCommands,
+      show: hasPermission(['create', 'view', 'edit', 'delete'], 'notes') ?? false
     },
     {
       heading: t`Tasks`,
       items: tasksCommands,
+      show: hasPermission(['create', 'view', 'edit', 'delete'], 'tasks') ?? false
     },
     {
       heading: t`Custom Objects`,
       items: customObjectCommands,
+      show: true
     },
   ];
 
@@ -220,10 +236,27 @@ export const CommandMenu = () => {
               {isNoResults && !isLoading && (
                 <StyledEmpty>No results found</StyledEmpty>
               )}
-              {commandGroups.map(({ heading, items }) =>
+              {commandGroups.filter((cmd) => cmd.show).map(({ heading, items }) =>
                 items?.length ? (
                   <CommandGroup heading={heading} key={heading}>
                     {items.map((item) => {
+                      let showCommandMenuItem = false;
+                      if (item.id.startsWith("go-to-")) {
+                        const objectNamePlural = item.id.split("go-to-")[1];
+                        if(objectNamePlural === 'settings'){
+                          showCommandMenuItem = true;
+                        }
+                       
+                        if(hasPermission(['create', 'view', 'edit', 'delete'], objectNamePlural)){
+                          showCommandMenuItem = true;
+                        }
+
+                        if(objectNamePlural === 'activities' && hasPermission(['create', 'view', 'edit', 'delete'], 'opportunities')){
+                          showCommandMenuItem = true
+                        }
+                      } else if(hasPermission(['create', 'view', 'edit', 'delete'])){
+                        showCommandMenuItem = true;
+                      }
                       return (
                         <SelectableItem itemId={item.id} key={item.id}>
                           <CommandMenuItem

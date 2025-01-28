@@ -6,7 +6,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -28,32 +28,32 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <SubMenuTopBarContainer
-      title={t`Developers`}
+    title={t('developers')}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: <Trans>Workspace</Trans>,
+          children: 'Workspace',
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: <Trans>Developers</Trans> },
+        { children: t('developers') },
       ]}
     >
       <SettingsPageContainer>
         <StyledContainer isMobile={isMobile}>
           <Section>
             <H2Title
-              title={t`API keys`}
-              description={t`Active API keys created by you or your team.`}
+              title={t('apiKeys')}
+              description={t('apiKeysDescription')}
             />
             <SettingsApiKeysTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title={t`Create API key`}
+                title={t('createApiKey')}
                 size="small"
                 variant="secondary"
                 to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
@@ -62,14 +62,14 @@ export const SettingsDevelopers = () => {
           </Section>
           <Section>
             <H2Title
-              title={t`Webhooks`}
-              description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
+              title={t('webhooks')}
+              description={t('webhookDescription')}
             />
             <SettingsWebhooksTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title={t`Create Webhook`}
+                title={t('createWebhook')}
                 size="small"
                 variant="secondary"
                 to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}

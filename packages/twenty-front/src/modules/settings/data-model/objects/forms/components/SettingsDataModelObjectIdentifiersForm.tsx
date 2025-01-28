@@ -9,6 +9,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -42,6 +43,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const { control } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
   const { getIcon } = useIcons();
+  const { t } = useTranslation();
   const labelIdentifierFieldOptions = useMemo(
     () =>
       getActiveFieldMetadataItems(objectMetadataItem)
@@ -68,13 +70,13 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     <StyledContainer>
       {[
         {
-          label: 'Record label',
+          label: t('recordLabel'),
           fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
           options: labelIdentifierFieldOptions,
           defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
         },
         {
-          label: 'Record image',
+          label: t('recordImage'),
           fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
           options: imageIdentifierFieldOptions,
           defaultValue: null,

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
-import { Trans } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelPreviewFormCardProps = {
@@ -23,14 +23,15 @@ export const SettingsDataModelPreviewFormCard = ({
   className,
   preview,
   form,
-}: SettingsDataModelPreviewFormCardProps) => (
+}: SettingsDataModelPreviewFormCardProps) => {
+  const { t } = useTranslation();
+
+  return (
   <Card className={className} fullWidth rounded>
     <StyledPreviewContainer divider={!!form}>
-      <StyledFormCardTitle>
-        <Trans>Preview</Trans>
-      </StyledFormCardTitle>
+      <StyledFormCardTitle>{t('preview')}</StyledFormCardTitle>
       {preview}
     </StyledPreviewContainer>
     {!!form && <StyledFormContainer>{form}</StyledFormContainer>}
   </Card>
-);
+)};

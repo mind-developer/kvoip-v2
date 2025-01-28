@@ -13,6 +13,7 @@ import { captchaState } from '@/client-config/states/captchaState';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Loader, MainButton } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
@@ -25,6 +26,7 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpWithCredentials = () => {
+  const { t } = useTranslation();
   const form = useFormContext<Form>();
 
   const signInUpStep = useRecoilValue(signInUpStepState);
@@ -64,24 +66,24 @@ export const SignInUpWithCredentials = () => {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return t('continueWithEmail');
     }
 
     if (
       signInUpMode === SignInUpMode.SignIn &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign in';
+      return t('signIn');
     }
 
     if (
       signInUpMode === SignInUpMode.SignUp &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign up';
+      return t('signUp');
     }
 
-    return 'Continue';
+    return t('continue');
   }, [signInUpMode, signInUpStep]);
 
   const shouldWaitForCaptchaToken =

@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -94,9 +95,9 @@ export const SettingsObjectFieldTable = ({
   objectMetadataItem,
   mode,
 }: SettingsObjectFieldTableProps) => {
-  const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-
+  const { t } = useLingui();
+  const { t: tFromReactI18n } = useTranslation();
   const tableMetadata = objectMetadataItem.isCustom
     ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM(t)
     : GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD(t);
@@ -180,7 +181,7 @@ export const SettingsObjectFieldTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder={t`Search a field...`}
+        placeholder={tFromReactI18n('searchField')}
         value={searchTerm}
         onChange={setSearchTerm}
       />
@@ -190,7 +191,7 @@ export const SettingsObjectFieldTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={item.fieldLabel}
+              label={tFromReactI18n(item.fieldLabel.toLowerCase().replace(" ", ""))}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}
             />
@@ -198,7 +199,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title={t`Active`}>
+          <TableSection title={tFromReactI18n('active')}>
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -212,7 +213,7 @@ export const SettingsObjectFieldTable = ({
         {isNonEmptyArray(filteredDisabledItems) && (
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title={t`Inactive`}
+            title={tFromReactI18n('inactive')}
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

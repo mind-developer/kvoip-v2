@@ -24,6 +24,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -32,6 +33,8 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { getIcon } = useIcons();
+
+  const { t } = useTranslation();
 
   const {
     viewType,
@@ -114,12 +117,12 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             : resetContent()
         }
       >
-        Group by
+        {t('groupBy')}
       </DropdownMenuHeader>
       <StyledInput
         autoFocus
         value={recordGroupFieldSearchInput}
-        placeholder="Search fields"
+        placeholder={t('searchFields')}
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>

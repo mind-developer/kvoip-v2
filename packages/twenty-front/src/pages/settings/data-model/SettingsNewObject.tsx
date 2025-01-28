@@ -15,7 +15,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -24,9 +24,10 @@ const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
-  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
+
+  const { t } = useTranslation();
 
   const { createOneObjectMetadataItem, findManyRecordsCache } =
     useCreateOneObjectMetadataItem();
@@ -66,17 +67,17 @@ export const SettingsNewObject = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
-        title={t`New Object`}
+        title={t('newObject')}
         links={[
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: t`Objects`,
+            children: t('objects'),
             href: getSettingsPath(SettingsPath.Objects),
           },
-          { children: t`New` },
+          { children: t('new') },
         ]}
         actionButton={
           <SaveAndCancelButtons
@@ -90,8 +91,8 @@ export const SettingsNewObject = () => {
         <SettingsPageContainer>
           <Section>
             <H2Title
-              title={t`About`}
-              description={t`Define the name and description of your object`}
+              title={t('about')}
+              description={t('nameSingularPluralDescription')}
             />
             <SettingsDataModelObjectAboutForm />
           </Section>

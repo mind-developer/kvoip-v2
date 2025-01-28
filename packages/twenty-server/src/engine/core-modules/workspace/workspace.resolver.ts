@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
+  ID,
   Mutation,
   Parent,
   Query,
@@ -51,7 +52,10 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
+import { InvitedMembers } from 'src/engine/core-modules/invited-members/invited-members.entity';
 import { WorkspaceService } from './services/workspace.service';
+
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 @Resolver(() => Workspace)
 @UseFilters(GraphqlValidationExceptionFilter)
@@ -67,6 +71,7 @@ export class WorkspaceResolver {
     private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly typeORMService: TypeORMService,
   ) {}
 
   @Query(() => Workspace)
@@ -86,20 +91,39 @@ export class WorkspaceResolver {
     @AuthUser() user: User,
     @OriginHeader() origin: string,
   ) {
+
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    const result = await this.workspaceService.activateWorkspace(
-      user,
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
-      data,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
     );
 
-    return result;
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    const result = await this.workspaceService.activateWorkspace(user, workspace, data);
+
+    setTimeout(async () => {
+      const dataSourceMetadata = await this.workspaceService.getDataSourceMetadata(workspace.id);
+      const defaultRole = await this.workspaceService.getDefaultRole(workspace.id);
+      if(dataSourceMetadata && defaultRole){
+        const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
+        await workspaceDataSource?.query(
+          `UPDATE ${dataSourceMetadata.schema}."workspaceMember"
+              SET "roleId" = $1
+              WHERE "userId" = $2`,
+          [defaultRole.id, user.id],
+        );
+      }
+    }, 1000);
+    return result
   }
 
   @Mutation(() => Workspace)
@@ -279,5 +303,14 @@ export class WorkspaceResolver {
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);
     }
+  }
+
+  @Query(() => [InvitedMembers])
+  async getAllInvitedMembers(
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<InvitedMembers[]> {
+    return await this.workspaceService.getAllInvitedMembers(workspaceId);
   }
 }

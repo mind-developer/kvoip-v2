@@ -38,10 +38,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     super(userWorkspaceRepository);
   }
 
-  async create(userId: string, workspaceId: string): Promise<UserWorkspace> {
+  async create(userId: string, workspaceId: string, roleId?: string): Promise<UserWorkspace> {
     const userWorkspace = this.userWorkspaceRepository.create({
       userId,
       workspaceId,
+      role: { id: roleId }
     });
 
     this.workspaceEventEmitter.emitCustomBatchEvent(
@@ -53,7 +54,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return this.userWorkspaceRepository.save(userWorkspace);
   }
 
-  async createWorkspaceMember(workspaceId: string, user: User) {
+  async createWorkspaceMember(workspaceId: string, user: User, roleId?: string) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -64,14 +65,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ($1, $2, 'System', $3, $4, $5)`,
+        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl", "roleId")
+        VALUES ($1, $2, 'System', $3, $4, $5, $6)`,
       [
         user.firstName,
         user.lastName,
         user.id,
         user.email,
         user.defaultAvatarUrl ?? '',
+        roleId ?? ''
       ],
     );
     const workspaceMember = await workspaceDataSource?.query(
@@ -105,16 +107,16 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  async addUserToWorkspace(user: User, workspace: Workspace) {
+  async addUserToWorkspace(user: User, workspace: Workspace, roleId?: string) {
     const userWorkspaceExists = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
     if (!userWorkspaceExists) {
-      await this.create(user.id, workspace.id);
+      await this.create(user.id, workspace.id, roleId);
 
-      await this.createWorkspaceMember(workspace.id, user);
+      await this.createWorkspaceMember(workspace.id, user, roleId);
     }
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -196,4 +198,17 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       ),
     }));
   }
+
+  async updateUserWorkspaceRole(userId: string, workspaceId: string, roleId: string) {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        workspaceId
+      }  
+    })
+
+    userWorkspace && await this.userWorkspaceRepository.update(userWorkspace.id, {...userWorkspace, role: { id: roleId } })
+  }
+
+  
 }

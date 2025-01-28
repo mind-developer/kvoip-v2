@@ -11,7 +11,7 @@ import {
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledCardsContainer = styled.div`
@@ -25,13 +25,13 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
-  const { t } = useLingui();
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <Section>
       <H2Title
-        title={t`Settings`}
-        description={t`Configure your emails and calendar settings.`}
+        title={t('settings')}
+        description={t('accountSettingsDescription')}
       />
       <StyledCardsContainer>
         <UndecoratedLink to={getSettingsPath(SettingsPath.AccountsEmails)}>
@@ -42,8 +42,8 @@ export const SettingsAccountsSettingsSection = () => {
                 stroke={theme.icon.stroke.sm}
               />
             }
-            title={t`Emails`}
-            description={t`Set email visibility, manage your blocklist and more.`}
+            title={t('emails')}
+            description={t('emailsDescription')}
           />
         </UndecoratedLink>
         <UndecoratedLink to={getSettingsPath(SettingsPath.AccountsCalendars)}>
@@ -54,8 +54,8 @@ export const SettingsAccountsSettingsSection = () => {
                 stroke={theme.icon.stroke.sm}
               />
             }
-            title={t`Calendar`}
-            description={t`Configure and customize your calendar preferences.`}
+            title={t('calendar')}
+            description={t('calendarDescription')}
           />
         </UndecoratedLink>
       </StyledCardsContainer>

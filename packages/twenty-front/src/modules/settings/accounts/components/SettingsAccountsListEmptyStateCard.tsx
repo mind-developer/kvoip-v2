@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import {
   Button,
@@ -34,16 +34,16 @@ export const SettingsAccountsListEmptyStateCard = ({
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <Card>
-      <StyledHeader>{label || t`No connected account`}</StyledHeader>
+      <StyledHeader>{label || t('noConnectedAccount')}</StyledHeader>
       <StyledBody>
         {currentWorkspace?.isGoogleAuthEnabled && (
           <Button
             Icon={IconGoogle}
-            title={t`Connect with Google`}
+            title={t('connectWithGoogle')}
             variant="secondary"
             onClick={() => triggerApisOAuth('google')}
           />
@@ -51,7 +51,7 @@ export const SettingsAccountsListEmptyStateCard = ({
         {currentWorkspace?.isMicrosoftAuthEnabled && (
           <Button
             Icon={IconMicrosoft}
-            title={t`Connect with Microsoft`}
+            title={t('connectWithMicrosoft')}
             variant="secondary"
             onClick={() => triggerApisOAuth('microsoft')}
           />

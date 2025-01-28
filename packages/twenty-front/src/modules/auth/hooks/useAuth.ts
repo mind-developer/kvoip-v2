@@ -379,6 +379,7 @@ export const useAuth = () => {
       workspaceInviteHash?: string,
       workspacePersonalInviteToken?: string,
       captchaToken?: string,
+      roleId?: string
     ) => {
       setIsVerifyPendingState(true);
 
@@ -392,6 +393,7 @@ export const useAuth = () => {
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
+          roleId
         },
       });
 

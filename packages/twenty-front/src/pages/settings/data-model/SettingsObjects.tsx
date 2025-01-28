@@ -20,9 +20,10 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   H2Title,
@@ -46,8 +47,9 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 export const SettingsObjects = () => {
-  const { t } = useLingui();
   const theme = useTheme();
+  const { t } = useLingui();
+  const { t: tFromReactI18Next } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -141,12 +143,12 @@ export const SettingsObjects = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Data model`}
+      title={tFromReactI18Next('dataModel')}
       actionButton={
         <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
-            title={t`Add object`}
+            title={tFromReactI18Next('addObject')}
             accent="blue"
             size="small"
           />
@@ -154,21 +156,21 @@ export const SettingsObjects = () => {
       }
       links={[
         {
-          children: <Trans>Workspace</Trans>,
+          children: 'Workspace',
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: <Trans>Objects</Trans> },
+        { children: tFromReactI18Next('objects') },
       ]}
     >
       <SettingsPageContainer>
         <>
           <SettingsObjectCoverImage />
           <Section>
-            <H2Title title={t`Existing objects`} />
+            <H2Title title={tFromReactI18Next('existingObjects')} />
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder={t`Search for an object...`}
+              placeholder={tFromReactI18Next('searchAnObject')}
               value={searchTerm}
               onChange={setSearchTerm}
             />
@@ -180,7 +182,7 @@ export const SettingsObjects = () => {
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={settingsObjectsTableMetadataField.fieldLabel}
+                      label={tFromReactI18Next(settingsObjectsTableMetadataField.fieldLabel.toLowerCase())}
                       tableId={tableMetadata.tableId}
                       align={settingsObjectsTableMetadataField.align}
                       initialSort={tableMetadata.initialSort}
@@ -190,7 +192,7 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title={t`Active`}>
+                <TableSection title={tFromReactI18Next('Active')}>
                   {filteredActiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
@@ -215,7 +217,7 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
-                <TableSection title={t`Inactive`}>
+                <TableSection title={tFromReactI18Next('Inactive')}>
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow

@@ -9,13 +9,12 @@ import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
-  const { t } = useLingui();
   const navigate = useNavigateSettings();
 
   const [formValues, setFormValues] = useState<{
@@ -30,6 +29,8 @@ export const SettingsDevelopersWebhooksNew = () => {
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
+
+  const { t } = useTranslation();
 
   const handleValidate = async (value: string) => {
     const trimmedUrl = value.trim();
@@ -93,13 +94,13 @@ export const SettingsDevelopersWebhooksNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={t`Endpoint URL`}
-            description={t`We will send POST requests to this endpoint for every new event`}
+            title={t('endpointUrl')}
+            description={t('endpointDescription')}
           />
           <TextInput
             placeholder={t`URL`}
             value={formValues.targetUrl}
-            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
+            error={!isTargetUrlValid ? t('pleaseEnterValidUrl') : undefined}
             onKeyDown={handleKeyDown}
             onChange={handleChange}
             fullWidth

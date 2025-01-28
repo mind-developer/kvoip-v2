@@ -237,7 +237,9 @@ export class WorkspaceInvitationService {
     workspace: Workspace,
     sender: User,
     usePersonalInvitation = true,
+    roleId?: string,
   ): Promise<SendInvitationsOutput> {
+
     if (!workspace?.inviteHash) {
       return {
         success: false,
@@ -284,6 +286,7 @@ export class WorkspaceInvitationService {
             ? {
                 inviteToken: invitation.value.appToken.value,
                 email: invitation.value.email,
+                roleId: roleId ?? ""
               }
             : {},
         });

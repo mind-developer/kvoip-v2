@@ -1,4 +1,5 @@
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
@@ -12,9 +13,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
+
 import { isDefined, useIcons } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { capitalize } from '~/utils/format/capitalize';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
@@ -22,6 +24,8 @@ export const RecordIndexPageHeader = () => {
 
   const { objectNamePlural } = useRecordIndexContextOrThrow();
 
+  const { hasPermission } = usePermissions();
+  
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
@@ -45,7 +49,7 @@ export const RecordIndexPageHeader = () => {
     isObjectMetadataReadOnly(objectMetadataItem);
 
   const shouldDisplayAddButton =
-    (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
+  hasPermission(['create']) && (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
     !isObjectMetadataItemReadOnly &&
     !isCommandMenuV2Enabled;
 

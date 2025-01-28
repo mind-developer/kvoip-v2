@@ -21,7 +21,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { useTranslation } from 'react-i18next';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -45,20 +45,20 @@ export const MainNavigationDrawerItems = () => {
     navigationDrawerExpandedMemorizedState,
   );
 
-  const { t } = useLingui();
+  const { t } = useTranslation();
 
   return (
     <>
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem
-            label={t`Search`}
+            label={t('search')}
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={[getOsControlSymbol(), 'K']}
           />
           <NavigationDrawerItem
-            label={t`Settings`}
+            label={t('settings')}
             to={getSettingsPath(SettingsPath.ProfilePage)}
             onClick={() => {
               setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
