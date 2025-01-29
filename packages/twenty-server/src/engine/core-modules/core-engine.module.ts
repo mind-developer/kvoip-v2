@@ -46,6 +46,7 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
+import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -118,6 +119,7 @@ import { FileModule } from './file/file.module';
       inject: [EnvironmentService, FileStorageService],
     }),
     MetaModule,
+    SectorModule,
   ],
   exports: [
     AnalyticsModule,
