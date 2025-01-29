@@ -36,8 +36,8 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
       subdomain
-      hasValidEntrepriseKey
       creatorEmail
+      hasValidEnterpriseKey
       featureFlags {
         id
         key
