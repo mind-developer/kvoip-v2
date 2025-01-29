@@ -16,19 +16,18 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingStat
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useChallengeMutation,
   useCheckUserExistsLazyQuery,
+  useGetAuthTokensFromLoginTokenMutation,
   useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
-  useVerifyMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -51,6 +50,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
@@ -60,8 +60,8 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -87,9 +87,11 @@ export const useAuth = () => {
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const [challenge] = useChallengeMutation();
+  const [getLoginTokenFromCredentials] =
+    useGetLoginTokenFromCredentialsMutation();
   const [signUp] = useSignUpMutation();
-  const [verify] = useVerifyMutation();
+  const [getAuthTokensFromLoginToken] =
+    useGetAuthTokensFromLoginTokenMutation();
   const [getLoginTokenFromEmailVerificationToken] =
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
@@ -126,9 +128,7 @@ export const useAuth = () => {
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
-        const captchaProvider = snapshot
-          .getLoadable(captchaProviderState)
-          .getValue();
+        const captcha = snapshot.getLoadable(captchaState).getValue();
         const clientConfigApiStatus = snapshot
           .getLoadable(clientConfigApiStatusState)
           .getValue();
@@ -151,7 +151,7 @@ export const useAuth = () => {
           );
           set(supportChatState, supportChat);
           set(isDebugModeState, isDebugMode);
-          set(captchaProviderState, captchaProvider);
+          set(captchaState, captcha);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
@@ -168,25 +168,25 @@ export const useAuth = () => {
     [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
-  const handleChallenge = useCallback(
+  const handleGetLoginTokenFromCredentials = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       try {
-        const challengeResult = await challenge({
+        const getLoginTokenResult = await getLoginTokenFromCredentials({
           variables: {
             email,
             password,
             captchaToken,
           },
         });
-        if (isDefined(challengeResult.errors)) {
-          throw challengeResult.errors;
+        if (isDefined(getLoginTokenResult.errors)) {
+          throw getLoginTokenResult.errors;
         }
 
-        if (!challengeResult.data?.challenge) {
+        if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
           throw new Error('No login token');
         }
 
-        return challengeResult.data.challenge;
+        return getLoginTokenResult.data.getLoginTokenFromCredentials;
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
@@ -200,7 +200,7 @@ export const useAuth = () => {
         throw error;
       }
     },
-    [challenge, setSearchParams, setSignInUpStep],
+    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep],
   );
 
   const handleGetLoginTokenFromEmailVerificationToken = useCallback(
@@ -280,7 +280,7 @@ export const useAuth = () => {
             )
           : TimeFormat[detectTimeFormat()],
       });
-      i18n.activate(workspaceMember.locale ?? 'en');
+      dynamicActivate(workspaceMember.locale ?? 'en');
     }
 
     const workspace = user.currentWorkspace ?? null;
@@ -324,41 +324,48 @@ export const useAuth = () => {
     setWorkspaces,
   ]);
 
-  const handleVerify = useCallback(
+  const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       setIsVerifyPendingState(true);
 
-      const verifyResult = await verify({
+      const getAuthTokensResult = await getAuthTokensFromLoginToken({
         variables: { loginToken },
       });
 
-      if (isDefined(verifyResult.errors)) {
-        throw verifyResult.errors;
+      if (isDefined(getAuthTokensResult.errors)) {
+        throw getAuthTokensResult.errors;
       }
 
-      if (!verifyResult.data?.verify) {
-        throw new Error('No verify result');
+      if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+        throw new Error('No getAuthTokensFromLoginToken result');
       }
 
-      setTokenPair(verifyResult.data?.verify.tokens);
+      setTokenPair(
+        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+      );
 
       await loadCurrentUser();
 
       setIsVerifyPendingState(false);
     },
-    [setIsVerifyPendingState, verify, setTokenPair, loadCurrentUser],
+    [
+      setIsVerifyPendingState,
+      getAuthTokensFromLoginToken,
+      setTokenPair,
+      loadCurrentUser,
+    ],
   );
 
-  const handleCrendentialsSignIn = useCallback(
+  const handleCredentialsSignIn = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      const { loginToken } = await handleChallenge(
+      const { loginToken } = await handleGetLoginTokenFromCredentials(
         email,
         password,
         captchaToken,
       );
-      await handleVerify(loginToken.token);
+      await handleGetAuthTokensFromLoginToken(loginToken.token);
     },
-    [handleChallenge, handleVerify],
+    [handleGetLoginTokenFromCredentials, handleGetAuthTokensFromLoginToken],
   );
 
   const handleSignOut = useCallback(async () => {
@@ -415,14 +422,16 @@ export const useAuth = () => {
         );
       }
 
-      await handleVerify(signUpResult.data?.signUp.loginToken.token);
+      await handleGetAuthTokensFromLoginToken(
+        signUpResult.data?.signUp.loginToken.token,
+      );
     },
     [
       setIsVerifyPendingState,
       signUp,
       workspacePublicData,
       isMultiWorkspaceEnabled,
-      handleVerify,
+      handleGetAuthTokensFromLoginToken,
       setSignInUpStep,
       setSearchParams,
       isEmailVerificationRequired,
@@ -488,10 +497,10 @@ export const useAuth = () => {
   );
 
   return {
-    challenge: handleChallenge,
+    getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
-    verify: handleVerify,
+    getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
 
     loadCurrentUser,
 
@@ -499,7 +508,7 @@ export const useAuth = () => {
     clearSession,
     signOut: handleSignOut,
     signUpWithCredentials: handleCredentialsSignUp,
-    signInWithCredentials: handleCrendentialsSignIn,
+    signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
   };

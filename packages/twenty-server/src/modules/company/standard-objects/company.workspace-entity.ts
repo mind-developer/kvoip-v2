@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -54,9 +55,9 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
   namePlural: 'companies',
-  labelSingular: 'Company',
-  labelPlural: 'Companies',
-  description: 'A company',
+  labelSingular: msg`Company`,
+  labelPlural: msg`Companies`,
+  description: msg`A company`,
   icon: STANDARD_OBJECT_ICONS.company,
   shortcut: 'C',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
@@ -69,7 +70,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'The company name',
     icon: 'IconBuildingSkyscraper',
   })
-  [NAME_FIELD_NAME]: string;
+  name: string;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
@@ -80,7 +81,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   @WorkspaceIsUnique()
-  [DOMAIN_NAME_FIELD_NAME]?: LinksMetadata;
+  domainName: LinksMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -311,5 +312,5 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

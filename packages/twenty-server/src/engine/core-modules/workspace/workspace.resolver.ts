@@ -7,17 +7,19 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -63,6 +65,8 @@ export class WorkspaceResolver {
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -89,7 +93,13 @@ export class WorkspaceResolver {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    return await this.workspaceService.activateWorkspace(user, workspace, data);
+    const result = await this.workspaceService.activateWorkspace(
+      user,
+      workspace,
+      data,
+    );
+
+    return result;
   }
 
   @Mutation(() => Workspace)
@@ -99,7 +109,7 @@ export class WorkspaceResolver {
     @AuthWorkspace() workspace: Workspace,
   ) {
     try {
-      return this.workspaceService.updateWorkspaceById({
+      return await this.workspaceService.updateWorkspaceById({
         ...data,
         id: workspace.id,
       });
@@ -138,10 +148,8 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @ResolveField(() => [FeatureFlagEntity], { nullable: true })
-  async featureFlags(
-    @Parent() workspace: Workspace,
-  ): Promise<FeatureFlagEntity[]> {
+  @ResolveField(() => [FeatureFlag], { nullable: true })
+  async featureFlags(@Parent() workspace: Workspace): Promise<FeatureFlag[]> {
     const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
       workspace.id,
     );
@@ -157,6 +165,23 @@ export class WorkspaceResolver {
   @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
+  }
+
+  @ResolveField(() => [BillingSubscription])
+  async billingSubscriptions(
+    @Parent() workspace: Workspace,
+  ): Promise<BillingSubscription[] | undefined> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return [];
+    }
+
+    try {
+      return this.billingSubscriptionRepository.find({
+        where: { workspaceId: workspace.id },
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })

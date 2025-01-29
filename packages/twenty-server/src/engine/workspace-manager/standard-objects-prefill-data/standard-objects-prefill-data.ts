@@ -51,7 +51,6 @@ export const standardObjectsPrefillData = async (
       entityManager,
       schemaName,
       objectMetadataMap,
-      isWorkflowEnabled,
     );
 
     await seedWorkspaceFavorites(

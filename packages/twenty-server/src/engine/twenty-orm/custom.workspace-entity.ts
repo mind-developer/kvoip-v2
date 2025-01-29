@@ -43,7 +43,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Name',
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
-    defaultValue: "'Untitled'",
   })
   name: string;
 
@@ -151,5 +150,5 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

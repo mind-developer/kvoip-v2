@@ -106,6 +106,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.workspaceRepository.update(workspace.id, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+      creatorEmail: user.email,
     });
 
     await this.featureFlagService.enableFeatureFlags(
@@ -171,6 +172,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId,
+      },
+    });
+
+    if (userWorkspaces.length === 0) {
+      await this.userRepository.softDelete(userId);
+    }
   }
 
   async isSubdomainAvailable(subdomain: string) {
