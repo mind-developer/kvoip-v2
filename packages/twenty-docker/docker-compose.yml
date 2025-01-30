@@ -34,10 +34,6 @@ services:
 
       APP_SECRET: ${APP_SECRET}
 
-      FRONT_PROTOCOL: ${FRONT_PROTOCOL:-http}
-      FRONT_DOMAIN: ${FRONT_DOMAIN:-localhost}
-      FRONT_PORT: ${FRONT_PORT:-3000}
-
       REACT_APP_CHATBOT_BASE_URL: ${REACT_APP_CHATBOT_BASE_URL:-http://localhost:8080}
 
       IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-true}
@@ -51,8 +47,9 @@ services:
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 10s
-      timeout: 120s
+      timeout: 5s
       retries: 10
+      start_period: 120s
     restart: on-failure
 
   worker:
