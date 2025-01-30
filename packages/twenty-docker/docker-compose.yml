@@ -20,7 +20,7 @@ services:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
     ports:
-      - "${SERVER_PORT}:3000"
+      - "${SERVER_PORT:-3000}:3000"
     environment:
       PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5433}/${PG_DATABASE}
@@ -34,11 +34,9 @@ services:
 
       APP_SECRET: ${APP_SECRET}
 
-      # FRONT_PROTOCOL: ${FRONT_PROTOCOL}
-      # FRONT_DOMAIN: ${FRONT_DOMAIN}
-      # FRONT_PORT: ${FRONT_PORT}
-      # FRONT_BASE_URL: ${SERVER_URL}
-      # REACT_APP_SERVER_BASE_URL: ${SERVER_URL}
+      FRONT_PROTOCOL: ${FRONT_PROTOCOL:-http}
+      FRONT_DOMAIN: ${FRONT_DOMAIN:-localhost}
+      FRONT_PORT: ${FRONT_PORT:-3000}
 
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
     depends_on:
