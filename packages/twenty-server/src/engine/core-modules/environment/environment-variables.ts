@@ -508,6 +508,32 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   META_WEBHOOK_URL: string;
+
+  // Onesignal
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_REST_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_APP_ID: string;
+
+  // Google Cloud Storage
+  @IsString()
+  @IsOptional()
+  BUCKET_KEYFILENAME: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_PROJECT_ID: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_NAME: string;
 }
 
 export const validate = (

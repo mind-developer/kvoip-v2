@@ -41,3 +41,5 @@ dump.rdb
 /devenv.nix
 /flake.lock
 /flake.nix
+
+packages/twenty-server/src/engine/core-modules/meta/FirebaseConfig.ts
