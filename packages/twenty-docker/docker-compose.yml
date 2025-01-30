@@ -40,6 +40,8 @@ services:
 
       REACT_APP_CHATBOT_BASE_URL: ${REACT_APP_CHATBOT_BASE_URL:-http://localhost:8080}
 
+      IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-true}
+
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
     depends_on:
       change-vol-ownership:
