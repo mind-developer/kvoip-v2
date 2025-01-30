@@ -38,6 +38,8 @@ services:
       FRONT_DOMAIN: ${FRONT_DOMAIN:-localhost}
       FRONT_PORT: ${FRONT_PORT:-3000}
 
+      REACT_APP_CHATBOT_BASE_URL: ${REACT_APP_CHATBOT_BASE_URL:-http://localhost:8080}
+
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
     depends_on:
       change-vol-ownership:
