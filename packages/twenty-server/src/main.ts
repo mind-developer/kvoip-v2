@@ -85,10 +85,6 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
-  app.enableCors({
-    origin: environmentService.get('SERVER_URL'),
-  });
-
   await app.listen(environmentService.get('PORT'));
 };
 
