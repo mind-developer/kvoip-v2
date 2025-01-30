@@ -160,6 +160,7 @@ export const queries = {
         hasValidEnterpriseKey
         creatorEmail
         hasValidEnterpriseKey
+        hostname
         featureFlags {
           id
           key
@@ -309,6 +310,7 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
+        hostname: null,
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

@@ -2,9 +2,15 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -102,6 +108,7 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']>;
+  hostname?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   sso: Array<SsoConnection>;
@@ -118,7 +125,7 @@ export type Billing = {
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
-  PRO = 'PRO'
+  PRO = 'PRO',
 }
 
 export type BillingPlanOutput = {
@@ -154,10 +161,12 @@ export type BillingPriceTierDto = {
 /** The different billing price tiers modes */
 export enum BillingPriceTiersMode {
   GRADUATED = 'GRADUATED',
-  VOLUME = 'VOLUME'
+  VOLUME = 'VOLUME',
 }
 
-export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
+export type BillingPriceUnionDto =
+  | BillingPriceLicensedDto
+  | BillingPriceMeteredDto;
 
 export type BillingProductDto = {
   __typename?: 'BillingProductDTO';
@@ -208,7 +217,7 @@ export type BillingUpdateOutput = {
 
 export enum BillingUsageType {
   LICENSED = 'LICENSED',
-  METERED = 'METERED'
+  METERED = 'METERED',
 }
 
 export type BooleanFieldComparison = {
@@ -218,7 +227,7 @@ export type BooleanFieldComparison = {
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
 }
 
 export type Captcha = {
@@ -229,7 +238,7 @@ export type Captcha = {
 
 export enum CaptchaDriverType {
   GoogleRecaptcha = 'GoogleRecaptcha',
-  Turnstile = 'Turnstile'
+  Turnstile = 'Turnstile',
 }
 
 export type ClientConfig = {
@@ -312,6 +321,28 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type CustomHostnameDetails = {
+  __typename?: 'CustomHostnameDetails';
+  hostname: Scalars['String'];
+  id: Scalars['String'];
+  ownershipVerifications: Array<OwnershipVerification>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type CustomHostnameOwnershipVerificationHttp = {
+  __typename?: 'CustomHostnameOwnershipVerificationHttp';
+  body: Scalars['String'];
+  type: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type CustomHostnameOwnershipVerificationTxt = {
+  __typename?: 'CustomHostnameOwnershipVerificationTxt';
+  name: Scalars['String'];
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID'];
@@ -343,7 +374,7 @@ export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
   COLUMNS_DELETED = 'COLUMNS_DELETED',
   COLUMNS_TYPE_CHANGED = 'COLUMNS_TYPE_CHANGED',
-  TABLE_DELETED = 'TABLE_DELETED'
+  TABLE_DELETED = 'TABLE_DELETED',
 }
 
 export type EditSsoInput = {
@@ -400,7 +431,7 @@ export enum FeatureFlagKey {
   IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled',
 }
 
 export type Field = {
@@ -479,7 +510,7 @@ export enum FieldMetadataType {
   SELECT = 'SELECT',
   TEXT = 'TEXT',
   TS_VECTOR = 'TS_VECTOR',
-  UUID = 'UUID'
+  UUID = 'UUID',
 }
 
 export enum FileFolder {
@@ -487,7 +518,7 @@ export enum FileFolder {
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
-  WorkspaceLogo = 'WorkspaceLogo'
+  WorkspaceLogo = 'WorkspaceLogo',
 }
 
 export type FindAvailableSsoidpOutput = {
@@ -526,7 +557,7 @@ export type GetServerlessFunctionSourceCodeInput = {
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
-  SAML = 'SAML'
+  SAML = 'SAML',
 }
 
 export type ImpersonateOutput = {
@@ -549,12 +580,10 @@ export type Index = {
   updatedAt: Scalars['DateTime'];
 };
 
-
 export type IndexIndexFieldMetadatasArgs = {
   filter?: IndexFieldFilter;
   paging?: CursorPaging;
 };
-
 
 export type IndexObjectMetadataArgs = {
   filter?: ObjectFilter;
@@ -627,7 +656,7 @@ export type IndexObjectMetadataConnection = {
 /** Type of the index */
 export enum IndexType {
   BTREE = 'BTREE',
-  GIN = 'GIN'
+  GIN = 'GIN',
 }
 
 export type InvalidatePassword = {
@@ -657,7 +686,7 @@ export type LoginToken = {
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-  SUBJECT = 'SUBJECT'
+  SUBJECT = 'SUBJECT',
 }
 
 export type Mutation = {
@@ -721,23 +750,19 @@ export type Mutation = {
   userLookupAdminPanel: UserLookup;
 };
 
-
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
 };
 
-
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
-
 
 export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
 };
-
 
 export type MutationCheckoutSessionArgs = {
   plan?: BillingPlanKey;
@@ -746,107 +771,86 @@ export type MutationCheckoutSessionArgs = {
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
 };
-
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
 
-
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
-
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
 
-
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
-
 
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
 
-
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
-
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
 };
 
-
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
-
 
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
 
-
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
 };
-
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
 
-
 export type MutationDeleteWorkflowVersionStepArgs = {
   input: DeleteWorkflowVersionStepInput;
 };
-
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
 };
 
-
 export type MutationEditSsoIdentityProviderArgs = {
   input: EditSsoInput;
 };
-
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
 };
 
-
 export type MutationExecuteOneServerlessFunctionArgs = {
   input: ExecuteServerlessFunctionInput;
 };
-
 
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
 };
 
-
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String'];
 };
 
-
 export type MutationGetAuthorizationUrlArgs = {
   input: GetAuthorizationUrlInput;
 };
-
 
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
@@ -854,48 +858,39 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
   password: Scalars['String'];
 };
 
-
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   emailVerificationToken: Scalars['String'];
 };
-
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
 };
 
-
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
 };
-
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String'];
 };
 
-
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String'];
 };
-
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
 };
 
-
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
 
-
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
 };
-
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
@@ -906,48 +901,39 @@ export type MutationSignUpArgs = {
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
 };
 
-
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
-
 
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
 
-
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
 };
 
-
 export type MutationUpdateOneServerlessFunctionArgs = {
   input: UpdateServerlessFunctionInput;
 };
-
 
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
 };
 
-
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
 };
 
-
 export type MutationUpdateWorkspaceArgs = {
   data: UpdateWorkspaceInput;
 };
-
 
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String'];
@@ -955,28 +941,23 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   workspaceId: Scalars['String'];
 };
 
-
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
-
 
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
-
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload'];
 };
 
-
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
 };
-
 
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
@@ -1006,12 +987,10 @@ export type Object = {
   updatedAt: Scalars['DateTime'];
 };
 
-
 export type ObjectFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
 };
-
 
 export type ObjectIndexMetadatasArgs = {
   filter?: IndexFilter;
@@ -1067,7 +1046,7 @@ export enum OnboardingStatus {
   PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
-  WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
+  WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION',
 }
 
 export type OnboardingStepSuccess = {
@@ -1075,6 +1054,10 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
+
+export type OwnershipVerification =
+  | CustomHostnameOwnershipVerificationHttp
+  | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -1113,6 +1096,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
+  hostname?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
@@ -1139,6 +1123,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
+  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -1156,52 +1141,42 @@ export type Query = {
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
-
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
 };
 
-
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
 };
-
 
 export type QueryFindAvailableWorkspacesByEmailArgs = {
   email: Scalars['String'];
 };
 
-
 export type QueryFindOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
 };
-
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
 };
 
-
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
-
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
 
-
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
-
 
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
@@ -1209,13 +1184,11 @@ export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
-
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
-
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
@@ -1223,13 +1196,11 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
-
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
-
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
@@ -1259,7 +1230,7 @@ export enum RelationDefinitionType {
   MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE'
+  ONE_TO_ONE = 'ONE_TO_ONE',
 }
 
 export type RelationMetadata = {
@@ -1297,14 +1268,14 @@ export enum RelationMetadataType {
   MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE'
+  ONE_TO_ONE = 'ONE_TO_ONE',
 }
 
 /** Relation type */
 export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE'
+  ONE_TO_ONE = 'ONE_TO_ONE',
 }
 
 export type RemoteServer = {
@@ -1332,7 +1303,7 @@ export type RemoteTable = {
 /** Status of the table */
 export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
-  SYNCED = 'SYNCED'
+  SYNCED = 'SYNCED',
 }
 
 export type ResendEmailVerificationTokenOutput = {
@@ -1368,7 +1339,7 @@ export type SsoIdentityProvider = {
 export enum SsoIdentityProviderStatus {
   Active = 'Active',
   Error = 'Error',
-  Inactive = 'Inactive'
+  Inactive = 'Inactive',
 }
 
 export type SendInvitationsOutput = {
@@ -1416,7 +1387,7 @@ export type ServerlessFunctionExecutionResult = {
 /** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
   ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS'
+  SUCCESS = 'SUCCESS',
 }
 
 export type ServerlessFunctionIdInput = {
@@ -1427,7 +1398,7 @@ export type ServerlessFunctionIdInput = {
 /** SyncStatus of the serverlessFunction */
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
-  READY = 'READY'
+  READY = 'READY',
 }
 
 export type SetupOidcSsoInput = {
@@ -1465,7 +1436,7 @@ export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
   Week = 'Week',
-  Year = 'Year'
+  Year = 'Year',
 }
 
 export enum SubscriptionStatus {
@@ -1476,7 +1447,7 @@ export enum SubscriptionStatus {
   PastDue = 'PastDue',
   Paused = 'Paused',
   Trialing = 'Trialing',
-  Unpaid = 'Unpaid'
+  Unpaid = 'Unpaid',
 }
 
 export type Support = {
@@ -1638,7 +1609,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   displayName?: InputMaybe<Scalars['String']>;
-  domainName?: InputMaybe<Scalars['String']>;
+  hostname?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -1783,7 +1754,7 @@ export enum WorkspaceActivationStatus {
   INACTIVE = 'INACTIVE',
   ONGOING_CREATION = 'ONGOING_CREATION',
   PENDING_CREATION = 'PENDING_CREATION',
-  SUSPENDED = 'SUSPENDED'
+  SUSPENDED = 'SUSPENDED',
 }
 
 export type WorkspaceEdge = {
@@ -1834,14 +1805,14 @@ export enum WorkspaceMemberDateFormatEnum {
   DAY_FIRST = 'DAY_FIRST',
   MONTH_FIRST = 'MONTH_FIRST',
   SYSTEM = 'SYSTEM',
-  YEAR_FIRST = 'YEAR_FIRST'
+  YEAR_FIRST = 'YEAR_FIRST',
 }
 
 /** Time time as Military, Standard or system as default */
 export enum WorkspaceMemberTimeFormatEnum {
   HOUR_12 = 'HOUR_12',
   HOUR_24 = 'HOUR_24',
-  SYSTEM = 'SYSTEM'
+  SYSTEM = 'SYSTEM',
 }
 
 export type WorkspaceNameAndId = {
@@ -1856,11 +1827,64 @@ export type WorkspaceSubdomainAndId = {
   subdomain: Scalars['String'];
 };
 
-export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+export type TimelineCalendarEventFragmentFragment = {
+  __typename?: 'TimelineCalendarEvent';
+  id: any;
+  title: string;
+  description: string;
+  location: string;
+  startsAt: string;
+  endsAt: string;
+  isFullDay: boolean;
+  visibility: CalendarChannelVisibility;
+  participants: Array<{
+    __typename?: 'TimelineCalendarEventParticipant';
+    personId?: any | null;
+    workspaceMemberId?: any | null;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    avatarUrl: string;
+    handle: string;
+  }>;
+};
 
-export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type TimelineCalendarEventParticipantFragmentFragment = {
+  __typename?: 'TimelineCalendarEventParticipant';
+  personId?: any | null;
+  workspaceMemberId?: any | null;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  avatarUrl: string;
+  handle: string;
+};
 
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = {
+  __typename?: 'TimelineCalendarEventsWithTotal';
+  totalNumberOfCalendarEvents: number;
+  timelineCalendarEvents: Array<{
+    __typename?: 'TimelineCalendarEvent';
+    id: any;
+    title: string;
+    description: string;
+    location: string;
+    startsAt: string;
+    endsAt: string;
+    isFullDay: boolean;
+    visibility: CalendarChannelVisibility;
+    participants: Array<{
+      __typename?: 'TimelineCalendarEventParticipant';
+      personId?: any | null;
+      workspaceMemberId?: any | null;
+      firstName: string;
+      lastName: string;
+      displayName: string;
+      avatarUrl: string;
+      handle: string;
+    }>;
+  }>;
+};
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['UUID'];
@@ -1868,8 +1892,34 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
-
-export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromCompanyIdQuery = {
+  __typename?: 'Query';
+  getTimelineCalendarEventsFromCompanyId: {
+    __typename?: 'TimelineCalendarEventsWithTotal';
+    totalNumberOfCalendarEvents: number;
+    timelineCalendarEvents: Array<{
+      __typename?: 'TimelineCalendarEvent';
+      id: any;
+      title: string;
+      description: string;
+      location: string;
+      startsAt: string;
+      endsAt: string;
+      isFullDay: boolean;
+      visibility: CalendarChannelVisibility;
+      participants: Array<{
+        __typename?: 'TimelineCalendarEventParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      }>;
+    }>;
+  };
+};
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['UUID'];
@@ -1877,14 +1927,113 @@ export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+export type GetTimelineCalendarEventsFromPersonIdQuery = {
+  __typename?: 'Query';
+  getTimelineCalendarEventsFromPersonId: {
+    __typename?: 'TimelineCalendarEventsWithTotal';
+    totalNumberOfCalendarEvents: number;
+    timelineCalendarEvents: Array<{
+      __typename?: 'TimelineCalendarEvent';
+      id: any;
+      title: string;
+      description: string;
+      location: string;
+      startsAt: string;
+      endsAt: string;
+      isFullDay: boolean;
+      visibility: CalendarChannelVisibility;
+      participants: Array<{
+        __typename?: 'TimelineCalendarEventParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      }>;
+    }>;
+  };
+};
 
-export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type ParticipantFragmentFragment = {
+  __typename?: 'TimelineThreadParticipant';
+  personId?: any | null;
+  workspaceMemberId?: any | null;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  avatarUrl: string;
+  handle: string;
+};
 
-export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type TimelineThreadFragmentFragment = {
+  __typename?: 'TimelineThread';
+  id: any;
+  read: boolean;
+  visibility: MessageChannelVisibility;
+  lastMessageReceivedAt: string;
+  lastMessageBody: string;
+  subject: string;
+  numberOfMessagesInThread: number;
+  participantCount: number;
+  firstParticipant: {
+    __typename?: 'TimelineThreadParticipant';
+    personId?: any | null;
+    workspaceMemberId?: any | null;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    avatarUrl: string;
+    handle: string;
+  };
+  lastTwoParticipants: Array<{
+    __typename?: 'TimelineThreadParticipant';
+    personId?: any | null;
+    workspaceMemberId?: any | null;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    avatarUrl: string;
+    handle: string;
+  }>;
+};
 
-export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
-
-export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineThreadsWithTotalFragmentFragment = {
+  __typename?: 'TimelineThreadsWithTotal';
+  totalNumberOfThreads: number;
+  timelineThreads: Array<{
+    __typename?: 'TimelineThread';
+    id: any;
+    read: boolean;
+    visibility: MessageChannelVisibility;
+    lastMessageReceivedAt: string;
+    lastMessageBody: string;
+    subject: string;
+    numberOfMessagesInThread: number;
+    participantCount: number;
+    firstParticipant: {
+      __typename?: 'TimelineThreadParticipant';
+      personId?: any | null;
+      workspaceMemberId?: any | null;
+      firstName: string;
+      lastName: string;
+      displayName: string;
+      avatarUrl: string;
+      handle: string;
+    };
+    lastTwoParticipants: Array<{
+      __typename?: 'TimelineThreadParticipant';
+      personId?: any | null;
+      workspaceMemberId?: any | null;
+      firstName: string;
+      lastName: string;
+      displayName: string;
+      avatarUrl: string;
+      handle: string;
+    }>;
+  }>;
+};
 
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['UUID'];
@@ -1892,8 +2041,44 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
-
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineThreadsFromCompanyIdQuery = {
+  __typename?: 'Query';
+  getTimelineThreadsFromCompanyId: {
+    __typename?: 'TimelineThreadsWithTotal';
+    totalNumberOfThreads: number;
+    timelineThreads: Array<{
+      __typename?: 'TimelineThread';
+      id: any;
+      read: boolean;
+      visibility: MessageChannelVisibility;
+      lastMessageReceivedAt: string;
+      lastMessageBody: string;
+      subject: string;
+      numberOfMessagesInThread: number;
+      participantCount: number;
+      firstParticipant: {
+        __typename?: 'TimelineThreadParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      };
+      lastTwoParticipants: Array<{
+        __typename?: 'TimelineThreadParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      }>;
+    }>;
+  };
+};
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['UUID'];
@@ -1901,38 +2086,99 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
-
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineThreadsFromPersonIdQuery = {
+  __typename?: 'Query';
+  getTimelineThreadsFromPersonId: {
+    __typename?: 'TimelineThreadsWithTotal';
+    totalNumberOfThreads: number;
+    timelineThreads: Array<{
+      __typename?: 'TimelineThread';
+      id: any;
+      read: boolean;
+      visibility: MessageChannelVisibility;
+      lastMessageReceivedAt: string;
+      lastMessageBody: string;
+      subject: string;
+      numberOfMessagesInThread: number;
+      participantCount: number;
+      firstParticipant: {
+        __typename?: 'TimelineThreadParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      };
+      lastTwoParticipants: Array<{
+        __typename?: 'TimelineThreadParticipant';
+        personId?: any | null;
+        workspaceMemberId?: any | null;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+        avatarUrl: string;
+        handle: string;
+      }>;
+    }>;
+  };
+};
 
 export type TrackMutationVariables = Exact<{
   action: Scalars['String'];
   payload: Scalars['JSON'];
 }>;
 
-
-export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'Analytics', success: boolean } };
+export type TrackMutation = {
+  __typename?: 'Mutation';
+  track: { __typename?: 'Analytics'; success: boolean };
+};
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 }>;
 
-
-export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+export type UploadFileMutation = {
+  __typename?: 'Mutation';
+  uploadFile: string;
+};
 
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 }>;
 
+export type UploadImageMutation = {
+  __typename?: 'Mutation';
+  uploadImage: string;
+};
 
-export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
+export type AuthTokenFragmentFragment = {
+  __typename?: 'AuthToken';
+  token: string;
+  expiresAt: string;
+};
 
-export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
+export type AuthTokensFragmentFragment = {
+  __typename?: 'AuthTokenPair';
+  accessToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+  refreshToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+};
 
-export type AuthTokensFragmentFragment = { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
-
-export type AvailableSsoIdentityProvidersFragmentFragment = { __typename?: 'FindAvailableSSOIDPOutput', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName?: string | null } };
+export type AvailableSsoIdentityProvidersFragmentFragment = {
+  __typename?: 'FindAvailableSSOIDPOutput';
+  id: string;
+  issuer: string;
+  name: string;
+  status: SsoIdentityProviderStatus;
+  workspace: {
+    __typename?: 'WorkspaceNameAndId';
+    id: string;
+    displayName?: string | null;
+  };
+};
 
 export type AuthorizeAppMutationVariables = Exact<{
   clientId: Scalars['String'];
@@ -1940,42 +2186,82 @@ export type AuthorizeAppMutationVariables = Exact<{
   redirectUrl: Scalars['String'];
 }>;
 
-
-export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
+export type AuthorizeAppMutation = {
+  __typename?: 'Mutation';
+  authorizeApp: { __typename?: 'AuthorizeApp'; redirectUrl: string };
+};
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
 
-
-export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
+export type EmailPasswordResetLinkMutation = {
+  __typename?: 'Mutation';
+  emailPasswordResetLink: {
+    __typename?: 'EmailPasswordResetLink';
+    success: boolean;
+  };
+};
 
 export type GenerateApiKeyTokenMutationVariables = Exact<{
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
 }>;
 
+export type GenerateApiKeyTokenMutation = {
+  __typename?: 'Mutation';
+  generateApiKeyToken: { __typename?: 'ApiKeyToken'; token: string };
+};
 
-export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApiKeyToken: { __typename?: 'ApiKeyToken', token: string } };
+export type GenerateTransientTokenMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
+export type GenerateTransientTokenMutation = {
+  __typename?: 'Mutation';
+  generateTransientToken: {
+    __typename?: 'TransientToken';
+    transientToken: { __typename?: 'AuthToken'; token: string };
+  };
+};
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
 }>;
 
-
-export type GetAuthTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAuthTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type GetAuthTokensFromLoginTokenMutation = {
+  __typename?: 'Mutation';
+  getAuthTokensFromLoginToken: {
+    __typename?: 'AuthTokens';
+    tokens: {
+      __typename?: 'AuthTokenPair';
+      accessToken: {
+        __typename?: 'AuthToken';
+        token: string;
+        expiresAt: string;
+      };
+      refreshToken: {
+        __typename?: 'AuthToken';
+        token: string;
+        expiresAt: string;
+      };
+    };
+  };
+};
 
 export type GetAuthorizationUrlMutationVariables = Exact<{
   input: GetAuthorizationUrlInput;
 }>;
 
-
-export type GetAuthorizationUrlMutation = { __typename?: 'Mutation', getAuthorizationUrl: { __typename?: 'GetAuthorizationUrlOutput', id: string, type: string, authorizationURL: string } };
+export type GetAuthorizationUrlMutation = {
+  __typename?: 'Mutation';
+  getAuthorizationUrl: {
+    __typename?: 'GetAuthorizationUrlOutput';
+    id: string;
+    type: string;
+    authorizationURL: string;
+  };
+};
 
 export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1983,38 +2269,80 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
-
-export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type GetLoginTokenFromCredentialsMutation = {
+  __typename?: 'Mutation';
+  getLoginTokenFromCredentials: {
+    __typename?: 'LoginToken';
+    loginToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+  };
+};
 
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
-
-export type GetLoginTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getLoginTokenFromEmailVerificationToken: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type GetLoginTokenFromEmailVerificationTokenMutation = {
+  __typename?: 'Mutation';
+  getLoginTokenFromEmailVerificationToken: {
+    __typename?: 'LoginToken';
+    loginToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+  };
+};
 
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
 }>;
 
-
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainAndId', subdomain: string, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type ImpersonateMutation = {
+  __typename?: 'Mutation';
+  impersonate: {
+    __typename?: 'ImpersonateOutput';
+    workspace: {
+      __typename?: 'WorkspaceSubdomainAndId';
+      subdomain: string;
+      id: string;
+    };
+    loginToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+  };
+};
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
 }>;
 
-
-export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type RenewTokenMutation = {
+  __typename?: 'Mutation';
+  renewToken: {
+    __typename?: 'AuthTokens';
+    tokens: {
+      __typename?: 'AuthTokenPair';
+      accessToken: {
+        __typename?: 'AuthToken';
+        token: string;
+        expiresAt: string;
+      };
+      refreshToken: {
+        __typename?: 'AuthToken';
+        token: string;
+        expiresAt: string;
+      };
+    };
+  };
+};
 
 export type ResendEmailVerificationTokenMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
 
-
-export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationTokenOutput', success: boolean } };
+export type ResendEmailVerificationTokenMutation = {
+  __typename?: 'Mutation';
+  resendEmailVerificationToken: {
+    __typename?: 'ResendEmailVerificationTokenOutput';
+    success: boolean;
+  };
+};
 
 export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
@@ -2025,43 +2353,119 @@ export type SignUpMutationVariables = Exact<{
   workspaceId?: InputMaybe<Scalars['String']>;
 }>;
 
-
-export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceSubdomainAndId', id: string, subdomain: string } } };
+export type SignUpMutation = {
+  __typename?: 'Mutation';
+  signUp: {
+    __typename?: 'SignUpOutput';
+    loginToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
+    workspace: {
+      __typename?: 'WorkspaceSubdomainAndId';
+      id: string;
+      subdomain: string;
+    };
+  };
+};
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
 }>;
 
-
-export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
+export type UpdatePasswordViaResetTokenMutation = {
+  __typename?: 'Mutation';
+  updatePasswordViaResetToken: {
+    __typename?: 'InvalidatePassword';
+    success: boolean;
+  };
+};
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
+export type CheckUserExistsQuery = {
+  __typename?: 'Query';
+  checkUserExists:
+    | {
+        __typename: 'UserExists';
+        exists: boolean;
+        isEmailVerified: boolean;
+        availableWorkspaces: Array<{
+          __typename?: 'AvailableWorkspaceOutput';
+          id: string;
+          displayName?: string | null;
+          subdomain: string;
+          hostname?: string | null;
+          logo?: string | null;
+          sso: Array<{
+            __typename?: 'SSOConnection';
+            type: IdentityProviderType;
+            id: string;
+            issuer: string;
+            name: string;
+            status: SsoIdentityProviderStatus;
+          }>;
+        }>;
+      }
+    | { __typename: 'UserNotExists'; exists: boolean };
+};
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
+export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
+export type GetPublicWorkspaceDataBySubdomainQuery = {
+  __typename?: 'Query';
+  getPublicWorkspaceDataBySubdomain: {
+    __typename?: 'PublicWorkspaceDataOutput';
+    id: string;
+    logo?: string | null;
+    displayName?: string | null;
+    subdomain: string;
+    hostname?: string | null;
+    authProviders: {
+      __typename?: 'AuthProviders';
+      google: boolean;
+      magicLink: boolean;
+      password: boolean;
+      microsoft: boolean;
+      sso: Array<{
+        __typename?: 'SSOIdentityProvider';
+        id: string;
+        name: string;
+        type: IdentityProviderType;
+        status: SsoIdentityProviderStatus;
+        issuer: string;
+      }>;
+    };
+  };
+};
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
 
-
-export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
+export type ValidatePasswordResetTokenQuery = {
+  __typename?: 'Query';
+  validatePasswordResetToken: {
+    __typename?: 'ValidatePasswordResetToken';
+    id: string;
+    email: string;
+  };
+};
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
-
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
+export type BillingPortalSessionQuery = {
+  __typename?: 'Query';
+  billingPortalSession: {
+    __typename?: 'BillingSessionOutput';
+    url?: string | null;
+  };
+};
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
@@ -2070,30 +2474,121 @@ export type CheckoutSessionMutationVariables = Exact<{
   requirePaymentMethod: Scalars['Boolean'];
 }>;
 
-
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
+export type CheckoutSessionMutation = {
+  __typename?: 'Mutation';
+  checkoutSession: { __typename?: 'BillingSessionOutput'; url?: string | null };
+};
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
 }>;
 
+export type GetProductPricesQuery = {
+  __typename?: 'Query';
+  getProductPrices: {
+    __typename?: 'BillingProductPricesOutput';
+    productPrices: Array<{
+      __typename?: 'BillingProductPriceDTO';
+      created: number;
+      recurringInterval: SubscriptionInterval;
+      stripePriceId: string;
+      unitAmount: number;
+    }>;
+  };
+};
 
-export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'BillingProductPricesOutput', productPrices: Array<{ __typename?: 'BillingProductPriceDTO', created: number, recurringInterval: SubscriptionInterval, stripePriceId: string, unitAmount: number }> } };
+export type UpdateBillingSubscriptionMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
+export type UpdateBillingSubscriptionMutation = {
+  __typename?: 'Mutation';
+  updateBillingSubscription: {
+    __typename?: 'BillingUpdateOutput';
+    success: boolean;
+  };
+};
 
+export type GetClientConfigQueryVariables = Exact<{ [key: string]: never }>;
 
-export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updateBillingSubscription: { __typename?: 'BillingUpdateOutput', success: boolean } };
+export type GetClientConfigQuery = {
+  __typename?: 'Query';
+  clientConfig: {
+    __typename?: 'ClientConfig';
+    signInPrefilled: boolean;
+    isMultiWorkspaceEnabled: boolean;
+    isEmailVerificationRequired: boolean;
+    defaultSubdomain?: string | null;
+    frontDomain: string;
+    debugMode: boolean;
+    analyticsEnabled: boolean;
+    chromeExtensionId?: string | null;
+    canManageFeatureFlags: boolean;
+    billing: {
+      __typename?: 'Billing';
+      isBillingEnabled: boolean;
+      billingUrl?: string | null;
+      trialPeriods: Array<{
+        __typename?: 'BillingTrialPeriodDTO';
+        duration: number;
+        isCreditCardRequired: boolean;
+      }>;
+    };
+    authProviders: {
+      __typename?: 'AuthProviders';
+      google: boolean;
+      password: boolean;
+      microsoft: boolean;
+      sso: Array<{
+        __typename?: 'SSOIdentityProvider';
+        id: string;
+        name: string;
+        type: IdentityProviderType;
+        status: SsoIdentityProviderStatus;
+        issuer: string;
+      }>;
+    };
+    support: {
+      __typename?: 'Support';
+      supportDriver: string;
+      supportFrontChatId?: string | null;
+    };
+    sentry: {
+      __typename?: 'Sentry';
+      dsn?: string | null;
+      environment?: string | null;
+      release?: string | null;
+    };
+    captcha: {
+      __typename?: 'Captcha';
+      provider?: CaptchaDriverType | null;
+      siteKey?: string | null;
+    };
+    api: { __typename?: 'ApiConfig'; mutationMaximumAffectedRecords: number };
+    publicFeatureFlags: Array<{
+      __typename?: 'PublicFeatureFlag';
+      key: FeatureFlagKey;
+      metadata: {
+        __typename?: 'PublicFeatureFlagMetadata';
+        label: string;
+        description: string;
+        imagePath: string;
+      };
+    }>;
+  };
+};
 
-export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
+export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
-
-export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
+export type SkipSyncEmailOnboardingStepMutation = {
+  __typename?: 'Mutation';
+  skipSyncEmailOnboardingStep: {
+    __typename?: 'OnboardingStepSuccess';
+    success: boolean;
+  };
+};
 
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -2101,383 +2596,793 @@ export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   value: Scalars['Boolean'];
 }>;
 
-
-export type UpdateWorkspaceFeatureFlagMutation = { __typename?: 'Mutation', updateWorkspaceFeatureFlag: boolean };
+export type UpdateWorkspaceFeatureFlagMutation = {
+  __typename?: 'Mutation';
+  updateWorkspaceFeatureFlag: boolean;
+};
 
 export type UserLookupAdminPanelMutationVariables = Exact<{
   userIdentifier: Scalars['String'];
 }>;
 
-
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = {
+  __typename?: 'Mutation';
+  userLookupAdminPanel: {
+    __typename?: 'UserLookup';
+    user: {
+      __typename?: 'UserInfo';
+      id: string;
+      email: string;
+      firstName?: string | null;
+      lastName?: string | null;
+    };
+    workspaces: Array<{
+      __typename?: 'WorkspaceInfo';
+      id: string;
+      name: string;
+      logo?: string | null;
+      totalUsers: number;
+      allowImpersonation: boolean;
+      users: Array<{
+        __typename?: 'UserInfo';
+        id: string;
+        email: string;
+        firstName?: string | null;
+        lastName?: string | null;
+      }>;
+      featureFlags: Array<{
+        __typename?: 'FeatureFlag';
+        key: FeatureFlagKey;
+        value: boolean;
+      }>;
+    }>;
+  };
+};
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
 
-
-export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
+export type UpdateLabPublicFeatureFlagMutation = {
+  __typename?: 'Mutation';
+  updateLabPublicFeatureFlag: boolean;
+};
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
 }>;
 
-
-export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type CreateOidcIdentityProviderMutation = {
+  __typename?: 'Mutation';
+  createOIDCIdentityProvider: {
+    __typename?: 'SetupSsoOutput';
+    id: string;
+    type: IdentityProviderType;
+    issuer: string;
+    name: string;
+    status: SsoIdentityProviderStatus;
+  };
+};
 
 export type CreateSamlIdentityProviderMutationVariables = Exact<{
   input: SetupSamlSsoInput;
 }>;
 
-
-export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type CreateSamlIdentityProviderMutation = {
+  __typename?: 'Mutation';
+  createSAMLIdentityProvider: {
+    __typename?: 'SetupSsoOutput';
+    id: string;
+    type: IdentityProviderType;
+    issuer: string;
+    name: string;
+    status: SsoIdentityProviderStatus;
+  };
+};
 
 export type DeleteSsoIdentityProviderMutationVariables = Exact<{
   input: DeleteSsoInput;
 }>;
 
-
-export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
+export type DeleteSsoIdentityProviderMutation = {
+  __typename?: 'Mutation';
+  deleteSSOIdentityProvider: {
+    __typename?: 'DeleteSsoOutput';
+    identityProviderId: string;
+  };
+};
 
 export type EditSsoIdentityProviderMutationVariables = Exact<{
   input: EditSsoInput;
 }>;
 
+export type EditSsoIdentityProviderMutation = {
+  __typename?: 'Mutation';
+  editSSOIdentityProvider: {
+    __typename?: 'EditSsoOutput';
+    id: string;
+    type: IdentityProviderType;
+    issuer: string;
+    name: string;
+    status: SsoIdentityProviderStatus;
+  };
+};
 
-export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type ListSsoIdentityProvidersByWorkspaceIdQuery = {
+  __typename?: 'Query';
+  listSSOIdentityProvidersByWorkspaceId: Array<{
+    __typename?: 'FindAvailableSSOIDPOutput';
+    type: IdentityProviderType;
+    id: string;
+    name: string;
+    issuer: string;
+    status: SsoIdentityProviderStatus;
+  }>;
+};
 
+export type UserQueryFragmentFragment = {
+  __typename?: 'User';
+  id: any;
+  firstName: string;
+  lastName: string;
+  email: string;
+  canImpersonate: boolean;
+  supportUserHash?: string | null;
+  onboardingStatus?: OnboardingStatus | null;
+  userVars: any;
+  analyticsTinybirdJwts?: {
+    __typename?: 'AnalyticsTinybirdJwtMap';
+    getWebhookAnalytics: string;
+    getPageviewsAnalytics: string;
+    getUsersAnalytics: string;
+    getServerlessFunctionDuration: string;
+    getServerlessFunctionSuccessRate: string;
+    getServerlessFunctionErrorCount: string;
+  } | null;
+  workspaceMember?: {
+    __typename?: 'WorkspaceMember';
+    id: any;
+    colorScheme: string;
+    avatarUrl?: string | null;
+    locale?: string | null;
+    timeZone?: string | null;
+    dateFormat?: WorkspaceMemberDateFormatEnum | null;
+    timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+    name: { __typename?: 'FullName'; firstName: string; lastName: string };
+  } | null;
+  workspaceMembers?: Array<{
+    __typename?: 'WorkspaceMember';
+    id: any;
+    colorScheme: string;
+    avatarUrl?: string | null;
+    locale?: string | null;
+    timeZone?: string | null;
+    dateFormat?: WorkspaceMemberDateFormatEnum | null;
+    timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+    name: { __typename?: 'FullName'; firstName: string; lastName: string };
+  }> | null;
+  currentWorkspace?: {
+    __typename?: 'Workspace';
+    id: any;
+    displayName?: string | null;
+    logo?: string | null;
+    inviteHash?: string | null;
+    allowImpersonation: boolean;
+    activationStatus: WorkspaceActivationStatus;
+    isPublicInviteLinkEnabled: boolean;
+    isGoogleAuthEnabled: boolean;
+    isMicrosoftAuthEnabled: boolean;
+    isPasswordAuthEnabled: boolean;
+    subdomain: string;
+    hasValidEnterpriseKey: boolean;
+    hostname?: string | null;
+    metadataVersion: number;
+    workspaceMembersCount?: number | null;
+    featureFlags?: Array<{
+      __typename?: 'FeatureFlag';
+      id: any;
+      key: FeatureFlagKey;
+      value: boolean;
+      workspaceId: string;
+    }> | null;
+    currentBillingSubscription?: {
+      __typename?: 'BillingSubscription';
+      id: any;
+      status: SubscriptionStatus;
+      interval?: SubscriptionInterval | null;
+    } | null;
+    billingSubscriptions: Array<{
+      __typename?: 'BillingSubscription';
+      id: any;
+      status: SubscriptionStatus;
+    }>;
+  } | null;
+  workspaces: Array<{
+    __typename?: 'UserWorkspace';
+    workspace?: {
+      __typename?: 'Workspace';
+      id: any;
+      logo?: string | null;
+      displayName?: string | null;
+      subdomain: string;
+    } | null;
+  }>;
+};
 
-export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+export type DeleteUserAccountMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, creatorEmail?: string | null, hasValidEnterpriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string } | null }> };
-
-export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', id: any } };
+export type DeleteUserAccountMutation = {
+  __typename?: 'Mutation';
+  deleteUser: { __typename?: 'User'; id: any };
+};
 
 export type UploadProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
 
+export type UploadProfilePictureMutation = {
+  __typename?: 'Mutation';
+  uploadProfilePicture: string;
+};
 
-export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: string };
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, creatorEmail?: string | null, hasValidEnterpriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string } | null }> } };
+export type GetCurrentUserQuery = {
+  __typename?: 'Query';
+  currentUser: {
+    __typename?: 'User';
+    id: any;
+    firstName: string;
+    lastName: string;
+    email: string;
+    canImpersonate: boolean;
+    supportUserHash?: string | null;
+    onboardingStatus?: OnboardingStatus | null;
+    userVars: any;
+    analyticsTinybirdJwts?: {
+      __typename?: 'AnalyticsTinybirdJwtMap';
+      getWebhookAnalytics: string;
+      getPageviewsAnalytics: string;
+      getUsersAnalytics: string;
+      getServerlessFunctionDuration: string;
+      getServerlessFunctionSuccessRate: string;
+      getServerlessFunctionErrorCount: string;
+    } | null;
+    workspaceMember?: {
+      __typename?: 'WorkspaceMember';
+      id: any;
+      colorScheme: string;
+      avatarUrl?: string | null;
+      locale?: string | null;
+      timeZone?: string | null;
+      dateFormat?: WorkspaceMemberDateFormatEnum | null;
+      timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+      name: { __typename?: 'FullName'; firstName: string; lastName: string };
+    } | null;
+    workspaceMembers?: Array<{
+      __typename?: 'WorkspaceMember';
+      id: any;
+      colorScheme: string;
+      avatarUrl?: string | null;
+      locale?: string | null;
+      timeZone?: string | null;
+      dateFormat?: WorkspaceMemberDateFormatEnum | null;
+      timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+      name: { __typename?: 'FullName'; firstName: string; lastName: string };
+    }> | null;
+    currentWorkspace?: {
+      __typename?: 'Workspace';
+      id: any;
+      displayName?: string | null;
+      logo?: string | null;
+      inviteHash?: string | null;
+      allowImpersonation: boolean;
+      activationStatus: WorkspaceActivationStatus;
+      isPublicInviteLinkEnabled: boolean;
+      isGoogleAuthEnabled: boolean;
+      isMicrosoftAuthEnabled: boolean;
+      isPasswordAuthEnabled: boolean;
+      subdomain: string;
+      hasValidEnterpriseKey: boolean;
+      hostname?: string | null;
+      metadataVersion: number;
+      workspaceMembersCount?: number | null;
+      featureFlags?: Array<{
+        __typename?: 'FeatureFlag';
+        id: any;
+        key: FeatureFlagKey;
+        value: boolean;
+        workspaceId: string;
+      }> | null;
+      currentBillingSubscription?: {
+        __typename?: 'BillingSubscription';
+        id: any;
+        status: SubscriptionStatus;
+        interval?: SubscriptionInterval | null;
+      } | null;
+      billingSubscriptions: Array<{
+        __typename?: 'BillingSubscription';
+        id: any;
+        status: SubscriptionStatus;
+      }>;
+    } | null;
+    workspaces: Array<{
+      __typename?: 'UserWorkspace';
+      workspace?: {
+        __typename?: 'Workspace';
+        id: any;
+        logo?: string | null;
+        displayName?: string | null;
+        subdomain: string;
+      } | null;
+    }>;
+  };
+};
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
 }>;
 
-
-export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+export type ActivateWorkflowVersionMutation = {
+  __typename?: 'Mutation';
+  activateWorkflowVersion: boolean;
+};
 
 export type ComputeStepOutputSchemaMutationVariables = Exact<{
   input: ComputeStepOutputSchemaInput;
 }>;
 
-
-export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
+export type ComputeStepOutputSchemaMutation = {
+  __typename?: 'Mutation';
+  computeStepOutputSchema: any;
+};
 
 export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
   input: CreateDraftFromWorkflowVersionInput;
 }>;
 
-
-export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: any } };
+export type CreateDraftFromWorkflowVersionMutation = {
+  __typename?: 'Mutation';
+  createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion'; id: any };
+};
 
 export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
 }>;
 
-
-export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
+export type CreateWorkflowVersionStepMutation = {
+  __typename?: 'Mutation';
+  createWorkflowVersionStep: {
+    __typename?: 'WorkflowAction';
+    id: any;
+    name: string;
+    type: string;
+    settings: any;
+    valid: boolean;
+  };
+};
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
 }>;
 
-
-export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
+export type DeactivateWorkflowVersionMutation = {
+  __typename?: 'Mutation';
+  deactivateWorkflowVersion: boolean;
+};
 
 export type DeleteWorkflowVersionStepMutationVariables = Exact<{
   input: DeleteWorkflowVersionStepInput;
 }>;
 
-
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
+export type DeleteWorkflowVersionStepMutation = {
+  __typename?: 'Mutation';
+  deleteWorkflowVersionStep: {
+    __typename?: 'WorkflowAction';
+    id: any;
+    name: string;
+    type: string;
+    settings: any;
+    valid: boolean;
+  };
+};
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
 }>;
 
-
-export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'WorkflowRun', workflowRunId: any } };
+export type RunWorkflowVersionMutation = {
+  __typename?: 'Mutation';
+  runWorkflowVersion: { __typename?: 'WorkflowRun'; workflowRunId: any };
+};
 
 export type UpdateWorkflowVersionStepMutationVariables = Exact<{
   input: UpdateWorkflowVersionStepInput;
 }>;
 
-
-export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
+export type UpdateWorkflowVersionStepMutation = {
+  __typename?: 'Mutation';
+  updateWorkflowVersionStep: {
+    __typename?: 'WorkflowAction';
+    id: any;
+    name: string;
+    type: string;
+    settings: any;
+    valid: boolean;
+  };
+};
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
 }>;
 
-
-export type DeleteWorkspaceInvitationMutation = { __typename?: 'Mutation', deleteWorkspaceInvitation: string };
+export type DeleteWorkspaceInvitationMutation = {
+  __typename?: 'Mutation';
+  deleteWorkspaceInvitation: string;
+};
 
 export type ResendWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
 }>;
 
-
-export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> } };
+export type ResendWorkspaceInvitationMutation = {
+  __typename?: 'Mutation';
+  resendWorkspaceInvitation: {
+    __typename?: 'SendInvitationsOutput';
+    success: boolean;
+    errors: Array<string>;
+    result: Array<{
+      __typename?: 'WorkspaceInvitation';
+      id: any;
+      email: string;
+      expiresAt: string;
+    }>;
+  };
+};
 
 export type SendInvitationsMutationVariables = Exact<{
   emails: Array<Scalars['String']> | Scalars['String'];
 }>;
 
+export type SendInvitationsMutation = {
+  __typename?: 'Mutation';
+  sendInvitations: {
+    __typename?: 'SendInvitationsOutput';
+    success: boolean;
+    errors: Array<string>;
+    result: Array<{
+      __typename?: 'WorkspaceInvitation';
+      id: any;
+      email: string;
+      expiresAt: string;
+    }>;
+  };
+};
 
-export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> } };
+export type GetWorkspaceInvitationsQueryVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type GetWorkspaceInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetWorkspaceInvitationsQuery = {
+  __typename?: 'Query';
+  findWorkspaceInvitations: Array<{
+    __typename?: 'WorkspaceInvitation';
+    id: any;
+    email: string;
+    expiresAt: string;
+  }>;
+};
 
-
-export type GetWorkspaceInvitationsQuery = { __typename?: 'Query', findWorkspaceInvitations: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> };
-
-export type WorkspaceMemberQueryFragmentFragment = { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } };
+export type WorkspaceMemberQueryFragmentFragment = {
+  __typename?: 'WorkspaceMember';
+  id: any;
+  colorScheme: string;
+  avatarUrl?: string | null;
+  locale?: string | null;
+  timeZone?: string | null;
+  dateFormat?: WorkspaceMemberDateFormatEnum | null;
+  timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+  name: { __typename?: 'FullName'; firstName: string; lastName: string };
+};
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
 }>;
 
+export type ActivateWorkspaceMutation = {
+  __typename?: 'Mutation';
+  activateWorkspace: { __typename?: 'Workspace'; id: any; subdomain: string };
+};
 
-export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: any, subdomain: string } };
+export type DeleteCurrentWorkspaceMutationVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DeleteCurrentWorkspaceMutation = { __typename?: 'Mutation', deleteCurrentWorkspace: { __typename?: 'Workspace', id: any } };
+export type DeleteCurrentWorkspaceMutation = {
+  __typename?: 'Mutation';
+  deleteCurrentWorkspace: { __typename?: 'Workspace'; id: any };
+};
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   input: UpdateWorkspaceInput;
 }>;
 
-
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean } };
+export type UpdateWorkspaceMutation = {
+  __typename?: 'Mutation';
+  updateWorkspace: {
+    __typename?: 'Workspace';
+    id: any;
+    hostname?: string | null;
+    subdomain: string;
+    displayName?: string | null;
+    logo?: string | null;
+    allowImpersonation: boolean;
+    isPublicInviteLinkEnabled: boolean;
+    isGoogleAuthEnabled: boolean;
+    isMicrosoftAuthEnabled: boolean;
+    isPasswordAuthEnabled: boolean;
+  };
+};
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
 
+export type UploadWorkspaceLogoMutation = {
+  __typename?: 'Mutation';
+  uploadWorkspaceLogo: string;
+};
 
-export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
+export type GetHostnameDetailsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetHostnameDetailsQuery = {
+  __typename?: 'Query';
+  getHostnameDetails?: {
+    __typename?: 'CustomHostnameDetails';
+    hostname: string;
+    status?: string | null;
+    ownershipVerifications: Array<
+      | {
+          __typename?: 'CustomHostnameOwnershipVerificationHttp';
+          type: string;
+          body: string;
+          url: string;
+        }
+      | {
+          __typename?: 'CustomHostnameOwnershipVerificationTxt';
+          type: string;
+          name: string;
+          value: string;
+        }
+    >;
+  } | null;
+};
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
 }>;
 
-
-export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subdomain: string } };
+export type GetWorkspaceFromInviteHashQuery = {
+  __typename?: 'Query';
+  findWorkspaceFromInviteHash: {
+    __typename?: 'Workspace';
+    id: any;
+    displayName?: string | null;
+    logo?: string | null;
+    allowImpersonation: boolean;
+    subdomain: string;
+  };
+};
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
-  personId
-  workspaceMemberId
-  firstName
-  lastName
-  displayName
-  avatarUrl
-  handle
-}
-    `;
-export const TimelineCalendarEventFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
-  id
-  title
-  description
-  location
-  startsAt
-  endsAt
-  isFullDay
-  visibility
-  participants {
-    ...TimelineCalendarEventParticipantFragment
-  }
-}
-    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
-export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
-  totalNumberOfCalendarEvents
-  timelineCalendarEvents {
-    ...TimelineCalendarEventFragment
-  }
-}
-    ${TimelineCalendarEventFragmentFragmentDoc}`;
-export const ParticipantFragmentFragmentDoc = gql`
-    fragment ParticipantFragment on TimelineThreadParticipant {
-  personId
-  workspaceMemberId
-  firstName
-  lastName
-  displayName
-  avatarUrl
-  handle
-}
-    `;
-export const TimelineThreadFragmentFragmentDoc = gql`
-    fragment TimelineThreadFragment on TimelineThread {
-  id
-  read
-  visibility
-  firstParticipant {
-    ...ParticipantFragment
-  }
-  lastTwoParticipants {
-    ...ParticipantFragment
-  }
-  lastMessageReceivedAt
-  lastMessageBody
-  subject
-  numberOfMessagesInThread
-  participantCount
-}
-    ${ParticipantFragmentFragmentDoc}`;
-export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
-    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
-  totalNumberOfThreads
-  timelineThreads {
-    ...TimelineThreadFragment
-  }
-}
-    ${TimelineThreadFragmentFragmentDoc}`;
-export const AuthTokenFragmentFragmentDoc = gql`
-    fragment AuthTokenFragment on AuthToken {
-  token
-  expiresAt
-}
-    `;
-export const AuthTokensFragmentFragmentDoc = gql`
-    fragment AuthTokensFragment on AuthTokenPair {
-  accessToken {
-    ...AuthTokenFragment
-  }
-  refreshToken {
-    ...AuthTokenFragment
-  }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
-    fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDPOutput {
-  id
-  issuer
-  name
-  status
-  workspace {
-    id
-    displayName
-  }
-}
-    `;
-export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
-    fragment WorkspaceMemberQueryFragment on WorkspaceMember {
-  id
-  name {
+  fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
+    personId
+    workspaceMemberId
     firstName
     lastName
-  }
-  colorScheme
-  avatarUrl
-  locale
-  timeZone
-  dateFormat
-  timeFormat
-}
-    `;
-export const UserQueryFragmentFragmentDoc = gql`
-    fragment UserQueryFragment on User {
-  id
-  firstName
-  lastName
-  email
-  canImpersonate
-  supportUserHash
-  analyticsTinybirdJwts {
-    getWebhookAnalytics
-    getPageviewsAnalytics
-    getUsersAnalytics
-    getServerlessFunctionDuration
-    getServerlessFunctionSuccessRate
-    getServerlessFunctionErrorCount
-  }
-  onboardingStatus
-  workspaceMember {
-    ...WorkspaceMemberQueryFragment
-  }
-  workspaceMembers {
-    ...WorkspaceMemberQueryFragment
-  }
-  currentWorkspace {
-    id
     displayName
-    logo
-    inviteHash
-    allowImpersonation
-    activationStatus
-    isPublicInviteLinkEnabled
-    isGoogleAuthEnabled
-    isMicrosoftAuthEnabled
-    isPasswordAuthEnabled
-    subdomain
-    creatorEmail
-    hasValidEnterpriseKey
-    featureFlags {
-      id
-      key
-      value
-      workspaceId
-    }
-    metadataVersion
-    currentBillingSubscription {
-      id
-      status
-      interval
-    }
-    billingSubscriptions {
-      id
-      status
-    }
-    workspaceMembersCount
+    avatarUrl
+    handle
   }
-  workspaces {
+`;
+export const TimelineCalendarEventFragmentFragmentDoc = gql`
+  fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
+    id
+    title
+    description
+    location
+    startsAt
+    endsAt
+    isFullDay
+    visibility
+    participants {
+      ...TimelineCalendarEventParticipantFragment
+    }
+  }
+  ${TimelineCalendarEventParticipantFragmentFragmentDoc}
+`;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
+  fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
+    totalNumberOfCalendarEvents
+    timelineCalendarEvents {
+      ...TimelineCalendarEventFragment
+    }
+  }
+  ${TimelineCalendarEventFragmentFragmentDoc}
+`;
+export const ParticipantFragmentFragmentDoc = gql`
+  fragment ParticipantFragment on TimelineThreadParticipant {
+    personId
+    workspaceMemberId
+    firstName
+    lastName
+    displayName
+    avatarUrl
+    handle
+  }
+`;
+export const TimelineThreadFragmentFragmentDoc = gql`
+  fragment TimelineThreadFragment on TimelineThread {
+    id
+    read
+    visibility
+    firstParticipant {
+      ...ParticipantFragment
+    }
+    lastTwoParticipants {
+      ...ParticipantFragment
+    }
+    lastMessageReceivedAt
+    lastMessageBody
+    subject
+    numberOfMessagesInThread
+    participantCount
+  }
+  ${ParticipantFragmentFragmentDoc}
+`;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
+  fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
+    totalNumberOfThreads
+    timelineThreads {
+      ...TimelineThreadFragment
+    }
+  }
+  ${TimelineThreadFragmentFragmentDoc}
+`;
+export const AuthTokenFragmentFragmentDoc = gql`
+  fragment AuthTokenFragment on AuthToken {
+    token
+    expiresAt
+  }
+`;
+export const AuthTokensFragmentFragmentDoc = gql`
+  fragment AuthTokensFragment on AuthTokenPair {
+    accessToken {
+      ...AuthTokenFragment
+    }
+    refreshToken {
+      ...AuthTokenFragment
+    }
+  }
+  ${AuthTokenFragmentFragmentDoc}
+`;
+export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
+  fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDPOutput {
+    id
+    issuer
+    name
+    status
     workspace {
       id
-      logo
       displayName
-      subdomain
     }
   }
-  userVars
-}
-    ${WorkspaceMemberQueryFragmentFragmentDoc}`;
-export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
-    query GetTimelineCalendarEventsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineCalendarEventsFromCompanyId(
-    companyId: $companyId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineCalendarEventsWithTotalFragment
+`;
+export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
+  fragment WorkspaceMemberQueryFragment on WorkspaceMember {
+    id
+    name {
+      firstName
+      lastName
+    }
+    colorScheme
+    avatarUrl
+    locale
+    timeZone
+    dateFormat
+    timeFormat
   }
-}
-    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+`;
+export const UserQueryFragmentFragmentDoc = gql`
+  fragment UserQueryFragment on User {
+    id
+    firstName
+    lastName
+    email
+    canImpersonate
+    supportUserHash
+    analyticsTinybirdJwts {
+      getWebhookAnalytics
+      getPageviewsAnalytics
+      getUsersAnalytics
+      getServerlessFunctionDuration
+      getServerlessFunctionSuccessRate
+      getServerlessFunctionErrorCount
+    }
+    onboardingStatus
+    workspaceMember {
+      ...WorkspaceMemberQueryFragment
+    }
+    workspaceMembers {
+      ...WorkspaceMemberQueryFragment
+    }
+    currentWorkspace {
+      id
+      displayName
+      logo
+      inviteHash
+      allowImpersonation
+      activationStatus
+      isPublicInviteLinkEnabled
+      isGoogleAuthEnabled
+      isMicrosoftAuthEnabled
+      isPasswordAuthEnabled
+      subdomain
+      creatorEmail
+      hasValidEnterpriseKey
+      hostname
+      featureFlags {
+        id
+        key
+        value
+        workspaceId
+      }
+      metadataVersion
+      currentBillingSubscription {
+        id
+        status
+        interval
+      }
+      billingSubscriptions {
+        id
+        status
+      }
+      workspaceMembersCount
+    }
+    workspaces {
+      workspace {
+        id
+        logo
+        displayName
+        subdomain
+      }
+    }
+    userVars
+  }
+  ${WorkspaceMemberQueryFragmentFragmentDoc}
+`;
+export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
+  query GetTimelineCalendarEventsFromCompanyId(
+    $companyId: UUID!
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    getTimelineCalendarEventsFromCompanyId(
+      companyId: $companyId
+      page: $page
+      pageSize: $pageSize
+    ) {
+      ...TimelineCalendarEventsWithTotalFragment
+    }
+  }
+  ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}
+`;
 
 /**
  * __useGetTimelineCalendarEventsFromCompanyIdQuery__
@@ -2497,28 +3402,56 @@ export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
  *   },
  * });
  */
-export function useGetTimelineCalendarEventsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
-      }
-export function useGetTimelineCalendarEventsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
-        }
-export type GetTimelineCalendarEventsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdQuery>;
-export type GetTimelineCalendarEventsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdLazyQuery>;
-export type GetTimelineCalendarEventsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>;
-export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
-    query GetTimelineCalendarEventsFromPersonId($personId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineCalendarEventsFromPersonId(
-    personId: $personId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineCalendarEventsWithTotalFragment
-  }
+export function useGetTimelineCalendarEventsFromCompanyIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTimelineCalendarEventsFromCompanyIdQuery,
+    GetTimelineCalendarEventsFromCompanyIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetTimelineCalendarEventsFromCompanyIdQuery,
+    GetTimelineCalendarEventsFromCompanyIdQueryVariables
+  >(GetTimelineCalendarEventsFromCompanyIdDocument, options);
 }
-    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+export function useGetTimelineCalendarEventsFromCompanyIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTimelineCalendarEventsFromCompanyIdQuery,
+    GetTimelineCalendarEventsFromCompanyIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetTimelineCalendarEventsFromCompanyIdQuery,
+    GetTimelineCalendarEventsFromCompanyIdQueryVariables
+  >(GetTimelineCalendarEventsFromCompanyIdDocument, options);
+}
+export type GetTimelineCalendarEventsFromCompanyIdQueryHookResult = ReturnType<
+  typeof useGetTimelineCalendarEventsFromCompanyIdQuery
+>;
+export type GetTimelineCalendarEventsFromCompanyIdLazyQueryHookResult =
+  ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdLazyQuery>;
+export type GetTimelineCalendarEventsFromCompanyIdQueryResult =
+  Apollo.QueryResult<
+    GetTimelineCalendarEventsFromCompanyIdQuery,
+    GetTimelineCalendarEventsFromCompanyIdQueryVariables
+  >;
+export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
+  query GetTimelineCalendarEventsFromPersonId(
+    $personId: UUID!
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    getTimelineCalendarEventsFromPersonId(
+      personId: $personId
+      page: $page
+      pageSize: $pageSize
+    ) {
+      ...TimelineCalendarEventsWithTotalFragment
+    }
+  }
+  ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}
+`;
 
 /**
  * __useGetTimelineCalendarEventsFromPersonIdQuery__
@@ -2538,28 +3471,56 @@ export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
  *   },
  * });
  */
-export function useGetTimelineCalendarEventsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
-      }
-export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
-        }
-export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdQuery>;
-export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
-export type GetTimelineCalendarEventsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>;
-export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineThreadsFromCompanyId(
-    companyId: $companyId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineThreadsWithTotalFragment
-  }
+export function useGetTimelineCalendarEventsFromPersonIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTimelineCalendarEventsFromPersonIdQuery,
+    GetTimelineCalendarEventsFromPersonIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetTimelineCalendarEventsFromPersonIdQuery,
+    GetTimelineCalendarEventsFromPersonIdQueryVariables
+  >(GetTimelineCalendarEventsFromPersonIdDocument, options);
 }
-    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
+export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTimelineCalendarEventsFromPersonIdQuery,
+    GetTimelineCalendarEventsFromPersonIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetTimelineCalendarEventsFromPersonIdQuery,
+    GetTimelineCalendarEventsFromPersonIdQueryVariables
+  >(GetTimelineCalendarEventsFromPersonIdDocument, options);
+}
+export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<
+  typeof useGetTimelineCalendarEventsFromPersonIdQuery
+>;
+export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult =
+  ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
+export type GetTimelineCalendarEventsFromPersonIdQueryResult =
+  Apollo.QueryResult<
+    GetTimelineCalendarEventsFromPersonIdQuery,
+    GetTimelineCalendarEventsFromPersonIdQueryVariables
+  >;
+export const GetTimelineThreadsFromCompanyIdDocument = gql`
+  query GetTimelineThreadsFromCompanyId(
+    $companyId: UUID!
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    getTimelineThreadsFromCompanyId(
+      companyId: $companyId
+      page: $page
+      pageSize: $pageSize
+    ) {
+      ...TimelineThreadsWithTotalFragment
+    }
+  }
+  ${TimelineThreadsWithTotalFragmentFragmentDoc}
+`;
 
 /**
  * __useGetTimelineThreadsFromCompanyIdQuery__
@@ -2579,28 +3540,56 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
  *   },
  * });
  */
-export function useGetTimelineThreadsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
-      }
-export function useGetTimelineThreadsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
-        }
-export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdQuery>;
-export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
-export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
-export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: UUID!, $page: Int!, $pageSize: Int!) {
-  getTimelineThreadsFromPersonId(
-    personId: $personId
-    page: $page
-    pageSize: $pageSize
-  ) {
-    ...TimelineThreadsWithTotalFragment
-  }
+export function useGetTimelineThreadsFromCompanyIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTimelineThreadsFromCompanyIdQuery,
+    GetTimelineThreadsFromCompanyIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetTimelineThreadsFromCompanyIdQuery,
+    GetTimelineThreadsFromCompanyIdQueryVariables
+  >(GetTimelineThreadsFromCompanyIdDocument, options);
 }
-    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
+export function useGetTimelineThreadsFromCompanyIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTimelineThreadsFromCompanyIdQuery,
+    GetTimelineThreadsFromCompanyIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetTimelineThreadsFromCompanyIdQuery,
+    GetTimelineThreadsFromCompanyIdQueryVariables
+  >(GetTimelineThreadsFromCompanyIdDocument, options);
+}
+export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<
+  typeof useGetTimelineThreadsFromCompanyIdQuery
+>;
+export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<
+  typeof useGetTimelineThreadsFromCompanyIdLazyQuery
+>;
+export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<
+  GetTimelineThreadsFromCompanyIdQuery,
+  GetTimelineThreadsFromCompanyIdQueryVariables
+>;
+export const GetTimelineThreadsFromPersonIdDocument = gql`
+  query GetTimelineThreadsFromPersonId(
+    $personId: UUID!
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    getTimelineThreadsFromPersonId(
+      personId: $personId
+      page: $page
+      pageSize: $pageSize
+    ) {
+      ...TimelineThreadsWithTotalFragment
+    }
+  }
+  ${TimelineThreadsWithTotalFragmentFragmentDoc}
+`;
 
 /**
  * __useGetTimelineThreadsFromPersonIdQuery__
@@ -2620,25 +3609,51 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
  *   },
  * });
  */
-export function useGetTimelineThreadsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
-      }
-export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
-        }
-export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
-export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
-export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const TrackDocument = gql`
-    mutation Track($action: String!, $payload: JSON!) {
-  track(action: $action, payload: $payload) {
-    success
-  }
+export function useGetTimelineThreadsFromPersonIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTimelineThreadsFromPersonIdQuery,
+    GetTimelineThreadsFromPersonIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetTimelineThreadsFromPersonIdQuery,
+    GetTimelineThreadsFromPersonIdQueryVariables
+  >(GetTimelineThreadsFromPersonIdDocument, options);
 }
-    `;
-export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
+export function useGetTimelineThreadsFromPersonIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTimelineThreadsFromPersonIdQuery,
+    GetTimelineThreadsFromPersonIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetTimelineThreadsFromPersonIdQuery,
+    GetTimelineThreadsFromPersonIdQueryVariables
+  >(GetTimelineThreadsFromPersonIdDocument, options);
+}
+export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<
+  typeof useGetTimelineThreadsFromPersonIdQuery
+>;
+export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<
+  typeof useGetTimelineThreadsFromPersonIdLazyQuery
+>;
+export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<
+  GetTimelineThreadsFromPersonIdQuery,
+  GetTimelineThreadsFromPersonIdQueryVariables
+>;
+export const TrackDocument = gql`
+  mutation Track($action: String!, $payload: JSON!) {
+    track(action: $action, payload: $payload) {
+      success
+    }
+  }
+`;
+export type TrackMutationFn = Apollo.MutationFunction<
+  TrackMutation,
+  TrackMutationVariables
+>;
 
 /**
  * __useTrackMutation__
@@ -2658,19 +3673,33 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  *   },
  * });
  */
-export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
-      }
+export function useTrackMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    TrackMutation,
+    TrackMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<TrackMutation, TrackMutationVariables>(
+    TrackDocument,
+    options,
+  );
+}
 export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
 export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
-export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
+export type TrackMutationOptions = Apollo.BaseMutationOptions<
+  TrackMutation,
+  TrackMutationVariables
+>;
 export const UploadFileDocument = gql`
-    mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
-  uploadFile(file: $file, fileFolder: $fileFolder)
-}
-    `;
-export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+  mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
+    uploadFile(file: $file, fileFolder: $fileFolder)
+  }
+`;
+export type UploadFileMutationFn = Apollo.MutationFunction<
+  UploadFileMutation,
+  UploadFileMutationVariables
+>;
 
 /**
  * __useUploadFileMutation__
@@ -2690,19 +3719,36 @@ export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, U
  *   },
  * });
  */
-export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
-      }
-export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
-export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
-export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
-export const UploadImageDocument = gql`
-    mutation uploadImage($file: Upload!, $fileFolder: FileFolder) {
-  uploadImage(file: $file, fileFolder: $fileFolder)
+export function useUploadFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadFileMutation,
+    UploadFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(
+    UploadFileDocument,
+    options,
+  );
 }
-    `;
-export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
+export type UploadFileMutationHookResult = ReturnType<
+  typeof useUploadFileMutation
+>;
+export type UploadFileMutationResult =
+  Apollo.MutationResult<UploadFileMutation>;
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<
+  UploadFileMutation,
+  UploadFileMutationVariables
+>;
+export const UploadImageDocument = gql`
+  mutation uploadImage($file: Upload!, $fileFolder: FileFolder) {
+    uploadImage(file: $file, fileFolder: $fileFolder)
+  }
+`;
+export type UploadImageMutationFn = Apollo.MutationFunction<
+  UploadImageMutation,
+  UploadImageMutationVariables
+>;
 
 /**
  * __useUploadImageMutation__
@@ -2722,25 +3768,46 @@ export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation,
  *   },
  * });
  */
-export function useUploadImageMutation(baseOptions?: Apollo.MutationHookOptions<UploadImageMutation, UploadImageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadImageMutation, UploadImageMutationVariables>(UploadImageDocument, options);
-      }
-export type UploadImageMutationHookResult = ReturnType<typeof useUploadImageMutation>;
-export type UploadImageMutationResult = Apollo.MutationResult<UploadImageMutation>;
-export type UploadImageMutationOptions = Apollo.BaseMutationOptions<UploadImageMutation, UploadImageMutationVariables>;
-export const AuthorizeAppDocument = gql`
-    mutation authorizeApp($clientId: String!, $codeChallenge: String!, $redirectUrl: String!) {
-  authorizeApp(
-    clientId: $clientId
-    codeChallenge: $codeChallenge
-    redirectUrl: $redirectUrl
-  ) {
-    redirectUrl
-  }
+export function useUploadImageMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadImageMutation,
+    UploadImageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UploadImageMutation, UploadImageMutationVariables>(
+    UploadImageDocument,
+    options,
+  );
 }
-    `;
-export type AuthorizeAppMutationFn = Apollo.MutationFunction<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
+export type UploadImageMutationHookResult = ReturnType<
+  typeof useUploadImageMutation
+>;
+export type UploadImageMutationResult =
+  Apollo.MutationResult<UploadImageMutation>;
+export type UploadImageMutationOptions = Apollo.BaseMutationOptions<
+  UploadImageMutation,
+  UploadImageMutationVariables
+>;
+export const AuthorizeAppDocument = gql`
+  mutation authorizeApp(
+    $clientId: String!
+    $codeChallenge: String!
+    $redirectUrl: String!
+  ) {
+    authorizeApp(
+      clientId: $clientId
+      codeChallenge: $codeChallenge
+      redirectUrl: $redirectUrl
+    ) {
+      redirectUrl
+    }
+  }
+`;
+export type AuthorizeAppMutationFn = Apollo.MutationFunction<
+  AuthorizeAppMutation,
+  AuthorizeAppMutationVariables
+>;
 
 /**
  * __useAuthorizeAppMutation__
@@ -2761,21 +3828,38 @@ export type AuthorizeAppMutationFn = Apollo.MutationFunction<AuthorizeAppMutatio
  *   },
  * });
  */
-export function useAuthorizeAppMutation(baseOptions?: Apollo.MutationHookOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AuthorizeAppMutation, AuthorizeAppMutationVariables>(AuthorizeAppDocument, options);
-      }
-export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMutation>;
-export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
-export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
-export const EmailPasswordResetLinkDocument = gql`
-    mutation EmailPasswordResetLink($email: String!) {
-  emailPasswordResetLink(email: $email) {
-    success
-  }
+export function useAuthorizeAppMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AuthorizeAppMutation,
+    AuthorizeAppMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    AuthorizeAppMutation,
+    AuthorizeAppMutationVariables
+  >(AuthorizeAppDocument, options);
 }
-    `;
-export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>;
+export type AuthorizeAppMutationHookResult = ReturnType<
+  typeof useAuthorizeAppMutation
+>;
+export type AuthorizeAppMutationResult =
+  Apollo.MutationResult<AuthorizeAppMutation>;
+export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<
+  AuthorizeAppMutation,
+  AuthorizeAppMutationVariables
+>;
+export const EmailPasswordResetLinkDocument = gql`
+  mutation EmailPasswordResetLink($email: String!) {
+    emailPasswordResetLink(email: $email) {
+      success
+    }
+  }
+`;
+export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<
+  EmailPasswordResetLinkMutation,
+  EmailPasswordResetLinkMutationVariables
+>;
 
 /**
  * __useEmailPasswordResetLinkMutation__
@@ -2794,21 +3878,38 @@ export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<EmailPass
  *   },
  * });
  */
-export function useEmailPasswordResetLinkMutation(baseOptions?: Apollo.MutationHookOptions<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>(EmailPasswordResetLinkDocument, options);
-      }
-export type EmailPasswordResetLinkMutationHookResult = ReturnType<typeof useEmailPasswordResetLinkMutation>;
-export type EmailPasswordResetLinkMutationResult = Apollo.MutationResult<EmailPasswordResetLinkMutation>;
-export type EmailPasswordResetLinkMutationOptions = Apollo.BaseMutationOptions<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>;
-export const GenerateApiKeyTokenDocument = gql`
-    mutation GenerateApiKeyToken($apiKeyId: String!, $expiresAt: String!) {
-  generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
-    token
-  }
+export function useEmailPasswordResetLinkMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EmailPasswordResetLinkMutation,
+    EmailPasswordResetLinkMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    EmailPasswordResetLinkMutation,
+    EmailPasswordResetLinkMutationVariables
+  >(EmailPasswordResetLinkDocument, options);
 }
-    `;
-export type GenerateApiKeyTokenMutationFn = Apollo.MutationFunction<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>;
+export type EmailPasswordResetLinkMutationHookResult = ReturnType<
+  typeof useEmailPasswordResetLinkMutation
+>;
+export type EmailPasswordResetLinkMutationResult =
+  Apollo.MutationResult<EmailPasswordResetLinkMutation>;
+export type EmailPasswordResetLinkMutationOptions = Apollo.BaseMutationOptions<
+  EmailPasswordResetLinkMutation,
+  EmailPasswordResetLinkMutationVariables
+>;
+export const GenerateApiKeyTokenDocument = gql`
+  mutation GenerateApiKeyToken($apiKeyId: String!, $expiresAt: String!) {
+    generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
+      token
+    }
+  }
+`;
+export type GenerateApiKeyTokenMutationFn = Apollo.MutationFunction<
+  GenerateApiKeyTokenMutation,
+  GenerateApiKeyTokenMutationVariables
+>;
 
 /**
  * __useGenerateApiKeyTokenMutation__
@@ -2828,23 +3929,40 @@ export type GenerateApiKeyTokenMutationFn = Apollo.MutationFunction<GenerateApiK
  *   },
  * });
  */
-export function useGenerateApiKeyTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>(GenerateApiKeyTokenDocument, options);
-      }
-export type GenerateApiKeyTokenMutationHookResult = ReturnType<typeof useGenerateApiKeyTokenMutation>;
-export type GenerateApiKeyTokenMutationResult = Apollo.MutationResult<GenerateApiKeyTokenMutation>;
-export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>;
+export function useGenerateApiKeyTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GenerateApiKeyTokenMutation,
+    GenerateApiKeyTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GenerateApiKeyTokenMutation,
+    GenerateApiKeyTokenMutationVariables
+  >(GenerateApiKeyTokenDocument, options);
+}
+export type GenerateApiKeyTokenMutationHookResult = ReturnType<
+  typeof useGenerateApiKeyTokenMutation
+>;
+export type GenerateApiKeyTokenMutationResult =
+  Apollo.MutationResult<GenerateApiKeyTokenMutation>;
+export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<
+  GenerateApiKeyTokenMutation,
+  GenerateApiKeyTokenMutationVariables
+>;
 export const GenerateTransientTokenDocument = gql`
-    mutation generateTransientToken {
-  generateTransientToken {
-    transientToken {
-      token
+  mutation generateTransientToken {
+    generateTransientToken {
+      transientToken {
+        token
+      }
     }
   }
-}
-    `;
-export type GenerateTransientTokenMutationFn = Apollo.MutationFunction<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+`;
+export type GenerateTransientTokenMutationFn = Apollo.MutationFunction<
+  GenerateTransientTokenMutation,
+  GenerateTransientTokenMutationVariables
+>;
 
 /**
  * __useGenerateTransientTokenMutation__
@@ -2862,23 +3980,41 @@ export type GenerateTransientTokenMutationFn = Apollo.MutationFunction<GenerateT
  *   },
  * });
  */
-export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>(GenerateTransientTokenDocument, options);
-      }
-export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
-export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
-export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+export function useGenerateTransientTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GenerateTransientTokenMutation,
+    GenerateTransientTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GenerateTransientTokenMutation,
+    GenerateTransientTokenMutationVariables
+  >(GenerateTransientTokenDocument, options);
+}
+export type GenerateTransientTokenMutationHookResult = ReturnType<
+  typeof useGenerateTransientTokenMutation
+>;
+export type GenerateTransientTokenMutationResult =
+  Apollo.MutationResult<GenerateTransientTokenMutation>;
+export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<
+  GenerateTransientTokenMutation,
+  GenerateTransientTokenMutationVariables
+>;
 export const GetAuthTokensFromLoginTokenDocument = gql`
-    mutation GetAuthTokensFromLoginToken($loginToken: String!) {
-  getAuthTokensFromLoginToken(loginToken: $loginToken) {
-    tokens {
-      ...AuthTokensFragment
+  mutation GetAuthTokensFromLoginToken($loginToken: String!) {
+    getAuthTokensFromLoginToken(loginToken: $loginToken) {
+      tokens {
+        ...AuthTokensFragment
+      }
     }
   }
-}
-    ${AuthTokensFragmentFragmentDoc}`;
-export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
+  ${AuthTokensFragmentFragmentDoc}
+`;
+export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<
+  GetAuthTokensFromLoginTokenMutation,
+  GetAuthTokensFromLoginTokenMutationVariables
+>;
 
 /**
  * __useGetAuthTokensFromLoginTokenMutation__
@@ -2897,23 +4033,41 @@ export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetA
  *   },
  * });
  */
-export function useGetAuthTokensFromLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>(GetAuthTokensFromLoginTokenDocument, options);
-      }
-export type GetAuthTokensFromLoginTokenMutationHookResult = ReturnType<typeof useGetAuthTokensFromLoginTokenMutation>;
-export type GetAuthTokensFromLoginTokenMutationResult = Apollo.MutationResult<GetAuthTokensFromLoginTokenMutation>;
-export type GetAuthTokensFromLoginTokenMutationOptions = Apollo.BaseMutationOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
-export const GetAuthorizationUrlDocument = gql`
-    mutation GetAuthorizationUrl($input: GetAuthorizationUrlInput!) {
-  getAuthorizationUrl(input: $input) {
-    id
-    type
-    authorizationURL
-  }
+export function useGetAuthTokensFromLoginTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GetAuthTokensFromLoginTokenMutation,
+    GetAuthTokensFromLoginTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GetAuthTokensFromLoginTokenMutation,
+    GetAuthTokensFromLoginTokenMutationVariables
+  >(GetAuthTokensFromLoginTokenDocument, options);
 }
-    `;
-export type GetAuthorizationUrlMutationFn = Apollo.MutationFunction<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export type GetAuthTokensFromLoginTokenMutationHookResult = ReturnType<
+  typeof useGetAuthTokensFromLoginTokenMutation
+>;
+export type GetAuthTokensFromLoginTokenMutationResult =
+  Apollo.MutationResult<GetAuthTokensFromLoginTokenMutation>;
+export type GetAuthTokensFromLoginTokenMutationOptions =
+  Apollo.BaseMutationOptions<
+    GetAuthTokensFromLoginTokenMutation,
+    GetAuthTokensFromLoginTokenMutationVariables
+  >;
+export const GetAuthorizationUrlDocument = gql`
+  mutation GetAuthorizationUrl($input: GetAuthorizationUrlInput!) {
+    getAuthorizationUrl(input: $input) {
+      id
+      type
+      authorizationURL
+    }
+  }
+`;
+export type GetAuthorizationUrlMutationFn = Apollo.MutationFunction<
+  GetAuthorizationUrlMutation,
+  GetAuthorizationUrlMutationVariables
+>;
 
 /**
  * __useGetAuthorizationUrlMutation__
@@ -2932,27 +4086,49 @@ export type GetAuthorizationUrlMutationFn = Apollo.MutationFunction<GetAuthoriza
  *   },
  * });
  */
-export function useGetAuthorizationUrlMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>(GetAuthorizationUrlDocument, options);
-      }
-export type GetAuthorizationUrlMutationHookResult = ReturnType<typeof useGetAuthorizationUrlMutation>;
-export type GetAuthorizationUrlMutationResult = Apollo.MutationResult<GetAuthorizationUrlMutation>;
-export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export function useGetAuthorizationUrlMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GetAuthorizationUrlMutation,
+    GetAuthorizationUrlMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GetAuthorizationUrlMutation,
+    GetAuthorizationUrlMutationVariables
+  >(GetAuthorizationUrlDocument, options);
+}
+export type GetAuthorizationUrlMutationHookResult = ReturnType<
+  typeof useGetAuthorizationUrlMutation
+>;
+export type GetAuthorizationUrlMutationResult =
+  Apollo.MutationResult<GetAuthorizationUrlMutation>;
+export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<
+  GetAuthorizationUrlMutation,
+  GetAuthorizationUrlMutationVariables
+>;
 export const GetLoginTokenFromCredentialsDocument = gql`
-    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
-  getLoginTokenFromCredentials(
-    email: $email
-    password: $password
-    captchaToken: $captchaToken
+  mutation GetLoginTokenFromCredentials(
+    $email: String!
+    $password: String!
+    $captchaToken: String
   ) {
-    loginToken {
-      ...AuthTokenFragment
+    getLoginTokenFromCredentials(
+      email: $email
+      password: $password
+      captchaToken: $captchaToken
+    ) {
+      loginToken {
+        ...AuthTokenFragment
+      }
     }
   }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
+  ${AuthTokenFragmentFragmentDoc}
+`;
+export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<
+  GetLoginTokenFromCredentialsMutation,
+  GetLoginTokenFromCredentialsMutationVariables
+>;
 
 /**
  * __useGetLoginTokenFromCredentialsMutation__
@@ -2973,26 +4149,49 @@ export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<Get
  *   },
  * });
  */
-export function useGetLoginTokenFromCredentialsMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>(GetLoginTokenFromCredentialsDocument, options);
-      }
-export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof useGetLoginTokenFromCredentialsMutation>;
-export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
-export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
+export function useGetLoginTokenFromCredentialsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GetLoginTokenFromCredentialsMutation,
+    GetLoginTokenFromCredentialsMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GetLoginTokenFromCredentialsMutation,
+    GetLoginTokenFromCredentialsMutationVariables
+  >(GetLoginTokenFromCredentialsDocument, options);
+}
+export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<
+  typeof useGetLoginTokenFromCredentialsMutation
+>;
+export type GetLoginTokenFromCredentialsMutationResult =
+  Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
+export type GetLoginTokenFromCredentialsMutationOptions =
+  Apollo.BaseMutationOptions<
+    GetLoginTokenFromCredentialsMutation,
+    GetLoginTokenFromCredentialsMutationVariables
+  >;
 export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
-  getLoginTokenFromEmailVerificationToken(
-    emailVerificationToken: $emailVerificationToken
-    captchaToken: $captchaToken
+  mutation GetLoginTokenFromEmailVerificationToken(
+    $emailVerificationToken: String!
+    $captchaToken: String
   ) {
-    loginToken {
-      ...AuthTokenFragment
+    getLoginTokenFromEmailVerificationToken(
+      emailVerificationToken: $emailVerificationToken
+      captchaToken: $captchaToken
+    ) {
+      loginToken {
+        ...AuthTokenFragment
+      }
     }
   }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
+  ${AuthTokenFragmentFragmentDoc}
+`;
+export type GetLoginTokenFromEmailVerificationTokenMutationFn =
+  Apollo.MutationFunction<
+    GetLoginTokenFromEmailVerificationTokenMutation,
+    GetLoginTokenFromEmailVerificationTokenMutationVariables
+  >;
 
 /**
  * __useGetLoginTokenFromEmailVerificationTokenMutation__
@@ -3012,27 +4211,45 @@ export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationF
  *   },
  * });
  */
-export function useGetLoginTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>(GetLoginTokenFromEmailVerificationTokenDocument, options);
-      }
-export type GetLoginTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
+export function useGetLoginTokenFromEmailVerificationTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GetLoginTokenFromEmailVerificationTokenMutation,
+    GetLoginTokenFromEmailVerificationTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GetLoginTokenFromEmailVerificationTokenMutation,
+    GetLoginTokenFromEmailVerificationTokenMutationVariables
+  >(GetLoginTokenFromEmailVerificationTokenDocument, options);
+}
+export type GetLoginTokenFromEmailVerificationTokenMutationHookResult =
+  ReturnType<typeof useGetLoginTokenFromEmailVerificationTokenMutation>;
+export type GetLoginTokenFromEmailVerificationTokenMutationResult =
+  Apollo.MutationResult<GetLoginTokenFromEmailVerificationTokenMutation>;
+export type GetLoginTokenFromEmailVerificationTokenMutationOptions =
+  Apollo.BaseMutationOptions<
+    GetLoginTokenFromEmailVerificationTokenMutation,
+    GetLoginTokenFromEmailVerificationTokenMutationVariables
+  >;
 export const ImpersonateDocument = gql`
-    mutation Impersonate($userId: String!, $workspaceId: String!) {
-  impersonate(userId: $userId, workspaceId: $workspaceId) {
-    workspace {
-      subdomain
-      id
-    }
-    loginToken {
-      ...AuthTokenFragment
+  mutation Impersonate($userId: String!, $workspaceId: String!) {
+    impersonate(userId: $userId, workspaceId: $workspaceId) {
+      workspace {
+        subdomain
+        id
+      }
+      loginToken {
+        ...AuthTokenFragment
+      }
     }
   }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export type ImpersonateMutationFn = Apollo.MutationFunction<ImpersonateMutation, ImpersonateMutationVariables>;
+  ${AuthTokenFragmentFragmentDoc}
+`;
+export type ImpersonateMutationFn = Apollo.MutationFunction<
+  ImpersonateMutation,
+  ImpersonateMutationVariables
+>;
 
 /**
  * __useImpersonateMutation__
@@ -3052,23 +4269,41 @@ export type ImpersonateMutationFn = Apollo.MutationFunction<ImpersonateMutation,
  *   },
  * });
  */
-export function useImpersonateMutation(baseOptions?: Apollo.MutationHookOptions<ImpersonateMutation, ImpersonateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ImpersonateMutation, ImpersonateMutationVariables>(ImpersonateDocument, options);
-      }
-export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMutation>;
-export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
-export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
+export function useImpersonateMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ImpersonateMutation,
+    ImpersonateMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<ImpersonateMutation, ImpersonateMutationVariables>(
+    ImpersonateDocument,
+    options,
+  );
+}
+export type ImpersonateMutationHookResult = ReturnType<
+  typeof useImpersonateMutation
+>;
+export type ImpersonateMutationResult =
+  Apollo.MutationResult<ImpersonateMutation>;
+export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<
+  ImpersonateMutation,
+  ImpersonateMutationVariables
+>;
 export const RenewTokenDocument = gql`
-    mutation RenewToken($appToken: String!) {
-  renewToken(appToken: $appToken) {
-    tokens {
-      ...AuthTokensFragment
+  mutation RenewToken($appToken: String!) {
+    renewToken(appToken: $appToken) {
+      tokens {
+        ...AuthTokensFragment
+      }
     }
   }
-}
-    ${AuthTokensFragmentFragmentDoc}`;
-export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, RenewTokenMutationVariables>;
+  ${AuthTokensFragmentFragmentDoc}
+`;
+export type RenewTokenMutationFn = Apollo.MutationFunction<
+  RenewTokenMutation,
+  RenewTokenMutationVariables
+>;
 
 /**
  * __useRenewTokenMutation__
@@ -3087,21 +4322,38 @@ export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, R
  *   },
  * });
  */
-export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<RenewTokenMutation, RenewTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(RenewTokenDocument, options);
-      }
-export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
-export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
-export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
-export const ResendEmailVerificationTokenDocument = gql`
-    mutation ResendEmailVerificationToken($email: String!) {
-  resendEmailVerificationToken(email: $email) {
-    success
-  }
+export function useRenewTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RenewTokenMutation,
+    RenewTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(
+    RenewTokenDocument,
+    options,
+  );
 }
-    `;
-export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
+export type RenewTokenMutationHookResult = ReturnType<
+  typeof useRenewTokenMutation
+>;
+export type RenewTokenMutationResult =
+  Apollo.MutationResult<RenewTokenMutation>;
+export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<
+  RenewTokenMutation,
+  RenewTokenMutationVariables
+>;
+export const ResendEmailVerificationTokenDocument = gql`
+  mutation ResendEmailVerificationToken($email: String!) {
+    resendEmailVerificationToken(email: $email) {
+      success
+    }
+  }
+`;
+export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<
+  ResendEmailVerificationTokenMutation,
+  ResendEmailVerificationTokenMutationVariables
+>;
 
 /**
  * __useResendEmailVerificationTokenMutation__
@@ -3120,34 +4372,60 @@ export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<Res
  *   },
  * });
  */
-export function useResendEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>(ResendEmailVerificationTokenDocument, options);
-      }
-export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof useResendEmailVerificationTokenMutation>;
-export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
-export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
+export function useResendEmailVerificationTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ResendEmailVerificationTokenMutation,
+    ResendEmailVerificationTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ResendEmailVerificationTokenMutation,
+    ResendEmailVerificationTokenMutationVariables
+  >(ResendEmailVerificationTokenDocument, options);
+}
+export type ResendEmailVerificationTokenMutationHookResult = ReturnType<
+  typeof useResendEmailVerificationTokenMutation
+>;
+export type ResendEmailVerificationTokenMutationResult =
+  Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
+export type ResendEmailVerificationTokenMutationOptions =
+  Apollo.BaseMutationOptions<
+    ResendEmailVerificationTokenMutation,
+    ResendEmailVerificationTokenMutationVariables
+  >;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String) {
-  signUp(
-    email: $email
-    password: $password
-    workspaceInviteHash: $workspaceInviteHash
-    workspacePersonalInviteToken: $workspacePersonalInviteToken
-    captchaToken: $captchaToken
-    workspaceId: $workspaceId
+  mutation SignUp(
+    $email: String!
+    $password: String!
+    $workspaceInviteHash: String
+    $workspacePersonalInviteToken: String = null
+    $captchaToken: String
+    $workspaceId: String
   ) {
-    loginToken {
-      ...AuthTokenFragment
-    }
-    workspace {
-      id
-      subdomain
+    signUp(
+      email: $email
+      password: $password
+      workspaceInviteHash: $workspaceInviteHash
+      workspacePersonalInviteToken: $workspacePersonalInviteToken
+      captchaToken: $captchaToken
+      workspaceId: $workspaceId
+    ) {
+      loginToken {
+        ...AuthTokenFragment
+      }
+      workspace {
+        id
+        subdomain
+      }
     }
   }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMutationVariables>;
+  ${AuthTokenFragmentFragmentDoc}
+`;
+export type SignUpMutationFn = Apollo.MutationFunction<
+  SignUpMutation,
+  SignUpMutationVariables
+>;
 
 /**
  * __useSignUpMutation__
@@ -3171,24 +4449,38 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *   },
  * });
  */
-export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignUpMutation, SignUpMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(SignUpDocument, options);
-      }
+export function useSignUpMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SignUpMutation,
+    SignUpMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(
+    SignUpDocument,
+    options,
+  );
+}
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
-export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export type SignUpMutationOptions = Apollo.BaseMutationOptions<
+  SignUpMutation,
+  SignUpMutationVariables
+>;
 export const UpdatePasswordViaResetTokenDocument = gql`
-    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
-  updatePasswordViaResetToken(
-    passwordResetToken: $token
-    newPassword: $newPassword
-  ) {
-    success
+  mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
+    updatePasswordViaResetToken(
+      passwordResetToken: $token
+      newPassword: $newPassword
+    ) {
+      success
+    }
   }
-}
-    `;
-export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
+`;
+export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<
+  UpdatePasswordViaResetTokenMutation,
+  UpdatePasswordViaResetTokenMutationVariables
+>;
 
 /**
  * __useUpdatePasswordViaResetTokenMutation__
@@ -3208,40 +4500,56 @@ export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<Upda
  *   },
  * });
  */
-export function useUpdatePasswordViaResetTokenMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>(UpdatePasswordViaResetTokenDocument, options);
-      }
-export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<typeof useUpdatePasswordViaResetTokenMutation>;
-export type UpdatePasswordViaResetTokenMutationResult = Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
-export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
+export function useUpdatePasswordViaResetTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdatePasswordViaResetTokenMutation,
+    UpdatePasswordViaResetTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdatePasswordViaResetTokenMutation,
+    UpdatePasswordViaResetTokenMutationVariables
+  >(UpdatePasswordViaResetTokenDocument, options);
+}
+export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<
+  typeof useUpdatePasswordViaResetTokenMutation
+>;
+export type UpdatePasswordViaResetTokenMutationResult =
+  Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
+export type UpdatePasswordViaResetTokenMutationOptions =
+  Apollo.BaseMutationOptions<
+    UpdatePasswordViaResetTokenMutation,
+    UpdatePasswordViaResetTokenMutationVariables
+  >;
 export const CheckUserExistsDocument = gql`
-    query CheckUserExists($email: String!, $captchaToken: String) {
-  checkUserExists(email: $email, captchaToken: $captchaToken) {
-    __typename
-    ... on UserExists {
-      exists
-      availableWorkspaces {
-        id
-        displayName
-        subdomain
-        logo
-        sso {
-          type
+  query CheckUserExists($email: String!, $captchaToken: String) {
+    checkUserExists(email: $email, captchaToken: $captchaToken) {
+      __typename
+      ... on UserExists {
+        exists
+        availableWorkspaces {
           id
-          issuer
-          name
-          status
+          displayName
+          subdomain
+          hostname
+          logo
+          sso {
+            type
+            id
+            issuer
+            name
+            status
+          }
         }
+        isEmailVerified
       }
-      isEmailVerified
-    }
-    ... on UserNotExists {
-      exists
+      ... on UserNotExists {
+        exists
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useCheckUserExistsQuery__
@@ -3260,40 +4568,64 @@ export const CheckUserExistsDocument = gql`
  *   },
  * });
  */
-export function useCheckUserExistsQuery(baseOptions: Apollo.QueryHookOptions<CheckUserExistsQuery, CheckUserExistsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CheckUserExistsQuery, CheckUserExistsQueryVariables>(CheckUserExistsDocument, options);
-      }
-export function useCheckUserExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckUserExistsQuery, CheckUserExistsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CheckUserExistsQuery, CheckUserExistsQueryVariables>(CheckUserExistsDocument, options);
-        }
-export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExistsQuery>;
-export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
-export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
+export function useCheckUserExistsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CheckUserExistsQuery,
+    CheckUserExistsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<CheckUserExistsQuery, CheckUserExistsQueryVariables>(
+    CheckUserExistsDocument,
+    options,
+  );
+}
+export function useCheckUserExistsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CheckUserExistsQuery,
+    CheckUserExistsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    CheckUserExistsQuery,
+    CheckUserExistsQueryVariables
+  >(CheckUserExistsDocument, options);
+}
+export type CheckUserExistsQueryHookResult = ReturnType<
+  typeof useCheckUserExistsQuery
+>;
+export type CheckUserExistsLazyQueryHookResult = ReturnType<
+  typeof useCheckUserExistsLazyQuery
+>;
+export type CheckUserExistsQueryResult = Apollo.QueryResult<
+  CheckUserExistsQuery,
+  CheckUserExistsQueryVariables
+>;
 export const GetPublicWorkspaceDataBySubdomainDocument = gql`
-    query GetPublicWorkspaceDataBySubdomain {
-  getPublicWorkspaceDataBySubdomain {
-    id
-    logo
-    displayName
-    subdomain
-    authProviders {
-      sso {
-        id
-        name
-        type
-        status
-        issuer
+  query GetPublicWorkspaceDataBySubdomain {
+    getPublicWorkspaceDataBySubdomain {
+      id
+      logo
+      displayName
+      subdomain
+      hostname
+      authProviders {
+        sso {
+          id
+          name
+          type
+          status
+          issuer
+        }
+        google
+        magicLink
+        password
+        microsoft
       }
-      google
-      magicLink
-      password
-      microsoft
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetPublicWorkspaceDataBySubdomainQuery__
@@ -3310,25 +4642,48 @@ export const GetPublicWorkspaceDataBySubdomainDocument = gql`
  *   },
  * });
  */
-export function useGetPublicWorkspaceDataBySubdomainQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicWorkspaceDataBySubdomainQuery, GetPublicWorkspaceDataBySubdomainQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPublicWorkspaceDataBySubdomainQuery, GetPublicWorkspaceDataBySubdomainQueryVariables>(GetPublicWorkspaceDataBySubdomainDocument, options);
-      }
-export function useGetPublicWorkspaceDataBySubdomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicWorkspaceDataBySubdomainQuery, GetPublicWorkspaceDataBySubdomainQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPublicWorkspaceDataBySubdomainQuery, GetPublicWorkspaceDataBySubdomainQueryVariables>(GetPublicWorkspaceDataBySubdomainDocument, options);
-        }
-export type GetPublicWorkspaceDataBySubdomainQueryHookResult = ReturnType<typeof useGetPublicWorkspaceDataBySubdomainQuery>;
-export type GetPublicWorkspaceDataBySubdomainLazyQueryHookResult = ReturnType<typeof useGetPublicWorkspaceDataBySubdomainLazyQuery>;
-export type GetPublicWorkspaceDataBySubdomainQueryResult = Apollo.QueryResult<GetPublicWorkspaceDataBySubdomainQuery, GetPublicWorkspaceDataBySubdomainQueryVariables>;
-export const ValidatePasswordResetTokenDocument = gql`
-    query ValidatePasswordResetToken($token: String!) {
-  validatePasswordResetToken(passwordResetToken: $token) {
-    id
-    email
-  }
+export function useGetPublicWorkspaceDataBySubdomainQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetPublicWorkspaceDataBySubdomainQuery,
+    GetPublicWorkspaceDataBySubdomainQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetPublicWorkspaceDataBySubdomainQuery,
+    GetPublicWorkspaceDataBySubdomainQueryVariables
+  >(GetPublicWorkspaceDataBySubdomainDocument, options);
 }
-    `;
+export function useGetPublicWorkspaceDataBySubdomainLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPublicWorkspaceDataBySubdomainQuery,
+    GetPublicWorkspaceDataBySubdomainQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetPublicWorkspaceDataBySubdomainQuery,
+    GetPublicWorkspaceDataBySubdomainQueryVariables
+  >(GetPublicWorkspaceDataBySubdomainDocument, options);
+}
+export type GetPublicWorkspaceDataBySubdomainQueryHookResult = ReturnType<
+  typeof useGetPublicWorkspaceDataBySubdomainQuery
+>;
+export type GetPublicWorkspaceDataBySubdomainLazyQueryHookResult = ReturnType<
+  typeof useGetPublicWorkspaceDataBySubdomainLazyQuery
+>;
+export type GetPublicWorkspaceDataBySubdomainQueryResult = Apollo.QueryResult<
+  GetPublicWorkspaceDataBySubdomainQuery,
+  GetPublicWorkspaceDataBySubdomainQueryVariables
+>;
+export const ValidatePasswordResetTokenDocument = gql`
+  query ValidatePasswordResetToken($token: String!) {
+    validatePasswordResetToken(passwordResetToken: $token) {
+      id
+      email
+    }
+  }
+`;
 
 /**
  * __useValidatePasswordResetTokenQuery__
@@ -3346,24 +4701,47 @@ export const ValidatePasswordResetTokenDocument = gql`
  *   },
  * });
  */
-export function useValidatePasswordResetTokenQuery(baseOptions: Apollo.QueryHookOptions<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>(ValidatePasswordResetTokenDocument, options);
-      }
-export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>(ValidatePasswordResetTokenDocument, options);
-        }
-export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
-export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
-export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
-export const BillingPortalSessionDocument = gql`
-    query BillingPortalSession($returnUrlPath: String) {
-  billingPortalSession(returnUrlPath: $returnUrlPath) {
-    url
-  }
+export function useValidatePasswordResetTokenQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ValidatePasswordResetTokenQuery,
+    ValidatePasswordResetTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    ValidatePasswordResetTokenQuery,
+    ValidatePasswordResetTokenQueryVariables
+  >(ValidatePasswordResetTokenDocument, options);
 }
-    `;
+export function useValidatePasswordResetTokenLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ValidatePasswordResetTokenQuery,
+    ValidatePasswordResetTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    ValidatePasswordResetTokenQuery,
+    ValidatePasswordResetTokenQueryVariables
+  >(ValidatePasswordResetTokenDocument, options);
+}
+export type ValidatePasswordResetTokenQueryHookResult = ReturnType<
+  typeof useValidatePasswordResetTokenQuery
+>;
+export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<
+  typeof useValidatePasswordResetTokenLazyQuery
+>;
+export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<
+  ValidatePasswordResetTokenQuery,
+  ValidatePasswordResetTokenQueryVariables
+>;
+export const BillingPortalSessionDocument = gql`
+  query BillingPortalSession($returnUrlPath: String) {
+    billingPortalSession(returnUrlPath: $returnUrlPath) {
+      url
+    }
+  }
+`;
 
 /**
  * __useBillingPortalSessionQuery__
@@ -3381,30 +4759,61 @@ export const BillingPortalSessionDocument = gql`
  *   },
  * });
  */
-export function useBillingPortalSessionQuery(baseOptions?: Apollo.QueryHookOptions<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>(BillingPortalSessionDocument, options);
-      }
-export function useBillingPortalSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>(BillingPortalSessionDocument, options);
-        }
-export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPortalSessionQuery>;
-export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
-export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
-export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!) {
-  checkoutSession(
-    recurringInterval: $recurringInterval
-    successUrlPath: $successUrlPath
-    plan: $plan
-    requirePaymentMethod: $requirePaymentMethod
-  ) {
-    url
-  }
+export function useBillingPortalSessionQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    BillingPortalSessionQuery,
+    BillingPortalSessionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    BillingPortalSessionQuery,
+    BillingPortalSessionQueryVariables
+  >(BillingPortalSessionDocument, options);
 }
-    `;
-export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
+export function useBillingPortalSessionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    BillingPortalSessionQuery,
+    BillingPortalSessionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    BillingPortalSessionQuery,
+    BillingPortalSessionQueryVariables
+  >(BillingPortalSessionDocument, options);
+}
+export type BillingPortalSessionQueryHookResult = ReturnType<
+  typeof useBillingPortalSessionQuery
+>;
+export type BillingPortalSessionLazyQueryHookResult = ReturnType<
+  typeof useBillingPortalSessionLazyQuery
+>;
+export type BillingPortalSessionQueryResult = Apollo.QueryResult<
+  BillingPortalSessionQuery,
+  BillingPortalSessionQueryVariables
+>;
+export const CheckoutSessionDocument = gql`
+  mutation CheckoutSession(
+    $recurringInterval: SubscriptionInterval!
+    $successUrlPath: String
+    $plan: BillingPlanKey!
+    $requirePaymentMethod: Boolean!
+  ) {
+    checkoutSession(
+      recurringInterval: $recurringInterval
+      successUrlPath: $successUrlPath
+      plan: $plan
+      requirePaymentMethod: $requirePaymentMethod
+    ) {
+      url
+    }
+  }
+`;
+export type CheckoutSessionMutationFn = Apollo.MutationFunction<
+  CheckoutSessionMutation,
+  CheckoutSessionMutationVariables
+>;
 
 /**
  * __useCheckoutSessionMutation__
@@ -3426,25 +4835,39 @@ export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionM
  *   },
  * });
  */
-export function useCheckoutSessionMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CheckoutSessionMutation, CheckoutSessionMutationVariables>(CheckoutSessionDocument, options);
-      }
-export type CheckoutSessionMutationHookResult = ReturnType<typeof useCheckoutSessionMutation>;
-export type CheckoutSessionMutationResult = Apollo.MutationResult<CheckoutSessionMutation>;
-export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
+export function useCheckoutSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CheckoutSessionMutation,
+    CheckoutSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CheckoutSessionMutation,
+    CheckoutSessionMutationVariables
+  >(CheckoutSessionDocument, options);
+}
+export type CheckoutSessionMutationHookResult = ReturnType<
+  typeof useCheckoutSessionMutation
+>;
+export type CheckoutSessionMutationResult =
+  Apollo.MutationResult<CheckoutSessionMutation>;
+export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<
+  CheckoutSessionMutation,
+  CheckoutSessionMutationVariables
+>;
 export const GetProductPricesDocument = gql`
-    query GetProductPrices($product: String!) {
-  getProductPrices(product: $product) {
-    productPrices {
-      created
-      recurringInterval
-      stripePriceId
-      unitAmount
+  query GetProductPrices($product: String!) {
+    getProductPrices(product: $product) {
+      productPrices {
+        created
+        recurringInterval
+        stripePriceId
+        unitAmount
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetProductPricesQuery__
@@ -3462,25 +4885,51 @@ export const GetProductPricesDocument = gql`
  *   },
  * });
  */
-export function useGetProductPricesQuery(baseOptions: Apollo.QueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
-      }
-export function useGetProductPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
-        }
-export type GetProductPricesQueryHookResult = ReturnType<typeof useGetProductPricesQuery>;
-export type GetProductPricesLazyQueryHookResult = ReturnType<typeof useGetProductPricesLazyQuery>;
-export type GetProductPricesQueryResult = Apollo.QueryResult<GetProductPricesQuery, GetProductPricesQueryVariables>;
-export const UpdateBillingSubscriptionDocument = gql`
-    mutation UpdateBillingSubscription {
-  updateBillingSubscription {
-    success
-  }
+export function useGetProductPricesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetProductPricesQuery,
+    GetProductPricesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(
+    GetProductPricesDocument,
+    options,
+  );
 }
-    `;
-export type UpdateBillingSubscriptionMutationFn = Apollo.MutationFunction<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>;
+export function useGetProductPricesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetProductPricesQuery,
+    GetProductPricesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetProductPricesQuery,
+    GetProductPricesQueryVariables
+  >(GetProductPricesDocument, options);
+}
+export type GetProductPricesQueryHookResult = ReturnType<
+  typeof useGetProductPricesQuery
+>;
+export type GetProductPricesLazyQueryHookResult = ReturnType<
+  typeof useGetProductPricesLazyQuery
+>;
+export type GetProductPricesQueryResult = Apollo.QueryResult<
+  GetProductPricesQuery,
+  GetProductPricesQueryVariables
+>;
+export const UpdateBillingSubscriptionDocument = gql`
+  mutation UpdateBillingSubscription {
+    updateBillingSubscription {
+      success
+    }
+  }
+`;
+export type UpdateBillingSubscriptionMutationFn = Apollo.MutationFunction<
+  UpdateBillingSubscriptionMutation,
+  UpdateBillingSubscriptionMutationVariables
+>;
 
 /**
  * __useUpdateBillingSubscriptionMutation__
@@ -3498,72 +4947,87 @@ export type UpdateBillingSubscriptionMutationFn = Apollo.MutationFunction<Update
  *   },
  * });
  */
-export function useUpdateBillingSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>(UpdateBillingSubscriptionDocument, options);
-      }
-export type UpdateBillingSubscriptionMutationHookResult = ReturnType<typeof useUpdateBillingSubscriptionMutation>;
-export type UpdateBillingSubscriptionMutationResult = Apollo.MutationResult<UpdateBillingSubscriptionMutation>;
-export type UpdateBillingSubscriptionMutationOptions = Apollo.BaseMutationOptions<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>;
+export function useUpdateBillingSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateBillingSubscriptionMutation,
+    UpdateBillingSubscriptionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateBillingSubscriptionMutation,
+    UpdateBillingSubscriptionMutationVariables
+  >(UpdateBillingSubscriptionDocument, options);
+}
+export type UpdateBillingSubscriptionMutationHookResult = ReturnType<
+  typeof useUpdateBillingSubscriptionMutation
+>;
+export type UpdateBillingSubscriptionMutationResult =
+  Apollo.MutationResult<UpdateBillingSubscriptionMutation>;
+export type UpdateBillingSubscriptionMutationOptions =
+  Apollo.BaseMutationOptions<
+    UpdateBillingSubscriptionMutation,
+    UpdateBillingSubscriptionMutationVariables
+  >;
 export const GetClientConfigDocument = gql`
-    query GetClientConfig {
-  clientConfig {
-    billing {
-      isBillingEnabled
-      billingUrl
-      trialPeriods {
-        duration
-        isCreditCardRequired
+  query GetClientConfig {
+    clientConfig {
+      billing {
+        isBillingEnabled
+        billingUrl
+        trialPeriods {
+          duration
+          isCreditCardRequired
+        }
       }
-    }
-    authProviders {
-      google
-      password
-      microsoft
-      sso {
-        id
-        name
-        type
-        status
-        issuer
+      authProviders {
+        google
+        password
+        microsoft
+        sso {
+          id
+          name
+          type
+          status
+          issuer
+        }
       }
-    }
-    signInPrefilled
-    isMultiWorkspaceEnabled
-    isEmailVerificationRequired
-    defaultSubdomain
-    frontDomain
-    debugMode
-    analyticsEnabled
-    support {
-      supportDriver
-      supportFrontChatId
-    }
-    sentry {
-      dsn
-      environment
-      release
-    }
-    captcha {
-      provider
-      siteKey
-    }
-    api {
-      mutationMaximumAffectedRecords
-    }
-    chromeExtensionId
-    canManageFeatureFlags
-    publicFeatureFlags {
-      key
-      metadata {
-        label
-        description
-        imagePath
+      signInPrefilled
+      isMultiWorkspaceEnabled
+      isEmailVerificationRequired
+      defaultSubdomain
+      frontDomain
+      debugMode
+      analyticsEnabled
+      support {
+        supportDriver
+        supportFrontChatId
+      }
+      sentry {
+        dsn
+        environment
+        release
+      }
+      captcha {
+        provider
+        siteKey
+      }
+      api {
+        mutationMaximumAffectedRecords
+      }
+      chromeExtensionId
+      canManageFeatureFlags
+      publicFeatureFlags {
+        key
+        metadata {
+          label
+          description
+          imagePath
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetClientConfigQuery__
@@ -3580,25 +5044,51 @@ export const GetClientConfigDocument = gql`
  *   },
  * });
  */
-export function useGetClientConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-      }
-export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-        }
-export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
-export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
-export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
-export const SkipSyncEmailOnboardingStepDocument = gql`
-    mutation SkipSyncEmailOnboardingStep {
-  skipSyncEmailOnboardingStep {
-    success
-  }
+export function useGetClientConfigQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(
+    GetClientConfigDocument,
+    options,
+  );
 }
-    `;
-export type SkipSyncEmailOnboardingStepMutationFn = Apollo.MutationFunction<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
+export function useGetClientConfigLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >(GetClientConfigDocument, options);
+}
+export type GetClientConfigQueryHookResult = ReturnType<
+  typeof useGetClientConfigQuery
+>;
+export type GetClientConfigLazyQueryHookResult = ReturnType<
+  typeof useGetClientConfigLazyQuery
+>;
+export type GetClientConfigQueryResult = Apollo.QueryResult<
+  GetClientConfigQuery,
+  GetClientConfigQueryVariables
+>;
+export const SkipSyncEmailOnboardingStepDocument = gql`
+  mutation SkipSyncEmailOnboardingStep {
+    skipSyncEmailOnboardingStep {
+      success
+    }
+  }
+`;
+export type SkipSyncEmailOnboardingStepMutationFn = Apollo.MutationFunction<
+  SkipSyncEmailOnboardingStepMutation,
+  SkipSyncEmailOnboardingStepMutationVariables
+>;
 
 /**
  * __useSkipSyncEmailOnboardingStepMutation__
@@ -3616,23 +5106,45 @@ export type SkipSyncEmailOnboardingStepMutationFn = Apollo.MutationFunction<Skip
  *   },
  * });
  */
-export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.MutationHookOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>(SkipSyncEmailOnboardingStepDocument, options);
-      }
-export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
-export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
-export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
-export const UpdateWorkspaceFeatureFlagDocument = gql`
-    mutation UpdateWorkspaceFeatureFlag($workspaceId: String!, $featureFlag: String!, $value: Boolean!) {
-  updateWorkspaceFeatureFlag(
-    workspaceId: $workspaceId
-    featureFlag: $featureFlag
-    value: $value
-  )
+export function useSkipSyncEmailOnboardingStepMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SkipSyncEmailOnboardingStepMutation,
+    SkipSyncEmailOnboardingStepMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SkipSyncEmailOnboardingStepMutation,
+    SkipSyncEmailOnboardingStepMutationVariables
+  >(SkipSyncEmailOnboardingStepDocument, options);
 }
-    `;
-export type UpdateWorkspaceFeatureFlagMutationFn = Apollo.MutationFunction<UpdateWorkspaceFeatureFlagMutation, UpdateWorkspaceFeatureFlagMutationVariables>;
+export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<
+  typeof useSkipSyncEmailOnboardingStepMutation
+>;
+export type SkipSyncEmailOnboardingStepMutationResult =
+  Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
+export type SkipSyncEmailOnboardingStepMutationOptions =
+  Apollo.BaseMutationOptions<
+    SkipSyncEmailOnboardingStepMutation,
+    SkipSyncEmailOnboardingStepMutationVariables
+  >;
+export const UpdateWorkspaceFeatureFlagDocument = gql`
+  mutation UpdateWorkspaceFeatureFlag(
+    $workspaceId: String!
+    $featureFlag: String!
+    $value: Boolean!
+  ) {
+    updateWorkspaceFeatureFlag(
+      workspaceId: $workspaceId
+      featureFlag: $featureFlag
+      value: $value
+    )
+  }
+`;
+export type UpdateWorkspaceFeatureFlagMutationFn = Apollo.MutationFunction<
+  UpdateWorkspaceFeatureFlagMutation,
+  UpdateWorkspaceFeatureFlagMutationVariables
+>;
 
 /**
  * __useUpdateWorkspaceFeatureFlagMutation__
@@ -3653,43 +5165,61 @@ export type UpdateWorkspaceFeatureFlagMutationFn = Apollo.MutationFunction<Updat
  *   },
  * });
  */
-export function useUpdateWorkspaceFeatureFlagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceFeatureFlagMutation, UpdateWorkspaceFeatureFlagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkspaceFeatureFlagMutation, UpdateWorkspaceFeatureFlagMutationVariables>(UpdateWorkspaceFeatureFlagDocument, options);
-      }
-export type UpdateWorkspaceFeatureFlagMutationHookResult = ReturnType<typeof useUpdateWorkspaceFeatureFlagMutation>;
-export type UpdateWorkspaceFeatureFlagMutationResult = Apollo.MutationResult<UpdateWorkspaceFeatureFlagMutation>;
-export type UpdateWorkspaceFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceFeatureFlagMutation, UpdateWorkspaceFeatureFlagMutationVariables>;
+export function useUpdateWorkspaceFeatureFlagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateWorkspaceFeatureFlagMutation,
+    UpdateWorkspaceFeatureFlagMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateWorkspaceFeatureFlagMutation,
+    UpdateWorkspaceFeatureFlagMutationVariables
+  >(UpdateWorkspaceFeatureFlagDocument, options);
+}
+export type UpdateWorkspaceFeatureFlagMutationHookResult = ReturnType<
+  typeof useUpdateWorkspaceFeatureFlagMutation
+>;
+export type UpdateWorkspaceFeatureFlagMutationResult =
+  Apollo.MutationResult<UpdateWorkspaceFeatureFlagMutation>;
+export type UpdateWorkspaceFeatureFlagMutationOptions =
+  Apollo.BaseMutationOptions<
+    UpdateWorkspaceFeatureFlagMutation,
+    UpdateWorkspaceFeatureFlagMutationVariables
+  >;
 export const UserLookupAdminPanelDocument = gql`
-    mutation UserLookupAdminPanel($userIdentifier: String!) {
-  userLookupAdminPanel(userIdentifier: $userIdentifier) {
-    user {
-      id
-      email
-      firstName
-      lastName
-    }
-    workspaces {
-      id
-      name
-      logo
-      totalUsers
-      allowImpersonation
-      users {
+  mutation UserLookupAdminPanel($userIdentifier: String!) {
+    userLookupAdminPanel(userIdentifier: $userIdentifier) {
+      user {
         id
         email
         firstName
         lastName
       }
-      featureFlags {
-        key
-        value
+      workspaces {
+        id
+        name
+        logo
+        totalUsers
+        allowImpersonation
+        users {
+          id
+          email
+          firstName
+          lastName
+        }
+        featureFlags {
+          key
+          value
+        }
       }
     }
   }
-}
-    `;
-export type UserLookupAdminPanelMutationFn = Apollo.MutationFunction<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
+`;
+export type UserLookupAdminPanelMutationFn = Apollo.MutationFunction<
+  UserLookupAdminPanelMutation,
+  UserLookupAdminPanelMutationVariables
+>;
 
 /**
  * __useUserLookupAdminPanelMutation__
@@ -3708,19 +5238,38 @@ export type UserLookupAdminPanelMutationFn = Apollo.MutationFunction<UserLookupA
  *   },
  * });
  */
-export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHookOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>(UserLookupAdminPanelDocument, options);
-      }
-export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
-export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
-export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
-export const UpdateLabPublicFeatureFlagDocument = gql`
-    mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
-  updateLabPublicFeatureFlag(input: $input)
+export function useUserLookupAdminPanelMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UserLookupAdminPanelMutation,
+    UserLookupAdminPanelMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UserLookupAdminPanelMutation,
+    UserLookupAdminPanelMutationVariables
+  >(UserLookupAdminPanelDocument, options);
 }
-    `;
-export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export type UserLookupAdminPanelMutationHookResult = ReturnType<
+  typeof useUserLookupAdminPanelMutation
+>;
+export type UserLookupAdminPanelMutationResult =
+  Apollo.MutationResult<UserLookupAdminPanelMutation>;
+export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<
+  UserLookupAdminPanelMutation,
+  UserLookupAdminPanelMutationVariables
+>;
+export const UpdateLabPublicFeatureFlagDocument = gql`
+  mutation UpdateLabPublicFeatureFlag(
+    $input: UpdateLabPublicFeatureFlagInput!
+  ) {
+    updateLabPublicFeatureFlag(input: $input)
+  }
+`;
+export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<
+  UpdateLabPublicFeatureFlagMutation,
+  UpdateLabPublicFeatureFlagMutationVariables
+>;
 
 /**
  * __useUpdateLabPublicFeatureFlagMutation__
@@ -3739,25 +5288,43 @@ export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<Updat
  *   },
  * });
  */
-export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>(UpdateLabPublicFeatureFlagDocument, options);
-      }
-export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
-export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
-export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
-export const CreateOidcIdentityProviderDocument = gql`
-    mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
-  createOIDCIdentityProvider(input: $input) {
-    id
-    type
-    issuer
-    name
-    status
-  }
+export function useUpdateLabPublicFeatureFlagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateLabPublicFeatureFlagMutation,
+    UpdateLabPublicFeatureFlagMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateLabPublicFeatureFlagMutation,
+    UpdateLabPublicFeatureFlagMutationVariables
+  >(UpdateLabPublicFeatureFlagDocument, options);
 }
-    `;
-export type CreateOidcIdentityProviderMutationFn = Apollo.MutationFunction<CreateOidcIdentityProviderMutation, CreateOidcIdentityProviderMutationVariables>;
+export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<
+  typeof useUpdateLabPublicFeatureFlagMutation
+>;
+export type UpdateLabPublicFeatureFlagMutationResult =
+  Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
+export type UpdateLabPublicFeatureFlagMutationOptions =
+  Apollo.BaseMutationOptions<
+    UpdateLabPublicFeatureFlagMutation,
+    UpdateLabPublicFeatureFlagMutationVariables
+  >;
+export const CreateOidcIdentityProviderDocument = gql`
+  mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
+    createOIDCIdentityProvider(input: $input) {
+      id
+      type
+      issuer
+      name
+      status
+    }
+  }
+`;
+export type CreateOidcIdentityProviderMutationFn = Apollo.MutationFunction<
+  CreateOidcIdentityProviderMutation,
+  CreateOidcIdentityProviderMutationVariables
+>;
 
 /**
  * __useCreateOidcIdentityProviderMutation__
@@ -3776,25 +5343,43 @@ export type CreateOidcIdentityProviderMutationFn = Apollo.MutationFunction<Creat
  *   },
  * });
  */
-export function useCreateOidcIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<CreateOidcIdentityProviderMutation, CreateOidcIdentityProviderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOidcIdentityProviderMutation, CreateOidcIdentityProviderMutationVariables>(CreateOidcIdentityProviderDocument, options);
-      }
-export type CreateOidcIdentityProviderMutationHookResult = ReturnType<typeof useCreateOidcIdentityProviderMutation>;
-export type CreateOidcIdentityProviderMutationResult = Apollo.MutationResult<CreateOidcIdentityProviderMutation>;
-export type CreateOidcIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateOidcIdentityProviderMutation, CreateOidcIdentityProviderMutationVariables>;
-export const CreateSamlIdentityProviderDocument = gql`
-    mutation CreateSAMLIdentityProvider($input: SetupSAMLSsoInput!) {
-  createSAMLIdentityProvider(input: $input) {
-    id
-    type
-    issuer
-    name
-    status
-  }
+export function useCreateOidcIdentityProviderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateOidcIdentityProviderMutation,
+    CreateOidcIdentityProviderMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateOidcIdentityProviderMutation,
+    CreateOidcIdentityProviderMutationVariables
+  >(CreateOidcIdentityProviderDocument, options);
 }
-    `;
-export type CreateSamlIdentityProviderMutationFn = Apollo.MutationFunction<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
+export type CreateOidcIdentityProviderMutationHookResult = ReturnType<
+  typeof useCreateOidcIdentityProviderMutation
+>;
+export type CreateOidcIdentityProviderMutationResult =
+  Apollo.MutationResult<CreateOidcIdentityProviderMutation>;
+export type CreateOidcIdentityProviderMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateOidcIdentityProviderMutation,
+    CreateOidcIdentityProviderMutationVariables
+  >;
+export const CreateSamlIdentityProviderDocument = gql`
+  mutation CreateSAMLIdentityProvider($input: SetupSAMLSsoInput!) {
+    createSAMLIdentityProvider(input: $input) {
+      id
+      type
+      issuer
+      name
+      status
+    }
+  }
+`;
+export type CreateSamlIdentityProviderMutationFn = Apollo.MutationFunction<
+  CreateSamlIdentityProviderMutation,
+  CreateSamlIdentityProviderMutationVariables
+>;
 
 /**
  * __useCreateSamlIdentityProviderMutation__
@@ -3813,21 +5398,39 @@ export type CreateSamlIdentityProviderMutationFn = Apollo.MutationFunction<Creat
  *   },
  * });
  */
-export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>(CreateSamlIdentityProviderDocument, options);
-      }
-export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
-export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
-export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
-export const DeleteSsoIdentityProviderDocument = gql`
-    mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
-  deleteSSOIdentityProvider(input: $input) {
-    identityProviderId
-  }
+export function useCreateSamlIdentityProviderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateSamlIdentityProviderMutation,
+    CreateSamlIdentityProviderMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateSamlIdentityProviderMutation,
+    CreateSamlIdentityProviderMutationVariables
+  >(CreateSamlIdentityProviderDocument, options);
 }
-    `;
-export type DeleteSsoIdentityProviderMutationFn = Apollo.MutationFunction<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
+export type CreateSamlIdentityProviderMutationHookResult = ReturnType<
+  typeof useCreateSamlIdentityProviderMutation
+>;
+export type CreateSamlIdentityProviderMutationResult =
+  Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
+export type CreateSamlIdentityProviderMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateSamlIdentityProviderMutation,
+    CreateSamlIdentityProviderMutationVariables
+  >;
+export const DeleteSsoIdentityProviderDocument = gql`
+  mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
+    deleteSSOIdentityProvider(input: $input) {
+      identityProviderId
+    }
+  }
+`;
+export type DeleteSsoIdentityProviderMutationFn = Apollo.MutationFunction<
+  DeleteSsoIdentityProviderMutation,
+  DeleteSsoIdentityProviderMutationVariables
+>;
 
 /**
  * __useDeleteSsoIdentityProviderMutation__
@@ -3846,25 +5449,43 @@ export type DeleteSsoIdentityProviderMutationFn = Apollo.MutationFunction<Delete
  *   },
  * });
  */
-export function useDeleteSsoIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>(DeleteSsoIdentityProviderDocument, options);
-      }
-export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<typeof useDeleteSsoIdentityProviderMutation>;
-export type DeleteSsoIdentityProviderMutationResult = Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
-export type DeleteSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
-export const EditSsoIdentityProviderDocument = gql`
-    mutation EditSSOIdentityProvider($input: EditSsoInput!) {
-  editSSOIdentityProvider(input: $input) {
-    id
-    type
-    issuer
-    name
-    status
-  }
+export function useDeleteSsoIdentityProviderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteSsoIdentityProviderMutation,
+    DeleteSsoIdentityProviderMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteSsoIdentityProviderMutation,
+    DeleteSsoIdentityProviderMutationVariables
+  >(DeleteSsoIdentityProviderDocument, options);
 }
-    `;
-export type EditSsoIdentityProviderMutationFn = Apollo.MutationFunction<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
+export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<
+  typeof useDeleteSsoIdentityProviderMutation
+>;
+export type DeleteSsoIdentityProviderMutationResult =
+  Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
+export type DeleteSsoIdentityProviderMutationOptions =
+  Apollo.BaseMutationOptions<
+    DeleteSsoIdentityProviderMutation,
+    DeleteSsoIdentityProviderMutationVariables
+  >;
+export const EditSsoIdentityProviderDocument = gql`
+  mutation EditSSOIdentityProvider($input: EditSsoInput!) {
+    editSSOIdentityProvider(input: $input) {
+      id
+      type
+      issuer
+      name
+      status
+    }
+  }
+`;
+export type EditSsoIdentityProviderMutationFn = Apollo.MutationFunction<
+  EditSsoIdentityProviderMutation,
+  EditSsoIdentityProviderMutationVariables
+>;
 
 /**
  * __useEditSsoIdentityProviderMutation__
@@ -3883,24 +5504,38 @@ export type EditSsoIdentityProviderMutationFn = Apollo.MutationFunction<EditSsoI
  *   },
  * });
  */
-export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>(EditSsoIdentityProviderDocument, options);
-      }
-export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
-export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
-export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
-export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
-    query ListSSOIdentityProvidersByWorkspaceId {
-  listSSOIdentityProvidersByWorkspaceId {
-    type
-    id
-    name
-    issuer
-    status
-  }
+export function useEditSsoIdentityProviderMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EditSsoIdentityProviderMutation,
+    EditSsoIdentityProviderMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    EditSsoIdentityProviderMutation,
+    EditSsoIdentityProviderMutationVariables
+  >(EditSsoIdentityProviderDocument, options);
 }
-    `;
+export type EditSsoIdentityProviderMutationHookResult = ReturnType<
+  typeof useEditSsoIdentityProviderMutation
+>;
+export type EditSsoIdentityProviderMutationResult =
+  Apollo.MutationResult<EditSsoIdentityProviderMutation>;
+export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<
+  EditSsoIdentityProviderMutation,
+  EditSsoIdentityProviderMutationVariables
+>;
+export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
+  query ListSSOIdentityProvidersByWorkspaceId {
+    listSSOIdentityProvidersByWorkspaceId {
+      type
+      id
+      name
+      issuer
+      status
+    }
+  }
+`;
 
 /**
  * __useListSsoIdentityProvidersByWorkspaceIdQuery__
@@ -3917,25 +5552,51 @@ export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
  *   },
  * });
  */
-export function useListSsoIdentityProvidersByWorkspaceIdQuery(baseOptions?: Apollo.QueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
-      }
-export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
-        }
-export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
-export const DeleteUserAccountDocument = gql`
-    mutation DeleteUserAccount {
-  deleteUser {
-    id
-  }
+export function useListSsoIdentityProvidersByWorkspaceIdQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ListSsoIdentityProvidersByWorkspaceIdQuery,
+    ListSsoIdentityProvidersByWorkspaceIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    ListSsoIdentityProvidersByWorkspaceIdQuery,
+    ListSsoIdentityProvidersByWorkspaceIdQueryVariables
+  >(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
 }
-    `;
-export type DeleteUserAccountMutationFn = Apollo.MutationFunction<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ListSsoIdentityProvidersByWorkspaceIdQuery,
+    ListSsoIdentityProvidersByWorkspaceIdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    ListSsoIdentityProvidersByWorkspaceIdQuery,
+    ListSsoIdentityProvidersByWorkspaceIdQueryVariables
+  >(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+}
+export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<
+  typeof useListSsoIdentityProvidersByWorkspaceIdQuery
+>;
+export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult =
+  ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
+export type ListSsoIdentityProvidersByWorkspaceIdQueryResult =
+  Apollo.QueryResult<
+    ListSsoIdentityProvidersByWorkspaceIdQuery,
+    ListSsoIdentityProvidersByWorkspaceIdQueryVariables
+  >;
+export const DeleteUserAccountDocument = gql`
+  mutation DeleteUserAccount {
+    deleteUser {
+      id
+    }
+  }
+`;
+export type DeleteUserAccountMutationFn = Apollo.MutationFunction<
+  DeleteUserAccountMutation,
+  DeleteUserAccountMutationVariables
+>;
 
 /**
  * __useDeleteUserAccountMutation__
@@ -3953,19 +5614,36 @@ export type DeleteUserAccountMutationFn = Apollo.MutationFunction<DeleteUserAcco
  *   },
  * });
  */
-export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>(DeleteUserAccountDocument, options);
-      }
-export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
-export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
-export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
-export const UploadProfilePictureDocument = gql`
-    mutation UploadProfilePicture($file: Upload!) {
-  uploadProfilePicture(file: $file)
+export function useDeleteUserAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteUserAccountMutation,
+    DeleteUserAccountMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteUserAccountMutation,
+    DeleteUserAccountMutationVariables
+  >(DeleteUserAccountDocument, options);
 }
-    `;
-export type UploadProfilePictureMutationFn = Apollo.MutationFunction<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
+export type DeleteUserAccountMutationHookResult = ReturnType<
+  typeof useDeleteUserAccountMutation
+>;
+export type DeleteUserAccountMutationResult =
+  Apollo.MutationResult<DeleteUserAccountMutation>;
+export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<
+  DeleteUserAccountMutation,
+  DeleteUserAccountMutationVariables
+>;
+export const UploadProfilePictureDocument = gql`
+  mutation UploadProfilePicture($file: Upload!) {
+    uploadProfilePicture(file: $file)
+  }
+`;
+export type UploadProfilePictureMutationFn = Apollo.MutationFunction<
+  UploadProfilePictureMutation,
+  UploadProfilePictureMutationVariables
+>;
 
 /**
  * __useUploadProfilePictureMutation__
@@ -3984,20 +5662,35 @@ export type UploadProfilePictureMutationFn = Apollo.MutationFunction<UploadProfi
  *   },
  * });
  */
-export function useUploadProfilePictureMutation(baseOptions?: Apollo.MutationHookOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>(UploadProfilePictureDocument, options);
-      }
-export type UploadProfilePictureMutationHookResult = ReturnType<typeof useUploadProfilePictureMutation>;
-export type UploadProfilePictureMutationResult = Apollo.MutationResult<UploadProfilePictureMutation>;
-export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
-export const GetCurrentUserDocument = gql`
-    query GetCurrentUser {
-  currentUser {
-    ...UserQueryFragment
-  }
+export function useUploadProfilePictureMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables
+  >(UploadProfilePictureDocument, options);
 }
-    ${UserQueryFragmentFragmentDoc}`;
+export type UploadProfilePictureMutationHookResult = ReturnType<
+  typeof useUploadProfilePictureMutation
+>;
+export type UploadProfilePictureMutationResult =
+  Apollo.MutationResult<UploadProfilePictureMutation>;
+export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<
+  UploadProfilePictureMutation,
+  UploadProfilePictureMutationVariables
+>;
+export const GetCurrentUserDocument = gql`
+  query GetCurrentUser {
+    currentUser {
+      ...UserQueryFragment
+    }
+  }
+  ${UserQueryFragmentFragmentDoc}
+`;
 
 /**
  * __useGetCurrentUserQuery__
@@ -4014,23 +5707,49 @@ export const GetCurrentUserDocument = gql`
  *   },
  * });
  */
-export function useGetCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
-      }
-export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
-        }
-export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
-export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
-export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export const ActivateWorkflowVersionDocument = gql`
-    mutation ActivateWorkflowVersion($workflowVersionId: String!) {
-  activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+export function useGetCurrentUserQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetCurrentUserQuery,
+    GetCurrentUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(
+    GetCurrentUserDocument,
+    options,
+  );
 }
-    `;
-export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export function useGetCurrentUserLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCurrentUserQuery,
+    GetCurrentUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(
+    GetCurrentUserDocument,
+    options,
+  );
+}
+export type GetCurrentUserQueryHookResult = ReturnType<
+  typeof useGetCurrentUserQuery
+>;
+export type GetCurrentUserLazyQueryHookResult = ReturnType<
+  typeof useGetCurrentUserLazyQuery
+>;
+export type GetCurrentUserQueryResult = Apollo.QueryResult<
+  GetCurrentUserQuery,
+  GetCurrentUserQueryVariables
+>;
+export const ActivateWorkflowVersionDocument = gql`
+  mutation ActivateWorkflowVersion($workflowVersionId: String!) {
+    activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+  }
+`;
+export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<
+  ActivateWorkflowVersionMutation,
+  ActivateWorkflowVersionMutationVariables
+>;
 
 /**
  * __useActivateWorkflowVersionMutation__
@@ -4049,19 +5768,36 @@ export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<Activate
  *   },
  * });
  */
-export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>(ActivateWorkflowVersionDocument, options);
-      }
-export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
-export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
-export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
-export const ComputeStepOutputSchemaDocument = gql`
-    mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
-  computeStepOutputSchema(input: $input)
+export function useActivateWorkflowVersionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ActivateWorkflowVersionMutation,
+    ActivateWorkflowVersionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ActivateWorkflowVersionMutation,
+    ActivateWorkflowVersionMutationVariables
+  >(ActivateWorkflowVersionDocument, options);
 }
-    `;
-export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
+export type ActivateWorkflowVersionMutationHookResult = ReturnType<
+  typeof useActivateWorkflowVersionMutation
+>;
+export type ActivateWorkflowVersionMutationResult =
+  Apollo.MutationResult<ActivateWorkflowVersionMutation>;
+export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<
+  ActivateWorkflowVersionMutation,
+  ActivateWorkflowVersionMutationVariables
+>;
+export const ComputeStepOutputSchemaDocument = gql`
+  mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+    computeStepOutputSchema(input: $input)
+  }
+`;
+export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<
+  ComputeStepOutputSchemaMutation,
+  ComputeStepOutputSchemaMutationVariables
+>;
 
 /**
  * __useComputeStepOutputSchemaMutation__
@@ -4080,21 +5816,40 @@ export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<ComputeS
  *   },
  * });
  */
-export function useComputeStepOutputSchemaMutation(baseOptions?: Apollo.MutationHookOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>(ComputeStepOutputSchemaDocument, options);
-      }
-export type ComputeStepOutputSchemaMutationHookResult = ReturnType<typeof useComputeStepOutputSchemaMutation>;
-export type ComputeStepOutputSchemaMutationResult = Apollo.MutationResult<ComputeStepOutputSchemaMutation>;
-export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
-export const CreateDraftFromWorkflowVersionDocument = gql`
-    mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
-  createDraftFromWorkflowVersion(input: $input) {
-    id
-  }
+export function useComputeStepOutputSchemaMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ComputeStepOutputSchemaMutation,
+    ComputeStepOutputSchemaMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ComputeStepOutputSchemaMutation,
+    ComputeStepOutputSchemaMutationVariables
+  >(ComputeStepOutputSchemaDocument, options);
 }
-    `;
-export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
+export type ComputeStepOutputSchemaMutationHookResult = ReturnType<
+  typeof useComputeStepOutputSchemaMutation
+>;
+export type ComputeStepOutputSchemaMutationResult =
+  Apollo.MutationResult<ComputeStepOutputSchemaMutation>;
+export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<
+  ComputeStepOutputSchemaMutation,
+  ComputeStepOutputSchemaMutationVariables
+>;
+export const CreateDraftFromWorkflowVersionDocument = gql`
+  mutation CreateDraftFromWorkflowVersion(
+    $input: CreateDraftFromWorkflowVersionInput!
+  ) {
+    createDraftFromWorkflowVersion(input: $input) {
+      id
+    }
+  }
+`;
+export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<
+  CreateDraftFromWorkflowVersionMutation,
+  CreateDraftFromWorkflowVersionMutationVariables
+>;
 
 /**
  * __useCreateDraftFromWorkflowVersionMutation__
@@ -4113,25 +5868,43 @@ export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<C
  *   },
  * });
  */
-export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>(CreateDraftFromWorkflowVersionDocument, options);
-      }
-export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
-export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
-export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
-export const CreateWorkflowVersionStepDocument = gql`
-    mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-  createWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-  }
+export function useCreateDraftFromWorkflowVersionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateDraftFromWorkflowVersionMutation,
+    CreateDraftFromWorkflowVersionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateDraftFromWorkflowVersionMutation,
+    CreateDraftFromWorkflowVersionMutationVariables
+  >(CreateDraftFromWorkflowVersionDocument, options);
 }
-    `;
-export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
+export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<
+  typeof useCreateDraftFromWorkflowVersionMutation
+>;
+export type CreateDraftFromWorkflowVersionMutationResult =
+  Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateDraftFromWorkflowVersionMutation,
+    CreateDraftFromWorkflowVersionMutationVariables
+  >;
+export const CreateWorkflowVersionStepDocument = gql`
+  mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+    createWorkflowVersionStep(input: $input) {
+      id
+      name
+      type
+      settings
+      valid
+    }
+  }
+`;
+export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<
+  CreateWorkflowVersionStepMutation,
+  CreateWorkflowVersionStepMutationVariables
+>;
 
 /**
  * __useCreateWorkflowVersionStepMutation__
@@ -4150,19 +5923,37 @@ export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<Create
  *   },
  * });
  */
-export function useCreateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>(CreateWorkflowVersionStepDocument, options);
-      }
-export type CreateWorkflowVersionStepMutationHookResult = ReturnType<typeof useCreateWorkflowVersionStepMutation>;
-export type CreateWorkflowVersionStepMutationResult = Apollo.MutationResult<CreateWorkflowVersionStepMutation>;
-export type CreateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
-export const DeactivateWorkflowVersionDocument = gql`
-    mutation DeactivateWorkflowVersion($workflowVersionId: String!) {
-  deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
+export function useCreateWorkflowVersionStepMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateWorkflowVersionStepMutation,
+    CreateWorkflowVersionStepMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateWorkflowVersionStepMutation,
+    CreateWorkflowVersionStepMutationVariables
+  >(CreateWorkflowVersionStepDocument, options);
 }
-    `;
-export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export type CreateWorkflowVersionStepMutationHookResult = ReturnType<
+  typeof useCreateWorkflowVersionStepMutation
+>;
+export type CreateWorkflowVersionStepMutationResult =
+  Apollo.MutationResult<CreateWorkflowVersionStepMutation>;
+export type CreateWorkflowVersionStepMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateWorkflowVersionStepMutation,
+    CreateWorkflowVersionStepMutationVariables
+  >;
+export const DeactivateWorkflowVersionDocument = gql`
+  mutation DeactivateWorkflowVersion($workflowVersionId: String!) {
+    deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
+  }
+`;
+export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<
+  DeactivateWorkflowVersionMutation,
+  DeactivateWorkflowVersionMutationVariables
+>;
 
 /**
  * __useDeactivateWorkflowVersionMutation__
@@ -4181,25 +5972,43 @@ export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<Deacti
  *   },
  * });
  */
-export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>(DeactivateWorkflowVersionDocument, options);
-      }
-export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
-export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
-export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
-export const DeleteWorkflowVersionStepDocument = gql`
-    mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
-  deleteWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-  }
+export function useDeactivateWorkflowVersionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeactivateWorkflowVersionMutation,
+    DeactivateWorkflowVersionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeactivateWorkflowVersionMutation,
+    DeactivateWorkflowVersionMutationVariables
+  >(DeactivateWorkflowVersionDocument, options);
 }
-    `;
-export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export type DeactivateWorkflowVersionMutationHookResult = ReturnType<
+  typeof useDeactivateWorkflowVersionMutation
+>;
+export type DeactivateWorkflowVersionMutationResult =
+  Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
+export type DeactivateWorkflowVersionMutationOptions =
+  Apollo.BaseMutationOptions<
+    DeactivateWorkflowVersionMutation,
+    DeactivateWorkflowVersionMutationVariables
+  >;
+export const DeleteWorkflowVersionStepDocument = gql`
+  mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
+    deleteWorkflowVersionStep(input: $input) {
+      id
+      name
+      type
+      settings
+      valid
+    }
+  }
+`;
+export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<
+  DeleteWorkflowVersionStepMutation,
+  DeleteWorkflowVersionStepMutationVariables
+>;
 
 /**
  * __useDeleteWorkflowVersionStepMutation__
@@ -4218,21 +6027,39 @@ export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<Delete
  *   },
  * });
  */
-export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>(DeleteWorkflowVersionStepDocument, options);
-      }
-export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
-export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
-export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
-export const RunWorkflowVersionDocument = gql`
-    mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-  runWorkflowVersion(input: $input) {
-    workflowRunId
-  }
+export function useDeleteWorkflowVersionStepMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteWorkflowVersionStepMutation,
+    DeleteWorkflowVersionStepMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteWorkflowVersionStepMutation,
+    DeleteWorkflowVersionStepMutationVariables
+  >(DeleteWorkflowVersionStepDocument, options);
 }
-    `;
-export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<
+  typeof useDeleteWorkflowVersionStepMutation
+>;
+export type DeleteWorkflowVersionStepMutationResult =
+  Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
+export type DeleteWorkflowVersionStepMutationOptions =
+  Apollo.BaseMutationOptions<
+    DeleteWorkflowVersionStepMutation,
+    DeleteWorkflowVersionStepMutationVariables
+  >;
+export const RunWorkflowVersionDocument = gql`
+  mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
+    runWorkflowVersion(input: $input) {
+      workflowRunId
+    }
+  }
+`;
+export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<
+  RunWorkflowVersionMutation,
+  RunWorkflowVersionMutationVariables
+>;
 
 /**
  * __useRunWorkflowVersionMutation__
@@ -4251,25 +6078,42 @@ export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<RunWorkflowVe
  *   },
  * });
  */
-export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>(RunWorkflowVersionDocument, options);
-      }
-export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
-export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
-export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
-export const UpdateWorkflowVersionStepDocument = gql`
-    mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-  updateWorkflowVersionStep(input: $input) {
-    id
-    name
-    type
-    settings
-    valid
-  }
+export function useRunWorkflowVersionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RunWorkflowVersionMutation,
+    RunWorkflowVersionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RunWorkflowVersionMutation,
+    RunWorkflowVersionMutationVariables
+  >(RunWorkflowVersionDocument, options);
 }
-    `;
-export type UpdateWorkflowVersionStepMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export type RunWorkflowVersionMutationHookResult = ReturnType<
+  typeof useRunWorkflowVersionMutation
+>;
+export type RunWorkflowVersionMutationResult =
+  Apollo.MutationResult<RunWorkflowVersionMutation>;
+export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<
+  RunWorkflowVersionMutation,
+  RunWorkflowVersionMutationVariables
+>;
+export const UpdateWorkflowVersionStepDocument = gql`
+  mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+    updateWorkflowVersionStep(input: $input) {
+      id
+      name
+      type
+      settings
+      valid
+    }
+  }
+`;
+export type UpdateWorkflowVersionStepMutationFn = Apollo.MutationFunction<
+  UpdateWorkflowVersionStepMutation,
+  UpdateWorkflowVersionStepMutationVariables
+>;
 
 /**
  * __useUpdateWorkflowVersionStepMutation__
@@ -4288,19 +6132,37 @@ export type UpdateWorkflowVersionStepMutationFn = Apollo.MutationFunction<Update
  *   },
  * });
  */
-export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>(UpdateWorkflowVersionStepDocument, options);
-      }
-export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
-export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
-export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
-export const DeleteWorkspaceInvitationDocument = gql`
-    mutation DeleteWorkspaceInvitation($appTokenId: String!) {
-  deleteWorkspaceInvitation(appTokenId: $appTokenId)
+export function useUpdateWorkflowVersionStepMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateWorkflowVersionStepMutation,
+    UpdateWorkflowVersionStepMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateWorkflowVersionStepMutation,
+    UpdateWorkflowVersionStepMutationVariables
+  >(UpdateWorkflowVersionStepDocument, options);
 }
-    `;
-export type DeleteWorkspaceInvitationMutationFn = Apollo.MutationFunction<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>;
+export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<
+  typeof useUpdateWorkflowVersionStepMutation
+>;
+export type UpdateWorkflowVersionStepMutationResult =
+  Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
+export type UpdateWorkflowVersionStepMutationOptions =
+  Apollo.BaseMutationOptions<
+    UpdateWorkflowVersionStepMutation,
+    UpdateWorkflowVersionStepMutationVariables
+  >;
+export const DeleteWorkspaceInvitationDocument = gql`
+  mutation DeleteWorkspaceInvitation($appTokenId: String!) {
+    deleteWorkspaceInvitation(appTokenId: $appTokenId)
+  }
+`;
+export type DeleteWorkspaceInvitationMutationFn = Apollo.MutationFunction<
+  DeleteWorkspaceInvitationMutation,
+  DeleteWorkspaceInvitationMutationVariables
+>;
 
 /**
  * __useDeleteWorkspaceInvitationMutation__
@@ -4319,29 +6181,47 @@ export type DeleteWorkspaceInvitationMutationFn = Apollo.MutationFunction<Delete
  *   },
  * });
  */
-export function useDeleteWorkspaceInvitationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>(DeleteWorkspaceInvitationDocument, options);
-      }
-export type DeleteWorkspaceInvitationMutationHookResult = ReturnType<typeof useDeleteWorkspaceInvitationMutation>;
-export type DeleteWorkspaceInvitationMutationResult = Apollo.MutationResult<DeleteWorkspaceInvitationMutation>;
-export type DeleteWorkspaceInvitationMutationOptions = Apollo.BaseMutationOptions<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>;
+export function useDeleteWorkspaceInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteWorkspaceInvitationMutation,
+    DeleteWorkspaceInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteWorkspaceInvitationMutation,
+    DeleteWorkspaceInvitationMutationVariables
+  >(DeleteWorkspaceInvitationDocument, options);
+}
+export type DeleteWorkspaceInvitationMutationHookResult = ReturnType<
+  typeof useDeleteWorkspaceInvitationMutation
+>;
+export type DeleteWorkspaceInvitationMutationResult =
+  Apollo.MutationResult<DeleteWorkspaceInvitationMutation>;
+export type DeleteWorkspaceInvitationMutationOptions =
+  Apollo.BaseMutationOptions<
+    DeleteWorkspaceInvitationMutation,
+    DeleteWorkspaceInvitationMutationVariables
+  >;
 export const ResendWorkspaceInvitationDocument = gql`
-    mutation ResendWorkspaceInvitation($appTokenId: String!) {
-  resendWorkspaceInvitation(appTokenId: $appTokenId) {
-    success
-    errors
-    result {
-      ... on WorkspaceInvitation {
-        id
-        email
-        expiresAt
+  mutation ResendWorkspaceInvitation($appTokenId: String!) {
+    resendWorkspaceInvitation(appTokenId: $appTokenId) {
+      success
+      errors
+      result {
+        ... on WorkspaceInvitation {
+          id
+          email
+          expiresAt
+        }
       }
     }
   }
-}
-    `;
-export type ResendWorkspaceInvitationMutationFn = Apollo.MutationFunction<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>;
+`;
+export type ResendWorkspaceInvitationMutationFn = Apollo.MutationFunction<
+  ResendWorkspaceInvitationMutation,
+  ResendWorkspaceInvitationMutationVariables
+>;
 
 /**
  * __useResendWorkspaceInvitationMutation__
@@ -4360,29 +6240,47 @@ export type ResendWorkspaceInvitationMutationFn = Apollo.MutationFunction<Resend
  *   },
  * });
  */
-export function useResendWorkspaceInvitationMutation(baseOptions?: Apollo.MutationHookOptions<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>(ResendWorkspaceInvitationDocument, options);
-      }
-export type ResendWorkspaceInvitationMutationHookResult = ReturnType<typeof useResendWorkspaceInvitationMutation>;
-export type ResendWorkspaceInvitationMutationResult = Apollo.MutationResult<ResendWorkspaceInvitationMutation>;
-export type ResendWorkspaceInvitationMutationOptions = Apollo.BaseMutationOptions<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>;
+export function useResendWorkspaceInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ResendWorkspaceInvitationMutation,
+    ResendWorkspaceInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ResendWorkspaceInvitationMutation,
+    ResendWorkspaceInvitationMutationVariables
+  >(ResendWorkspaceInvitationDocument, options);
+}
+export type ResendWorkspaceInvitationMutationHookResult = ReturnType<
+  typeof useResendWorkspaceInvitationMutation
+>;
+export type ResendWorkspaceInvitationMutationResult =
+  Apollo.MutationResult<ResendWorkspaceInvitationMutation>;
+export type ResendWorkspaceInvitationMutationOptions =
+  Apollo.BaseMutationOptions<
+    ResendWorkspaceInvitationMutation,
+    ResendWorkspaceInvitationMutationVariables
+  >;
 export const SendInvitationsDocument = gql`
-    mutation SendInvitations($emails: [String!]!) {
-  sendInvitations(emails: $emails) {
-    success
-    errors
-    result {
-      ... on WorkspaceInvitation {
-        id
-        email
-        expiresAt
+  mutation SendInvitations($emails: [String!]!) {
+    sendInvitations(emails: $emails) {
+      success
+      errors
+      result {
+        ... on WorkspaceInvitation {
+          id
+          email
+          expiresAt
+        }
       }
     }
   }
-}
-    `;
-export type SendInvitationsMutationFn = Apollo.MutationFunction<SendInvitationsMutation, SendInvitationsMutationVariables>;
+`;
+export type SendInvitationsMutationFn = Apollo.MutationFunction<
+  SendInvitationsMutation,
+  SendInvitationsMutationVariables
+>;
 
 /**
  * __useSendInvitationsMutation__
@@ -4401,22 +6299,36 @@ export type SendInvitationsMutationFn = Apollo.MutationFunction<SendInvitationsM
  *   },
  * });
  */
-export function useSendInvitationsMutation(baseOptions?: Apollo.MutationHookOptions<SendInvitationsMutation, SendInvitationsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendInvitationsMutation, SendInvitationsMutationVariables>(SendInvitationsDocument, options);
-      }
-export type SendInvitationsMutationHookResult = ReturnType<typeof useSendInvitationsMutation>;
-export type SendInvitationsMutationResult = Apollo.MutationResult<SendInvitationsMutation>;
-export type SendInvitationsMutationOptions = Apollo.BaseMutationOptions<SendInvitationsMutation, SendInvitationsMutationVariables>;
-export const GetWorkspaceInvitationsDocument = gql`
-    query GetWorkspaceInvitations {
-  findWorkspaceInvitations {
-    id
-    email
-    expiresAt
-  }
+export function useSendInvitationsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendInvitationsMutation,
+    SendInvitationsMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SendInvitationsMutation,
+    SendInvitationsMutationVariables
+  >(SendInvitationsDocument, options);
 }
-    `;
+export type SendInvitationsMutationHookResult = ReturnType<
+  typeof useSendInvitationsMutation
+>;
+export type SendInvitationsMutationResult =
+  Apollo.MutationResult<SendInvitationsMutation>;
+export type SendInvitationsMutationOptions = Apollo.BaseMutationOptions<
+  SendInvitationsMutation,
+  SendInvitationsMutationVariables
+>;
+export const GetWorkspaceInvitationsDocument = gql`
+  query GetWorkspaceInvitations {
+    findWorkspaceInvitations {
+      id
+      email
+      expiresAt
+    }
+  }
+`;
 
 /**
  * __useGetWorkspaceInvitationsQuery__
@@ -4433,26 +6345,52 @@ export const GetWorkspaceInvitationsDocument = gql`
  *   },
  * });
  */
-export function useGetWorkspaceInvitationsQuery(baseOptions?: Apollo.QueryHookOptions<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>(GetWorkspaceInvitationsDocument, options);
-      }
-export function useGetWorkspaceInvitationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>(GetWorkspaceInvitationsDocument, options);
-        }
-export type GetWorkspaceInvitationsQueryHookResult = ReturnType<typeof useGetWorkspaceInvitationsQuery>;
-export type GetWorkspaceInvitationsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceInvitationsLazyQuery>;
-export type GetWorkspaceInvitationsQueryResult = Apollo.QueryResult<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>;
-export const ActivateWorkspaceDocument = gql`
-    mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
-  activateWorkspace(data: $input) {
-    id
-    subdomain
-  }
+export function useGetWorkspaceInvitationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetWorkspaceInvitationsQuery,
+    GetWorkspaceInvitationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetWorkspaceInvitationsQuery,
+    GetWorkspaceInvitationsQueryVariables
+  >(GetWorkspaceInvitationsDocument, options);
 }
-    `;
-export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
+export function useGetWorkspaceInvitationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWorkspaceInvitationsQuery,
+    GetWorkspaceInvitationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetWorkspaceInvitationsQuery,
+    GetWorkspaceInvitationsQueryVariables
+  >(GetWorkspaceInvitationsDocument, options);
+}
+export type GetWorkspaceInvitationsQueryHookResult = ReturnType<
+  typeof useGetWorkspaceInvitationsQuery
+>;
+export type GetWorkspaceInvitationsLazyQueryHookResult = ReturnType<
+  typeof useGetWorkspaceInvitationsLazyQuery
+>;
+export type GetWorkspaceInvitationsQueryResult = Apollo.QueryResult<
+  GetWorkspaceInvitationsQuery,
+  GetWorkspaceInvitationsQueryVariables
+>;
+export const ActivateWorkspaceDocument = gql`
+  mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
+    activateWorkspace(data: $input) {
+      id
+      subdomain
+    }
+  }
+`;
+export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<
+  ActivateWorkspaceMutation,
+  ActivateWorkspaceMutationVariables
+>;
 
 /**
  * __useActivateWorkspaceMutation__
@@ -4471,21 +6409,38 @@ export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<ActivateWorksp
  *   },
  * });
  */
-export function useActivateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>(ActivateWorkspaceDocument, options);
-      }
-export type ActivateWorkspaceMutationHookResult = ReturnType<typeof useActivateWorkspaceMutation>;
-export type ActivateWorkspaceMutationResult = Apollo.MutationResult<ActivateWorkspaceMutation>;
-export type ActivateWorkspaceMutationOptions = Apollo.BaseMutationOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
-export const DeleteCurrentWorkspaceDocument = gql`
-    mutation DeleteCurrentWorkspace {
-  deleteCurrentWorkspace {
-    id
-  }
+export function useActivateWorkspaceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ActivateWorkspaceMutation,
+    ActivateWorkspaceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ActivateWorkspaceMutation,
+    ActivateWorkspaceMutationVariables
+  >(ActivateWorkspaceDocument, options);
 }
-    `;
-export type DeleteCurrentWorkspaceMutationFn = Apollo.MutationFunction<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
+export type ActivateWorkspaceMutationHookResult = ReturnType<
+  typeof useActivateWorkspaceMutation
+>;
+export type ActivateWorkspaceMutationResult =
+  Apollo.MutationResult<ActivateWorkspaceMutation>;
+export type ActivateWorkspaceMutationOptions = Apollo.BaseMutationOptions<
+  ActivateWorkspaceMutation,
+  ActivateWorkspaceMutationVariables
+>;
+export const DeleteCurrentWorkspaceDocument = gql`
+  mutation DeleteCurrentWorkspace {
+    deleteCurrentWorkspace {
+      id
+    }
+  }
+`;
+export type DeleteCurrentWorkspaceMutationFn = Apollo.MutationFunction<
+  DeleteCurrentWorkspaceMutation,
+  DeleteCurrentWorkspaceMutationVariables
+>;
 
 /**
  * __useDeleteCurrentWorkspaceMutation__
@@ -4503,29 +6458,47 @@ export type DeleteCurrentWorkspaceMutationFn = Apollo.MutationFunction<DeleteCur
  *   },
  * });
  */
-export function useDeleteCurrentWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>(DeleteCurrentWorkspaceDocument, options);
-      }
-export type DeleteCurrentWorkspaceMutationHookResult = ReturnType<typeof useDeleteCurrentWorkspaceMutation>;
-export type DeleteCurrentWorkspaceMutationResult = Apollo.MutationResult<DeleteCurrentWorkspaceMutation>;
-export type DeleteCurrentWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
-export const UpdateWorkspaceDocument = gql`
-    mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
-  updateWorkspace(data: $input) {
-    id
-    subdomain
-    displayName
-    logo
-    allowImpersonation
-    isPublicInviteLinkEnabled
-    isGoogleAuthEnabled
-    isMicrosoftAuthEnabled
-    isPasswordAuthEnabled
-  }
+export function useDeleteCurrentWorkspaceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteCurrentWorkspaceMutation,
+    DeleteCurrentWorkspaceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteCurrentWorkspaceMutation,
+    DeleteCurrentWorkspaceMutationVariables
+  >(DeleteCurrentWorkspaceDocument, options);
 }
-    `;
-export type UpdateWorkspaceMutationFn = Apollo.MutationFunction<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
+export type DeleteCurrentWorkspaceMutationHookResult = ReturnType<
+  typeof useDeleteCurrentWorkspaceMutation
+>;
+export type DeleteCurrentWorkspaceMutationResult =
+  Apollo.MutationResult<DeleteCurrentWorkspaceMutation>;
+export type DeleteCurrentWorkspaceMutationOptions = Apollo.BaseMutationOptions<
+  DeleteCurrentWorkspaceMutation,
+  DeleteCurrentWorkspaceMutationVariables
+>;
+export const UpdateWorkspaceDocument = gql`
+  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
+    updateWorkspace(data: $input) {
+      id
+      hostname
+      subdomain
+      displayName
+      logo
+      allowImpersonation
+      isPublicInviteLinkEnabled
+      isGoogleAuthEnabled
+      isMicrosoftAuthEnabled
+      isPasswordAuthEnabled
+    }
+  }
+`;
+export type UpdateWorkspaceMutationFn = Apollo.MutationFunction<
+  UpdateWorkspaceMutation,
+  UpdateWorkspaceMutationVariables
+>;
 
 /**
  * __useUpdateWorkspaceMutation__
@@ -4544,19 +6517,36 @@ export type UpdateWorkspaceMutationFn = Apollo.MutationFunction<UpdateWorkspaceM
  *   },
  * });
  */
-export function useUpdateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(UpdateWorkspaceDocument, options);
-      }
-export type UpdateWorkspaceMutationHookResult = ReturnType<typeof useUpdateWorkspaceMutation>;
-export type UpdateWorkspaceMutationResult = Apollo.MutationResult<UpdateWorkspaceMutation>;
-export type UpdateWorkspaceMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
-export const UploadWorkspaceLogoDocument = gql`
-    mutation UploadWorkspaceLogo($file: Upload!) {
-  uploadWorkspaceLogo(file: $file)
+export function useUpdateWorkspaceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateWorkspaceMutation,
+    UpdateWorkspaceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateWorkspaceMutation,
+    UpdateWorkspaceMutationVariables
+  >(UpdateWorkspaceDocument, options);
 }
-    `;
-export type UploadWorkspaceLogoMutationFn = Apollo.MutationFunction<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
+export type UpdateWorkspaceMutationHookResult = ReturnType<
+  typeof useUpdateWorkspaceMutation
+>;
+export type UpdateWorkspaceMutationResult =
+  Apollo.MutationResult<UpdateWorkspaceMutation>;
+export type UpdateWorkspaceMutationOptions = Apollo.BaseMutationOptions<
+  UpdateWorkspaceMutation,
+  UpdateWorkspaceMutationVariables
+>;
+export const UploadWorkspaceLogoDocument = gql`
+  mutation UploadWorkspaceLogo($file: Upload!) {
+    uploadWorkspaceLogo(file: $file)
+  }
+`;
+export type UploadWorkspaceLogoMutationFn = Apollo.MutationFunction<
+  UploadWorkspaceLogoMutation,
+  UploadWorkspaceLogoMutationVariables
+>;
 
 /**
  * __useUploadWorkspaceLogoMutation__
@@ -4575,24 +6565,108 @@ export type UploadWorkspaceLogoMutationFn = Apollo.MutationFunction<UploadWorksp
  *   },
  * });
  */
-export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHookOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>(UploadWorkspaceLogoDocument, options);
-      }
-export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
-export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
-export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const GetWorkspaceFromInviteHashDocument = gql`
-    query GetWorkspaceFromInviteHash($inviteHash: String!) {
-  findWorkspaceFromInviteHash(inviteHash: $inviteHash) {
-    id
-    displayName
-    logo
-    allowImpersonation
-    subdomain
-  }
+export function useUploadWorkspaceLogoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadWorkspaceLogoMutation,
+    UploadWorkspaceLogoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UploadWorkspaceLogoMutation,
+    UploadWorkspaceLogoMutationVariables
+  >(UploadWorkspaceLogoDocument, options);
 }
-    `;
+export type UploadWorkspaceLogoMutationHookResult = ReturnType<
+  typeof useUploadWorkspaceLogoMutation
+>;
+export type UploadWorkspaceLogoMutationResult =
+  Apollo.MutationResult<UploadWorkspaceLogoMutation>;
+export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<
+  UploadWorkspaceLogoMutation,
+  UploadWorkspaceLogoMutationVariables
+>;
+export const GetHostnameDetailsDocument = gql`
+  query GetHostnameDetails {
+    getHostnameDetails {
+      hostname
+      ownershipVerifications {
+        ... on CustomHostnameOwnershipVerificationTxt {
+          type
+          name
+          value
+        }
+        ... on CustomHostnameOwnershipVerificationHttp {
+          type
+          body
+          url
+        }
+      }
+      status
+    }
+  }
+`;
+
+/**
+ * __useGetHostnameDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetHostnameDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHostnameDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetHostnameDetailsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetHostnameDetailsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetHostnameDetailsQuery,
+    GetHostnameDetailsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetHostnameDetailsQuery,
+    GetHostnameDetailsQueryVariables
+  >(GetHostnameDetailsDocument, options);
+}
+export function useGetHostnameDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetHostnameDetailsQuery,
+    GetHostnameDetailsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetHostnameDetailsQuery,
+    GetHostnameDetailsQueryVariables
+  >(GetHostnameDetailsDocument, options);
+}
+export type GetHostnameDetailsQueryHookResult = ReturnType<
+  typeof useGetHostnameDetailsQuery
+>;
+export type GetHostnameDetailsLazyQueryHookResult = ReturnType<
+  typeof useGetHostnameDetailsLazyQuery
+>;
+export type GetHostnameDetailsQueryResult = Apollo.QueryResult<
+  GetHostnameDetailsQuery,
+  GetHostnameDetailsQueryVariables
+>;
+export const GetWorkspaceFromInviteHashDocument = gql`
+  query GetWorkspaceFromInviteHash($inviteHash: String!) {
+    findWorkspaceFromInviteHash(inviteHash: $inviteHash) {
+      id
+      displayName
+      logo
+      allowImpersonation
+      subdomain
+    }
+  }
+`;
 
 /**
  * __useGetWorkspaceFromInviteHashQuery__
@@ -4610,14 +6684,37 @@ export const GetWorkspaceFromInviteHashDocument = gql`
  *   },
  * });
  */
-export function useGetWorkspaceFromInviteHashQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>(GetWorkspaceFromInviteHashDocument, options);
-      }
-export function useGetWorkspaceFromInviteHashLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>(GetWorkspaceFromInviteHashDocument, options);
-        }
-export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashQuery>;
-export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
-export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
+export function useGetWorkspaceFromInviteHashQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetWorkspaceFromInviteHashQuery,
+    GetWorkspaceFromInviteHashQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetWorkspaceFromInviteHashQuery,
+    GetWorkspaceFromInviteHashQueryVariables
+  >(GetWorkspaceFromInviteHashDocument, options);
+}
+export function useGetWorkspaceFromInviteHashLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWorkspaceFromInviteHashQuery,
+    GetWorkspaceFromInviteHashQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetWorkspaceFromInviteHashQuery,
+    GetWorkspaceFromInviteHashQueryVariables
+  >(GetWorkspaceFromInviteHashDocument, options);
+}
+export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<
+  typeof useGetWorkspaceFromInviteHashQuery
+>;
+export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<
+  typeof useGetWorkspaceFromInviteHashLazyQuery
+>;
+export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<
+  GetWorkspaceFromInviteHashQuery,
+  GetWorkspaceFromInviteHashQueryVariables
+>;
