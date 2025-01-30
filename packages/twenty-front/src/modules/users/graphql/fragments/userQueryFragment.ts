@@ -38,6 +38,7 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       creatorEmail
       hasValidEnterpriseKey
+      hostname
       featureFlags {
         id
         key
