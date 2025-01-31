@@ -7,7 +7,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
 import { TelephonyResolver } from 'src/engine/core-modules/telephony/telephony.resolver';
@@ -22,7 +21,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
       imports: [
         NestjsQueryTypeOrmModule.forFeature([Telephony, Workspace], 'core'),
         TypeORMModule,
-        FileModule,
       ],
     }),
     DataSourceModule,

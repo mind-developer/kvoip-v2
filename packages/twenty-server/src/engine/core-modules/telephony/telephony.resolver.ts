@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
-import { PABXPRODapi, PABXapi } from 'src/engine/core-modules/telephony/api';
+import { PABXapi, PABXPRODapi } from 'src/engine/core-modules/telephony/api';
 import {
   CreateTelephonyInput,
   UpdateTelephonyInput,
@@ -154,27 +154,29 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
-    const ramalBody = this.getRamalBody(createTelephonyInput);
+    console.log('createTelephonyInput', createTelephonyInput);
+
+    // const ramalBody = this.getRamalBody(createTelephonyInput);
 
     try {
-      const createdRamal = await PABXapi.post('/inserir_ramal', {
-        ...ramalBody,
+      // const createdRamal = await PABXapi.post('/inserir_ramal', {
+      //   ...ramalBody,
+      // });
+
+      // if (createdRamal) {
+      const result = await this.telephonyService.createTelehony({
+        ...createTelephonyInput,
+        // ramal_id: createdRamal.data.id,
       });
 
-      if (createdRamal) {
-        const result = await this.telephonyService.createTelehony({
-          ...createTelephonyInput,
-          ramal_id: createdRamal.data.id,
-        });
+      await this.telephonyService.setExtensionNumberInWorkspaceMember(
+        createTelephonyInput.workspaceId,
+        createTelephonyInput.memberId,
+        createTelephonyInput.numberExtension,
+      );
 
-        await this.telephonyService.setExtensionNumberInWorkspaceMember(
-          createTelephonyInput.workspaceId,
-          createTelephonyInput.memberId,
-          createTelephonyInput.numberExtension,
-        );
-
-        return result;
-      }
+      return result;
+      // }
     } catch (error) {
       return error;
     }

@@ -40,13 +40,13 @@ import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serv
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
+import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
-import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -54,7 +54,6 @@ import { FileModule } from './file/file.module';
 @Module({
   imports: [
     HealthModule,
-    TelephonyModule,
     AnalyticsModule,
     AuthModule,
     BillingModule,
@@ -118,6 +117,7 @@ import { FileModule } from './file/file.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
+    TelephonyModule,
   ],
   exports: [
     AnalyticsModule,
