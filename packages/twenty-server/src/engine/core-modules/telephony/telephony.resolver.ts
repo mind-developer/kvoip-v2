@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
-import { PABXapi, PABXPRODapi } from 'src/engine/core-modules/telephony/api';
+import { PABXPRODapi } from 'src/engine/core-modules/telephony/api';
 import {
   CreateTelephonyInput,
   UpdateTelephonyInput,
@@ -42,7 +42,7 @@ export class TelephonyResolver {
   getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
     return {
       dados: {
-        tipo: parseInt(input.type),
+        tipo: input.type ? parseInt(input.type) : 1,
         nome: input.extensionName,
         numero: input.numberExtension,
         senha_sip: input.SIPPassword,
@@ -53,21 +53,23 @@ export class TelephonyResolver {
         dupla_autenticacao_ip_permitido: '1',
         dupla_autenticacao_mascara: '1',
         grupo_musica_espera: '1',
-        plano_discagem_id: parseInt(input.dialingPlan),
-        puxar_chamadas: parseInt(input.pullCalls),
+        plano_discagem_id: input.dialingPlan ? parseInt(input.dialingPlan) : 1,
+        puxar_chamadas: input.pullCalls ? parseInt(input.pullCalls) : 0,
         habilitar_timers: 0,
         habilitar_blf: 0,
         escutar_chamadas: input.listenToCalls ? 1 : 0,
         gravar_chamadas: input.recordCalls ? 1 : 0,
         bloquear_ramal: input.blockExtension ? 1 : 0,
-        codigo_area: parseInt(input.areaCode),
+        codigo_area: input.areaCode ? parseInt(input.areaCode) : 0,
         habilitar_dupla_autenticacao: 0,
         habilitar_caixa_postal: input.enableMailbox ? 1 : 0,
         caixa_postal_email: input.emailForMailbox,
         encaminhar_todas_chamadas: {
-          encaminhamento_tipo: parseInt(input.fowardAllCalls),
+          encaminhamento_tipo: input.fowardAllCalls
+            ? parseInt(input.fowardAllCalls)
+            : 0,
           encaminhamento_destino: this.switchFowardOptions(
-            input.fowardAllCalls,
+            input.fowardAllCalls || '0',
             input,
             true,
           ),
@@ -99,7 +101,7 @@ export class TelephonyResolver {
             ? parseInt(input.fowardOfflineWithoutService)
             : 0,
           encaminhamento_destino: this.switchFowardOptions(
-            input.fowardOfflineWithoutService,
+            input.fowardOfflineWithoutService || '0',
             input,
             true,
           ),
@@ -109,7 +111,7 @@ export class TelephonyResolver {
             ? parseInt(input.fowardBusyNotAvailable)
             : 0,
           encaminhamento_destino: this.switchFowardOptions(
-            input.fowardBusyNotAvailable,
+            input.fowardBusyNotAvailable || '0',
             input,
             false,
           ),
@@ -213,25 +215,25 @@ export class TelephonyResolver {
     }
 
     try {
-      const ramalBody = {
-        dados: {
-          ...this.getRamalBody(updateTelephonyInput).dados,
-          ramal_id: telephony.ramal_id,
-        },
-      };
+      // const ramalBody = {
+      //   dados: {
+      //     ...this.getRamalBody(updateTelephonyInput).dados,
+      //     ramal_id: telephony.ramal_id,
+      //   },
+      // };
 
-      const updatedRamal = await PABXapi.post('/alterar_ramal', {
-        ...ramalBody,
-      });
+      // const updatedRamal = await PABXapi.post('/alterar_ramal', {
+      //   ...ramalBody,
+      // });
 
-      if (!updatedRamal) {
-        throw new Error('Error updating ramal');
-      }
+      // if (!updatedRamal) {
+      //   throw new Error('Error updating ramal');
+      // }
 
       await this.telephonyService.setExtensionNumberInWorkspaceMember(
         telephony.workspace.id,
         telephony.memberId,
-        updateTelephonyInput.numberExtension,
+        updateTelephonyInput.numberExtension || telephony.numberExtension,
       );
 
       const result = await this.telephonyService.updateTelephony({
