@@ -1,6 +1,6 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateTelephonyInput {
@@ -16,132 +16,165 @@ export class CreateTelephonyInput {
   @IsString()
   numberExtension: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  type: string;
+  @IsOptional()
+  type?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  extensionName: string;
+  @IsOptional()
+  extensionName?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  extensionGroup: string;
+  @IsOptional()
+  extensionGroup?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  dialingPlan: string;
+  @IsOptional()
+  dialingPlan?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  areaCode: string;
+  @IsOptional()
+  areaCode?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  SIPPassword: string;
+  @IsOptional()
+  SIPPassword?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  callerExternalID: string;
+  @IsOptional()
+  callerExternalID?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  pullCalls: string;
+  @IsOptional()
+  pullCalls?: string;
 
   @Field({ nullable: true, defaultValue: false })
-  listenToCalls: boolean;
+  @IsOptional()
+  listenToCalls?: boolean;
 
   @Field({ nullable: true, defaultValue: false })
-  recordCalls: boolean;
+  @IsOptional()
+  recordCalls?: boolean;
 
   @Field({ nullable: true, defaultValue: false })
-  blockExtension: boolean;
+  @IsOptional()
+  blockExtension?: boolean;
 
   @Field({ nullable: true, defaultValue: false })
-  enableMailbox: boolean;
+  @IsOptional()
+  enableMailbox?: boolean;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  emailForMailbox: string;
+  @IsOptional()
+  emailForMailbox?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  fowardAllCalls: string;
+  @IsOptional()
+  fowardAllCalls?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  fowardBusyNotAvailable: string;
+  @IsOptional()
+  fowardBusyNotAvailable?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  fowardOfflineWithoutService: string;
+  @IsOptional()
+  fowardOfflineWithoutService?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  extensionAllCallsOrOffline: string;
+  @IsOptional()
+  extensionAllCallsOrOffline?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  externalNumberAllCallsOrOffline: string;
+  @IsOptional()
+  externalNumberAllCallsOrOffline?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  destinyMailboxAllCallsOrOffline: string;
+  @IsOptional()
+  destinyMailboxAllCallsOrOffline?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  extensionBusy: string;
+  @IsOptional()
+  extensionBusy?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  externalNumberBusy: string;
+  @IsOptional()
+  externalNumberBusy?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
-  destinyMailboxBusy: string;
+  @IsOptional()
+  destinyMailboxBusy?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   ramal_id?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding1?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding2?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding3?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding4?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding5?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding1Value?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding2Value?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding3Value?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding4Value?: string;
 
-  @Field({ nullable: true, defaultValue: '' })
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   advancedFowarding5Value?: string;
 }
 
