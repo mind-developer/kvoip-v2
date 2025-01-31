@@ -158,6 +158,8 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
+        creatorEmail
+        hasValidEnterpriseKey
         hostname
         featureFlags {
           id
