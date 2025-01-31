@@ -42,6 +42,9 @@ services:
       IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-true}
 
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}    
+      
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
