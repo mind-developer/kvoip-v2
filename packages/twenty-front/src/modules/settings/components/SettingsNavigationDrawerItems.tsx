@@ -13,6 +13,7 @@ import {
   IconHierarchy2,
   IconKey,
   IconMail,
+  IconPhone,
   IconRocket,
   IconServer,
   IconSettings,
@@ -146,6 +147,11 @@ export const SettingsNavigationDrawerItems = () => {
           label={t`Members`}
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
+        />
+        <SettingsNavigationDrawerItem
+          label={'Service Center'}
+          path={SettingsPath.ServiceCenter}
+          Icon={IconPhone}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
