@@ -14,11 +14,11 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: kvoipcrm/v2:${TAG:-latest}
     container_name: kvoipv2-server
     build:
       context: ../..
       dockerfile: ./packages/twenty-docker/twenty/Dockerfile
+    image: kvoipcrm/v2:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
@@ -28,7 +28,7 @@ services:
       - "${SERVER_PORT:-3000}:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5433}/${PG_DATABASE}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -85,14 +85,18 @@ services:
 
   db:
     container_name: kvoipv2-pg
-    image: ankane/pgvector:latest
+    image: kvoipcrm-v2/kvoip-pg-spilo:latest
+    build:
+      context: ../..
+      dockerfile: ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile
     volumes:
-      - db_data:/home/postgres/pgdata
-      - ./kvoip-postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-data:/home/postgres/pgdata
     environment:
-      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
       POSTGRES_DB: ${PG_DATABASE:-postgres}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
     ports: 
       - "5433:5432"
     healthcheck:
@@ -109,5 +113,5 @@ services:
 
 volumes:
   docker-data:
-  db_data:
+  db-data:
   server-local-data:
