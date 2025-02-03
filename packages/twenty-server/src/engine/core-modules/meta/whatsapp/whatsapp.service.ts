@@ -1,6 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
 import {
@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { firestoreDB } from 'src/engine/core-modules/meta/FirebaseConfig';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
@@ -27,7 +28,6 @@ import {
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
