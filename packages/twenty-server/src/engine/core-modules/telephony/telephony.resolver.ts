@@ -156,29 +156,27 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
-    console.log('createTelephonyInput', createTelephonyInput);
-
-    // const ramalBody = this.getRamalBody(createTelephonyInput);
+    const ramalBody = this.getRamalBody(createTelephonyInput);
 
     try {
-      // const createdRamal = await PABXapi.post('/inserir_ramal', {
-      //   ...ramalBody,
-      // });
-
-      // if (createdRamal) {
-      const result = await this.telephonyService.createTelehony({
-        ...createTelephonyInput,
-        // ramal_id: createdRamal.data.id,
+      const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
+        ...ramalBody,
       });
 
-      await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        createTelephonyInput.workspaceId,
-        createTelephonyInput.memberId,
-        createTelephonyInput.numberExtension,
-      );
+      if (createdRamal) {
+        const result = await this.telephonyService.createTelehony({
+          ...createTelephonyInput,
+          ramal_id: createdRamal.data.id,
+        });
 
-      return result;
-      // }
+        await this.telephonyService.setExtensionNumberInWorkspaceMember(
+          createTelephonyInput.workspaceId,
+          createTelephonyInput.memberId,
+          createTelephonyInput.numberExtension,
+        );
+
+        return result;
+      }
     } catch (error) {
       return error;
     }
@@ -215,20 +213,20 @@ export class TelephonyResolver {
     }
 
     try {
-      // const ramalBody = {
-      //   dados: {
-      //     ...this.getRamalBody(updateTelephonyInput).dados,
-      //     ramal_id: telephony.ramal_id,
-      //   },
-      // };
+      const ramalBody = {
+        dados: {
+          ...this.getRamalBody(updateTelephonyInput).dados,
+          ramal_id: telephony.ramal_id,
+        },
+      };
 
-      // const updatedRamal = await PABXapi.post('/alterar_ramal', {
-      //   ...ramalBody,
-      // });
+      const updatedRamal = await PABXPRODapi.post('/alterar_ramal', {
+        ...ramalBody,
+      });
 
-      // if (!updatedRamal) {
-      //   throw new Error('Error updating ramal');
-      // }
+      if (!updatedRamal) {
+        throw new Error('Error updating ramal');
+      }
 
       await this.telephonyService.setExtensionNumberInWorkspaceMember(
         telephony.workspace.id,
