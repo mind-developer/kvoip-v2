@@ -14,16 +14,21 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: kvoipcrm/v2:${TAG:-latest}
     container_name: kvoipv2-server
+    build:
+      context: ../..
+      dockerfile: ./packages/twenty-docker/twenty/Dockerfile
+    image: kvoipcrm/v2:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
+      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
+      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
     ports:
-      - "${SERVER_PORT}:3000"
+      - "${SERVER_PORT:-3000}:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5433}/${PG_DATABASE}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -34,13 +39,14 @@ services:
 
       APP_SECRET: ${APP_SECRET}
 
-      # FRONT_PROTOCOL: ${FRONT_PROTOCOL}
-      # FRONT_DOMAIN: ${FRONT_DOMAIN}
-      # FRONT_PORT: ${FRONT_PORT}
-      # FRONT_BASE_URL: ${SERVER_URL}
-      # REACT_APP_SERVER_BASE_URL: ${SERVER_URL}
+      REACT_APP_CHATBOT_BASE_URL: ${REACT_APP_CHATBOT_BASE_URL:-http://localhost:8080}
+
+      IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-true}
 
       DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-true}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}    
+      
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -48,9 +54,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 120s
     restart: on-failure
 
   worker:
@@ -78,14 +85,18 @@ services:
 
   db:
     container_name: kvoipv2-pg
-    image: ankane/pgvector:latest
+    image: kvoipcrm-v2/kvoip-pg-spilo:latest
+    build:
+      context: ../..
+      dockerfile: ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile
     volumes:
-      - db_data:/home/postgres/pgdata
-      - ./kvoip-postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-data:/home/postgres/pgdata
     environment:
-      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
       POSTGRES_DB: ${PG_DATABASE:-postgres}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
     ports: 
       - "5433:5432"
     healthcheck:
@@ -102,5 +113,5 @@ services:
 
 volumes:
   docker-data:
-  db_data:
+  db-data:
   server-local-data:
