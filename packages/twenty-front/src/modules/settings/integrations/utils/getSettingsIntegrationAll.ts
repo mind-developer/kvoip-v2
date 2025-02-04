@@ -46,5 +46,14 @@ export const getSettingsIntegrationAll = ({
       text: 'Stripe',
       link: '/settings/integrations/stripe',
     },
+    {
+      from: {
+        key: 'inter',
+        image: '/images/integrations/inter-logo.png',
+      },
+      type: 'Add',
+      text: 'Banco Inter',
+      link: '/settings/integrations/inter',
+    },
   ].filter(Boolean) as SettingsIntegration[],
 });
