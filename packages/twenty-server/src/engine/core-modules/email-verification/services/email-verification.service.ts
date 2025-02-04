@@ -15,8 +15,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -41,8 +40,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
-    locale: keyof typeof APP_LOCALES,
+    workspaceSubdomain?: string,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -55,7 +53,7 @@ export class EmailVerificationService {
       this.domainManagerService.buildEmailVerificationURL({
         emailVerificationToken,
         email,
-        workspace,
+        workspaceSubdomain,
       });
 
     const emailData = {
@@ -88,8 +86,7 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
-    locale: keyof typeof APP_LOCALES,
+    workspaceSubdomain?: string,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -131,7 +128,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspace, locale);
+    await this.sendVerificationEmail(user.id, email, workspaceSubdomain);
 
     return { success: true };
   }

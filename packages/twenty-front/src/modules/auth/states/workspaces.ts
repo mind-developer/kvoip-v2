@@ -3,10 +3,10 @@ import { Workspace } from '~/generated/graphql';
 
 export type Workspaces = Pick<
   Workspace,
-  'id' | 'logo' | 'displayName' | 'workspaceUrls'
->[];
+  'id' | 'logo' | 'displayName' | 'subdomain'
+>;
 
-export const workspacesState = createState<Workspaces>({
+export const workspacesState = createState<Workspaces[] | null>({
   key: 'workspacesState',
   defaultValue: [],
 });

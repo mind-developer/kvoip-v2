@@ -5,8 +5,6 @@ import { RecordIndexAddRecordInGroupDropdown } from '@/object-record/record-inde
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
-import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
-import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -22,15 +20,9 @@ export const RecordTableEmptyStateByGroupNoRecordAtAll = () => {
 
   const buttonTitle = `Add a ${objectLabel}`;
 
-  const title = getEmptyStateTitle(
-    objectMetadataItem.nameSingular,
-    objectLabel,
-  );
+  const title = `Add your first ${objectLabel}`;
 
-  const subTitle = getEmptyStateSubTitle(
-    objectMetadataItem.nameSingular,
-    objectLabel,
-  );
+  const subTitle = `Use our API or add your first ${objectLabel} manually`;
 
   const handleButtonClick = () => {
     // When we have no records in the group, we want to show the empty state

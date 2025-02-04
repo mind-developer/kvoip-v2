@@ -1,14 +1,15 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -32,9 +33,9 @@ import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
   namePlural: 'timelineActivities',
-  labelSingular: msg`Timeline Activity`,
-  labelPlural: msg`Timeline Activities`,
-  description: msg`Aggregated / filtered event to be displayed on the timeline`,
+  labelSingular: 'Timeline Activity',
+  labelPlural: 'Timeline Activities',
+  description: 'Aggregated / filtered event to be displayed on the timeline',
   icon: STANDARD_OBJECT_ICONS.timelineActivity,
 })
 @WorkspaceIsSystem()
@@ -229,10 +230,16 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('workflow')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   workflowId: string | null;
 
   @WorkspaceRelation({
@@ -244,10 +251,16 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('workflowVersion')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   workflowVersionId: string | null;
 
   @WorkspaceRelation({
@@ -259,10 +272,16 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   @WorkspaceIsNullable()
   workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('workflowRun')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
   workflowRunId: string | null;
 
   @WorkspaceDynamicRelation({

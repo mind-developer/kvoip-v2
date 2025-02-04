@@ -1,10 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
-
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 
 import { ClientConfig } from './client-config.entity';
 
@@ -83,19 +80,6 @@ export class ClientConfigResolver {
         this.environmentService.get('NODE_ENV') ===
           NodeEnvironment.development ||
         this.environmentService.get('IS_BILLING_ENABLED'),
-      publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
-      isMicrosoftMessagingEnabled: this.environmentService.get(
-        'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
-      ),
-      isMicrosoftCalendarEnabled: this.environmentService.get(
-        'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
-      ),
-      isGoogleMessagingEnabled: this.environmentService.get(
-        'MESSAGING_PROVIDER_GMAIL_ENABLED',
-      ),
-      isGoogleCalendarEnabled: this.environmentService.get(
-        'CALENDAR_PROVIDER_GOOGLE_ENABLED',
-      ),
     };
 
     return Promise.resolve(clientConfig);

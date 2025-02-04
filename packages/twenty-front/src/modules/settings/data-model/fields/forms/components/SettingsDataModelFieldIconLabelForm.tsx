@@ -11,8 +11,6 @@ import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/uti
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
-import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   Card,
@@ -92,8 +90,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const theme = useTheme();
 
-  const { t } = useLingui();
-
   const isLabelSyncedWithName =
     watch('isLabelSyncedWithName') ??
     (isDefined(fieldMetadataItem)
@@ -102,8 +98,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
   const label = watch('label');
 
   const apiNameTooltipText = isLabelSyncedWithName
-    ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
-    : t`Input must be in camel case and cannot start with a number`;
+    ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
+    : 'Input must be in camel case and cannot start with a number';
 
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
@@ -134,7 +130,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              placeholder={t`Employees`}
+              placeholder="Employees"
               value={value}
               onChange={(value) => {
                 onChange(value);
@@ -163,8 +159,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     render={({ field: { onChange, value } }) => (
                       <>
                         <TextInput
-                          label={t`API Name`}
-                          placeholder={t`employees`}
+                          label="API Name"
+                          placeholder="employees"
                           value={value}
                           onChange={onChange}
                           disabled={
@@ -208,8 +204,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     <Card rounded>
                       <SettingsOptionCardContentToggle
                         Icon={IconRefresh}
-                        title={t`Synchronize Field Label and API Name`}
-                        description={t`Should changing a field's label also change the API name?`}
+                        title="Synchronize Field Label and API Name"
+                        description="Should changing a field's label also change the API name?"
                         checked={value ?? true}
                         disabled={
                           isDefined(fieldMetadataItem) &&

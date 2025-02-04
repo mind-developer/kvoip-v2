@@ -4,18 +4,11 @@ import { APP_LOCALES } from 'twenty-shared';
 
 export default defineConfig({
   sourceLocale: 'en',
-  locales: Object.values(APP_LOCALES),
-  pseudoLocale: 'pseudo-en',
-  fallbackLocales: {
-    'pseudo-en': 'en',
-  },
+  locales: ['fr', 'en', 'pt', 'de', 'it', 'es', 'zh'],
   catalogs: [
     {
-      path: '<rootDir>/src/locales/{locale}',
+      path: '<rootDir>/src/locales/{locale}/messages',
       include: ['src'],
     },
   ],
-  catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
-  compileNamespace: 'ts',
-  format: formatter({ lineNumbers: false }),
 });

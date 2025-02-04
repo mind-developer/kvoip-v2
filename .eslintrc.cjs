@@ -1,14 +1,7 @@
 module.exports = {
   root: true,
-  extends: ['plugin:prettier/recommended', 'plugin:lingui/recommended'],
-  plugins: [
-    '@nx',
-    'prefer-arrow',
-    'import',
-    'unused-imports',
-    'unicorn',
-    'lingui',
-  ],
+  extends: ['plugin:prettier/recommended'],
+  plugins: ['@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn'],
   rules: {
     'lingui/no-single-variables-to-translate': 'off',
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],

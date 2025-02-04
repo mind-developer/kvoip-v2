@@ -14,21 +14,10 @@ export const getSessionStorageOptions = (
 
   const SERVER_URL = environmentService.get('SERVER_URL');
 
-  const appSecret = environmentService.get('APP_SECRET');
-
-  if (!appSecret) {
-    throw new Error('APP_SECRET is not set');
-  }
-
-  const sessionSecret = createHash('sha256')
-    .update(`${appSecret}SESSION_STORE_SECRET`)
-    .digest('hex');
-
-  const sessionStorage: session.SessionOptions = {
-    secret: sessionSecret,
+  const sessionStorage = {
+    secret: environmentService.get('SESSION_STORE_SECRET'),
     resave: false,
     saveUninitialized: false,
-    proxy: true,
     cookie: {
       secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
       maxAge: 1000 * 60 * 30, // 30 minutes

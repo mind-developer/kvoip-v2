@@ -1,11 +1,12 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -34,20 +35,21 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const TITLE_FIELD_NAME = 'title';
+const BODY_FIELD_NAME = 'body';
 
 const BODY_V2_FIELD_NAME = 'bodyV2';
 
 export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
+  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
 ];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.task,
   namePlural: 'tasks',
-  labelSingular: msg`Task`,
-  labelPlural: msg`Tasks`,
-  description: msg`A task`,
+  labelSingular: 'Task',
+  labelPlural: 'Tasks',
+  description: 'A task',
   icon: STANDARD_OBJECT_ICONS.task,
   shortcut: 'T',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
@@ -72,7 +74,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Task title`,
     icon: 'IconNotes',
   })
-  title: string;
+  [TITLE_FIELD_NAME]: string;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
@@ -82,17 +84,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  body: string | null;
-
-  @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
-    type: FieldMetadataType.RICH_TEXT_V2,
-    label: msg`Body`,
-    description: msg`Task body`,
-    icon: 'IconFilePencil',
-  })
-  @WorkspaceIsNullable()
-  bodyV2: RichTextV2Metadata | null;
+  [BODY_FIELD_NAME]: string | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,
@@ -217,5 +209,5 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

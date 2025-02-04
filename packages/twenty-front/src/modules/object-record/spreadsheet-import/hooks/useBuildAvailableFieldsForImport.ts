@@ -17,9 +17,9 @@ export const useBuildAvailableFieldsForImport = () => {
 
     // Todo: refactor this to avoid this else if syntax with duplicated code
     for (const fieldMetadataItem of fieldMetadataItems) {
-      if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
+      if (fieldMetadataItem.type === FieldMetadataType.FullName) {
         const { firstNameLabel, lastNameLabel } =
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.FULL_NAME];
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.FullName];
 
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
@@ -48,7 +48,7 @@ export const useBuildAvailableFieldsForImport = () => {
             `${lastNameLabel} (${fieldMetadataItem.label})`,
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Relation) {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
           label: fieldMetadataItem.label + ' (ID)',
@@ -62,9 +62,9 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.label + ' (ID)',
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.CURRENCY) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Currency) {
         const { currencyCodeLabel, amountMicrosLabel } =
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.CURRENCY];
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Currency];
 
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
@@ -89,13 +89,13 @@ export const useBuildAvailableFieldsForImport = () => {
           },
           fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
-            FieldMetadataType.NUMBER,
+            FieldMetadataType.Number,
             `${amountMicrosLabel} (${fieldMetadataItem.label})`,
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Address) {
         Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.ADDRESS],
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Address],
         ).forEach(([_, fieldLabel]) => {
           availableFieldsForImport.push({
             icon: getIcon(fieldMetadataItem.icon),
@@ -112,9 +112,9 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.LINKS) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Links) {
         Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.LINKS],
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Links],
         ).forEach(([_, fieldLabel]) => {
           availableFieldsForImport.push({
             icon: getIcon(fieldMetadataItem.icon),
@@ -131,7 +131,7 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Select) {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
           label: fieldMetadataItem.label,
@@ -151,7 +151,7 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.label + ' (ID)',
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.MultiSelect) {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
           label: fieldMetadataItem.label,
@@ -171,7 +171,7 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.label + ' (ID)',
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.BOOLEAN) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
           label: fieldMetadataItem.label,
@@ -185,9 +185,9 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.label,
           ),
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.EMAILS) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Emails) {
         Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.EMAILS],
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Emails],
         ).forEach(([_, fieldLabel]) => {
           availableFieldsForImport.push({
             icon: getIcon(fieldMetadataItem.icon),
@@ -204,9 +204,9 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.PHONES) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.Phones) {
         Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.PHONES],
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Phones],
         ).forEach(([_, fieldLabel]) => {
           availableFieldsForImport.push({
             icon: getIcon(fieldMetadataItem.icon),

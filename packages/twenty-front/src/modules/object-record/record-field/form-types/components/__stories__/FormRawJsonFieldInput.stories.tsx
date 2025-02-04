@@ -169,8 +169,14 @@ export const DisplayDefaultValueWithVariablesProperly: Story = {
 
     await canvas.findByText(/{ "a": { "b" : /);
 
-    const variableTag = await canvas.findByText('Name');
-    await expect(variableTag).toBeVisible();
+    await waitFor(() => {
+      const variableTag = canvasElement.querySelector(
+        '[data-type="variableTag"]',
+      );
+
+      expect(variableTag).toBeVisible();
+      expect(variableTag).toHaveTextContent('test');
+    });
 
     await canvas.findByText(/ } }/);
   },

@@ -1,11 +1,11 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
+import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
-  DateTimePicker,
+  InternalDatePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -352,11 +352,11 @@ export const FormDateTimeFieldInput = ({
                 <StyledDateInputContainer>
                   <StyledDateInputAbsoluteContainer>
                     <OverlayContainer>
-                      <DateTimePicker
+                      <InternalDatePicker
                         date={pickerDate ?? new Date()}
                         isDateTimeInput={false}
                         onChange={handlePickerChange}
-                        onClose={handlePickerMouseSelect}
+                        onMouseSelect={handlePickerMouseSelect}
                         onEnter={handlePickerEnter}
                         onEscape={handlePickerEscape}
                         onClear={handlePickerClear}
@@ -368,7 +368,7 @@ export const FormDateTimeFieldInput = ({
               ) : null}
             </>
           ) : (
-            <VariableChipStandalone
+            <VariableChip
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />

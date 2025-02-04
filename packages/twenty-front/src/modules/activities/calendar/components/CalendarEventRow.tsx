@@ -15,10 +15,11 @@ import { isDefined } from 'twenty-shared';
 import {
   Avatar,
   AvatarGroup,
-  Card,
-  CardContent,
   IconArrowRight,
   IconLock,
+  isDefined,
+  Card,
+  CardContent,
 } from 'twenty-ui';
 import {
   CalendarChannelVisibility,
@@ -70,10 +71,7 @@ const StyledTime = styled.div`
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
   flex: 1 0 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: ${({ theme }) => theme.spacing(10)};
+
   ${({ theme, active }) =>
     active &&
     css`
@@ -129,7 +127,7 @@ export const CalendarEventRow = ({
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
   const showTitle =
-    calendarEvent.visibility === CalendarChannelVisibility.SHARE_EVERYTHING;
+    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
   return (
     <StyledContainer

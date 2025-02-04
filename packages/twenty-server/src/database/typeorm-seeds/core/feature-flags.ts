@@ -36,6 +36,11 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKey.IsFunctionSettingsEnabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -46,12 +51,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsCustomDomainEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsApprovedAccessDomainsEnabled,
+        key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -66,12 +66,12 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsNewRelationEnabled,
+        key: FeatureFlagKey.IsCommandMenuV2Enabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
-        key: FeatureFlagKey.IsWorkflowFormActionEnabled,
+        key: FeatureFlagKey.IsLocalizationEnabled,
         workspaceId: workspaceId,
         value: true,
       },

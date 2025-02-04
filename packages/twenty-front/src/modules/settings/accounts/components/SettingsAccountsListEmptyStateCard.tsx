@@ -3,8 +3,8 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared';
 import {
@@ -15,6 +15,7 @@ import {
   IconGoogle,
   IconMicrosoft,
 } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -36,8 +37,10 @@ export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
-
-  const { t } = useLingui();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const isMicrosoftSyncEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsMicrosoftSyncEnabled,
+  );
 
   const isGoogleMessagingEnabled = useRecoilValue(
     isGoogleMessagingEnabledState,
@@ -54,21 +57,20 @@ export const SettingsAccountsListEmptyStateCard = ({
 
   return (
     <Card>
-      <StyledHeader>{label || t`No connected account`}</StyledHeader>
+      <StyledHeader>{label || 'No connected account'}</StyledHeader>
       <StyledBody>
         {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
           <Button
             Icon={IconGoogle}
-            title={t`Connect with Google`}
+            title="Connect with Google"
             variant="secondary"
             onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
           />
         )}
-
-        {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
+        {isMicrosoftSyncEnabled && currentWorkspace?.isMicrosoftAuthEnabled && (
           <Button
             Icon={IconMicrosoft}
-            title={t`Connect with Microsoft`}
+            title="Connect with Microsoft"
             variant="secondary"
             onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
           />

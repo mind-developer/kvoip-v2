@@ -76,11 +76,9 @@ const StyledSourceHandle = styled(Handle)`
   border: none;
   width: 4px;
   height: 4px;
-  left: ${({ theme }) => theme.spacing(10)};
 `;
 
 export const StyledTargetHandle = styled(Handle)`
-  left: ${({ theme }) => theme.spacing(10)};
   visibility: hidden;
 `;
 

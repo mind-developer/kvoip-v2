@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useLingui } from '@lingui/react/macro';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { i18n } from '@lingui/core';
+import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -20,11 +17,9 @@ const StyledContainer = styled.div`
 `;
 
 export const LocalePicker = () => {
-  const { t } = useLingui();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-  const isDebugMode = useRecoilValue(isDebugModeState);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -57,141 +52,8 @@ export const LocalePicker = () => {
     });
     await updateWorkspaceMember({ locale: value });
 
-    await dynamicActivate(value);
-    await refreshObjectMetadataItems();
+    i18n.activate(value);
   };
-
-  const localeOptions: Array<{
-    label: string;
-    value: (typeof APP_LOCALES)[keyof typeof APP_LOCALES];
-  }> = [
-    {
-      label: t`Afrikaans`,
-      value: APP_LOCALES['af-ZA'],
-    },
-    {
-      label: t`Arabic`,
-      value: APP_LOCALES['ar-SA'],
-    },
-    {
-      label: t`Catalan`,
-      value: APP_LOCALES['ca-ES'],
-    },
-    {
-      label: t`Chinese — Simplified`,
-      value: APP_LOCALES['zh-CN'],
-    },
-    {
-      label: t`Chinese — Traditional`,
-      value: APP_LOCALES['zh-TW'],
-    },
-    {
-      label: t`Czech`,
-      value: APP_LOCALES['cs-CZ'],
-    },
-    {
-      label: t`Danish`,
-      value: APP_LOCALES['da-DK'],
-    },
-    {
-      label: t`Dutch`,
-      value: APP_LOCALES['nl-NL'],
-    },
-    {
-      label: t`English`,
-      value: APP_LOCALES.en,
-    },
-    {
-      label: t`Finnish`,
-      value: APP_LOCALES['fi-FI'],
-    },
-    {
-      label: t`French`,
-      value: APP_LOCALES['fr-FR'],
-    },
-    {
-      label: t`German`,
-      value: APP_LOCALES['de-DE'],
-    },
-    {
-      label: t`Greek`,
-      value: APP_LOCALES['el-GR'],
-    },
-    {
-      label: t`Hebrew`,
-      value: APP_LOCALES['he-IL'],
-    },
-    {
-      label: t`Hungarian`,
-      value: APP_LOCALES['hu-HU'],
-    },
-    {
-      label: t`Italian`,
-      value: APP_LOCALES['it-IT'],
-    },
-    {
-      label: t`Japanese`,
-      value: APP_LOCALES['ja-JP'],
-    },
-    {
-      label: t`Korean`,
-      value: APP_LOCALES['ko-KR'],
-    },
-    {
-      label: t`Norwegian`,
-      value: APP_LOCALES['no-NO'],
-    },
-    {
-      label: t`Polish`,
-      value: APP_LOCALES['pl-PL'],
-    },
-    {
-      label: t`Portuguese — Portugal`,
-      value: APP_LOCALES['pt-PT'],
-    },
-    {
-      label: t`Portuguese — Brazil`,
-      value: APP_LOCALES['pt-BR'],
-    },
-    {
-      label: t`Romanian`,
-      value: APP_LOCALES['ro-RO'],
-    },
-    {
-      label: t`Russian`,
-      value: APP_LOCALES['ru-RU'],
-    },
-    {
-      label: t`Serbian (Cyrillic)`,
-      value: APP_LOCALES['sr-Cyrl'],
-    },
-    {
-      label: t`Spanish`,
-      value: APP_LOCALES['es-ES'],
-    },
-    {
-      label: t`Swedish`,
-      value: APP_LOCALES['sv-SE'],
-    },
-    {
-      label: t`Turkish`,
-      value: APP_LOCALES['tr-TR'],
-    },
-    {
-      label: t`Ukrainian`,
-      value: APP_LOCALES['uk-UA'],
-    },
-    {
-      label: t`Vietnamese`,
-      value: APP_LOCALES['vi-VN'],
-    },
-  ];
-  if (isDebugMode) {
-    localeOptions.push({
-      label: t`Pseudo-English`,
-      value: APP_LOCALES['pseudo-en'],
-    });
-  }
 
   return (
     <StyledContainer>
@@ -199,11 +61,38 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
-        value={currentWorkspaceMember.locale}
-        options={localeOptions}
-        onChange={(value) =>
-          handleLocaleChange(value as keyof typeof APP_LOCALES)
-        }
+        value={i18n.locale}
+        options={[
+          {
+            label: 'Portuguese',
+            value: 'pt',
+          },
+          {
+            label: 'French',
+            value: 'fr',
+          },
+          {
+            label: 'German',
+            value: 'de',
+          },
+          {
+            label: 'Italian',
+            value: 'it',
+          },
+          {
+            label: 'Spanish',
+            value: 'es',
+          },
+          {
+            label: 'English',
+            value: 'en',
+          },
+          {
+            label: 'Chinese',
+            value: 'zh',
+          },
+        ]}
+        onChange={(value) => handleLocaleChange(value)}
       />
     </StyledContainer>
   );

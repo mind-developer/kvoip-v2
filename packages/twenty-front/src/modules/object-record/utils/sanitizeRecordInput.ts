@@ -25,9 +25,9 @@ export const sanitizeRecordInput = ({
         }
 
         if (
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE
+            RelationDefinitionType.ManyToOne
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
@@ -42,9 +42,9 @@ export const sanitizeRecordInput = ({
         }
 
         if (
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.ONE_TO_MANY
+            RelationDefinitionType.OneToMany
         ) {
           return undefined;
         }

@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -46,9 +45,9 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
   namePlural: 'opportunities',
-  labelSingular: msg`Opportunity`,
-  labelPlural: msg`Opportunities`,
-  description: msg`An opportunity`,
+  labelSingular: 'Opportunity',
+  labelPlural: 'Opportunities',
+  description: 'An opportunity',
   icon: STANDARD_OBJECT_ICONS.opportunity,
   shortcut: 'O',
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
@@ -244,5 +243,5 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

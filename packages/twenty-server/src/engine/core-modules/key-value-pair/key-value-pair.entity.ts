@@ -25,7 +25,7 @@ export enum KeyValuePairType {
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
-@ObjectType()
+@ObjectType('KeyValuePair')
 @Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
 @Index('IndexOnKeyWorkspaceIdAndNullUserIdUnique', ['key', 'workspaceId'], {
   unique: true,

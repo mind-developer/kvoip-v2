@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -16,7 +16,7 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
   imports: [
     FileUploadModule,
     NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity], 'metadata'),
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     FileModule,
     ThrottlerModule,
     AnalyticsModule,

@@ -130,32 +130,69 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
-    let logs = '';
+        child.on('message', (message: object | ServerlessExecuteError) => {
+          const duration = Date.now() - startTime;
 
-    const consoleListener = new ConsoleListener();
+          if ('errorType' in message) {
+            resolve({
+              data: null,
+              duration,
+              error: message,
+              status: ServerlessFunctionExecutionStatus.ERROR,
+            });
+          } else {
+            resolve({
+              data: message,
+              duration,
+              status: ServerlessFunctionExecutionStatus.SUCCESS,
+            });
+          }
+          child.kill();
+        });
 
-    consoleListener.intercept((type, args) => {
-      const formattedArgs = args.map((arg) => {
-        if (typeof arg === 'object' && arg !== null) {
-          const seen = new WeakSet();
+        child.stderr?.on('data', (data) => {
+          const stackTrace = data
+            .toString()
+            .split('\n')
+            .filter((line: string) => line.trim() !== '');
+          const errorTrace = stackTrace.filter((line: string) =>
+            line.includes('Error: '),
+          )?.[0];
 
-          return JSON.stringify(
-            arg,
-            (key, value) => {
-              if (typeof value === 'object' && value !== null) {
-                if (seen.has(value)) {
-                  return '[Circular]'; // Handle circular references
-                }
-                seen.add(value);
-              }
+          let errorType = 'Unknown';
+          let errorMessage = '';
 
-              return value;
+          if (errorTrace) {
+            errorType = errorTrace.split(':')[0];
+            errorMessage = errorTrace.split(': ')[1];
+          }
+          const duration = Date.now() - startTime;
+
+          resolve({
+            data: null,
+            duration,
+            status: ServerlessFunctionExecutionStatus.ERROR,
+            error: {
+              errorType,
+              errorMessage,
+              stackTrace: stackTrace,
             },
             2,
           );
         }
 
-        return arg;
+        child.on('error', (error) => {
+          reject(error);
+          child.kill();
+        });
+
+        child.on('exit', (code) => {
+          if (code && code !== 0) {
+            reject(new Error(`Child process exited with code ${code}`));
+          }
+        });
+
+        child.send({ params: payload });
       });
 
       const formattedType = type === 'log' ? 'info' : type;

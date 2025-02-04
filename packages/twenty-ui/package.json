@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "0.44.0-canary",
+  "version": "0.35.4",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
@@ -9,9 +9,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
-  },
-  "dependencies": {
-    "twenty-shared": "workspace:*"
   },
   "scripts": {
     "build": "npx vite build"

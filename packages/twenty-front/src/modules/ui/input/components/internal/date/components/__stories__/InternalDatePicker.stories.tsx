@@ -3,12 +3,12 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { isDefined } from 'twenty-shared';
-import { DateTimePicker } from '../InternalDatePicker';
+import { isDefined } from '~/utils/isDefined';
+import { InternalDatePicker } from '../InternalDatePicker';
 
-const meta: Meta<typeof DateTimePicker> = {
+const meta: Meta<typeof InternalDatePicker> = {
   title: 'UI/Input/Internal/InternalDatePicker',
-  component: DateTimePicker,
+  component: InternalDatePicker,
   decorators: [ComponentDecorator],
   argTypes: {
     date: { control: 'date' },
@@ -17,7 +17,7 @@ const meta: Meta<typeof DateTimePicker> = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [, updateArgs] = useArgs();
     return (
-      <DateTimePicker
+      <InternalDatePicker
         date={isDefined(date) ? new Date(date) : new Date()}
         onChange={(newDate) => updateArgs({ date: newDate })}
       />
@@ -27,7 +27,7 @@ const meta: Meta<typeof DateTimePicker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DateTimePicker>;
+type Story = StoryObj<typeof InternalDatePicker>;
 
 export const Default: Story = {};
 

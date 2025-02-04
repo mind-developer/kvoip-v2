@@ -26,9 +26,9 @@ describe('useSearchRecordGroupField', () => {
     const mockContextValue = {
       objectMetadataItem: {
         fields: [
-          { type: FieldMetadataType.SELECT, label: 'First' },
-          { type: FieldMetadataType.SELECT, label: 'Second' },
-          { type: FieldMetadataType.TEXT, label: 'Third' },
+          { type: FieldMetadataType.Select, label: 'First' },
+          { type: FieldMetadataType.Select, label: 'Second' },
+          { type: FieldMetadataType.Text, label: 'Third' },
         ],
       },
     };
@@ -40,7 +40,7 @@ describe('useSearchRecordGroupField', () => {
     });
 
     expect(result.current.filteredRecordGroupFieldMetadataItems).toEqual([
-      { type: FieldMetadataType.SELECT, label: 'First' },
+      { type: FieldMetadataType.Select, label: 'First' },
     ]);
   });
 
@@ -48,9 +48,9 @@ describe('useSearchRecordGroupField', () => {
     const mockContextValue = {
       objectMetadataItem: {
         fields: [
-          { type: FieldMetadataType.SELECT, label: 'First' },
-          { type: FieldMetadataType.SELECT, label: 'Second' },
-          { type: FieldMetadataType.TEXT, label: 'Third' },
+          { type: FieldMetadataType.Select, label: 'First' },
+          { type: FieldMetadataType.Select, label: 'Second' },
+          { type: FieldMetadataType.Text, label: 'Third' },
         ],
       },
     };
@@ -58,8 +58,8 @@ describe('useSearchRecordGroupField', () => {
     const { result } = renderWithContext(mockContextValue);
 
     expect(result.current.filteredRecordGroupFieldMetadataItems).toEqual([
-      { type: FieldMetadataType.SELECT, label: 'First' },
-      { type: FieldMetadataType.SELECT, label: 'Second' },
+      { type: FieldMetadataType.Select, label: 'First' },
+      { type: FieldMetadataType.Select, label: 'Second' },
     ]);
   });
 });

@@ -1,7 +1,6 @@
-import { WorkflowTextEditorVariableChip } from '@/workflow/workflow-variables/components/WorkflowTextEditorVariableChip';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
+import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
 import { Node } from '@tiptap/core';
-import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
+import { mergeAttributes } from '@tiptap/react';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -43,10 +42,6 @@ export const VariableTag = Node.create({
         part: 'selectedField',
       }),
     ];
-  },
-
-  addNodeView: () => {
-    return ReactNodeViewRenderer(WorkflowTextEditorVariableChip);
   },
 
   renderText: ({ node }) => {

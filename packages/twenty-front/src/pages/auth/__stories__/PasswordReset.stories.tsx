@@ -17,7 +17,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const mockedOnboardingUsersData = mockedOnboardingUserData(
-  OnboardingStatus.COMPLETED,
+  OnboardingStatus.Completed,
 );
 
 const meta: Meta<PageDecoratorArgs> = {

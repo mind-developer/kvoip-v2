@@ -84,9 +84,19 @@ const RelationManyFieldInputWithContext = () => {
 
   return (
     <div>
-      <RecordFieldComponentInstanceContext.Provider
-        value={{
-          instanceId: 'relation-from-many-field-record-id-people',
+      <FieldContextProvider
+        fieldDefinition={{
+          fieldMetadataId: 'relation',
+          label: 'People',
+          type: FieldMetadataType.Relation,
+          iconName: 'IconLink',
+          metadata: {
+            fieldName: 'people',
+            relationObjectMetadataNamePlural: 'companies',
+            relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
+            objectMetadataNameSingular: 'company',
+            relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+          },
         }}
       >
         <FieldContextProvider

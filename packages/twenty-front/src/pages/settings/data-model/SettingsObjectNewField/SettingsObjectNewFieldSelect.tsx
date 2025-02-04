@@ -7,18 +7,14 @@ import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/for
 import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
+import { useNavigate, useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { t } from '@lingui/core/macro';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -34,7 +30,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 >;
 
 export const SettingsObjectNewFieldSelect = () => {
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -43,15 +39,14 @@ export const SettingsObjectNewFieldSelect = () => {
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.Text,
     },
   });
   const excludedFieldTypes: FieldType[] = (
     [
-      FieldMetadataType.NUMERIC,
-      FieldMetadataType.RICH_TEXT,
-      FieldMetadataType.RICH_TEXT_V2,
-      FieldMetadataType.ACTOR,
+      FieldMetadataType.Numeric,
+      FieldMetadataType.RichText,
+      FieldMetadataType.Actor,
     ] as const
   ).filter(isDefined);
 
@@ -75,9 +70,7 @@ export const SettingsObjectNewFieldSelect = () => {
             { children: t`Objects`, href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural,
-              }),
+              href: `/settings/objects/${objectNamePlural}`,
             },
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
           ]}

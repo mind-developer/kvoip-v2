@@ -3,12 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  SubscriptionInterval,
-  SubscriptionStatus,
-  WorkspaceActivationStatus,
-} from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -28,23 +24,6 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
-      customDomain: 'my-custom-domain.com',
-      isCustomDomainEnabled: true,
-      workspaceUrls: {
-        subdomainUrl: 'https://twenty.twenty.com',
-        customUrl: 'https://my-custom-domain.com',
-      },
-      currentBillingSubscription: {
-        id: '1',
-        interval: SubscriptionInterval.Month,
-        status: SubscriptionStatus.Active,
-      },
-      billingSubscriptions: [
-        {
-          id: '1',
-          status: SubscriptionStatus.Active,
-        },
-      ],
     });
   },
 });

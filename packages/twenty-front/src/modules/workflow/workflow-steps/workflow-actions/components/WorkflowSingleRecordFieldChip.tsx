@@ -1,5 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
+import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import {
@@ -47,10 +47,9 @@ export const WorkflowSingleRecordFieldChip = ({
     isStandaloneVariableString(draftValue.value)
   ) {
     return (
-      <VariableChipStandalone
-        rawVariableName={draftValue.value}
-        onRemove={disabled ? undefined : onRemove}
-        isFullRecord
+      <VariableChip
+        rawVariableName={objectMetadataItem.labelSingular}
+        onRemove={onRemove}
       />
     );
   }

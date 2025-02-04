@@ -33,12 +33,12 @@ export const mockedClientConfig: ClientConfig = {
     billingUrl: '',
     trialPeriods: [
       {
-        __typename: 'BillingTrialPeriodDTO',
+        __typename: 'TrialPeriodDTO',
         duration: 30,
         isCreditCardRequired: true,
       },
       {
-        __typename: 'BillingTrialPeriodDTO',
+        __typename: 'TrialPeriodDTO',
         duration: 7,
         isCreditCardRequired: false,
       },
@@ -52,10 +52,4 @@ export const mockedClientConfig: ClientConfig = {
   },
   api: { mutationMaximumAffectedRecords: 100 },
   canManageFeatureFlags: true,
-  publicFeatureFlags: [],
-  isMicrosoftMessagingEnabled: true,
-  isMicrosoftCalendarEnabled: true,
-  isGoogleMessagingEnabled: true,
-  isGoogleCalendarEnabled: true,
-  isAttachmentPreviewEnabled: true,
 };

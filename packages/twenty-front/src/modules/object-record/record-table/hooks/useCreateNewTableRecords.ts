@@ -5,9 +5,8 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
-import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -15,7 +14,8 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useCreateNewTableRecord = ({
   objectMetadataItem,
@@ -46,48 +46,31 @@ export const useCreateNewTableRecord = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const navigate = useNavigateApp();
+  const createNewTableRecord = async () => {
+    const recordId = v4();
 
-  const { openRecordTitleCell } = useRecordTitleCell();
+    if (isCommandMenuV2Enabled) {
+      await createOneRecord({ id: recordId });
 
-  const createNewTableRecord = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const recordId = v4();
+      openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
+      return;
+    }
 
-        const recordIndexOpenRecordIn = snapshot
-          .getLoadable(recordIndexOpenRecordInState)
-          .getValue();
+    setPendingRecordId(recordId);
+    setSelectedTableCellEditMode(-1, 0);
+    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
 
-        await createOneRecord({ id: recordId });
+    if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
+      setActiveDropdownFocusIdAndMemorizePrevious(
+        getDropdownFocusIdForRecordField(
+          recordId,
+          objectMetadataItem.labelIdentifierFieldMetadataId,
+          'table-cell',
+        ),
+      );
+    }
+  };
 
-        if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-          openRecordInCommandMenu({
-            recordId,
-            objectNameSingular: objectMetadataItem.nameSingular,
-            isNewRecord: true,
-          });
-
-          openRecordTitleCell({
-            recordId,
-            fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-          });
-        } else {
-          navigate(AppPath.RecordShowPage, {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          });
-        }
-      },
-    [
-      createOneRecord,
-      navigate,
-      objectMetadataItem.labelIdentifierFieldMetadataId,
-      objectMetadataItem.nameSingular,
-      openRecordInCommandMenu,
-      openRecordTitleCell,
-    ],
-  );
   const createNewTableRecordInGroup = useRecoilCallback(
     ({ set }) =>
       (recordGroupId: string) => {

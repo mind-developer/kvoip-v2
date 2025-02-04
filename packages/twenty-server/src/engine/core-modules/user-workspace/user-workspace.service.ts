@@ -92,7 +92,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workspaceMember',
-        workspaceId,
       },
     });
 
@@ -133,6 +132,20 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       user,
       userWorkspace,
     };
+  }
+
+  async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
+    const appToken = await this.workspaceInvitationService.validateInvitation({
+      workspacePersonalInviteToken: inviteToken,
+      email: user.email,
+    });
+
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      appToken.workspace.id,
+      user.email,
+    );
+
+    return await this.addUserToWorkspace(user, appToken.workspace);
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {

@@ -8,8 +8,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright install",
-          "cp .env.example .env"
+          "yarn playwright install"
         ]
       }
     },

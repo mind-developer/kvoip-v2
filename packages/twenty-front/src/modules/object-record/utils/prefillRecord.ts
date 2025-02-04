@@ -20,9 +20,9 @@ export const prefillRecord = <T extends ObjectRecord>({
       .map((fieldMetadataItem) => {
         const inputValue = input[fieldMetadataItem.name];
         if (
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE
+            RelationDefinitionType.ManyToOne
         ) {
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
         }

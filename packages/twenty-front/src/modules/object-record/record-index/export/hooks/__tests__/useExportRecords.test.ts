@@ -16,7 +16,7 @@ describe('generateCsv', () => {
         label: 'Relation',
         metadata: {
           fieldName: 'relation',
-          relationType: RelationDefinitionType.MANY_TO_ONE,
+          relationType: RelationDefinitionType.ManyToOne,
         },
       },
     ] as ColumnDefinition<FieldMetadata>[];

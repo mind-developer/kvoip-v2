@@ -49,13 +49,13 @@ describe('useAuth', () => {
     jest.clearAllMocks();
   });
 
-  it('should return login token object', async () => {
+  it('should return challenge object', async () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      expect(
-        await result.current.getLoginTokenFromCredentials(email, password),
-      ).toStrictEqual(results.getLoginTokenFromCredentials);
+      expect(await result.current.challenge(email, password)).toStrictEqual(
+        results.challenge,
+      );
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.getAuthTokensFromLoginToken(token);
+      await result.current.verify(token);
     });
 
     expect(mocks[1].result).toHaveBeenCalled();

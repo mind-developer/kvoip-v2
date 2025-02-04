@@ -1,3 +1,4 @@
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Key } from 'ts-key-enum';
@@ -15,7 +16,7 @@ export const CmdEnterActionButton = ({
   useScopedHotkeys(
     [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     () => onClick(),
-    AppHotkeyScope.CommandMenuOpen,
+    RightDrawerHotkeyScope.RightDrawer,
     [onClick],
   );
 

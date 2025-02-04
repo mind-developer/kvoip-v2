@@ -1,12 +1,5 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,43 +29,6 @@ export class ObjectMetadataResolver {
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
   ) {}
 
-  @ResolveField(() => String, { nullable: true })
-  async labelPlural(
-    @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
-      objectMetadata,
-      'labelPlural',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async labelSingular(
-    @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
-      objectMetadata,
-      'labelSingular',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async description(
-    @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
-      objectMetadata,
-      'description',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,

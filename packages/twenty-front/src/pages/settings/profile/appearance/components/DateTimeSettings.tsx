@@ -115,12 +115,12 @@ export const DateTimeSettings = () => {
       : dateTimeFormat.timeZone;
 
   const dateFormat =
-    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.SYSTEM
+    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.System
       ? DateFormat.SYSTEM
       : dateTimeFormat.dateFormat;
 
   const timeFormat =
-    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.SYSTEM
+    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.System
       ? TimeFormat.SYSTEM
       : dateTimeFormat.timeFormat;
 

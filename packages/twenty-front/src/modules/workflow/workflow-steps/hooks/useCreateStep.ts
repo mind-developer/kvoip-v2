@@ -8,13 +8,14 @@ import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/wo
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-ui';
 
 export const useCreateStep = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { openRightDrawer } = useRightDrawer();
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setWorkflowLastCreatedStepId = useSetRecoilState(
@@ -32,11 +33,11 @@ export const useCreateStep = ({
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
 
     const createdStep = (
       await createWorkflowVersionStep({
-        workflowVersionId,
+        workflowVersionId: workflowVersion.id,
         stepType: newStepType,
       })
     )?.data?.createWorkflowVersionStep;
@@ -47,6 +48,7 @@ export const useCreateStep = ({
 
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
+    openRightDrawer(RightDrawerPages.WorkflowStepEdit);
   };
 
   return {

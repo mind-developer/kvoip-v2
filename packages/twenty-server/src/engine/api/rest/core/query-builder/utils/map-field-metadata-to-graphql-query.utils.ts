@@ -170,13 +170,5 @@ export const mapFieldMetadataToGraphqlQuery = (
         additionalPhones
       }
     `;
-  } else if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
-    return `
-      ${field.name}
-      {
-        blocknote
-        markdown
-      }
-    `;
   }
 };

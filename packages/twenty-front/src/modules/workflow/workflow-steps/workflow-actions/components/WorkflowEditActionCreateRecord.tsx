@@ -7,12 +7,15 @@ import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOr
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import {
+  HorizontalSeparator,
+  IconAddressBook,
+  isDefined,
+  useIcons,
+} from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -90,7 +93,7 @@ export const WorkflowEditActionCreateRecord = ({
   const inlineFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+        fieldMetadataItem.type !== FieldMetadataType.Relation &&
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive,
     )
@@ -158,7 +161,6 @@ export const WorkflowEditActionCreateRecord = ({
   }, [saveAction]);
 
   const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
-  const headerIcon = getActionIcon(action.type);
 
   return (
     <>
@@ -173,7 +175,7 @@ export const WorkflowEditActionCreateRecord = ({
             name: newName,
           });
         }}
-        Icon={getIcon(headerIcon)}
+        Icon={IconAddressBook}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
@@ -197,7 +199,6 @@ export const WorkflowEditActionCreateRecord = ({
 
             saveAction(newFormData);
           }}
-          withSearchInput
         />
 
         <HorizontalSeparator noMargin />

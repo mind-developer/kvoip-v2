@@ -13,6 +13,7 @@ import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-gr
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,7 +23,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -51,10 +51,13 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
       viewType,
     });
 
-  const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
-    objectNamePlural,
-    fieldName: recordGroupFieldMetadata?.name ?? '',
-  });
+  const viewGroupSettingsUrl = getSettingsPagePath(
+    SettingsPath.ObjectFieldEdit,
+    {
+      objectNamePlural,
+      fieldName: recordGroupFieldMetadata?.name ?? '',
+    },
+  );
 
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(

@@ -1,6 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavoriteFoldersState';
+import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesFoldersData = {
@@ -16,6 +18,11 @@ export const usePrefetchedFavoritesFoldersData =
     const prefetchFavoriteFolders = useRecoilValue(
       prefetchFavoriteFoldersState,
     );
+
+    const { upsertRecordsInCache: upsertFavoriteFolders } =
+      usePrefetchRunQuery<FavoriteFolder>({
+        prefetchKey: PrefetchKey.AllFavoritesFolders,
+      });
 
     return {
       favoriteFolders: prefetchFavoriteFolders,

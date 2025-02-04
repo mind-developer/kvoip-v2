@@ -11,7 +11,7 @@ export const getLabelIdentifierFieldValue = (
 ): string => {
   if (
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember ||
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
   ) {
     return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
   }

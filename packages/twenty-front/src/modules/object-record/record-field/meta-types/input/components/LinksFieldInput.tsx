@@ -54,7 +54,7 @@ export const LinksFieldInput = ({
       onCancel={onCancel}
       onClickOutside={onClickOutside}
       placeholder="URL"
-      fieldMetadataType={FieldMetadataType.LINKS}
+      fieldMetadataType={FieldMetadataType.Links}
       validateInput={(input) => ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',

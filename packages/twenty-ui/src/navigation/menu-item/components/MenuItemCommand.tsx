@@ -8,7 +8,6 @@ import {
 
 import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
-import { ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`
@@ -32,7 +31,9 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   background: ${({ isSelected, theme }) =>
-    isSelected ? theme.background.transparent.light : 'transparent'};
+    isSelected
+      ? theme.background.transparent.light
+      : theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
@@ -86,7 +87,6 @@ export type MenuItemCommandProps = {
   className?: string;
   isSelected?: boolean;
   onClick?: () => void;
-  RightComponent?: ReactNode;
 };
 
 export const MenuItemCommand = ({
@@ -97,7 +97,6 @@ export const MenuItemCommand = ({
   className,
   isSelected,
   onClick,
-  RightComponent,
 }: MenuItemCommandProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -114,13 +113,7 @@ export const MenuItemCommand = ({
             <LeftIcon size={theme.icon.size.sm} />
           </StyledBigIconContainer>
         )}
-        <StyledTextContainer>
-          <StyledMenuItemLabelText>
-            <OverflowingTextWithTooltip text={text} />
-          </StyledMenuItemLabelText>
-          {description && <StyledDescription>{description}</StyledDescription>}
-        </StyledTextContainer>
-        {RightComponent}
+        <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
       </StyledMenuItemLeftContent>
       {!isMobile && <MenuItemCommandHotKeys hotKeys={hotKeys} />}
     </StyledMenuItemCommandContainer>

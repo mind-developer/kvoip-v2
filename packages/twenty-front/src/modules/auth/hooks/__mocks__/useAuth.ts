@@ -1,13 +1,13 @@
 import {
-  GetAuthTokensFromLoginTokenDocument,
+  ChallengeDocument,
   GetCurrentUserDocument,
-  GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
+  VerifyDocument,
 } from '~/generated/graphql';
 
 export const queries = {
-  getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,
-  getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
+  challenge: ChallengeDocument,
+  verify: VerifyDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
 };
@@ -18,28 +18,23 @@ export const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
 export const variables = {
-  getLoginTokenFromCredentials: {
+  challenge: {
     email,
     password,
   },
-  getAuthTokensFromLoginToken: { loginToken: token },
-  signup: {
-    email,
-    password,
-    workspacePersonalInviteToken: null,
-    locale: "",
-  },
+  verify: { loginToken: token },
+  signup: {},
   getCurrentUser: {},
 };
 
 export const results = {
-  getLoginTokenFromCredentials: {
+  challenge: {
     loginToken: {
       token,
       expiresAt: '2022-01-01',
     },
   },
-  getAuthTokensFromLoginToken: {
+  verify: {
     tokens: {
       accessToken: { token, expiresAt: 'expiresAt' },
       refreshToken: { token, expiresAt: 'expiresAt' },
@@ -69,6 +64,7 @@ export const results = {
         id: 'id',
         displayName: 'displayName',
         logo: 'logo',
+        domainName: 'domainName',
         inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
@@ -86,30 +82,30 @@ export const results = {
 export const mocks = [
   {
     request: {
-      query: queries.getLoginTokenFromCredentials,
-      variables: variables.getLoginTokenFromCredentials,
+      query: queries.challenge,
+      variables: variables.challenge,
     },
     result: jest.fn(() => ({
       data: {
-        getLoginTokenFromCredentials: results.getLoginTokenFromCredentials,
+        challenge: results.challenge,
       },
     })),
   },
   {
     request: {
-      query: queries.getAuthTokensFromLoginToken,
-      variables: variables.getAuthTokensFromLoginToken,
+      query: queries.verify,
+      variables: variables.verify,
     },
     result: jest.fn(() => ({
       data: {
-        getAuthTokensFromLoginToken: results.getAuthTokensFromLoginToken,
+        verify: results.verify,
       },
     })),
   },
   {
     request: {
       query: queries.signup,
-      variables: variables.signup,
+      variables: variables.challenge,
     },
     result: jest.fn(() => ({
       data: {

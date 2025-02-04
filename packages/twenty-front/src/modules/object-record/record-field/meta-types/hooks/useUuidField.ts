@@ -13,7 +13,7 @@ import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 export const useUuidField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.UUID, isFieldUuid, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Uuid, isFieldUuid, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -42,17 +42,3 @@ postgres-on-docker:
 
 redis-on-docker:
 	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
-
-clean-local-dev:
-	npx nx reset;
-	yarn cache clean --all;
-	rm -rf "./.swc";
-	rm -rf "./packages/twenty-emails/.swc";
-	rm -rf "./packages/twenty-emails/dist";
-	rm -rf "./packages/twenty-server/.swc";
-	rm -rf "./packages/twenty-server/dist";
-	rm -rf "./packages/twenty-front/.swc";
-	rm -rf "./packages/twenty-front/build";
-	rm -rf "./packages/twenty-shared/.swc";
-	rm -rf "./packages/twenty-shared/dist";
-	rm -rf "./packages/twenty-ui/dist";

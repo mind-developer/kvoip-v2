@@ -4,18 +4,13 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
-import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useCallback, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useCallback, useContext, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconEyeOff, IconSettings } from 'twenty-ui';
-import { SettingsPermissions } from '~/generated/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -24,7 +19,7 @@ type UseRecordGroupActionsParams = {
 export const useRecordGroupActions = ({
   viewType,
 }: UseRecordGroupActionsParams) => {
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const { objectNameSingular } = useRecordIndexContextOrThrow();
@@ -57,10 +52,9 @@ export const useRecordGroupActions = ({
       throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 
-    navigate(SettingsPath.ObjectFieldEdit, {
-      objectNamePlural: objectMetadataItem.namePlural,
-      fieldName: recordGroupFieldMetadata.name,
-    });
+    const settingsPath = `/settings/objects/${objectMetadataItem.namePlural}/${recordGroupFieldMetadata.name}`;
+
+    navigate(settingsPath);
   }, [
     setNavigationMemorizedUrl,
     location.pathname,
@@ -70,8 +64,33 @@ export const useRecordGroupActions = ({
     recordGroupFieldMetadata,
   ]);
 
-  const hasAccessToDataModelSettings = useHasSettingsPermission(
-    SettingsPermissions.DATA_MODEL,
+  const recordGroupActions: RecordGroupAction[] = useMemo(
+    () =>
+      [
+        {
+          id: 'edit',
+          label: 'Edit',
+          icon: IconSettings,
+          position: 0,
+          callback: () => {
+            navigateToSelectSettings();
+          },
+        },
+        {
+          id: 'hide',
+          label: 'Hide',
+          icon: IconEyeOff,
+          position: 1,
+          callback: () => {
+            handleRecordGroupVisibilityChange(recordGroupDefinition);
+          },
+        },
+      ].filter(isDefined),
+    [
+      handleRecordGroupVisibilityChange,
+      navigateToSelectSettings,
+      recordGroupDefinition,
+    ],
   );
 
   const recordGroupActions: RecordGroupAction[] = [];

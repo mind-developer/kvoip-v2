@@ -70,7 +70,7 @@ export const SummaryCard = ({
             fieldDefinition: {
               type:
                 labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.TEXT,
+                FieldMetadataType.Text,
               iconName: '',
               fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
               label: labelIdentifierFieldMetadataItem?.label || '',

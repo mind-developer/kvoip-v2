@@ -5,7 +5,6 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
@@ -29,7 +28,6 @@ export const NameField = ({
   autoSave = true,
   onNameUpdate,
 }: NameFieldProps) => {
-  const { t } = useLingui();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
@@ -88,7 +86,7 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label={t`Name`}
+        label="Name"
         value={displayName}
         onChange={setDisplayName}
         placeholder="Apple"

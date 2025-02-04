@@ -17,7 +17,9 @@ const meta: Meta<typeof EventCardMessage> = {
     (Story) => {
       return (
         <TimelineActivityContext.Provider
-          value={{ labelIdentifierValue: 'Mock' }}
+          value={{
+            labelIdentifierValue: 'Mock',
+          }}
         >
           <Story />
         </TimelineActivityContext.Provider>

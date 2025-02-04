@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContext, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
@@ -15,6 +15,7 @@ import {
 } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -78,8 +79,7 @@ type SettingsIntegrationNewConnectionFormValues =
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { t } = useTranslation();
   const { databaseKey = '' } = useParams();
-  const navigate = useNavigateSettings();
-  const navigateApp = useNavigateApp();
+  const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -99,9 +99,9 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   useEffect(() => {
     if (!isIntegrationAvailable) {
-      navigateApp(AppPath.NotFound);
+      navigate(AppPath.NotFound);
     }
-  }, [integration, databaseKey, navigateApp, isIntegrationAvailable]);
+  }, [integration, databaseKey, navigate, isIntegrationAvailable]);
 
   const newConnectionSchema =
     databaseKey === 'postgresql'
@@ -115,7 +115,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   if (!isIntegrationAvailable) return null;
 
-  const settingsIntegrationsPagePath = getSettingsPath(
+  const settingsIntegrationsPagePath = getSettingsPagePath(
     SettingsPath.Integrations,
   );
 
@@ -134,14 +134,9 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
       const connectionId = createdConnection.data?.createOneRemoteServer.id;
 
-      if (!connectionId) {
-        throw new Error('Failed to create connection');
-      }
-
-      navigate(SettingsPath.IntegrationDatabaseConnection, {
-        databaseKey,
-        connectionId,
-      });
+      navigate(
+        `${settingsIntegrationsPagePath}/${databaseKey}/${connectionId}`,
+      );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -173,7 +168,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',
@@ -189,9 +184,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() =>
-            navigate(SettingsPath.IntegrationDatabase, {
-              databaseKey,
-            })
+            navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
           }
           onSave={handleSave}
         />

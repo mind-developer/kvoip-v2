@@ -14,10 +14,8 @@ export function isStripeValidProductMetadata(
   }
   const hasBillingPlanKey = isValidBillingPlanKey(metadata.planKey);
   const hasPriceUsageBased = isValidPriceUsageBased(metadata.priceUsageBased);
-  const hasIsBaseProduct =
-    metadata.isBaseProduct === 'true' || metadata.isBaseProduct === 'false';
 
-  return hasBillingPlanKey && hasPriceUsageBased && hasIsBaseProduct;
+  return hasBillingPlanKey && hasPriceUsageBased;
 }
 
 const isValidBillingPlanKey = (planKey?: string) => {

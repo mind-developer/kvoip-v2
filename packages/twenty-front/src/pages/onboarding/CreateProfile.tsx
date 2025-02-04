@@ -180,7 +180,7 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.PROFILE_CREATION) {
+  if (onboardingStatus !== OnboardingStatus.ProfileCreation) {
     return null;
   }
 

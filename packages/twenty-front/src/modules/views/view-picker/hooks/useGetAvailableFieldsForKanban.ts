@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isDefined } from '~/utils/isDefined';
 
 export const useGetAvailableFieldsForKanban = () => {
   const viewObjectMetadataId = useRecoilComponentValueV2(
@@ -27,26 +26,22 @@ export const useGetAvailableFieldsForKanban = () => {
 
   const availableFieldsForKanban =
     objectMetadataItem?.fields.filter(
-      (field) => field.type === FieldMetadataType.SELECT,
+      (field) => field.type === FieldMetadataType.Select,
     ) ?? [];
 
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (isDefined(objectMetadataItem?.namePlural)) {
       navigate(
-        SettingsPath.ObjectNewFieldConfigure,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
-        },
-        {
-          fieldType: FieldMetadataType.SELECT,
-        },
+        `/settings/objects/${
+          objectMetadataItem.namePlural
+        }/new-field/configure?fieldType=${FieldMetadataType.Select}`,
       );
     } else {
-      navigate(SettingsPath.Objects);
+      navigate(`/settings/objects`);
     }
   }, [
     setNavigationMemorizedUrl,

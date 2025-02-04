@@ -31,9 +31,6 @@ export type WorkflowDiagramStepNodeData =
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
       name: string;
-      icon?: string;
-      runStatus?: WorkflowDiagramRunStatus;
-      isLeafNode: boolean;
     }
   | {
       nodeType: 'action';

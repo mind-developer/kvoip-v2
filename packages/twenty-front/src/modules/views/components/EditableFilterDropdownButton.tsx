@@ -7,7 +7,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { EditableFilterDropdownButtonEffect } from '@/views/components/EditableFilterDropdownButtonEffect';
 
@@ -24,16 +26,36 @@ export const EditableFilterDropdownButton = ({
 }: EditableFilterDropdownButtonProps) => {
   const { closeDropdown } = useDropdown(viewFilterDropdownId);
 
-  const { removeRecordFilter } = useRemoveRecordFilter();
+  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
+
+  useEffect(() => {
+    const filterDefinition = availableFilterDefinitions.find(
+      (filterDefinition) =>
+        filterDefinition.fieldMetadataId === viewFilter.fieldMetadataId,
+    );
+
+    if (isDefined(filterDefinition)) {
+      setFilterDefinitionUsedInDropdown(filterDefinition);
+      setSelectedOperandInDropdown(viewFilter.operand);
+      setSelectedFilter(viewFilter);
+    }
+  }, [
+    availableFilterDefinitions,
+    setFilterDefinitionUsedInDropdown,
+    viewFilter,
+    setSelectedOperandInDropdown,
+    setSelectedFilter,
+    viewFilterDropdownId,
+  ]);
 
   const handleRemove = () => {
     closeDropdown();
 
-    removeRecordFilter({ recordFilterId: viewFilter.id });
+    deleteCombinedViewFilter(viewFilter.id);
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, operand } = viewFilter;
+    const { id: fieldId, value, operand } = viewFilter;
     if (
       !value &&
       ![
@@ -44,9 +66,9 @@ export const EditableFilterDropdownButton = ({
         RecordFilterOperand.IsToday,
       ].includes(operand)
     ) {
-      removeRecordFilter({ recordFilterId: viewFilter.id });
+      deleteCombinedViewFilter(fieldId);
     }
-  }, [viewFilter, removeRecordFilter]);
+  }, [viewFilter, deleteCombinedViewFilter]);
 
   return (
     <>

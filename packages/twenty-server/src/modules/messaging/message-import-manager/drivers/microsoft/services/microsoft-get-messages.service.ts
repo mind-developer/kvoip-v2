@@ -54,7 +54,9 @@ export class MicrosoftGetMessagesService {
 
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftMessageListFetchError(
+        error,
+      );
 
       return [];
     }
@@ -80,7 +82,7 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+        this.microsoftHandleErrorService.handleMicrosoftMessageListFetchError(
           response.error,
         );
       }

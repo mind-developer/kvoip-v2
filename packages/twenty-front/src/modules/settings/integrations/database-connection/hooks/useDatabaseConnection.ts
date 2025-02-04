@@ -1,13 +1,12 @@
 import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useDatabaseConnection = ({
   fetchPolicy,
@@ -15,7 +14,7 @@ export const useDatabaseConnection = ({
   fetchPolicy?: WatchQueryFetchPolicy;
 }) => {
   const { databaseKey = '', connectionId = '' } = useParams();
-  const navigateApp = useNavigateApp();
+  const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -35,12 +34,12 @@ export const useDatabaseConnection = ({
 
   useEffect(() => {
     if (!isIntegrationAvailable || (!loading && !connection)) {
-      navigateApp(AppPath.NotFound);
+      navigate(AppPath.NotFound);
     }
   }, [
     integration,
     databaseKey,
-    navigateApp,
+    navigate,
     isIntegrationAvailable,
     connection,
     loading,

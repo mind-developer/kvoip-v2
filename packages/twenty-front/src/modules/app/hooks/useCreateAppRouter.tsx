@@ -17,9 +17,6 @@ import {
 import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { CallCenter } from '~/pages/chat/call-center/ExternalChat';
-import { Chat } from '~/pages/chat/internal/InternalChat';
-import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
@@ -31,7 +28,9 @@ import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
+  isBillingEnabled?: boolean,
+  isCRMMigrationEnabled?: boolean,
+  isServerlessFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -64,28 +63,15 @@ export const useCreateAppRouter = (
             path={AppPath.SettingsCatchAll}
             element={
               <SettingsRoutes
-                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                isBillingEnabled={isBillingEnabled}
+                isCRMMigrationEnabled={isCRMMigrationEnabled}
+                isServerlessFunctionSettingsEnabled={
+                  isServerlessFunctionSettingsEnabled
+                }
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }
           />
-          <Route
-            path={AppPath.InternalChat}
-            element={
-              <ChatProvider>
-                <Chat />
-              </ChatProvider>
-            }
-          />
-          <Route
-            path={AppPath.ExternalChat}
-            element={
-              <CallCenterProvider>
-                <CallCenter />
-              </CallCenterProvider>
-            }
-          />
-          <Route path={AppPath.Chatbot} element={<Chatbot />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>

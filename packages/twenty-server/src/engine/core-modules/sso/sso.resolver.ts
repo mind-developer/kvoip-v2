@@ -3,7 +3,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
+import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
@@ -29,7 +29,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => SetupSsoOutput)
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOIDCSsoInput,
@@ -41,7 +41,7 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(SSOProviderEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
   async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -49,7 +49,7 @@ export class SSOResolver {
     return this.sSOService.getSSOIdentityProviders(workspaceId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => SetupSsoOutput)
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSAMLSsoInput,
@@ -61,7 +61,7 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => DeleteSsoOutput)
   async deleteSSOIdentityProvider(
     @Args('input') { identityProviderId }: DeleteSsoInput,
@@ -73,7 +73,7 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => EditSsoOutput)
   async editSSOIdentityProvider(
     @Args('input') input: EditSsoInput,

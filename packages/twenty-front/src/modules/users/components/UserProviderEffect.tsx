@@ -17,10 +17,10 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined, SOURCE_LOCALE } from 'twenty-shared';
+import { i18n } from '@lingui/core';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { isDefined } from '~/utils/isDefined';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -103,9 +103,7 @@ export const UserProviderEffect = () => {
           : TimeFormat[detectTimeFormat()],
       });
 
-      dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
-      );
+      i18n.activate(workspaceMember.locale ?? 'en');
     }
 
     if (isDefined(workspaceMembers)) {

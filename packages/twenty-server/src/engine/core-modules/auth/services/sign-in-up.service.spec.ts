@@ -16,7 +16,7 @@ import {
   ExistingUserOrPartialUserWithPicture,
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -76,7 +76,7 @@ describe('SignInUpService', () => {
         {
           provide: WorkspaceInvitationService,
           useValue: {
-            validatePersonalInvitation: jest.fn(),
+            validateInvitation: jest.fn(),
             invalidateWorkspaceInvitation: jest.fn(),
           },
         },
@@ -169,7 +169,7 @@ describe('SignInUpService', () => {
     };
 
     jest
-      .spyOn(workspaceInvitationService, 'validatePersonalInvitation')
+      .spyOn(workspaceInvitationService, 'validateInvitation')
       .mockResolvedValue({
         isValid: true,
         workspace: params.workspace as Workspace,
@@ -188,9 +188,7 @@ describe('SignInUpService', () => {
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(
-      workspaceInvitationService.validatePersonalInvitation,
-    ).toHaveBeenCalledWith({
+    expect(workspaceInvitationService.validateInvitation).toHaveBeenCalledWith({
       workspacePersonalInviteToken: 'invitationToken',
       email: 'test@example.com',
     });

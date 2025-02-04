@@ -1,11 +1,10 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { AppPath } from '@/types/AppPath';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-shared';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-ui';
 
 export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -17,7 +16,7 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
 
     const workflowActiveVersion = useActiveWorkflowVersion(recordId);
 
-    const navigateApp = useNavigateApp();
+    const navigate = useNavigate();
 
     const shouldBeRegistered = isDefined(workflowActiveVersion) && isDraft;
 
@@ -26,10 +25,9 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
         return;
       }
 
-      navigateApp(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        objectRecordId: workflowActiveVersion.id,
-      });
+      navigate(
+        `/object/${CoreObjectNameSingular.WorkflowVersion}/${workflowActiveVersion.id}`,
+      );
     };
 
     return {

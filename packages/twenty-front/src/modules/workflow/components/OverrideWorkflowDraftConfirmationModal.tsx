@@ -1,14 +1,13 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { AppPath } from '@/types/AppPath';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import {
   ConfirmationModal,
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
   workflowId,
@@ -25,7 +24,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
 
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
 
   const handleOverrideDraft = async () => {
     await createDraftFromWorkflowVersion({
@@ -33,10 +32,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
       workflowVersionIdToCopy,
     });
 
-    navigate(AppPath.RecordShowPage, {
-      objectNameSingular: CoreObjectNameSingular.Workflow,
-      objectRecordId: workflowId,
-    });
+    navigate(buildShowPageURL(CoreObjectNameSingular.Workflow, workflowId));
   };
 
   return (
@@ -50,10 +46,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         confirmButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
-            to={getAppPath(AppPath.RecordShowPage, {
-              objectNameSingular: CoreObjectNameSingular.Workflow,
-              objectRecordId: workflowId,
-            })}
+            to={buildShowPageURL(CoreObjectNameSingular.Workflow, workflowId)}
             onClick={() => {
               setOpenOverrideWorkflowDraftConfirmationModal(false);
             }}

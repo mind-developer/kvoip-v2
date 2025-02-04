@@ -28,7 +28,7 @@ export const useCreateDraftFromWorkflowVersion = () => {
   const createDraftFromWorkflowVersion = async (
     input: CreateDraftFromWorkflowVersionInput,
   ) => {
-    const result = await mutate({
+    await mutate({
       variables: { input },
       awaitRefetchQueries: true,
       refetchQueries: [
@@ -40,8 +40,6 @@ export const useCreateDraftFromWorkflowVersion = () => {
         },
       ],
     });
-
-    return result?.data?.createDraftFromWorkflowVersion.id;
   };
 
   return {

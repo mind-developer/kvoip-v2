@@ -25,9 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUserData(
-                OnboardingStatus.SYNC_EMAIL,
-              ),
+              currentUser: mockedOnboardingUserData(OnboardingStatus.SyncEmail),
             },
           });
         }),

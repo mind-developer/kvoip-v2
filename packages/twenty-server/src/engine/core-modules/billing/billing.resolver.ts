@@ -3,22 +3,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared';
-
-import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
-import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
-import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
-import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
-import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingSessionInput } from 'src/engine/core-modules/billing/dto/billing-session.input';
+import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
+import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
+import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
+import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
+import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-billing.entity';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
-import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -43,17 +37,22 @@ export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
-    private readonly billingPlanService: BillingPlanService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly billingService: BillingService,
-    private readonly permissionsService: PermissionsService,
+    private readonly stripePriceService: StripePriceService,
   ) {}
 
-  @Query(() => BillingSessionOutput)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
-  )
+  @Query(() => ProductPricesEntity)
+  async getProductPrices(@Args() { product }: ProductInput) {
+    const productPrices =
+      await this.stripePriceService.getStripePrices(product);
+
+    return {
+      totalNumberOfPrices: productPrices.length,
+      productPrices: productPrices,
+    };
+  }
+
+  @Query(() => SessionEntity)
+  @UseGuards(WorkspaceAuthGuard)
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
@@ -66,7 +65,7 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => BillingSessionOutput)
+  @Mutation(() => SessionEntity)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async checkoutSession(
     @AuthWorkspace() workspace: Workspace,
@@ -78,100 +77,36 @@ export class BillingResolver {
       successUrlPath,
       plan,
       requirePaymentMethod,
-    }: BillingCheckoutSessionInput,
-    @AuthApiKey() apiKey?: string,
+    }: CheckoutSessionInput,
   ) {
-    await this.validateCanCheckoutSessionPermissionOrThrow({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      isExecutedByApiKey: isDefined(apiKey),
-    });
-
-    const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
-      user,
-      workspace,
-      successUrlPath,
-      plan: plan ?? BillingPlanKey.PRO,
-      requirePaymentMethod,
-    };
-
-    const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
-      {
-        planKey: checkoutSessionParams.plan,
-        interval: recurringInterval,
-      },
+    const productPrice = await this.stripePriceService.getStripePrice(
+      AvailableProduct.BasePlan,
+      recurringInterval,
     );
-    const checkoutSessionURL =
-      await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-        ...checkoutSessionParams,
-        billingPricesPerPlan,
-      });
+
+    if (!productPrice) {
+      throw new Error(
+        'Product price not found for the given recurring interval',
+      );
+    }
 
     return {
-      url: checkoutSessionURL,
+      url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+        user,
+        workspace,
+        productPrice.stripePriceId,
+        successUrlPath,
+        plan,
+        requirePaymentMethod,
+      ),
     };
   }
 
-  @Mutation(() => BillingUpdateOutput)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
-  )
+  @Mutation(() => UpdateBillingEntity)
+  @UseGuards(WorkspaceAuthGuard)
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
 
     return { success: true };
-  }
-
-  @Query(() => [BillingPlanOutput])
-  @UseGuards(WorkspaceAuthGuard)
-  async plans(): Promise<BillingPlanOutput[]> {
-    const plans = await this.billingPlanService.getPlans();
-
-    return plans.map(formatBillingDatabaseProductToGraphqlDTO);
-  }
-
-  private async validateCanCheckoutSessionPermissionOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    isExecutedByApiKey,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    isExecutedByApiKey: boolean;
-  }) {
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspaceId,
-    );
-
-    if (!isPermissionsEnabled) {
-      return;
-    }
-
-    if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
-        workspaceId,
-      )
-    ) {
-      return;
-    }
-
-    const userHasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        _setting: SettingsPermissions.WORKSPACE,
-        isExecutedByApiKey,
-      });
-
-    if (!userHasPermission) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
-    return;
   }
 }

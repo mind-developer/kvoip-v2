@@ -54,16 +54,16 @@ export const SyncEmails = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
-    MessageChannelVisibility.SHARE_EVERYTHING,
+    MessageChannelVisibility.ShareEverything,
   );
   const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
   const handleButtonClick = async (provider: ConnectedAccountProvider) => {
     const calendarChannelVisibility =
-      visibility === MessageChannelVisibility.SHARE_EVERYTHING
-        ? CalendarChannelVisibility.SHARE_EVERYTHING
-        : CalendarChannelVisibility.METADATA;
+      visibility === MessageChannelVisibility.ShareEverything
+        ? CalendarChannelVisibility.ShareEverything
+        : CalendarChannelVisibility.Metadata;
 
     await triggerApisOAuth(provider, {
       redirectLocation: AppPath.Index,
@@ -104,7 +104,7 @@ export const SyncEmails = () => {
     [continueWithoutSync],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.SYNC_EMAIL) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.SyncEmail) {
     return <></>;
   }
 

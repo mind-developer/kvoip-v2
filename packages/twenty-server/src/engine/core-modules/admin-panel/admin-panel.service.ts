@@ -17,7 +17,8 @@ import { ENVIRONMENT_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/en
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
@@ -29,6 +30,10 @@ export class AdminPanelService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async impersonate(userId: string, workspaceId: string) {
@@ -115,17 +120,23 @@ export class AdminPanelService {
             userWorkspace.workspace.featureFlags?.find(
               (flag) => flag.key === key,
             )?.value ?? false,
-        })) as FeatureFlag[],
+        })) as FeatureFlagEntity[],
       })),
     };
   }
 
-  getEnvironmentVariablesGrouped(): EnvironmentVariablesOutput {
-    const rawEnvVars = this.environmentService.getAll();
-    const groupedData = new Map<
-      EnvironmentVariablesGroup,
-      EnvironmentVariable[]
-    >();
+  async updateWorkspaceFeatureFlags(
+    workspaceId: string,
+    featureFlag: FeatureFlagKey,
+    value: boolean,
+  ) {
+    featureFlagValidator.assertIsFeatureFlagKey(
+      featureFlag,
+      new AuthException(
+        'Invalid feature flag key',
+        AuthExceptionCode.INVALID_INPUT,
+      ),
+    );
 
     for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
       const { group, description } = metadata;

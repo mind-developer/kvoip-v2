@@ -10,18 +10,13 @@ import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/Emp
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import {
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
+import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { getIcon } = useIcons();
   const { startNodeCreation } = useStartNodeCreation();
 
   const {
@@ -53,10 +48,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
-        if (isDefined(workflowId)) {
-          openWorkflowTriggerTypeInCommandMenu(workflowId);
-          return;
-        }
+        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType);
 
         return;
       }
@@ -67,19 +59,9 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
-
       setWorkflowSelectedNode(selectedNode.id);
-
-      if (isDefined(workflowId)) {
-        openWorkflowEditStepInCommandMenu(
-          workflowId,
-          selectedNodeData.name,
-          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-        );
-
-        return;
-      }
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+      openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
       isInRightDrawer,
@@ -87,9 +69,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       workflowId,
       openWorkflowTriggerTypeInCommandMenu,
       startNodeCreation,
-      openWorkflowEditStepInCommandMenu,
-      getIcon,
-      setWorkflowSelectedNode,
     ],
   );
 

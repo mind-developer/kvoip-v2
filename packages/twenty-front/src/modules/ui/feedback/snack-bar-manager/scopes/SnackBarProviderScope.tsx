@@ -13,7 +13,9 @@ export const SnackBarProviderScope = ({
 }: SnackBarProviderScopeProps) => {
   return (
     <SnackBarManagerScopeInternalContext.Provider
-      value={{ scopeId: snackBarManagerScopeId }}
+      value={{
+        scopeId: snackBarManagerScopeId,
+      }}
     >
       {children}
     </SnackBarManagerScopeInternalContext.Provider>

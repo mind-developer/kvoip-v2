@@ -14,7 +14,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 
 import { IndexMetadataDTO } from './index-metadata.dto';
 
-@ObjectType('IndexField')
+@ObjectType('indexField')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },

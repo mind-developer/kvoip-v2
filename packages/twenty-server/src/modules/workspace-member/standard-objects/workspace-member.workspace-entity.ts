@@ -1,7 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
-import { APP_LOCALES, FieldMetadataType, SOURCE_LOCALE } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -76,9 +75,9 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
   namePlural: 'workspaceMembers',
-  labelSingular: msg`Workspace Member`,
-  labelPlural: msg`Workspace Members`,
-  description: msg`A workspace member`,
+  labelSingular: 'Workspace Member',
+  labelPlural: 'Workspace Members',
+  description: 'A workspace member',
   icon: STANDARD_OBJECT_ICONS.workspaceMember,
   labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
 })
@@ -104,7 +103,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workspace member name`,
     icon: 'IconCircleUser',
   })
-  name: FullNameMetadata;
+  [NAME_FIELD_NAME]: FullNameMetadata;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
@@ -145,8 +144,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Related user email address`,
     icon: 'IconMail',
   })
-  @WorkspaceIsSystem()
-  userEmail: string;
+  [USER_EMAIL_FIELD_NAME]: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
@@ -421,5 +419,5 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

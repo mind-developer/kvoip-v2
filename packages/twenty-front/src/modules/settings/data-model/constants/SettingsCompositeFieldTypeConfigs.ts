@@ -35,7 +35,7 @@ type SettingsCompositeFieldTypeConfigArray = Record<
 >;
 
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
-  [FieldMetadataType.CURRENCY]: {
+  [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
     subFields: ['amountMicros'],
@@ -50,7 +50,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
-  [FieldMetadataType.EMAILS]: {
+  [FieldMetadataType.Emails]: {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
@@ -69,7 +69,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
-  [FieldMetadataType.LINKS]: {
+  [FieldMetadataType.Links]: {
     label: 'Links',
     Icon: IllustrationIconLink,
     exampleValue: {
@@ -86,7 +86,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       secondaryLinks: 'Secondary Links',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
-  [FieldMetadataType.PHONES]: {
+  [FieldMetadataType.Phones]: {
     label: 'Phones',
     Icon: IllustrationIconPhone,
     exampleValue: {
@@ -111,7 +111,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
-  [FieldMetadataType.FULL_NAME]: {
+  [FieldMetadataType.FullName]: {
     label: 'Full Name',
     Icon: IllustrationIconUser,
     exampleValue: { firstName: 'John', lastName: 'Doe' },
@@ -123,7 +123,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       lastName: 'Last Name',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
-  [FieldMetadataType.ADDRESS]: {
+  [FieldMetadataType.Address]: {
     label: 'Address',
     Icon: IllustrationIconMap,
     subFields: [
@@ -166,7 +166,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
-  [FieldMetadataType.ACTOR]: {
+  [FieldMetadataType.Actor]: {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',

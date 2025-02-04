@@ -24,6 +24,11 @@ export type OIDCRequest = Omit<
   };
 };
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+
 @Injectable()
 export class OIDCAuthStrategy extends PassportStrategy(
   Strategy,
@@ -59,8 +64,12 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
   private extractState(req: Request): {
     identityProviderId: string;
-    workspaceInviteHash?: string;
-  } {
+    user: {
+      email: string;
+      firstName?: string | null;
+      lastName?: string | null;
+    };
+  }> = async (req, tokenset, done) => {
     try {
       const state = JSON.parse(
         req.query.state && typeof req.query.state === 'string'
@@ -91,21 +100,14 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
       const userinfo = await this.client.userinfo(tokenset);
 
-      const email = userinfo.email ?? userinfo.upn;
-
-      if (!email || typeof email !== 'string') {
+      if (!userinfo || !userinfo.email) {
         return done(
-          new AuthException(
-            'Email not found in identity provider payload',
-            AuthExceptionCode.INVALID_DATA,
-          ),
+          new AuthException('Email not found', AuthExceptionCode.INVALID_DATA),
         );
       }
 
-      done(null, {
-        email,
-        workspaceInviteHash: state.workspaceInviteHash,
-        identityProviderId: state.identityProviderId,
+      const user = {
+        email: userinfo.email,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
       });

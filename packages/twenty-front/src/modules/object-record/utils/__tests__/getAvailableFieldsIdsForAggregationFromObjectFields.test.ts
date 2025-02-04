@@ -12,10 +12,9 @@ const NAME_FIELD_ID = '5d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0c';
 const ACTIVE_FIELD_ID = '0825d011-6006-49a2-99c5-8d67bed77e55';
 
 const FIELDS_MOCKS = [
-  { id: AMOUNT_FIELD_ID, type: FieldMetadataType.NUMBER, name: 'amount' },
-  { id: PRICE_FIELD_ID, type: FieldMetadataType.CURRENCY, name: 'price' },
-  { id: NAME_FIELD_ID, type: FieldMetadataType.TEXT, name: 'name' },
-  { id: ACTIVE_FIELD_ID, type: FieldMetadataType.BOOLEAN, name: 'active' },
+  { id: AMOUNT_FIELD_ID, type: FieldMetadataType.Number, name: 'amount' },
+  { id: PRICE_FIELD_ID, type: FieldMetadataType.Currency, name: 'price' },
+  { id: NAME_FIELD_ID, type: FieldMetadataType.Text, name: 'name' },
 ];
 
 jest.mock(

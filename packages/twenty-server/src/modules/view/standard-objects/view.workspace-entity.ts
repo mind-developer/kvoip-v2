@@ -1,6 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -39,9 +36,9 @@ registerEnumType(ViewOpenRecordInType, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
   namePlural: 'views',
-  labelSingular: msg`View`,
-  labelPlural: msg`Views`,
-  description: msg`(System) Views`,
+  labelSingular: 'View',
+  labelPlural: 'Views',
+  description: '(System) Views',
   icon: STANDARD_OBJECT_ICONS.view,
   labelIdentifierStandardId: VIEW_STANDARD_FIELD_IDS.name,
 })

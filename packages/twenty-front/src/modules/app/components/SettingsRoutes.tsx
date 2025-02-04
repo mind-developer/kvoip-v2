@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
@@ -261,6 +262,14 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const SettingsCRMMigration = lazy(() =>
+  import('~/pages/settings/crm-migration/SettingsCRMMigration').then(
+    (module) => ({
+      default: module.SettingsCRMMigration,
+    }),
+  ),
+);
+
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -305,31 +314,17 @@ const SettingsAdminSecondaryEnvVariables = lazy(() =>
   })),
 );
 
-const SettingsLab = lazy(() =>
-  import('~/pages/settings/lab/SettingsLab').then((module) => ({
-    default: module.SettingsLab,
-  })),
-);
-
-const SettingsRoles = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
-    default: module.SettingsRoles,
-  })),
-);
-
-const SettingsRoleEdit = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
-    default: module.SettingsRoleEdit,
-  })),
-);
-
 type SettingsRoutesProps = {
-  isFunctionSettingsEnabled?: boolean;
+  isBillingEnabled?: boolean;
+  isCRMMigrationEnabled?: boolean;
+  isServerlessFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
-  isFunctionSettingsEnabled,
+  isBillingEnabled,
+  isCRMMigrationEnabled,
+  isServerlessFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
@@ -374,153 +369,41 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenter />}
       />
       <Route
-        path={SettingsPath.ServiceCenterAgents}
-        element={<SettingsServiceCenterAgents />}
+        path={SettingsPath.ObjectDetail}
+        element={<SettingsObjectDetailPage />}
       />
+      <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      {isCRMMigrationEnabled && (
+        <Route
+          path={SettingsPath.CRMMigration}
+          element={<SettingsCRMMigration />}
+        />
+      )}
       <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
-        path={SettingsPath.EditTelephony}
-        element={<SettingsTelephonyEdit />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewAgent}
-        element={<SettingsServiceCenterNewAgent />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterEditAgent}
-        element={<SettingsServiceCenterEditAgent />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
-        path={SettingsPath.EditTelephony}
-        element={<SettingsTelephonyEdit />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterSectors}
-        element={<SettingsServiceCenterSectors />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewSector}
-        element={<SettingsServiceCenterNewSector />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterEditSector}
-        element={<SettingsServiceCenterEditSector />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterServiceLevel}
-        element={<SettingsServiceCenterServiceLevel />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterEditServiceLevel}
-        element={<SettingsServiceCenterEditServiceLevel />}
-      />
-      <Route
+        path={AppPath.DevelopersCatchAll}
         element={
-          <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.DATA_MODEL}
-          />
+          <Routes>
+            <Route
+              path={SettingsPath.DevelopersNewApiKey}
+              element={<SettingsDevelopersApiKeysNew />}
+            />
+            <Route
+              path={SettingsPath.DevelopersApiKeyDetail}
+              element={<SettingsDevelopersApiKeyDetail />}
+            />
+            <Route
+              path={SettingsPath.DevelopersNewWebhook}
+              element={<SettingsDevelopersWebhooksNew />}
+            />
+            <Route
+              path={SettingsPath.DevelopersNewWebhookDetail}
+              element={<SettingsDevelopersWebhooksDetail />}
+            />
+          </Routes>
         }
-      >
-        <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
-        <Route
-          path={SettingsPath.ObjectOverview}
-          element={<SettingsObjectOverview />}
-        />
-        <Route
-          path={SettingsPath.ObjectDetail}
-          element={<SettingsObjectDetailPage />}
-        />
-        <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
-        <Route
-          path={SettingsPath.ObjectNewFieldSelect}
-          element={<SettingsObjectNewFieldSelect />}
-        />
-        <Route
-          path={SettingsPath.ObjectNewFieldConfigure}
-          element={<SettingsObjectNewFieldConfigure />}
-        />
-        <Route
-          path={SettingsPath.ObjectFieldEdit}
-          element={<SettingsObjectFieldEdit />}
-        />
-      </Route>
-      <Route
-        element={
-          <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.ROLES}
-            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
-          />
-        }
-      >
-        <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
-        <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
-      </Route>
-      <Route
-        element={
-          <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.API_KEYS_AND_WEBHOOKS}
-          />
-        }
-      >
-        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
-        <Route
-          path={`${SettingsPath.GraphQLPlayground}`}
-          element={<SettingsGraphQLPlayground />}
-        />
-        <Route
-          path={`${SettingsPath.RestPlayground}/*`}
-          element={<SettingsRestPlayground />}
-        />
-        <Route
-          path={SettingsPath.DevelopersNewApiKey}
-          element={<SettingsDevelopersApiKeysNew />}
-        />
-        <Route
-          path={SettingsPath.DevelopersApiKeyDetail}
-          element={<SettingsDevelopersApiKeyDetail />}
-        />
-        <Route
-          path={SettingsPath.DevelopersNewWebhookDetail}
-          element={<SettingsDevelopersWebhooksDetail />}
-        />
-        <Route
-          path={SettingsPath.Integrations}
-          element={<SettingsIntegrations />}
-        />
-        <Route
-          path={SettingsPath.IntegrationDatabase}
-          element={<SettingsIntegrationDatabase />}
-        />
-        <Route
-          path={SettingsPath.IntegrationNewDatabaseConnection}
-          element={<SettingsIntegrationNewDatabaseConnection />}
-        />
-        <Route
-          path={SettingsPath.IntegrationEditDatabaseConnection}
-          element={<SettingsIntegrationEditDatabaseConnection />}
-        />
-        <Route
-          path={SettingsPath.IntegrationDatabaseConnection}
-          element={<SettingsIntegrationShowDatabaseConnection />}
-        />
-      </Route>
-      {isFunctionSettingsEnabled && (
+      />
+      {isServerlessFunctionSettingsEnabled && (
         <>
           <Route
             path={SettingsPath.ServerlessFunctions}
@@ -612,15 +495,6 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route
-        element={
-          <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
-          />
-        }
-      >
-        <Route path={SettingsPath.Lab} element={<SettingsLab />} />
-      </Route>
     </Routes>
   </Suspense>
 );

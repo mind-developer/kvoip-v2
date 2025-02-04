@@ -1,26 +1,32 @@
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
-import { css, useTheme } from '@emotion/react';
+import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconAlertTriangle, IconX } from 'twenty-ui';
 
-const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
-  background-color: ${({ theme, danger }) =>
-    danger ? theme.background.danger : theme.accent.quaternary};
-  border-radius: 4px;
-  height: 20px;
-  box-sizing: border-box;
-  display: inline-flex;
+import { css, useTheme } from '@emotion/react';
+import { IconX, isDefined } from 'twenty-ui';
+
+export const StyledContainer = styled.div`
   align-items: center;
+  display: flex;
+`;
+
+const StyledChip = styled.div<{ deletable: boolean }>`
+  align-items: center;
+  background-color: ${({ theme }) => theme.accent.quaternary};
+  border: 1px solid ${({ theme }) => theme.accent.tertiary};
+  border-radius: 4px;
+  color: ${({ theme }) => theme.color.blue};
+  height: 26px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
   flex-direction: row;
   flex-shrink: 0;
   column-gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding: ${({ theme }) => theme.spacing(0.5)};
   padding-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   white-space: nowrap;
 
@@ -34,13 +40,7 @@ const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
         `}
 `;
 
-const StyledLabel = styled.span<{ danger: boolean }>`
-  color: ${({ theme, danger }) =>
-    danger ? theme.color.red : theme.color.blue};
-  line-height: 140%;
-`;
-
-const StyledDelete = styled.button<{ danger: boolean }>`
+const StyledDelete = styled.button`
   box-sizing: border-box;
   height: 20px;
   width: 20px;
@@ -54,14 +54,11 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   margin: 0;
   background: none;
   border: none;
-  color: ${({ theme, danger }) =>
-    danger ? theme.color.red : theme.color.blue};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  color: inherit;
 
   &:hover {
-    background-color: ${({ theme, danger }) =>
-      danger ? theme.color.red20 : theme.accent.secondary};
+    background-color: ${({ theme }) => theme.accent.secondary};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
 
@@ -107,27 +104,16 @@ export const VariableChip = ({
   const title = isVariableNotFound ? t`Variable not found` : variablePathLabel;
 
   return (
-    <StyledChip deletable={isDefined(onRemove)} danger={isVariableNotFound}>
-      {!isDefined(variableLabel) && (
-        <IconAlertTriangle
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-          color={theme.color.red}
-        />
-      )}
-      <StyledLabel title={title} danger={isVariableNotFound}>
-        {label}
-      </StyledLabel>
+    <StyledContainer>
+      <StyledChip deletable={isDefined(onRemove)}>
+        {extractVariableLabel(rawVariableName)}
 
-      {onRemove ? (
-        <StyledDelete
-          onClick={onRemove}
-          aria-label="Remove variable"
-          danger={isVariableNotFound}
-        >
-          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-        </StyledDelete>
-      ) : null}
-    </StyledChip>
+        {onRemove ? (
+          <StyledDelete onClick={onRemove}>
+            <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+          </StyledDelete>
+        ) : null}
+      </StyledChip>
+    </StyledContainer>
   );
 };

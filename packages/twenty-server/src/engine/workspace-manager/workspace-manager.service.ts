@@ -184,6 +184,11 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
@@ -217,10 +222,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await seedWorkspaceWithDemoData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      isWorkflowEnabled,
     );
 
     await this.seederService.seedCustomObjects(

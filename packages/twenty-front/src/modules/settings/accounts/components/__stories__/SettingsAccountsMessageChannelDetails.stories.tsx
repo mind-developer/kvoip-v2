@@ -25,7 +25,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
       excludeNonProfessionalEmails: true,
       excludeGroupEmails: false,
       isSyncEnabled: true,
-      visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      visibility: MessageChannelVisibility.ShareEverything,
     },
   },
   argTypes: {

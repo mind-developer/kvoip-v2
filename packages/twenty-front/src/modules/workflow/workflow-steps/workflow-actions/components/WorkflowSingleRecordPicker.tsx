@@ -176,11 +176,13 @@ export const WorkflowSingleRecordPicker = ({
                     objectNameSingular={objectNameSingular}
                     recordPickerInstanceId={dropdownId}
                   />
-                }
-                dropdownHotkeyScope={{ scope: dropdownId }}
-              />
-            </DropdownScope>
-          )}
+                </RecordPickerComponentInstanceContext.Provider>
+              }
+              dropdownHotkeyScope={{
+                scope: dropdownId,
+              }}
+            />
+          </DropdownScope>
         </StyledFormSelectContainer>
 
         {!disabled && (

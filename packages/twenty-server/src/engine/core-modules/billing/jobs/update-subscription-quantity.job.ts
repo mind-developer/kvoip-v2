@@ -38,13 +38,13 @@ export class UpdateSubscriptionQuantityJob {
     }
 
     try {
-      const billingBaseProductSubscriptionItem =
-        await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+      const billingSubscriptionItem =
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionItemOrThrow(
           data.workspaceId,
         );
 
       await this.stripeSubscriptionItemService.updateSubscriptionItem(
-        billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
+        billingSubscriptionItem.stripeSubscriptionItemId,
         workspaceMembersCount,
       );
 

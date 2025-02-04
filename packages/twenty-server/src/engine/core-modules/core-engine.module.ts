@@ -26,8 +26,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { GlobalSearchModule } from 'src/engine/core-modules/global-search/global-search.module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
-import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
 import { LLMTracingModule } from 'src/engine/core-modules/llm-tracing/llm-tracing.module';

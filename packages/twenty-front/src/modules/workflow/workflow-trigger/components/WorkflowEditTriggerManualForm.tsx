@@ -8,10 +8,8 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { useTheme } from '@emotion/react';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { IconHandMove, isDefined, useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -49,10 +47,6 @@ export const WorkflowEditTriggerManualForm = ({
 
   const headerTitle = isDefined(trigger.name) ? trigger.name : 'Manual Trigger';
 
-  const headerIcon = getTriggerIcon({
-    type: 'MANUAL',
-  });
-
   return (
     <>
       <WorkflowStepHeader
@@ -66,7 +60,7 @@ export const WorkflowEditTriggerManualForm = ({
             name: newName,
           });
         }}
-        Icon={getIcon(headerIcon)}
+        Icon={IconHandMove}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Trigger · Manual"

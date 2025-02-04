@@ -6,14 +6,14 @@ export const isSelectOptionDefaultValue = (
   optionValue: string,
   fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'type'>,
 ): boolean => {
-  if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
+  if (fieldMetadataItem.type === FieldMetadataType.Select) {
     return (
       applySimpleQuotesToString(optionValue) === fieldMetadataItem.defaultValue
     );
   }
 
   if (
-    fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
     Array.isArray(fieldMetadataItem.defaultValue)
   ) {
     return fieldMetadataItem.defaultValue.includes(

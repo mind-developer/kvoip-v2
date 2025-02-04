@@ -1,5 +1,3 @@
-import { MessageDescriptor } from '@lingui/core';
-
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
@@ -8,9 +6,9 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 interface WorkspaceEntityOptions {
   standardId: string;
   namePlural: string;
-  labelSingular: MessageDescriptor;
-  labelPlural: MessageDescriptor;
-  description?: MessageDescriptor;
+  labelSingular: string;
+  labelPlural: string;
+  description?: string;
   icon?: string;
   shortcut?: string;
   labelIdentifierStandardId?: string;
@@ -50,9 +48,9 @@ export function WorkspaceEntity(
       standardId: options.standardId,
       nameSingular: objectName,
       namePlural: options.namePlural,
-      labelSingular: options.labelSingular?.message ?? '',
-      labelPlural: options.labelPlural?.message ?? '',
-      description: options.description?.message ?? '',
+      labelSingular: options.labelSingular,
+      labelPlural: options.labelPlural,
+      description: options.description,
       labelIdentifierStandardId:
         options.labelIdentifierStandardId ?? BASE_OBJECT_STANDARD_FIELD_IDS.id,
       imageIdentifierStandardId: options.imageIdentifierStandardId ?? null,

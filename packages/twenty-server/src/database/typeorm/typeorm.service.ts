@@ -15,14 +15,12 @@ import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -49,7 +47,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         UserWorkspace,
         AppToken,
         KeyValuePair,
-        FeatureFlag,
+        FeatureFlagEntity,
         BillingSubscription,
         BillingSubscriptionItem,
         BillingMeter,

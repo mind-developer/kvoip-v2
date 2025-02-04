@@ -12,8 +12,6 @@ import { RetryLink } from '@apollo/client/link/retry';
 import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { isDefined } from 'twenty-shared';
 import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
@@ -29,7 +27,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
   initialTokenPair: AuthTokenPair | null;
-  currentWorkspaceMember: CurrentWorkspaceMember | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
 }
@@ -37,7 +34,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private tokenPair: AuthTokenPair | null = null;
-  private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
 
   constructor(opts: Options<TCacheShape>) {
     const {
@@ -47,14 +43,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onTokenPairChange,
       onUnauthenticatedError,
       initialTokenPair,
-      currentWorkspaceMember,
       extraLinks,
       isDebugMode,
       ...options
     } = opts;
 
     this.tokenPair = initialTokenPair;
-    this.currentWorkspaceMember = currentWorkspaceMember;
 
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({
@@ -69,9 +63,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             authorization: this.tokenPair?.accessToken.token
               ? `Bearer ${this.tokenPair?.accessToken.token}`
               : '',
-            ...(this.currentWorkspaceMember?.locale
-              ? { 'x-locale': this.currentWorkspaceMember.locale }
-              : {}),
           },
         };
       });
@@ -163,10 +154,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   updateTokenPair(tokenPair: AuthTokenPair | null) {
     this.tokenPair = tokenPair;
-  }
-
-  updateWorkspaceMember(workspaceMember: CurrentWorkspaceMember | null) {
-    this.currentWorkspaceMember = workspaceMember;
   }
 
   getClient() {

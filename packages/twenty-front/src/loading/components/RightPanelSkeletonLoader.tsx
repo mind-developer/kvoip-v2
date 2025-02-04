@@ -1,11 +1,16 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { BORDER_COMMON, MOBILE_VIEWPORT } from 'twenty-ui';
+import {
+  BACKGROUND_LIGHT,
+  BORDER_COMMON,
+  BORDER_LIGHT,
+  GRAY_SCALE,
+  MOBILE_VIEWPORT,
+} from 'twenty-ui';
 
 const StyledMainContainer = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${BACKGROUND_LIGHT.noisy};
   box-sizing: border-box;
   display: flex;
   flex: 1 1 auto;
@@ -22,8 +27,8 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${BACKGROUND_LIGHT.primary};
+  border: 1px solid ${BORDER_LIGHT.color.medium};
   border-radius: ${BORDER_COMMON.radius.md};
   height: 100%;
   overflow: auto;
@@ -49,13 +54,11 @@ const StyledRightPanelFlexContainer = styled.div`
 `;
 
 const StyledSkeletonHeaderLoader = () => {
-  const theme = useTheme();
-
   return (
     <StyledHeaderContainer>
       <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
+        baseColor={GRAY_SCALE.gray15}
+        highlightColor={BACKGROUND_LIGHT.transparent.lighter}
         borderRadius={4}
       >
         <Skeleton
@@ -68,12 +71,10 @@ const StyledSkeletonHeaderLoader = () => {
 };
 
 const StyledSkeletonAddLoader = () => {
-  const theme = useTheme();
-
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={GRAY_SCALE.gray15}
+      highlightColor={BACKGROUND_LIGHT.transparent.lighter}
       borderRadius={4}
     >
       <Skeleton width={132} height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />

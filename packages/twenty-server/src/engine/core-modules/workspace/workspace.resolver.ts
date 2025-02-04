@@ -7,23 +7,19 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared';
-import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -73,9 +69,6 @@ export class WorkspaceResolver {
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly roleService: RoleService,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -114,13 +107,9 @@ export class WorkspaceResolver {
     @AuthApiKey() apiKey?: string,
   ) {
     try {
-      return await this.workspaceService.updateWorkspaceById({
-        payload: {
-          ...data,
-          id: workspace.id,
-        },
-        userWorkspaceId,
-        apiKey,
+      return this.workspaceService.updateWorkspaceById({
+        ...data,
+        id: workspace.id,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -160,8 +149,10 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @ResolveField(() => [FeatureFlag], { nullable: true })
-  async featureFlags(@Parent() workspace: Workspace): Promise<FeatureFlag[]> {
+  @ResolveField(() => [FeatureFlagEntity], { nullable: true })
+  async featureFlags(
+    @Parent() workspace: Workspace,
+  ): Promise<FeatureFlagEntity[]> {
     const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
       workspace.id,
     );
@@ -178,37 +169,6 @@ export class WorkspaceResolver {
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
-  }
-
-  @ResolveField(() => [BillingSubscription])
-  async billingSubscriptions(
-    @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription[] | undefined> {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
-      return [];
-    }
-
-    try {
-      return this.billingSubscriptionRepository.find({
-        where: { workspaceId: workspace.id },
-      });
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-    }
-  }
-
-  @ResolveField(() => RoleDTO, { nullable: true })
-  async defaultRole(@Parent() workspace: Workspace): Promise<RoleDTO | null> {
-    if (!workspace.defaultRoleId) {
-      return null;
-    }
-
-    const role = await this.roleService.getRoleById(
-      workspace.defaultRoleId,
-      workspace.id,
-    );
-
-    return role;
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })

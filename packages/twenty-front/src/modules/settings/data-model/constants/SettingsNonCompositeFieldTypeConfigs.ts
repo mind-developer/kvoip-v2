@@ -50,77 +50,83 @@ type SettingsNonCompositeFieldTypeConfigArray = Record<
 // TODO: can we derive this from backend definitions ?
 export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFieldTypeConfigArray =
   {
-    [FieldMetadataType.UUID]: {
+    [FieldMetadataType.Uuid]: {
       label: 'Unique ID',
       Icon: IllustrationIconUid,
       exampleValue: '00000000-0000-0000-0000-000000000000',
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldUUidValue>,
-    [FieldMetadataType.TEXT]: {
+    [FieldMetadataType.Text]: {
       label: 'Text',
       Icon: IllustrationIconText,
       exampleValue:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldTextValue>,
-    [FieldMetadataType.NUMERIC]: {
+    [FieldMetadataType.Numeric]: {
       label: 'Numeric',
       Icon: IllustrationIconNumbers,
       exampleValue: 2000,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
-    [FieldMetadataType.NUMBER]: {
+    [FieldMetadataType.Number]: {
       label: 'Number',
       Icon: IllustrationIconNumbers,
       exampleValue: 2000,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
-    [FieldMetadataType.BOOLEAN]: {
+    [FieldMetadataType.Boolean]: {
       label: 'True/False',
       Icon: IllustrationIconToggle,
       exampleValue: true,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldBooleanValue>,
-    [FieldMetadataType.DATE_TIME]: {
+    [FieldMetadataType.DateTime]: {
       label: 'Date and Time',
       Icon: IllustrationIconCalendarTime,
       exampleValue: DEFAULT_DATE_VALUE.toISOString(),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateTimeValue>,
-    [FieldMetadataType.DATE]: {
+    [FieldMetadataType.Date]: {
       label: 'Date',
       Icon: IllustrationIconCalendarEvent,
       exampleValue: DEFAULT_DATE_VALUE.toISOString(),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateValue>,
-    [FieldMetadataType.SELECT]: {
+    [FieldMetadataType.Select]: {
       label: 'Select',
       Icon: IllustrationIconTag,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldSelectValue>,
-    [FieldMetadataType.MULTI_SELECT]: {
+    [FieldMetadataType.MultiSelect]: {
       label: 'Multi-select',
       Icon: IllustrationIconTags,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldMultiSelectValue>,
-    [FieldMetadataType.RELATION]: {
+    [FieldMetadataType.Relation]: {
       label: 'Relation',
       Icon: IllustrationIconOneToMany,
       category: 'Relation',
     } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,
-    [FieldMetadataType.RATING]: {
+    [FieldMetadataType.Rating]: {
       label: 'Rating',
       Icon: IllustrationIconStar,
       exampleValue: 'RATING_3',
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRatingValue>,
-    [FieldMetadataType.RAW_JSON]: {
+    [FieldMetadataType.RawJson]: {
       label: 'JSON',
       Icon: IllustrationIconJson,
       exampleValue: { key: 'value' },
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
-    [FieldMetadataType.ARRAY]: {
+    [FieldMetadataType.RichText]: {
+      label: 'Rich Text',
+      Icon: IllustrationIconSetting,
+      exampleValue: "{ key: 'value' }",
+      category: 'Basic',
+    } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
+    [FieldMetadataType.Array]: {
       label: 'Array',
       Icon: IllustrationIconArray,
       category: 'Advanced',

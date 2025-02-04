@@ -181,18 +181,18 @@ export const isRecordMatchingFilter = ({
     }
 
     switch (objectMetadataField.type) {
-      case FieldMetadataType.RATING:
+      case FieldMetadataType.Rating:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.TEXT: {
+      case FieldMetadataType.Text: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RICH_TEXT: {
+      case FieldMetadataType.RichText: {
         // TODO: Implement a better rich text filter once it becomes a composite field
         // See this issue for more context: https://github.com/twentyhq/twenty/issues/7613#issuecomment-2408944585
         // This should be tackled in Q4'24
@@ -201,35 +201,29 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RICH_TEXT_V2: {
-        return isMatchingRichTextV2Filter({
-          richTextV2Filter: filterValue as RichTextV2Filter,
-          value: record[filterKey],
-        });
-      }
-      case FieldMetadataType.SELECT:
+      case FieldMetadataType.Select:
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.MULTI_SELECT:
+      case FieldMetadataType.MultiSelect:
         return isMatchingMultiSelectFilter({
           multiSelectFilter: filterValue as MultiSelectFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.ARRAY: {
+      case FieldMetadataType.Array: {
         return isMatchingArrayFilter({
           arrayFilter: filterValue as ArrayFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RAW_JSON: {
+      case FieldMetadataType.RawJson: {
         return isMatchingRawJsonFilter({
           rawJsonFilter: filterValue as RawJsonFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.FULL_NAME: {
+      case FieldMetadataType.FullName: {
         const fullNameFilter = filterValue as FullNameFilter;
 
         return (
@@ -245,7 +239,7 @@ export const isRecordMatchingFilter = ({
             }))
         );
       }
-      case FieldMetadataType.ADDRESS: {
+      case FieldMetadataType.Address: {
         const addressFilter = filterValue as AddressFilter;
 
         const keys = [
@@ -269,7 +263,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.LINKS: {
+      case FieldMetadataType.Links: {
         const linksFilter = filterValue as LinksFilter;
 
         const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
@@ -286,39 +280,39 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.DATE:
-      case FieldMetadataType.DATE_TIME: {
+      case FieldMetadataType.Date:
+      case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC: {
+      case FieldMetadataType.Number:
+      case FieldMetadataType.Numeric: {
         return isMatchingFloatFilter({
           floatFilter: filterValue as FloatFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.UUID: {
+      case FieldMetadataType.Uuid: {
         return isMatchingUUIDFilter({
           uuidFilter: filterValue as UUIDFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.BOOLEAN: {
+      case FieldMetadataType.Boolean: {
         return isMatchingBooleanFilter({
           booleanFilter: filterValue as BooleanFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.CURRENCY: {
+      case FieldMetadataType.Currency: {
         return isMatchingCurrencyFilter({
           currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey].amountMicros,
         });
       }
-      case FieldMetadataType.ACTOR: {
+      case FieldMetadataType.Actor: {
         const actorFilter = filterValue as ActorFilter;
 
         return (
@@ -329,7 +323,7 @@ export const isRecordMatchingFilter = ({
           })
         );
       }
-      case FieldMetadataType.EMAILS: {
+      case FieldMetadataType.Emails: {
         const emailsFilter = filterValue as EmailsFilter;
 
         if (emailsFilter.primaryEmail === undefined) {
@@ -341,7 +335,7 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey].primaryEmail,
         });
       }
-      case FieldMetadataType.PHONES: {
+      case FieldMetadataType.Phones: {
         const phonesFilter = filterValue as PhonesFilter;
 
         const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
@@ -358,7 +352,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.RELATION: {
+      case FieldMetadataType.Relation: {
         throw new Error(
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );

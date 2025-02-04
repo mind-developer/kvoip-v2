@@ -2,11 +2,15 @@ import { isDefined } from 'twenty-shared';
 
 export const useBuildWorkspaceUrl = () => {
   const buildWorkspaceUrl = (
-    endpoint: string,
+    subdomain?: string,
     pathname?: string,
     searchParams?: Record<string, string | boolean>,
   ) => {
-    const url = new URL(endpoint);
+    const url = new URL(window.location.href);
+
+    if (isDefined(subdomain) && subdomain.length !== 0) {
+      url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
+    }
 
     if (isDefined(pathname)) {
       url.pathname = pathname;

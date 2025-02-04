@@ -16,7 +16,7 @@ export const useJsonField = () => {
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RAW_JSON,
+    FieldMetadataType.RawJson,
     isFieldRawJson,
     fieldDefinition,
   );

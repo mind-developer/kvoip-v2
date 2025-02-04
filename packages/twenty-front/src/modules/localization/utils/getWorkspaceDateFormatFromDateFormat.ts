@@ -6,14 +6,14 @@ export const getWorkspaceDateFormatFromDateFormat = (
 ) => {
   switch (dateFormat) {
     case DateFormat.SYSTEM:
-      return WorkspaceMemberDateFormatEnum.SYSTEM;
+      return WorkspaceMemberDateFormatEnum.System;
     case DateFormat.MONTH_FIRST:
-      return WorkspaceMemberDateFormatEnum.MONTH_FIRST;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
     case DateFormat.DAY_FIRST:
-      return WorkspaceMemberDateFormatEnum.DAY_FIRST;
+      return WorkspaceMemberDateFormatEnum.DayFirst;
     case DateFormat.YEAR_FIRST:
-      return WorkspaceMemberDateFormatEnum.YEAR_FIRST;
+      return WorkspaceMemberDateFormatEnum.YearFirst;
     default:
-      return WorkspaceMemberDateFormatEnum.MONTH_FIRST;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
   }
 };

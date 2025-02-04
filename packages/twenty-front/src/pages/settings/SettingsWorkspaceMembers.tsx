@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -23,6 +22,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -36,7 +36,7 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from '~/utils/isDefined';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -71,7 +71,6 @@ const StyledTextContainerWithEllipsis = styled.div`
 `;
 
 export const SettingsWorkspaceMembers = () => {
-  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -140,13 +139,13 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Members`}
+      title="Members"
       links={[
         {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: <Trans>Members</Trans> },
+        { children: 'Members' },
       ]}
     >
       <SettingsPageContainer>
@@ -154,8 +153,8 @@ export const SettingsWorkspaceMembers = () => {
           currentWorkspace?.isPublicInviteLinkEnabled && (
             <Section>
               <H2Title
-                title={t`Invite by link`}
-                description={t`Share this link to invite users to join your workspace`}
+                title="Invite by link"
+                description="Share this link to invite users to join your workspace"
               />
               <WorkspaceInviteLink
                 inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
@@ -164,8 +163,8 @@ export const SettingsWorkspaceMembers = () => {
           )}
         <Section>
           <H2Title
-            title={t`Manage Members`}
-            description={t`Manage the members of your space here`}
+            title="Manage Members"
+            description="Manage the members of your space here"
           />
           <Table>
             <StyledTableHeaderRow>
@@ -173,12 +172,8 @@ export const SettingsWorkspaceMembers = () => {
                 gridAutoColumns="150px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
-                <TableHeader>
-                  <Trans>Name</Trans>
-                </TableHeader>
-                <TableHeader>
-                  <Trans>Email</Trans>
-                </TableHeader>
+                <TableHeader>Name</TableHeader>
+                <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
               </TableRow>
             </StyledTableHeaderRow>
@@ -241,8 +236,8 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
         <Section>
           <H2Title
-            title={t`Invite by email`}
-            description={t`Send an invite email to your team`}
+            title="Invite by email"
+            description="Send an invite email to your team"
           />
           <WorkspaceInviteTeam />
           {isNonEmptyArray(workspaceInvitations) && (
@@ -252,12 +247,8 @@ export const SettingsWorkspaceMembers = () => {
                   gridAutoColumns="150px 1fr 1fr"
                   mobileGridAutoColumns="100px 1fr 1fr"
                 >
-                  <TableHeader>
-                    <Trans>Email</Trans>
-                  </TableHeader>
-                  <TableHeader align={'right'}>
-                    <Trans>Expires in</Trans>
-                  </TableHeader>
+                  <TableHeader>Email</TableHeader>
+                  <TableHeader align={'right'}>Expires in</TableHeader>
                   <TableHeader></TableHeader>
                 </TableRow>
               </StyledTableHeaderRow>
@@ -318,18 +309,18 @@ export const SettingsWorkspaceMembers = () => {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         setIsOpen={setIsConfirmationModalOpen}
-        title={t`Account Deletion`}
+        title="Account Deletion"
         subtitle={
-          <Trans>
+          <>
             This action cannot be undone. This will permanently delete this user
-            and remove them from all their assignments.
-          </Trans>
+            and remove them from all their assignements.
+          </>
         }
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        confirmButtonText={t`Delete account`}
+        deleteButtonText="Delete account"
       />
     </SubMenuTopBarContainer>
   );

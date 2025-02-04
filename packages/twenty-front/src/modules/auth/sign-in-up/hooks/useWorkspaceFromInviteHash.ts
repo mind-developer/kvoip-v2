@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -11,11 +11,11 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { AppPath } from '@/types/AppPath';
 import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from '~/utils/isDefined';
 
 export const useWorkspaceFromInviteHash = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));

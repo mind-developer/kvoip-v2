@@ -34,8 +34,8 @@ export class BillingProduct {
   @Column({ nullable: false })
   active: boolean;
 
-  @Column({ nullable: false, type: 'text', default: '' })
-  description: string;
+  @Column({ nullable: true, type: 'text' })
+  description: string | null;
 
   @Column({ nullable: false })
   name: string;

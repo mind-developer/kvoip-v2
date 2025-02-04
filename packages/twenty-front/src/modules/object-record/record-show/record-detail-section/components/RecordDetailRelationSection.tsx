@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import qs from 'qs';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
@@ -26,8 +27,8 @@ import { RecordDetailSectionHeader } from '@/object-record/record-show/record-de
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
-import { AppPath } from '@/types/AppPath';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -36,7 +37,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 type RecordDetailRelationSectionProps = {
   loading: boolean;
 };
@@ -73,8 +73,8 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
-  const isToManyObjects = relationType === RelationDefinitionType.ONE_TO_MANY;
+  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
+  const isToManyObjects = relationType === RelationDefinitionType.OneToMany;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -164,13 +164,9 @@ export const RecordDetailRelationSection = ({
     view: indexViewId,
   };
 
-  const filterLinkHref = getAppPath(
-    AppPath.RecordIndexPage,
-    {
-      objectNamePlural: relationObjectMetadataItem.namePlural,
-    },
-    filterQueryParams,
-  );
+  const filterLinkHref = `/objects/${
+    relationObjectMetadataItem.namePlural
+  }?${qs.stringify(filterQueryParams)}`;
 
   const showContent = () => {
     return (
@@ -295,7 +291,9 @@ export const RecordDetailRelationSection = ({
                     />
                   )
                 }
-                dropdownHotkeyScope={{ scope: dropdownId }}
+                dropdownHotkeyScope={{
+                  scope: dropdownId,
+                }}
               />
             </DropdownScope>
           )

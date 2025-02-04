@@ -28,8 +28,6 @@ export const useRefreshObjectMetadataItems = (
       });
 
     replaceObjectMetadataItemIfDifferent(objectMetadataItems);
-
-    return objectMetadataItems;
   };
 
   const replaceObjectMetadataItemIfDifferent = useRecoilCallback(

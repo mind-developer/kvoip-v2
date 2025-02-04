@@ -30,7 +30,7 @@ describe('useFieldPreviewValue', () => {
     const fieldName = 'amount';
     const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
-        name === fieldName && type === FieldMetadataType.CURRENCY,
+        name === fieldName && type === FieldMetadataType.Currency,
     );
     const skip = true;
 
@@ -53,7 +53,7 @@ describe('useFieldPreviewValue', () => {
     const fieldName = 'amount';
     const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
-        name === fieldName && type === FieldMetadataType.CURRENCY,
+        name === fieldName && type === FieldMetadataType.Currency,
     );
 
     if (!fieldMetadataItem) {
@@ -77,7 +77,7 @@ describe('useFieldPreviewValue', () => {
     // Given
     const fieldMetadataItem = {
       name: 'people',
-      type: FieldMetadataType.RELATION,
+      type: FieldMetadataType.Relation,
     };
     const relationObjectMetadataItem = mockedPersonObjectMetadataItem;
 
@@ -107,7 +107,7 @@ describe('useFieldPreviewValue', () => {
     const fieldName = 'stage';
     const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
-        name === fieldName && type === FieldMetadataType.SELECT,
+        name === fieldName && type === FieldMetadataType.Select,
     );
 
     if (!fieldMetadataItem) {
@@ -151,7 +151,7 @@ describe('useFieldPreviewValue', () => {
     ];
     const fieldMetadataItem = {
       name: 'industry',
-      type: FieldMetadataType.MULTI_SELECT,
+      type: FieldMetadataType.MultiSelect,
       options,
     };
 

@@ -4,11 +4,9 @@ import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
 import { useTheme } from '@emotion/react';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { IconPlaylistAdd, isDefined } from 'twenty-ui';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -28,35 +26,39 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const triggerEvent = splitWorkflowTriggerEventName(
-    trigger.settings.eventName,
-  );
+  const triggerEvent = isDefined(trigger)
+    ? splitWorkflowTriggerEventName(trigger.settings.eventName)
+    : undefined;
 
   const availableMetadata: Array<SelectOption<string>> =
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
     }));
+  const recordTypeMetadata = isDefined(triggerEvent)
+    ? activeObjectMetadataItems.find(
+        (item) => item.nameSingular === triggerEvent.objectType,
+      )
+    : undefined;
 
-  const defaultLabel =
-    getTriggerDefaultLabel({
-      type: 'DATABASE_EVENT',
-      eventName: triggerEvent.event,
-    }) ?? '-';
+  const selectedEvent = isDefined(triggerEvent)
+    ? OBJECT_EVENT_TRIGGERS.find(
+        (availableEvent) => availableEvent.value === triggerEvent.event,
+      )
+    : undefined;
 
-  const headerIcon = getTriggerIcon({
-    type: 'DATABASE_EVENT',
-    eventName: triggerEvent.event,
-  });
+  const headerTitle = isDefined(trigger.name)
+    ? trigger.name
+    : isDefined(recordTypeMetadata) && isDefined(selectedEvent)
+      ? `When a ${recordTypeMetadata.labelSingular} is ${selectedEvent.label}`
+      : '-';
 
-  const headerTitle = isDefined(trigger.name) ? trigger.name : defaultLabel;
-
-  const headerType = `Trigger · ${defaultLabel}`;
+  const headerType = isDefined(selectedEvent)
+    ? `Trigger · Record is ${selectedEvent.label}`
+    : '-';
 
   return (
     <>
@@ -71,7 +73,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             name: newName,
           });
         }}
-        Icon={getIcon(headerIcon)}
+        Icon={IconPlaylistAdd}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType={headerType}
@@ -91,15 +93,58 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
               return;
             }
 
-            triggerOptions.onTriggerUpdate({
-              ...trigger,
-              settings: {
-                ...trigger.settings,
-                eventName: `${updatedRecordType}.${triggerEvent.event}`,
-              },
-            });
+            triggerOptions.onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${updatedRecordType}.${triggerEvent.event}`,
+                    },
+                  }
+                : {
+                    name: headerTitle,
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+                      outputSchema: {},
+                    },
+                  },
+            );
           }}
-          withSearchInput
+        />
+        <Select
+          dropdownId="workflow-edit-trigger-event-type"
+          label="Event type"
+          fullWidth
+          value={triggerEvent?.event}
+          emptyOption={{ label: 'Select an option', value: '' }}
+          options={OBJECT_EVENT_TRIGGERS}
+          disabled={triggerOptions.readonly}
+          onChange={(updatedEvent) => {
+            if (triggerOptions.readonly === true) {
+              return;
+            }
+
+            triggerOptions.onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${triggerEvent.objectType}.${updatedEvent}`,
+                    },
+                  }
+                : {
+                    name: headerTitle,
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${availableMetadata?.[0].value}.${updatedEvent}`,
+                      outputSchema: {},
+                    },
+                  },
+            );
+          }}
         />
       </WorkflowStepBody>
     </>

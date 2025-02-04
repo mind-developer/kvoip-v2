@@ -6,7 +6,7 @@ const getFeatureKey = (databaseKey: string): FeatureFlagKey | null => {
     case 'airtable':
       return FeatureFlagKey.IsAirtableIntegrationEnabled;
     case 'postgresql':
-      return FeatureFlagKey.IsPostgreSQLIntegrationEnabled;
+      return FeatureFlagKey.IsPostgreSqlIntegrationEnabled;
     case 'stripe':
       return FeatureFlagKey.IsStripeIntegrationEnabled;
     default:

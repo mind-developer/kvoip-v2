@@ -102,6 +102,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
     }
   };
 
+  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
   const displayedObject = getDisplayedSubStepFields();
   const options = displayedObject ? Object.entries(displayedObject) : [];
 
@@ -118,11 +119,11 @@ export const WorkflowVariablesDropdownFieldItems = ({
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
         onClick={goBack}
-        style={{ position: 'fixed' }}
+        style={{
+          position: 'fixed',
+        }}
       >
-        <OverflowingTextWithTooltip
-          text={getStepHeaderLabel(step, currentPath)}
-        />
+        <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

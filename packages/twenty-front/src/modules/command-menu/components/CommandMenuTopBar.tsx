@@ -1,8 +1,5 @@
-import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
-import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
-import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
-import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -12,7 +9,6 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -100,18 +96,6 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const theme = useTheme();
-
-  const { contextChips } = useCommandMenuContextChips();
-
-  const location = useLocation();
-  const isButtonVisible =
-    !location.pathname.startsWith('/objects/') &&
-    !location.pathname.startsWith('/object/');
-
-  const backButtonAnimationDuration =
-    contextChips.length > 0 ? theme.animation.duration.instant : 0;
-
   return (
     <StyledInputContainer>
       <StyledContentContainer>
@@ -140,17 +124,13 @@ export const CommandMenuTopBar = () => {
         ) : (
           <CommandMenuContextChipGroups contextChips={contextChips} />
         )}
-        {(commandMenuPage === CommandMenuPages.Root ||
-          commandMenuPage === CommandMenuPages.SearchRecords) && (
-          <>
-            <StyledInput
-              ref={inputRef}
-              value={commandMenuSearch}
-              placeholder={t`Type anything`}
-              onChange={handleSearchChange}
-            />
-            <CommandMenuTopBarInputFocusEffect inputRef={inputRef} />
-          </>
+        {commandMenuPage === CommandMenuPages.Root && (
+          <StyledInput
+            autoFocus
+            value={commandMenuSearch}
+            placeholder="Type anything"
+            onChange={handleSearchChange}
+          />
         )}
       </StyledContentContainer>
       {!isMobile && (

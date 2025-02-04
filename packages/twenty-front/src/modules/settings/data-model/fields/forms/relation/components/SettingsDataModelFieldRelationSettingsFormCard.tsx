@@ -91,7 +91,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             relationObjectMetadataItem={relationObjectMetadataItem}
             pluralizeLabel={
               watchFormValue('relation.type') ===
-              RelationDefinitionType.MANY_TO_ONE
+              RelationDefinitionType.ManyToOne
             }
           />
           <StyledRelationImage
@@ -112,14 +112,14 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
                   'relation.field.label',
                   initialRelationFieldMetadataItem.label,
                 ) || 'Field name',
-              type: FieldMetadataType.RELATION,
+              type: FieldMetadataType.Relation,
             }}
             shrink
             objectMetadataItem={relationObjectMetadataItem}
             relationObjectMetadataItem={objectMetadataItem}
             pluralizeLabel={
               watchFormValue('relation.type') !==
-              RelationDefinitionType.MANY_TO_ONE
+              RelationDefinitionType.ManyToOne
             }
           />
         </StyledPreviewContent>

@@ -7,7 +7,6 @@ export const getMicrosoftApisOauthScopes = () => {
     'Mail.ReadWrite',
     'Mail.Send',
     'Calendars.Read',
-    'User.Read',
   ];
 
   return scopes;

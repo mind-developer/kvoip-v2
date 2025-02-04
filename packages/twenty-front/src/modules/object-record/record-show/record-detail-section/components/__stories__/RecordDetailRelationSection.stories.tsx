@@ -10,8 +10,6 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
@@ -56,7 +54,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     MemoryRouterDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

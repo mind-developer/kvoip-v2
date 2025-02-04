@@ -1,23 +1,57 @@
 import { Button, H2Title } from 'twenty-ui';
 
-import { useLingui } from '@lingui/react/macro';
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 export const ChangePassword = () => {
-  const { t } = useLingui();
+  const { enqueueSnackBar } = useSnackBar();
 
-  const { handleResetPassword } = useHandleResetPassword();
+  const currentUser = useRecoilValue(currentUserState);
+
+  const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
+
+  const handlePasswordResetClick = async () => {
+    if (!currentUser?.email) {
+      enqueueSnackBar('Invalid email', {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
+
+    try {
+      const { data } = await emailPasswordResetLink({
+        variables: {
+          email: currentUser.email,
+        },
+      });
+      if (data?.emailPasswordResetLink?.success === true) {
+        enqueueSnackBar('Password reset link has been sent to the email', {
+          variant: SnackBarVariant.Success,
+        });
+      } else {
+        enqueueSnackBar('There was some issue', {
+          variant: SnackBarVariant.Error,
+        });
+      }
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+  };
 
   return (
     <>
       <H2Title
-        title={t`Change Password`}
-        description={t`Receive an email containing password update link`}
+        title="Change Password"
+        description="Receive an email containing password update link"
       />
       <Button
         onClick={handleResetPassword()}
         variant="secondary"
-        title={t`Change Password`}
+        title="Change Password"
       />
     </>
   );

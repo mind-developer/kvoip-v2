@@ -6,6 +6,7 @@ import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreat
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,12 +15,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { t } from '@lingui/core/macro';
+import { useNavigate } from 'react-router-dom';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
@@ -46,7 +45,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
         ),
       );
 
-      navigate(SettingsPath.Security);
+      navigate(getSettingsPagePath(SettingsPath.Security));
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -55,7 +54,27 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSave)}>
+    <SubMenuTopBarContainer
+      title="New SSO Configuration"
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!formConfig.formState.isValid}
+          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Security))}
+          onSave={handleSave}
+        />
+      }
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Security',
+          href: getSettingsPagePath(SettingsPath.Security),
+        },
+        { children: 'New' },
+      ]}
+    >
       <FormProvider
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...form}

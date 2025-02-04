@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @ObjectType()
 class UserInfo {
@@ -37,8 +37,8 @@ class WorkspaceInfo {
   @Field(() => [UserInfo])
   users: UserInfo[];
 
-  @Field(() => [FeatureFlag])
-  featureFlags: FeatureFlag[];
+  @Field(() => [FeatureFlagEntity])
+  featureFlags: FeatureFlagEntity[];
 }
 
 @ObjectType()

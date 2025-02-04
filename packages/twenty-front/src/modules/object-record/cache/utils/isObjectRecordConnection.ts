@@ -1,23 +1,30 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { z } from 'zod';
+
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { capitalize } from 'twenty-shared';
 
 export const isObjectRecordConnection = (
-  relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>,
+  objectNameSingular: string,
   value: unknown,
 ): value is RecordGqlConnection => {
-  switch (relationDefinition.direction) {
-    case RelationDefinitionType.MANY_TO_MANY:
-    case RelationDefinitionType.ONE_TO_MANY: {
-      return true;
-    }
-    case RelationDefinitionType.MANY_TO_ONE:
-    case RelationDefinitionType.ONE_TO_ONE: {
-      return false;
-    }
-    default: {
-      return assertUnreachable(relationDefinition.direction);
-    }
-  }
+  const objectConnectionTypeName = `${capitalize(
+    objectNameSingular,
+  )}Connection`;
+  const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
+
+  const objectConnectionSchema = z.object({
+    __typename: z.literal(objectConnectionTypeName).optional(),
+    edges: z.array(
+      z.object({
+        __typename: z.literal(objectEdgeTypeName).optional(),
+        node: z.object({
+          id: z.string().uuid(),
+        }),
+      }),
+    ),
+  });
+
+  const connectionValidation = objectConnectionSchema.safeParse(value);
+
+  return connectionValidation.success;
 };

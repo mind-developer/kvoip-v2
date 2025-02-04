@@ -40,7 +40,7 @@ export const useRelationSettingsFormInitialValues = ({
   );
 
   const initialRelationType =
-    relationTypeFromFieldMetadata ?? RelationDefinitionType.ONE_TO_MANY;
+    relationTypeFromFieldMetadata ?? RelationDefinitionType.OneToMany;
 
   return {
     disableFieldEdition:
@@ -49,8 +49,8 @@ export const useRelationSettingsFormInitialValues = ({
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
       label: [
-        RelationDefinitionType.MANY_TO_MANY,
-        RelationDefinitionType.MANY_TO_ONE,
+        RelationDefinitionType.ManyToMany,
+        RelationDefinitionType.ManyToOne,
       ].includes(initialRelationType)
         ? initialRelationObjectMetadataItem.labelPlural
         : initialRelationObjectMetadataItem.labelSingular,

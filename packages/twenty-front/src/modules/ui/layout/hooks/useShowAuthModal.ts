@@ -36,18 +36,18 @@ export const useShowAuthModal = () => {
 
     if (
       !isLoggedIn ||
-      onboardingStatus === OnboardingStatus.PLAN_REQUIRED ||
-      onboardingStatus === OnboardingStatus.PROFILE_CREATION ||
-      onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION ||
-      onboardingStatus === OnboardingStatus.SYNC_EMAIL ||
-      onboardingStatus === OnboardingStatus.INVITE_TEAM
+      onboardingStatus === OnboardingStatus.PlanRequired ||
+      onboardingStatus === OnboardingStatus.ProfileCreation ||
+      onboardingStatus === OnboardingStatus.WorkspaceActivation ||
+      onboardingStatus === OnboardingStatus.SyncEmail ||
+      onboardingStatus === OnboardingStatus.InviteTeam
     ) {
       return true;
     }
 
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        (onboardingStatus === OnboardingStatus.COMPLETED &&
+        (onboardingStatus === OnboardingStatus.Completed &&
           !isDefined(subscriptionStatus)) ||
         subscriptionStatus === SubscriptionStatus.Canceled
       );

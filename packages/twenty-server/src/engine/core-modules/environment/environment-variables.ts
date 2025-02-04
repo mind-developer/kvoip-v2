@@ -710,18 +710,258 @@ export class EnvironmentVariables {
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TokensDuration,
-    description: 'Time-to-live for cache storage in seconds',
-  })
-  @CastToPositiveNumber()
-  CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
+  // Frontend URL
+  @IsString()
+  @IsOptional()
+  FRONT_DOMAIN?: string;
 
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    sensitive: true,
-    description: 'URL for cache storage (e.g., Redis connection URL)',
+  @IsString()
+  @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
+  DEFAULT_SUBDOMAIN = 'app';
+
+  @IsString()
+  @IsOptional()
+  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  FRONT_PORT?: number;
+
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  SERVER_URL = 'http://localhost:3000';
+
+  @IsString()
+  APP_SECRET: string;
+
+  @IsOptional()
+  @IsString()
+  ACCESS_TOKEN_SECRET: string;
+
+  @IsDuration()
+  @IsOptional()
+  ACCESS_TOKEN_EXPIRES_IN = '30m';
+
+  @IsOptional()
+  REFRESH_TOKEN_EXPIRES_IN = '60d';
+
+  @IsDuration()
+  @IsOptional()
+  REFRESH_TOKEN_COOL_DOWN = '1m';
+
+  @IsDuration()
+  @IsOptional()
+  LOGIN_TOKEN_EXPIRES_IN = '15m';
+
+  @IsDuration()
+  @IsOptional()
+  FILE_TOKEN_EXPIRES_IN = '1d';
+
+  @IsDuration()
+  @IsOptional()
+  INVITATION_TOKEN_EXPIRES_IN = '30d';
+
+  // Auth
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_PASSWORD_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED)
+  SIGN_IN_PREFILLED = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_MICROSOFT_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CALLBACK_URL: string;
+
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_GOOGLE_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
+  AUTH_GOOGLE_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
+  AUTH_GOOGLE_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
+  AUTH_GOOGLE_CALLBACK_URL: string;
+
+  @IsString()
+  @IsOptional()
+  ENTERPRISE_KEY: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_MULTIWORKSPACE_ENABLED = false;
+
+  // Custom Code Engine
+  @IsEnum(ServerlessDriverType)
+  @IsOptional()
+  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsAWSRegion()
+  SERVERLESS_LAMBDA_REGION: AwsRegion;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ROLE: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+
+  // Storage
+  @IsEnum(StorageDriverType)
+  @IsOptional()
+  STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsAWSRegion()
+  STORAGE_S3_REGION: AwsRegion;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  STORAGE_S3_NAME: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_ENDPOINT: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_SECRET_ACCESS_KEY: string;
+
+  @IsString()
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
+  STORAGE_LOCAL_PATH = '.local-storage';
+
+  // Support
+  @IsEnum(SupportDriver)
+  @IsOptional()
+  SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
+
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @IsString()
+  SUPPORT_FRONT_CHAT_ID: string;
+
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @IsString()
+  SUPPORT_FRONT_HMAC_KEY: string;
+
+  @IsEnum(LoggerDriverType)
+  @IsOptional()
+  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
+
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  LOGGER_IS_BUFFER_ENABLED = true;
+
+  @IsEnum(ExceptionHandlerDriver)
+  @IsOptional()
+  EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
+    ExceptionHandlerDriver.Console;
+
+  @CastToLogLevelArray()
+  @IsOptional()
+  LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
+
+  @CastToStringArray()
+  @IsOptional()
+  DEMO_WORKSPACE_IDS: string[] = [];
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  SENTRY_DSN: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  SENTRY_FRONT_DSN: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_RELEASE: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_ENVIRONMENT: string;
+
+  @IsDuration()
+  @IsOptional()
+  PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
+    message:
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 30;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
+
+  @IsEnum(CaptchaDriverType)
   @IsOptional()
   @IsUrl({
     protocols: ['redis'],

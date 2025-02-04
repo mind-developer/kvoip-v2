@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -13,13 +13,9 @@ import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -33,7 +29,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { destroyOneRecord } = useDestroyOneRecord({
@@ -47,17 +43,33 @@ export const SettingsAccountsRowDropdownMenu = ({
   };
 
   return (
-    <>
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownPlacement="right-start"
-        dropdownHotkeyScope={{ scope: dropdownId }}
-        clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-        }
-        dropdownMenuWidth={160}
-        dropdownComponents={
-          <DropdownMenuItemsContainer>
+    <Dropdown
+      dropdownId={dropdownId}
+      dropdownPlacement="right-start"
+      dropdownHotkeyScope={{ scope: dropdownId }}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
+      dropdownMenuWidth={160}
+      dropdownComponents={
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            LeftIcon={IconMail}
+            text="Emails settings"
+            onClick={() => {
+              navigate(`/settings/accounts/emails`);
+              closeDropdown();
+            }}
+          />
+          <MenuItem
+            LeftIcon={IconCalendarEvent}
+            text="Calendar settings"
+            onClick={() => {
+              navigate(`/settings/accounts/calendars`);
+              closeDropdown();
+            }}
+          />
+          {account.authFailedAt && (
             <MenuItem
               LeftIcon={IconMail}
               text={t`Emails settings`}

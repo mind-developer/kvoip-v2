@@ -39,9 +39,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           fieldMetadataItem.isActive &&
           (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
           fieldMetadataItem.name !== 'createdAt' &&
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+          (fieldMetadataItem.type !== FieldMetadataType.Relation ||
             fieldMetadataItem.relationDefinition?.direction ===
-              RelationDefinitionType.MANY_TO_ONE),
+              RelationDefinitionType.ManyToOne),
       )
       .sort((fieldMetadataItemA, fieldMetadataItemB) =>
         fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

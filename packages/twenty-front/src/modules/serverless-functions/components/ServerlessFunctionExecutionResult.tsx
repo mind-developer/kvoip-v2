@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { ServerlessFunctionTestData } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useTheme } from '@emotion/react';
+import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import {
   CodeEditor,
   CoreEditorHeader,
@@ -11,7 +10,11 @@ import {
   IconLoader,
   AnimatedCircleLoading,
 } from 'twenty-ui';
-import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import {
+  DEFAULT_OUTPUT_VALUE,
+  ServerlessFunctionTestData,
+} from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,8 +31,8 @@ const StyledInfoContainer = styled.div`
 const StyledOutput = styled.div<{ accent?: OutputAccent }>`
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme, accent }) =>
-    accent === 'success'
+  color: ${({ theme, status }) =>
+    status === ServerlessFunctionExecutionStatus.Success
       ? theme.color.turquoise
       : accent === 'error'
         ? theme.color.red
@@ -51,49 +54,20 @@ export const ServerlessFunctionExecutionResult = ({
     serverlessFunctionTestData.output.error ||
     '';
 
-  const SuccessLeftNode = (
-    <StyledOutput accent="success">
-      <IconSquareRoundedCheck size={theme.icon.size.md} />
-      200 OK - {serverlessFunctionTestData.output.duration}ms
-    </StyledOutput>
-  );
-
-  const ErrorLeftNode = (
-    <StyledOutput accent="error">
-      <IconSquareRoundedX size={theme.icon.size.md} />
-      500 Error - {serverlessFunctionTestData.output.duration}ms
-    </StyledOutput>
-  );
-
-  const IdleLeftNode = 'Output';
-
-  const PendingLeftNode = isTesting && (
-    <StyledOutput>
-      <AnimatedCircleLoading>
-        <IconLoader size={theme.icon.size.md} />
-      </AnimatedCircleLoading>
-      <StyledInfoContainer>Running function</StyledInfoContainer>
-    </StyledOutput>
-  );
-
-  const computeLeftNode = () => {
-    if (isTesting) {
-      return PendingLeftNode;
-    }
-    if (
-      serverlessFunctionTestData.output.status ===
-      ServerlessFunctionExecutionStatus.ERROR
-    ) {
-      return ErrorLeftNode;
-    }
-    if (
-      serverlessFunctionTestData.output.status ===
-      ServerlessFunctionExecutionStatus.SUCCESS
-    ) {
-      return SuccessLeftNode;
-    }
-    return IdleLeftNode;
-  };
+  const leftNode =
+    serverlessFunctionTestData.output.data === DEFAULT_OUTPUT_VALUE ? (
+      'Output'
+    ) : (
+      <StyledOutput status={serverlessFunctionTestData.output.status}>
+        <IconSquareRoundedCheck size={theme.icon.size.md} />
+        {serverlessFunctionTestData.output.status ===
+        ServerlessFunctionExecutionStatus.Success
+          ? '200 OK'
+          : '500 Error'}
+        {' - '}
+        {serverlessFunctionTestData.output.duration}ms
+      </StyledOutput>
+    );
 
   return (
     <StyledContainer>

@@ -4,13 +4,15 @@ import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/Node
 import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
 import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { css } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
-import React from 'react';
-import { capitalize, isDefined } from 'twenty-shared';
-import { Label, Loader, OverflowingTextWithTooltip } from 'twenty-ui';
+import {
+  IconAddressBook,
+  IconCode,
+  IconHandMove,
+  IconMail,
+  IconPlaylistAdd,
+} from 'twenty-ui';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -203,6 +205,75 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
   isLeafNode: boolean;
 }) => {
+  const theme = useTheme();
+
+  const renderStepIcon = () => {
+    switch (data.nodeType) {
+      case 'trigger': {
+        switch (data.triggerType) {
+          case 'DATABASE_EVENT': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconPlaylistAdd
+                  size={theme.icon.size.lg}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'MANUAL': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconHandMove
+                  size={theme.icon.size.lg}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+        }
+
+        return assertUnreachable(data.triggerType);
+      }
+      case 'action': {
+        switch (data.actionType) {
+          case 'CODE': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconCode
+                  size={theme.icon.size.lg}
+                  color={theme.color.orange}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'SEND_EMAIL': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconMail size={theme.icon.size.lg} color={theme.color.blue} />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'CREATE_RECORD':
+          case 'UPDATE_RECORD':
+          case 'DELETE_RECORD': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconAddressBook
+                  size={theme.icon.size.lg}
+                  color={theme.font.color.tertiary}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+        }
+      }
+    }
+
+    return assertUnreachable(data);
+  };
+
   return (
     <StyledStepNodeContainer className="workflow-node-container">
       {nodeType !== 'trigger' ? (

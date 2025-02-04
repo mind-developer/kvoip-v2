@@ -51,7 +51,7 @@ describe('getWorkflowVersionDiagram', () => {
 `);
   });
 
-  it('returns a diagram with only a trigger node if the provided workflow version has no steps', () => {
+  it('returns a diagram with an empty-trigger node if the provided workflow version has no steps', () => {
     const result = getWorkflowVersionDiagram({
       __typename: 'WorkflowVersion',
       status: 'ACTIVE',
@@ -60,7 +60,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
-        name: 'Record is created',
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -68,27 +68,20 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    expect(result).toMatchInlineSnapshot(`
-{
-  "edges": [],
-  "nodes": [
-    {
-      "data": {
-        "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
-        "name": "Record is created",
-        "nodeType": "trigger",
-        "triggerType": "DATABASE_EVENT",
-      },
-      "id": "trigger",
-      "position": {
-        "x": 0,
-        "y": 0,
-      },
-    },
-  ],
-}
-`);
+    expect(result).toEqual({
+      nodes: [
+        {
+          data: {
+            name: 'Company created',
+            nodeType: 'trigger',
+            triggerType: 'DATABASE_EVENT',
+          },
+          id: 'trigger',
+          position: { x: 0, y: 0 },
+        },
+      ],
+      edges: [],
+    });
   });
 
   it('returns the diagram for the last version', () => {

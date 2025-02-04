@@ -13,7 +13,9 @@ export const RecordFieldInputScope = ({
 }: RecordFieldInputScopeProps) => {
   return (
     <RecordFieldInputScopeInternalContext.Provider
-      value={{ scopeId: recordFieldInputScopeId }}
+      value={{
+        scopeId: recordFieldInputScopeId,
+      }}
     >
       {children}
     </RecordFieldInputScopeInternalContext.Provider>

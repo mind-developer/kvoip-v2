@@ -9,7 +9,6 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -19,8 +18,6 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch, UndecoratedLink } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { t } from '@lingui/core/macro';
 
 type SettingsObjectNewFieldSelectorProps = {
   className?: string;
@@ -87,14 +84,14 @@ export const SettingsObjectNewFieldSelector = ({
 
   const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
-      case FieldMetadataType.BOOLEAN:
+      case FieldMetadataType.Boolean:
         resetBooleanDefaultValueField();
         break;
-      case FieldMetadataType.CURRENCY:
+      case FieldMetadataType.Currency:
         resetCurrencyDefaultValueField();
         break;
-      case FieldMetadataType.SELECT:
-      case FieldMetadataType.MULTI_SELECT:
+      case FieldMetadataType.Select:
+      case FieldMetadataType.MultiSelect:
         resetSelectDefaultValueField();
         break;
       default:
@@ -132,11 +129,7 @@ export const SettingsObjectNewFieldSelector = ({
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink
-                          to={getSettingsPath(
-                            SettingsPath.ObjectNewFieldConfigure,
-                            { objectNamePlural },
-                            { fieldType: key },
-                          )}
+                          to={`/settings/objects/${objectNamePlural}/new-field/configure?fieldType=${key}`}
                           fullWidth
                           onClick={() => {
                             setValue('type', key as SettingsFieldType);

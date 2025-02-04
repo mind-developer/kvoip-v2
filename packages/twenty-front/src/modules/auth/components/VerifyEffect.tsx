@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from 'twenty-shared';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -16,19 +16,25 @@ export const VerifyEffect = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const isLogged = useIsLogged();
-  const navigate = useNavigateApp();
-  const { verifyLoginToken } = useVerifyLogin();
+  const navigate = useNavigate();
+
+  const { verify } = useAuth();
+
+  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
+  );
 
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
-        dedupeKey: 'get-auth-tokens-from-login-token-failed-dedupe-key',
+        dedupeKey: 'verify-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }
 
     if (isDefined(loginToken)) {
-      verifyLoginToken(loginToken);
+      setIsAppWaitingForFreshObjectMetadata(true);
+      verify(loginToken);
     } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }

@@ -95,19 +95,19 @@ export const MultiItemFieldInput = <T,>({
   const handleEditButtonClick = (index: number) => {
     let item;
     switch (fieldMetadataType) {
-      case FieldMetadataType.LINKS:
+      case FieldMetadataType.Links:
         item = items[index] as { label: string; url: string };
         setInputValue(item.url || '');
         break;
-      case FieldMetadataType.PHONES:
+      case FieldMetadataType.Phones:
         item = items[index] as PhoneRecord;
         setInputValue(item.callingCode + item.number);
         break;
-      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.Emails:
         item = items[index] as string;
         setInputValue(item);
         break;
-      case FieldMetadataType.ARRAY:
+      case FieldMetadataType.Array:
         item = items[index] as string;
         setInputValue(item);
         break;

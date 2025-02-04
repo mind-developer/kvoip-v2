@@ -15,7 +15,7 @@ describe('getMultiSelectFieldPreviewValue', () => {
   it('returns null if the field is not a Multi-Select field', () => {
     // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ type }) => type !== FieldMetadataType.MULTI_SELECT,
+      ({ type }) => type !== FieldMetadataType.MultiSelect,
     );
 
     if (!fieldMetadataItem) {
@@ -41,7 +41,7 @@ describe('getMultiSelectFieldPreviewValue', () => {
 
   const fieldMetadataItem = {
     ...selectFieldMetadataItem,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.MultiSelect,
   };
 
   it("returns the defaultValue as an option value if a valid defaultValue is found in the field's metadata", () => {

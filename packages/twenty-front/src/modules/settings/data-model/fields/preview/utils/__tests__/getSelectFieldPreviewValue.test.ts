@@ -16,7 +16,7 @@ describe('getSelectFieldPreviewValue', () => {
   it('returns null if the field is not a Select field', () => {
     // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ type }) => type !== FieldMetadataType.SELECT,
+      ({ type }) => type !== FieldMetadataType.Select,
     );
 
     if (!fieldMetadataItem) {

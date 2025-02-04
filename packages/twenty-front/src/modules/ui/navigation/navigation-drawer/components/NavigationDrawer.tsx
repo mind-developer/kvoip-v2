@@ -101,7 +101,9 @@ export const NavigationDrawer = ({
       className={className}
       initial={false}
       animate={navigationDrawerAnimate}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
       isSettings={isSettingsDrawer}
     >
       <StyledContainer

@@ -11,15 +11,14 @@ import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/o
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import {
   IconMinus,
   IconPlus,
@@ -28,9 +27,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -72,7 +69,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const variant = objectMetadataItem.isCustom ? 'identifier' : 'field-type';
 
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
 
   const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
     navigationMemorizedUrlState,
@@ -108,10 +105,7 @@ export const SettingsObjectFieldItemTableRow = ({
     !isLabelIdentifier &&
     LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type);
 
-  const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldName: fieldMetadataItem.name,
-  });
+  const linkToNavigate = `./${fieldMetadataItem.name}`;
 
   const {
     activateMetadataField,
@@ -214,15 +208,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   return (
     <StyledObjectFieldTableRow
-      onClick={
-        mode === 'view'
-          ? () =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-          : undefined
-      }
+      onClick={mode === 'view' ? () => navigate(linkToNavigate) : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
         <StyledNameTableCell>
@@ -244,8 +230,8 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationDefinitionType.MANY_TO_ONE ||
-            relationType === RelationDefinitionType.ONE_TO_ONE
+            relationType === RelationDefinitionType.ManyToOne ||
+            relationType === RelationDefinitionType.OneToOne
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }
@@ -254,9 +240,7 @@ export const SettingsObjectFieldItemTableRow = ({
           }
           to={
             isRelatedObjectLinkable
-              ? getSettingsPath(SettingsPath.Objects, {
-                  objectNamePlural: relationObjectMetadataItem.namePlural,
-                })
+              ? `/settings/objects/${relationObjectMetadataItem.namePlural}`
               : undefined
           }
           value={fieldType}
@@ -273,12 +257,7 @@ export const SettingsObjectFieldItemTableRow = ({
             <SettingsObjectFieldActiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
               scopeKey={fieldMetadataItem.id}
-              onEdit={() =>
-                navigate(SettingsPath.ObjectFieldEdit, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                  fieldName: fieldMetadataItem.name,
-                })
-              }
+              onEdit={() => navigate(linkToNavigate)}
               onSetAsLabelIdentifier={
                 canBeSetAsLabelIdentifier
                   ? () => handleSetLabelIdentifierField(fieldMetadataItem)
@@ -303,12 +282,7 @@ export const SettingsObjectFieldItemTableRow = ({
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
             scopeKey={fieldMetadataItem.id}
-            onEdit={() =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-            }
+            onEdit={() => navigate(linkToNavigate)}
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }

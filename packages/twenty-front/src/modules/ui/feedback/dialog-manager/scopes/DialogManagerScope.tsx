@@ -13,7 +13,9 @@ export const DialogManagerScope = ({
 }: DialogManagerScopeProps) => {
   return (
     <DialogManagerScopeInternalContext.Provider
-      value={{ scopeId: dialogManagerScopeId }}
+      value={{
+        scopeId: dialogManagerScopeId,
+      }}
     >
       {children}
     </DialogManagerScopeInternalContext.Provider>

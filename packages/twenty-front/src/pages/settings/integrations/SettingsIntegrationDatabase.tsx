@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
@@ -8,16 +8,15 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettigsIntegrationStripeConnectionsListCard } from '@/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
-  const navigateApp = useNavigateApp();
+  const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -30,9 +29,9 @@ export const SettingsIntegrationDatabase = () => {
 
   useEffect(() => {
     if (!isIntegrationAvailable) {
-      navigateApp(AppPath.NotFound);
+      navigate(AppPath.NotFound);
     }
-  }, [integration, databaseKey, navigateApp, isIntegrationAvailable]);
+  }, [integration, databaseKey, navigate, isIntegrationAvailable]);
 
   const { connections } = useGetDatabaseConnections({
     databaseKey,
@@ -47,11 +46,11 @@ export const SettingsIntegrationDatabase = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',
-          href: getSettingsPath(SettingsPath.Integrations),
+          href: getSettingsPagePath(SettingsPath.Integrations),
         },
         { children: integration.text },
       ]}

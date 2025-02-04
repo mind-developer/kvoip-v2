@@ -23,11 +23,7 @@ const StyledSettingsOptionCardToggleContent = styled(
   }
 `;
 
-const StyledSettingsOptionCardToggleButton = styled(Toggle)<{
-  toggleCentered?: boolean;
-}>`
-  align-self: ${({ toggleCentered }) =>
-    toggleCentered ? 'center' : 'flex-start'};
+const StyledSettingsOptionCardToggleButton = styled(Toggle)`
   margin-left: auto;
 `;
 
@@ -44,7 +40,6 @@ type SettingsOptionCardContentToggleProps = {
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
-  toggleCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -56,7 +51,6 @@ export const SettingsOptionCardContentToggle = ({
   divider,
   disabled = false,
   advancedMode = false,
-  toggleCentered = true,
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
@@ -89,7 +83,6 @@ export const SettingsOptionCardContentToggle = ({
           disabled={disabled}
           toggleSize="small"
           color={advancedMode ? theme.color.yellow : theme.color.blue}
-          toggleCentered={toggleCentered}
         />
       </StyledSettingsOptionCardToggleContent>
       {divider && <Separator />}

@@ -29,7 +29,8 @@ export class StripeCheckoutService {
   async createCheckoutSession({
     user,
     workspaceId,
-    stripeSubscriptionLineItems,
+    priceId,
+    quantity,
     successUrl,
     cancelUrl,
     stripeCustomerId,
@@ -39,7 +40,8 @@ export class StripeCheckoutService {
   }: {
     user: User;
     workspaceId: string;
-    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    priceId: string;
+    quantity: number;
     successUrl?: string;
     cancelUrl?: string;
     stripeCustomerId?: string;
@@ -48,7 +50,12 @@ export class StripeCheckoutService {
     withTrialPeriod: boolean;
   }): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
-      line_items: stripeSubscriptionLineItems,
+      line_items: [
+        {
+          price: priceId,
+          quantity,
+        },
+      ],
       mode: 'subscription',
       subscription_data: {
         metadata: {
@@ -63,9 +70,7 @@ export class StripeCheckoutService {
                   : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
               ),
               trial_settings: {
-                end_behavior: {
-                  missing_payment_method: 'pause',
-                },
+                end_behavior: { missing_payment_method: 'pause' },
               },
             }
           : {}),

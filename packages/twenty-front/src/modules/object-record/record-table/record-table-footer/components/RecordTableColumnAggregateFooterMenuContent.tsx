@@ -55,7 +55,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
 
   const fieldIsRelation =
     objectMetadataItem.fields.find((field) => field.id === fieldMetadataId)
-      ?.type === FieldMetadataType.RELATION;
+      ?.type === FieldMetadataType.Relation;
 
   const {
     updateViewFieldAggregateOperation,

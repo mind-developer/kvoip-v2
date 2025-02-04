@@ -1,5 +1,4 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -12,7 +11,7 @@ import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useWorkspaceFavorites = () => {
   const { workspaceFavorites } = usePrefetchedFavoritesData();
-  const prefetchViews = useRecoilValue(prefetchViewsState);
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
@@ -25,8 +24,8 @@ export const useWorkspaceFavorites = () => {
     () =>
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.name !== 'forWorkspaceMember' &&
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.name !== 'workspaceMember' &&
           fieldMetadataItem.name !== 'favoriteFolder',
       ),
     [favoriteObjectMetadataItem.fields],
@@ -51,29 +50,5 @@ export const useWorkspaceFavorites = () => {
     ],
   );
 
-  const workspaceFavoriteIds = new Set(
-    sortedWorkspaceFavorites.map((favorite) => favorite.recordId),
-  );
-
-  const favoriteViewObjectMetadataIds = new Set(
-    prefetchViews.reduce<string[]>((acc, view) => {
-      if (workspaceFavoriteIds.has(view.id)) {
-        acc.push(view.objectMetadataId);
-      }
-      return acc;
-    }, []),
-  );
-
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-
-  const activeObjectMetadataItemsInWorkspaceFavorites =
-    activeObjectMetadataItems.filter((item) =>
-      favoriteViewObjectMetadataIds.has(item.id),
-    );
-
-  return {
-    workspaceFavorites: sortedWorkspaceFavorites,
-    workspaceFavoritesObjectMetadataItems:
-      activeObjectMetadataItemsInWorkspaceFavorites,
-  };
+  return { sortedWorkspaceFavorites };
 };

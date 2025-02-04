@@ -81,8 +81,8 @@ const StyledInputsContainer = styled.div`
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
   .filter(
     ([value]) =>
-      RelationDefinitionType.ONE_TO_ONE !== value &&
-      RelationDefinitionType.MANY_TO_MANY !== value,
+      RelationDefinitionType.OneToOne !== value &&
+      RelationDefinitionType.ManyToMany !== value,
   )
   .map(([value, { label, Icon }]) => ({
     label,
@@ -170,7 +170,7 @@ export const SettingsDataModelFieldRelationForm = ({
       </StyledSelectsContainer>
       <StyledInputsLabel>
         Field on{' '}
-        {selectedRelationType === RelationDefinitionType.MANY_TO_ONE
+        {selectedRelationType === RelationDefinitionType.ManyToOne
           ? selectedObjectMetadataItem?.labelSingular
           : selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>

@@ -10,7 +10,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
+import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-step.workspace-service';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -59,17 +59,21 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => Boolean)
-  async submitFormStep(
+  async createDraftFromWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { stepId, workflowRunId, response }: SubmitFormStepInput,
+    {
+      workflowId,
+      workflowVersionIdToCopy,
+    }: CreateDraftFromWorkflowVersionInput,
   ) {
-    await this.workflowVersionStepWorkspaceService.submitFormStep({
-      workspaceId,
-      stepId,
-      workflowRunId,
-      response,
-    });
+    await this.workflowVersionStepWorkspaceService.createDraftFromWorkflowVersion(
+      {
+        workspaceId,
+        workflowId,
+        workflowVersionIdToCopy,
+      },
+    );
 
     return true;
   }

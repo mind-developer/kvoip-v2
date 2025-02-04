@@ -18,32 +18,30 @@ export const seedWorkspaces = async (
       Workspace,
       | 'id'
       | 'displayName'
+      | 'domainName'
       | 'inviteHash'
       | 'logo'
       | 'subdomain'
       | 'activationStatus'
-      | 'creatorEmail'
     >;
   } = {
     [SEED_APPLE_WORKSPACE_ID]: {
       id: workspaceId,
       displayName: 'Apple',
+      domainName: 'apple.dev',
       subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      creatorEmail: 'tim@apple.dev',
-      creatorEmail: 'tim@apple.dev',
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
       displayName: 'Acme',
+      domainName: 'acme.dev',
       subdomain: 'acme',
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      creatorEmail: 'tim@apple.dev',
-      creatorEmail: 'tim@apple.dev',
     },
   };
 
@@ -53,11 +51,11 @@ export const seedWorkspaces = async (
     .into(`${schemaName}.${tableName}`, [
       'id',
       'displayName',
+      'domainName',
       'subdomain',
       'inviteHash',
       'logo',
       'activationStatus',
-      'creatorEmail'
     ])
     .orIgnore()
     .values(workspaces[workspaceId])

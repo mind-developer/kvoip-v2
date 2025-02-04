@@ -29,7 +29,7 @@ import {
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -101,6 +101,7 @@ export class SignInUpService {
       };
     }
 
+    // with global invitation flow
     if (params.workspace) {
       const updatedUser = await this.signInUpOnExistingWorkspace({
         workspace: params.workspace,
@@ -140,7 +141,10 @@ export class SignInUpService {
     password: string;
     passwordHash: string;
   }) {
-    const isValid = await compareHash(password, passwordHash);
+    const isValid = await compareHash(
+      await this.generateHash(password),
+      passwordHash,
+    );
 
     if (!isValid) {
       throw new AuthException(
@@ -173,7 +177,7 @@ export class SignInUpService {
     }
 
     const invitationValidation =
-      await this.workspaceInvitationService.validatePersonalInvitation({
+      await this.workspaceInvitationService.validateInvitation({
         workspacePersonalInviteToken: params.invitation.value,
         email,
       });
@@ -268,9 +272,7 @@ export class SignInUpService {
 
     const user = Object.assign(currentUser, updatedUser);
 
-    if (params.userData.type === 'newUserWithPicture') {
-      await this.activateOnboardingForUser(user, params.workspace);
-    }
+    await this.activateOnboardingForUser(user, params.workspace);
 
     if (params.workspace.defaultRoleId) {
       await this.userRoleService.assignRoleToUserWorkspace({
@@ -347,6 +349,7 @@ export class SignInUpService {
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
+      domainName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       logo,

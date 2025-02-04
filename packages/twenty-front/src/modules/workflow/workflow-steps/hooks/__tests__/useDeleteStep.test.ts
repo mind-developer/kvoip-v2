@@ -3,9 +3,10 @@ import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
+const mockCloseRightDrawer = jest.fn();
+const mockCreateNewWorkflowVersion = jest.fn();
 const mockDeleteWorkflowVersionStep = jest.fn();
 const updateOneRecordMock = jest.fn();
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({
@@ -19,9 +20,9 @@ jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
-  useCreateDraftFromWorkflowVersion: () => ({
-    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
+jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
+  useCreateNewWorkflowVersion: () => ({
+    createNewWorkflowVersion: mockCreateNewWorkflowVersion,
   }),
 }));
 

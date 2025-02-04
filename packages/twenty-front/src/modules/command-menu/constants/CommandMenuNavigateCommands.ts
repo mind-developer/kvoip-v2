@@ -6,19 +6,12 @@ import {
   IconUser,
 } from 'twenty-ui';
 
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
-import { getAppPath } from '~/utils/navigation/getAppPath';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Command, CommandType } from '../types/Command';
 
 export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {
     id: 'go-to-people',
-    to: getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: CoreObjectNamePlural.Person,
-    }),
+    to: '/objects/people',
     label: 'Go to People',
     type: CommandType.Navigate,
     hotKeys: ['G', 'P'],
@@ -27,9 +20,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   companies: {
     id: 'go-to-companies',
-    to: getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: CoreObjectNamePlural.Company,
-    }),
+    to: '/objects/companies',
     label: 'Go to Companies',
     type: CommandType.Navigate,
     hotKeys: ['G', 'C'],
@@ -38,9 +29,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   opportunities: {
     id: 'go-to-activities',
-    to: getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: CoreObjectNamePlural.Opportunity,
-    }),
+    to: '/objects/opportunities',
     label: 'Go to Opportunities',
     type: CommandType.Navigate,
     hotKeys: ['G', 'O'],
@@ -49,7 +38,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   settings: {
     id: 'go-to-settings',
-    to: getSettingsPath(SettingsPath.ProfilePage),
+    to: '/settings/profile',
     label: 'Go to Settings',
     type: CommandType.Navigate,
     hotKeys: ['G', 'S'],
@@ -58,9 +47,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   tasks: {
     id: 'go-to-tasks',
-    to: getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: CoreObjectNamePlural.Task,
-    }),
+    to: '/objects/tasks',
     label: 'Go to Tasks',
     type: CommandType.Navigate,
     hotKeys: ['G', 'T'],

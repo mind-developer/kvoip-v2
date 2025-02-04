@@ -27,6 +27,15 @@ export class OnboardingService {
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
+  private async isSubscriptionIncompleteOnboardingStatus(workspace: Workspace) {
+    const hasSubscription =
+      await this.billingService.hasWorkspaceSubscriptionOrFreeAccess(
+        workspace.id,
+      );
+
+    return !hasSubscription;
+  }
+
   private isWorkspaceActivationPending(workspace: Workspace) {
     return (
       workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION

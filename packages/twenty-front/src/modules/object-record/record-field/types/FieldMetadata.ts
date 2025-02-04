@@ -209,7 +209,6 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
-  | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
   | FieldTextMetadata

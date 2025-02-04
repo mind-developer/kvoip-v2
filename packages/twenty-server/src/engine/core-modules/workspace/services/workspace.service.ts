@@ -255,7 +255,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.workspaceRepository.update(workspace.id, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
-      creatorEmail: user.email,
     });
 
     await this.featureFlagService.enableFeatureFlags(
@@ -344,32 +343,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return workspace;
   }
 
-  async handleRemoveWorkspaceMember(
-    workspaceId: string,
-    userId: string,
-    softDelete = false,
-  ) {
-    if (softDelete) {
-      await this.userWorkspaceRepository.softDelete({
-        userId,
-        workspaceId,
-      });
-    } else {
-      await this.userWorkspaceRepository.delete({
-        userId,
-        workspaceId,
-      });
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        userId,
-      },
+  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
+    await this.userWorkspaceRepository.delete({
+      userId,
+      workspaceId,
     });
-
-    if (userWorkspaces.length === 0) {
-      await this.userRepository.softDelete(userId);
-    }
   }
 
   async isSubdomainAvailable(subdomain: string) {

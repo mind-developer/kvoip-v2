@@ -1,7 +1,5 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -14,12 +12,10 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { isDate } from 'src/utils/date/isDate';
-import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
   data: any,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
   if (!data) {
@@ -28,7 +24,7 @@ export function formatResult<T>(
 
   if (Array.isArray(data)) {
     return data.map((item) =>
-      formatResult(item, objectMetadataItemWithFieldMaps, objectMetadataMaps),
+      formatResult(item, ObjectMetadataItemWithFieldMaps, objectMetadataMaps),
     ) as T;
   }
 
@@ -36,16 +32,16 @@ export function formatResult<T>(
     return data;
   }
 
-  if (!objectMetadataItemWithFieldMaps) {
+  if (!ObjectMetadataItemWithFieldMaps) {
     throw new Error('Object metadata is missing');
   }
 
-  const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
-    objectMetadataItemWithFieldMaps,
+  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
+    ObjectMetadataItemWithFieldMaps,
   );
 
   const relationMetadataMap = new Map(
-    Object.values(objectMetadataItemWithFieldMaps.fieldsById)
+    Object.values(ObjectMetadataItemWithFieldMaps.fieldsById)
       .filter(({ type }) => isRelationFieldMetadataType(type))
       .map((fieldMetadata) => [
         fieldMetadata.name,
@@ -63,7 +59,7 @@ export function formatResult<T>(
   );
   const newData: object = {};
   const objectMetadaItemFieldsByName =
-    objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;
+    objectMetadataMaps.byId[ObjectMetadataItemWithFieldMaps.id]?.fieldsByName;
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
@@ -74,7 +70,7 @@ export function formatResult<T>(
       if (isPlainObject(value)) {
         newData[key] = formatResult(
           value,
-          objectMetadataItemWithFieldMaps,
+          ObjectMetadataItemWithFieldMaps,
           objectMetadataMaps,
         );
       } else if (objectMetadaItemFieldsByName[key]) {
@@ -127,56 +123,6 @@ export function formatResult<T>(
     }
 
     newData[parentField][compositeProperty.name] = value;
-  }
-
-  const dateFieldMetadataCollection =
-    objectMetadataItemWithFieldMaps.fields.filter(
-      (field) => field.type === FieldMetadataType.DATE,
-    );
-
-  // This is a temporary fix to handle a bug in the frontend where the date gets returned in the wrong timezone,
-  //   thus returning the wrong date.
-  //
-  // In short, for example :
-  //   - DB stores `2025-01-01`
-  //   - TypeORM .returning() returns `2024-12-31T23:00:00.000Z`
-  //   - we shift +1h (or whatever the timezone offset is on the server)
-  //   - we return `2025-01-01T00:00:00.000Z`
-  //
-  // See this PR for more details: https://github.com/twentyhq/twenty/pull/9700
-  const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
-    new Date().getTimezoneOffset() * 60 * 1000;
-
-  for (const dateFieldMetadata of dateFieldMetadataCollection) {
-    const rawUpdatedDate = newData[dateFieldMetadata.name] as
-      | string
-      | null
-      | undefined
-      | Date;
-
-    if (!isDefined(rawUpdatedDate)) {
-      continue;
-    }
-
-    if (isDate(rawUpdatedDate)) {
-      if (isValidDate(rawUpdatedDate)) {
-        const shiftedDate = new Date(
-          rawUpdatedDate.getTime() -
-            serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
-        );
-
-        newData[dateFieldMetadata.name] = shiftedDate;
-      }
-    } else if (isNonEmptyString(rawUpdatedDate)) {
-      const currentDate = new Date(newData[dateFieldMetadata.name]);
-
-      const shiftedDate = new Date(
-        new Date(currentDate).getTime() -
-          serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
-      );
-
-      newData[dateFieldMetadata.name] = shiftedDate;
-    }
   }
 
   return newData as T;

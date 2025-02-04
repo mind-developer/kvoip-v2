@@ -1,11 +1,12 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
+import {
+  NavigationDrawerItem,
+  NavigationDrawerItemProps,
+} from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { isDefined } from 'twenty-shared';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;
@@ -16,7 +17,7 @@ export const SettingsNavigationDrawerItem = ({
   item,
   subItemState,
 }: SettingsNavigationDrawerItemProps) => {
-  const href = item.path ? getSettingsPath(item.path) : '';
+  const href = getSettingsPagePath(path);
   const pathName = useResolvedPath(href).pathname;
   const isActive = !!useMatch({
     path: pathName,

@@ -14,22 +14,22 @@ export const generateEmptyFieldValue = ({
   fieldMetadataItem,
 }: GenerateEmptyFieldValueArgs) => {
   switch (fieldMetadataItem.type) {
-    case FieldMetadataType.TEXT: {
+    case FieldMetadataType.Text: {
       return '';
     }
-    case FieldMetadataType.EMAILS: {
+    case FieldMetadataType.Emails: {
       return { primaryEmail: '', additionalEmails: null };
     }
-    case FieldMetadataType.LINKS: {
+    case FieldMetadataType.Links: {
       return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: [] };
     }
-    case FieldMetadataType.FULL_NAME: {
+    case FieldMetadataType.FullName: {
       return {
         firstName: '',
         lastName: '',
       };
     }
-    case FieldMetadataType.ADDRESS: {
+    case FieldMetadataType.Address: {
       return {
         addressStreet1: '',
         addressStreet2: '',
@@ -41,62 +41,56 @@ export const generateEmptyFieldValue = ({
         addressLng: null,
       };
     }
-    case FieldMetadataType.DATE_TIME: {
+    case FieldMetadataType.DateTime: {
       return null;
     }
-    case FieldMetadataType.DATE: {
+    case FieldMetadataType.Date: {
       return null;
     }
-    case FieldMetadataType.NUMBER:
-    case FieldMetadataType.RATING:
-    case FieldMetadataType.POSITION:
-    case FieldMetadataType.NUMERIC: {
+    case FieldMetadataType.Number:
+    case FieldMetadataType.Rating:
+    case FieldMetadataType.Position:
+    case FieldMetadataType.Numeric: {
       return null;
     }
-    case FieldMetadataType.UUID: {
+    case FieldMetadataType.Uuid: {
       return null;
     }
-    case FieldMetadataType.BOOLEAN: {
+    case FieldMetadataType.Boolean: {
       return true;
     }
-    case FieldMetadataType.RELATION: {
+    case FieldMetadataType.Relation: {
       if (
         fieldMetadataItem.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
+        RelationDefinitionType.ManyToOne
       ) {
         return null;
       }
 
       return [];
     }
-    case FieldMetadataType.CURRENCY: {
+    case FieldMetadataType.Currency: {
       return {
         amountMicros: null,
         currencyCode: null,
       };
     }
-    case FieldMetadataType.SELECT: {
+    case FieldMetadataType.Select: {
       return null;
     }
-    case FieldMetadataType.MULTI_SELECT: {
+    case FieldMetadataType.MultiSelect: {
       return null;
     }
-    case FieldMetadataType.ARRAY: {
+    case FieldMetadataType.Array: {
       return null;
     }
-    case FieldMetadataType.RAW_JSON: {
+    case FieldMetadataType.RawJson: {
       return null;
     }
-    case FieldMetadataType.RICH_TEXT: {
+    case FieldMetadataType.RichText: {
       return null;
     }
-    case FieldMetadataType.RICH_TEXT_V2: {
-      return {
-        blocknote: null,
-        markdown: null,
-      };
-    }
-    case FieldMetadataType.ACTOR: {
+    case FieldMetadataType.Actor: {
       return {
         source: 'MANUAL',
         context: {},
@@ -104,7 +98,7 @@ export const generateEmptyFieldValue = ({
         workspaceMemberId: null,
       } satisfies FieldActorValue;
     }
-    case FieldMetadataType.PHONES: {
+    case FieldMetadataType.Phones: {
       return {
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',

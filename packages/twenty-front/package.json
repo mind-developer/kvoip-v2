@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.44.0-canary",
+  "version": "0.35.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,8 +54,7 @@
     "file-saver": "^2.0.5",
     "firebase": "^11.2.0",
     "recoil-sync": "^0.2.0",
-    "transliteration": "^2.3.5",
-    "twenty-shared": "workspace:*"
+    "transliteration": "^2.3.5"
   },
   "devDependencies": {
     "@types/file-saver": "^2"

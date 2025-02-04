@@ -2,19 +2,14 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import {
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasReadonlyEffect = () => {
-  const { getIcon } = useIcons();
+  const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const { openWorkflowViewStepInCommandMenu } = useCommandMenu();
 
@@ -29,22 +24,15 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       }
 
       setWorkflowSelectedNode(selectedNode.id);
-
-      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
-
-      if (isDefined(workflowId)) {
-        openWorkflowViewStepInCommandMenu(
-          workflowId,
-          selectedNodeData.name,
-          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-        );
-      }
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+      openRightDrawer(RightDrawerPages.WorkflowStepView);
     },
     [
       setWorkflowSelectedNode,
-      openWorkflowViewStepInCommandMenu,
-      workflowId,
-      getIcon,
+      setHotkeyScope,
+      openRightDrawer,
+      closeRightDrawer,
+      closeCommandMenu,
     ],
   );
 

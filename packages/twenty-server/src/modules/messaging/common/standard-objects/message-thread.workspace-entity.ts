@@ -1,5 +1,3 @@
-import { msg } from '@lingui/core/macro';
-
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
@@ -20,9 +18,9 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
   namePlural: 'messageThreads',
-  labelSingular: msg`Message Thread`,
-  labelPlural: msg`Message Threads`,
-  description: msg`A group of related messages (e.g. email thread, chat thread)`,
+  labelSingular: 'Message Thread',
+  labelPlural: 'Message Threads',
+  description: 'Message Thread',
   icon: STANDARD_OBJECT_ICONS.messageThread,
 })
 @WorkspaceIsNotAuditLogged()

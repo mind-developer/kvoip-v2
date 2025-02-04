@@ -165,38 +165,26 @@ export class WorkflowStatusesUpdateJob {
         const newStep = { ...step };
 
         if (step.type === WorkflowActionType.CODE) {
+          let serverlessFunction;
+
           try {
-            await this.serverlessFunctionService.publishOneServerlessFunction(
-              step.settings.input.serverlessFunctionId,
-              workspaceId,
-            );
-          } catch (e) {
-            // publishOneServerlessFunction throws if no change have been
-            // applied between draft and lastPublished version.
-            // If no change have been applied, we just use the same
-            // serverless function version
-            if (
-              e.code !==
-              ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
-            ) {
-              this.logger.error(
-                `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
+            serverlessFunction =
+              await this.serverlessFunctionService.publishOneServerlessFunction(
+                step.settings.input.serverlessFunctionId,
+                workspaceId,
               );
-            }
+          } catch (e) {
+            serverlessFunction = null;
           }
 
-          const serverlessFunction =
-            await this.serverlessFunctionService.findOneOrFail({
-              id: step.settings.input.serverlessFunctionId,
-              workspaceId,
-            });
+          if (serverlessFunction) {
+            const newStepSettings = { ...step.settings };
 
-          const newStepSettings = { ...step.settings };
+            newStepSettings.input.serverlessFunctionVersion =
+              serverlessFunction.latestVersion;
 
-          newStepSettings.input.serverlessFunctionVersion =
-            serverlessFunction.latestVersion;
-
-          newStep.settings = newStepSettings;
+            newStep.settings = newStepSettings;
+          }
         }
         newSteps.push(newStep);
       }

@@ -47,14 +47,8 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

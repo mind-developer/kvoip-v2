@@ -12,20 +12,20 @@ const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
   currentWorkspace: CurrentWorkspace | null,
 ) => {
-  if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return OnboardingStatus.PROFILE_CREATION;
+  if (currentUser?.onboardingStatus === OnboardingStatus.WorkspaceActivation) {
+    return OnboardingStatus.ProfileCreation;
   }
 
-  if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    return OnboardingStatus.SYNC_EMAIL;
+  if (currentUser?.onboardingStatus === OnboardingStatus.ProfileCreation) {
+    return OnboardingStatus.SyncEmail;
   }
   if (
-    currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
+    currentUser?.onboardingStatus === OnboardingStatus.SyncEmail &&
     currentWorkspace?.workspaceMembersCount === 1
   ) {
-    return OnboardingStatus.INVITE_TEAM;
+    return OnboardingStatus.InviteTeam;
   }
-  return OnboardingStatus.COMPLETED;
+  return OnboardingStatus.Completed;
 };
 
 export const useSetNextOnboardingStatus = () => {

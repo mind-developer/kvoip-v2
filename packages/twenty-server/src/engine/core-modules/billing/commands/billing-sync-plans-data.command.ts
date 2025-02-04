@@ -17,9 +17,9 @@ import { StripeBillingMeterService } from 'src/engine/core-modules/billing/strip
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
-import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
-import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
+import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
+import { transformStripePriceDataToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-data-to-price-repository-data.util';
+import { transformStripeProductDataToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-data-to-product-repository-data.util';
 @Command({
   name: 'billing:sync-plans-data',
   description:
@@ -49,7 +49,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
       try {
         if (!options.dryRun) {
           await this.billingMeterRepository.upsert(
-            transformStripeMeterToDatabaseMeter(meter),
+            transformStripeMeterDataToMeterRepositoryData(meter),
             {
               conflictPaths: ['stripeMeterId'],
             },
@@ -69,7 +69,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
     try {
       if (!options.dryRun) {
         await this.billingProductRepository.upsert(
-          transformStripeProductToDatabaseProduct(product),
+          transformStripeProductDataToProductRepositoryData(product),
           {
             conflictPaths: ['stripeProductId'],
           },
@@ -150,7 +150,9 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
       options,
     );
     const transformedPrices = billingPrices.flatMap((prices) =>
-      prices.map((price) => transformStripePriceToDatabasePrice(price)),
+      prices.map((price) =>
+        transformStripePriceDataToPriceRepositoryData(price),
+      ),
     );
 
     this.logger.log(`Upserting ${transformedPrices.length} transformed prices`);

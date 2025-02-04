@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -19,9 +18,9 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favoriteFolder,
   namePlural: 'favoriteFolders',
-  labelSingular: msg`Favorite Folder`,
-  labelPlural: msg`Favorite Folders`,
-  description: msg`A Folder of favorites`,
+  labelSingular: 'Favorite Folder',
+  labelPlural: 'Favorite Folders',
+  description: 'A Folder of favorites',
   icon: 'IconFolder',
 })
 @WorkspaceIsSystem()

@@ -4,12 +4,6 @@ import { v4 } from 'uuid';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
-import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-
-import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
@@ -36,7 +30,7 @@ export const useHandleToggleColumnFilter = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { upsertRecordFilter } = useUpsertRecordFilter();
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
@@ -119,9 +113,9 @@ export const useHandleToggleColumnFilter = ({
           value: '',
         };
 
-        upsertRecordFilter(newFilter);
+        await upsertCombinedViewFilter(newFilter);
 
-        selectFilterUsedInDropdown({ fieldMetadataItemId: fieldMetadataId });
+        selectFilterDefinitionUsedInDropdown({ filterDefinition });
       }
 
       openDropdown(existingRecordFilter?.id ?? newFilterId);
@@ -129,10 +123,10 @@ export const useHandleToggleColumnFilter = ({
     [
       openDropdown,
       columnDefinitions,
-      selectFilterUsedInDropdown,
-      currentRecordFilters,
-      availableFieldMetadataItemsForFilter,
-      upsertRecordFilter,
+      upsertCombinedViewFilter,
+      selectFilterDefinitionUsedInDropdown,
+      currentViewWithCombinedFiltersAndSorts,
+      availableFilterDefinitions,
     ],
   );
 

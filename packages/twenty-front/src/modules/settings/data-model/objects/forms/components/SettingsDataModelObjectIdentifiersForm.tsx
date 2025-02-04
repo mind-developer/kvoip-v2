@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { IconCircleOff, useIcons } from 'twenty-ui';
-import { ZodError, isDirty, z } from 'zod';
+import { Controller, useFormContext } from 'react-hook-form';
+import { IconCircleOff, isDefined, useIcons } from 'twenty-ui';
+import { z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -24,15 +24,11 @@ export const settingsDataModelObjectIdentifiersFormSchema =
 export type SettingsDataModelObjectIdentifiersFormValues = z.infer<
   typeof settingsDataModelObjectIdentifiersFormSchema
 >;
-export type SettingsDataModelObjectIdentifiers =
-  keyof SettingsDataModelObjectIdentifiersFormValues;
+
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
+  defaultLabelIdentifierFieldMetadataId: string;
 };
-const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
-  'labelIdentifierFieldMetadataId';
-const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
-  'imageIdentifierFieldMetadataId';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -41,6 +37,7 @@ const StyledContainer = styled.div`
 
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
+  defaultLabelIdentifierFieldMetadataId,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
   const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
     mode: 'onTouched',
@@ -77,6 +74,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   };
 
   const { getIcon } = useIcons();
+
   const labelIdentifierFieldOptions = useMemo(
     () =>
       getActiveFieldMetadataItems(objectMetadataItem)
@@ -103,38 +101,42 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     <StyledContainer>
       {[
         {
-          label: t`Record label`,
-          fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
+          label: 'Record label',
+          fieldName: 'labelIdentifierFieldMetadataId' as const,
           options: labelIdentifierFieldOptions,
-          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
         },
         {
-          label: t`Record image`,
-          fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
+          label: 'Record image',
+          fieldName: 'imageIdentifierFieldMetadataId' as const,
           options: imageIdentifierFieldOptions,
-          defaultValue: null,
         },
-      ].map(({ fieldName, label, options, defaultValue }) => (
+      ].map(({ fieldName, label, options }) => (
         <Controller
           key={fieldName}
           name={fieldName}
-          control={formConfig.control}
-          defaultValue={defaultValue}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              label={label}
-              disabled={!objectMetadataItem.isCustom || !options.length}
-              fullWidth
-              dropdownId={`${fieldName}-select`}
-              emptyOption={emptyOption}
-              options={options}
-              value={value}
-              onChange={(value) => {
-                onChange(value);
-                formConfig.handleSubmit(handleSave)();
-              }}
-            />
-          )}
+          control={control}
+          defaultValue={
+            fieldName === 'labelIdentifierFieldMetadataId'
+              ? isDefined(objectMetadataItem[fieldName])
+                ? objectMetadataItem[fieldName]
+                : defaultLabelIdentifierFieldMetadataId
+              : objectMetadataItem[fieldName]
+          }
+          render={({ field: { onBlur, onChange, value } }) => {
+            return (
+              <Select
+                label={label}
+                disabled={!objectMetadataItem.isCustom || !options.length}
+                fullWidth
+                dropdownId={`${fieldName}-select`}
+                emptyOption={emptyOption}
+                options={options}
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+              />
+            );
+          }}
         />
       ))}
     </StyledContainer>

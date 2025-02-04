@@ -1,8 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -27,9 +26,9 @@ registerEnumType(AGGREGATE_OPERATIONS, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
   namePlural: 'viewFields',
-  labelSingular: msg`View Field`,
-  labelPlural: msg`View Fields`,
-  description: msg`(System) View Fields`,
+  labelSingular: 'View Field',
+  labelPlural: 'View Fields',
+  description: '(System) View Fields',
   icon: STANDARD_OBJECT_ICONS.viewField,
 })
 @WorkspaceIsNotAuditLogged()

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -8,6 +8,7 @@ import { ObjectIndexes } from '@/settings/data-model/object-details/components/t
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -32,10 +33,8 @@ import {
   UndecoratedLink,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -54,8 +53,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 export const SettingsObjectDetailPage = () => {
-  const navigateApp = useNavigateApp();
-  const { t } = useLingui();
+  const navigate = useNavigate();
 
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -80,10 +78,10 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDefined(objectMetadataItem)) navigateApp(AppPath.NotFound);
+    if (!isDefined(objectMetadataItem)) navigate(AppPath.NotFound);
   }, [
     objectMetadataItem,
-    navigateApp,
+    navigate,
     objectNamePlural,
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
@@ -145,10 +143,10 @@ export const SettingsObjectDetailPage = () => {
         }
         links={[
           {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
           },
-          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
+          { children: 'Objects', href: '/settings/objects' },
           {
             children: objectMetadataItem.labelPlural,
           },

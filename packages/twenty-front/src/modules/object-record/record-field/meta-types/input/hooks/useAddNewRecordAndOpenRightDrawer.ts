@@ -69,7 +69,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
           | { firstName: string | undefined; lastName: string | undefined };
         [key: string]: any;
       } =
-        labelIdentifierType === FieldMetadataType.FULL_NAME
+        labelIdentifierType === FieldMetadataType.FullName
           ? {
               id: newRecordId,
               name:
@@ -84,7 +84,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
+        RelationDefinitionType.ManyToOne
       ) {
         createRecordPayload[
           `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
@@ -95,7 +95,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.ONE_TO_MANY
+        RelationDefinitionType.OneToMany
       ) {
         await updateOneRecord({
           idToUpdate: recordId,

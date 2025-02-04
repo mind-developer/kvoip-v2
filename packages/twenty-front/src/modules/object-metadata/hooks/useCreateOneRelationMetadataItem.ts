@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/client';
 
 import {
-  CreateOneRelationMetadataItemMutation,
-  CreateOneRelationMetadataItemMutationVariables,
+  CreateOneRelationMetadataMutation,
+  CreateOneRelationMetadataMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_RELATION_METADATA_ITEM } from '../graphql/mutations';
@@ -18,8 +18,8 @@ export const useCreateOneRelationMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
-    CreateOneRelationMetadataItemMutation,
-    CreateOneRelationMetadataItemMutationVariables
+    CreateOneRelationMetadataMutation,
+    CreateOneRelationMetadataMutationVariables
   >(CREATE_ONE_RELATION_METADATA_ITEM, {
     client: apolloMetadataClient,
   });
@@ -31,9 +31,7 @@ export const useCreateOneRelationMetadataItem = () => {
     input: FormatRelationMetadataInputParams,
   ) => {
     const result = await mutate({
-      variables: {
-        input: { relationMetadata: formatRelationMetadataInput(input) },
-      },
+      variables: { input: { relation: formatRelationMetadataInput(input) } },
     });
 
     await refreshObjectMetadataItems();

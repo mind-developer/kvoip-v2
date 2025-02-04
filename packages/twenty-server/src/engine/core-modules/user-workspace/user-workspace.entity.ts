@@ -9,29 +9,18 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
-
-registerEnumType(SettingsPermissions, {
-  name: 'SettingsPermissions',
-});
-
-registerEnumType(PermissionsOnAllObjectRecords, {
-  name: 'PermissionsOnAllObjectRecords',
-});
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
-@ObjectType()
+@ObjectType('UserWorkspace')
 @Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
 export class UserWorkspace {
   @IDField(() => UUIDScalarType)
@@ -71,16 +60,4 @@ export class UserWorkspace {
   @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
-
-  @OneToMany(
-    () => TwoFactorMethod,
-    (twoFactorMethod) => twoFactorMethod.userWorkspace,
-  )
-  twoFactorMethods: Relation<TwoFactorMethod[]>;
-
-  @Field(() => [SettingsPermissions], { nullable: true })
-  settingsPermissions?: SettingsPermissions[];
-
-  @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
-  objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
 }

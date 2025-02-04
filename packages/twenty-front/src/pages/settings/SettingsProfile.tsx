@@ -1,4 +1,3 @@
-import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -9,58 +8,43 @@ import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { PhoneField } from '@/settings/profile/components/PhoneField';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const SettingsProfile = () => {
-  const { t } = useLingui();
-
-  return (
-    <SubMenuTopBarContainer
-      title={t`Profile`}
-      links={[
-        {
-          children: <Trans>User</Trans>,
-          href: getSettingsPath(SettingsPath.ProfilePage),
-        },
-        { children: <Trans>Profile</Trans> },
-      ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Picture`} />
-          <ProfilePictureUploader />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Name`}
-            description={t`Your name as it will be displayed`}
-          />
-          <NameFields />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Email`}
-            description={t`The email associated to your account`}
-          />
-          <EmailField />
-        </Section>
-        <Section>
-          <H2Title title="Document" description="" />
-          <DocumentField />
-        </Section>
-        <Section>
-          <H2Title title="Phone" description="" />
-          <PhoneField />
-        </Section>
-        <Section>
-          <ChangePassword />
-        </Section>
-        <Section>
-          <DeleteAccount />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
-  );
-};
+export const SettingsProfile = () => (
+  <SubMenuTopBarContainer
+    title="Profile"
+    links={[
+      {
+        children: 'User',
+        href: getSettingsPagePath(SettingsPath.ProfilePage),
+      },
+      { children: 'Profile' },
+    ]}
+  >
+    <SettingsPageContainer>
+      <Section>
+        <H2Title title="Picture" />
+        <ProfilePictureUploader />
+      </Section>
+      <Section>
+        <H2Title title="Name" description="Your name as it will be displayed" />
+        <NameFields />
+      </Section>
+      <Section>
+        <H2Title
+          title="Email"
+          description="The email associated to your account"
+        />
+        <EmailField />
+      </Section>
+      <Section>
+        <ChangePassword />
+      </Section>
+      <Section>
+        <DeleteAccount />
+      </Section>
+    </SettingsPageContainer>
+  </SubMenuTopBarContainer>
+);

@@ -7,7 +7,7 @@ import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metada
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
-  __typename: z.literal('Object').optional(),
+  __typename: z.literal('object').optional(),
   createdAt: z.string().datetime(),
   dataSourceId: z.string().uuid(),
   description: z.string().trim().nullable().optional(),
@@ -20,8 +20,7 @@ export const objectMetadataItemSchema = z.object({
   isCustom: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
-  isSearchable: z.boolean(),
-  labelIdentifierFieldMetadataId: z.string().uuid(),
+  labelIdentifierFieldMetadataId: z.string().uuid().nullable(),
   labelPlural: metadataLabelSchema(),
   labelSingular: metadataLabelSchema(),
   namePlural: camelCaseStringSchema,

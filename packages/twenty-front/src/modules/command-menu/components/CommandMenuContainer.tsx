@@ -16,11 +16,6 @@ import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAni
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -110,72 +105,38 @@ export const CommandMenuContainer = ({
   );
 
   return (
-    <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: recordIndexId }}
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: 'command-menu' }}
     >
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: recordIndexId }}
+      <ActionMenuComponentInstanceContext.Provider
+        value={{ instanceId: 'command-menu' }}
       >
-        <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <ActionMenuContext.Provider
+          value={{
+            isInRightDrawer: false,
+            onActionExecutedCallback: toggleCommandMenu,
+          }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
-          >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          <RecordActionMenuEntriesSetter />
+          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+          <ActionMenuConfirmationModals />
+          {isCommandMenuOpened && (
+            <StyledCommandMenu
+              ref={commandMenuRef}
+              className="command-menu"
+              animate={targetVariantForAnimation}
+              initial="closed"
+              exit="closed"
+              variants={COMMAND_MENU_ANIMATION_VARIANTS}
+              transition={{
+                duration: theme.animation.duration.normal,
+              }}
             >
-              <ActionMenuContext.Provider
-                value={{
-                  isInRightDrawer: true,
-                  onActionExecutedCallback: ({ key }) => {
-                    if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
-                      key !==
-                        RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
-                      key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                    ) {
-                      toggleCommandMenu();
-                    }
-
-                    if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
-                    ) {
-                      setCommandMenuSearch('');
-                    }
-                  },
-                }}
-              >
-                <RecordActionMenuEntriesSetter />
-                <RecordAgnosticActionMenuEntriesSetter />
-                {isWorkflowEnabled && (
-                  <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-                )}
-                <ActionMenuConfirmationModals />
-                <AnimatePresence
-                  mode="wait"
-                  onExitComplete={onCommandMenuCloseAnimationComplete}
-                >
-                  {isCommandMenuOpened && (
-                    <StyledCommandMenu
-                      data-testid="command-menu"
-                      ref={commandMenuRef}
-                      className="command-menu"
-                      animate={targetVariantForAnimation}
-                      initial="closed"
-                      exit="closed"
-                      variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                      transition={{ duration: theme.animation.duration.normal }}
-                    >
-                      {children}
-                    </StyledCommandMenu>
-                  )}
-                </AnimatePresence>
-              </ActionMenuContext.Provider>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </RecordSortsComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
-    </RecordFilterGroupsComponentInstanceContext.Provider>
+              {children}
+            </StyledCommandMenu>
+          )}
+        </ActionMenuContext.Provider>
+      </ActionMenuComponentInstanceContext.Provider>
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };

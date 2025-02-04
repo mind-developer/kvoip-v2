@@ -17,7 +17,7 @@ export const getMultiSelectFieldPreviewValue = ({
   >;
 }): FieldMultiSelectValue => {
   if (
-    fieldMetadataItem.type !== FieldMetadataType.MULTI_SELECT ||
+    fieldMetadataItem.type !== FieldMetadataType.MultiSelect ||
     !fieldMetadataItem.options?.length
   ) {
     return null;

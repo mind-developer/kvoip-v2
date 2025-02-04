@@ -161,7 +161,9 @@ export const CalendarCurrentEventCursor = ({
               updateCurrentCalendarEvent();
             }
           }}
-          transition={{ duration: theme.animation.duration.normal }}
+          transition={{
+            duration: theme.animation.duration.normal,
+          }}
         >
           <motion.div
             initial={{ opacity: 0 }}

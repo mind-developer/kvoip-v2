@@ -25,7 +25,7 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   }
 
   const syncedTables = tables.filter(
-    (table) => table.status === RemoteTableStatus.SYNCED,
+    (table) => table.status === RemoteTableStatus.Synced,
   );
 
   const updatesAvailable = tables.some(

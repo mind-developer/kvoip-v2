@@ -34,7 +34,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: environmentService.get('AUTH_MICROSOFT_CALLBACK_URL'),
-      tenant: 'common',
+      tenant: environmentService.get('AUTH_MICROSOFT_TENANT_ID'),
       scope: ['user.read'],
       passReqToCallback: true,
     });

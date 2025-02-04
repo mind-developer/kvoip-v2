@@ -1,15 +1,18 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
-import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
+import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
+import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useLingui } from '@lingui/react/macro';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
@@ -19,7 +22,7 @@ export type CommandGroupConfig = {
 };
 
 export const CommandMenu = () => {
-  const { t } = useLingui();
+  const { onItemClick } = useCommandMenuOnItemClick();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
@@ -63,24 +66,36 @@ export const CommandMenu = () => {
 
   const commandGroups: CommandGroupConfig[] = [
     {
-      heading: t`Record Selection`,
-      items: matchingStandardActionRecordSelectionCommands.concat(
-        matchingWorkflowRunRecordSelectionCommands,
-      ),
+      heading: 'Copilot',
+      items: copilotCommands,
     },
     {
-      heading: currentObjectMetadataItem?.labelPlural ?? t`Object`,
-      items: matchingStandardActionObjectCommands,
+      heading: 'Record Selection',
+      items: matchingStandardActionRecordSelectionCommands,
     },
     {
-      heading: t`Global`,
-      items: matchingStandardActionGlobalCommands
-        .concat(matchingNavigateCommands)
-        .concat(matchingWorkflowRunGlobalCommands),
+      heading: 'Workflow Record Selection',
+      items: matchingWorkflowRunRecordSelectionCommands,
     },
     {
-      heading: t`Search ''${commandMenuSearch}'' with...`,
-      items: fallbackCommands,
+      heading: 'View',
+      items: matchingStandardActionGlobalCommands,
+    },
+    {
+      heading: 'Workflows',
+      items: matchingWorkflowRunGlobalCommands,
+    },
+    {
+      heading: 'Navigate',
+      items: matchingNavigateCommand,
+    },
+    {
+      heading: 'People',
+      items: peopleCommands,
+    },
+    {
+      heading: 'Companies',
+      items: companyCommands,
     },
     {
       heading: 'Opportunities',
@@ -109,18 +124,70 @@ export const CommandMenu = () => {
   ];
 
   return (
-    <CommandMenuList
-      commandGroups={commandGroups}
-      selectableItemIds={selectableItemIds}
-      noResults={noResults}
-    >
-      {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
-        <CommandGroup heading={t`Context`}>
-          <SelectableItem itemId={RESET_CONTEXT_TO_SELECTION}>
-            <ResetContextToSelectionCommandButton />
-          </SelectableItem>
-        </CommandGroup>
-      )}
-    </CommandMenuList>
+    <>
+      <CommandMenuDefaultSelectionEffect
+        selectableItemIds={selectableItemIds}
+      />
+
+      <StyledList>
+        <ScrollWrapper
+          contextProviderName="commandMenu"
+          componentInstanceId={`scroll-wrapper-command-menu`}
+        >
+          <StyledInnerList isMobile={isMobile}>
+            <SelectableList
+              selectableListId="command-menu-list"
+              selectableItemIdArray={selectableItemIds}
+              hotkeyScope={AppHotkeyScope.CommandMenu}
+              onEnter={(itemId) => {
+                const command = selectableItems.find(
+                  (item) => item.id === itemId,
+                );
+
+                if (isDefined(command)) {
+                  const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
+                    command;
+
+                  onItemClick({
+                    shouldCloseCommandMenuOnClick,
+                    onClick: onCommandClick,
+                    to,
+                  });
+                }
+              }}
+            >
+              {isNoResults && !isLoading && (
+                <StyledEmpty>No results found</StyledEmpty>
+              )}
+              {commandGroups.map(({ heading, items }) =>
+                items?.length ? (
+                  <CommandGroup heading={heading} key={heading}>
+                    {items.map((item) => {
+                      return (
+                        <SelectableItem itemId={item.id} key={item.id}>
+                          <CommandMenuItem
+                            key={item.id}
+                            id={item.id}
+                            Icon={item.Icon}
+                            label={item.label}
+                            to={item.to}
+                            onClick={item.onCommandClick}
+                            firstHotKey={item.firstHotKey}
+                            secondHotKey={item.secondHotKey}
+                            shouldCloseCommandMenuOnClick={
+                              item.shouldCloseCommandMenuOnClick
+                            }
+                          />
+                        </SelectableItem>
+                      );
+                    })}
+                  </CommandGroup>
+                ) : null,
+              )}
+            </SelectableList>
+          </StyledInnerList>
+        </ScrollWrapper>
+      </StyledList>
+    </>
   );
 };

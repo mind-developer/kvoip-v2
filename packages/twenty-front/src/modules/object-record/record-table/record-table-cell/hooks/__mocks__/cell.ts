@@ -26,7 +26,7 @@ export const recordTableCellContextValue: RecordTableCellContextValue = {
     fieldMetadataId: 'fieldMetadataId',
     label: 'label',
     iconName: 'iconName',
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.Text,
     metadata: {
       placeHolder: 'placeHolder',
       fieldName: 'fieldName',

@@ -1,11 +1,11 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-shared';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import qs from 'qs';
+import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-ui';
 
 export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -13,7 +13,7 @@ export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetada
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-    const navigateApp = useNavigateApp();
+    const navigate = useNavigate();
 
     const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
 
@@ -22,21 +22,20 @@ export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetada
         return;
       }
 
-      navigateApp(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: CoreObjectNamePlural.WorkflowRun,
-        },
-        {
-          filter: {
-            workflow: {
-              [ViewFilterOperand.Is]: {
-                selectedRecordIds: [workflowWithCurrentVersion.id],
-              },
+      const filterQueryParams = {
+        filter: {
+          workflow: {
+            [ViewFilterOperand.Is]: {
+              selectedRecordIds: [workflowWithCurrentVersion.id],
             },
           },
         },
-      );
+      };
+      const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
+        filterQueryParams,
+      )}`;
+
+      navigate(filterLinkHref);
     };
 
     return {

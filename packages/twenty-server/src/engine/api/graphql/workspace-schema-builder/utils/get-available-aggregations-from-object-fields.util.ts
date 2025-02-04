@@ -3,7 +3,6 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 import {
   capitalize,
-  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
   FieldMetadataType,
   isFieldMetadataDateKind,
 } from 'twenty-shared';
@@ -195,7 +194,7 @@ export const getAvailableAggregationsFromObjectFields = (
       totalCount: {
         type: GraphQLInt,
         description: `Total number of records in the connection`,
-        fromField: FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
+        fromField: 'id',
         fromFieldType: FieldMetadataType.UUID,
         aggregateOperation: AGGREGATE_OPERATIONS.count,
       },

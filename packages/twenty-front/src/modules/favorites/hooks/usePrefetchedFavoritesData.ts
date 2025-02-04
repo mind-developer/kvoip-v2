@@ -1,6 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
-import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesData = {
@@ -21,6 +23,15 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   const workspaceFavorites = prefetchFavorites.filter(
     (favorite) => favorite.forWorkspaceMemberId === null,
   );
+
+  const workspaceFavorites = _favorites.filter(
+    (favorite) => favorite.workspaceMemberId === null,
+  );
+
+  const { upsertRecordsInCache: upsertFavorites } =
+    usePrefetchRunQuery<Favorite>({
+      prefetchKey: PrefetchKey.AllFavorites,
+    });
 
   return {
     favorites,

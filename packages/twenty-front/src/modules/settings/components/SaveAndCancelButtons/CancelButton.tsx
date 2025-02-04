@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { LightButton } from 'twenty-ui';
 
 type CancelButtonProps = {
@@ -10,10 +9,9 @@ export const CancelButton = ({
   onCancel,
   disabled = false,
 }: CancelButtonProps) => {
-  const { t } = useLingui();
   return (
     <LightButton
-      title={t`Cancel`}
+      title="Cancel"
       accent="tertiary"
       onClick={onCancel}
       disabled={disabled}

@@ -39,7 +39,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
@@ -72,14 +71,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem,
       variables: {
-        ...(filter || withSoftDeleted
-          ? {
-              filter: {
-                ...filter,
-                ...(withSoftDeleted ? withSoftDeleterFilter : {}),
-              },
-            }
-          : {}),
+        filter: {
+          ...filter,
+          ...(withSoftDeleted ? withSoftDeleterFilter : {}),
+        },
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,

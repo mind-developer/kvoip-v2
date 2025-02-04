@@ -92,7 +92,9 @@ export const ShowPageAddButton = ({
             />
           </DropdownMenuItemsContainer>
         }
-        dropdownHotkeyScope={{ scope: PageHotkeyScope.ShowPage }}
+        dropdownHotkeyScope={{
+          scope: PageHotkeyScope.ShowPage,
+        }}
       />
     </StyledContainer>
   );

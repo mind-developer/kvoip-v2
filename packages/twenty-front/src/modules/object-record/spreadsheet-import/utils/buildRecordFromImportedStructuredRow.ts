@@ -49,15 +49,15 @@ export const buildRecordFromImportedStructuredRow = ({
     const importedFieldValue = importedStructuredRow[field.name];
 
     switch (field.type) {
-      case FieldMetadataType.BOOLEAN:
+      case FieldMetadataType.Boolean:
         recordToBuild[field.name] =
           importedFieldValue === 'true' || importedFieldValue === true;
         break;
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.Number:
+      case FieldMetadataType.Numeric:
         recordToBuild[field.name] = Number(importedFieldValue);
         break;
-      case FieldMetadataType.CURRENCY:
+      case FieldMetadataType.Currency:
         if (
           isDefined(
             importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
@@ -78,7 +78,7 @@ export const buildRecordFromImportedStructuredRow = ({
           };
         }
         break;
-      case FieldMetadataType.ADDRESS: {
+      case FieldMetadataType.Address: {
         if (
           isDefined(
             importedStructuredRow[`${addressStreet1Label} (${field.name})`] ||
@@ -122,7 +122,7 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      case FieldMetadataType.LINKS: {
+      case FieldMetadataType.Links: {
         if (
           isDefined(
             importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
@@ -138,7 +138,7 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      case FieldMetadataType.PHONES: {
+      case FieldMetadataType.Phones: {
         if (
           isDefined(
             importedStructuredRow[
@@ -165,25 +165,7 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      case FieldMetadataType.RICH_TEXT_V2: {
-        if (
-          isDefined(
-            importedStructuredRow[`${blocknoteLabel} (${field.name})`] ||
-              importedStructuredRow[`${markdownLabel} (${field.name})`],
-          )
-        ) {
-          recordToBuild[field.name] = {
-            blocknote: castToString(
-              importedStructuredRow[`${blocknoteLabel} (${field.name})`],
-            ),
-            markdown: castToString(
-              importedStructuredRow[`${markdownLabel} (${field.name})`],
-            ),
-          } satisfies FieldRichTextV2Value;
-        }
-        break;
-      }
-      case FieldMetadataType.EMAILS: {
+      case FieldMetadataType.Emails: {
         if (
           isDefined(
             importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
@@ -198,7 +180,7 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      case FieldMetadataType.RELATION:
+      case FieldMetadataType.Relation:
         if (
           isDefined(importedFieldValue) &&
           (isNonEmptyString(importedFieldValue) || importedFieldValue !== false)
@@ -206,7 +188,7 @@ export const buildRecordFromImportedStructuredRow = ({
           recordToBuild[field.name + 'Id'] = importedFieldValue;
         }
         break;
-      case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.FullName:
         if (
           isDefined(
             importedStructuredRow[`${firstNameLabel} (${field.name})`] ??
@@ -221,14 +203,14 @@ export const buildRecordFromImportedStructuredRow = ({
           };
         }
         break;
-      case FieldMetadataType.ACTOR:
+      case FieldMetadataType.Actor:
         recordToBuild[field.name] = {
           source: 'IMPORT',
           context: {},
         } satisfies FieldActorForInputValue;
         break;
-      case FieldMetadataType.ARRAY:
-      case FieldMetadataType.MULTI_SELECT: {
+      case FieldMetadataType.Array:
+      case FieldMetadataType.MultiSelect: {
         const stringArrayJSONSchema = z
           .preprocess((value) => {
             try {
@@ -246,7 +228,7 @@ export const buildRecordFromImportedStructuredRow = ({
           stringArrayJSONSchema.parse(importedFieldValue);
         break;
       }
-      case FieldMetadataType.RAW_JSON: {
+      case FieldMetadataType.RawJson: {
         if (typeof importedFieldValue === 'string') {
           try {
             recordToBuild[field.name] = JSON.parse(importedFieldValue);

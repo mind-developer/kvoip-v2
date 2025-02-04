@@ -64,9 +64,9 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
 
   const formByType = useMemo(() => {
     switch (selectedType) {
-      case IdentityProviderType.OIDC:
+      case IdentityProviderType.Oidc:
         return IdentitiesProvidersMap.OIDC.form;
-      case IdentityProviderType.SAML:
+      case IdentityProviderType.Saml:
         return IdentitiesProvidersMap.SAML.form;
       default:
         return null;

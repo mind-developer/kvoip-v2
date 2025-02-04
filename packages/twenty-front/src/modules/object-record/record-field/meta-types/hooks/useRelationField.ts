@@ -17,7 +17,7 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const button = useGetButtonIcon();
 
   assertFieldMetadata(
-    FieldMetadataType.RELATION,
+    FieldMetadataType.Relation,
     isFieldRelation,
     fieldDefinition,
   );

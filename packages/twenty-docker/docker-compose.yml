@@ -29,8 +29,8 @@ services:
     ports:
       - '${SERVER_PORT:-3000}:${SERVER_PORT:-3000}'
     environment:
-      NODE_PORT: ${SERVER_PORT:-3000}
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
+      PORT: 3000
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -84,7 +84,7 @@ services:
     command: ['yarn', 'worker:prod']
     env_file: 'server.env'
     environment:
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE}
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -135,15 +135,12 @@ services:
     volumes:
       - db-data:/home/postgres/pgdata
     environment:
-      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
-      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
-      POSTGRES_DB: ${PG_DATABASE:-postgres}
-      ALLOW_NOSSL: 'true'
-      SPILO_PROVIDER: 'local'
-    ports:
-      - '5433:5432'
+      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-postgres}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
     healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h db -d postgres
+      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10

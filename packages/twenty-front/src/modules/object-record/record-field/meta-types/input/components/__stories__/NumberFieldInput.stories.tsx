@@ -49,7 +49,7 @@ const NumberFieldInputWithContext = ({
           fieldMetadataId: 'number',
           label: 'Number',
           iconName: 'Icon123',
-          type: FieldMetadataType.NUMBER,
+          type: FieldMetadataType.Number,
           metadata: {
             fieldName: 'number',
             placeHolder: 'Enter number',

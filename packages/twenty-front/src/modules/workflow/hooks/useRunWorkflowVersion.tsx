@@ -3,7 +3,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
-import { useLingui } from '@lingui/react/macro';
+import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import {
   RunWorkflowVersionMutation,
@@ -26,27 +26,18 @@ export const useRunWorkflowVersion = () => {
 
   const runWorkflowVersion = async ({
     workflowVersionId,
+    workflowName,
     payload,
   }: {
     workflowVersionId: string;
+    workflowName: string;
     payload?: Record<string, any>;
   }) => {
-    const { data } = await mutate({
+    await mutate({
       variables: { input: { workflowVersionId, payload } },
     });
 
-    const workflowRunId = data?.runWorkflowVersion?.workflowRunId;
-
-    if (!workflowRunId) {
-      enqueueSnackBar(t`Workflow run failed`, {
-        variant: SnackBarVariant.Error,
-      });
-      return;
-    }
-
-    const link = `/object/workflowRun/${workflowRunId}`;
-
-    enqueueSnackBar(t`Workflow is running...`, {
+    enqueueSnackBar(`${capitalize(workflowName)} starting...`, {
       variant: SnackBarVariant.Success,
       icon: (
         <IconSettingsAutomation
@@ -54,10 +45,6 @@ export const useRunWorkflowVersion = () => {
           color={theme.snackBar.success.color}
         />
       ),
-      link: {
-        href: link,
-        text: t`View execution details`,
-      },
     });
   };
 

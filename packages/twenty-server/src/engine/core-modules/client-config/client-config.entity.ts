@@ -1,13 +1,8 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
+import { TrialPeriodDTO } from 'src/engine/core-modules/billing/dto/trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
-
-registerEnumType(FeatureFlagKey, {
-  name: 'FeatureFlagKey',
-});
 
 @ObjectType()
 class Billing {
@@ -17,8 +12,8 @@ class Billing {
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
-  @Field(() => [BillingTrialPeriodDTO])
-  trialPeriods: BillingTrialPeriodDTO[];
+  @Field(() => [TrialPeriodDTO])
+  trialPeriods: TrialPeriodDTO[];
 }
 
 @ObjectType()
@@ -55,27 +50,6 @@ class Captcha {
 class ApiConfig {
   @Field(() => Number, { nullable: false })
   mutationMaximumAffectedRecords: number;
-}
-
-@ObjectType()
-class PublicFeatureFlagMetadata {
-  @Field(() => String)
-  label: string;
-
-  @Field(() => String)
-  description: string;
-
-  @Field(() => String, { nullable: false, defaultValue: '' })
-  imagePath: string;
-}
-
-@ObjectType()
-class PublicFeatureFlag {
-  @Field(() => FeatureFlagKey)
-  key: FeatureFlagKey;
-
-  @Field(() => PublicFeatureFlagMetadata)
-  metadata: PublicFeatureFlagMetadata;
 }
 
 @ObjectType()
@@ -127,19 +101,4 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
-
-  @Field(() => [PublicFeatureFlag])
-  publicFeatureFlags: PublicFeatureFlag[];
-
-  @Field(() => Boolean)
-  isMicrosoftMessagingEnabled: boolean;
-
-  @Field(() => Boolean)
-  isMicrosoftCalendarEnabled: boolean;
-
-  @Field(() => Boolean)
-  isGoogleMessagingEnabled: boolean;
-
-  @Field(() => Boolean)
-  isGoogleCalendarEnabled: boolean;
 }

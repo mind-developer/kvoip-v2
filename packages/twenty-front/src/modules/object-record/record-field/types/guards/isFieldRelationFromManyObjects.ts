@@ -8,4 +8,4 @@ export const isFieldRelationFromManyObjects = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldRelationMetadata> =>
   isFieldRelation(field) &&
-  field.metadata.relationType === RelationDefinitionType.ONE_TO_MANY;
+  field.metadata.relationType === RelationDefinitionType.OneToMany;

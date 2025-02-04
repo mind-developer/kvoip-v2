@@ -6,19 +6,13 @@ import { Repository } from 'typeorm';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import {
-  FeatureFlagException,
-  FeatureFlagExceptionCode,
-} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
-import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
-import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class FeatureFlagService {
   constructor(
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async isFeatureEnabled(
@@ -36,7 +30,7 @@ export class FeatureFlagService {
 
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
-  ): Promise<FeatureFlag[]> {
+  ): Promise<FeatureFlagEntity[]> {
     return this.featureFlagRepository.find({ where: { workspaceId } });
   }
 

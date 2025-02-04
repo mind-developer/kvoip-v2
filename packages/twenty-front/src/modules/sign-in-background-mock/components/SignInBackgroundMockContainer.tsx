@@ -4,9 +4,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
@@ -56,48 +54,32 @@ export const SignInBackgroundMockContainer = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
+          <ContextStoreComponentInstanceContext.Provider
+            value={{
+              instanceId: recordIndexId,
+            }}
           >
-            <RecordFiltersComponentInstanceContext.Provider
+            <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId: recordIndexId }}
-              >
-                <ContextStoreComponentInstanceContext.Provider
-                  value={{
-                    instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-                  }}
-                >
-                  <SignInBackgroundMockContainerEffect
-                    objectNamePlural={objectNamePlural}
-                    recordTableId={recordIndexId}
-                    viewId={viewBarId}
-                  />
-                  <ActionMenuComponentInstanceContext.Provider
-                    value={{ instanceId: recordIndexId }}
-                  >
-                    {isDefined(objectMetadataItem) && (
-                      <>
-                        <ViewBar
-                          viewBarId={viewBarId}
-                          optionsDropdownButton={<></>}
-                        />
-
-                        <RecordTableWithWrappers
-                          objectNameSingular={objectNameSingular}
-                          recordTableId={recordIndexId}
-                          viewBarId={viewBarId}
-                          updateRecordMutation={() => {}}
-                        />
-                      </>
-                    )}
-                  </ActionMenuComponentInstanceContext.Provider>
-                </ContextStoreComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
+              <ViewBar
+                viewBarId={viewBarId}
+                onCurrentViewChange={() => {}}
+                optionsDropdownButton={<></>}
+              />
+              <SignInBackgroundMockContainerEffect
+                objectNamePlural={objectNamePlural}
+                recordTableId={recordIndexId}
+                viewId={viewBarId}
+              />
+              <RecordTableWithWrappers
+                objectNameSingular={objectNameSingular}
+                recordTableId={recordIndexId}
+                viewBarId={viewBarId}
+                updateRecordMutation={() => {}}
+              />
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>
     </StyledContainer>

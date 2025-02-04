@@ -59,7 +59,7 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     isCanceled: false,
     location: '',
     title: 'Onboarding call',
-    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+    visibility: CalendarChannelVisibility.ShareEverything,
   };
 
   return (

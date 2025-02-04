@@ -6,7 +6,7 @@ export const useSetViewInUrl = () => {
   const setViewInUrl = (viewId: string) => {
     setSearchParams(() => {
       const searchParams = new URLSearchParams();
-      searchParams.set('viewId', viewId);
+      searchParams.set('view', viewId);
       return searchParams;
     });
   };

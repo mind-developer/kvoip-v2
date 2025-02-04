@@ -1,7 +1,7 @@
-import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import {
   OutputSchema,
   StepOutputSchema,
@@ -37,16 +37,19 @@ export const useAvailableVariablesInWorkflowStep = ({
     }),
   );
 
-  const availableVariablesInWorkflowStep = availableStepsOutputSchema
-    .map((stepOutputSchema) => {
-      const outputSchema = filterOutputSchema(
-        stepOutputSchema.outputSchema,
-        objectNameSingularToSelect,
-      ) as OutputSchema;
-
-      if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
-        return undefined;
-      }
+  if (
+    isDefined(workflow.currentVersion.trigger) &&
+    isDefined(filteredTriggerOutputSchema) &&
+    !isEmptyObject(filteredTriggerOutputSchema)
+  ) {
+    result.push({
+      id: 'trigger',
+      name: isDefined(workflow.currentVersion.trigger.name)
+        ? workflow.currentVersion.trigger.name
+        : getTriggerStepName(workflow.currentVersion.trigger),
+      outputSchema: filteredTriggerOutputSchema,
+    });
+  }
 
       return {
         id: stepOutputSchema.id,
@@ -57,5 +60,15 @@ export const useAvailableVariablesInWorkflowStep = ({
     })
     .filter(isDefined);
 
-  return availableVariablesInWorkflowStep;
+    if (isDefined(filteredOutputSchema) && !isEmpty(filteredOutputSchema)) {
+      result.push({
+        id: previousStep.id,
+        name: previousStep.name,
+        outputSchema: filteredOutputSchema,
+        ...(previousStep.type === 'CODE' ? { icon: 'IconCode' } : {}),
+      });
+    }
+  });
+
+  return result;
 };

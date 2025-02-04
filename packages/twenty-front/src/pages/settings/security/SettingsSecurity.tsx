@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
-import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
-import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
+import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
+import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
+import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -28,32 +25,27 @@ const StyledSection = styled(Section)`
 `;
 
 export const SettingsSecurity = () => {
-  const { t } = useLingui();
-
-  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
-  );
-
   return (
     <SubMenuTopBarContainer
-      title={t`Security`}
+      title="Security"
+      actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: <Trans>Security</Trans> },
+        { children: 'Security' },
       ]}
     >
       <SettingsPageContainer>
         <StyledMainContent>
           <StyledSection>
             <H2Title
-              title={t`SSO`}
-              description={t`Configure an SSO connection`}
+              title="SSO"
+              description="Configure an SSO connection"
               adornment={
                 <Tag
-                  text={t`Enterprise`}
+                  text={'Enterprise'}
                   color={'transparent'}
                   Icon={IconLock}
                   variant={'border'}
@@ -74,8 +66,8 @@ export const SettingsSecurity = () => {
           <Section>
             <StyledContainer>
               <H2Title
-                title={t`Authentication`}
-                description={t`Customize your workspace security`}
+                title="Authentication"
+                description="Customize your workspace security"
               />
               <SettingsSecurityAuthProvidersOptionsList />
             </StyledContainer>

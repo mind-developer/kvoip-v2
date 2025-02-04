@@ -94,12 +94,34 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     const canOpen =
       thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
-    if (canOpen) {
-      openEmailThreadInCommandMenu(thread.id);
-    }
-  };
+  const handleThreadClick = useRecoilCallback(
+    ({ snapshot }) =>
+      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const clickJustTriggeredEmailDrawerClose =
+          isSameEventThanRightDrawerClose(event.nativeEvent);
 
-  const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
+        const emailThreadIdWhenEmailThreadWasClosed = snapshot
+          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState)
+          .getValue();
+
+        const canOpen =
+          thread.visibility === MessageChannelVisibility.ShareEverything &&
+          (!clickJustTriggeredEmailDrawerClose ||
+            emailThreadIdWhenEmailThreadWasClosed !== thread.id);
+
+        if (canOpen) {
+          openEmailThread(thread.id);
+        }
+      },
+    [
+      isSameEventThanRightDrawerClose,
+      openEmailThread,
+      thread.id,
+      thread.visibility,
+    ],
+  );
+
+  const isDisabled = visibility !== MessageChannelVisibility.ShareEverything;
 
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
@@ -141,13 +163,13 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        {visibility !== MessageChannelVisibility.METADATA && (
+        {visibility !== MessageChannelVisibility.Metadata && (
           <StyledSubject>{thread.subject}</StyledSubject>
         )}
-        {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
+        {visibility === MessageChannelVisibility.ShareEverything && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
-        {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
+        {visibility !== MessageChannelVisibility.ShareEverything && (
           <EmailThreadNotShared />
         )}
       </StyledSubjectAndBody>

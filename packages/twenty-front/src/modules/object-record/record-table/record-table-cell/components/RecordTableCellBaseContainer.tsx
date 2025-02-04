@@ -34,17 +34,9 @@ const StyledBaseContainer = styled.div<{
   border-radius: ${({ hasSoftFocus, isReadOnly }) =>
     hasSoftFocus && !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
 
-  outline: ${({
-    hasSoftFocus,
-    fontColorExtraLight,
-    fontColorMedium,
-    isReadOnly,
-  }) =>
-    hasSoftFocus
-      ? isReadOnly
-        ? `1px solid ${fontColorMedium}`
-        : `1px solid ${fontColorExtraLight}`
-      : 'none'};
+  outline: ${({ hasSoftFocus, fontColorExtraLight }) =>
+    hasSoftFocus ? `1px solid ${fontColorExtraLight}` : 'none'};
+  z-index: 5;
 `;
 
 export const RecordTableCellBaseContainer = ({

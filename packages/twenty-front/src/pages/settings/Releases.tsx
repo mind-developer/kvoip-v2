@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
@@ -8,10 +7,10 @@ import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ReleaseNote = {
   slug: string;
@@ -80,7 +79,6 @@ const StyledReleaseDate = styled.span`
 `;
 
 export const Releases = () => {
-  const { t } = useLingui();
   const [releases, setReleases] = useState<ReleaseNote[]>([]);
 
   useEffect(() => {
@@ -108,13 +106,15 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Releases`}
+      title="Releases"
       links={[
         {
-          children: <Trans>Other</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: 'Others',
+          href: getSettingsPagePath(SettingsPath.Releases),
         },
-        { children: <Trans>Releases</Trans> },
+        {
+          children: 'Releases',
+        },
       ]}
     >
       <SettingsPageContainer>

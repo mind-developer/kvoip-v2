@@ -15,7 +15,7 @@ import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
 export const useSelectField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.SELECT, isFieldSelect, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Select, isFieldSelect, fieldDefinition);
 
   const { fieldName } = fieldDefinition.metadata;
 

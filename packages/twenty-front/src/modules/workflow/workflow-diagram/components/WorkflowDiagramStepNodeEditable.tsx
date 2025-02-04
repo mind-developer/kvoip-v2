@@ -1,10 +1,11 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
-import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditableContent';
+import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useRecoilValue } from 'recoil';
+import { FloatingIconButton, IconTrash } from 'twenty-ui';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,
@@ -25,13 +26,19 @@ export const WorkflowDiagramStepNodeEditable = ({
   });
 
   return (
-    <WorkflowDiagramStepNodeEditableContent
+    <WorkflowDiagramStepNodeBase
       data={data}
-      variant="default"
-      selected={selected ?? false}
-      onDelete={() => {
-        deleteStep(id);
-      }}
+      RightFloatingElement={
+        selected ? (
+          <FloatingIconButton
+            size="medium"
+            Icon={IconTrash}
+            onClick={() => {
+              deleteStep(id);
+            }}
+          />
+        ) : undefined
+      }
     />
   );
 };

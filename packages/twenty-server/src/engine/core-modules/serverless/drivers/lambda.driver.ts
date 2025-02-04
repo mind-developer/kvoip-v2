@@ -243,10 +243,63 @@ export class LambdaDriver implements ServerlessDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const params: CreateFunctionCommandInput = {
-      Code: {
+    if (!functionExists) {
+      const layerArn = await this.createLayerIfNotExists(
+        serverlessFunction.layerVersion,
+      );
+
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: serverlessFunction.id,
+        Handler: 'src/index.main',
+        Layers: [layerArn],
+        Environment: {
+          Variables: envVariables,
+        },
+        Role: this.lambdaRole,
+        Runtime: serverlessFunction.runtime,
+        Description: 'Lambda function to run user script',
+        Timeout: 900,
+      };
+
+      const command = new CreateFunctionCommand(params);
+
+      await this.lambdaClient.send(command);
+    } else {
+      const updateCodeParams: UpdateFunctionCodeCommandInput = {
         ZipFile: await fs.readFile(lambdaZipPath),
-      },
+        FunctionName: serverlessFunction.id,
+      };
+
+      const updateCodeCommand = new UpdateFunctionCodeCommand(updateCodeParams);
+
+      await this.lambdaClient.send(updateCodeCommand);
+
+      const updateConfigurationParams: UpdateFunctionConfigurationCommandInput =
+        {
+          Environment: {
+            Variables: envVariables,
+          },
+          FunctionName: serverlessFunction.id,
+        };
+
+      const updateConfigurationCommand = new UpdateFunctionConfigurationCommand(
+        updateConfigurationParams,
+      );
+
+      await this.waitFunctionUpdates(serverlessFunction.id);
+
+      await this.lambdaClient.send(updateConfigurationCommand);
+    }
+
+    await this.waitFunctionUpdates(serverlessFunction.id);
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    await this.build(serverlessFunction, 'draft');
+    const params: PublishVersionCommandInput = {
       FunctionName: serverlessFunction.id,
       Layers: [layerArn],
       Handler: 'index.handler',

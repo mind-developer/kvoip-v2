@@ -5,11 +5,14 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import {
+  HorizontalSeparator,
+  IconAddressBook,
+  isDefined,
+  useIcons,
+} from 'twenty-ui';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -107,7 +110,6 @@ export const WorkflowEditActionDeleteRecord = ({
   }, [saveAction]);
 
   const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
-  const headerIcon = getActionIcon(action.type);
 
   return (
     <>
@@ -122,7 +124,7 @@ export const WorkflowEditActionDeleteRecord = ({
             name: newName,
           });
         }}
-        Icon={getIcon(headerIcon)}
+        Icon={IconAddressBook}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
@@ -147,7 +149,6 @@ export const WorkflowEditActionDeleteRecord = ({
 
             saveAction(newFormData);
           }}
-          withSearchInput
         />
 
         <HorizontalSeparator noMargin />

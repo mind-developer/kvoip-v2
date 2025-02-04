@@ -30,11 +30,6 @@ export enum AppPath {
   Developers = `developers`,
   DevelopersCatchAll = `/${Developers}/*`,
 
-  InternalChat = '/chat/internal',
-  ExternalChat = '/chat/call-center',
-
-  Chatbot = '/chatbot',
-
   Authorize = '/authorize',
 
   // 404 page not found

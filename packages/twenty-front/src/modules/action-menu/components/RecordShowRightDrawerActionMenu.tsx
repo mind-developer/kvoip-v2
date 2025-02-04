@@ -30,21 +30,13 @@ export const RecordShowRightDrawerActionMenu = () => {
 
   return (
     <>
-      {contextStoreCurrentObjectMetadataItemId && (
+      {contextStoreCurrentObjectMetadataId && (
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: true,
-            onActionExecutedCallback: ({ key }) => {
-              if (
-                key === SingleRecordActionKeys.DELETE ||
-                key === SingleRecordActionKeys.DESTROY
-              ) {
-                toggleCommandMenu();
-              }
-            },
           }}
         >
-          <CommandMenuActionMenuDropdown />
+          <RightDrawerActionMenuDropdown />
           <ActionMenuConfirmationModals />
 
           {isDefined(contextStoreTargetedRecordsRule) &&

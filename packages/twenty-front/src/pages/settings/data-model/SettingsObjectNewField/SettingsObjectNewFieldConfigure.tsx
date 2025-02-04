@@ -14,7 +14,6 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -22,20 +21,16 @@ import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
@@ -44,16 +39,12 @@ type SettingsDataModelNewFieldFormValues = z.infer<
 const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
-  const { t } = useLingui();
-
-  const navigateApp = useNavigateApp();
-  const navigate = useNavigateSettings();
-
+  const navigate = useNavigate();
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType =
     (searchParams.get('fieldType') as SettingsFieldType) ||
-    FieldMetadataType.TEXT;
+    FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -123,9 +114,9 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {
-      navigateApp(AppPath.NotFound);
+      navigate(AppPath.NotFound);
     }
-  }, [activeObjectMetadataItem, navigateApp]);
+  }, [activeObjectMetadataItem, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 
@@ -136,12 +127,8 @@ export const SettingsObjectNewFieldConfigure = () => {
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {
     try {
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural,
-      });
-
       if (
-        formValues.type === FieldMetadataType.RELATION &&
+        formValues.type === FieldMetadataType.Relation &&
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
@@ -175,6 +162,8 @@ export const SettingsObjectNewFieldConfigure = () => {
         });
       }
 
+      navigate(`/settings/objects/${objectNamePlural}`);
+
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
       await apolloClient.refetchQueries({
@@ -203,21 +192,13 @@ export const SettingsObjectNewFieldConfigure = () => {
         {...formConfig}
       >
         <SubMenuTopBarContainer
-          title={t`2. Configure field`}
+          title="2. Configure field"
           links={[
-            {
-              children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            {
-              children: t`Objects`,
-              href: getSettingsPath(SettingsPath.Objects),
-            },
+            { children: 'Workspace', href: '/settings/workspace' },
+            { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural,
-              }),
+              href: `/settings/objects/${objectNamePlural}`,
             },
 
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
@@ -228,13 +209,7 @@ export const SettingsObjectNewFieldConfigure = () => {
               isCancelDisabled={isSubmitting}
               onCancel={() =>
                 navigate(
-                  SettingsPath.ObjectNewFieldSelect,
-                  {
-                    objectNamePlural,
-                  },
-                  {
-                    fieldType,
-                  },
+                  `/settings/objects/${objectNamePlural}/new-field/select?fieldType=${fieldType}`,
                 )
               }
               onSave={formConfig.handleSubmit(handleSave)}
@@ -244,21 +219,18 @@ export const SettingsObjectNewFieldConfigure = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title={t`Icon and Name`}
-                description={t`The name and icon of this field`}
+                title="Icon and Name"
+                description="The name and icon of this field"
               />
               <SettingsDataModelFieldIconLabelForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldType !== FieldMetadataType.RELATION
+                  fieldType !== FieldMetadataType.Relation
                 }
               />
             </Section>
             <Section>
-              <H2Title
-                title={t`Values`}
-                description={t`The values of this field`}
-              />
+              <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={{
                   icon: formConfig.watch('icon'),
@@ -271,8 +243,8 @@ export const SettingsObjectNewFieldConfigure = () => {
             </Section>
             <Section>
               <H2Title
-                title={t`Description`}
-                description={t`The description of this field`}
+                title="Description"
+                description="The description of this field"
               />
               <SettingsDataModelFieldDescriptionForm />
             </Section>

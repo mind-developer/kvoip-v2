@@ -93,7 +93,7 @@ describe('useDefaultHomePagePath', () => {
       withExistingView: true,
     });
     expect(result.current.defaultHomePagePath).toEqual(
-      '/objects/companies?viewId=viewId',
+      '/objects/companies?view=viewId',
     );
   });
 });

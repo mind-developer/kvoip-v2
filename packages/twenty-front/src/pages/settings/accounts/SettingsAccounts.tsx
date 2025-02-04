@@ -12,13 +12,11 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccounts = () => {
-  const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -26,7 +24,7 @@ export const SettingsAccounts = () => {
   });
 
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+    objectNameSingular: 'connectedAccount',
     filter: {
       accountOwnerId: {
         eq: currentWorkspaceMember?.id,
@@ -37,13 +35,13 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Account`}
+      title="Account"
       links={[
         {
-          children: t`User`,
-          href: getSettingsPath(SettingsPath.ProfilePage),
+          children: 'User',
+          href: getSettingsPagePath(SettingsPath.ProfilePage),
         },
-        { children: t`Account` },
+        { children: 'Account' },
       ]}
     >
       <SettingsPageContainer>
@@ -53,8 +51,8 @@ export const SettingsAccounts = () => {
           <>
             <Section>
               <H2Title
-                title={t`Connected accounts`}
-                description={t`Manage your internet accounts.`}
+                title="Connected accounts"
+                description="Manage your internet accounts."
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={accounts}

@@ -3,7 +3,6 @@ import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderR
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -63,19 +62,15 @@ export const FavoriteFolders = ({
   return (
     <>
       {isFavoriteFolderCreating && (
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <NavigationDrawerInput
-            Icon={IconFolder}
-            value={newFolderName}
-            onChange={handleFavoriteFolderNameChange}
-            onSubmit={handleSubmitFavoriteFolderCreation}
-            onCancel={handleCancelFavoriteFolderCreation}
-            onClickOutside={handleClickOutside}
-            hotkeyScope={
-              FavoriteFolderHotkeyScope.FavoriteFolderNavigationInput
-            }
-          />
-        </NavigationDrawerAnimatedCollapseWrapper>
+        <NavigationDrawerInput
+          Icon={IconFolder}
+          value={newFolderName}
+          onChange={handleFavoriteFolderNameChange}
+          onSubmit={handleSubmitFavoriteFolderCreation}
+          onCancel={handleCancelFavoriteFolderCreation}
+          onClickOutside={handleClickOutside}
+          hotkeyScope={FavoriteFolderHotkeyScope.FavoriteFolderNavigationInput}
+        />
       )}
       {favoritesByFolder.map((folder) => (
         <CurrentWorkspaceMemberFavorites

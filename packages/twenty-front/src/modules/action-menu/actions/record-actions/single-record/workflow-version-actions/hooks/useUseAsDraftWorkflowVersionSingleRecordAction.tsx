@@ -1,15 +1,15 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { AppPath } from '@/types/AppPath';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-ui';
 
 export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -28,7 +28,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
       openOverrideWorkflowDraftConfirmationModalState,
     );
 
-    const navigate = useNavigateApp();
+    const navigate = useNavigate();
 
     const hasAlreadyDraftVersion =
       workflow?.versions.some((version) => version.status === 'DRAFT') || false;
@@ -48,10 +48,13 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
           workflowId: workflowVersion.workflow.id,
           workflowVersionIdToCopy: workflowVersion.id,
         });
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular: CoreObjectNameSingular.Workflow,
-          objectRecordId: workflowVersion.workflow.id,
-        });
+
+        navigate(
+          buildShowPageURL(
+            CoreObjectNameSingular.Workflow,
+            workflowVersion.workflow.id,
+          ),
+        );
       }
     };
 

@@ -24,7 +24,7 @@ import { flushSync } from 'react-dom';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
-  position: fixed;
+  position: absolute;
   top: 0;
 `;
 

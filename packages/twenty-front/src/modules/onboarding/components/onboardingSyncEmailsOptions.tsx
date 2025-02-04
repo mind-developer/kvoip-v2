@@ -10,25 +10,28 @@ const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
 
 export const onboardingSyncEmailsOptions = [
   {
-    title: msg`Everything`,
-    description: msg`Your emails and events content will be shared with your team.`,
-    value: MessageChannelVisibility.SHARE_EVERYTHING,
+    title: 'Everything',
+    description:
+      'Your emails and events content will be shared with your team.',
+    value: MessageChannelVisibility.ShareEverything,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="active" />
     ),
   },
   {
-    title: msg`Subject and metadata`,
-    description: msg`Your email subjects and meeting titles will be shared with your team.`,
-    value: MessageChannelVisibility.SUBJECT,
+    title: 'Subject and metadata',
+    description:
+      'Your email subjects and meeting titles will be shared with your team.',
+    value: MessageChannelVisibility.Subject,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="inactive" />
     ),
   },
   {
-    title: msg`Metadata`,
-    description: msg`Only the timestamp & participants will be shared with your team.`,
-    value: MessageChannelVisibility.METADATA,
+    title: 'Metadata',
+    description:
+      'Only the timestamp & participants will be shared with your team.',
+    value: MessageChannelVisibility.Metadata,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="inactive" body="inactive" />
     ),

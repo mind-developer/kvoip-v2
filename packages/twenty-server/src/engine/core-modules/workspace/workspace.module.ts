@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -36,7 +33,6 @@ import { StripeIntegration } from '../stripe/integrations/stripe-integration.ent
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscription], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         DomainManagerModule,

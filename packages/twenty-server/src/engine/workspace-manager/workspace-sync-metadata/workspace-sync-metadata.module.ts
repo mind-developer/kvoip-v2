@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -38,8 +38,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
       ],
       'metadata',
     ),
-    DataSourceModule,
-    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceMetadataVersionModule,
   ],
   providers: [
