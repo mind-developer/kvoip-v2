@@ -128,7 +128,9 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
               />
             </DropdownMenuItemsContainer>
           }
-          dropdownHotkeyScope={{ scope: dropDownId }}
+          dropdownHotkeyScope={{
+            scope: dropDownId,
+          }}
         />
       </TableCell>
     </StyledTableRow>

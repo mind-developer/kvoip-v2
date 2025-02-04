@@ -9,7 +9,6 @@ import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
-import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
@@ -22,6 +21,7 @@ export const computeAggregateValueAndLabel = ({
   objectMetadataItem,
   fieldMetadataId,
   aggregateOperation,
+  fallbackFieldName,
   dateFormat,
   timeFormat,
   timeZone,
@@ -30,6 +30,7 @@ export const computeAggregateValueAndLabel = ({
   objectMetadataItem: ObjectMetadataItem;
   fieldMetadataId?: string | null;
   aggregateOperation?: ExtendedAggregateOperations | null;
+  fallbackFieldName?: string;
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
@@ -42,11 +43,11 @@ export const computeAggregateValueAndLabel = ({
   );
 
   if (!isDefined(field)) {
+    if (!fallbackFieldName) {
+      throw new Error('Missing fallback field name');
+    }
     return {
-      value:
-        data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-          AGGREGATE_OPERATIONS.count
-        ],
+      value: data?.[fallbackFieldName]?.[AGGREGATE_OPERATIONS.count],
       label: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
       labelWithFieldName: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
     };
@@ -78,13 +79,13 @@ export const computeAggregateValueAndLabel = ({
     value = `${formatNumber(Number(aggregateValue) * 100)}%`;
   } else {
     switch (field.type) {
-      case FieldMetadataType.CURRENCY: {
+      case FieldMetadataType.Currency: {
         value = Number(aggregateValue);
         value = formatAmount(value / 1_000_000);
         break;
       }
 
-      case FieldMetadataType.NUMBER: {
+      case FieldMetadataType.Number: {
         value = Number(aggregateValue);
         const { decimals, type } = field.settings ?? {};
         value =
@@ -94,7 +95,7 @@ export const computeAggregateValueAndLabel = ({
         break;
       }
 
-      case FieldMetadataType.DATE_TIME: {
+      case FieldMetadataType.DateTime: {
         value = aggregateValue as string;
         value = formatDateTimeString({
           value,
@@ -106,7 +107,7 @@ export const computeAggregateValueAndLabel = ({
         break;
       }
 
-      case FieldMetadataType.DATE: {
+      case FieldMetadataType.Date: {
         value = aggregateValue as string;
         value = formatDateString({
           value,

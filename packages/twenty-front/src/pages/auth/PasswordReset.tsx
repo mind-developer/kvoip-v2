@@ -3,7 +3,6 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
@@ -14,22 +13,21 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 const validationSchema = z
   .object({
@@ -72,12 +70,11 @@ const StyledInputContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
-  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
@@ -173,9 +170,7 @@ export const PasswordReset = () => {
         <AnimatedEaseIn>
           <Logo secondaryLogo={workspacePublicData?.logo} />
         </AnimatedEaseIn>
-        <Title animate>
-          <Trans>Reset Password</Trans>
-        </Title>
+        <Title animate>Reset Password</Title>
         <StyledContentContainer>
           {!email ? (
             <SkeletonTheme
@@ -185,7 +180,9 @@ export const PasswordReset = () => {
               <Skeleton
                 height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                 count={2}
-                style={{ marginBottom: theme.spacing(2) }}
+                style={{
+                  marginBottom: theme.spacing(2),
+                }}
               />
             </SkeletonTheme>
           ) : (
@@ -203,7 +200,7 @@ export const PasswordReset = () => {
                   <TextInputV2
                     autoFocus
                     value={email}
-                    placeholder={t`Email`}
+                    placeholder="Email"
                     fullWidth
                     disabled
                   />
@@ -230,7 +227,7 @@ export const PasswordReset = () => {
                         autoFocus
                         value={value}
                         type="password"
-                        placeholder={t`New Password`}
+                        placeholder="New Password"
                         onBlur={onBlur}
                         onChange={onChange}
                         error={error?.message}
@@ -243,7 +240,7 @@ export const PasswordReset = () => {
 
               <MainButton
                 variant="secondary"
-                title={t`Change Password`}
+                title="Change Password"
                 type="submit"
                 fullWidth
                 disabled={isUpdatingPassword}

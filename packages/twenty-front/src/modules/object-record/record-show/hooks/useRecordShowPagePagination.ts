@@ -1,17 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
-import { AppPath } from '@/types/AppPath';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -22,9 +22,9 @@ export const useRecordShowPagePagination = (
     objectRecordId: paramObjectRecordId,
   } = useParams();
 
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const viewIdQueryParam = searchParams.get('viewId');
+  const viewIdQueryParam = searchParams.get('view');
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
@@ -130,36 +130,22 @@ export const useRecordShowPagePagination = (
     !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
 
   const navigateToPreviousRecord = () => {
-    if (loading) {
-      return;
-    }
-
     if (isFirstRecord) {
       if (cacheIsAvailableForNavigation) {
         const lastRecordIdFromCache =
           recordIdsInCache[recordIdsInCache.length - 1];
 
         navigate(
-          AppPath.RecordShowPage,
-          {
+          buildShowPageURL(
             objectNameSingular,
-            objectRecordId: lastRecordIdFromCache,
-          },
-          {
-            viewId: viewIdQueryParam,
-          },
+            lastRecordIdFromCache,
+            viewIdQueryParam,
+          ),
         );
       }
     } else {
       navigate(
-        AppPath.RecordShowPage,
-        {
-          objectNameSingular,
-          objectRecordId: recordBefore.id,
-        },
-        {
-          viewId: viewIdQueryParam,
-        },
+        buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
       );
     }
   };
@@ -168,51 +154,34 @@ export const useRecordShowPagePagination = (
     !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
 
   const navigateToNextRecord = () => {
-    if (loading) {
-      return;
-    }
-
     if (isLastRecord) {
       if (cacheIsAvailableForNavigation) {
         const firstRecordIdFromCache = recordIdsInCache[0];
 
         navigate(
-          AppPath.RecordShowPage,
-          {
+          buildShowPageURL(
             objectNameSingular,
-            objectRecordId: firstRecordIdFromCache,
-          },
-          {
-            viewId: viewIdQueryParam,
-          },
+            firstRecordIdFromCache,
+            viewIdQueryParam,
+          ),
         );
       }
     } else {
       navigate(
-        AppPath.RecordShowPage,
-        {
-          objectNameSingular,
-          objectRecordId: recordAfter.id,
-        },
-        {
-          viewId: viewIdQueryParam,
-        },
+        buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
       );
     }
   };
 
   const navigateToIndexView = () => {
+    const indexTableURL = buildIndexTablePageURL(
+      objectMetadataItem.namePlural,
+      viewIdQueryParam,
+    );
+
     setLastShowPageRecordId(objectRecordId);
 
-    navigate(
-      AppPath.RecordIndexPage,
-      {
-        objectNamePlural: objectMetadataItem.namePlural,
-      },
-      {
-        viewId: viewIdQueryParam,
-      },
-    );
+    navigate(indexTableURL);
   };
 
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);

@@ -25,17 +25,20 @@ import {
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -44,13 +47,13 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
-import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
+import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
+import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -67,6 +70,7 @@ export class AuthResolver {
     private apiKeyService: ApiKeyService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
+    private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
@@ -103,9 +107,8 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async getLoginTokenFromCredentials(
-    @Args()
-    getLoginTokenFromCredentialsInput: GetLoginTokenFromCredentialsInput,
+  async challenge(
+    @Args() challengeInput: ChallengeInput,
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
     const workspace =
@@ -120,12 +123,7 @@ export class AuthResolver {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
-
-    const user = await this.authService.getLoginTokenFromCredentials(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
-
+    const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
@@ -178,14 +176,10 @@ export class AuthResolver {
       workspaceId: signUpInput.workspaceId,
     });
 
-    const invitation =
-      currentWorkspace && signUpInput.workspacePersonalInviteToken
-        ? await this.authService.findInvitationForSignInUp({
-            currentWorkspace,
-            workspacePersonalInviteToken:
-              signUpInput.workspacePersonalInviteToken,
-          })
-        : undefined;
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace,
+      workspacePersonalInviteToken: signUpInput.workspacePersonalInviteToken,
+    });
 
     const existingUser = await this.userRepository.findOne({
       where: {
@@ -271,8 +265,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  async getAuthTokensFromLoginToken(
-    @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
+  async verify(
+    @Args() verifyInput: VerifyInput,
     @OriginHeader() origin: string,
   ): Promise<AuthTokens> {
     const workspace =
@@ -283,9 +277,7 @@ export class AuthResolver {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const { sub: email, workspaceId } =
-      await this.loginTokenService.verifyLoginToken(
-        getAuthTokensFromLoginTokenInput.loginToken,
-      );
+      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
 
     if (workspaceId !== workspace.id) {
       throw new AuthException(
@@ -308,6 +300,18 @@ export class AuthResolver {
       authorizeAppInput,
       user,
       workspace,
+    );
+  }
+
+  @Mutation(() => PublicWorkspaceDataOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async switchWorkspace(
+    @AuthUser() user: User,
+    @Args() args: SwitchWorkspaceInput,
+  ): Promise<PublicWorkspaceDataOutput> {
+    return await this.switchWorkspaceService.switchWorkspace(
+      user,
+      args.workspaceId,
     );
   }
 

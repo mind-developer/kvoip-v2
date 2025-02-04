@@ -26,7 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
           return HttpResponse.json({
             data: {
               currentUser: mockedOnboardingUserData(
-                OnboardingStatus.PROFILE_CREATION,
+                OnboardingStatus.ProfileCreation,
               ),
             },
           });

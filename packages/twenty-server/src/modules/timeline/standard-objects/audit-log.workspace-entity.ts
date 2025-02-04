@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -19,9 +18,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.auditLog,
   namePlural: 'auditLogs',
-  labelSingular: msg`Audit Log`,
-  labelPlural: msg`Audit Logs`,
-  description: msg`An audit log of actions performed in the system`,
+  labelSingular: 'Audit Log',
+  labelPlural: 'Audit Logs',
+  description: 'An audit log of actions performed in the system',
   icon: STANDARD_OBJECT_ICONS.auditLog,
   labelIdentifierStandardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
 })

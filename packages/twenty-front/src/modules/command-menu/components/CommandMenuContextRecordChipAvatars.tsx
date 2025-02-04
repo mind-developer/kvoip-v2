@@ -3,7 +3,21 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui';
+
+const StyledAvatarWrapper = styled.div`
+  background-color: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${({ theme }) => theme.spacing(0.5)};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  &:not(:first-of-type) {
+    margin-left: -${({ theme }) => theme.spacing(1)};
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const CommandMenuContextRecordChipAvatars = ({
   objectMetadataItem,
@@ -24,7 +38,7 @@ export const CommandMenuContextRecordChipAvatars = ({
   const theme = useTheme();
 
   return (
-    <>
+    <StyledAvatarWrapper>
       {Icon ? (
         <Icon color={IconColor} size={theme.icon.size.sm} />
       ) : (
@@ -36,6 +50,6 @@ export const CommandMenuContextRecordChipAvatars = ({
           size="sm"
         />
       )}
-    </>
+    </StyledAvatarWrapper>
   );
 };

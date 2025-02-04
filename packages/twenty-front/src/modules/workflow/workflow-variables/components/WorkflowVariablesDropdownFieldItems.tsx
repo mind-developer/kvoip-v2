@@ -115,20 +115,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
     }
   };
 
-  const getHeaderLabel = () => {
-    if (currentPath.length === 0) {
-      return step.name;
-    }
-
-    const subStepName = currentPath.at(-1);
-
-    if (isDefined(subStepName) && isRecordOutputSchema(step.outputSchema)) {
-      return step.outputSchema.fields[subStepName].label;
-    }
-
-    return subStepName;
-  };
-
+  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
   const displayedObject = getDisplayedSubStepFields();
   const options = displayedObject ? Object.entries(displayedObject) : [];
 
@@ -145,9 +132,11 @@ export const WorkflowVariablesDropdownFieldItems = ({
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
         onClick={goBack}
-        style={{ position: 'fixed' }}
+        style={{
+          position: 'fixed',
+        }}
       >
-        <OverflowingTextWithTooltip text={getHeaderLabel()} />
+        <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

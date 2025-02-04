@@ -3,7 +3,7 @@ import { Nullable } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
-  DateTimePicker,
+  InternalDatePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -54,7 +54,7 @@ export const DateInput = ({
     onClear?.();
   };
 
-  const handleClose = (newDate: Date | null) => {
+  const handleMouseSelect = (newDate: Date | null) => {
     setInternalValue(newDate);
     onSubmit?.(newDate);
   };
@@ -104,16 +104,16 @@ export const DateInput = ({
 
   return (
     <div ref={wrapperRef}>
-      <DateTimePicker
+      <InternalDatePicker
         date={internalValue ?? new Date()}
         onChange={handleChange}
-        onClose={handleClose}
+        onMouseSelect={handleMouseSelect}
         clearable={clearable ? clearable : false}
+        isDateTimeInput={isDateTimeInput}
         onEnter={onEnter}
         onEscape={onEscape}
         onClear={handleClear}
         hideHeaderInput={hideHeaderInput}
-        isDateTimeInput={isDateTimeInput}
       />
     </div>
   );

@@ -13,7 +13,7 @@ export const getFieldPreviewValueFromRecord = ({
 
   // Relation fields (to many)
   if (
-    fieldMetadataItem.type === FieldMetadataType.RELATION &&
+    fieldMetadataItem.type === FieldMetadataType.Relation &&
     Array.isArray(recordFieldValue?.edges)
   ) {
     return recordFieldValue.edges[0]?.node;

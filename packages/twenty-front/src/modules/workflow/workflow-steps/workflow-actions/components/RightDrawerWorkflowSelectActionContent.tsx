@@ -1,45 +1,40 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
-import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
-import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { MenuItemCommand, useIcons } from 'twenty-ui';
-import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
-import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
+import { ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/Actions';
+import styled from '@emotion/styled';
+import { MenuItem } from 'twenty-ui';
+
+const StyledActionListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+
+  padding-block: ${({ theme }) => theme.spacing(1)};
+  padding-inline: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const RightDrawerWorkflowSelectActionContent = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { getIcon } = useIcons();
   const { createStep } = useCreateStep({
     workflow,
   });
 
   return (
-    <RightDrawerStepListContainer>
-      <RightDrawerWorkflowSelectStepTitle>
-        Records
-      </RightDrawerWorkflowSelectStepTitle>
-      {RECORD_ACTIONS.map((action) => (
-        <MenuItemCommand
+    <StyledActionListContainer>
+      {ACTIONS.map((action) => (
+        <MenuItem
           key={action.type}
-          LeftIcon={getIcon(action.icon)}
+          LeftIcon={action.icon}
           text={action.label}
-          onClick={() => createStep(action.type)}
+          onClick={() => {
+            return createStep(action.type);
+          }}
         />
       ))}
-      <RightDrawerWorkflowSelectStepTitle>
-        Other
-      </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_ACTIONS.map((action) => (
-        <MenuItemCommand
-          key={action.type}
-          LeftIcon={getIcon(action.icon)}
-          text={action.label}
-          onClick={() => createStep(action.type)}
-        />
-      ))}
-    </RightDrawerStepListContainer>
+    </StyledActionListContainer>
   );
 };

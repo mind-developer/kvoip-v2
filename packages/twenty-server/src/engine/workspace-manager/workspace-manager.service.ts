@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -105,6 +106,11 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
@@ -138,10 +144,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await seedWorkspaceWithDemoData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      isWorkflowEnabled,
     );
 
     await this.seederService.seedCustomObjects(

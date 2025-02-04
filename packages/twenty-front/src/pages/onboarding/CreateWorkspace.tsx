@@ -100,7 +100,7 @@ export const CreateWorkspace = () => {
     }
   };
 
-  if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
+  if (onboardingStatus !== OnboardingStatus.WorkspaceActivation) {
     return null;
   }
 

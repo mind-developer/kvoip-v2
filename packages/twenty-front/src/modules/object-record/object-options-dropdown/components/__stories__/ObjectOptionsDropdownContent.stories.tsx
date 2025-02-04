@@ -7,7 +7,6 @@ import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dro
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -38,26 +37,22 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       }, [setObjectMetadataItems]);
 
       return (
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{ instanceId: 'object-options-dropdown' }}
+        <RecordTableComponentInstanceContext.Provider
+          value={{ instanceId, onColumnsChange: () => {} }}
         >
-          <RecordTableComponentInstanceContext.Provider
-            value={{ instanceId, onColumnsChange: () => {} }}
-          >
-            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <ContextStoreComponentInstanceContext.Provider
-                value={{ instanceId }}
+          <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId }}
+            >
+              <MemoryRouter
+                initialEntries={['/one', '/two', { pathname: '/three' }]}
+                initialIndex={1}
               >
-                <MemoryRouter
-                  initialEntries={['/one', '/two', { pathname: '/three' }]}
-                  initialIndex={1}
-                >
-                  <Story />
-                </MemoryRouter>
-              </ContextStoreComponentInstanceContext.Provider>
-            </ViewComponentInstanceContext.Provider>
-          </RecordTableComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
+                <Story />
+              </MemoryRouter>
+            </ContextStoreComponentInstanceContext.Provider>
+          </ViewComponentInstanceContext.Provider>
+        </RecordTableComponentInstanceContext.Provider>
       );
     },
     ObjectMetadataItemsDecorator,

@@ -13,7 +13,7 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
     options = {
       ...options,
       accessType: 'offline',
-      prompt: 'select_account',
+      prompt: 'consent',
       loginHint: req.params.loginHint,
       state: JSON.stringify({
         transientToken: req.params.transientToken,

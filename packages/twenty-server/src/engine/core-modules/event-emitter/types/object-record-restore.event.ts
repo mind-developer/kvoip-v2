@@ -1,9 +1,9 @@
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 
 export class ObjectRecordRestoreEvent<
   T = object,
-> extends ObjectRecordCreateEvent<T> {
+> extends ObjectRecordBaseEvent<T> {
   properties: {
-    after: T;
+    before: T;
   };
 }

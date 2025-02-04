@@ -17,20 +17,20 @@ const eventSettingsVisibilityOptions = [
   {
     title: 'Everything',
     description: 'The whole event details will be shared with your team.',
-    value: CalendarChannelVisibility.SHARE_EVERYTHING,
+    value: CalendarChannelVisibility.ShareEverything,
     cardMedia: <StyledCardMedia subject="active" body="active" />,
   },
   {
     title: 'Metadata',
     description: 'Only date & participants will be shared with your team.',
-    value: CalendarChannelVisibility.METADATA,
+    value: CalendarChannelVisibility.Metadata,
     cardMedia: <StyledCardMedia subject="active" body="inactive" />,
   },
 ];
 
 export const SettingsAccountsEventVisibilitySettingsCard = ({
   onChange,
-  value = CalendarChannelVisibility.SHARE_EVERYTHING,
+  value = CalendarChannelVisibility.ShareEverything,
 }: SettingsAccountsEventVisibilitySettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
     name="event-visibility"

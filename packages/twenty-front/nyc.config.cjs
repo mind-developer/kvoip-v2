@@ -1,4 +1,3 @@
-// @ts-check
 const globalCoverage = {
   branches: 23,
   statements: 39,
@@ -9,8 +8,8 @@ const globalCoverage = {
 
 const modulesCoverage = {
   branches: 25,
-  statements: 44,
-  lines: 44,
+  statements: 49,
+  lines: 50,
   functions: 38,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
@@ -32,18 +31,13 @@ const performanceCoverage = {
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };
 
-const getCoverageConfig = () => {
-  const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;
-  switch (storybookStoriesFolders) {
-    case 'pages':
-      return pagesCoverage;
-    case 'modules':
-      return modulesCoverage;
-    case 'performance':
-      return performanceCoverage;
-    default:
-      return globalCoverage;
-  }
-};
+const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;
 
-module.exports = getCoverageConfig();
+module.exports =
+  storybookStoriesFolders === 'pages'
+    ? pagesCoverage
+    : storybookStoriesFolders === 'modules'
+      ? modulesCoverage
+      : storybookStoriesFolders === 'performance'
+        ? performanceCoverage
+        : globalCoverage;

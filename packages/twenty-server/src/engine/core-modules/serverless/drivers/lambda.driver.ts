@@ -237,7 +237,7 @@ export class LambdaDriver implements ServerlessDriver {
         Role: this.lambdaRole,
         Runtime: serverlessFunction.runtime,
         Description: 'Lambda function to run user script',
-        Timeout: serverlessFunction.timeoutSeconds,
+        Timeout: 900,
       };
 
       const command = new CreateFunctionCommand(params);
@@ -259,7 +259,6 @@ export class LambdaDriver implements ServerlessDriver {
             Variables: envVariables,
           },
           FunctionName: serverlessFunction.id,
-          Timeout: serverlessFunction.timeoutSeconds,
         };
 
       const updateConfigurationCommand = new UpdateFunctionConfigurationCommand(

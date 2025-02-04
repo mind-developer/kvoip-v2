@@ -33,7 +33,7 @@ export const getRecordChipGenerators = (
         .filter(
           (fieldMetadataItem) =>
             labelIdentifierFieldMetadataItem?.id === fieldMetadataItem.id ||
-            fieldMetadataItem.type === FieldMetadataType.RELATION ||
+            fieldMetadataItem.type === FieldMetadataType.Relation ||
             isFieldIdentifierDisplay(
               fieldMetadataItem,
               isLabelIdentifierField({

@@ -24,8 +24,7 @@ import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -36,7 +35,6 @@ export class GoogleAPIsAuthController {
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
@@ -54,89 +52,75 @@ export class GoogleAPIsAuthController {
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
   ) {
-    let workspace: Workspace | null = null;
+    const { user } = req;
 
-    try {
-      const { user } = req;
+    const {
+      emails,
+      accessToken,
+      refreshToken,
+      transientToken,
+      redirectLocation,
+      calendarVisibility,
+      messageVisibility,
+    } = user;
 
-      const {
-        emails,
-        accessToken,
-        refreshToken,
-        transientToken,
-        redirectLocation,
-        calendarVisibility,
-        messageVisibility,
-      } = user;
+    const { workspaceMemberId, userId, workspaceId } =
+      await this.transientTokenService.verifyTransientToken(transientToken);
 
-      const { workspaceMemberId, userId, workspaceId } =
-        await this.transientTokenService.verifyTransientToken(transientToken);
+    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
-      const demoWorkspaceIds =
-        this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-      if (demoWorkspaceIds.includes(workspaceId)) {
-        throw new AuthException(
-          'Cannot connect Google account to demo workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      if (!workspaceId) {
-        throw new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.WORKSPACE_NOT_FOUND,
-        );
-      }
-
-      workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
-
-      const handle = emails[0].value;
-
-      await this.googleAPIsService.refreshGoogleRefreshToken({
-        handle,
-        workspaceMemberId: workspaceMemberId,
-        workspaceId: workspaceId,
-        accessToken,
-        refreshToken,
-        calendarVisibility,
-        messageVisibility,
-      });
-
-      if (userId) {
-        await this.onboardingService.setOnboardingConnectAccountPending({
-          userId,
-          workspaceId,
-          value: false,
-        });
-      }
-
-      if (!workspace) {
-        throw new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.WORKSPACE_NOT_FOUND,
-        );
-      }
-
-      return res.redirect(
-        this.domainManagerService
-          .buildWorkspaceURL({
-            subdomain: workspace.subdomain,
-            pathname: redirectLocation || '/settings/accounts',
-          })
-          .toString(),
-      );
-    } catch (err) {
-      return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-          },
-        ),
+    if (demoWorkspaceIds.includes(workspaceId)) {
+      throw new AuthException(
+        'Cannot connect Google account to demo workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+
+    if (!workspaceId) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const handle = emails[0].value;
+
+    await this.googleAPIsService.refreshGoogleRefreshToken({
+      handle,
+      workspaceMemberId: workspaceMemberId,
+      workspaceId: workspaceId,
+      accessToken,
+      refreshToken,
+      calendarVisibility,
+      messageVisibility,
+    });
+
+    if (userId) {
+      await this.onboardingService.setOnboardingConnectAccountPending({
+        userId,
+        workspaceId,
+        value: false,
+      });
+    }
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    return res.redirect(
+      this.domainManagerService
+        .buildWorkspaceURL({
+          subdomain: workspace.subdomain,
+          pathname: redirectLocation || '/settings/accounts',
+        })
+        .toString(),
+    );
   }
 }

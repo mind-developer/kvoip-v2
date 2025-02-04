@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -19,9 +18,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.blocklist,
   namePlural: 'blocklists',
-  labelSingular: msg`Blocklist`,
-  labelPlural: msg`Blocklists`,
-  description: msg`Blocklist`,
+  labelSingular: 'Blocklist',
+  labelPlural: 'Blocklists',
+  description: 'Blocklist',
   icon: STANDARD_OBJECT_ICONS.blocklist,
   labelIdentifierStandardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
 })

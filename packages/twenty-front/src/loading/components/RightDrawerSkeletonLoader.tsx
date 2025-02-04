@@ -1,6 +1,6 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledRightDrawerContainer = styled.div`
@@ -11,12 +11,10 @@ const StyledRightDrawerContainer = styled.div`
 `;
 
 const StyledSkeletonLoader = () => {
-  const theme = useTheme();
-
   return (
     <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
+      baseColor={GRAY_SCALE.gray15}
+      highlightColor={BACKGROUND_LIGHT.transparent.lighter}
       borderRadius={4}
     >
       <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} width={140} />

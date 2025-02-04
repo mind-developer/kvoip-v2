@@ -1,4 +1,3 @@
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -11,37 +10,28 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  ComputeNodeDimensions,
-  IconComponent,
-  IconEye,
-  IconEyeOff,
-  RGBA,
-} from 'twenty-ui';
+import { IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
 >`
-  box-sizing: border-box;
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledInputContainer = styled.div`
-  background-color: inherit;
   display: flex;
   flex-direction: row;
+  width: 100%;
   position: relative;
 `;
 
 const StyledInput = styled.input<
-  Pick<
-    TextInputV2ComponentProps,
-    'LeftIcon' | 'error' | 'sizeVariant' | 'width'
-  >
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
@@ -54,14 +44,12 @@ const StyledInput = styled.input<
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
+  height: 32px;
   outline: none;
-  padding: ${({ theme, sizeVariant }) =>
-    sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
-  width: ${({ theme, width }) =>
-    width ? `calc(${width}px + ${theme.spacing(5)})` : '100%'};
+  width: 100%;
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -123,8 +111,6 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputV2Size = 'sm' | 'md';
-
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange' | 'onKeyDown'
@@ -137,14 +123,10 @@ export type TextInputV2ComponentProps = Omit<
   noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
-  autoGrow?: boolean;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
-  sizeVariant?: TextInputV2Size;
 };
-
-type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
 
 const TextInputV2Component = (
   {
@@ -156,7 +138,6 @@ const TextInputV2Component = (
     onBlur,
     onKeyDown,
     fullWidth,
-    width,
     error,
     noErrorHelper = false,
     required,
@@ -169,7 +150,6 @@ const TextInputV2Component = (
     LeftIcon,
     autoComplete,
     maxLength,
-    sizeVariant = 'md',
     dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
@@ -203,10 +183,8 @@ const TextInputV2Component = (
             </StyledTrailingIcon>
           </StyledLeftIconContainer>
         )}
-
         <StyledInput
           id={inputId}
-          width={width}
           data-testid={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
@@ -229,10 +207,8 @@ const TextInputV2Component = (
             LeftIcon,
             maxLength,
             error,
-            sizeVariant,
           }}
         />
-
         <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
@@ -260,22 +236,4 @@ const TextInputV2Component = (
   );
 };
 
-const TextInputV2WithAutoGrowWrapper = (
-  props: TextInputV2WithAutoGrowWrapperProps,
-) => (
-  <>
-    {props.autoGrow ? (
-      <ComputeNodeDimensions node={props.value || props.placeholder}>
-        {(nodeDimensions) => (
-          // eslint-disable-next-line
-          <TextInputV2Component {...props} width={nodeDimensions?.width} />
-        )}
-      </ComputeNodeDimensions>
-    ) : (
-      // eslint-disable-next-line
-      <TextInputV2Component {...props} />
-    )}
-  </>
-);
-
-export const TextInputV2 = forwardRef(TextInputV2WithAutoGrowWrapper);
+export const TextInputV2 = forwardRef(TextInputV2Component);

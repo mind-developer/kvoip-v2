@@ -23,7 +23,7 @@ export const SettingsIntegrationRemoteTableSyncStatusToggle = ({
 
   return (
     <Toggle
-      value={tableStatus === RemoteTableStatus.SYNCED}
+      value={tableStatus === RemoteTableStatus.Synced}
       disabled={isToggleLoading}
       onChange={onChange}
     />

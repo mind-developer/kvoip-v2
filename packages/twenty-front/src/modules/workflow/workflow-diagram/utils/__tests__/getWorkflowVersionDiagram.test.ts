@@ -33,7 +33,7 @@ describe('getWorkflowVersionDiagram', () => {
     });
   });
 
-  it('returns a diagram with only a trigger node if the provided workflow version has no steps', () => {
+  it('returns a diagram with an empty-trigger node if the provided workflow version has no steps', () => {
     const result = getWorkflowVersionDiagram({
       __typename: 'WorkflowVersion',
       status: 'ACTIVE',
@@ -42,7 +42,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
-        name: 'Record is created',
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -54,10 +54,9 @@ describe('getWorkflowVersionDiagram', () => {
       nodes: [
         {
           data: {
-            name: 'Record is created',
+            name: 'Company created',
             nodeType: 'trigger',
             triggerType: 'DATABASE_EVENT',
-            icon: 'IconPlus',
           },
           id: 'trigger',
           position: { x: 0, y: 0 },

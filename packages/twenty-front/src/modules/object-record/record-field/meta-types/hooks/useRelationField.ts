@@ -19,7 +19,7 @@ export const useRelationField = <
   const button = useGetButtonIcon();
 
   assertFieldMetadata(
-    FieldMetadataType.RELATION,
+    FieldMetadataType.Relation,
     isFieldRelation,
     fieldDefinition,
   );

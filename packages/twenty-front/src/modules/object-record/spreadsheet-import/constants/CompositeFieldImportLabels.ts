@@ -10,15 +10,15 @@ import { CompositeFieldLabels } from '@/object-record/spreadsheet-import/types/C
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const COMPOSITE_FIELD_IMPORT_LABELS = {
-  [FieldMetadataType.FULL_NAME]: {
+  [FieldMetadataType.FullName]: {
     firstNameLabel: 'First Name',
     lastNameLabel: 'Last Name',
   } satisfies CompositeFieldLabels<FieldFullNameValue>,
-  [FieldMetadataType.CURRENCY]: {
+  [FieldMetadataType.Currency]: {
     currencyCodeLabel: 'Currency Code',
     amountMicrosLabel: 'Amount',
   } satisfies CompositeFieldLabels<FieldCurrencyValue>,
-  [FieldMetadataType.ADDRESS]: {
+  [FieldMetadataType.Address]: {
     addressStreet1Label: 'Address 1',
     addressStreet2Label: 'Address 2',
     addressCityLabel: 'City',
@@ -28,18 +28,18 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     addressLatLabel: 'Latitude',
     addressLngLabel: 'Longitude',
   } satisfies CompositeFieldLabels<FieldAddressValue>,
-  [FieldMetadataType.LINKS]: {
+  [FieldMetadataType.Links]: {
     primaryLinkUrlLabel: 'Link URL',
     primaryLinkLabelLabel: 'Link Label',
   } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
-  [FieldMetadataType.EMAILS]: {
+  [FieldMetadataType.Emails]: {
     primaryEmailLabel: 'Email',
   } satisfies Partial<CompositeFieldLabels<FieldEmailsValue>>,
-  [FieldMetadataType.PHONES]: {
+  [FieldMetadataType.Phones]: {
     primaryPhoneCountryCodeLabel: 'Phone country code',
     primaryPhoneNumberLabel: 'Phone number',
   } satisfies Partial<CompositeFieldLabels<FieldPhonesValue>>,
-  [FieldMetadataType.ACTOR]: {
+  [FieldMetadataType.Actor]: {
     sourceLabel: 'Source',
   },
 };

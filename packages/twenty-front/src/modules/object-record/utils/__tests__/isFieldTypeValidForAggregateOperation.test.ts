@@ -7,14 +7,14 @@ describe('isFieldTypeValidForAggregateOperation', () => {
   it('should return true for valid field types and operations', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
-        FieldMetadataType.NUMBER,
+        FieldMetadataType.Number,
         AGGREGATE_OPERATIONS.sum,
       ),
     ).toBe(true);
 
     expect(
       isFieldTypeValidForAggregateOperation(
-        FieldMetadataType.CURRENCY,
+        FieldMetadataType.Currency,
         AGGREGATE_OPERATIONS.min,
       ),
     ).toBe(true);
@@ -23,21 +23,21 @@ describe('isFieldTypeValidForAggregateOperation', () => {
   it('should return false for invalid field types', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
-        FieldMetadataType.TEXT,
+        FieldMetadataType.Text,
         AGGREGATE_OPERATIONS.avg,
       ),
     ).toBe(false);
 
     expect(
       isFieldTypeValidForAggregateOperation(
-        FieldMetadataType.BOOLEAN,
+        FieldMetadataType.Boolean,
         AGGREGATE_OPERATIONS.max,
       ),
     ).toBe(false);
   });
 
   it('should handle all aggregate operations', () => {
-    const numericField = FieldMetadataType.NUMBER;
+    const numericField = FieldMetadataType.Number;
     const operations = [
       AGGREGATE_OPERATIONS.min,
       AGGREGATE_OPERATIONS.max,

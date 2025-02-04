@@ -270,7 +270,7 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
-type DateTimePickerProps = {
+type InternalDatePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: Date | null;
@@ -283,7 +283,7 @@ type DateTimePickerProps = {
     start: Date;
     end: Date;
   };
-  onClose?: (date: Date | null) => void;
+  onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   onRelativeDateChange?: (
     relativeDate: {
@@ -300,10 +300,10 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-export const DateTimePicker = ({
+export const InternalDatePicker = ({
   date,
   onChange,
-  onClose,
+  onMouseSelect,
   clearable = true,
   isDateTimeInput,
   onClear,
@@ -312,7 +312,7 @@ export const DateTimePicker = ({
   onRelativeDateChange,
   highlightedDateRange,
   hideHeaderInput,
-}: DateTimePickerProps) => {
+}: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
   const { timeZone } = useContext(UserContext);
@@ -336,9 +336,9 @@ export const DateTimePicker = ({
     closeDropdown();
   };
 
-  const handleClose = (newDate: Date) => {
+  const handleMouseSelect = (newDate: Date) => {
     closeDropdowns();
-    onClose?.(newDate);
+    onMouseSelect?.(newDate);
   };
 
   const handleChangeMonth = (month: number) => {
@@ -396,7 +396,7 @@ export const DateTimePicker = ({
       })
       .toJSDate();
 
-    handleClose?.(dateParsed);
+    handleMouseSelect?.(dateParsed);
   };
 
   const dateWithoutTime = DateTime.fromJSDate(internalDate)

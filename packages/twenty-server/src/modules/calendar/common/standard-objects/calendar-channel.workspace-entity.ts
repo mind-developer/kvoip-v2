@@ -1,6 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -71,9 +70,9 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
-  labelSingular: msg`Calendar Channel`,
-  labelPlural: msg`Calendar Channels`,
-  description: msg`Calendar Channels`,
+  labelSingular: 'Calendar Channel',
+  labelPlural: 'Calendar Channels',
+  description: 'Calendar Channels',
   icon: STANDARD_OBJECT_ICONS.calendarChannel,
   labelIdentifierStandardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
 })

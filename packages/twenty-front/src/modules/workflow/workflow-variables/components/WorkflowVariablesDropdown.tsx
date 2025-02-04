@@ -64,7 +64,7 @@ export const WorkflowVariablesDropdown = ({
 
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
-    setSelectedStep(initialStep);
+    setSelectedStep(undefined);
     closeDropdown();
   };
 

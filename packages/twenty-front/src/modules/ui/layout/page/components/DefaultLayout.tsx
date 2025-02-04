@@ -98,7 +98,9 @@ export const DefaultLayout = () => {
                   2
                 : 0,
           }}
-          transition={{ duration: theme.animation.duration.normal }}
+          transition={{
+            duration: theme.animation.duration.normal,
+          }}
         >
           {showAuthModal ? (
             <StyledAppNavigationDrawerMock />

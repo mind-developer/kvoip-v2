@@ -39,7 +39,6 @@
         "updateBuildableProjectDepsInPackageJson": true
       }
     },
-    "typecheck": {},
     "start": {
       "executor": "nx:run-commands",
       "dependsOn": ["typecheck", "build"],
@@ -209,20 +208,6 @@
         }
       },
       "defaultConfiguration": "seed"
-    },
-    "lingui:extract": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "lingui extract --overwrite"
-      }
-    },
-    "lingui:compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "lingui compile --typescript"
-      }
     }
   }
 }

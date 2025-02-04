@@ -13,7 +13,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   const processRecordsForCSVExport = (records: ObjectRecord[]) => {
     return records.map((record) => {
       const currencyFields = objectMetadataItem.fields.filter(
-        (field) => field.type === FieldMetadataType.CURRENCY,
+        (field) => field.type === FieldMetadataType.Currency,
       );
 
       const processedRecord = {

@@ -8,7 +8,6 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   ActionLink,
@@ -79,18 +78,16 @@ const StyledLinkGroup = styled.div`
   }
 `;
 
+const benefits = [
+  'Full access',
+  'Unlimited contacts',
+  'Email integration',
+  'Custom objects',
+  'API & Webhooks',
+  '1 000 workflow node executions',
+];
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
-  const { t } = useLingui();
-
-  const benefits = [
-    t`Full access`,
-    t`Unlimited contacts`,
-    t`Email integration`,
-    t`Custom objects`,
-    t`API & Webhooks`,
-    t`1 000 workflow node executions`,
-  ];
 
   const { data: prices } = useGetProductPricesQuery({
     variables: { product: 'base-plan' },
@@ -136,26 +133,20 @@ export const ChooseYourPlan = () => {
 
   const { signOut } = useAuth();
 
-  const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
-
   return (
     isDefined(price) &&
     isDefined(billing) && (
       <>
         <Title noMarginTop>
           {hasWithoutCreditCardTrialPeriod
-            ? t`Choose your Trial`
-            : t`Get your subscription`}
+            ? 'Choose your Trial'
+            : 'Get your subscription'}
         </Title>
         {hasWithoutCreditCardTrialPeriod ? (
-          <SubTitle>
-            <Trans>Cancel anytime</Trans>
-          </SubTitle>
+          <SubTitle>Cancel anytime</SubTitle>
         ) : (
           withCreditCardTrialPeriod && (
-            <SubTitle>
-              {t`Enjoy a ${withCreditCardTrialPeriodDuration}-days free trial`}
-            </SubTitle>
+            <SubTitle>{`Enjoy a ${withCreditCardTrialPeriod.duration}-days free trial`}</SubTitle>
           )
         )}
         <StyledSubscriptionContainer
@@ -195,19 +186,17 @@ export const ChooseYourPlan = () => {
           </StyledChooseTrialContainer>
         )}
         <MainButton
-          title={t`Continue`}
+          title="Continue"
           onClick={handleCheckoutSession}
           width={200}
           Icon={() => isSubmitting && <Loader />}
           disabled={isSubmitting}
         />
         <StyledLinkGroup>
-          <ActionLink onClick={signOut}>
-            <Trans>Log out</Trans>
-          </ActionLink>
+          <ActionLink onClick={signOut}>Log out</ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
-            <Trans>Book a Call</Trans>
+            Book a Call
           </ActionLink>
         </StyledLinkGroup>
       </>

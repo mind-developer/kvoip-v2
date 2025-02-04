@@ -2,35 +2,11 @@ import { defineConfig } from '@lingui/cli';
 
 export default defineConfig({
   sourceLocale: 'en',
-  locales: [
-    'en',
-    'fr',
-    'pt',
-    'de',
-    'it',
-    'es',
-    'zh-Hans',
-    'zh-Hant',
-    'pseudo-en',
-  ],
-  pseudoLocale: 'pseudo-en',
-  fallbackLocales: {
-    'pseudo-en': 'en',
-  },
+  locales: ['fr', 'en', 'pt', 'de', 'it', 'es', 'zh'],
   catalogs: [
     {
-      path: '<rootDir>/src/locales/{locale}',
+      path: '<rootDir>/src/locales/{locale}/messages',
       include: ['src'],
     },
   ],
-  catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
-  compileNamespace: 'ts',
-  ...(process.env.TRANSLATION_IO_API_KEY
-    ? {
-        service: {
-          name: 'TranslationIO',
-          apiKey: process.env.TRANSLATION_IO_API_KEY,
-        },
-      }
-    : {}),
 });

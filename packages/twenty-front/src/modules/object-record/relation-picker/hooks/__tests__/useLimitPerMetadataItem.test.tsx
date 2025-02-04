@@ -25,7 +25,6 @@ describe('useLimitPerMetadataItem', () => {
       labelSingular: 'labelSingular',
       namePlural: 'namePlural',
       nameSingular: 'nameSingular',
-      labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
       updatedAt: 'updatedAt',
       isLabelSyncedWithName: false,
       fields: [],

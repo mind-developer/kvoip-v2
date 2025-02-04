@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { useCallback } from 'react';
+import styled from '@emotion/styled';
 import { z } from 'zod';
 
 import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
@@ -36,19 +36,19 @@ const StyledRowRightContainer = styled.div`
 const getDistantTableUpdatesText = (
   schemaPendingUpdates: DistantTableUpdate[],
 ) => {
-  if (schemaPendingUpdates.includes(DistantTableUpdate.TABLE_DELETED)) {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.TableDeleted)) {
     return 'Table has been deleted';
   }
   if (
-    schemaPendingUpdates.includes(DistantTableUpdate.COLUMNS_ADDED) &&
-    schemaPendingUpdates.includes(DistantTableUpdate.COLUMNS_DELETED)
+    schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded) &&
+    schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)
   ) {
     return 'Columns have been added and other deleted';
   }
-  if (schemaPendingUpdates.includes(DistantTableUpdate.COLUMNS_ADDED)) {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded)) {
     return 'Columns have been added';
   }
-  if (schemaPendingUpdates.includes(DistantTableUpdate.COLUMNS_DELETED)) {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)) {
     return 'Columns have been deleted';
   }
   return null;

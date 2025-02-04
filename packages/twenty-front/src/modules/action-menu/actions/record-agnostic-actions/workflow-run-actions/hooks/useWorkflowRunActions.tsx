@@ -49,6 +49,7 @@ export const useWorkflowRunActions = () => {
         onClick: async () => {
           await runWorkflowVersion({
             workflowVersionId: activeWorkflowVersion.id,
+            workflowName: name,
           });
         },
       });

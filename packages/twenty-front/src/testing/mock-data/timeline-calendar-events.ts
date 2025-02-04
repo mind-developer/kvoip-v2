@@ -18,7 +18,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+    visibility: CalendarChannelVisibility.ShareEverything,
     isFullDay: false,
     participants: [
       {
@@ -58,7 +58,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: CalendarChannelVisibility.METADATA,
+    visibility: CalendarChannelVisibility.Metadata,
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',
@@ -87,7 +87,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: CalendarChannelVisibility.METADATA,
+    visibility: CalendarChannelVisibility.Metadata,
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',

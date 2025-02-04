@@ -23,7 +23,6 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverl
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -33,13 +32,7 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  CodeEditor,
-  IconCode,
-  IconPlayerPlay,
-  isDefined,
-  useIcons,
-} from 'twenty-ui';
+import { CodeEditor, IconCode, IconPlayerPlay, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`
@@ -61,7 +54,6 @@ const StyledTabListContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(10)};
-  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
@@ -84,11 +76,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
-  const theme = useTheme();
-  const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const serverlessFunctionVersion =
     action.settings.input.serverlessFunctionVersion;
+  const theme = useTheme();
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
   const { updateOneServerlessFunction, isReady } =
@@ -279,11 +270,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     setFunctionInput(action.settings.input.serverlessFunctionInput);
   }, [action]);
 
-  const headerTitle = isDefined(action.name)
-    ? action.name
-    : 'Code - Serverless Function';
-  const headerIcon = getActionIcon(action.type);
-
   return (
     !loading && (
       <StyledContainer>
@@ -298,9 +284,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
           }}
-          Icon={getIcon(headerIcon)}
+          Icon={IconCode}
           iconColor={theme.color.orange}
-          initialTitle={headerTitle}
+          initialTitle={action.name || 'Code - Serverless Function'}
           headerType="Code"
         />
         <WorkflowStepBody>

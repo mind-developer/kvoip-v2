@@ -8,7 +8,6 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
 
@@ -21,7 +20,7 @@ if (!mockedCompanyObjectMetadataItem) {
 }
 
 const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-  ({ type }) => type === FieldMetadataType.TEXT,
+  ({ type }) => type === FieldMetadataType.Text,
 )!;
 
 const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
@@ -34,7 +33,6 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     FormProviderDecorator,
-    I18nFrontDecorator,
   ],
   args: {
     fieldMetadataItem,
@@ -64,7 +62,7 @@ export const WithSelectForm: Story = {
     fieldMetadataItem: {
       label: 'Industry',
       icon: 'IconBuildingFactory2',
-      type: FieldMetadataType.SELECT,
+      type: FieldMetadataType.Select,
     },
   },
 };

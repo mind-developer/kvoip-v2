@@ -12,10 +12,10 @@ export const getAddressFieldPreviewValue = ({
     'defaultValue' | 'options' | 'type'
   >;
 }): FieldAddressValue | null => {
-  if (fieldMetadataItem.type !== FieldMetadataType.ADDRESS) return null;
+  if (fieldMetadataItem.type !== FieldMetadataType.Address) return null;
 
   const addressFieldTypeConfig = getSettingsFieldTypeConfig(
-    FieldMetadataType.ADDRESS,
+    FieldMetadataType.Address,
   );
 
   const placeholderDefaultValue = addressFieldTypeConfig.exampleValue;

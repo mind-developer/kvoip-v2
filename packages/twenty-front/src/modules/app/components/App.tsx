@@ -11,14 +11,15 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { messages as enMessages } from '../../../locales/generated/en';
+import { messages as enMessages } from '../../../locales/en/messages';
 import { messages as frMessages } from '../../../locales/fr/messages';
 import StripeProvider from '~/pages/settings/integrations/stripe/context/StripeContext';
 
 i18n.load({
   en: enMessages,
+  fr: frMessages,
 });
-i18n.activate('en');
+i18n.activate('fr');
 
 export const App = () => {
   return (

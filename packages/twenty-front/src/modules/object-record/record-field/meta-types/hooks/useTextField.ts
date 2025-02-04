@@ -15,7 +15,7 @@ export const useTextField = () => {
   const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

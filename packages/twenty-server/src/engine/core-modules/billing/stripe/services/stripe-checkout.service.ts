@@ -27,28 +27,33 @@ export class StripeCheckoutService {
   async createCheckoutSession({
     user,
     workspaceId,
-    stripeSubscriptionLineItems,
+    priceId,
+    quantity,
     successUrl,
     cancelUrl,
     stripeCustomerId,
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = true,
     withTrialPeriod,
-    isBillingPlansEnabled = false,
   }: {
     user: User;
     workspaceId: string;
-    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    priceId: string;
+    quantity: number;
     successUrl?: string;
     cancelUrl?: string;
     stripeCustomerId?: string;
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
-    isBillingPlansEnabled: boolean;
   }): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
-      line_items: stripeSubscriptionLineItems,
+      line_items: [
+        {
+          price: priceId,
+          quantity,
+        },
+      ],
       mode: 'subscription',
       subscription_data: {
         metadata: {
@@ -63,11 +68,7 @@ export class StripeCheckoutService {
                   : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
               ),
               trial_settings: {
-                end_behavior: {
-                  missing_payment_method: isBillingPlansEnabled
-                    ? 'create_invoice'
-                    : 'pause',
-                },
+                end_behavior: { missing_payment_method: 'pause' },
               },
             }
           : {}),

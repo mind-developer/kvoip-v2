@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class LoginPage {
   private readonly loginWithGoogleButton: Locator;
@@ -98,8 +98,6 @@ export class LoginPage {
   }
 
   async typeEmail(email: string) {
-    await expect(this.emailField).toBeVisible();
-
     await this.emailField.fill(email);
   }
 

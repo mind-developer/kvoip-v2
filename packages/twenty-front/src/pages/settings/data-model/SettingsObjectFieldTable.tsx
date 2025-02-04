@@ -12,7 +12,6 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -20,65 +19,63 @@ import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
-const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD = (
-  t: (literals: TemplateStringsArray) => string,
-): TableMetadata<SettingsObjectDetailTableItem> => ({
-  tableId: 'settingsObjectDetail',
-  fields: [
-    {
-      fieldLabel: t`Name`,
+const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectDetailTableItem> =
+  {
+    tableId: 'settingsObjectDetail',
+    fields: [
+      {
+        fieldLabel: 'Name',
+        fieldName: 'label',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: 'Field type',
+        fieldName: 'fieldType',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: 'Data type',
+        fieldName: 'dataType',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
       fieldName: 'label',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: t`Field type`,
-      fieldName: 'fieldType',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: t`Data type`,
-      fieldName: 'dataType',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'label',
-    orderBy: 'AscNullsLast',
-  },
-});
+  };
 
-const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM = (
-  t: (literals: TemplateStringsArray) => string,
-): TableMetadata<SettingsObjectDetailTableItem> => ({
-  tableId: 'settingsObjectDetail',
-  fields: [
-    {
-      fieldLabel: t`Name`,
+const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObjectDetailTableItem> =
+  {
+    tableId: 'settingsObjectDetail',
+    fields: [
+      {
+        fieldLabel: 'Name',
+        fieldName: 'label',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: 'Identifier',
+        fieldName: 'identifierType',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: 'Data type',
+        fieldName: 'dataType',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
       fieldName: 'label',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: t`Identifier`,
-      fieldName: 'identifierType',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: t`Data type`,
-      fieldName: 'dataType',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'label',
-    orderBy: 'AscNullsLast',
-  },
-});
+  };
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -94,12 +91,11 @@ export const SettingsObjectFieldTable = ({
   objectMetadataItem,
   mode,
 }: SettingsObjectFieldTableProps) => {
-  const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
 
   const tableMetadata = objectMetadataItem.isCustom
-    ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM(t)
-    : GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD(t);
+    ? SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM
+    : SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD;
 
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
@@ -180,7 +176,7 @@ export const SettingsObjectFieldTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder={t`Search a field...`}
+        placeholder="Search a field..."
         value={searchTerm}
         onChange={setSearchTerm}
       />
@@ -198,7 +194,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title={t`Active`}>
+          <TableSection title="Active">
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -212,7 +208,7 @@ export const SettingsObjectFieldTable = ({
         {isNonEmptyArray(filteredDisabledItems) && (
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title={t`Inactive`}
+            title="Inactive"
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

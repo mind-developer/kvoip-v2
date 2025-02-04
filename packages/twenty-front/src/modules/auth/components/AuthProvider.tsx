@@ -8,7 +8,11 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
 
   return (
-    <AuthContext.Provider value={{ currentWorkspaceMembers }}>
+    <AuthContext.Provider
+      value={{
+        currentWorkspaceMembers,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

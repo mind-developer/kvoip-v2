@@ -9,7 +9,7 @@ import {
 
 @Injectable()
 export class MicrosoftHandleErrorService {
-  public handleMicrosoftMessageFetchError(error: GraphError): void {
+  public handleMicrosoftMessageListFetchError(error: GraphError): void {
     if (error.statusCode === 401) {
       throw new MessageImportDriverException(
         'Unauthorized access to Microsoft Graph API',

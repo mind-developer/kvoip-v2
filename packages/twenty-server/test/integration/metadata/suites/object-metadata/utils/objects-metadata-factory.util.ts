@@ -13,7 +13,7 @@ export const objectsMetadataFactory = ({
   input,
 }: ObjectsFactoryParams) => ({
   query: gql`
-      query ObjectsMetadata($filter: ObjectFilter!, $paging: CursorPaging!) {
+      query ObjectsMetadata($filter: objectFilter!, $paging: CursorPaging!) {
         objects(filter: $filter, paging: $paging) {
           edges {
             node {

@@ -1,23 +1,11 @@
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 
 describe('isLabelIdentifierField', () => {
-  it('should not find unknown labelIdentifier', () => {
+  it('should work as expected', () => {
     const res = isLabelIdentifierField({
       fieldMetadataItem: { id: 'fieldId', name: 'fieldName' },
-      objectMetadataItem: {
-        labelIdentifierFieldMetadataId: 'unknown',
-      },
+      objectMetadataItem: {},
     });
     expect(res).toBe(false);
-  });
-
-  it('should find known labelIdentifier', () => {
-    const res = isLabelIdentifierField({
-      fieldMetadataItem: { id: 'fieldId', name: 'fieldName' },
-      objectMetadataItem: {
-        labelIdentifierFieldMetadataId: 'fieldId',
-      },
-    });
-    expect(res).toBe(true);
   });
 });

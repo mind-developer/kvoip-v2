@@ -5,14 +5,9 @@ import { FieldMetadataItem } from './FieldMetadataItem';
 
 export type ObjectMetadataItem = Omit<
   GeneratedObject,
-  | '__typename'
-  | 'fields'
-  | 'dataSourceId'
-  | 'indexMetadatas'
-  | 'labelIdentifierFieldMetadataId'
+  '__typename' | 'fields' | 'dataSourceId' | 'indexMetadatas'
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];
-  labelIdentifierFieldMetadataId: string;
   indexMetadatas: IndexMetadataItem[];
 };

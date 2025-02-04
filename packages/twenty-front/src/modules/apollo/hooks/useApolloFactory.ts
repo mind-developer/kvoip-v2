@@ -1,7 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -29,7 +29,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -62,7 +61,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       connectToDevTools: isDebugMode,
       // We don't want to re-create the client on token change or it will cause infinite loop
       initialTokenPair: tokenPair,
-      currentWorkspaceMember: currentWorkspaceMember,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -71,7 +69,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
-        setWorkspaces([]);
+        setWorkspaces(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignInUp) &&
@@ -106,12 +104,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       apolloRef.current.updateTokenPair(tokenPair);
     }
   }, [tokenPair]);
-
-  useUpdateEffect(() => {
-    if (isDefined(apolloRef.current)) {
-      apolloRef.current.updateWorkspaceMember(currentWorkspaceMember);
-    }
-  }, [currentWorkspaceMember]);
 
   return apolloClient;
 };

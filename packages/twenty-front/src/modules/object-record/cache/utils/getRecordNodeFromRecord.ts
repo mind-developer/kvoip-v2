@@ -60,9 +60,9 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         }
 
         if (
-          field.type === FieldMetadataType.RELATION &&
+          field.type === FieldMetadataType.Relation &&
           field.relationDefinition?.direction ===
-            RelationDefinitionType.ONE_TO_MANY
+            RelationDefinitionType.OneToMany
         ) {
           const oneToManyObjectMetadataItem = objectMetadataItems.find(
             (item) =>
@@ -93,7 +93,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         }
 
         switch (field.type) {
-          case FieldMetadataType.RELATION: {
+          case FieldMetadataType.Relation: {
             if (
               isUndefined(
                 field.relationDefinition?.targetObjectMetadata.nameSingular,
@@ -131,10 +131,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               },
             ];
           }
-          case FieldMetadataType.LINKS:
-          case FieldMetadataType.ADDRESS:
-          case FieldMetadataType.FULL_NAME:
-          case FieldMetadataType.CURRENCY: {
+          case FieldMetadataType.Links:
+          case FieldMetadataType.Address:
+          case FieldMetadataType.FullName:
+          case FieldMetadataType.Currency: {
             return [
               fieldName,
               {

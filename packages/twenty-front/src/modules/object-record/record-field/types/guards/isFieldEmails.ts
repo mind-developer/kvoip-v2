@@ -6,4 +6,4 @@ import { FieldEmailsMetadata, FieldMetadata } from '../FieldMetadata';
 export const isFieldEmails = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldEmailsMetadata> =>
-  field.type === FieldMetadataType.EMAILS;
+  field.type === FieldMetadataType.Emails;

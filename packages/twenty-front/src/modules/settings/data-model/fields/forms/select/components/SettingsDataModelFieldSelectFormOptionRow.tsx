@@ -117,7 +117,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       <Dropdown
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
-        dropdownHotkeyScope={{ scope: SELECT_COLOR_DROPDOWN_ID }}
+        dropdownHotkeyScope={{
+          scope: SELECT_COLOR_DROPDOWN_ID,
+        }}
         clickableComponent={<StyledColorSample colorName={option.color} />}
         dropdownComponents={
           <DropdownMenuItemsContainer>
@@ -158,7 +160,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       <Dropdown
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
-        dropdownHotkeyScope={{ scope: SELECT_ACTIONS_DROPDOWN_ID }}
+        dropdownHotkeyScope={{
+          scope: SELECT_ACTIONS_DROPDOWN_ID,
+        }}
         clickableComponent={
           <StyledLightIconButton accent="tertiary" Icon={IconDotsVertical} />
         }

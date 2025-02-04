@@ -42,7 +42,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
+    onboardingStatus === OnboardingStatus.PlanRequired &&
     !isMatchingLocation(AppPath.PlanRequired) &&
     !isMatchingLocation(AppPath.PlanRequiredSuccess)
   ) {
@@ -56,7 +56,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
+    onboardingStatus === OnboardingStatus.WorkspaceActivation &&
     !isMatchingLocation(AppPath.CreateWorkspace) &&
     !isMatchingLocation(AppPath.PlanRequiredSuccess)
   ) {
@@ -64,28 +64,28 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
+    onboardingStatus === OnboardingStatus.ProfileCreation &&
     !isMatchingLocation(AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
   }
 
   if (
-    onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
+    onboardingStatus === OnboardingStatus.SyncEmail &&
     !isMatchingLocation(AppPath.SyncEmails)
   ) {
     return AppPath.SyncEmails;
   }
 
   if (
-    onboardingStatus === OnboardingStatus.INVITE_TEAM &&
+    onboardingStatus === OnboardingStatus.InviteTeam &&
     !isMatchingLocation(AppPath.InviteTeam)
   ) {
     return AppPath.InviteTeam;
   }
 
   if (
-    onboardingStatus === OnboardingStatus.COMPLETED &&
+    onboardingStatus === OnboardingStatus.Completed &&
     isMatchingOnboardingRoute &&
     isLoggedIn
   ) {

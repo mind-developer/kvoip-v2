@@ -9,7 +9,6 @@ import { emailsCompositeType } from 'src/engine/metadata-modules/field-metadata/
 import { fullNameCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { phonesCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
-import { richTextV2CompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 
 export const compositeTypeDefinitions = new Map<
   FieldMetadataType,
@@ -22,5 +21,4 @@ export const compositeTypeDefinitions = new Map<
   [FieldMetadataType.ACTOR, actorCompositeType],
   [FieldMetadataType.EMAILS, emailsCompositeType],
   [FieldMetadataType.PHONES, phonesCompositeType],
-  [FieldMetadataType.RICH_TEXT_V2, richTextV2CompositeType],
 ]);

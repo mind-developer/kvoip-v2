@@ -14,7 +14,7 @@ export const getOrderByForFieldMetadataType = (
   direction: OrderBy | null | undefined,
 ): RecordGqlOperationOrderBy => {
   switch (field.type) {
-    case FieldMetadataType.FULL_NAME:
+    case FieldMetadataType.FullName:
       return [
         {
           [field.name]: {
@@ -23,7 +23,7 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
-    case FieldMetadataType.CURRENCY:
+    case FieldMetadataType.Currency:
       return [
         {
           [field.name]: {
@@ -31,7 +31,7 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
-    case FieldMetadataType.ACTOR:
+    case FieldMetadataType.Actor:
       return [
         {
           [field.name]: {
@@ -39,7 +39,7 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
-    case FieldMetadataType.LINKS:
+    case FieldMetadataType.Links:
       return [
         {
           [field.name]: {
@@ -47,7 +47,7 @@ export const getOrderByForFieldMetadataType = (
           } satisfies { [key in keyof FieldLinksValue]?: OrderBy },
         },
       ];
-    case FieldMetadataType.EMAILS:
+    case FieldMetadataType.Emails:
       return [
         {
           [field.name]: {
@@ -55,7 +55,7 @@ export const getOrderByForFieldMetadataType = (
           } satisfies { [key in keyof FieldEmailsValue]?: OrderBy },
         },
       ];
-    case FieldMetadataType.PHONES:
+    case FieldMetadataType.Phones:
       return [
         {
           [field.name]: {

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -12,11 +13,9 @@ import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -27,7 +26,7 @@ export const SettingsAccountsRowDropdownMenu = ({
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
 
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { destroyOneRecord } = useDestroyOneRecord({
@@ -50,7 +49,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             LeftIcon={IconMail}
             text="Emails settings"
             onClick={() => {
-              navigate(SettingsPath.AccountsEmails);
+              navigate(`/settings/accounts/emails`);
               closeDropdown();
             }}
           />
@@ -58,7 +57,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             LeftIcon={IconCalendarEvent}
             text="Calendar settings"
             onClick={() => {
-              navigate(SettingsPath.AccountsCalendars);
+              navigate(`/settings/accounts/calendars`);
               closeDropdown();
             }}
           />

@@ -27,7 +27,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
-import { I18nModule } from './engine/core-modules/i18n/i18n.module';
 
 @Module({
   imports: [
@@ -52,8 +51,6 @@ import { I18nModule } from './engine/core-modules/i18n/i18n.module';
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     RestApiModule,
-    // I18n module for translations
-    I18nModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],

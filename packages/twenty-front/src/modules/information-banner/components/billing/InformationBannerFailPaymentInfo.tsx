@@ -1,22 +1,19 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { isDefined } from 'twenty-ui';
 import { useBillingPortalSessionQuery } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const InformationBannerFailPaymentInfo = () => {
-  const { redirect } = useRedirect();
-
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: getSettingsPath(SettingsPath.Billing),
+      returnUrlPath: `${AppPath.Settings}/${SettingsPath.Billing}`,
     },
   });
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
-      redirect(data.billingPortalSession.url);
+      window.location.replace(data.billingPortalSession.url);
     }
   };
 

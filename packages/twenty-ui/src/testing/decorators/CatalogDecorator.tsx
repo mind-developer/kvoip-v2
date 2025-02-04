@@ -1,7 +1,7 @@
+import { ComponentProps, JSX } from 'react';
 import styled from '@emotion/styled';
 import { isNumber, isString } from '@sniptt/guards';
 import { Decorator } from '@storybook/react';
-import { ComponentProps, JSX } from 'react';
 
 const StyledColumnTitle = styled.h1`
   font-size: ${({ theme }) => theme.font.size.lg};
@@ -91,8 +91,6 @@ export type CatalogDimension<
 export type CatalogOptions = {
   elementContainer?: {
     width?: number;
-    style?: React.CSSProperties;
-    className?: string;
   };
 };
 
@@ -137,8 +135,6 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                         </StyledElementTitle>
                         <StyledElementContainer
                           width={options?.elementContainer?.width}
-                          style={options?.elementContainer?.style}
-                          className={options?.elementContainer?.className}
                         >
                           <Story
                             args={{

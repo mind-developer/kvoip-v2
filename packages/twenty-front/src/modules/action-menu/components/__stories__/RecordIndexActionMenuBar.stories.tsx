@@ -10,7 +10,6 @@ import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBar
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
@@ -26,63 +25,58 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
   decorators: [
     RouterDecorator,
     (Story) => (
-      <RecordFiltersComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: 'story-action-menu' }}
       >
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: 'story-action-menu' }}
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(
+              contextStoreTargetedRecordsRuleComponentState.atomFamily({
+                instanceId: 'story-action-menu',
+              }),
+              {
+                mode: 'selection',
+                selectedRecordIds: ['1', '2', '3'],
+              },
+            );
+            set(
+              contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+                instanceId: 'story-action-menu',
+              }),
+              3,
+            );
+            const map = new Map<string, ActionMenuEntry>();
+            map.set('delete', {
+              isPinned: true,
+              scope: ActionMenuEntryScope.RecordSelection,
+              type: ActionMenuEntryType.Standard,
+              key: 'delete',
+              label: 'Delete',
+              position: 0,
+              Icon: IconTrash,
+              onClick: deleteMock,
+            });
+            set(
+              actionMenuEntriesComponentState.atomFamily({
+                instanceId: 'story-action-menu',
+              }),
+              map,
+            );
+            set(
+              isBottomBarOpenedComponentState.atomFamily({
+                instanceId: getActionBarIdFromActionMenuId('story-action-menu'),
+              }),
+              true,
+            );
+          }}
         >
-          <RecoilRoot
-            initializeState={({ set }) => {
-              set(
-                contextStoreTargetedRecordsRuleComponentState.atomFamily({
-                  instanceId: 'story-action-menu',
-                }),
-                {
-                  mode: 'selection',
-                  selectedRecordIds: ['1', '2', '3'],
-                },
-              );
-              set(
-                contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-                  instanceId: 'story-action-menu',
-                }),
-                3,
-              );
-              const map = new Map<string, ActionMenuEntry>();
-              map.set('delete', {
-                isPinned: true,
-                scope: ActionMenuEntryScope.RecordSelection,
-                type: ActionMenuEntryType.Standard,
-                key: 'delete',
-                label: 'Delete',
-                position: 0,
-                Icon: IconTrash,
-                onClick: deleteMock,
-              });
-              set(
-                actionMenuEntriesComponentState.atomFamily({
-                  instanceId: 'story-action-menu',
-                }),
-                map,
-              );
-              set(
-                isBottomBarOpenedComponentState.atomFamily({
-                  instanceId:
-                    getActionBarIdFromActionMenuId('story-action-menu'),
-                }),
-                true,
-              );
-            }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'story-action-menu' }}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'story-action-menu' }}
-            >
-              <Story />
-            </ActionMenuComponentInstanceContext.Provider>
-          </RecoilRoot>
-        </ContextStoreComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
+            <Story />
+          </ActionMenuComponentInstanceContext.Provider>
+        </RecoilRoot>
+      </ContextStoreComponentInstanceContext.Provider>
     ),
   ],
   args: {

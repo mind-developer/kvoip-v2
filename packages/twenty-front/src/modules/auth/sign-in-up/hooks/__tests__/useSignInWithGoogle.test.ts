@@ -8,7 +8,6 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
   useSearchParams: jest.fn(),
-  Link: jest.fn(),
 }));
 
 jest.mock('@/auth/hooks/useAuth', () => ({
@@ -17,7 +16,7 @@ jest.mock('@/auth/hooks/useAuth', () => ({
 
 describe('useSignInWithGoogle', () => {
   const mockBillingCheckoutSession = {
-    plan: BillingPlanKey.PRO,
+    plan: BillingPlanKey.Pro,
     interval: SubscriptionInterval.Month,
     requirePaymentMethod: true,
   };

@@ -1,3 +1,4 @@
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -7,8 +8,6 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 import { useCheckoutSessionMutation } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
@@ -19,8 +18,6 @@ export const useHandleCheckoutSession = ({
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
 }) => {
-  const { redirect } = useRedirect();
-
   const { enqueueSnackBar } = useSnackBar();
 
   const [checkoutSession] = useCheckoutSessionMutation();
@@ -32,7 +29,7 @@ export const useHandleCheckoutSession = ({
     const { data } = await checkoutSession({
       variables: {
         recurringInterval,
-        successUrlPath: getSettingsPath(SettingsPath.Billing),
+        successUrlPath: `${AppPath.Settings}/${SettingsPath.Billing}`,
         plan,
         requirePaymentMethod,
       },
@@ -47,7 +44,7 @@ export const useHandleCheckoutSession = ({
       );
       return;
     }
-    redirect(data.checkoutSession.url);
+    window.location.replace(data.checkoutSession.url);
   };
   return { isSubmitting, handleCheckoutSession };
 };

@@ -7,7 +7,7 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
-import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal/useUpsertRecordsInCacheForPrefetchKey';
+import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
@@ -19,16 +19,16 @@ export const PrefetchRunQueriesEffect = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
   const { upsertRecordsInCache: upsertViewsInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<View>({
+    usePrefetchRunQuery<View>({
       prefetchKey: PrefetchKey.AllViews,
     });
 
   const { upsertRecordsInCache: upsertFavoritesInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<Favorite>({
+    usePrefetchRunQuery<Favorite>({
       prefetchKey: PrefetchKey.AllFavorites,
     });
   const { upsertRecordsInCache: upsertFavoritesFoldersInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<FavoriteFolder>({
+    usePrefetchRunQuery<FavoriteFolder>({
       prefetchKey: PrefetchKey.AllFavoritesFolders,
     });
   const { objectMetadataItems } = useObjectMetadataItems();

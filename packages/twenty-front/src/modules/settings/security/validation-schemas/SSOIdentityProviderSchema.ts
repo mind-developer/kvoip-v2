@@ -5,17 +5,17 @@ import { z } from 'zod';
 export const SSOIdentitiesProvidersOIDCParamsSchema = z
   .object({
     type: z.literal('OIDC'),
-    clientID: z.string().nonempty(),
-    clientSecret: z.string().nonempty(),
+    clientID: z.string().optional(),
+    clientSecret: z.string().optional(),
   })
   .required();
 
 export const SSOIdentitiesProvidersSAMLParamsSchema = z
   .object({
     type: z.literal('SAML'),
-    id: z.string().nonempty(),
-    ssoURL: z.string().url().nonempty(),
-    certificate: z.string().nonempty(),
+    id: z.string().optional(),
+    ssoURL: z.string().url().optional(),
+    certificate: z.string().optional(),
   })
   .required();
 
@@ -27,8 +27,8 @@ export const SSOIdentitiesProvidersParamsSchema = z
   .and(
     z
       .object({
-        name: z.string().nonempty(),
-        issuer: z.string().url().nonempty(),
+        name: z.string().min(1),
+        issuer: z.string().url().optional(),
       })
       .required(),
   );

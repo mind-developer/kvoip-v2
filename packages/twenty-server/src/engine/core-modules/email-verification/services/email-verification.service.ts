@@ -12,7 +12,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -37,7 +37,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    subdomain: string,
+    workspaceSubdomain?: string,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -50,7 +50,7 @@ export class EmailVerificationService {
       this.domainManagerService.buildEmailVerificationURL({
         emailVerificationToken,
         email,
-        subdomain,
+        workspaceSubdomain,
       });
 
     const emailData = {
@@ -80,7 +80,10 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async resendEmailVerificationToken(email: string, subdomain: string) {
+  async resendEmailVerificationToken(
+    email: string,
+    workspaceSubdomain?: string,
+  ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
         'Email verification token cannot be sent because email verification is not required',
@@ -121,7 +124,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, subdomain);
+    await this.sendVerificationEmail(user.id, email, workspaceSubdomain);
 
     return { success: true };
   }

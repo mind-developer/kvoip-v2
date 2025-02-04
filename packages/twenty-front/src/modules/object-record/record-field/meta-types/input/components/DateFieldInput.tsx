@@ -32,13 +32,9 @@ export const DateFieldInput = ({
     if (!isDefined(newDate)) {
       persistField(null);
     } else {
-      const newDateWithoutTime = `${newDate?.getFullYear()}-${(
-        newDate?.getMonth() + 1
-      )
-        .toString()
-        .padStart(2, '0')}-${newDate?.getDate().toString().padStart(2, '0')}`;
+      const newDateISO = newDate?.toISOString();
 
-      persistField(newDateWithoutTime);
+      persistField(newDateISO);
     }
   };
 

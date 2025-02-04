@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { Card, FloatingButton, IconEye } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { useLingui } from '@lingui/react/macro';
 import DarkCoverImage from '../../assets/cover-dark.png';
 import LightCoverImage from '../../assets/cover-light.png';
 
@@ -26,13 +25,12 @@ const StyledButtonContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 export const SettingsObjectCoverImage = () => {
-  const { t } = useLingui();
   return (
     <StyledCoverImageContainer>
       <StyledButtonContainer>
         <FloatingButton
           Icon={IconEye}
-          title={t`Visualize`}
+          title="Visualize"
           size="small"
           to={'/settings/' + SettingsPath.ObjectOverview}
         />

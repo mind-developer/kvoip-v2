@@ -11,7 +11,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import {
   Controller,
@@ -23,6 +22,7 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
   ActionLink,
+  AnimatedTranslation,
   IconCopy,
   LightButton,
   MainButton,
@@ -68,7 +68,6 @@ const validationSchema = z.object({
 type FormInput = z.infer<typeof validationSchema>;
 
 export const InviteTeam = () => {
-  const { t } = useLingui();
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
@@ -124,7 +123,7 @@ export const InviteTeam = () => {
     if (isDefined(currentWorkspace?.inviteHash)) {
       const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
       navigator.clipboard.writeText(inviteLink);
-      enqueueSnackBar(t`Link copied to clipboard`, {
+      enqueueSnackBar('Link copied to clipboard', {
         variant: SnackBarVariant.Success,
         icon: <IconCopy size={theme.icon.size.md} />,
         duration: 2000,
@@ -149,13 +148,13 @@ export const InviteTeam = () => {
         throw result.errors;
       }
       if (emails.length > 0) {
-        enqueueSnackBar(t`Invite link sent to email addresses`, {
+        enqueueSnackBar('Invite link sent to email addresses', {
           variant: SnackBarVariant.Success,
           duration: 2000,
         });
       }
     },
-    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus, t],
+    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
 
   const handleSkip = async () => {
@@ -171,20 +170,18 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam) {
     return <></>;
   }
 
   return (
     <>
-      <Title>
-        <Trans>Invite your team</Trans>
-      </Title>
+      <Title noMarginTop>Invite your team</Title>
       <SubTitle>
-        <Trans>Get the most out of your workspace by inviting your team.</Trans>
+        Get the most out of your workspace by inviting your team.
       </SubTitle>
       <StyledAnimatedContainer>
-        {fields.map((field, index) => (
+        {fields.map((_field, index) => (
           <Controller
             key={index}
             name={`emails.${index}.email`}
@@ -193,28 +190,28 @@ export const InviteTeam = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInputV2
-                autoFocus={index === 0}
-                type="email"
-                value={value}
-                placeholder={getPlaceholder(index)}
-                onBlur={onBlur}
-                error={error?.message}
-                onChange={onChange}
-                noErrorHelper
-                fullWidth
-              />
+              <AnimatedTranslation>
+                <TextInputV2
+                  autoFocus={index === 0}
+                  type="email"
+                  value={value}
+                  placeholder={getPlaceholder(index)}
+                  onBlur={onBlur}
+                  error={error?.message}
+                  onChange={onChange}
+                  noErrorHelper
+                  fullWidth
+                />
+              </AnimatedTranslation>
             )}
           />
         ))}
         {isDefined(currentWorkspace?.inviteHash) && (
           <>
-            <SeparatorLineText>
-              <Trans>or</Trans>
-            </SeparatorLineText>
+            <SeparatorLineText>Or</SeparatorLineText>
             <StyledActionLinkContainer>
               <LightButton
-                title={t`Copy invitation link`}
+                title="Copy invitation link"
                 accent="tertiary"
                 onClick={copyInviteLink}
                 Icon={IconCopy}
@@ -225,16 +222,14 @@ export const InviteTeam = () => {
       </StyledAnimatedContainer>
       <StyledButtonContainer>
         <MainButton
-          title={t`Continue`}
+          title="Finish"
           disabled={!isValid || isSubmitting}
           onClick={handleSubmit(onSubmit)}
           fullWidth
         />
       </StyledButtonContainer>
       <StyledActionSkipLinkContainer>
-        <ActionLink onClick={handleSkip}>
-          <Trans>Skip</Trans>
-        </ActionLink>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
       </StyledActionSkipLinkContainer>
     </>
   );

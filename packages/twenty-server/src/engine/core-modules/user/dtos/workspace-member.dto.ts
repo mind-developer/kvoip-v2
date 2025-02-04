@@ -8,7 +8,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-@ObjectType()
+@ObjectType('FullName')
 export class FullName {
   @Field({ nullable: false })
   firstName: string;
@@ -17,7 +17,7 @@ export class FullName {
   lastName: string;
 }
 
-@ObjectType()
+@ObjectType('WorkspaceMember')
 export class WorkspaceMember {
   @IDField(() => UUIDScalarType)
   id: string;

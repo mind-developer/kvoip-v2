@@ -1,15 +1,16 @@
+import { useNavigate } from 'react-router-dom';
 import { IconComponent, IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
-import { useRecoilValue } from 'recoil';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isDefined } from '~/utils/isDefined';
 import { SettingsListCard } from '../../components/SettingsListCard';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 const ProviderIcons: { [k: string]: IconComponent } = {
   google: IconGoogle,
@@ -23,7 +24,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
   accounts: ConnectedAccount[];
   loading?: boolean;
 }) => {
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   if (!accounts.length) {
@@ -46,7 +47,9 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       )}
       hasFooter={atLeastOneProviderAvailable}
       footerButtonLabel="Add account"
-      onFooterButtonClick={() => navigate(SettingsPath.NewAccount)}
+      onFooterButtonClick={() =>
+        navigate(getSettingsPagePath(SettingsPath.NewAccount))
+      }
     />
   );
 };

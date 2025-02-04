@@ -2,7 +2,6 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -11,7 +10,6 @@ import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
 import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -37,23 +35,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
-  const navigationPath = getAppPath(
-    AppPath.RecordIndexPage,
-    { objectNamePlural: objectMetadataItem.namePlural },
-    viewId ? { viewId } : undefined,
-  );
+  const navigationPath = `/objects/${objectMetadataItem.namePlural}${
+    viewId ? `?view=${viewId}` : ''
+  }`;
 
   const isActive =
-    currentPath ===
-      getAppPath(AppPath.RecordIndexPage, {
-        objectNamePlural: objectMetadataItem.namePlural,
-      }) ||
-    currentPath.includes(
-      getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: objectMetadataItem.nameSingular,
-        objectRecordId: '',
-      }) + '/',
-    );
+    currentPath === `/objects/${objectMetadataItem.namePlural}` ||
+    currentPath.includes(`object/${objectMetadataItem.nameSingular}/`);
 
   const shouldSubItemsBeDisplayed = isActive && objectMetadataViews.length > 1;
 
@@ -88,11 +76,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         {sortedObjectMetadataViews.map((view, index) => (
           <NavigationDrawerSubItem
             label={view.name}
-            to={getAppPath(
-              AppPath.RecordIndexPage,
-              { objectNamePlural: objectMetadataItem.namePlural },
-              { viewId: view.id },
-            )}
+            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
             active={viewId === view.id}
             subItemState={getNavigationSubItemLeftAdornment({
               index,

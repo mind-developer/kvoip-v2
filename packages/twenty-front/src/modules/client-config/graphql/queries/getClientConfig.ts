@@ -48,14 +48,6 @@ export const GET_CLIENT_CONFIG = gql`
       }
       chromeExtensionId
       canManageFeatureFlags
-      publicFeatureFlags {
-        key
-        metadata {
-          label
-          description
-          imagePath
-        }
-      }
     }
   }
 `;

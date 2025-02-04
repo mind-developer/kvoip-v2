@@ -16,7 +16,6 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
@@ -29,7 +28,8 @@ import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
-  isFunctionSettingsEnabled?: boolean,
+  isCRMMigrationEnabled?: boolean,
+  isServerlessFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -63,12 +63,14 @@ export const useCreateAppRouter = (
             element={
               <SettingsRoutes
                 isBillingEnabled={isBillingEnabled}
-                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                isCRMMigrationEnabled={isCRMMigrationEnabled}
+                isServerlessFunctionSettingsEnabled={
+                  isServerlessFunctionSettingsEnabled
+                }
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }
           />
-          <Route path={AppPath.Chatbot} element={<Chatbot />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>

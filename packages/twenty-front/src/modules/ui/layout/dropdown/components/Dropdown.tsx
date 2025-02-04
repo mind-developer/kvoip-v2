@@ -26,7 +26,7 @@ import { useDropdown } from '../hooks/useDropdown';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
-  position: fixed;
+  position: absolute;
   top: 0;
 `;
 

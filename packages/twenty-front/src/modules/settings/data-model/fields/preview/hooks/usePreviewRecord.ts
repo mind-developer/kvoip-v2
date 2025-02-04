@@ -48,7 +48,7 @@ export const usePreviewRecord = ({
   }
 
   const fieldPreviewValue =
-    labelIdentifierFieldMetadataItem.type === FieldMetadataType.TEXT
+    labelIdentifierFieldMetadataItem.type === FieldMetadataType.Text
       ? objectMetadataItem.labelSingular
       : getFieldPreviewValue({
           fieldMetadataItem: labelIdentifierFieldMetadataItem,

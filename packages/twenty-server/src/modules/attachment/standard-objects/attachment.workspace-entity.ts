@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -29,9 +28,9 @@ import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
-  labelSingular: msg`Attachment`,
-  labelPlural: msg`Attachments`,
-  description: msg`An attachment`,
+  labelSingular: 'Attachment',
+  labelPlural: 'Attachments',
+  description: 'An attachment',
   icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })

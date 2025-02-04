@@ -21,6 +21,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
@@ -40,6 +41,8 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
+  const { cleanRecoilState } = useCleanRecoilState();
+
   const eventTracker = useEventTracker();
 
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
@@ -48,6 +51,10 @@ export const PageChangeEffect = () => {
     useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
 
   const resetTableSelections = useResetTableRowSelection(objectNamePlural);
+
+  useEffect(() => {
+    cleanRecoilState();
+  }, [cleanRecoilState]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {

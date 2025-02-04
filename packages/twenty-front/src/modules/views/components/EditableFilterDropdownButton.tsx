@@ -11,7 +11,6 @@ import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
@@ -74,17 +73,14 @@ export const EditableFilterDropdownButton = ({
     viewFilterDropdownId,
   ]);
 
-  const { removeRecordFilter } = useRemoveRecordFilter();
-
   const handleRemove = () => {
     closeDropdown();
 
     deleteCombinedViewFilter(viewFilter.id);
-    removeRecordFilter(viewFilter.fieldMetadataId);
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { id: fieldId, value, operand, fieldMetadataId } = viewFilter;
+    const { id: fieldId, value, operand } = viewFilter;
     if (
       !value &&
       ![
@@ -95,10 +91,9 @@ export const EditableFilterDropdownButton = ({
         RecordFilterOperand.IsToday,
       ].includes(operand)
     ) {
-      removeRecordFilter(fieldMetadataId);
       deleteCombinedViewFilter(fieldId);
     }
-  }, [viewFilter, deleteCombinedViewFilter, removeRecordFilter]);
+  }, [viewFilter, deleteCombinedViewFilter]);
 
   return (
     <Dropdown

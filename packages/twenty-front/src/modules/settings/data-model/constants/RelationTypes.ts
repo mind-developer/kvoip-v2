@@ -19,24 +19,24 @@ export const RELATION_TYPES: Record<
     isImageFlipped?: boolean;
   }
 > = {
-  [RelationDefinitionType.ONE_TO_MANY]: {
+  [RelationDefinitionType.OneToMany]: {
     label: 'Has many',
     Icon: IllustrationIconOneToMany,
     imageSrc: OneToManySvg,
   },
-  [RelationDefinitionType.ONE_TO_ONE]: {
+  [RelationDefinitionType.OneToOne]: {
     label: 'Has one',
     Icon: IllustrationIconOneToOne,
     imageSrc: OneToOneSvg,
   },
-  [RelationDefinitionType.MANY_TO_ONE]: {
+  [RelationDefinitionType.ManyToOne]: {
     label: 'Belongs to one',
     Icon: IllustrationIconOneToMany,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },
   // Not supported yet
-  [RelationDefinitionType.MANY_TO_MANY]: {
+  [RelationDefinitionType.ManyToMany]: {
     label: 'Belongs to many',
     Icon: IllustrationIconManyToMany,
     imageSrc: OneToManySvg,

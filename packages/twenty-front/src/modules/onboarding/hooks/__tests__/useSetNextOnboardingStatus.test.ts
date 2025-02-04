@@ -51,37 +51,37 @@ const renderHooks = (
 describe('useSetNextOnboardingStatus', () => {
   it('should set next onboarding status for ProfileCreation', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.ProfileCreation,
       false,
       true,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.SyncEmail);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.SYNC_EMAIL,
+      OnboardingStatus.SyncEmail,
       false,
       true,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.InviteTeam);
   });
 
   it('should skip invite when more than 1 workspaceMember exist', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.SYNC_EMAIL,
+      OnboardingStatus.SyncEmail,
       true,
       false,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 
   it('should set next onboarding status for Completed', () => {
     const nextOnboardingStatus = renderHooks(
-      OnboardingStatus.INVITE_TEAM,
+      OnboardingStatus.InviteTeam,
       true,
       true,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 });

@@ -7,8 +7,8 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: jest.fn(() => ({
     objectMetadataItem: {
       fields: [
-        { type: FieldMetadataType.CURRENCY, name: 'price' },
-        { type: FieldMetadataType.TEXT, name: 'name' },
+        { type: FieldMetadataType.Currency, name: 'price' },
+        { type: FieldMetadataType.Text, name: 'name' },
       ],
     },
   })),

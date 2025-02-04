@@ -10,11 +10,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import {
-  FeatureFlagException,
-  FeatureFlagExceptionCode,
-} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -29,8 +25,8 @@ export class AdminPanelService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async impersonate(userId: string, workspaceId: string) {
@@ -115,7 +111,7 @@ export class AdminPanelService {
             userWorkspace.workspace.featureFlags?.find(
               (flag) => flag.key === key,
             )?.value ?? false,
-        })) as FeatureFlag[],
+        })) as FeatureFlagEntity[],
       })),
     };
   }
@@ -127,9 +123,9 @@ export class AdminPanelService {
   ) {
     featureFlagValidator.assertIsFeatureFlagKey(
       featureFlag,
-      new FeatureFlagException(
+      new AuthException(
         'Invalid feature flag key',
-        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+        AuthExceptionCode.INVALID_INPUT,
       ),
     );
 

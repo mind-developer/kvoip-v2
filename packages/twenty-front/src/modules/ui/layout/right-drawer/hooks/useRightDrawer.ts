@@ -5,11 +5,9 @@ import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/righ
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/utils/mapRightDrawerPageToCommandMenuPage';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { IconComponent } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -29,22 +27,12 @@ export const useRightDrawer = () => {
 
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
-      (
-        rightDrawerPage: RightDrawerPages,
-        commandMenuPageInfo?: {
-          title?: string;
-          Icon?: IconComponent;
-        },
-      ) => {
+      (rightDrawerPage: RightDrawerPages) => {
         if (isCommandMenuV2Enabled) {
           const commandMenuPage =
             mapRightDrawerPageToCommandMenuPage(rightDrawerPage);
 
           set(commandMenuPageState, commandMenuPage);
-          set(commandMenuPageInfoState, {
-            title: commandMenuPageInfo?.title,
-            Icon: commandMenuPageInfo?.Icon,
-          });
           openCommandMenu();
           return;
         }

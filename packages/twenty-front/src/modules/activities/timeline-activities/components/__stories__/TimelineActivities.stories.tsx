@@ -18,7 +18,9 @@ const meta: Meta<typeof TimelineActivities> = {
     (Story) => {
       return (
         <TimelineActivityContext.Provider
-          value={{ labelIdentifierValue: 'Mock' }}
+          value={{
+            labelIdentifierValue: 'Mock',
+          }}
         >
           <Story />
         </TimelineActivityContext.Provider>

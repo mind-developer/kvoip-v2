@@ -6,13 +6,13 @@ import { Repository } from 'typeorm';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class FeatureFlagService {
   constructor(
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async isFeatureEnabled(
@@ -30,7 +30,7 @@ export class FeatureFlagService {
 
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
-  ): Promise<FeatureFlag[]> {
+  ): Promise<FeatureFlagEntity[]> {
     return this.featureFlagRepository.find({ where: { workspaceId } });
   }
 

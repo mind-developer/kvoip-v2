@@ -12,7 +12,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const useArrayField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.ARRAY, isFieldArray, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Array, isFieldArray, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

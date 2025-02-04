@@ -9,7 +9,6 @@ import { View } from '@/views/types/View';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
@@ -80,13 +79,11 @@ export const useDefaultHomePagePath = () => {
     }
 
     const namePlural = defaultObjectPathInfo.objectMetadataItem?.namePlural;
-    const viewId = defaultObjectPathInfo.view?.id;
+    const viewParam = defaultObjectPathInfo.view
+      ? `?view=${defaultObjectPathInfo.view.id}`
+      : '';
 
-    return getAppPath(
-      AppPath.RecordIndexPage,
-      { objectNamePlural: namePlural },
-      viewId ? { viewId } : undefined,
-    );
+    return `/objects/${namePlural}${viewParam}`;
   }, [currentUser, defaultObjectPathInfo]);
 
   return { defaultHomePagePath };

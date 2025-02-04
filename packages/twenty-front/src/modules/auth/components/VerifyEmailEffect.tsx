@@ -5,8 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
@@ -19,7 +18,7 @@ export const VerifyEmailEffect = () => {
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const { readCaptchaToken } = useReadCaptchaToken();
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export const VerifyEmailEffect = () => {
           variant: SnackBarVariant.Success,
         });
 
-        navigate(AppPath.Verify, undefined, { loginToken: loginToken.token });
+        navigate(`${AppPath.Verify}?loginToken=${loginToken.token}`);
       } catch (error) {
         enqueueSnackBar('Email verification failed.', {
           dedupeKey: 'email-verification-dedupe-key',

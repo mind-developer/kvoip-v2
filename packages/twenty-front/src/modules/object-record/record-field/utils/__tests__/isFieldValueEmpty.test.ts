@@ -76,7 +76,7 @@ describe('isFieldValueEmpty', () => {
       fieldMetadataId,
       label: 'Annual Income',
       iconName: 'cashCow',
-      type: FieldMetadataType.CURRENCY,
+      type: FieldMetadataType.Currency,
       metadata: {
         fieldName: 'annualIncome',
         placeHolder: '100000',

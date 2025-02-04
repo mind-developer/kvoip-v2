@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
 
     const outputSchema = (
       await computeStepOutputSchema({
@@ -42,7 +42,7 @@ export const useUpdateWorkflowVersionTrigger = ({
     };
 
     await updateOneWorkflowVersion({
-      idToUpdate: workflowVersionId,
+      idToUpdate: workflowVersion.id,
       updateOneRecordInput: {
         trigger: updatedTrigger,
       },

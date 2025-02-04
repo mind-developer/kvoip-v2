@@ -33,64 +33,64 @@ import {
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const booleanFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.BOOLEAN) })
+  .object({ type: z.literal(FieldMetadataType.Boolean) })
   .merge(settingsDataModelFieldBooleanFormSchema);
 
 const currencyFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.CURRENCY) })
+  .object({ type: z.literal(FieldMetadataType.Currency) })
   .merge(settingsDataModelFieldCurrencyFormSchema);
 
 const dateFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.DATE) })
+  .object({ type: z.literal(FieldMetadataType.Date) })
   .merge(settingsDataModelFieldDateFormSchema);
 
 const dateTimeFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
+  .object({ type: z.literal(FieldMetadataType.DateTime) })
   .merge(settingsDataModelFieldDateFormSchema);
 
 const relationFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.RELATION) })
+  .object({ type: z.literal(FieldMetadataType.Relation) })
   .merge(settingsDataModelFieldRelationFormSchema);
 
 const selectFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.SELECT) })
+  .object({ type: z.literal(FieldMetadataType.Select) })
   .merge(settingsDataModelFieldSelectFormSchema);
 
 const multiSelectFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.MULTI_SELECT) })
+  .object({ type: z.literal(FieldMetadataType.MultiSelect) })
   .merge(settingsDataModelFieldMultiSelectFormSchema);
 
 const numberFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.NUMBER) })
+  .object({ type: z.literal(FieldMetadataType.Number) })
   .merge(settingsDataModelFieldNumberFormSchema);
 
 const textFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.TEXT) })
+  .object({ type: z.literal(FieldMetadataType.Text) })
   .merge(settingsDataModelFieldtextFormSchema);
 
 const addressFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.ADDRESS) })
+  .object({ type: z.literal(FieldMetadataType.Address) })
   .merge(settingsDataModelFieldAddressFormSchema);
 
 const phonesFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.PHONES) })
+  .object({ type: z.literal(FieldMetadataType.Phones) })
   .merge(settingsDataModelFieldPhonesFormSchema);
 
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
       omit(SETTINGS_FIELD_TYPE_CONFIGS, [
-        FieldMetadataType.BOOLEAN,
-        FieldMetadataType.CURRENCY,
-        FieldMetadataType.RELATION,
-        FieldMetadataType.SELECT,
-        FieldMetadataType.MULTI_SELECT,
-        FieldMetadataType.DATE,
-        FieldMetadataType.DATE_TIME,
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.ADDRESS,
-        FieldMetadataType.PHONES,
-        FieldMetadataType.TEXT,
+        FieldMetadataType.Boolean,
+        FieldMetadataType.Currency,
+        FieldMetadataType.Relation,
+        FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
+        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
+        FieldMetadataType.Number,
+        FieldMetadataType.Address,
+        FieldMetadataType.Phones,
+        FieldMetadataType.Text,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
   ),
@@ -127,23 +127,23 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 `;
 
 const previewableTypes = [
-  FieldMetadataType.ARRAY,
-  FieldMetadataType.ADDRESS,
-  FieldMetadataType.BOOLEAN,
-  FieldMetadataType.CURRENCY,
-  FieldMetadataType.DATE,
-  FieldMetadataType.DATE_TIME,
-  FieldMetadataType.EMAILS,
-  FieldMetadataType.FULL_NAME,
-  FieldMetadataType.LINKS,
-  FieldMetadataType.MULTI_SELECT,
-  FieldMetadataType.NUMBER,
-  FieldMetadataType.PHONES,
-  FieldMetadataType.RATING,
-  FieldMetadataType.RAW_JSON,
-  FieldMetadataType.RELATION,
-  FieldMetadataType.SELECT,
-  FieldMetadataType.TEXT,
+  FieldMetadataType.Array,
+  FieldMetadataType.Address,
+  FieldMetadataType.Boolean,
+  FieldMetadataType.Currency,
+  FieldMetadataType.Date,
+  FieldMetadataType.DateTime,
+  FieldMetadataType.Emails,
+  FieldMetadataType.FullName,
+  FieldMetadataType.Links,
+  FieldMetadataType.MultiSelect,
+  FieldMetadataType.Number,
+  FieldMetadataType.Phones,
+  FieldMetadataType.Rating,
+  FieldMetadataType.RawJson,
+  FieldMetadataType.Relation,
+  FieldMetadataType.Select,
+  FieldMetadataType.Text,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
@@ -154,7 +154,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return null;
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.BOOLEAN) {
+  if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
     return (
       <SettingsDataModelFieldBooleanSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -163,7 +163,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.CURRENCY) {
+  if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -173,8 +173,8 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   if (
-    fieldMetadataItem.type === FieldMetadataType.DATE ||
-    fieldMetadataItem.type === FieldMetadataType.DATE_TIME
+    fieldMetadataItem.type === FieldMetadataType.Date ||
+    fieldMetadataItem.type === FieldMetadataType.DateTime
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
@@ -184,7 +184,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+  if (fieldMetadataItem.type === FieldMetadataType.Relation) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -193,7 +193,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.NUMBER) {
+  if (fieldMetadataItem.type === FieldMetadataType.Number) {
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -202,7 +202,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.TEXT) {
+  if (fieldMetadataItem.type === FieldMetadataType.Text) {
     return (
       <SettingsDataModelFieldTextSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -211,7 +211,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
+  if (fieldMetadataItem.type === FieldMetadataType.Address) {
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -220,7 +220,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.PHONES) {
+  if (fieldMetadataItem.type === FieldMetadataType.Phones) {
     return (
       <SettingsDataModelFieldPhonesSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
@@ -230,8 +230,8 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   if (
-    fieldMetadataItem.type === FieldMetadataType.SELECT ||
-    fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT
+    fieldMetadataItem.type === FieldMetadataType.Select ||
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect
   ) {
     return (
       <SettingsDataModelFieldSelectSettingsFormCard

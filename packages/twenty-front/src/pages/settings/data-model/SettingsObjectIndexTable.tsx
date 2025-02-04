@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+
 import { settingsObjectIndexesFamilyState } from '@/settings/data-model/object-details/states/settingsObjectIndexesFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -9,7 +10,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -20,26 +20,12 @@ export const StyledObjectIndexTableRow = styled(TableRow)`
   grid-template-columns: 350px 70px 80px;
 `;
 
-const StyledSearchInput = styled(TextInput)`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-export type SettingsObjectIndexTableProps = {
-  objectMetadataItem: ObjectMetadataItem;
-};
-
-export const SettingsObjectIndexTable = ({
-  objectMetadataItem,
-}: SettingsObjectIndexTableProps) => {
-  const { t } = useLingui();
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const tableMetadata: TableMetadata<SettingsObjectIndexesTableItem> = {
+const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectIndexesTableItem> =
+  {
     tableId: 'settingsObjectIndexs',
     fields: [
       {
-        fieldLabel: t`Fields`,
+        fieldLabel: 'Fields',
         fieldName: 'indexFields',
         fieldType: 'string',
         align: 'left',
@@ -52,7 +38,7 @@ export const SettingsObjectIndexTable = ({
         align: 'left',
       },
       {
-        fieldLabel: t`Type`,
+        fieldLabel: 'Type',
         fieldName: 'indexType',
         fieldType: 'string',
         align: 'right',
@@ -63,6 +49,19 @@ export const SettingsObjectIndexTable = ({
       orderBy: 'AscNullsLast',
     },
   };
+
+const StyledSearchInput = styled(TextInput)`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+export type SettingsObjectIndexTableProps = {
+  objectMetadataItem: ObjectMetadataItem;
+};
+
+export const SettingsObjectIndexTable = ({
+  objectMetadataItem,
+}: SettingsObjectIndexTableProps) => {
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [settingsObjectIndexes, setSettingsObjectIndexes] = useRecoilState(
     settingsObjectIndexesFamilyState({
@@ -96,7 +95,7 @@ export const SettingsObjectIndexTable = ({
 
   const sortedActiveObjectSettingsDetailItems = useSortedArray(
     objectSettingsDetailItems,
-    tableMetadata,
+    SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD,
   );
 
   const filteredActiveItems = useMemo(
@@ -113,20 +112,22 @@ export const SettingsObjectIndexTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder={t`Search an index...`}
+        placeholder="Search an index..."
         value={searchTerm}
         onChange={setSearchTerm}
       />
       <Table>
         <StyledObjectIndexTableRow>
-          {tableMetadata.fields.map((item) => (
+          {SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
               label={item.fieldLabel}
               Icon={item.FieldIcon}
-              tableId={tableMetadata.tableId}
-              initialSort={tableMetadata.initialSort}
+              tableId={SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.tableId}
+              initialSort={
+                SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.initialSort
+              }
             />
           ))}
           <TableHeader></TableHeader>

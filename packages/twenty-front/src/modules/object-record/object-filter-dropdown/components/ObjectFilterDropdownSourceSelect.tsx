@@ -9,7 +9,6 @@ import { selectedFilterComponentState } from '@/object-record/object-filter-drop
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -62,7 +61,6 @@ export const ObjectFilterDropdownSourceSelect = ({
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
-  // TODO: this should be removed as it is not consistent across re-renders
   const [fieldId] = useState(v4());
 
   const sourceTypes = getActorSourceMultiSelectOptions(
@@ -75,8 +73,6 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const { emptyRecordFilter } = useEmptyRecordFilter();
 
-  const { removeRecordFilter } = useRemoveRecordFilter();
-
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
@@ -87,13 +83,8 @@ export const ObjectFilterDropdownSourceSelect = ({
           (id) => id !== itemToSelect.id,
         );
 
-    if (!filterDefinitionUsedInDropdown) {
-      throw new Error('Filter definition used in dropdown should be defined');
-    }
-
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
-      removeRecordFilter(filterDefinitionUsedInDropdown.fieldMetadataId);
       deleteCombinedViewFilter(fieldId);
       return;
     }

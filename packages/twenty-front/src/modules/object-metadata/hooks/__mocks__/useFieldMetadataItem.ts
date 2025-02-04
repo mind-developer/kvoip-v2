@@ -26,47 +26,36 @@ export const queries = {
     }
   `,
   findManyViewsQuery: gql`
-    query FindManyViews(
-      $filter: ViewFilterInput
-      $orderBy: [ViewOrderByInput]
-      $lastCursor: String
-      $limit: Int
-    ) {
-      views(
-        filter: $filter
-        orderBy: $orderBy
-        first: $limit
-        after: $lastCursor
-      ) {
-        edges {
-          node {
-            __typename
-            id
-            viewGroups {
-              edges {
-                node {
-                  __typename
-                  fieldMetadataId
-                  fieldValue
-                  id
-                  isVisible
-                  position
+    query FindManyViews($filter: ViewFilterInput, $orderBy: [ViewOrderByInput], $lastCursor: String, $limit: Int) {
+        views(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
+          edges {
+            node {
+              __typename
+              id
+              viewGroups {
+                edges {
+                  node {
+                    __typename
+                    fieldMetadataId
+                    fieldValue
+                    id
+                    isVisible
+                    position
+                  }
                 }
               }
             }
+            cursor
           }
-          cursor
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
         }
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-          startCursor
-          endCursor
-        }
-        totalCount
-      }
-    }
-  `,
+      }`,
   deleteMetadataFieldRelation: gql`
     mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
       deleteOneRelation(input: { id: $idToDelete }) {
@@ -149,6 +138,7 @@ export const queries = {
         id
         displayName
         logo
+        domainName
         inviteHash
         allowImpersonation
         activationStatus
@@ -158,7 +148,6 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEntrepriseKey
-        creatorEmail
         featureFlags {
           id
           key
@@ -171,10 +160,6 @@ export const queries = {
           status
           interval
         }
-        billingSubscriptions {
-          id
-          status
-        }
         workspaceMembersCount
       }
       workspaces {
@@ -182,6 +167,7 @@ export const queries = {
           id
           logo
           displayName
+          domainName
           subdomain
         }
       }
@@ -253,7 +239,7 @@ const defaultResponseData = {
 const fieldRelationResponseData = {
   ...defaultResponseData,
   id: FIELD_RELATION_METADATA_ID,
-  type: FieldMetadataType.RELATION,
+  type: FieldMetadataType.Relation,
 };
 
 export const responseData = {
@@ -299,6 +285,7 @@ export const responseData = {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
         logo: null,
+        domainName: 'test',
         inviteHash: 'test-hash',
         allowImpersonation: false,
         activationStatus: 'active',
@@ -313,8 +300,6 @@ export const responseData = {
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
       },
-      currentBillingSubscription: null,
-      billingSubscriptions: [],
       workspaces: [],
       userVars: null,
     },

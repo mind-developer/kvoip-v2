@@ -8,18 +8,13 @@ import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/Emp
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import {
-  WorkflowDiagramNode,
-  WorkflowDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { IconBolt, isDefined, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { getIcon } = useIcons();
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
@@ -42,10 +37,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
-        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType, {
-          title: 'Trigger Type',
-          Icon: IconBolt,
-        });
+        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType);
 
         return;
       }
@@ -61,14 +53,9 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
-
       setWorkflowSelectedNode(selectedNode.id);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
-        title: selectedNodeData.name,
-        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-      });
+      openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
       setWorkflowSelectedNode,
@@ -77,7 +64,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       closeRightDrawer,
       closeCommandMenu,
       startNodeCreation,
-      getIcon,
     ],
   );
 

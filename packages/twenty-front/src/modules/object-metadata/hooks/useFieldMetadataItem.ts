@@ -63,7 +63,7 @@ export const useFieldMetadataItem = () => {
     });
 
   const deleteMetadataField = (metadataField: FieldMetadataItem) => {
-    return metadataField.type === FieldMetadataType.RELATION
+    return metadataField.type === FieldMetadataType.Relation
       ? deleteOneRelationMetadataItem(
           metadataField.relationDefinition?.relationId,
         )

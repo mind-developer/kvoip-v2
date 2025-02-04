@@ -19,10 +19,9 @@ export const useUpdateStep = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
+    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
     await updateWorkflowVersionStep({
-      workflowVersionId,
+      workflowVersionId: workflowVersion.id,
       step: updatedStep,
     });
   };

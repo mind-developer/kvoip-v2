@@ -28,6 +28,7 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
+      domainName
       inviteHash
       allowImpersonation
       activationStatus
@@ -37,7 +38,6 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthEnabled
       subdomain
       hasValidEntrepriseKey
-      creatorEmail
       featureFlags {
         id
         key
@@ -50,10 +50,6 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
       }
-      billingSubscriptions {
-        id
-        status
-      }
       workspaceMembersCount
     }
     workspaces {
@@ -61,6 +57,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         logo
         displayName
+        domainName
         subdomain
       }
     }

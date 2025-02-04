@@ -198,27 +198,37 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
+    const newStepId = v4();
+
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.usePublishedVersionAsDraft({
-          id: step.settings.input.serverlessFunctionId,
-          version: step.settings.input.serverlessFunctionVersion,
-          workspaceId,
-        });
+        const copiedServerlessFunction =
+          await this.serverlessFunctionService.copyOneServerlessFunction({
+            serverlessFunctionToCopyId:
+              step.settings.input.serverlessFunctionId,
+            serverlessFunctionToCopyVersion:
+              step.settings.input.serverlessFunctionVersion,
+            workspaceId,
+          });
 
         return {
           ...step,
+          id: newStepId,
           settings: {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionVersion: 'draft',
+              serverlessFunctionId: copiedServerlessFunction.id,
+              serverlessFunctionVersion: copiedServerlessFunction.latestVersion,
             },
           },
         };
       }
       default: {
-        return step;
+        return {
+          ...step,
+          id: newStepId,
+        };
       }
     }
   }
@@ -463,6 +473,17 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
 
+    if (Array.isArray(draftWorkflowVersion.steps)) {
+      await Promise.all(
+        draftWorkflowVersion.steps.map((step) =>
+          this.runWorkflowVersionStepDeletionSideEffects({
+            step,
+            workspaceId,
+          }),
+        ),
+      );
+    }
+
     const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
     const newWorkflowVersionSteps: WorkflowAction[] = [];
 
@@ -479,8 +500,6 @@ export class WorkflowVersionStepWorkspaceService {
       steps: newWorkflowVersionSteps,
       trigger: newWorkflowVersionTrigger,
     });
-
-    return draftWorkflowVersion.id;
   }
 
   private async runWorkflowVersionStepDeletionSideEffects({

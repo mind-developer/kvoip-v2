@@ -1,6 +1,8 @@
 import { ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { expect, jest } from '@jest/globals';
+
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 
 describe('ImpersonateGuard', () => {

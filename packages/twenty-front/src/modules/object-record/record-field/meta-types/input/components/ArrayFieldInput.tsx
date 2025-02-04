@@ -29,7 +29,7 @@ export const ArrayFieldInput = ({
       onCancel={onCancel}
       onClickOutside={onClickOutside}
       placeholder="Enter value"
-      fieldMetadataType={FieldMetadataType.ARRAY}
+      fieldMetadataType={FieldMetadataType.Array}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
           key={index}

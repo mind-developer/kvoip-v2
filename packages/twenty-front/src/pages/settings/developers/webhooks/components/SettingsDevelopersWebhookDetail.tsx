@@ -1,7 +1,7 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -28,6 +28,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -35,13 +36,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -65,12 +63,10 @@ const StyledPlaceholder = styled.div`
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
-  const { t } = useLingui();
-
   const { objectMetadataItems } = useObjectMetadataItems();
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
   const isMobile = useIsMobile();
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -112,9 +108,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
+  const developerPath = getSettingsPagePath(SettingsPath.Developers);
+
   const deleteWebhook = () => {
     deleteOneWebhook(webhookId);
-    navigate(SettingsPath.Developers);
+    navigate(developerPath);
   };
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled(
@@ -165,7 +163,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         secret: secret,
       },
     });
-    navigate(SettingsPath.Developers);
+    navigate(developerPath);
   };
 
   const addEmptyOperationIfNecessary = (
@@ -206,27 +204,22 @@ export const SettingsDevelopersWebhooksDetail = () => {
     return <></>;
   }
 
-  const confirmationText = t`yes`;
-
   return (
     <SubMenuTopBarContainer
       title={webhookData.targetUrl}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
-        },
-        { children: t`Webhook` },
+        { children: 'Developers', href: developerPath },
+        { children: 'Webhook' },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!isDirty}
           onCancel={() => {
-            navigate(SettingsPath.Developers);
+            navigate(developerPath);
           }}
           onSave={handleSave}
         />
@@ -235,23 +228,20 @@ export const SettingsDevelopersWebhooksDetail = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={t`Endpoint URL`}
-            description={t`We will send POST requests to this endpoint for every new event`}
+            title="Endpoint URL"
+            description="We will send POST requests to this endpoint for every new event"
           />
           <TextInput
-            placeholder={t`URL`}
+            placeholder="URL"
             value={webhookData.targetUrl}
             disabled
             fullWidth
           />
         </Section>
         <Section>
-          <H2Title
-            title={t`Description`}
-            description={t`An optional description`}
-          />
+          <H2Title title="Description" description="An optional description" />
           <TextArea
-            placeholder={t`Write a description`}
+            placeholder="Write a description"
             minRows={4}
             value={description}
             onChange={(description) => {
@@ -262,8 +252,8 @@ export const SettingsDevelopersWebhooksDetail = () => {
         </Section>
         <Section>
           <H2Title
-            title={t`Filters`}
-            description={t`Select the events you wish to send to this endpoint`}
+            title="Filters"
+            description="Select the events you wish to send to this endpoint"
           />
           {operations.map((operation, index) => (
             <StyledFilterRow isMobile={isMobile} key={index}>
@@ -278,7 +268,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 options={fieldTypeOptions}
                 emptyOption={{
                   value: null,
-                  label: t`Choose an object`,
+                  label: 'Choose an object',
                   Icon: IconBox,
                 }}
               />
@@ -337,31 +327,25 @@ export const SettingsDevelopersWebhooksDetail = () => {
           </AnalyticsGraphDataInstanceContext.Provider>
         )}
         <Section>
-          <H2Title
-            title={t`Danger zone`}
-            description={t`Delete this integration`}
-          />
+          <H2Title title="Danger zone" description="Delete this integration" />
           <Button
             accent="danger"
             variant="secondary"
-            title={t`Delete`}
+            title="Delete"
             Icon={IconTrash}
             onClick={() => setIsDeleteWebhookModalOpen(true)}
           />
           <ConfirmationModal
-            confirmationPlaceholder={confirmationText}
-            confirmationValue={confirmationText}
+            confirmationPlaceholder="yes"
+            confirmationValue="yes"
             isOpen={isDeleteWebhookModalOpen}
             setIsOpen={setIsDeleteWebhookModalOpen}
-            title={t`Delete webhook`}
+            title="Delete webhook"
             subtitle={
-              <Trans>
-                Please type {confirmationText} to confirm you want to delete
-                this webhook.
-              </Trans>
+              <>Please type "yes" to confirm you want to delete this webhook.</>
             }
             onConfirmClick={deleteWebhook}
-            deleteButtonText={t`Delete webhook`}
+            deleteButtonText="Delete webhook"
           />
         </Section>
       </SettingsPageContainer>

@@ -12,20 +12,18 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
-import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import {
   GetFullMessageListResponse,
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
-// Microsoft API limit is 999 messages per request on this endpoint
-const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
+// Microsoft API limit is 1000 messages per request on this endpoint
+const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 1000;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
-    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
   ) {}
 
   public async getFullMessageList(
@@ -56,9 +54,7 @@ export class MicrosoftGetMessageListService {
 
     const pageIterator = new PageIterator(microsoftClient, response, callback);
 
-    await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
-    });
+    await pageIterator.iterate();
 
     return {
       messageExternalIds: messageExternalIds,
@@ -107,9 +103,7 @@ export class MicrosoftGetMessageListService {
 
     const pageIterator = new PageIterator(microsoftClient, response, callback);
 
-    await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
-    });
+    await pageIterator.iterate();
 
     return {
       messageExternalIds,

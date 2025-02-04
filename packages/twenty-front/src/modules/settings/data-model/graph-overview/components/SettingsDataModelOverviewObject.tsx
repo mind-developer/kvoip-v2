@@ -13,10 +13,8 @@ import { capitalize } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
-import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
@@ -114,7 +112,7 @@ export const SettingsDataModelOverviewObject = ({
   const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
 
   const countNonRelation = fields.filter(
-    (x) => x.type !== FieldMetadataType.RELATION,
+    (x) => x.type !== FieldMetadataType.Relation,
   ).length;
 
   const Icon = getIcon(objectMetadataItem.icon);
@@ -124,9 +122,7 @@ export const SettingsDataModelOverviewObject = ({
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
           <StyledObjectLink
-            to={getSettingsPath(SettingsPath.Objects, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })}
+            to={`/settings/objects/${objectMetadataItem.namePlural}`}
           >
             {Icon && <Icon size={theme.icon.size.md} />}
             {capitalize(objectMetadataItem.namePlural)}
@@ -140,7 +136,7 @@ export const SettingsDataModelOverviewObject = ({
 
       <StyledInnerCard>
         {fields
-          .filter((x) => x.type === FieldMetadataType.RELATION)
+          .filter((x) => x.type === FieldMetadataType.Relation)
           .map((field) => (
             <StyledCardRow key={field.id}>
               <ObjectFieldRow field={field} />
@@ -160,7 +156,7 @@ export const SettingsDataModelOverviewObject = ({
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields
-                .filter((x) => x.type !== FieldMetadataType.RELATION)
+                .filter((x) => x.type !== FieldMetadataType.Relation)
                 .map((field) => (
                   <StyledCardRow>
                     <ObjectFieldRowWithoutRelation field={field} />

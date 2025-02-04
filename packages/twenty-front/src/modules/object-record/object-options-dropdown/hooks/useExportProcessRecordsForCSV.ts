@@ -19,7 +19,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
           }
 
           switch (field.type) {
-            case FieldMetadataType.CURRENCY:
+            case FieldMetadataType.Currency:
               return {
                 ...processedRecord,
                 [field.name]: {
@@ -29,7 +29,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };
-            case FieldMetadataType.RAW_JSON:
+            case FieldMetadataType.RawJson:
               return {
                 ...processedRecord,
                 [field.name]: JSON.stringify(record[field.name]),

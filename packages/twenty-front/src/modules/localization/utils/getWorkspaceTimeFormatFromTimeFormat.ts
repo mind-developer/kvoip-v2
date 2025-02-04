@@ -6,12 +6,12 @@ export const getWorkspaceTimeFormatFromTimeFormat = (
 ) => {
   switch (timeFormat) {
     case TimeFormat.SYSTEM:
-      return WorkspaceMemberTimeFormatEnum.SYSTEM;
+      return WorkspaceMemberTimeFormatEnum.System;
     case TimeFormat.HOUR_24:
-      return WorkspaceMemberTimeFormatEnum.HOUR_24;
+      return WorkspaceMemberTimeFormatEnum.Hour_24;
     case TimeFormat.HOUR_12:
-      return WorkspaceMemberTimeFormatEnum.HOUR_12;
+      return WorkspaceMemberTimeFormatEnum.Hour_12;
     default:
-      return WorkspaceMemberTimeFormatEnum.HOUR_24;
+      return WorkspaceMemberTimeFormatEnum.Hour_24;
   }
 };
