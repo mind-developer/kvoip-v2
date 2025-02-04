@@ -202,6 +202,14 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
   })),
 );
 
+const SettingsIntegrationInterDatabase = lazy(() =>
+  import(
+    '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase'
+  ).then((module) => ({
+    default: module.SettingsIntegrationInterDatabase,
+  })),
+);
+
 const SettingsObjectNewFieldSelect = lazy(() =>
   import(
     '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
@@ -363,6 +371,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationDatabaseConnection}
         element={<SettingsIntegrationShowDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterDatabase}
+        element={<SettingsIntegrationInterDatabase />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
