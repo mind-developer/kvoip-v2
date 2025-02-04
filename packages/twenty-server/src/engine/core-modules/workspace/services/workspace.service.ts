@@ -185,7 +185,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.userWorkspaceRepository.delete({ workspaceId: id });
 
     if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscription(workspace.id);
+      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
     }
 
     await this.workspaceManagerService.delete(id);
