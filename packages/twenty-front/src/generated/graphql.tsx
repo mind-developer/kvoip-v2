@@ -251,6 +251,10 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
   isEmailVerificationRequired: Scalars['Boolean'];
+  isGoogleCalendarEnabled: Scalars['Boolean'];
+  isGoogleMessagingEnabled: Scalars['Boolean'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
@@ -392,6 +396,69 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type EnvironmentVariable = {
+  __typename?: 'EnvironmentVariable';
+  description: Scalars['String'];
+  name: Scalars['String'];
+  sensitive: Scalars['Boolean'];
+  value: Scalars['String'];
+};
+
+export enum EnvironmentVariablesGroup {
+  Analytics = 'Analytics',
+  Authentication = 'Authentication',
+  Billing = 'Billing',
+  Cache = 'Cache',
+  Database = 'Database',
+  Email = 'Email',
+  Frontend = 'Frontend',
+  LLM = 'LLM',
+  Logging = 'Logging',
+  QueueConfig = 'QueueConfig',
+  Security = 'Security',
+  ServerConfig = 'ServerConfig',
+  Serverless = 'Serverless',
+  Storage = 'Storage',
+  Support = 'Support',
+  Workspace = 'Workspace'
+}
+
+export type EnvironmentVariablesGroupData = {
+  __typename?: 'EnvironmentVariablesGroupData';
+  groupName: EnvironmentVariablesGroup;
+  subgroups: Array<EnvironmentVariablesSubgroupData>;
+  variables: Array<EnvironmentVariable>;
+};
+
+export type EnvironmentVariablesOutput = {
+  __typename?: 'EnvironmentVariablesOutput';
+  groups: Array<EnvironmentVariablesGroupData>;
+};
+
+export enum EnvironmentVariablesSubGroup {
+  CloudflareConfig = 'CloudflareConfig',
+  EmailSettings = 'EmailSettings',
+  FrontSupportConfig = 'FrontSupportConfig',
+  GoogleAuth = 'GoogleAuth',
+  LambdaConfig = 'LambdaConfig',
+  MicrosoftAuth = 'MicrosoftAuth',
+  PasswordAuth = 'PasswordAuth',
+  RateLimiting = 'RateLimiting',
+  S3Config = 'S3Config',
+  SSL = 'SSL',
+  SentryConfig = 'SentryConfig',
+  SmtpConfig = 'SmtpConfig',
+  StripeConfig = 'StripeConfig',
+  TinybirdConfig = 'TinybirdConfig',
+  Tokens = 'Tokens'
+}
+
+export type EnvironmentVariablesSubgroupData = {
+  __typename?: 'EnvironmentVariablesSubgroupData';
+  subgroupName: EnvironmentVariablesSubGroup;
+  variables: Array<EnvironmentVariable>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -537,6 +604,7 @@ export type FullName = {
 
 export type GetAuthorizationUrlInput = {
   identityProviderId: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 export type GetAuthorizationUrlOutput = {
@@ -736,7 +804,7 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
-  updateLabPublicFeatureFlag: Scalars['Boolean'];
+  updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
@@ -1177,10 +1245,12 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
+  getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getRoles: Array<RoleDto>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1377,6 +1447,16 @@ export enum RemoteTableStatus {
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
+};
+
+export type RoleDto = {
+  __typename?: 'RoleDTO';
+  canUpdateAllSettings: Scalars['Boolean'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isEditable: Scalars['Boolean'];
+  label: Scalars['String'];
+  workspaceMembers: Array<WorkspaceMember>;
 };
 
 export type RunWorkflowVersionInput = {
@@ -1617,7 +1697,6 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
@@ -2129,7 +2208,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2152,12 +2231,17 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
+export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
+
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
 
 
-export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
+export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3610,6 +3694,10 @@ export const GetClientConfigDocument = gql`
         imagePath
       }
     }
+    isMicrosoftMessagingEnabled
+    isMicrosoftCalendarEnabled
+    isGoogleMessagingEnabled
+    isGoogleCalendarEnabled
   }
 }
     `;
@@ -3764,9 +3852,64 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
+export const GetEnvironmentVariablesGroupedDocument = gql`
+    query GetEnvironmentVariablesGrouped {
+  getEnvironmentVariablesGrouped {
+    groups {
+      groupName
+      variables {
+        name
+        description
+        value
+        sensitive
+      }
+      subgroups {
+        subgroupName
+        variables {
+          name
+          description
+          value
+          sensitive
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetEnvironmentVariablesGroupedQuery__
+ *
+ * To run a query within a React component, call `useGetEnvironmentVariablesGroupedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEnvironmentVariablesGroupedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEnvironmentVariablesGroupedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetEnvironmentVariablesGroupedQuery(baseOptions?: Apollo.QueryHookOptions<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>(GetEnvironmentVariablesGroupedDocument, options);
+      }
+export function useGetEnvironmentVariablesGroupedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>(GetEnvironmentVariablesGroupedDocument, options);
+        }
+export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedQuery>;
+export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
+export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
-  updateLabPublicFeatureFlag(input: $input)
+  updateLabPublicFeatureFlag(input: $input) {
+    id
+    key
+    value
+  }
 }
     `;
 export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
