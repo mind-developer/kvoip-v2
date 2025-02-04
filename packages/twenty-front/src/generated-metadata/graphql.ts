@@ -202,6 +202,7 @@ export type ComputeStepOutputSchemaInput = {
 };
 
 export type CreateAgentInput = {
+  inboxesIds: Array<Scalars['String']['input']>;
   isAdmin: Scalars['Boolean']['input'];
   memberId: Scalars['ID']['input'];
   sectorIds: Array<Scalars['String']['input']>;
@@ -1784,6 +1785,7 @@ export type UuidFilterComparison = {
 };
 
 export type UpdateAgentInput = {
+  inboxesIds: Array<Scalars['String']['input']>;
   isAdmin: Scalars['Boolean']['input'];
   memberId: Scalars['ID']['input'];
   sectorIds: Array<Scalars['String']['input']>;

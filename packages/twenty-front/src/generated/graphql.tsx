@@ -195,6 +195,7 @@ export type ComputeStepOutputSchemaInput = {
 };
 
 export type CreateAgentInput = {
+  inboxesIds: Array<Scalars['String']>;
   isAdmin: Scalars['Boolean'];
   memberId: Scalars['ID'];
   sectorIds: Array<Scalars['String']>;
@@ -1574,6 +1575,7 @@ export type UuidFilterComparison = {
 };
 
 export type UpdateAgentInput = {
+  inboxesIds: Array<Scalars['String']>;
   isAdmin: Scalars['Boolean'];
   memberId: Scalars['ID'];
   sectorIds: Array<Scalars['String']>;
@@ -2384,6 +2386,20 @@ export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: 
 
 
 export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+
+export type CreateAgentMutationVariables = Exact<{
+  createInput: CreateAgentInput;
+}>;
+
+
+export type CreateAgentMutation = { __typename?: 'Mutation', createAgent: { __typename?: 'Agent', id: any } };
+
+export type InboxesByWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type InboxesByWorkspaceQuery = { __typename?: 'Query', inboxesByWorkspace: Array<{ __typename?: 'Inbox', id: any, integrationType: IntegrationType, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null }, whatsappIntegration?: { __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, disabled: boolean } | null }> };
 
 export type CreateSectorMutationVariables = Exact<{
   createInput: CreateSectorInput;
@@ -4187,6 +4203,85 @@ export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
+export const CreateAgentDocument = gql`
+    mutation CreateAgent($createInput: CreateAgentInput!) {
+  createAgent(createInput: $createInput) {
+    id
+  }
+}
+    `;
+export type CreateAgentMutationFn = Apollo.MutationFunction<CreateAgentMutation, CreateAgentMutationVariables>;
+
+/**
+ * __useCreateAgentMutation__
+ *
+ * To run a mutation, you first call `useCreateAgentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAgentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAgentMutation, { data, loading, error }] = useCreateAgentMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateAgentMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentMutation, CreateAgentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAgentMutation, CreateAgentMutationVariables>(CreateAgentDocument, options);
+      }
+export type CreateAgentMutationHookResult = ReturnType<typeof useCreateAgentMutation>;
+export type CreateAgentMutationResult = Apollo.MutationResult<CreateAgentMutation>;
+export type CreateAgentMutationOptions = Apollo.BaseMutationOptions<CreateAgentMutation, CreateAgentMutationVariables>;
+export const InboxesByWorkspaceDocument = gql`
+    query InboxesByWorkspace($workspaceId: String!) {
+  inboxesByWorkspace(workspaceId: $workspaceId) {
+    id
+    integrationType
+    workspace {
+      id
+      displayName
+    }
+    whatsappIntegration {
+      id
+      label
+      phoneId
+      disabled
+    }
+  }
+}
+    `;
+
+/**
+ * __useInboxesByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useInboxesByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInboxesByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInboxesByWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useInboxesByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>(InboxesByWorkspaceDocument, options);
+      }
+export function useInboxesByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>(InboxesByWorkspaceDocument, options);
+        }
+export type InboxesByWorkspaceQueryHookResult = ReturnType<typeof useInboxesByWorkspaceQuery>;
+export type InboxesByWorkspaceLazyQueryHookResult = ReturnType<typeof useInboxesByWorkspaceLazyQuery>;
+export type InboxesByWorkspaceQueryResult = Apollo.QueryResult<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>;
 export const CreateSectorDocument = gql`
     mutation CreateSector($createInput: CreateSectorInput!) {
   createSector(createInput: $createInput) {
