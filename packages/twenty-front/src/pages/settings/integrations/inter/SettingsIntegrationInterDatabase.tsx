@@ -1,12 +1,13 @@
-import { SettingsPageContainer } from "@/settings/components/SettingsPageContainer"
-import { SettingsIntegrationPreview } from "@/settings/integrations/components/SettingsIntegrationPreview"
-import { useSettingsIntegrationCategories } from "@/settings/integrations/hooks/useSettingsIntegrationCategories"
-import { AppPath } from "@/types/AppPath"
-import { SettingsPath } from "@/types/SettingsPath"
-import { SubMenuTopBarContainer } from "@/ui/layout/page/components/SubMenuTopBarContainer"
-import { useEffect } from "react"
-import { useNavigateApp } from "~/hooks/useNavigateApp"
-import { getSettingsPath } from "~/utils/navigation/getSettingsPath"
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
+import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsIntegrationInterDatabaseConectionsListCard } from '@/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConectionsListCard';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useEffect } from 'react';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationInterDatabase = () => {
   const navigateApp = useNavigateApp();
@@ -28,7 +29,7 @@ export const SettingsIntegrationInterDatabase = () => {
 
   return (
     <SubMenuTopBarContainer
-    title="Banco Inter"
+      title="Banco Inter"
       links={[
         {
           children: 'Workspace',
@@ -45,7 +46,13 @@ export const SettingsIntegrationInterDatabase = () => {
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
         />
+        <SettingsIntegrationInterDatabaseConectionsListCard
+          {...{
+            connections: [],
+            integration,
+          }}
+        />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
-  )
-}
+  );
+};

@@ -202,11 +202,20 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
   })),
 );
 
+// TODO: Move integration to fdw?
 const SettingsIntegrationInterDatabase = lazy(() =>
   import(
     '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase'
   ).then((module) => ({
     default: module.SettingsIntegrationInterDatabase,
+  })),
+);
+
+const SettingsIntegrationInterNewDatabaseConnection = lazy(() =>
+  import(
+    '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection'
+  ).then((module) => ({
+    default: module.SettingsIntegrationInterNewDatabaseConnection,
   })),
 );
 
@@ -375,6 +384,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationInterDatabase}
         element={<SettingsIntegrationInterDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterNewDatabaseConnection}
+        element={<SettingsIntegrationInterNewDatabaseConnection />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}

@@ -28,6 +28,8 @@ export enum SettingsPath {
   IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   IntegrationInterDatabase = 'integrations/inter',
+  IntegrationInterNewDatabaseConnection = 'integrations/inter/new',
+  IntegrationInterDatabaseConnection = 'integrations/inter/:connectionId',
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
   EditSSOIdentityProvider = 'security/sso/:identityProviderId',
