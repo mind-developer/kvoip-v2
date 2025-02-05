@@ -16,6 +16,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { InterConnection } from 'src/engine/core-modules/inter/inter.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -85,6 +86,13 @@ export class Workspace {
 
   @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlag[]>;
+
+  // TODO: Move to feature flags?
+  @OneToMany(
+    () => InterConnection,
+    (interConnection) => interConnection.workspace,
+  )
+  interConnections: Relation<InterConnection[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;

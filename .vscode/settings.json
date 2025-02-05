@@ -18,7 +18,7 @@
     }
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit",
       "source.addMissingImports": "always",
@@ -29,7 +29,7 @@
     "editor.formatOnSave": true
   },
   "javascript.format.enable": false,
-  "typescript.format.enable": false,
+  "typescript.format.enable": true,
   "cSpell.enableFiletypes": [
     "!javascript",
     "!json",
@@ -38,12 +38,10 @@
     "md",
     "mdx"
   ],
-  "cSpell.words": [
-    "twentyhq"
-  ],
+  "cSpell.words": ["twentyhq"],
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "search.exclude": {
-    "**/.yarn": true,
+    "**/.yarn": true
   },
   "eslint.debug": true,
   "files.associations": {

@@ -16,10 +16,38 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+const CRT_MAX_FILE_SIZE = 10000;
+const KEY_MAX_FILE_SIZE = 5000;
+enum CRT_KEY_ACCEPTED_TYPES {
+  KEY = 'application/x-pem-file',
+  CRT = 'application/x-x509-ca-cert',
+  TXT = 'text/plain',
+}
+
 export const settingsIntegrationInterConnectionFormSchema = z.object({
   label: z.string().min(1),
   client_secret: z.string().min(1),
   client_id: z.string().min(1),
+  crt_file: z
+    .any()
+    .refine(
+      (file: File) => file?.size <= CRT_MAX_FILE_SIZE,
+      'Max certificate size is 10KB.',
+    )
+    .refine(
+      (file: File) => file?.type === CRT_KEY_ACCEPTED_TYPES.CRT,
+      'Only .key format is suported.',
+    ),
+  key_file: z
+    .any()
+    .refine(
+      (file: File) => file?.size <= KEY_MAX_FILE_SIZE,
+      'Max certificate size is 5KB.',
+    )
+    .refine(
+      (file: File) => file?.type === CRT_KEY_ACCEPTED_TYPES.KEY,
+      'Only .key format is suported.',
+    ),
 });
 
 export type SettingsIntegrationInterConnectionFormValues = z.infer<

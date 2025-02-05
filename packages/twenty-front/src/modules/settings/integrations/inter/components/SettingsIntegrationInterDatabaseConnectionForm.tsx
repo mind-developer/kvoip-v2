@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
@@ -47,6 +47,18 @@ const getFormFields = (): {
       placeholder: 'ClientID',
       type: 'text',
     },
+    {
+      name: 'key_file',
+      label: 'Key file',
+      placeholder: '',
+      type: 'file',
+    },
+    {
+      name: 'crt_file',
+      label: 'Certificate file',
+      placeholder: '',
+      type: 'file',
+    },
   ];
 };
 
@@ -68,7 +80,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           control={control}
           render={({ field: { onChange, value } }) => {
             return (
-              <TextInput
+              <TextInputV2
                 autoComplete="new-password" // Disable autocomplete
                 label={label}
                 value={value}
