@@ -25,6 +25,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
 
+import { InterConnection } from 'src/engine/core-modules/inter/inter.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 @Module({
@@ -40,7 +41,7 @@ import { WorkspaceService } from './services/workspace.service';
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace],
+          [User, Workspace, UserWorkspace, InterConnection],
           'core',
         ),
         UserWorkspaceModule,

@@ -66,6 +66,7 @@ import { FileModule } from './file/file.module';
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
+    InterModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     PostgresCredentialsModule,
@@ -77,7 +78,6 @@ import { FileModule } from './file/file.module';
     LabModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
-    InterModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
@@ -129,6 +129,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    InterModule,
   ],
 })
 export class CoreEngineModule {}

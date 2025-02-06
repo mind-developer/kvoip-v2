@@ -45,7 +45,7 @@ export class InterConnection {
   workspace: Relation<Workspace>;
 
   @Field({ nullable: false })
-  @Column()
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Field()

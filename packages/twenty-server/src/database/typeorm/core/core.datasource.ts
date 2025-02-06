@@ -17,7 +17,8 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : [
           `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity{.ts,.js}`,
         ],
-  synchronize: false,
+  synchronize: true,
+  autoLoadEntities: true,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   metadataTableName: '_typeorm_generated_columns_and_materialized_views',

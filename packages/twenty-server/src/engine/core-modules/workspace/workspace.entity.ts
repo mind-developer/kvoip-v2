@@ -88,6 +88,7 @@ export class Workspace {
   featureFlags: Relation<FeatureFlag[]>;
 
   // TODO: Move to feature flags?
+  @Field(() => [InterConnection])
   @OneToMany(
     () => InterConnection,
     (interConnection) => interConnection.workspace,
