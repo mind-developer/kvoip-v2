@@ -3,15 +3,18 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
+import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
+import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
 import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
 import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/SettingsServiceCenterAgents';
 import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
 import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
+import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
 import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
-import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -350,7 +353,6 @@ export const SettingsRoutes = ({
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
@@ -402,6 +404,18 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationDatabaseConnection}
         element={<SettingsIntegrationShowDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationWhatsappDatabase}
+        element={<SettingsIntegrationWhatsappDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationWhatsappNewDatabaseConnection}
+        element={<SettingsIntegrationWhatsappNewDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
+        element={<SettingsIntegrationWhatsappEditDatabaseConnection />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
