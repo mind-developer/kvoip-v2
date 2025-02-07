@@ -88,6 +88,10 @@ msgstr "Active API keys created by you or your team."
 msgid "Add"
 msgstr "Add"
 
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "Add"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
 msgid "Add Field"
 msgstr "Add Field"
