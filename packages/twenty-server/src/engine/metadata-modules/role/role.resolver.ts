@@ -94,57 +94,6 @@ export class RoleResolver {
     } as WorkspaceMember;
   }
 
-  @Mutation(() => WorkspaceMember)
-  async updateWorkspaceMemberRole(
-    @AuthUserWorkspaceId() currentUserWorkspaceId: string,
-    @AuthWorkspace() workspace: Workspace,
-    @Args('workspaceMemberId') workspaceMemberId: string,
-    @Args('roleId', { type: () => String, nullable: true })
-    roleId: string | null,
-  ): Promise<WorkspaceMember> {
-    await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
-      {
-        userWorkspaceId: currentUserWorkspaceId,
-        setting: SettingsFeatures.ROLES,
-      },
-    );
-
-    const workspaceMember =
-      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
-        workspaceMemberId,
-        workspaceId: workspace.id,
-      });
-
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-      });
-
-    if (!isDefined(roleId)) {
-      await this.userRoleService.unassignAllRolesFromUserWorkspace({
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: workspace.id,
-      });
-    } else {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: workspace.id,
-        roleId,
-      });
-    }
-
-    const roles = await this.userRoleService.getRolesForUserWorkspace(
-      userWorkspace.id,
-    );
-
-    return {
-      ...workspaceMember,
-      userWorkspaceId: userWorkspace.id,
-      roles,
-    } as WorkspaceMember;
-  }
-
   @ResolveField('workspaceMembers', () => [WorkspaceMember])
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
