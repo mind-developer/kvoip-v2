@@ -3,10 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { SettingsFeatures } from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
@@ -21,8 +17,9 @@ export class PermissionsService {
   }: {
     userWorkspaceId: string;
   }): Promise<Record<SettingsFeatures, boolean>> {
-    const [roleOfUserWorkspace] =
-      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces([userWorkspaceId])
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
     let hasPermissionOnSettingFeature = false;
 
@@ -39,24 +36,22 @@ export class PermissionsService {
     );
   }
 
-  public async validateUserHasWorkspaceSettingPermissionOrThrow({
+  public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
-    setting,
+    _setting,
   }: {
     userWorkspaceId: string;
-    setting: SettingsFeatures;
-  }): Promise<void> {
-    const [userWorkspaceRole] =
-      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
+    _setting: SettingsFeatures;
+  }): Promise<boolean> {
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces([userWorkspaceId])
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    if (userWorkspaceRole?.canUpdateAllSettings === true) {
-      return;
+    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
+      return true;
     }
 
-    throw new PermissionsException(
-      `User does not have permission to access this setting: ${setting}`,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
+    return false;
   }
 
   public async isPermissionsEnabled(): Promise<boolean> {
