@@ -145,6 +145,9 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
+      currentUserWorkspace {
+        settingsPermissions
+      }
       currentWorkspace {
         id
         displayName
@@ -161,6 +164,10 @@ export const queries = {
         creatorEmail
         hasValidEnterpriseKey
         hostname
+        workspaceUrls {
+          subdomainUrl
+          customUrl
+        }
         featureFlags {
           id
           key
@@ -185,6 +192,11 @@ export const queries = {
           logo
           displayName
           subdomain
+          hostname
+          workspaceUrls {
+            subdomainUrl
+            customUrl
+          }
         }
       }
       userVars
@@ -297,6 +309,9 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
+      currentUserWorkspace: {
+        settingsPermissions: ['DATA_MODEL']
+      },
       currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
@@ -311,6 +326,10 @@ export const responseData = {
         isPasswordAuthEnabled: true,
         subdomain: 'test',
         hostname: null,
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://test.twenty.com/',
+        },
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

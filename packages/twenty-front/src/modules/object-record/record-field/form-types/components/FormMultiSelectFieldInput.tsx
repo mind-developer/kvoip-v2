@@ -16,8 +16,8 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -178,7 +178,7 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer data-testid={testId}>
+    <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>

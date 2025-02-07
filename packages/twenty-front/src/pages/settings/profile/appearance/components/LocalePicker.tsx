@@ -8,11 +8,9 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -52,7 +50,7 @@ export const LocalePicker = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
-  const handleLocaleChange = async (value: string) => {
+  const handleLocaleChange = async (value: keyof typeof APP_LOCALES) => {
     setCurrentWorkspaceMember({
       ...currentWorkspaceMember,
       ...{ locale: value },
@@ -92,6 +90,10 @@ export const LocalePicker = () => {
       value: APP_LOCALES.ko,
     },
     {
+      label: t`Japanese`,
+      value: APP_LOCALES.ja,
+    },
+    {
       label: t`Portuguese — Portugal`,
       value: APP_LOCALES['pt-PT'],
     },
@@ -121,9 +123,11 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
-        value={i18n.locale}
+        value={currentWorkspaceMember.locale}
         options={localeOptions}
-        onChange={(value) => handleLocaleChange(value)}
+        onChange={(value) =>
+          handleLocaleChange(value as keyof typeof APP_LOCALES)
+        }
       />
     </StyledContainer>
   );

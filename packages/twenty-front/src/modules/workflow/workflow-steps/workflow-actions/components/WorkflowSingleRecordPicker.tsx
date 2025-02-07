@@ -1,10 +1,3 @@
-import {
-  IconChevronDown,
-  IconForbid,
-  isDefined,
-  LightIconButton,
-} from 'twenty-ui';
-
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
@@ -23,7 +16,8 @@ import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/compone
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { isValidUuid } from '~/utils/isValidUuid';
+import { isDefined, isValidUuid } from 'twenty-shared';
+import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;
@@ -131,7 +125,7 @@ export const WorkflowSingleRecordPicker = ({
   };
 
   return (
-    <FormFieldInputContainer data-testid={testId}>
+    <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         <StyledFormSelectContainer hasRightElement={!disabled}>
