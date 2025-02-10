@@ -13,6 +13,9 @@ import { SettingsIntegration } from '@/settings/integrations/types/SettingsInteg
 import { Link } from 'react-router-dom';
 
 import { isDefined } from '~/utils/isDefined';
+import StripeLoginButton from '~/pages/settings/integrations/stripe/components/SripeLoginButton';
+import { StripeIntegrationContextType, StripeContext } from "~/pages/settings/integrations/stripe/context/StripeContext";
+import { useContext } from 'react';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
@@ -65,6 +68,10 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
+  const { stripeLogin } = useContext(
+      StripeContext,
+  ) as StripeIntegrationContextType;
+
   return (
     <StyledContainer
       to={integration.type === 'Active' ? integration.link : undefined}
@@ -100,6 +107,14 @@ export const SettingsIntegrationComponent = ({
           Icon={IconBolt}
           title="Use"
           size="small"
+        />
+      ) : integration.from.key === 'stripe' ? (
+        <Button 
+          onClick={stripeLogin} 
+          target="_self"
+          Icon={IconArrowUpRight}
+          title={integration.linkText}
+          size="small" 
         />
       ) : (
         <Button

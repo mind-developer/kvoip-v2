@@ -10,6 +10,6 @@ export type SettingsIntegration = {
   to?: { key: string; image: string } | null;
   type: SettingsIntegrationType;
   linkText?: string;
-  link: string;
+  link: string | void | null;
   text: string;
 };
