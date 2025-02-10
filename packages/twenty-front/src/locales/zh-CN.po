@@ -621,9 +621,9 @@ msgid "Display as relative date"
 msgstr "显示为相对日期"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/workspace/SettingsHostname.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:183
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 msgid "Domain"
 msgstr "域"
 
@@ -850,7 +850,7 @@ msgstr "功能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:122
+#: src/pages/settings/workspace/SettingsDomain.tsx:190
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "常规"
@@ -923,6 +923,10 @@ msgstr "集成"
 msgid "Invalid auth provider"
 msgstr "无效的身份验证提供商"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Invalid custom hostname. Custom hostnames have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
+
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
 msgstr "无效的电子邮件"
@@ -932,7 +936,7 @@ msgstr "无效的电子邮件"
 msgid "Invalid email or domain"
 msgstr "无效的电子邮件或域"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:71
+#: src/pages/settings/workspace/SettingsDomain.tsx:164
 msgid "Invalid form values"
 msgstr "无效的表单值"
 
@@ -1363,7 +1367,7 @@ msgid "Run a workflow and return here to view its executions"
 msgstr "运行工作流并返回此处查看其执行情况"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
 msgid "Search"
 msgstr "搜索"
@@ -1441,7 +1445,7 @@ msgstr "服务器管理面板"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "设置电子邮件可见性、管理黑名单等。"
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsHostname.tsx:25
 msgid "Set the name of your domain"
 msgstr "设置您的域名"
 
@@ -1452,7 +1456,7 @@ msgstr "设置您的子域名"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:62
 msgid "Settings"
 msgstr "设置"
 
@@ -1497,15 +1501,16 @@ msgstr "SSO"
 msgid "Subdomain"
 msgstr "子域名"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:89
+#: src/pages/settings/workspace/SettingsDomain.tsx:109
+#: src/pages/settings/workspace/SettingsDomain.tsx:136
 msgid "Subdomain already taken"
 msgstr "子域名已被占用"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:39
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "子域名不能超过 30 个字符"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:34
+#: src/pages/settings/workspace/SettingsDomain.tsx:38
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "子域名不能少于 3 个字符"
 
@@ -1639,7 +1644,7 @@ msgstr "触发类型应为手动 - 当没有选择记录时"
 msgid "Type"
 msgstr "类型"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
 msgid "Type anything"
 msgstr "输入任何内容"
 
@@ -1670,7 +1675,7 @@ msgstr "URL"
 msgid "Use as draft"
 msgstr "用作草稿"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:37
+#: src/pages/settings/workspace/SettingsDomain.tsx:41
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "仅使用字母、数字和破折号。以字母或数字开头和结尾"
 
@@ -1746,7 +1751,7 @@ msgstr "无法测试工作流"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:110
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
@@ -1809,4 +1814,3 @@ msgstr "您的工作区"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作区将被禁用"
-
