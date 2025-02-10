@@ -11,8 +11,11 @@ import {
 
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
-import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
+
+import { isDefined } from '~/utils/isDefined';
+import StripeLoginButton from '~/pages/settings/integrations/stripe/components/SripeLoginButton';
+import { StripeIntegrationContextType, StripeContext } from "~/pages/settings/integrations/stripe/context/StripeContext";
+import { useContext } from 'react';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
@@ -65,7 +68,9 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
-  const { stripeLogin } = useStripeLogin();
+  const { stripeLogin } = useContext(
+      StripeContext,
+  ) as StripeIntegrationContextType;
 
   return (
     <StyledContainer
@@ -104,12 +109,12 @@ export const SettingsIntegrationComponent = ({
           size="small"
         />
       ) : integration.from.key === 'stripe' ? (
-        <Button
-          onClick={stripeLogin}
+        <Button 
+          onClick={stripeLogin} 
           target="_self"
           Icon={IconArrowUpRight}
           title={integration.linkText}
-          size="small"
+          size="small" 
         />
       ) : (
         <Button
