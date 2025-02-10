@@ -874,6 +874,40 @@ export class EnvironmentVariables {
   @IsOptional()
   SSL_CERT_PATH: string;
 
+  // Meta
+  @IsString()
+  @IsOptional()
+  META_API_URL: string;
+
+  @IsString()
+  @IsOptional()
+  META_WEBHOOK_URL: string;
+
+  // Onesignal
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_REST_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_APP_ID: string;
+
+  // Google Cloud Storage
+  @IsString()
+  @IsOptional()
+  BUCKET_KEYFILENAME: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_PROJECT_ID: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_NAME: string;
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.CloudflareConfig,
