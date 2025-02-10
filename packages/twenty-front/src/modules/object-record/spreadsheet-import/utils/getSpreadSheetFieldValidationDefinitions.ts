@@ -1,7 +1,7 @@
 import { FieldValidationDefinition } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-ui';
+import { isDefined, isValidUuid } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isValidUuid } from '~/utils/isValidUuid';
+import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 
 export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,
@@ -44,6 +44,16 @@ export const getSpreadSheetFieldValidationDefinitions = (
         {
           rule: 'function',
           isValid: (value: string) => isValidUuid(value),
+          errorMessage: fieldName + ' is not valid',
+          level: 'error',
+        },
+      ];
+    case FieldMetadataType.LINKS:
+      return [
+        {
+          rule: 'function',
+          isValid: (value: string) =>
+            absoluteUrlSchema.safeParse(value).success,
           errorMessage: fieldName + ' is not valid',
           level: 'error',
         },

@@ -44,3 +44,4 @@ dump.rdb
 
 packages/twenty-server/src/engine/core-modules/meta/FirebaseConfig.ts
 packages/twenty-server/src/engine/core-modules/whatsapp/google-cloud/*.json
+.crowdin.yml

@@ -39,7 +39,6 @@ const StyledInnerContainer = styled.div`
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
-  const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -66,6 +65,7 @@ export const MainNavigationDrawerItems = () => {
   const { telephonyExtension, loading: loadingSoftfone } = useGetUserSoftfone({
     extNum: workspaceMember?.extensionNumber || '',
   });
+  const { openRecordsSearchPage } = useCommandMenu();
 
   return (
     <>
@@ -80,8 +80,8 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label={t`Search`}
             Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={[getOsControlSymbol(), 'K']}
+            onClick={openRecordsSearchPage}
+            keyboard={['/']}
           />
           <NavigationDrawerItem
             label={t`Settings`}
@@ -94,7 +94,7 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconSettings}
           />
           <NavigationDrawerItem
-            label="Chatbot"
+            label="Bot"
             to={'/chatbot'}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);

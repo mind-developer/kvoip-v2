@@ -4,38 +4,21 @@ import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatu
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Card, MOBILE_VIEWPORT } from 'twenty-ui';
+import { Card } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCardGrid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
   grid-template-columns: 1fr;
-
-  & > *:not(:first-child) {
-    grid-column: span 1;
-  }
-
-  @media (min-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: repeat(2, 1fr);
-
-    & > *:first-child {
-      grid-column: 1 / -1;
-    }
-  }
 `;
 
-const StyledImage = styled.img<{ isFirstCard: boolean }>`
+const StyledImage = styled.img`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
+  height: 120px;
   width: 100%;
-`;
-
-const StyledFallbackDiv = styled.div<{ isFirstCard: boolean }>`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
-  width: 100%;
+  object-fit: cover;
+  display: flex;
 `;
 
 export const SettingsLabContent = () => {
@@ -57,27 +40,35 @@ export const SettingsLabContent = () => {
   return (
     currentWorkspace?.id && (
       <StyledCardGrid>
-        {labPublicFeatureFlags.map((flag, index) => (
-          <Card key={flag.key} rounded>
-            {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
-              <StyledImage
-                src={flag.metadata.imagePath}
-                alt={flag.metadata.label}
-                isFirstCard={index === 0}
-                onError={() => handleImageError(flag.key)}
+        {[...labPublicFeatureFlags]
+          .sort((a, b) => {
+            // Sort flags with images first
+            if (a.metadata.imagePath !== '' && b.metadata.imagePath === '')
+              return -1;
+            if (a.metadata.imagePath === '' && b.metadata.imagePath !== '')
+              return 1;
+            return 0;
+          })
+          .map((flag) => (
+            <Card key={flag.key} rounded>
+              {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
+                <StyledImage
+                  src={flag.metadata.imagePath}
+                  alt={flag.metadata.label}
+                  onError={() => handleImageError(flag.key)}
+                />
+              ) : (
+                <></>
+              )}
+              <SettingsOptionCardContentToggle
+                title={flag.metadata.label}
+                description={flag.metadata.description}
+                checked={flag.value}
+                onChange={(value) => handleToggle(flag.key, value)}
+                toggleCentered={false}
               />
-            ) : (
-              <StyledFallbackDiv isFirstCard={index === 0} />
-            )}
-            <SettingsOptionCardContentToggle
-              title={flag.metadata.label}
-              description={flag.metadata.description}
-              checked={flag.value}
-              onChange={(value) => handleToggle(flag.key, value)}
-              toggleCentered={false}
-            />
-          </Card>
-        ))}
+            </Card>
+          ))}
       </StyledCardGrid>
     )
   );

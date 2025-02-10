@@ -266,15 +266,27 @@ const SettingsLab = lazy(() =>
   })),
 );
 
+const SettingsRoles = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
+    default: module.SettingsRoles,
+  })),
+);
+
+const SettingsRoleEdit = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
-  isServerlessFunctionSettingsEnabled?: boolean;
+  isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
-  isServerlessFunctionSettingsEnabled,
+  isFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
@@ -343,8 +355,9 @@ export const SettingsRoutes = ({
         element={<SettingsObjectDetailPage />}
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+      <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
@@ -361,7 +374,7 @@ export const SettingsRoutes = ({
         path={SettingsPath.DevelopersNewWebhookDetail}
         element={<SettingsDevelopersWebhooksDetail />}
       />
-      {isServerlessFunctionSettingsEnabled && (
+      {isFunctionSettingsEnabled && (
         <>
           <Route
             path={SettingsPath.ServerlessFunctions}
