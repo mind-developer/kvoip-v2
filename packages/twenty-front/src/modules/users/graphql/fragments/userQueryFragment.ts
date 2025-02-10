@@ -41,7 +41,7 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       creatorEmail
       hasValidEnterpriseKey
-      hostname
+      customDomain
       workspaceUrls {
         subdomainUrl
         customUrl
@@ -70,7 +70,7 @@ export const USER_QUERY_FRAGMENT = gql`
         logo
         displayName
         subdomain
-        hostname
+        customDomain
         workspaceUrls {
           subdomainUrl
           customUrl
