@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   IconRobot,
   IconSearch,
@@ -7,15 +7,11 @@ import {
   getOsControlSymbol,
 } from 'twenty-ui';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -24,10 +20,8 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import InnerHTML from 'dangerously-set-html-content';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -52,29 +46,10 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
-
-  const workspaceMember = workspaceMembers.find(
-    (member) => member.id === currentWorkspaceMember?.id,
-  );
-
-  const { telephonyExtension, loading: loadingSoftfone } = useGetUserSoftfone({
-    extNum: workspaceMember?.extensionNumber || '',
-  });
   const { openRecordsSearchPage } = useCommandMenu();
 
   return (
     <>
-      {!loadingSoftfone && telephonyExtension && (
-        <InnerHTML
-          allowRerender
-          html={telephonyExtension.codigo_incorporacao}
-        />
-      )}
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem

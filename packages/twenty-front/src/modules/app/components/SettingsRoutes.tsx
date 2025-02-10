@@ -3,13 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
-import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
-import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
-import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterNewTelephonyExtension';
-import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
-import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
-import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -311,38 +304,6 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenter}
-        element={<SettingsServiceCenter />}
-      />
-      {/* <Route
-        path={SettingsPath.ServiceCenterAgents}
-        element={<SettingsServiceCenterAgents />}
-      /> */}
-      <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
-        path={SettingsPath.EditTelephony}
-        element={<SettingsTelephonyEdit />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterSectors}
-        element={<SettingsServiceCenterSectors />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewSector}
-        element={<SettingsServiceCenterNewSector />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterEditSector}
-        element={<SettingsServiceCenterEditSector />}
       />
       <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
       <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
