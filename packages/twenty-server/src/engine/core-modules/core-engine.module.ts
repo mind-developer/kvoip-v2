@@ -44,12 +44,8 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
-import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
-import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
-import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
-import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -79,6 +75,7 @@ import { FileModule } from './file/file.module';
     TelemetryModule,
     AdminPanelModule,
     LabModule,
+    RoleModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     FileStorageModule.forRootAsync({
@@ -121,11 +118,6 @@ import { FileModule } from './file/file.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
-    MetaModule,
-    SectorModule,
-    AgentModule,
-    InboxModule,
-    GoogleStorageModule,
   ],
   exports: [
     AnalyticsModule,

@@ -18,9 +18,12 @@ export type CurrentWorkspace = Pick<
   | 'isGoogleAuthEnabled'
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
-  | 'hasValidEntrepriseKey'
+  | 'hasValidEnterpriseKey'
   | 'subdomain'
+  | 'customDomain'
+  | 'workspaceUrls'
   | 'metadataVersion'
+  | 'creatorEmail'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

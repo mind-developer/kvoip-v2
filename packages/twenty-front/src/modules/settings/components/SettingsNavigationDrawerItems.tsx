@@ -12,8 +12,8 @@ import {
   IconFunction,
   IconHierarchy2,
   IconKey,
+  IconLock,
   IconMail,
-  IconPhone,
   IconRocket,
   IconServer,
   IconSettings,
@@ -42,7 +42,7 @@ import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2, IconMailCog } from '@tabler/icons-react';
+import { IconIdBadge2, IconMailCog, IconPhone } from '@tabler/icons-react';
 
 type SettingsNavigationItem = {
   label: string;
@@ -58,14 +58,15 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
-  const isFunctionSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFunctionSettingsEnabled,
+  const isPermissionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsEnabled,
   );
-  const isFreeAccessEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFreeAccessEnabled,
-  );
-  const isBillingPageEnabled =
-    billing?.isBillingEnabled && !isFreeAccessEnabled;
+
+  // We want to disable this serverless function setting menu but keep the code
+  // for now
+  const isFunctionSettingsEnabled = false;
+
+  const isBillingPageEnabled = billing?.isBillingEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
@@ -210,6 +211,13 @@ export const SettingsNavigationDrawerItems = () => {
             label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
+          />
+        )}
+        {isPermissionsEnabled && (
+          <SettingsNavigationDrawerItem
+            label={t`Roles`}
+            path={SettingsPath.Roles}
+            Icon={IconLock}
           />
         )}
         <SettingsNavigationDrawerItem

@@ -26,36 +26,47 @@ export const queries = {
     }
   `,
   findManyViewsQuery: gql`
-    query FindManyViews($filter: ViewFilterInput, $orderBy: [ViewOrderByInput], $lastCursor: String, $limit: Int) {
-        views(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
-          edges {
-            node {
-              __typename
-              id
-              viewGroups {
-                edges {
-                  node {
-                    __typename
-                    fieldMetadataId
-                    fieldValue
-                    id
-                    isVisible
-                    position
-                  }
+    query FindManyViews(
+      $filter: ViewFilterInput
+      $orderBy: [ViewOrderByInput]
+      $lastCursor: String
+      $limit: Int
+    ) {
+      views(
+        filter: $filter
+        orderBy: $orderBy
+        first: $limit
+        after: $lastCursor
+      ) {
+        edges {
+          node {
+            __typename
+            id
+            viewGroups {
+              edges {
+                node {
+                  __typename
+                  fieldMetadataId
+                  fieldValue
+                  id
+                  isVisible
+                  position
                 }
               }
             }
-            cursor
           }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-          totalCount
+          cursor
         }
-      }`,
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        totalCount
+      }
+    }
+  `,
   deleteMetadataFieldRelation: gql`
     mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
       deleteOneRelation(input: { id: $idToDelete }) {
@@ -134,11 +145,13 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
+      currentUserWorkspace {
+        settingsPermissions
+      }
       currentWorkspace {
         id
         displayName
         logo
-        domainName
         inviteHash
         allowImpersonation
         activationStatus
@@ -147,7 +160,13 @@ export const queries = {
         isMicrosoftAuthEnabled
         isPasswordAuthEnabled
         subdomain
-        hasValidEntrepriseKey
+        hasValidEnterpriseKey
+        creatorEmail
+        customDomain
+        workspaceUrls {
+          subdomainUrl
+          customUrl
+        }
         featureFlags {
           id
           key
@@ -171,8 +190,12 @@ export const queries = {
           id
           logo
           displayName
-          domainName
           subdomain
+          customDomain
+          workspaceUrls {
+            subdomainUrl
+            customUrl
+          }
         }
       }
       userVars
@@ -285,20 +308,27 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
+      currentUserWorkspace: {
+        settingsPermissions: ['DATA_MODEL'],
+      },
       currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
         logo: null,
-        domainName: 'test',
         inviteHash: 'test-hash',
         allowImpersonation: false,
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
-        hasValidEntrepriseKey: false,
+        hasValidEnterpriseKey: false,
         isGoogleAuthEnabled: true,
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
+        customDomain: null,
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://test.twenty.com/',
+        },
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

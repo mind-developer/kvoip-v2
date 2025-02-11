@@ -34,7 +34,6 @@ const StyledInnerContainer = styled.div`
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
-  const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -48,6 +47,8 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
+  const { openRecordsSearchPage } = useCommandMenu();
+
   return (
     <>
       {!isMobile && (
@@ -55,8 +56,8 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label={t`Search`}
             Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={[getOsControlSymbol(), 'K']}
+            onClick={openRecordsSearchPage}
+            keyboard={['/']}
           />
           <NavigationDrawerItem
             label={t`Settings`}
@@ -70,7 +71,7 @@ export const MainNavigationDrawerItems = () => {
           />
           <ChatNavigationNavItem />
           <NavigationDrawerItem
-            label="Chatbot"
+            label="Bot"
             to={'/chatbot'}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);

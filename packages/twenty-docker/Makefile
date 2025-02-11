@@ -1,6 +1,9 @@
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty . && cd -
 
+kvoip-prod-build:
+	@cd ../.. && docker build -t kvoipcrm/v2:latest -f ./packages/twenty-docker/twenty/Dockerfile .
+
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty
 
@@ -12,3 +15,10 @@ prod-website-build:
 
 prod-website-run:
 	@docker run -d -p 3000:3000 --name twenty-website twenty-website
+
+prod-seed-kvoipv2-db:
+	docker exec -it kvoipv2-server sh -c "yarn && yes | npx nx command-no-deps -- workspace:seed:dev"
+
+prod-force-migrate-db:
+	docker exec -it kvoipv2-server sh -c "rm -f /app/docker-data/db_status" && docker compose down && docker compose up -d
+	

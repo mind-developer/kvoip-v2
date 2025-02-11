@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { TrialPeriodDTO } from 'src/engine/core-modules/billing/dto/trial-period.dto';
+import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
@@ -17,8 +17,8 @@ class Billing {
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
-  @Field(() => [TrialPeriodDTO])
-  trialPeriods: TrialPeriodDTO[];
+  @Field(() => [BillingTrialPeriodDTO])
+  trialPeriods: BillingTrialPeriodDTO[];
 }
 
 @ObjectType()
@@ -127,4 +127,16 @@ export class ClientConfig {
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  @Field(() => Boolean)
+  isMicrosoftMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isMicrosoftCalendarEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleCalendarEnabled: boolean;
 }

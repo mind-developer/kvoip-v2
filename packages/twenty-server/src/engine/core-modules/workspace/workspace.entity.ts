@@ -15,27 +15,22 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
 });
 
 @Entity({ name: 'workspace', schema: 'core' })
-@ObjectType('Workspace')
+@ObjectType()
 export class Workspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  domainName?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -48,6 +43,10 @@ export class Workspace {
   @Field({ nullable: true })
   @Column({ nullable: true })
   inviteHash?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorEmail: string;
 
   @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamptz' })
@@ -84,8 +83,8 @@ export class Workspace {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
-  @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
-  featureFlags: Relation<FeatureFlagEntity[]>;
+  @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
+  featureFlags: Relation<FeatureFlag[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
@@ -127,6 +126,10 @@ export class Workspace {
   @Column({ unique: true })
   subdomain: string;
 
+  @Field({ nullable: true })
+  @Column({ unique: true, nullable: true })
+  customDomain?: string;
+
   @Field()
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;
@@ -136,13 +139,6 @@ export class Workspace {
   isPasswordAuthEnabled: boolean;
 
   @Field()
-  @Column({ default: false })
+  @Column({ default: true })
   isMicrosoftAuthEnabled: boolean;
-
-  @Field(() => [WhatsappIntegration])
-  @OneToMany(
-    () => WhatsappIntegration,
-    (whatsappIntegration) => whatsappIntegration.workspace,
-  )
-  whatsappIntegrations: Relation<WhatsappIntegration[]>;
 }
