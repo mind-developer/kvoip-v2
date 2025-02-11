@@ -1036,6 +1036,74 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   ENTERPRISE_KEY: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Health monitoring time window in minutes',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+
+  // Meta
+  @IsString()
+  @IsOptional()
+  META_API_URL: string;
+
+  @IsString()
+  @IsOptional()
+  META_WEBHOOK_URL: string;
+
+  // Onesignal
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_REST_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  ONESIGNAL_APP_ID: string;
+
+  // Google Cloud Storage
+  @IsString()
+  @IsOptional()
+  BUCKET_KEYFILENAME: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_PROJECT_ID: string;
+
+  @IsString()
+  @IsOptional()
+  BUCKET_NAME: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_AUTH_DOMAIN: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_PROJECT_ID: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_STORAGE_BUCKET: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_MESSAGING_SENDER_ID: string;
+
+  @IsString()
+  @IsOptional()
+  FIREBASE_APP_ID: string;
 }
 
 export const validate = (
