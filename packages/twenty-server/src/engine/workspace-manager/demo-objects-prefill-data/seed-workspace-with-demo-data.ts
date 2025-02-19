@@ -41,7 +41,14 @@ export const seedWorkspaceWithDemoData = async (
 
       await seedWorkspaceFavorites(
         viewDefinitionsWithId
-          .filter((view) => view.key === 'INDEX' && shouldSeedWorkspaceFavorite(view.objectMetadataId, objectMetadataMap))
+          .filter(
+            (view) =>
+              view.key === 'INDEX' &&
+              shouldSeedWorkspaceFavorite(
+                view.objectMetadataId,
+                objectMetadataMap,
+              ),
+          )
           .map((view) => view.id),
         entityManager,
         schemaName,

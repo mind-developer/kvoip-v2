@@ -10,6 +10,7 @@ import {
 } from 'src/database/typeorm-seeds/core/workspaces';
 import {
   getDevSeedCompanyCustomFields,
+  getDevSeedLinkTrackingCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
@@ -25,6 +26,7 @@ import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/mes
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
+import { seedLinkTracking } from 'src/database/typeorm-seeds/workspace/seedLinkTracking';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/seedPeople';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
@@ -146,6 +148,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
+      await this.seedLinkTrackingCustomFields(
+        objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.linkTracking].id,
+        workspaceId,
+      );
+
       await this.seedStandardObjectRecords(
         workspaceDataSource,
         dataSourceMetadata,
@@ -190,6 +197,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           dataSourceMetadata.schema,
           dataSourceMetadata.workspaceId,
         );
+
+        await seedLinkTracking(entityManager, dataSourceMetadata.schema);
 
         if (dataSourceMetadata.workspaceId === SEED_APPLE_WORKSPACE_ID) {
           await seedMessageThread(entityManager, dataSourceMetadata.schema);
@@ -290,6 +299,29 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     await this.fieldMetadataService.createMany(
       DEV_SEED_PERSON_CUSTOM_FIELDS.map((customField) => ({
+        ...customField,
+        isCustom: true,
+      })),
+    );
+  }
+
+  async seedLinkTrackingCustomFields(
+    linkTrackingObjectMetadataId: string,
+    workspaceId: string,
+  ) {
+    if (!linkTrackingObjectMetadataId) {
+      throw new Error(
+        `LinkTracking object metadata not found for workspace ${workspaceId}, can't seed custom fields`,
+      );
+    }
+    const DEV_SEED_LINK_TRACKING_CUSTOM_FIELDS =
+      getDevSeedLinkTrackingCustomFields(
+        linkTrackingObjectMetadataId,
+        workspaceId,
+      );
+
+    await this.fieldMetadataService.createMany(
+      DEV_SEED_LINK_TRACKING_CUSTOM_FIELDS.map((customField) => ({
         ...customField,
         isCustom: true,
       })),

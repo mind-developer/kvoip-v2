@@ -1,11 +1,11 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 import {
-  SEED_APPLE_WORKSPACE_ID,
   SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 const tableName = 'workspaceMember';
 
@@ -91,5 +91,37 @@ export const seedWorkspaceMember = async (
     ])
     .orIgnore()
     .values(workspaceMembers)
+    .execute();
+
+  const linkTrackingEntries = workspaceMembers.map((member) => ({
+    id: crypto.randomUUID(),
+    workspaceId: workspaceId,
+    userId: member.userId,
+    linkName: 'Example Link',
+    websiteUrl: 'https://example.com',
+    generatedUrl: 'https://short.ly/example',
+    campaignName: 'Launch Campaign',
+    campaignSource: 'Google Ads',
+    meansOfCommunication: 'Email',
+    keyword: 'marketing',
+  }));
+
+  await entityManager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.link_tracking`, [
+      'id',
+      'workspaceId',
+      'userId',
+      'linkName',
+      'websiteUrl',
+      'generatedUrl',
+      'campaignName',
+      'campaignSource',
+      'meansOfCommunication',
+      'keyword',
+    ])
+    .orIgnore()
+    .values(linkTrackingEntries)
     .execute();
 };

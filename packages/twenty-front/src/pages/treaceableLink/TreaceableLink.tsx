@@ -16,9 +16,7 @@ export const TraceableLink = () => {
     <PageContainer>
       <PageHeader Icon={IconLink} title="Traceable link" />
       <PageBody>
-        <StyledMainContainer>
-         
-        </StyledMainContainer>
+        <StyledMainContainer></StyledMainContainer>
       </PageBody>
     </PageContainer>
   );

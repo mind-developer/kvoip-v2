@@ -332,6 +332,17 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
 };
 
+export const LINK_TRACKING_STANDARD_FIELD_IDS = {
+  id: '30303030-3875-44d5-8c33-a6239011cab8',
+  linkName: '30303030-a740-42bb-8849-8980fb3f12e1',
+  websiteUrl: '30303030-3c51-43fa-8b6e-af39e29368ab',
+  generatedUrl: '30303030-f1af-48f7-893b-2007a73dd508',
+  campaignName: '30303030-8fc2-487c-b84a-55a99b145cfd',
+  campaignSource: '30303030-b0d0-415a-bef9-640a26dacd9b',
+  meansOfCommunication: '30303030-4564-4b8b-a09f-05445f2e0bce',
+  keyword: '30303030-0638-448e-8825-439134618022',
+};
+
 export const PERSON_STANDARD_FIELD_IDS = {
   name: '20202020-3875-44d5-8c33-a6239011cab8',
   email: '20202020-a740-42bb-8849-8980fb3f12e1',
@@ -565,6 +576,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   noteTarget: NOTE_TARGET_STANDARD_FIELD_IDS,
   opportunity: OPPORTUNITY_STANDARD_FIELD_IDS,
   person: PERSON_STANDARD_FIELD_IDS,
+  traceableLink: LINK_TRACKING_STANDARD_FIELD_IDS,
   task: TASK_STANDARD_FIELD_IDS,
   taskTarget: TASK_TARGET_STANDARD_FIELD_IDS,
   timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,

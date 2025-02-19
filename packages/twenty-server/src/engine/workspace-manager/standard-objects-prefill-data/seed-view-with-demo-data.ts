@@ -4,6 +4,7 @@ import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/obj
 
 import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { seedCompaniesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { linkTrackingAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/link-tracking-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -30,6 +31,7 @@ export const seedViewWithDemoData = async (
     workflowsAllView(objectMetadataStandardIdToIdMap),
     workflowVersionsAllView(objectMetadataStandardIdToIdMap),
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
+    linkTrackingAllView(objectMetadataStandardIdToIdMap),
   ];
 
   return createWorkspaceViews(entityManager, schemaName, viewDefinitions);
