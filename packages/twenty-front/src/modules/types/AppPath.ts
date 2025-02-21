@@ -31,6 +31,7 @@ export enum AppPath {
   ExternalChat = '/chat/call-center',
 
   Chatbot = '/chatbot',
+  TraceableLink = 'traceable-link',
 
   Authorize = '/authorize',
 

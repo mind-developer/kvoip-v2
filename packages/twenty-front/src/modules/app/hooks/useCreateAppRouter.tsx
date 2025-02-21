@@ -29,6 +29,7 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { TraceableLink } from '~/pages/traceable-link/TraceableLink';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
@@ -88,6 +89,7 @@ export const useCreateAppRouter = (
             }
           />
           <Route path={AppPath.Chatbot} element={<Chatbot />} />
+          <Route path={AppPath.TraceableLink} element={<TraceableLink />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>
