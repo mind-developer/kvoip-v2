@@ -39,8 +39,10 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
+import { TRACKABLE_LINK_DATA_SEEDS } from 'src/engine/seeder/data-seeds/trackable-link-data-seeds';
 import { PETS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/pets-metadata-seeds';
 import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
+import { TRACKABLE_LINK_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/trackable-link-metadata-seeds';
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -163,6 +165,13 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
         SURVEY_RESULTS_METADATA_SEEDS,
         SURVEY_RESULTS_DATA_SEEDS,
+      );
+
+      await this.seederService.seedCustomObjects(
+        dataSourceMetadata.id,
+        workspaceId,
+        TRACKABLE_LINK_METADATA_SEEDS,
+        TRACKABLE_LINK_DATA_SEEDS,
       );
     } catch (error) {
       this.logger.error(error);

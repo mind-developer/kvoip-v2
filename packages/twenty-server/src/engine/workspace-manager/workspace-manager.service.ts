@@ -20,8 +20,10 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
+import { TRACKABLE_LINK_DATA_SEEDS } from 'src/engine/seeder/data-seeds/trackable-link-data-seeds';
 import { PETS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/pets-metadata-seeds';
 import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
+import { TRACKABLE_LINK_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/trackable-link-metadata-seeds';
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { seedWorkspaceWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data';
@@ -179,6 +181,13 @@ export class WorkspaceManagerService {
       workspaceId,
       SURVEY_RESULTS_METADATA_SEEDS,
       SURVEY_RESULTS_DATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjects(
+      dataSourceMetadata.id,
+      workspaceId,
+      TRACKABLE_LINK_METADATA_SEEDS,
+      TRACKABLE_LINK_DATA_SEEDS,
     );
   }
 

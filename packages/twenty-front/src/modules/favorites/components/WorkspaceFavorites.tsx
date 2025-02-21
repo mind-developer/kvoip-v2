@@ -14,10 +14,15 @@ export const WorkspaceFavorites = () => {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
 
+  const filteredObjectMetadataItems =
+    workspaceFavoritesObjectMetadataItems.filter(
+      (item) => item.id !== '22fbede1-6471-44be-98e5-475f0943a3bd',
+    );
+
   return (
     <NavigationDrawerSectionForObjectMetadataItems
       sectionTitle={t`Workspace`}
-      objectMetadataItems={workspaceFavoritesObjectMetadataItems}
+      objectMetadataItems={filteredObjectMetadataItems}
       isRemote={false}
     />
   );

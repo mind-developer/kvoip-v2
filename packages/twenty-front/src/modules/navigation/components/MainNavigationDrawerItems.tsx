@@ -74,8 +74,8 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconRobot}
           />
           <NavigationDrawerItem
-            label="Traceable"
-            to={'/traceable-link'}
+            label="Traceable Link"
+            to="/objects/trackableLinks?viewId=6318c5af-da81-47d6-85a4-297067771c9b"
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}

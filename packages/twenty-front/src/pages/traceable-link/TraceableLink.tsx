@@ -1,11 +1,9 @@
 /* eslint-disable no-restricted-imports */
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
-import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 
 import { IconLink } from '@tabler/icons-react';
 
@@ -23,13 +21,7 @@ export const TraceableLink = () => {
     <PageContainer>
       <PageHeader Icon={IconLink} title="Traceable Link" />
       <PageBody>
-        <StyledMainContainer>
-          <NavigationDrawerSectionForObjectMetadataItems
-            sectionTitle={t`Workspace`}
-            objectMetadataItems={workspaceFavoritesObjectMetadataItems}
-            isRemote={false}
-          />
-        </StyledMainContainer>
+        <StyledMainContainer></StyledMainContainer>
       </PageBody>
     </PageContainer>
   );
