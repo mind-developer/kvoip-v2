@@ -16,7 +16,7 @@ export const WorkspaceFavorites = () => {
 
   const filteredObjectMetadataItems =
     workspaceFavoritesObjectMetadataItems.filter(
-      (item) => item.id !== '22fbede1-6471-44be-98e5-475f0943a3bd',
+      (item) => item.nameSingular !== 'trackableLink',
     );
 
   return (

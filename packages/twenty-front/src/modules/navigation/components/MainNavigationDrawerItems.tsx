@@ -5,6 +5,7 @@ import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
@@ -28,6 +29,7 @@ const StyledInnerContainer = styled.div`
 `;
 
 export const MainNavigationDrawerItems = () => {
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
   const isMobile = useIsMobile();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -43,6 +45,16 @@ export const MainNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const { openRecordsSearchPage } = useCommandMenu();
+
+  const filteredObjectMetadataItems =
+    workspaceFavoritesObjectMetadataItems.filter(
+      (item) => item.nameSingular === 'trackableLink',
+    );
+
+  const viewId =
+    filteredObjectMetadataItems.length > 0
+      ? filteredObjectMetadataItems[0].id
+      : null;
 
   return (
     <>
@@ -75,7 +87,7 @@ export const MainNavigationDrawerItems = () => {
           />
           <NavigationDrawerItem
             label="Traceable Link"
-            to="/objects/trackableLinks?viewId=6318c5af-da81-47d6-85a4-297067771c9b"
+            to={`/objects/trackableLinks?viewId=${viewId}`}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
