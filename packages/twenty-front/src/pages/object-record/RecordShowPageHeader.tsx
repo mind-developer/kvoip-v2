@@ -39,27 +39,31 @@ export const RecordShowPageHeader = ({
     getObjectMetadataIdentifierFields({ objectMetadataItem });
 
   return (
-    <PageHeader
-      title={
-        hasEditableName ? (
-          <ObjectRecordShowPageBreadcrumb
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-            objectLabelPlural={objectMetadataItem.labelPlural}
-            labelIdentifierFieldMetadataItem={labelIdentifierFieldMetadataItem}
-          />
-        ) : (
-          viewName
-        )
-      }
-      hasPaginationButtons
-      hasClosePageButton
-      onClosePage={navigateToIndexView}
-      navigateToPreviousRecord={navigateToPreviousRecord}
-      navigateToNextRecord={navigateToNextRecord}
-      Icon={headerIcon}
-    >
-      {children}
-    </PageHeader>
+    <>
+      <PageHeader
+        title={
+          hasEditableName ? (
+            <ObjectRecordShowPageBreadcrumb
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+              objectLabelPlural={objectMetadataItem.labelPlural}
+              labelIdentifierFieldMetadataItem={
+                labelIdentifierFieldMetadataItem
+              }
+            />
+          ) : (
+            viewName
+          )
+        }
+        hasPaginationButtons
+        hasClosePageButton
+        onClosePage={navigateToIndexView}
+        navigateToPreviousRecord={navigateToPreviousRecord}
+        navigateToNextRecord={navigateToNextRecord}
+        Icon={headerIcon}
+      >
+        {children}
+      </PageHeader>
+    </>
   );
 };
