@@ -11,7 +11,7 @@ export const TRACKABLE_LINK_METADATA_SEEDS: ObjectMetadataSeed = {
   icon: 'IconLink',
   fields: [
     {
-      type: FieldMetadataType.LINKS,
+      type: FieldMetadataType.TEXT,
       label: 'Link Name',
       name: 'linkName',
       isCustom: false,
@@ -20,18 +20,9 @@ export const TRACKABLE_LINK_METADATA_SEEDS: ObjectMetadataSeed = {
       } as FieldMetadataTextSettings,
     },
     {
-      type: FieldMetadataType.LINKS,
+      type: FieldMetadataType.TEXT,
       label: 'Website URL',
       name: 'websiteUrl',
-      isCustom: false,
-      settings: {
-        displayedMaxRows: 1,
-      } as FieldMetadataTextSettings,
-    },
-    {
-      type: FieldMetadataType.LINKS,
-      label: 'Generated URL',
-      name: 'generatedUrl',
       isCustom: false,
       settings: {
         displayedMaxRows: 1,
@@ -70,6 +61,15 @@ export const TRACKABLE_LINK_METADATA_SEEDS: ObjectMetadataSeed = {
       name: 'keyword',
       isCustom: false,
       isNullable: true,
+      settings: {
+        displayedMaxRows: 1,
+      } as FieldMetadataTextSettings,
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'Generated URL',
+      name: 'generatedUrl',
+      isCustom: false,
       settings: {
         displayedMaxRows: 1,
       } as FieldMetadataTextSettings,

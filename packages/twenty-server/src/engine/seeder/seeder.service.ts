@@ -10,6 +10,7 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { generateUrlLink } from 'src/engine/seeder/metadata-seeds/generateUrl';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
@@ -27,6 +28,41 @@ export class SeederService {
     objectMetadataSeed: ObjectMetadataSeed,
     objectRecordSeeds: Record<string, any>[],
   ): Promise<void> {
+    const isTrackableLink = objectMetadataSeed.nameSingular === 'trackableLink';
+
+    const recordsWithGeneratedUrl = objectRecordSeeds.map((record) => {
+      if (isTrackableLink) {
+        try {
+          if (
+            !record.websiteUrl ||
+            !record.campaignName ||
+            !record.campaignSource
+          ) {
+            throw new Error(
+              `Missing required fields for generating URL in record: ${JSON.stringify(record)}`,
+            );
+          }
+
+          const generatedUrl = generateUrlLink(
+            record.websiteUrl,
+            record.campaignName,
+            record.campaignSource,
+          );
+
+          return {
+            ...record,
+            generatedUrl,
+          };
+        } catch (error) {
+          throw new Error(
+            `Failed to generate URL for record: ${error.message}`,
+          );
+        }
+      }
+
+      return record;
+    });
+
     const createdObjectMetadata = await this.objectMetadataService.createOne({
       ...objectMetadataSeed,
       dataSourceId,
@@ -79,7 +115,7 @@ export class SeederService {
 
     this.addNameFieldToFieldMetadataSeeds(filteredFieldMetadataSeeds);
 
-    const objectRecordSeedsAsSQLFlattenedSeeds = objectRecordSeeds.map(
+    const objectRecordSeedsAsSQLFlattenedSeeds = recordsWithGeneratedUrl.map(
       (recordSeed) => {
         const objectRecordSeedsAsSQLFlattenedSeeds = {};
 
