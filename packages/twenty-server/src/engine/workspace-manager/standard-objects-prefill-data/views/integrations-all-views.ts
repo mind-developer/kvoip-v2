@@ -32,14 +32,6 @@ export const integrationsAllView = (
         isVisible: true,
         size: 150,
       },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.integration]
-            .fields[INTEGRATION_STANDARD_FIELD_IDS.traceable],
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
     ],
   };
 };

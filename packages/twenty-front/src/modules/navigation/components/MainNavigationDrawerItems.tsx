@@ -49,13 +49,11 @@ export const MainNavigationDrawerItems = () => {
 
   const traceableObject = useMemo(() => {
     return workspaceFavoritesObjectMetadataItems?.find(
-      (item) => item.nameSingular === 'charge',
+      (item) => item.nameSingular === 'traceable',
     );
   }, [workspaceFavoritesObjectMetadataItems]);
 
   const viewId = traceableObject?.id;
-
-  console.log(workspaceFavoritesObjectMetadataItems);
 
   //id do charges = 067b9d2f-515d-4583-9825-51e38a84514f
   // id do objeto charges = aeeeec5c-2651-41fc-a3b7-a92b4f73ce2d
@@ -92,7 +90,7 @@ export const MainNavigationDrawerItems = () => {
 
           <NavigationDrawerItem
             label="Traceable"
-            to={`/objects/charges?viewId=${viewId ?? ''}`}
+            to={`/objects/traceables?viewId=${viewId ?? ''}`}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
