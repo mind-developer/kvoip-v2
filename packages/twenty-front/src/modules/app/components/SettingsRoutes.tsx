@@ -352,6 +352,18 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterAgents />}
       />
       <Route
+        path={SettingsPath.ServiceCenterTelephony}
+        element={<SettingsServiceCenterTelephony />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewTelephonyExtension}
+        element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.EditTelephony}
+        element={<SettingsTelephonyEdit />}
+      />
+      <Route
         path={SettingsPath.ServiceCenterNewAgent}
         element={<SettingsServiceCenterNewAgent />}
       />
