@@ -78,10 +78,6 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
 
   useEffect(() => {}, [refetchStripe]);
 
-  const handleEditIntegration = (connId: string) => {
-    navigate(`./edit/${connId}`);
-  };
-
   const handleDeleteIntegration = async (id: string) => {
     try {
       await deleteStripeIntegration(id);
@@ -106,9 +102,6 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
       });
     }
   };
-
-  console.log('stripe', stripeIntegrations);
-  console.log('ref', { refetchStripe });
 
   const integrationCategories = useSettingsIntegrationCategories();
   const stripeCategory = integrationCategories[3];
@@ -148,7 +141,10 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
           {/* <button onClick={() => handleCheckoutSession()}>checkout</button> */}
         </StripeAccountConnectedContainer>
       ) : (
-        <SettingsIntegrationGroup key={stripeCategory.key} integrationGroup={stripeCategory} />
+        <SettingsIntegrationGroup
+          key={stripeCategory.key}
+          integrationGroup={stripeCategory}
+        />
       )}
     </>
   );

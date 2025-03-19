@@ -65,10 +65,7 @@ export const SettingsIntegrationDatabase = () => {
             description={`Connect or access your ${integration.text} data`}
           />
           {databaseKey === 'stripe' ? (
-            <SettigsIntegrationStripeConnectionsListCard
-              integration={integration}
-              connections={connections}
-            />
+            <SettigsIntegrationStripeConnectionsListCard />
           ) : (
             <SettingsIntegrationDatabaseConnectionsListCard
               integration={integration}

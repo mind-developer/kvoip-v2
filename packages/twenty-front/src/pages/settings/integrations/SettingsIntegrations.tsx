@@ -9,7 +9,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 export const SettingsIntegrations = () => {
   const integrationCategories = useSettingsIntegrationCategories();
 
-  const filteredIntegrationCategories = integrationCategories.filter((group) => group.key !== 'stripe');
+  const filteredIntegrationCategories = integrationCategories.filter(
+    (group) => group.key !== 'stripe',
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -22,13 +24,11 @@ export const SettingsIntegrations = () => {
         { children: 'Integrations' },
       ]}
     >
+      <SettigsIntegrationStripeConnectionsListCard />
       <SettingsPageContainer>
         {filteredIntegrationCategories.map((group) => (
           <SettingsIntegrationGroup key={group.key} integrationGroup={group} />
-          
         ))}
-
-        <SettigsIntegrationStripeConnectionsListCard />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
