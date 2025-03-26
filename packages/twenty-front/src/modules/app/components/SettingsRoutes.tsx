@@ -6,6 +6,8 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
+import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
+import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
@@ -563,6 +565,14 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationWhatsappNewDatabaseConnection}
         element={<SettingsIntegrationWhatsappNewDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterDatabase}
+        element={<SettingsIntegrationInterDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterNewDatabaseConnection}
+        element={<SettingsIntegrationInterNewDatabaseConnection />}
       />
       <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
