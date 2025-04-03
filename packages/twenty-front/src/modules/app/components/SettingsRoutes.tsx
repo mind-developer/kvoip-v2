@@ -7,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
 import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
+import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
 import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
@@ -573,6 +574,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationInterNewDatabaseConnection}
         element={<SettingsIntegrationInterNewDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterEditDatabaseConnection}
+        element={<SettingsIntegrationInterEditDatabaseConnection />}
       />
       <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
