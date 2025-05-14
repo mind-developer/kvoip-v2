@@ -66,7 +66,7 @@ type FileDropZoneProps = {
   label: string;
   maxFileSize?: number;
   disabled?: boolean;
-  file?: File | null;
+  file?: File | string | { path: string };
 };
 
 const StyledFileDisplay = styled.div`
@@ -166,17 +166,17 @@ export const FileDropZone = ({
                 />
               </StyledFileIcon>
 
-              {typeof file === 'string' ? (
+              {file instanceof File ? (
+                <StyledFileName>{file.name}</StyledFileName>
+              ) : (
                 <StyledFileLink
-                  href={file}
+                  href={typeof file === 'string' ? file : file.path}
                   target="_blank"
                   rel="noopener noreferrer"
                   download
                 >
                   Download
                 </StyledFileLink>
-              ) : (
-                <StyledFileName>{file.name}</StyledFileName>
               )}
             </StyledFileDisplay>
 

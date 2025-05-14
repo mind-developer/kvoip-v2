@@ -78,8 +78,14 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
       clientSecret: activeConnection?.clientSecret,
       integrationName: activeConnection?.integrationName,
       expirationDate: activeConnection?.expirationDate ?? undefined,
-      certificate: activeConnection?.certificate,
-      privateKey: activeConnection?.privateKey,
+      certificate:
+        typeof activeConnection?.certificate === 'string'
+          ? undefined
+          : activeConnection?.certificate,
+      privateKey:
+        typeof activeConnection?.privateKey === 'string'
+          ? undefined
+          : activeConnection?.privateKey,
     },
   });
 

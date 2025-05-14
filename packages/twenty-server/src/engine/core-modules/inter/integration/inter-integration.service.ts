@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -10,6 +10,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class InterIntegrationService {
+  private readonly logger = new Logger(InterIntegrationService.name);
+
   constructor(
     @InjectRepository(InterIntegration, 'core')
     private interIntegrationRepository: Repository<InterIntegration>,
@@ -20,11 +22,18 @@ export class InterIntegrationService {
   async create(
     createInput: CreateInterIntegrationInput,
   ): Promise<InterIntegration> {
+    this.logger.debug(
+      `Creating integration for workspace ${createInput.workspaceId}`,
+    );
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: createInput.workspaceId },
     });
 
     if (!workspace) {
+      this.logger.warn(
+        `Workspace with ID ${createInput.workspaceId} not found`,
+      );
       throw new NotFoundException('Workspace not found');
     }
 
@@ -37,14 +46,22 @@ export class InterIntegrationService {
     const savedIntegration =
       await this.interIntegrationRepository.save(createIntegration);
 
+    this.logger.log(`Created integration with ID ${savedIntegration.id}`);
+
     return savedIntegration;
   }
 
   async findAll(workspaceId: string): Promise<InterIntegration[]> {
+    this.logger.debug(`Finding all integrations for workspace ${workspaceId}`);
+
     const integrations = await this.interIntegrationRepository.find({
       where: { workspace: { id: workspaceId } },
       relations: ['workspace'],
     });
+
+    this.logger.log(
+      `Found ${integrations.length} integrations for workspace ${workspaceId}`,
+    );
 
     return integrations.map((integration) => ({
       ...integration,
@@ -55,20 +72,33 @@ export class InterIntegrationService {
   }
 
   async findById(id: string): Promise<InterIntegration | null> {
-    return this.interIntegrationRepository.findOne({
+    this.logger.debug(`Finding integration with ID ${id}`);
+
+    const integration = await this.interIntegrationRepository.findOne({
       where: { id },
       relations: ['workspace'],
     });
+
+    if (!integration) {
+      this.logger.warn(`Integration with ID ${id} not found`);
+    } else {
+      this.logger.log(`Found integration with ID ${id}`);
+    }
+
+    return integration;
   }
 
   async update(
     updateInput: UpdateInterIntegrationInput,
   ): Promise<InterIntegration> {
+    this.logger.debug(`Updating integration with ID ${updateInput.id}`);
+
     const integration = await this.interIntegrationRepository.findOne({
       where: { id: updateInput.id },
     });
 
     if (!integration) {
+      this.logger.warn(`Integration with ID ${updateInput.id} not found`);
       throw new NotFoundException('Integration not found');
     }
 
@@ -80,13 +110,21 @@ export class InterIntegrationService {
       },
     );
 
-    return await this.interIntegrationRepository.save(updatedIntegration);
+    const saved =
+      await this.interIntegrationRepository.save(updatedIntegration);
+
+    this.logger.log(`Updated integration with ID ${saved.id}`);
+
+    return saved;
   }
 
   async toggleStatus(id: string): Promise<InterIntegration> {
+    this.logger.debug(`Toggling status for integration ID ${id}`);
+
     const integration = await this.findById(id);
 
     if (!integration) {
+      this.logger.warn(`Integration with ID ${id} not found for status toggle`);
       throw new NotFoundException('Integration not found');
     }
 
@@ -94,14 +132,32 @@ export class InterIntegrationService {
       integration.expirationDate ?? new Date(),
     );
 
-    return await this.interIntegrationRepository.save(integration);
+    const saved = await this.interIntegrationRepository.save(integration);
+
+    this.logger.log(
+      `Toggled status for integration ID ${saved.id} to ${saved.status}`,
+    );
+
+    return saved;
   }
 
   private getStatusFromExpirationDate(
     expirationDate: Date | null,
   ): 'Active' | 'Expired' | 'Disabled' {
-    if (!expirationDate) return 'Disabled';
+    const now = new Date();
 
-    return expirationDate > new Date() ? 'Expired' : 'Active';
+    if (!expirationDate) {
+      this.logger.debug(
+        'No expiration date provided, returning status: Disabled',
+      );
+
+      return 'Disabled';
+    }
+
+    const status = expirationDate > now ? 'Active' : 'Expired';
+
+    this.logger.debug(`Calculated status based on expiration date: ${status}`);
+
+    return status;
   }
 }
