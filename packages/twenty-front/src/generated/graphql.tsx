@@ -491,6 +491,13 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateFocusNfeIntegrationInput = {
+  integrationName: Scalars['String'];
+  status?: Scalars['String'];
+  token: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId: Scalars['String'];
@@ -1106,6 +1113,7 @@ export type Mutation = {
   createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFocusNfeIntegration: FocusNfeIntegration;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1125,6 +1133,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteFocusNfeIntegration: Scalars['Boolean'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1175,6 +1184,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: Scalars['Boolean'];
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFocusNfeIntegration: FocusNfeIntegration;
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
@@ -1261,6 +1271,11 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateFocusNfeIntegrationArgs = {
+  createInput: CreateFocusNfeIntegrationInput;
+};
+
+
 export type MutationCreateInterIntegrationArgs = {
   createInput: CreateInterIntegrationInput;
 };
@@ -1341,6 +1356,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteFocusNfeIntegrationArgs = {
+  focusNfeIntegrationId: Scalars['String'];
 };
 
 
@@ -1569,6 +1589,11 @@ export type MutationUpdateChatbotFlowArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFocusNfeIntegrationArgs = {
+  updateInput: UpdateFocusNfeIntegrationInput;
 };
 
 
@@ -1960,6 +1985,8 @@ export type Query = {
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
+  getFocusNfeIntegrationById: FocusNfeIntegration;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegration>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2067,6 +2094,16 @@ export type QueryGetChatbotFlowByIdArgs = {
 
 export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type QueryGetFocusNfeIntegrationByIdArgs = {
+  focusNfeIntegrationId: Scalars['String'];
+};
+
+
+export type QueryGetFocusNfeIntegrationsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -2832,6 +2869,13 @@ export type UpdateFieldInput = {
   settings?: InputMaybe<Scalars['JSON']>;
 };
 
+export type UpdateFocusNfeIntegrationInput = {
+  id: Scalars['String'];
+  integrationName?: InputMaybe<Scalars['String']>;
+  status?: Scalars['String'];
+  token?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['String']>;
@@ -3272,6 +3316,17 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type FocusNfeIntegration = {
+  __typename?: 'focusNfeIntegration';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  integrationName: Scalars['String'];
+  status: Scalars['String'];
+  token: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
 export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
@@ -3687,6 +3742,13 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
+
+export type CreateFocusNfeIntegrationMutationVariables = Exact<{
+  createInput: CreateFocusNfeIntegrationInput;
+}>;
+
+
+export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'focusNfeIntegration', id: any, integrationName: string, token: string, status: string, workspace: { __typename?: 'Workspace', id: any } } };
 
 export type CreateInterIntegrationMutationVariables = Exact<{
   createInput: CreateInterIntegrationInput;
@@ -6577,6 +6639,45 @@ export function useGetSystemHealthStatusLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSystemHealthStatusQueryHookResult = ReturnType<typeof useGetSystemHealthStatusQuery>;
 export type GetSystemHealthStatusLazyQueryHookResult = ReturnType<typeof useGetSystemHealthStatusLazyQuery>;
 export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>;
+export const CreateFocusNfeIntegrationDocument = gql`
+    mutation CreateFocusNfeIntegration($createInput: CreateFocusNfeIntegrationInput!) {
+  createFocusNfeIntegration(createInput: $createInput) {
+    id
+    integrationName
+    token
+    status
+    workspace {
+      id
+    }
+  }
+}
+    `;
+export type CreateFocusNfeIntegrationMutationFn = Apollo.MutationFunction<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>;
+
+/**
+ * __useCreateFocusNfeIntegrationMutation__
+ *
+ * To run a mutation, you first call `useCreateFocusNfeIntegrationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFocusNfeIntegrationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFocusNfeIntegrationMutation, { data, loading, error }] = useCreateFocusNfeIntegrationMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateFocusNfeIntegrationMutation(baseOptions?: Apollo.MutationHookOptions<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>(CreateFocusNfeIntegrationDocument, options);
+      }
+export type CreateFocusNfeIntegrationMutationHookResult = ReturnType<typeof useCreateFocusNfeIntegrationMutation>;
+export type CreateFocusNfeIntegrationMutationResult = Apollo.MutationResult<CreateFocusNfeIntegrationMutation>;
+export type CreateFocusNfeIntegrationMutationOptions = Apollo.BaseMutationOptions<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>;
 export const CreateInterIntegrationDocument = gql`
     mutation CreateInterIntegration($createInput: CreateInterIntegrationInput!) {
   createInterIntegration(createInput: $createInput) {
