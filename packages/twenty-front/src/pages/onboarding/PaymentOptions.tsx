@@ -128,7 +128,7 @@ export const PaymentOptions = () => {
         body: JSON.stringify({
           amount: selectedPlanId.price,
           currency: 'brl',
-          success_url: `${window.location.origin}/payment-required/payment-success`,
+          success_url: `${window.location.origin}/payment-required/payment-success?planId=${selectedPlanId.id}`,
           cancel_url: `${window.location.origin}/plan-required`,
         }),
       },
