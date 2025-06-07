@@ -160,7 +160,10 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
   price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
   createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
-  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
+  percentNfe: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
+  percentNfse: '7edf6c53-7d75-423c-8d94-e048bea96137',
+  percentNfce: '7ff7727e-d19c-45b2-ab90-b7c5f0078c5b',
+  percentNfcom: '2c826a97-0cf7-44a5-95e0-a2c2104fedea',
   discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
   entityType: '20202020-a1b2-4c3d-8e4f-5f6a7b8c9d01',
@@ -175,6 +178,16 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
+  nfType: 'e4cbb32f-dac1-4b3b-abaa-d38755ac6512',
+  cfop: '28dda09e-6568-4762-88fc-ddad993b680a',
+  cstIcmsCsosn: '7271c845-2b6c-4f81-a355-ad76ba1b9836',
+  unitOfMeasure: '2a716517-d04b-4c7d-a7d9-3411d09e3f46',
+  origem: '95823a55-9f9b-4573-a24b-c8a9d4ef18ef',
+  aliquotaIcms: 'c1c193d5-e76d-4c63-9bab-4d6e1b61c381',
+  aliquotaPis: '964fdfb5-650b-44f5-aa52-6a8187cfacd9',
+  aliquotaCofins: 'b9555f1e-b71c-4495-be5c-d99de7733c4f',
+  aliquotaIpi: '10bb8c81-11b0-43b0-88ca-056174eced6a',
+  nfStatus: '2bbe73b0-3f15-44b1-bd7c-7aae2a381de0',
 };
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
