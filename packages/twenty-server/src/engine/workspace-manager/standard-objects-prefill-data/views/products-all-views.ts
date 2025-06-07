@@ -62,6 +62,15 @@ export const productsAllView = (
         isVisible: true,
         size: 150,
       },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
+            PRODUCT_STANDARD_FIELD_IDS.productType
+          ],
+        position: 5,
+        isVisible: true,
+        size: 150,
+      },
     ],
   };
 };

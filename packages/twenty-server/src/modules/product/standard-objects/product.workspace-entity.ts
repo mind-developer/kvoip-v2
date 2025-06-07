@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -5,6 +7,7 @@ import { Relation } from 'typeorm';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -30,6 +33,31 @@ export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'cest', type: FieldMetadataType.TEXT },
 ];
 
+export enum ProductTypeStatus {
+  SERVICE = 'SERVICE',
+  COMMODITY = 'COMMODITY',
+}
+
+const ProductTypeStatusOptions: FieldMetadataComplexOption[] = [
+  {
+    value: ProductTypeStatus.SERVICE,
+    label: 'Serviço',
+    position: 0,
+    color: 'sky',
+  },
+  {
+    value: ProductTypeStatus.COMMODITY,
+    label: 'Mercadoria',
+    position: 1,
+    color: 'green',
+  },
+];
+
+registerEnumType(ProductTypeStatus, {
+  name: 'ProductTypeStatus',
+  description: 'Product type status options',
+});
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.product,
   namePlural: 'products',
@@ -50,6 +78,17 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   name: string;
+
+  @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.productType,
+    type: FieldMetadataType.SELECT,
+    label: msg`Tipo de produto`,
+    description: msg`Tipo de produto`,
+    icon: 'IconTag',
+    options: ProductTypeStatusOptions,
+  })
+  @WorkspaceIsNullable()
+  productType: ProductTypeStatus | null;
 
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.salePrice,

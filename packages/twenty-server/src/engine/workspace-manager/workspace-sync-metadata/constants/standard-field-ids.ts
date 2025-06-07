@@ -213,6 +213,7 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   aliquotaPis: '542891a0-5388-4ac8-b58a-ce3404704f49',
   aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
   valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
+  productType: '73460110-2f05-49db-a76e-7c0ac0880888',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
