@@ -17,6 +17,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PRODUCT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -25,6 +26,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -146,18 +148,6 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
-  @WorkspaceRelation({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.charges,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Charges`,
-    description: msg`Charges using this product`,
-    icon: 'IconSettings',
-    inverseSideTarget: () => ChargeWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  charges: Relation<ChargeWorkspaceEntity[]> | null;
-
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.ncm,
     type: FieldMetadataType.TEXT,
@@ -269,6 +259,16 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   aliquotaCofins: number;
 
   @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.aliquotaIss,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Alíquota ISS`,
+    description: msg`Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais.`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  aliquotaIss: number;
+
+  @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.valorIpi,
     type: FieldMetadataType.NUMBER,
     label: msg`Valor/Alíquota IPI`,
@@ -277,6 +277,65 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   valorIpi: number;
+
+  @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.issRetido,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`ISS Retido`,
+    description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
+    icon: 'IconTag',
+    defaultValue: false,
+  })
+  @WorkspaceFieldIndex()
+  issRetido: boolean;
+
+  @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.itemListaServico,
+    type: FieldMetadataType.TEXT,
+    label: msg`Item Lista Serviço`,
+    description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  itemListaServico: string;
+
+  @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.codigoTributarioMunicipio,
+    type: FieldMetadataType.TEXT,
+    label: msg`Código Tributário Município`,
+    description: msg`Informar o código tributário de acordo com a tabela de cada município (não há um padrão).`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  codigoTributarioMunicipio: string;
+
+  // Relations
+  @WorkspaceRelation({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.company,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Company`,
+    description: msg`Company linked to the products`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'products',
+  })
+  @WorkspaceIsNullable()
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.charges,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Charges`,
+    description: msg`Charges using this product`,
+    icon: 'IconSettings',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  charges: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.searchVector,

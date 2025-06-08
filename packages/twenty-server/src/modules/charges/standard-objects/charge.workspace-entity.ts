@@ -31,90 +31,14 @@ import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-ob
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { NfType, NfTypeOptions } from 'src/modules/charges/types/NfType';
+import { NfStatus, NfStatusOptions } from 'src/modules/charges/types/NfStatus';
 
 const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
-
-export enum NfTypeStatus {
-  NFE = 'nfe',
-  NFSE = 'nfse',
-  NFCOM = 'nfcom',
-  NFCE = 'nfce',
-}
-
-const NfTypeStatusOptions: FieldMetadataComplexOption[] = [
-  {
-    value: NfTypeStatus.NFE,
-    label: 'NF-e',
-    position: 0,
-    color: 'green',
-  },
-  {
-    value: NfTypeStatus.NFSE,
-    label: 'NFS-e',
-    position: 1,
-    color: 'green',
-  },
-  {
-    value: NfTypeStatus.NFCOM,
-    label: 'NF-Com',
-    position: 2,
-    color: 'green',
-  },
-  {
-    value: NfTypeStatus.NFCE,
-    label: 'NFC-e',
-    position: 3,
-    color: 'green',
-  },
-];
-
-registerEnumType(NfTypeStatus, {
-  name: 'ProductTypeStatus',
-  description: 'Product type status options',
-});
-
-export enum NfStatus {
-  CANCELLED = 'cancelled',
-  ISSUED = 'issued',
-  ISSUE = 'issue',
-  DRAFT = 'draft',
-}
-
-const NfStatusOptions: FieldMetadataComplexOption[] = [
-  {
-    value: NfStatus.CANCELLED,
-    label: 'Cancelada',
-    position: 0,
-    color: 'red',
-  },
-  {
-    value: NfStatus.ISSUED,
-    label: 'Emitida',
-    position: 1,
-    color: 'green',
-  },
-  {
-    value: NfStatus.ISSUE,
-    label: 'Emitir',
-    position: 2,
-    color: 'purple',
-  },
-  {
-    value: NfStatus.DRAFT,
-    label: 'Rascunho',
-    position: 3,
-    color: 'gray',
-  },
-];
-
-registerEnumType(NfStatus, {
-  name: 'ProductTypeStatus',
-  description: 'Product type status options',
-});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.charge,
@@ -143,10 +67,10 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NF Type`,
     description: msg`NF Type`,
     icon: 'IconTag',
-    options: NfTypeStatusOptions,
+    options: NfTypeOptions,
   })
   @WorkspaceIsNullable()
-  nfType: NfTypeStatus | null;
+  nfType: NfType | null;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.price,
@@ -279,15 +203,66 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   aliquotaIpi: number;
 
   @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaIss,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Valor/Alíquota IPI`,
+    description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  aliquotaIss: number;
+
+  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.nfStatus,
     type: FieldMetadataType.SELECT,
-    label: msg`Status`,
+    label: msg`NF Status`,
     description: msg`NF Status`,
     icon: 'IconProgress',
-    options: NfTypeStatusOptions,
+    options: NfStatusOptions,
   })
   @WorkspaceIsNullable()
   nfStatus: NfStatus | null;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.discriminacao,
+    type: FieldMetadataType.TEXT,
+    label: msg`Discriminação`,
+    description: msg`Discriminação dos serviços.`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  discriminacao: string;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.issRetido,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`ISS Retido`,
+    description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
+    icon: 'IconTag',
+    defaultValue: false,
+  })
+  @WorkspaceFieldIndex()
+  issRetido: boolean;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.itemListaServico,
+    type: FieldMetadataType.TEXT,
+    label: msg`Item Lista Serviço`,
+    description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  itemListaServico: string;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.codigoTributarioMunicipio,
+    type: FieldMetadataType.TEXT,
+    label: msg`Código Tributário Município`,
+    description: msg`Informar o código tributário de acordo com a tabela de cada município (não há um padrão).`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  codigoTributarioMunicipio: string;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.discount,

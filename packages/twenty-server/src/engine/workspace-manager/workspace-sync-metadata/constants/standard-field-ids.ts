@@ -151,6 +151,10 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+  codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
+  product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
+  inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
+  emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {
@@ -188,6 +192,11 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   aliquotaCofins: 'b9555f1e-b71c-4495-be5c-d99de7733c4f',
   aliquotaIpi: '10bb8c81-11b0-43b0-88ca-056174eced6a',
   nfStatus: '2bbe73b0-3f15-44b1-bd7c-7aae2a381de0',
+  discriminacao: '9971c70a-85f8-4daa-bb36-c2e949c08d60',
+  aliquotaIss: '456d311b-0f5e-404d-baad-b89d5641f0dc',
+  issRetido: 'a146839e-084f-4f72-b66f-db85493e6d35',
+  itemListaServico: '24e3f637-3e0d-4d5c-833e-4044f7c05799',
+  codigoTributarioMunicipio: '95dab266-8f6a-4185-8457-4ca8e600a735',
 };
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
@@ -227,6 +236,11 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
   valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
   productType: '73460110-2f05-49db-a76e-7c0ac0880888',
+  company: 'a9e553b0-b233-474a-a22b-5f76541e1f70',
+  aliquotaIss: 'cd4d2f86-ed16-4eee-b78a-412a2a5e3be9',
+  issRetido: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
+  itemListaServico: 'c4606156-e1b0-477d-972f-1373be7099f4',
+  codigoTributarioMunicipio: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
