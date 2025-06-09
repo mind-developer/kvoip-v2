@@ -83,3 +83,5 @@ export type NFSe = {
     valor_servicos: number;
   };
 };
+
+export type FiscalNote = NFSe;

@@ -1157,6 +1157,10 @@ export class ConfigVariables {
   @IsOptional()
   FIREBASE_APP_ID: string;
 
+  @IsString()
+  @IsOptional()
+  FOCUS_NFE_BASE_URL: string;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Enable or disable the attachment preview feature',

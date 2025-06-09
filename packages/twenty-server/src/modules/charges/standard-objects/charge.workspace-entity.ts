@@ -205,8 +205,8 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaIss,
     type: FieldMetadataType.NUMBER,
-    label: msg`Valor/Alíquota IPI`,
-    description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
+    label: msg`Alíquota ISS`,
+    description: msg`Valor ou alíquota de ISS (se aplicável). Placeholder: 0.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()

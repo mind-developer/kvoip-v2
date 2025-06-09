@@ -7,6 +7,7 @@ export enum NfStatus {
   ISSUED = 'issued',
   ISSUE = 'issue',
   DRAFT = 'draft',
+  CANCEL = 'cancel',
 }
 
 export const NfStatusOptions: FieldMetadataComplexOption[] = [
@@ -26,13 +27,19 @@ export const NfStatusOptions: FieldMetadataComplexOption[] = [
     value: NfStatus.ISSUE,
     label: 'Emitir',
     position: 2,
-    color: 'purple',
+    color: 'orange',
   },
   {
     value: NfStatus.DRAFT,
     label: 'Rascunho',
     position: 3,
-    color: 'gray',
+    color: 'yellow',
+  },
+  {
+    value: NfStatus.CANCEL,
+    label: 'Cancelar',
+    position: 4,
+    color: 'purple',
   },
 ];
 
