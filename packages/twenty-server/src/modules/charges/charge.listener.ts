@@ -6,6 +6,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { FocusNFeService } from 'src/modules/charges/focusNFe/FocusNFeService';
 import {
   FlattenedCompany,
   FlattenedPerson,
@@ -24,6 +25,7 @@ export class ChargeEventListener {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
+    private readonly focusNFeService: FocusNFeService,
   ) {}
 
   @OnDatabaseBatchEvent('charge', DatabaseEventAction.UPDATED)
@@ -202,7 +204,7 @@ export class ChargeEventListener {
       events.map((event) =>
         chargeRepository.findOne({
           where: { id: event.recordId },
-          relations: ['product', 'person', 'company'],
+          relations: ['product', 'product.company', 'person', 'company'],
         }),
       ),
     );
@@ -223,31 +225,60 @@ export class ChargeEventListener {
           );
 
           charge.nfStatus = NfStatus.DRAFT;
+          await chargeRepository.save(charge);
 
           return;
         }
 
+        // TODO: think about how to validate valid fields by NF type
+        // if (!this.isNFSeComplete(charge)) {
+        //   charge.nfStatus = NfStatus.DRAFT;
+        //   await chargeRepository.save(charge);
+
+        //   return;
+        // }
+
         try {
           switch (charge.nfStatus) {
             case NfStatus.DRAFT:
-              return;
+              break;
 
             case NfStatus.ISSUE:
-              this.issueNf(charge);
-              charge.nfStatus = NfStatus.ISSUED;
+              const issueResult = await this.issueNf(charge);
 
-              return;
+              console.log('issueResult: ', issueResult);
+
+              if (issueResult?.success) {
+                charge.nfStatus = NfStatus.ISSUED;
+                charge.requestCode = issueResult.requestCode || '';
+
+                this.logger.log(
+                  `Nota fiscal emitida com sucesso para charge ${charge.id}. Código: ${issueResult.requestCode}`,
+                );
+              } else {
+                charge.nfStatus = NfStatus.DRAFT;
+                this.logger.error(
+                  `Erro ao emitir nota fiscal para charge ${charge.id}: ${issueResult?.error}`,
+                );
+              }
+              break;
 
             case NfStatus.ISSUED:
             case NfStatus.CANCELLED:
-              return this.issueNf(charge);
+              if (charge.requestCode) {
+                // TODO: Create code to check invoice status checkNfStatus: use focusNFeService.getNoteStatus
+                console.log(
+                  'ISSUED/CANCELLED - charge.requestCode: ',
+                  charge.requestCode,
+                );
+              }
+              break;
 
             default:
               this.logger.warn(
                 `Não foi possível em fazer a emissão da nota fiscal`,
               );
-
-              return;
+              break;
           }
         } catch (error) {
           charge.nfStatus = NfStatus.DRAFT;
@@ -263,7 +294,7 @@ export class ChargeEventListener {
     );
   }
 
-  private issueNf = (charge: ChargeWorkspaceEntity) => {
+  private issueNf = async (charge: ChargeWorkspaceEntity) => {
     const { product, company } = charge;
 
     if (!product || !company) return;
@@ -283,8 +314,7 @@ export class ChargeEventListener {
             email: company.emails.primaryEmail,
             endereco: {
               logradouro: company.address.addressStreet1,
-              numero: '-',
-              complemento: '-',
+              numero: '999', // Campo obrigatório
               bairro: company.address.addressStreet2,
               codigo_municipio: company.codigoMunicipio || '',
               uf: company.address.addressCountry,
@@ -301,47 +331,35 @@ export class ChargeEventListener {
           },
         };
 
-        console.log('nfse: ', nfse);
+        this.logger.log('Emitindo NFSe:', JSON.stringify(nfse, null, 2));
 
-        if (!this.isNFSeComplete(nfse)) return;
+        const result = await this.focusNFeService.issueNFSe(
+          nfse,
+          charge.requestCode,
+        );
 
-        // TODO: Create requisition to issue NFS-e
+        if (result.success) {
+          this.logger.log(
+            `NFSe emitida com sucesso. Código: ${result.requestCode}`,
+          );
 
-        return;
+          return {
+            success: true,
+            requestCode: result.requestCode,
+            data: result,
+          };
+        } else {
+          this.logger.error(`Erro ao emitir NFSe: ${result.error}`);
+
+          return {
+            success: false,
+            error: result.error,
+          };
+        }
       }
 
       case NfType.NFE:
         return;
     }
-  };
-
-  private isNFSeComplete = (nfse: NFSe): boolean => {
-    const dadosNotaCompletos = !!nfse.data_emissao;
-
-    const prestador =
-      !!nfse.prestador.cnpj &&
-      !!nfse.prestador.inscricao_municipal &&
-      !!nfse.prestador.codigo_municipio;
-
-    const tomador =
-      !!nfse.tomador.cnpj &&
-      !!nfse.tomador.razao_social &&
-      !!nfse.tomador.email &&
-      !!nfse.tomador.endereco.logradouro &&
-      !!nfse.tomador.endereco.numero &&
-      !!nfse.tomador.endereco.bairro &&
-      !!nfse.tomador.endereco.codigo_municipio &&
-      !!nfse.tomador.endereco.uf &&
-      !!nfse.tomador.endereco.cep;
-
-    const servico =
-      nfse.servico.aliquota !== undefined &&
-      !!nfse.servico.discriminacao &&
-      !!nfse.servico.iss_retido &&
-      !!nfse.servico.item_lista_servico &&
-      !!nfse.servico.codigo_tributario_municipio &&
-      nfse.servico.valor_servicos !== undefined;
-
-    return dadosNotaCompletos && prestador && tomador && servico;
   };
 }
