@@ -170,16 +170,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   cpfCnpj: string | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.codigoMunicipio,
-    type: FieldMetadataType.TEXT,
-    label: msg`Código Município`,
-    description: msg`Código IBGE de 7 dígitos do município do prestador`,
-    icon: 'IconFileText',
-  })
-  @WorkspaceIsNullable()
-  codigoMunicipio: string | null;
-
-  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.inscricaoMunicipal,
     type: FieldMetadataType.TEXT,
     label: msg`Inscrição Municipal`,

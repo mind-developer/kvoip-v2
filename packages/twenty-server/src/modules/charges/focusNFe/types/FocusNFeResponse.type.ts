@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface FocusNFeResponse {
   success: boolean;
-  data?: unknown;
+  data?: any;
   error?: string;
-  requestCode?: string;
 }

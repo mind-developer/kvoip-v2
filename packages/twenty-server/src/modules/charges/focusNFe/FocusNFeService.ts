@@ -150,6 +150,15 @@ export class FocusNFeService {
     }
   }
 
+  async getCodigoMunicipio(nomeMunicipio: string) {
+    const response = await this.makeRequest(
+      `/municipios?nome_municipio=${nomeMunicipio}`,
+      'GET',
+    );
+
+    return response.data[0].codigo_municipio;
+  }
+
   validateNFSe(nfse: NFSe): boolean {
     const requiredFields = [
       nfse.data_emissao,
