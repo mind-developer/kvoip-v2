@@ -271,6 +271,41 @@ export class ChargeEventListener {
                   'ISSUED/CANCELLED - charge.requestCode: ',
                   charge.requestCode,
                 );
+
+                const checkedCharge = await this.checkNfStatus(charge);
+
+                console.log('checkedCharge: ', checkedCharge);
+
+                const checkedChargeStatus = (
+                  checkedCharge.data as { status: string }
+                ).status;
+
+                // TODO: find the best way to select the charge.status by the NF status
+                if (checkedChargeStatus) {
+                  switch (checkedChargeStatus) {
+                    case 'autorizado':
+                      charge.nfStatus = NfStatus.ISSUED;
+                      break;
+
+                    case 'cancelado':
+                      charge.nfStatus = NfStatus.CANCELLED;
+                      break;
+
+                    case 'erro_autorizacao':
+                      charge.nfStatus = NfStatus.ISSUE;
+                      break;
+
+                    // case 'processando_autorizacao':
+                    //   charge.nfStatus = NfStatus.ISSUE;
+                    //   break;
+
+                    default:
+                      this.logger.warn(
+                        `Status desconhecido retornado de checkNfStatus para charge ${charge.id}: ${checkedChargeStatus}`,
+                      );
+                      break;
+                  }
+                }
               }
               break;
 
@@ -362,4 +397,42 @@ export class ChargeEventListener {
         return;
     }
   };
+
+  private async checkNfStatus(charge: ChargeWorkspaceEntity) {
+    if (!charge.requestCode || !charge.nfType) {
+      return {
+        success: false,
+        error: 'Missing request code or NF type',
+      };
+    }
+
+    try {
+      const result = await this.focusNFeService.getNoteStatus(
+        charge.nfType,
+        charge.requestCode,
+      );
+
+      if (result.success) {
+        this.logger.log(
+          `Status da nota fiscal ${charge.requestCode}: ${JSON.stringify(result.data)}`,
+        );
+      } else {
+        this.logger.error(
+          `Erro ao consultar status da nota fiscal ${charge.requestCode}: ${result.error}`,
+        );
+      }
+
+      return result;
+    } catch (error) {
+      this.logger.error(
+        `Erro inesperado ao consultar status: ${error.message}`,
+        error.stack,
+      );
+
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Erro inesperado',
+      };
+    }
+  }
 }
