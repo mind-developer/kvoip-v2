@@ -220,10 +220,6 @@ export class ChargeEventListener {
         const { company, product } = charge;
 
         if (!product || !company) {
-          this.logger.warn(
-            `Charge ${charge.id} não possui relação com product ou company. Ignorando.`,
-          );
-
           charge.nfStatus = NfStatus.DRAFT;
           await chargeRepository.save(charge);
 
@@ -241,19 +237,22 @@ export class ChargeEventListener {
         try {
           switch (charge.nfStatus) {
             case NfStatus.DRAFT:
+            case NfStatus.ISSUED:
+            case NfStatus.CANCELLED:
               break;
 
             case NfStatus.ISSUE:
               const issueResult = await this.issueNf(charge);
 
+              // ! Remove log after testing
+
               console.log('issueResult: ', issueResult);
 
               if (issueResult?.success) {
                 charge.nfStatus = NfStatus.ISSUED;
-                charge.requestCode = issueResult.requestCode || '';
 
                 this.logger.log(
-                  `Nota fiscal emitida com sucesso para charge ${charge.id}. Código: ${issueResult.requestCode}`,
+                  `Nota fiscal emitida com sucesso para charge ${charge.id}. Código: ${issueResult.data.ref}`,
                 );
               } else {
                 charge.nfStatus = NfStatus.DRAFT;
@@ -263,50 +262,7 @@ export class ChargeEventListener {
               }
               break;
 
-            case NfStatus.ISSUED:
-            case NfStatus.CANCELLED:
-              if (charge.requestCode) {
-                // TODO: Create code to check invoice status checkNfStatus: use focusNFeService.getNoteStatus
-                console.log(
-                  'ISSUED/CANCELLED - charge.requestCode: ',
-                  charge.requestCode,
-                );
-
-                const checkedCharge = await this.checkNfStatus(charge);
-
-                console.log('checkedCharge: ', checkedCharge);
-
-                const checkedChargeStatus = (
-                  checkedCharge.data as { status: string }
-                ).status;
-
-                // TODO: find the best way to select the charge.status by the NF status
-                if (checkedChargeStatus) {
-                  switch (checkedChargeStatus) {
-                    case 'autorizado':
-                      charge.nfStatus = NfStatus.ISSUED;
-                      break;
-
-                    case 'cancelado':
-                      charge.nfStatus = NfStatus.CANCELLED;
-                      break;
-
-                    case 'erro_autorizacao':
-                      charge.nfStatus = NfStatus.ISSUE;
-                      break;
-
-                    // case 'processando_autorizacao':
-                    //   charge.nfStatus = NfStatus.ISSUE;
-                    //   break;
-
-                    default:
-                      this.logger.warn(
-                        `Status desconhecido retornado de checkNfStatus para charge ${charge.id}: ${checkedChargeStatus}`,
-                      );
-                      break;
-                  }
-                }
-              }
+            case NfStatus.CANCEL:
               break;
 
             default:
@@ -336,12 +292,22 @@ export class ChargeEventListener {
 
     switch (charge.nfType) {
       case NfType.NFSE: {
+        const codMunicipioPrestador =
+          await this.focusNFeService.getCodigoMunicipio(
+            charge.product?.company?.address.addressCity || '',
+          );
+
+        const codMunicipioTomador =
+          await this.focusNFeService.getCodigoMunicipio(
+            charge.company?.address.addressCity || '',
+          );
+
         const nfse: NFSe = {
           data_emissao: new Date().toISOString(),
           prestador: {
             cnpj: product.company?.cpfCnpj || '',
             inscricao_municipal: product.company?.inscricaoMunicipal || '',
-            codigo_municipio: product.company?.codigoMunicipio || '',
+            codigo_municipio: codMunicipioPrestador,
           },
           tomador: {
             cnpj: company.cpfCnpj || '',
@@ -351,8 +317,8 @@ export class ChargeEventListener {
               logradouro: company.address.addressStreet1,
               numero: '999', // Campo obrigatório
               bairro: company.address.addressStreet2,
-              codigo_municipio: company.codigoMunicipio || '',
-              uf: company.address.addressCountry,
+              codigo_municipio: codMunicipioTomador,
+              uf: company.address.addressState,
               cep: company.address.addressZipCode,
             },
           },
@@ -375,21 +341,14 @@ export class ChargeEventListener {
 
         if (result.success) {
           this.logger.log(
-            `NFSe emitida com sucesso. Código: ${result.requestCode}`,
+            `NFSe emitida com sucesso. Status: ${result.data.status}`,
           );
 
-          return {
-            success: true,
-            requestCode: result.requestCode,
-            data: result,
-          };
+          return result;
         } else {
           this.logger.error(`Erro ao emitir NFSe: ${result.error}`);
 
-          return {
-            success: false,
-            error: result.error,
-          };
+          return result;
         }
       }
 
@@ -397,42 +356,4 @@ export class ChargeEventListener {
         return;
     }
   };
-
-  private async checkNfStatus(charge: ChargeWorkspaceEntity) {
-    if (!charge.requestCode || !charge.nfType) {
-      return {
-        success: false,
-        error: 'Missing request code or NF type',
-      };
-    }
-
-    try {
-      const result = await this.focusNFeService.getNoteStatus(
-        charge.nfType,
-        charge.requestCode,
-      );
-
-      if (result.success) {
-        this.logger.log(
-          `Status da nota fiscal ${charge.requestCode}: ${JSON.stringify(result.data)}`,
-        );
-      } else {
-        this.logger.error(
-          `Erro ao consultar status da nota fiscal ${charge.requestCode}: ${result.error}`,
-        );
-      }
-
-      return result;
-    } catch (error) {
-      this.logger.error(
-        `Erro inesperado ao consultar status: ${error.message}`,
-        error.stack,
-      );
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Erro inesperado',
-      };
-    }
-  }
 }

@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Repository } from 'typeorm';
 
@@ -67,7 +68,33 @@ export class FocusNfeService {
       workspace,
     });
 
-    return await this.focusNfeRepository.save(createdFocusNfeIntegration);
+    const createdIntegration = await this.focusNfeRepository.save(
+      createdFocusNfeIntegration,
+    );
+
+    // await this.subscriptionWebhook(
+    //   'nfe',
+    //   createdIntegration.cnpj,
+    //   createdIntegration.token,
+    //   createInput.workspaceId,
+    //   createdIntegration.id,
+    // );
+    // await this.subscriptionWebhook(
+    //   'nfse',
+    //   createdIntegration.cnpj,
+    //   createdIntegration.token,
+    //   createInput.workspaceId,
+    //   createdIntegration.id,
+    // );
+    // await this.subscriptionWebhook(
+    //   'nfcom',
+    //   createdIntegration.cnpj,
+    //   createdIntegration.token,
+    //   createInput.workspaceId,
+    //   createdIntegration.id,
+    // );
+
+    return createdIntegration;
   }
 
   async findAll(workspaceId: string): Promise<FocusNfeIntegration[]> {
@@ -160,5 +187,45 @@ export class FocusNfeService {
     }
 
     await this.focusNfeRepository.save(integration);
+  }
+
+  async subscriptionWebhook(
+    event: string,
+    cnpj: string,
+    token: string,
+    workspaceId: string,
+    integrationId: string,
+  ) {
+    const baseUrl = this.environmentService.get('FOCUS_NFE_BASE_URL');
+    const webhookUrl = this.environmentService.get('WEBHOOK_URL');
+
+    const webhook = {
+      // TODO: ideal to receive cnpj when adding integration with Focus NF-e (mandatory information)
+      cnpj,
+      event,
+      url: `${webhookUrl}/focus-nfe/webhook/${workspaceId}/${integrationId}/${event}`,
+    };
+
+    try {
+      const response = await axios.post(`${baseUrl}/hooks`, webhook, {
+        auth: {
+          username: token,
+          password: '',
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('HTTP code:', response.status);
+      console.log('Body:', response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.response.status);
+        console.error('Response:', error.response.data);
+      } else {
+        console.error('Request error:', error.message);
+      }
+    }
   }
 }
