@@ -28,8 +28,7 @@ import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-ob
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { NfType, NfTypeOptions } from 'src/modules/charges/types/NfType';
-import { NfStatus, NfStatusOptions } from 'src/modules/charges/types/NfStatus';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -59,207 +58,24 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.nfType,
-    type: FieldMetadataType.SELECT,
-    label: msg`NF Type`,
-    description: msg`NF Type`,
-    icon: 'IconTag',
-    options: NfTypeOptions,
-  })
-  @WorkspaceIsNullable()
-  nfType: NfType | null;
-
-  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.price,
     type: FieldMetadataType.NUMBER,
-    label: msg`Total Amount`,
-    description: msg`Total Amount`,
-    icon: 'IconTag',
+    label: msg`Price`,
+    description: msg`Charge price`,
+    icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
   price: number;
 
   @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.percentNfe,
+    standardId: CHARGE_STANDARD_FIELD_IDS.quantity,
     type: FieldMetadataType.NUMBER,
-    label: msg`% NF-e`,
-    description: msg`Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  percentNfe: number | null;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.percentNfse,
-    type: FieldMetadataType.NUMBER,
-    label: msg`% NFS-e`,
-    description: msg`Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  percentNfse: number | null;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.percentNfce,
-    type: FieldMetadataType.NUMBER,
-    label: msg`% NFC-e`,
-    description: msg`Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  percentNfce: number | null;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.percentNfcom,
-    type: FieldMetadataType.NUMBER,
-    label: msg`% NF-Com`,
-    description: msg`Percentage for Nota Fiscal de Comunicação (Communication Invoice)`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  percentNfcom: number | null;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.cfop,
-    type: FieldMetadataType.TEXT,
-    label: msg`CFOP`,
-    description: msg`Código Fiscal de Operações. Placeholder: 5102`,
-    icon: 'IconFileCode',
-  })
-  @WorkspaceIsNullable()
-  cfop: string;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.cstIcmsCsosn,
-    type: FieldMetadataType.TEXT,
-    label: msg`CST/CSOSN`,
-    description: msg`Código da Situação Tributária ou CSOSN. Placeholder: 102`,
-    icon: 'IconReceiptTax',
-  })
-  @WorkspaceIsNullable()
-  cstIcmsCsosn: string;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.unitOfMeasure,
-    type: FieldMetadataType.TEXT,
-    label: msg`Unit`,
-    description: msg`Product unit of measure (e.g., kg, unit, liter)`,
+    label: msg`Quantity`,
+    description: msg`Charge quantity`,
     icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
-  unitOfMeasure: string;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.origem,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Origem da Mercadoria`,
-    description: msg`Origem da mercadoria (0-8). Placeholder: 0`,
-    icon: 'IconFlag',
-  })
-  @WorkspaceIsNullable()
-  origem: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaIcms,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ICMS (%)`,
-    description: msg`Alíquota do ICMS. Placeholder: 18.00`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  aliquotaIcms: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaPis,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota PIS (%)`,
-    description: msg`Alíquota do PIS. Placeholder: 1.65`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  aliquotaPis: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaCofins,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota COFINS (%)`,
-    description: msg`Alíquota do COFINS. Placeholder: 7.60`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  aliquotaCofins: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaIpi,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Valor/Alíquota IPI`,
-    description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  aliquotaIpi: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.aliquotaIss,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ISS`,
-    description: msg`Valor ou alíquota de ISS (se aplicável). Placeholder: 0.00`,
-    icon: 'IconPercentage',
-  })
-  @WorkspaceIsNullable()
-  aliquotaIss: number;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.nfStatus,
-    type: FieldMetadataType.SELECT,
-    label: msg`NF Status`,
-    description: msg`NF Status`,
-    icon: 'IconProgress',
-    options: NfStatusOptions,
-  })
-  @WorkspaceIsNullable()
-  nfStatus: NfStatus | null;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.discriminacao,
-    type: FieldMetadataType.TEXT,
-    label: msg`Discriminação`,
-    description: msg`Discriminação dos serviços.`,
-    icon: 'IconNotes',
-  })
-  @WorkspaceIsNullable()
-  discriminacao: string;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.issRetido,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`ISS Retido`,
-    description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
-    icon: 'IconTag',
-    defaultValue: false,
-  })
-  @WorkspaceFieldIndex()
-  issRetido: boolean;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.itemListaServico,
-    type: FieldMetadataType.TEXT,
-    label: msg`Item Lista Serviço`,
-    description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
-    icon: 'IconNotes',
-  })
-  @WorkspaceIsNullable()
-  itemListaServico: string;
-
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.codigoTributarioMunicipio,
-    type: FieldMetadataType.TEXT,
-    label: msg`Código Tributário Município`,
-    description: msg`Informar o código tributário de acordo com a tabela de cada município (não há um padrão).`,
-    icon: 'IconNotes',
-  })
-  @WorkspaceIsNullable()
-  codigoTributarioMunicipio: string;
+  quantity: number;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.discount,
@@ -336,53 +152,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
-  @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
-    type: FieldMetadataType.SELECT,
-    label: msg`Charge Action`,
-    description: msg`Product charge action(issue products can be used in charges)`,
-    icon: 'IconProgress',
-    options: [
-      { value: 'none', label: 'None', position: 0, color: 'gray' },
-      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
-      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
-    ],
-    defaultValue: "'none'",
-  })
-  @WorkspaceFieldIndex()
-  chargeAction: string;
-
-  // Relations
-  @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.company,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Company`,
-    description: msg`Company linked to the charge`,
-    icon: 'IconBuildingSkyscraper',
-    inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'charges',
-  })
-  @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('company')
-  companyId: string | null;
-
-  @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.product,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Product`,
-    description: msg`Product linked to this charge`,
-    icon: 'IconClipboardList',
-    inverseSideTarget: () => ProductWorkspaceEntity,
-    inverseSideFieldKey: 'charges',
-  })
-  @WorkspaceIsNullable()
-  product: Relation<ProductWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('product')
-  productId: string | null;
-
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.integration,
     type: RelationType.MANY_TO_ONE,
@@ -399,6 +168,53 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   integrationId: string | null;
 
   @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Product`,
+    description: msg`Product linked to this charge`,
+    icon: 'IconClipboardList',
+    inverseSideTarget: () => ProductWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  product: Relation<ProductWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('product')
+  productId: string | null;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
+    type: FieldMetadataType.SELECT,
+    label: msg`Charge Action`,
+    description: msg`Product charge action(issue products can be used in charges)`,
+    icon: 'IconProgress',
+    options: [
+      { value: 'none', label: 'None', position: 0, color: 'gray' },
+      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
+      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
+    ],
+    defaultValue: "'none'",
+  })
+  @WorkspaceFieldIndex()
+  chargeAction: string;
+
+  //Relations
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.company,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Customer`,
+    description: msg`Customer linked to the charge`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
+
+  @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Contact`,
@@ -412,6 +228,18 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('person')
   personId: string;
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.notaFiscal,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Notas Fiscais`,
+    description: msg`Notas fiscais using this charge`,
+    icon: 'IconSettings',
+    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
