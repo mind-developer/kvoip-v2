@@ -41,6 +41,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
@@ -372,6 +373,17 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.notaFiscal,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Nota Fiscal`,
+    description: msg`Notas fiscais to the company`,
+    icon: 'IconNotes',
+    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]>;
+
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
@@ -397,6 +409,5 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  searchVector: any;
+  searchVector: string;
 }

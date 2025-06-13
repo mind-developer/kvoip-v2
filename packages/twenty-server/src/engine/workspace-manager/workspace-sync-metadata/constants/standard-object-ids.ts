@@ -58,4 +58,6 @@ export const STANDARD_OBJECT_IDS = {
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
+  focusNFe: 'aaadd2ab-25b5-4717-9712-7de5b7253633',
+  notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
 };

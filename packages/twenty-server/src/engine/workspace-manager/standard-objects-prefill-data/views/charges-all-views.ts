@@ -29,7 +29,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.company
+            CHARGE_STANDARD_FIELD_IDS.product
           ],
         position: 1,
         isVisible: true,
@@ -38,7 +38,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.product
+            CHARGE_STANDARD_FIELD_IDS.quantity
           ],
         position: 2,
         isVisible: true,
@@ -47,9 +47,18 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.nfType
+            CHARGE_STANDARD_FIELD_IDS.taxId
           ],
-        position: 3,
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.entityType
+          ],
+        position: 2,
         isVisible: true,
         size: 150,
       },
@@ -58,6 +67,15 @@ export const chargesAllView = (
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
             CHARGE_STANDARD_FIELD_IDS.price
           ],
+        position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.discount
+          ],
         position: 4,
         isVisible: true,
         size: 150,
@@ -65,7 +83,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.percentNfe
+            CHARGE_STANDARD_FIELD_IDS.recurrence
           ],
         position: 5,
         isVisible: true,
@@ -74,7 +92,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.percentNfse
+            CHARGE_STANDARD_FIELD_IDS.company
           ],
         position: 6,
         isVisible: true,
@@ -83,7 +101,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.percentNfce
+            CHARGE_STANDARD_FIELD_IDS.chargeAction
           ],
         position: 7,
         isVisible: true,
@@ -92,7 +110,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.percentNfcom
+            CHARGE_STANDARD_FIELD_IDS.person
           ],
         position: 8,
         isVisible: true,
@@ -101,18 +119,9 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.attachments
+            CHARGE_STANDARD_FIELD_IDS.integration
           ],
         position: 9,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.nfStatus
-          ],
-        position: 10,
         isVisible: true,
         size: 150,
       },

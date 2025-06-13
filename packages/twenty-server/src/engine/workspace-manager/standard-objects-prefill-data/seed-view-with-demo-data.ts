@@ -4,6 +4,7 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { notaFiscalAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notaFiscal-all-views';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -44,6 +45,7 @@ export const seedViewWithDemoData = async (
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
     chatbotsAllView(objectMetadataStandardIdToIdMap),
     supportAllView(objectMetadataStandardIdToIdMap),
+    notaFiscalAllView(objectMetadataStandardIdToIdMap),
   ];
 
   return createWorkspaceViews(entityManager, schemaName, viewDefinitions);
