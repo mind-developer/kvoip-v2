@@ -507,10 +507,21 @@ export type CreateFieldInput = {
 };
 
 export type CreateFocusNfeIntegrationInput = {
-  integrationName: Scalars['String'];
-  status?: Scalars['String'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode: Scalars['String'];
+  cnpj: Scalars['String'];
+  companyName: Scalars['String'];
+  cpf: Scalars['String'];
+  ie: Scalars['String'];
+  inscricaoMunicipal: Scalars['String'];
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
   token: Scalars['String'];
-  workspaceId: Scalars['ID'];
 };
 
 export type CreateInterIntegrationInput = {
@@ -954,14 +965,25 @@ export type FindAvailableSsoidpOutput = {
   workspace: WorkspaceNameAndId;
 };
 
-export type FocusNfeIntegrationPublicDto = {
-  __typename?: 'FocusNfeIntegrationPublicDto';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  integrationName?: Maybe<Scalars['String']>;
-  status: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  workspace?: Maybe<Workspace>;
+export type FocusNFeWorkspaceEntity = {
+  __typename?: 'FocusNFeWorkspaceEntity';
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: Maybe<Scalars['String']>;
+  cnpj?: Maybe<Scalars['String']>;
+  companyName?: Maybe<Scalars['String']>;
+  cpf?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  ie?: Maybe<Scalars['String']>;
+  inscricaoMunicipal?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  street: Scalars['String'];
+  taxRegime?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
 };
 
 export type FullName = {
@@ -1271,7 +1293,7 @@ export type Mutation = {
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
-  createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
+  createFocusNfeIntegration: FocusNFeWorkspaceEntity;
   createInterIntegration: InterIntegration;
   createIssuer: IssuerDto;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -1348,7 +1370,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean'];
-  updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
+  updateFocusNfeIntegration: FocusNFeWorkspaceEntity;
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -2282,8 +2304,8 @@ export type Query = {
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
-  getFocusNfeIntegrationById: FocusNfeIntegrationPublicDto;
-  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegrationPublicDto>;
+  getFocusNfeIntegrationById: FocusNFeWorkspaceEntity;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNFeWorkspaceEntity>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String'];
   getIssuerById: IssuerDto;
@@ -2403,11 +2425,6 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String'];
-};
-
-
-export type QueryGetFocusNfeIntegrationsByWorkspaceArgs = {
-  workspaceId: Scalars['String'];
 };
 
 
@@ -3271,9 +3288,21 @@ export type UpdateFieldInput = {
 };
 
 export type UpdateFocusNfeIntegrationInput = {
+  cep?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  companyName?: InputMaybe<Scalars['String']>;
+  cpf?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
-  integrationName?: InputMaybe<Scalars['String']>;
-  status?: Scalars['String'];
+  ie?: InputMaybe<Scalars['String']>;
+  inscricaoMunicipal?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  neighborhood?: InputMaybe<Scalars['String']>;
+  number?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
+  street?: InputMaybe<Scalars['String']>;
+  taxRegime?: InputMaybe<Scalars['String']>;
   token?: InputMaybe<Scalars['String']>;
 };
 
@@ -4183,7 +4212,7 @@ export type CreateFocusNfeIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, workspace?: { __typename?: 'Workspace', id: any } | null } };
+export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'FocusNFeWorkspaceEntity', id: string, status?: string | null, name?: string | null, cnpj?: string | null, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime?: string | null } };
 
 export type CreateIssuerMutationVariables = Exact<{
   createInput: CreateIssuerInput;
@@ -4204,7 +4233,7 @@ export type UpdateFocusNfeIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateFocusNfeIntegrationMutation = { __typename?: 'Mutation', updateFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, createdAt: string, updatedAt: string, workspace?: { __typename?: 'Workspace', displayName?: string | null, id: any } | null } };
+export type UpdateFocusNfeIntegrationMutation = { __typename?: 'Mutation', updateFocusNfeIntegration: { __typename?: 'FocusNFeWorkspaceEntity', id: string, status?: string | null, name?: string | null, cnpj?: string | null, cpf?: string | null, ie?: string | null, inscricaoMunicipal?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime?: string | null } };
 
 export type UpdateIssuerMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -4219,12 +4248,10 @@ export type GetIssuersByWorkspaceQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetIssuersByWorkspaceQuery = { __typename?: 'Query', getIssuersByWorkspace: Array<{ __typename?: 'IssuerDto', id: string, name: string, cnpj: string, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime: string, createdAt: string, updatedAt: string }> };
 
-export type GetFocusNfeIntegrationsByWorkspaceQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
+export type GetFocusNfeIntegrationsByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFocusNfeIntegrationsByWorkspaceQuery = { __typename?: 'Query', getFocusNfeIntegrationsByWorkspace: Array<{ __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, createdAt: string, status: string, workspace?: { __typename?: 'Workspace', displayName?: string | null } | null }> };
+export type GetFocusNfeIntegrationsByWorkspaceQuery = { __typename?: 'Query', getFocusNfeIntegrationsByWorkspace: Array<{ __typename?: 'FocusNFeWorkspaceEntity', id: string, status?: string | null, name?: string | null, cnpj?: string | null, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime?: string | null }> };
 
 export type CreateInterIntegrationMutationVariables = Exact<{
   createInput: CreateInterIntegrationInput;
@@ -7161,11 +7188,19 @@ export const CreateFocusNfeIntegrationDocument = gql`
     mutation CreateFocusNfeIntegration($createInput: CreateFocusNfeIntegrationInput!) {
   createFocusNfeIntegration(createInput: $createInput) {
     id
-    integrationName
     status
-    workspace {
-      id
-    }
+    name
+    cnpj
+    cpf
+    ie
+    cnaeCode
+    cep
+    street
+    number
+    neighborhood
+    city
+    state
+    taxRegime
   }
 }
     `;
@@ -7265,14 +7300,20 @@ export const UpdateFocusNfeIntegrationDocument = gql`
     mutation UpdateFocusNfeIntegration($updateInput: UpdateFocusNfeIntegrationInput!) {
   updateFocusNfeIntegration(updateInput: $updateInput) {
     id
-    integrationName
     status
-    createdAt
-    updatedAt
-    workspace {
-      displayName
-      id
-    }
+    name
+    cnpj
+    cpf
+    ie
+    inscricaoMunicipal
+    cnaeCode
+    cep
+    street
+    number
+    neighborhood
+    city
+    state
+    taxRegime
   }
 }
     `;
@@ -7397,15 +7438,22 @@ export type GetIssuersByWorkspaceQueryHookResult = ReturnType<typeof useGetIssue
 export type GetIssuersByWorkspaceLazyQueryHookResult = ReturnType<typeof useGetIssuersByWorkspaceLazyQuery>;
 export type GetIssuersByWorkspaceQueryResult = Apollo.QueryResult<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>;
 export const GetFocusNfeIntegrationsByWorkspaceDocument = gql`
-    query GetFocusNfeIntegrationsByWorkspace($workspaceId: String!) {
-  getFocusNfeIntegrationsByWorkspace(workspaceId: $workspaceId) {
+    query GetFocusNfeIntegrationsByWorkspace {
+  getFocusNfeIntegrationsByWorkspace {
     id
-    integrationName
-    createdAt
     status
-    workspace {
-      displayName
-    }
+    name
+    cnpj
+    cpf
+    ie
+    cnaeCode
+    cep
+    street
+    number
+    neighborhood
+    city
+    state
+    taxRegime
   }
 }
     `;
@@ -7422,11 +7470,10 @@ export const GetFocusNfeIntegrationsByWorkspaceDocument = gql`
  * @example
  * const { data, loading, error } = useGetFocusNfeIntegrationsByWorkspaceQuery({
  *   variables: {
- *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetFocusNfeIntegrationsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>) {
+export function useGetFocusNfeIntegrationsByWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>(GetFocusNfeIntegrationsByWorkspaceDocument, options);
       }
