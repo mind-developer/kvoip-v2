@@ -20,8 +20,21 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
-  integrationName: z.string().min(1),
+  name: z.string().min(1),
   token: z.string(),
+  companyName: z.string().min(1),
+  cnpj: z.string().min(14),
+  cpf: z.string().optional().nullable(),
+  ie: z.string().min(1),
+  inscricaoMunicipal: z.string(),
+  cnaeCode: z.string(),
+  cep: z.string().min(1),
+  street: z.string(),
+  number: z.string(),
+  neighborhood: z.string(),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  taxRegime: z.string(),
 });
 
 export type SettingsIntegrationFocusNfeConnectionFormValues = z.infer<
@@ -36,7 +49,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  const { createFocusNfeIntegration } = useCreateFocusNfeIntegration();
+  const { createFocusNfeIntegration, loading } = useCreateFocusNfeIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -67,9 +80,21 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
 
     try {
       await createFocusNfeIntegration({
-        integrationName: formValues.integrationName,
+        name: formValues.name,
         token: formValues.token,
-        status: 'active',
+        companyName: formValues.companyName,
+        cnpj: formValues.cnpj,
+        cpf: formValues.cpf || null,
+        ie: formValues.ie || null,
+        inscricaoMunicipal: formValues.inscricaoMunicipal,
+        cnaeCode: formValues.cnaeCode || null,
+        cep: formValues.cep,
+        street: formValues.street,
+        number: formValues.number,
+        neighborhood: formValues.neighborhood,
+        city: formValues.city,
+        state: formValues.state,
+        taxRegime: formValues.taxRegime,
       });
 
       navigate(SettingsPath.IntegrationFocusNfe);
@@ -121,7 +146,9 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
               to="https://focusnfe.com.br/doc/#introducao"
               buttonTitle="Go to doc"
             />
-            <SettingsIntegrationFocusNfeDatabaseConnectionForm />
+            <SettingsIntegrationFocusNfeDatabaseConnectionForm
+              disabled={loading}
+            />
           </Section>
         </FormProvider>
       </SettingsPageContainer>

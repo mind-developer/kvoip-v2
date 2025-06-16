@@ -131,8 +131,8 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: "'active'",
   })
   @WorkspaceFieldIndex()
-  // @Field(() => Status, { nullable: false })
-  status: string;
+  @Field(() => String, { nullable: true })
+  status: Status | null;
 
   // Issuer data
   @WorkspaceField({

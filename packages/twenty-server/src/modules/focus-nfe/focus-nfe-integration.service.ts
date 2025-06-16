@@ -13,6 +13,7 @@ import { CreateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/creat
 import { UpdateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/update-focus-nfe-integration.input';
 import {
   FocusNFeWorkspaceEntity,
+  Status,
   TaxRegime,
 } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 
@@ -80,6 +81,7 @@ export class FocusNfeService {
       throw new Error('FocusNFe repository not found');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const validateDocument = (createdIntegration.cnpj ??
       createdIntegration.cpf)!;
 
@@ -242,9 +244,9 @@ export class FocusNfeService {
     }
 
     if (integration.status === 'active') {
-      integration.status = 'inactive';
+      integration.status = Status.INACTIVE;
     } else {
-      integration.status = 'active';
+      integration.status = Status.ACTIVE;
     }
 
     await focusNFeRepository.save(integration);
