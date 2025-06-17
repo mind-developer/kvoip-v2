@@ -12,34 +12,34 @@ export enum NfStatus {
 
 export const NfStatusOptions: FieldMetadataComplexOption[] = [
   {
-    value: NfStatus.CANCELLED,
-    label: 'Cancelada',
+    value: NfStatus.DRAFT,
+    label: 'Rascunho',
     position: 0,
-    color: 'red',
-  },
-  {
-    value: NfStatus.ISSUED,
-    label: 'Emitida',
-    position: 1,
-    color: 'green',
+    color: 'yellow',
   },
   {
     value: NfStatus.ISSUE,
     label: 'Emitir',
-    position: 2,
+    position: 1,
     color: 'orange',
   },
   {
-    value: NfStatus.DRAFT,
-    label: 'Rascunho',
-    position: 3,
-    color: 'yellow',
+    value: NfStatus.ISSUED,
+    label: 'Emitida',
+    position: 2,
+    color: 'green',
   },
   {
     value: NfStatus.CANCEL,
     label: 'Cancelar',
-    position: 4,
+    position: 3,
     color: 'purple',
+  },
+  {
+    value: NfStatus.CANCELLED,
+    label: 'Cancelada',
+    position: 4,
+    color: 'red',
   },
 ];
 

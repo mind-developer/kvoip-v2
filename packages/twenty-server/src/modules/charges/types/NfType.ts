@@ -11,27 +11,33 @@ export enum NfType {
 
 export const NfTypeOptions: FieldMetadataComplexOption[] = [
   {
+    value: 'none',
+    label: 'None',
+    position: 0,
+    color: 'gray',
+  },
+  {
     value: NfType.NFE,
     label: 'NF-e',
-    position: 0,
+    position: 1,
     color: 'green',
   },
   {
     value: NfType.NFSE,
     label: 'NFS-e',
-    position: 1,
+    position: 2,
     color: 'green',
   },
   {
     value: NfType.NFCOM,
     label: 'NF-Com',
-    position: 2,
+    position: 3,
     color: 'green',
   },
   {
     value: NfType.NFCE,
     label: 'NFC-e',
-    position: 3,
+    position: 4,
     color: 'green',
   },
 ];

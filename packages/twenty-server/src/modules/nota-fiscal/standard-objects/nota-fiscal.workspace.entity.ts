@@ -24,11 +24,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
-import { NfStatus, NfStatusOptions } from 'src/modules/charges/types/NfStatus';
+import { NfStatusOptions } from 'src/modules/charges/types/NfStatus';
 import { NfTypeOptions } from 'src/modules/charges/types/NfType';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -51,9 +51,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: NOTA_FISCAL_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
-    description: msg`Attachment name`,
+    description: msg`Issue name`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsNullable()
   name: string;
 
   @WorkspaceField({
@@ -63,9 +64,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Tipo de nota fiscal`,
     icon: 'IconTag',
     options: NfTypeOptions,
+    defaultValue: "'none'",
   })
-  @WorkspaceIsNullable()
-  nfType: NfStatus | null;
+  @WorkspaceFieldIndex()
+  nfType: string | null;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.totalAmount,
@@ -85,7 +87,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  percentNfe: number | null;
+  percentNfe: number;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.percentNFSe,
@@ -95,7 +97,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  percentNfse: number | null;
+  percentNfse: number;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.percentNFCe,
@@ -105,7 +107,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  percentNfce: number | null;
+  percentNfce: number;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.percentNFCom,
@@ -115,14 +117,14 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  percentNfcom: number | null;
+  percentNfcom: number;
 
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Nota emitida`,
     description: msg`Attachments linked to the Nota Fiscal`,
-    icon: 'IconFileImport',
+    icon: 'IconFiles',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
@@ -136,11 +138,11 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Status da Nota Fiscal`,
     icon: 'IconProgress',
     options: NfStatusOptions,
+    defaultValue: "'draft'",
   })
   @WorkspaceFieldIndex()
-  nfStatus: NfStatus | null;
+  nfStatus: string;
 
-  // Aqui não deixa habilitado na view da tabela
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.ncm,
     type: FieldMetadataType.TEXT,
@@ -279,7 +281,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Nota Fiscal`,
     description: msg`Notas fiscais linked to the products`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconClipboardList',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'notaFiscal',
   })
@@ -294,7 +296,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Company linked to the Nota Fiscal`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconTag',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'notaFiscal',
   })
@@ -309,7 +311,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Product`,
     description: msg`Company linked to the products`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconTag',
     inverseSideTarget: () => ProductWorkspaceEntity,
     inverseSideFieldKey: 'notaFiscal',
   })
