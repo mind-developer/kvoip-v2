@@ -1,7 +1,7 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
 import {
@@ -15,8 +15,11 @@ import {
 } from 'src/engine/core-modules/telephony/inputs';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import {
   Campaign,
@@ -163,6 +166,8 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => Telephony)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards()
   async createTelephony(
     @AuthUser() { id: userId }: User,
     @Args('createTelephonyInput') createTelephonyInput: CreateTelephonyInput,
@@ -179,8 +184,6 @@ export class TelephonyResolver {
       createTelephonyInput,
       createTelephonyInput.workspaceId,
     );
-
-    console.log('ramalBody', ramalBody);
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
@@ -205,6 +208,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [Telephony])
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async findAllTelephony(
     @AuthUser() { id: userId }: User,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
@@ -217,6 +221,7 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => Telephony)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async updateTelephony(
     @AuthUser() { id: userId }: User,
     @Args('id', { type: () => ID }) id: string,
@@ -271,6 +276,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyExtension], { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getAllExtensions(
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyExtension[]> {
@@ -292,14 +298,19 @@ export class TelephonyResolver {
   }
 
   @Query(() => TelephonyExtension, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getUserSoftfone(
-    @Args('extNum', { type: () => String }) extNum: string,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
-  ): Promise<TelephonyExtension> {
+    @Args('extNum', { type: () => String, nullable: true }) extNum?: string,
+  ): Promise<TelephonyExtension | null> {
     const workspace = await this.workspaceService.findById(workspaceId);
 
     if (!workspace) {
       throw new Error('Workspace not found');
+    }
+
+    if (!extNum) {
+      return null;
     }
 
     const extensions = await this.pabxService.listExtentions({
@@ -311,6 +322,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyDialingPlan], { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getTelephonyPlans(
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyDialingPlan[]> {
@@ -332,6 +344,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyDids], { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getTelephonyDids(
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyDids[]> {
@@ -353,6 +366,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [Campaign], { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getTelephonyURAs(
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<Campaign[]> {
@@ -380,6 +394,7 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyCallFlow], { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getTelephonyCallFlows(
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyCallFlow[]> {
@@ -407,6 +422,7 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async deleteTelephony(
     @AuthUser() { id: userId }: User,
     @Args('telephonyId', { type: () => ID }) telephonyId: string,
@@ -438,6 +454,7 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => PabxCompanyResponseType, { name: 'createPabxCompany' })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async createPabxCompany(
     @AuthUser() { id: userId }: User,
     @Args('input') input: CreatePabxCompanyInput,
@@ -475,6 +492,7 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => PabxTrunkResponseType, { name: 'createPabxTrunk' })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async createPabxTrunk(
     @AuthUser() { id: userId }: User,
     @Args('input') input: CreatePabxTrunkInput,
@@ -512,6 +530,7 @@ export class TelephonyResolver {
   }
 
   @Mutation(() => PabxDialingPlanResponseType, { name: 'createDialingPlan' })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async createDialingPlan(
     @AuthUser() { id: userId }: User,
     @Args('input') input: CreateDialingPlanInput,
@@ -551,6 +570,7 @@ export class TelephonyResolver {
   @Mutation(() => UpdateRoutingRulesResponseType, {
     name: 'updateRoutingRules',
   })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async updateRoutingRules(
     @AuthUser() { id: userId }: User,
     @Args('input') input: UpdateRoutingRulesInput,
@@ -577,6 +597,7 @@ export class TelephonyResolver {
   @Mutation(() => SetupPabxEnvironmentResponseType, {
     name: 'setupPabxEnvironment',
   })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async setupPabxEnvironment(
     @AuthUser() { id: userId }: User,
     @Args('input') input: SetupPabxEnvironmentInput,

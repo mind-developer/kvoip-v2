@@ -29,8 +29,6 @@ import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-cent
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
-import { SettingsBillingPlan } from '~/pages/settings/billing/SettingsBilling';
-
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
     (module) => ({
@@ -207,11 +205,19 @@ const SettingsObjects = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksDetail = lazy(() =>
+const SettingsDevelopersWebhookNew = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew'
+  ).then((module) => ({
+    default: module.SettingsDevelopersWebhookNew,
+  })),
+);
+
+const SettingsDevelopersWebhookDetail = lazy(() =>
   import(
     '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail'
   ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksDetail,
+    default: module.SettingsDevelopersWebhookDetail,
   })),
 );
 
@@ -344,6 +350,14 @@ const SettingsRoleObjectLevel = lazy(() =>
   })),
 );
 
+const SettingsRoleAddObjectLevel = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleAddObjectLevel').then(
+    (module) => ({
+      default: module.SettingsRoleAddObjectLevel,
+    }),
+  ),
+);
+
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
@@ -391,10 +405,6 @@ export const SettingsRoutes = ({
         />
       </Route>
 
-      <Route
-        path={SettingsPath.BillingPlan}
-        element={<SettingsBillingPlan />}
-      />
       <Route
         path={SettingsPath.ServiceCenter}
         element={<SettingsServiceCenter />}
@@ -502,6 +512,10 @@ export const SettingsRoutes = ({
           path={SettingsPath.RoleObjectLevel}
           element={<SettingsRoleObjectLevel />}
         />
+        <Route
+          path={SettingsPath.RoleAddObjectLevel}
+          element={<SettingsRoleAddObjectLevel />}
+        />
       </Route>
       <Route
         element={
@@ -521,16 +535,20 @@ export const SettingsRoutes = ({
           element={<SettingsRestPlayground />}
         />
         <Route
-          path={SettingsPath.DevelopersNewApiKey}
+          path={SettingsPath.NewApiKey}
           element={<SettingsDevelopersApiKeysNew />}
         />
         <Route
-          path={SettingsPath.DevelopersApiKeyDetail}
+          path={SettingsPath.ApiKeyDetail}
           element={<SettingsDevelopersApiKeyDetail />}
         />
         <Route
-          path={SettingsPath.DevelopersNewWebhookDetail}
-          element={<SettingsDevelopersWebhooksDetail />}
+          path={SettingsPath.NewWebhook}
+          element={<SettingsDevelopersWebhookNew />}
+        />
+        <Route
+          path={SettingsPath.WebhookDetail}
+          element={<SettingsDevelopersWebhookDetail />}
         />
         <Route
           path={SettingsPath.Integrations}

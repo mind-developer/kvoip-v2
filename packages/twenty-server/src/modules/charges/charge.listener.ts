@@ -7,13 +7,17 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { FocusNFeService } from 'src/modules/charges/focusNFe/FocusNFeService';
-import {
-  FlattenedCompany,
-  FlattenedPerson,
-} from 'src/modules/charges/types/inter';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-import { InterApiService } from './inter/inter-api.service';
-import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
+import { InterApiService } from './inter/services/inter-api.service';
+import {
+  ChargeAction,
+  ChargeRecurrence,
+  ChargeWorkspaceEntity,
+} from './standard-objects/charge.workspace-entity';
 
 @Injectable()
 export class ChargeEventListener {
@@ -22,14 +26,16 @@ export class ChargeEventListener {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
-    private readonly focusNFeService: FocusNFeService,
   ) {}
 
   @OnDatabaseBatchEvent('charge', DatabaseEventAction.UPDATED)
   async handleChargeCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
+    // TODO: Move this to use the chargeQueue
     const { workspaceId, name: eventName, events } = payload;
+
+    this.logger.log(`Charge update triggered.`);
 
     if (!workspaceId || !eventName) {
       this.logger.error(
@@ -46,7 +52,7 @@ export class ChargeEventListener {
       );
 
     const attachmentRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<any>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
       );
@@ -68,74 +74,73 @@ export class ChargeEventListener {
           return;
         }
 
-        const person = charge.person as FlattenedPerson;
-        const company = charge.company as FlattenedCompany;
+        const contact = charge.person as PersonWorkspaceEntity;
+        const client = charge.company as CompanyWorkspaceEntity;
 
         const { chargeAction, id, price } = charge;
         const dataVencimento = '2025-10-21'; //temporario
 
-        if (!person || !company) {
+        if (!contact || !client) {
           this.logger.warn(
             `Charge ${id} não possui relação com person ou company. Ignorando.`,
           );
 
-          charge.chargeAction = 'none';
+          charge.chargeAction = ChargeAction.NONE;
 
           return;
         }
 
-        this.logger.log('person', company);
+        this.logger.log('person', client);
 
         const cliente = {
-          telefone: person.phonesPrimaryPhoneNumber || '',
-          cpfCnpj: charge.taxId.replace(/\D/g, ''),
-          tipoPessoa:
-            charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
-          nome: person.nameFirstName || '',
-          cidade: person.city || '',
-          uf: company.addressAddressState || 'SP',
-          cep: company.addressAddressPostcode || '18103418',
-          ddd: person.phonesPrimaryPhoneCallingCode?.replace(/^\+/, '') || '',
-          endereco: company.addressAddressStreet1 || 'Rua ...',
-          bairro: company.addressAddressStreet2 || '',
-          email: person.emailsPrimaryEmail || '',
+          nome: client.name || '',
+          cpfCnpj: client.cpfCnpj || '',
+          tipoPessoa: chargeEntityTypeToInterCustomerTypeMap(charge.entityType),
+          endereco: client.address.addressStreet1 || 'Rua ...',
+          telefone: contact.phone || '',
+          cep: client.address.addressZipCode || '18103418',
+          cidade: client.address.addressCity || '',
+          uf: client.address.addressState || 'SP',
+          //TODO: Maybe remove these since they are not required data for charge emmission for inter?
+          ddd: contact.phone?.replace(/^\+/, '') || '',
+          bairro: client.address.addressStreet1 || '',
+          email: contact.emails.primaryEmail || '',
           complemento: '-',
           numero: '-',
         };
 
-        const authorId =
-          person.createdByWorkspaceMemberId ||
-          company.createdByWorkspaceMemberId ||
-          '';
+        const authorId = contact.id || client.id || '';
 
         try {
           switch (chargeAction) {
             case 'issue':
-              this.logger.log(
-                `Emitindo cobrança para charge ${id.slice(0, 11)}`,
-              );
-
-              const response =
-                await this.interApiService.issueChargeAndStoreAttachment(
-                  workspaceId,
-                  attachmentRepository,
-                  {
-                    id: charge.id,
-                    authorId,
-                    seuNumero: id.slice(0, 8),
-                    valorNominal: price,
-                    dataVencimento,
-                    numDiasAgenda: 60,
-                    pagador: { ...cliente },
-                    mensagem: { linha1: '-' },
-                  },
+              if (charge.recurrence === ChargeRecurrence.NONE) {
+                this.logger.log(
+                  `Emitindo cobrança para charge ${id.slice(0, 11)}`,
                 );
 
-              charge.requestCode = response.codigoSolicitacao;
+                const response =
+                  await this.interApiService.issueChargeAndStoreAttachment(
+                    workspaceId,
+                    attachmentRepository,
+                    {
+                      id: charge.id,
+                      authorId,
+                      seuNumero: id.slice(0, 8),
+                      valorNominal: price,
+                      dataVencimento,
+                      numDiasAgenda: 60,
+                      pagador: { ...cliente },
+                      mensagem: { linha1: '-' },
+                    },
+                  );
 
-              this.logger.log(
-                `Cobrança emitida e attachment salvo para charge ${id}. Código: ${response.codigoSolicitacao}`,
-              );
+                charge.requestCode = response.codigoSolicitacao;
+
+                this.logger.log(
+                  `Cobrança emitida e attachment salvo para charge ${id}. Código: ${response.codigoSolicitacao}`,
+                );
+              }
               break;
 
             case 'cancel':
@@ -147,7 +152,7 @@ export class ChargeEventListener {
                 'Cancelamento manual',
               );
               charge.requestCode = '';
-              charge.chargeAction = 'cancel';
+              charge.chargeAction = ChargeAction.CANCEL;
               this.logger.log(
                 `Cobrança cancelada com sucesso para charge ${id}`,
               );
@@ -164,7 +169,7 @@ export class ChargeEventListener {
               break;
           }
         } catch (error) {
-          charge.chargeAction = 'none';
+          charge.chargeAction = ChargeAction.NONE;
           charge.requestCode = '';
           this.logger.error(
             `Erro processando charge ${id}: ${error.message}`,

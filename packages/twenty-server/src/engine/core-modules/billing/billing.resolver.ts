@@ -1,17 +1,25 @@
 /* @license Enterprise */
 
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
 import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
+import { BillingSwitchPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-switch-plan.output';
+import { BillingUpdateOneTimePaidSubscriptionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update-onetime-pad-subscription.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -20,7 +28,10 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { formatBillingDatabaseProductToBaseProductDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-base-product-dto.util';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -41,7 +52,11 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -91,6 +106,7 @@ export class BillingResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
@@ -122,6 +138,47 @@ export class BillingResolver {
     };
   }
 
+  @Mutation(() => BillingUpdateOneTimePaidSubscriptionOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async updateOneTimePaidSubscription(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingUpdateOneTimePaidSubscriptionOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    const currentSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    if (!currentSubscription)
+      throw new BillingException(
+        `Billing charge not found`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+
+    const bankSlipFileLink =
+      await this.billingSubscriptionService.updateOneTimePaymentSubscription({
+        subscription: currentSubscription,
+        user,
+        locale: context.req.headers['x-locale'],
+      });
+
+    return {
+      bankSlipFileLink,
+    };
+  }
+
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
@@ -129,6 +186,53 @@ export class BillingResolver {
   )
   async switchToYearlyInterval(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.switchToYearlyInterval(workspace);
+
+    return { success: true };
+  }
+
+  @Mutation(() => BillingSwitchPlanOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async switchPlan(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { plan }: BillingSwitchPlanInput,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingSwitchPlanOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    const { baseProduct, planKey, subscription } =
+      await this.billingSubscriptionService.switchSubscriptionPlan(
+        billingSubscription,
+        plan,
+      );
+
+    return {
+      planKey,
+      subscription,
+      baseProduct: formatBillingDatabaseProductToBaseProductDTO(baseProduct),
+    };
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
+  async switchToEnterprisePlan(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.switchToEnterprisePlan(workspace);
 
     return { success: true };
   }
@@ -160,22 +264,30 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const result =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    return result;
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({
     workspaceId,
     userWorkspaceId,
     isExecutedByApiKey,
+    workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     isExecutedByApiKey: boolean;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+      (await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,
-      )
+      )) ||
+      workspaceActivationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspaceActivationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       return;
     }

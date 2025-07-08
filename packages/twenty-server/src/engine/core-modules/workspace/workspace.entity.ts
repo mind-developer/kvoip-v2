@@ -23,6 +23,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -126,6 +127,11 @@ export class Workspace {
   )
   workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProvider[]>;
 
+  @OneToMany(() => AgentEntity, (agent) => agent.workspace, {
+    onDelete: 'CASCADE',
+  })
+  agents: Relation<AgentEntity[]>;
+
   @Field()
   @Column({ default: 1 })
   metadataVersion: number;
@@ -189,6 +195,14 @@ export class Workspace {
   @Field(() => Number, { nullable: true })
   @Column({ type: 'int', nullable: true })
   pabxCompanyId?: number;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  onesignalAppId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  onesignalApiKey?: string | null;
 
   @Field(() => Number, { nullable: true })
   @Column({ type: 'int', nullable: true })

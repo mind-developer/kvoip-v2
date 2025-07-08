@@ -1,12 +1,15 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { KebabCase } from 'type-fest';
+
 export enum FileFolder {
   ProfilePicture = 'profile-picture',
   WorkspaceLogo = 'workspace-logo',
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
   ServerlessFunction = 'serverless-function',
-  InterCharge = 'inter-charge',
+  BillingSubscriptionBill = 'billing-subscription-bill',
+  ChargeBill = 'charge-bill',
 }
 
 registerEnumType(FileFolder, {
@@ -33,8 +36,13 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.ServerlessFunction]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.InterCharge]: {
+  [FileFolder.BillingSubscriptionBill]: {
     // TODO: Maybe we shouldn't ignore expiration token for Inter charges?
     ignoreExpirationToken: true,
   },
+  [FileFolder.ChargeBill]: {
+    ignoreExpirationToken: true,
+  },
 };
+
+export type AllowedFolders = KebabCase<keyof typeof FileFolder>;

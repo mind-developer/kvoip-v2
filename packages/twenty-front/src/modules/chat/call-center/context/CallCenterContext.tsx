@@ -43,7 +43,8 @@ import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/wha
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useApolloClient } from '@apollo/client';
@@ -263,7 +264,12 @@ export const CallCenterProvider = ({
           (bot: any) => bot.id === chatbotId,
         );
 
-        if (last.from === findChatbot.name) continue;
+        if (
+          last.from === findChatbot.name &&
+          last.from !==
+            `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`
+        )
+          continue;
 
         if (!executor) {
           // Change the way the request is made to chatbot flow
@@ -334,7 +340,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat.integrationId,
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -374,7 +380,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -415,7 +421,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -444,7 +450,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',

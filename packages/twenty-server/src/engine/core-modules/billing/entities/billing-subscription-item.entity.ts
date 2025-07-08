@@ -17,10 +17,10 @@ import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
-@Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
-  'billingSubscriptionId',
-  'stripeProductId',
-])
+@Unique(
+  'IDX_BILLING_SUBSCRIPTION_ITEM_BILLING_SUBSCRIPTION_ID_STRIPE_PRODUCT_ID_UNIQUE',
+  ['billingSubscriptionId', 'stripeProductId'],
+)
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -68,7 +68,7 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   stripePriceId: string;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: true, unique: true })
   stripeSubscriptionItemId: string;
 
   @Column({ nullable: true, type: 'numeric' })
