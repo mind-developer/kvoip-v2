@@ -1,15 +1,21 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { NOTA_FISCAL_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const notaFiscalAllView = (
-  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataItems: ObjectMetadataEntity[],
 ) => {
+  const notaFiscalObjectMetadata = objectMetadataItems.find(
+    (object) => object.standardId === STANDARD_OBJECT_IDS.notaFiscal,
+  );
+
+  if (!notaFiscalObjectMetadata) {
+    throw new Error('Nota Fiscal object metadata not found');
+  }
+
   return {
     name: 'All',
-    objectMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal].id,
+    objectMetadataId: notaFiscalObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -19,99 +25,93 @@ export const notaFiscalAllView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.name],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.name,
+          )?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 150,
+        size: 210,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.charge],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.charge,
+          )?.id ?? '',
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.company],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.company,
+          )?.id ?? '',
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.product],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.product,
+          )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.nfType],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.nfType,
+          )?.id ?? '',
         position: 4,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.totalAmount],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.totalAmount,
+          )?.id ?? '',
         position: 5,
         isVisible: true,
         size: 100,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.percentNFe],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.percentNFSe,
+          )?.id ?? '',
         position: 6,
         isVisible: true,
-        size: 100,
+        size: 80,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.percentNFSe],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.percentNFCom,
+          )?.id ?? '',
         position: 7,
         isVisible: true,
-        size: 150,
+        size: 80,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.percentNFCe],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.nfStatus,
+          )?.id ?? '',
         position: 8,
         isVisible: true,
         size: 100,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.percentNFCom],
+          notaFiscalObjectMetadata.fields.find(
+            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.focusNFe,
+          )?.id ?? '',
         position: 9,
         isVisible: true,
         size: 100,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.nfStatus],
-        position: 10,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.notaFiscal]
-            .fields[NOTA_FISCAL_FIELD_IDS.focusNFe],
-        position: 11,
-        isVisible: true,
-        size: 150,
       },
     ],
   };

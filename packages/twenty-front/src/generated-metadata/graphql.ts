@@ -672,50 +672,6 @@ export type CreatePabxCompanyInput = {
   workspaceId: Scalars['ID']['input'];
 };
 
-export type CreatePabxCompanyInput = {
-  acao_limite_espaco: Scalars['Int']['input'];
-  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']['input']>;
-  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']['input']>;
-  bairro?: InputMaybe<Scalars['String']['input']>;
-  cel?: InputMaybe<Scalars['String']['input']>;
-  cep?: InputMaybe<Scalars['String']['input']>;
-  cidade?: InputMaybe<Scalars['String']['input']>;
-  cliente_bloqueado?: InputMaybe<Scalars['Int']['input']>;
-  cnpj?: InputMaybe<Scalars['String']['input']>;
-  compl?: InputMaybe<Scalars['String']['input']>;
-  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']['input']>;
-  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
-  dias_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
-  email_cliente?: InputMaybe<Scalars['String']['input']>;
-  end?: InputMaybe<Scalars['String']['input']>;
-  espaco_disco?: InputMaybe<Scalars['Int']['input']>;
-  estado?: InputMaybe<Scalars['String']['input']>;
-  faixa_max?: InputMaybe<Scalars['Int']['input']>;
-  faixa_min?: InputMaybe<Scalars['Int']['input']>;
-  forma_arredondamento?: InputMaybe<Scalars['Int']['input']>;
-  formato_numeros_contatos?: InputMaybe<Scalars['Int']['input']>;
-  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
-  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']['input']>;
-  login: Scalars['String']['input'];
-  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']['input']>;
-  modulos?: InputMaybe<Scalars['String']['input']>;
-  nome: Scalars['String']['input'];
-  prefixo?: InputMaybe<Scalars['String']['input']>;
-  prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
-  qtd_ramais_max_pa: Scalars['Int']['input'];
-  qtd_ramais_max_pabx: Scalars['Int']['input'];
-  ramal_resp?: InputMaybe<Scalars['String']['input']>;
-  razao_social?: InputMaybe<Scalars['String']['input']>;
-  remover_mailings?: InputMaybe<Scalars['Int']['input']>;
-  resp?: InputMaybe<Scalars['String']['input']>;
-  salas_conf_num_max: Scalars['Int']['input'];
-  senha: Scalars['String']['input'];
-  tel?: InputMaybe<Scalars['String']['input']>;
-  tipo: Scalars['Int']['input'];
-  usuario_padrao_id?: InputMaybe<Scalars['Int']['input']>;
-  workspaceId: Scalars['ID']['input'];
-};
-
 export type CreatePabxTrunkInput = {
   autentica_user_pass?: InputMaybe<Scalars['Int']['input']>;
   cliente_id: Scalars['Int']['input'];

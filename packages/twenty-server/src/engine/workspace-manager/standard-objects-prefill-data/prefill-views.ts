@@ -21,6 +21,7 @@ import { tracaebleAllView } from 'src/engine/workspace-manager/standard-objects-
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { notaFiscalAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notaFiscal-all-views';
 
 export const prefillViews = async (
   entityManager: WorkspaceEntityManager,
@@ -53,6 +54,7 @@ export const prefillViews = async (
     supportAllView(objectMetadataItems),
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),
+    notaFiscalAllView(objectMetadataItems),
     ...customViews,
   ];
 

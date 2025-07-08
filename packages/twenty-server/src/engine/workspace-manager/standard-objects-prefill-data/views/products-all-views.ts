@@ -72,9 +72,10 @@ export const productsAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.productType
-          ],
+          productObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === PRODUCT_STANDARD_FIELD_IDS.productType,
+          )?.id ?? '',
         position: 5,
         isVisible: true,
         size: 150,
