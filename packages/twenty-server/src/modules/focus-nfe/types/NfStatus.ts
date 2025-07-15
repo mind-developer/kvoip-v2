@@ -8,6 +8,7 @@ export enum NfStatus {
   ISSUE = 'issue',
   DRAFT = 'draft',
   CANCEL = 'cancel',
+  IN_PROCESS = 'in_process',
 }
 
 export const NfStatusOptions: FieldMetadataComplexOption[] = [
@@ -40,6 +41,12 @@ export const NfStatusOptions: FieldMetadataComplexOption[] = [
     label: 'Cancelada',
     position: 4,
     color: 'red',
+  },
+  {
+    value: NfStatus.IN_PROCESS,
+    label: 'Em processo',
+    position: 5,
+    color: 'gray',
   },
 ];
 

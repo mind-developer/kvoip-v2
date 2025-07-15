@@ -57,6 +57,7 @@ export const addressCompositeType: CompositeType = {
 };
 
 export type AddressMetadata = {
+  addressPostcode: string;
   addressStreet1: string;
   addressStreet2: string;
   addressCity: string;

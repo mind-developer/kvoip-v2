@@ -16,12 +16,12 @@ export const NfTypeOptions: FieldMetadataComplexOption[] = [
     position: 0,
     color: 'gray',
   },
-  {
-    value: NfType.NFE,
-    label: 'NF-e',
-    position: 1,
-    color: 'green',
-  },
+  // {
+  //   value: NfType.NFE,
+  //   label: 'NF-e',
+  //   position: 1,
+  //   color: 'green',
+  // },
   {
     value: NfType.NFSE,
     label: 'NFS-e',
@@ -34,12 +34,12 @@ export const NfTypeOptions: FieldMetadataComplexOption[] = [
     position: 3,
     color: 'green',
   },
-  {
-    value: NfType.NFCE,
-    label: 'NFC-e',
-    position: 4,
-    color: 'green',
-  },
+  // {
+  //   value: NfType.NFCE,
+  //   label: 'NFC-e',
+  //   position: 4,
+  //   color: 'green',
+  // },
 ];
 
 registerEnumType(NfType, {

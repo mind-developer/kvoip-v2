@@ -6,7 +6,6 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { FocusNFeService } from 'src/modules/charges/focusNFe/FocusNFeService';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
