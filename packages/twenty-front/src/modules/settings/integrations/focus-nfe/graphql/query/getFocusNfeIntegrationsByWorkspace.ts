@@ -7,6 +7,7 @@ export const GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE = gql`
       status
       name
       token
+      companyName
       cnpj
       cpf
       ie

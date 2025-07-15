@@ -6,13 +6,13 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/create-focus-nfe-integration.input';
 import { UpdateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/update-focus-nfe-integration.input';
-import { FocusNfeService } from 'src/modules/focus-nfe/focus-nfe-integration.service';
+import { FocusNFeIntegrationService } from 'src/modules/focus-nfe/focus-nfe-integration.service';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FocusNFeWorkspaceEntity)
-export class FocusNfeResolver {
-  constructor(private readonly focusNfeService: FocusNfeService) {}
+export class FocusNFeIntegrationResolver {
+  constructor(private readonly focusNfeService: FocusNFeIntegrationService) {}
 
   @Mutation(() => FocusNFeWorkspaceEntity)
   async createFocusNfeIntegration(

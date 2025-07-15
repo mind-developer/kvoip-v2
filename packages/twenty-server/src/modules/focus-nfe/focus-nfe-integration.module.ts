@@ -9,9 +9,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FocusNfeIntegration } from 'src/modules/focus-nfe/focus-nfe-integration.entity';
-import { FocusNfeResolver } from 'src/modules/focus-nfe/focus-nfe-integration.resolver';
-import { FocusNfeService } from 'src/modules/focus-nfe/focus-nfe-integration.service';
-import { FocusNfeController } from 'src/modules/focus-nfe/focus-nfe-webhook.service';
+import { FocusNFeIntegrationResolver } from 'src/modules/focus-nfe/focus-nfe-integration.resolver';
+import { FocusNFeIntegrationService } from 'src/modules/focus-nfe/focus-nfe-integration.service';
+import { FocusNfeController } from 'src/modules/focus-nfe/focus-nfe-webhook.controller';
+import { FocusNFeEventListener } from 'src/modules/focus-nfe/focus-nfe.listener';
+import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
+import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.listener';
 
 @Module({
   imports: [
@@ -27,8 +30,15 @@ import { FocusNfeController } from 'src/modules/focus-nfe/focus-nfe-webhook.serv
     DataSourceModule,
     forwardRef(() => WorkspaceModule),
   ],
-  exports: [FocusNfeService],
+  exports: [FocusNFeIntegrationService],
   controllers: [FocusNfeController],
-  providers: [FocusNfeResolver, FocusNfeService, TypeORMService],
+  providers: [
+    FocusNFeIntegrationResolver,
+    FocusNFeIntegrationService,
+    TypeORMService,
+    FocusNFeService,
+    FocusNFeEventListener,
+    NotaFiscalEventListener,
+  ],
 })
 export class FocusNfeModule {}

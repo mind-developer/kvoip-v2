@@ -18,7 +18,7 @@ import {
 } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 
 @Injectable()
-export class FocusNfeService {
+export class FocusNFeIntegrationService {
   constructor(
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
