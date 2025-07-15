@@ -1,5 +1,9 @@
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { NOTA_FISCAL_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  BASE_OBJECT_STANDARD_FIELD_IDS,
+  NOTA_FISCAL_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const notaFiscalAllView = (
@@ -30,7 +34,7 @@ export const notaFiscalAllView = (
           )?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 210,
+        size: 150,
       },
       {
         fieldMetadataId:
@@ -75,7 +79,7 @@ export const notaFiscalAllView = (
           )?.id ?? '',
         position: 5,
         isVisible: true,
-        size: 100,
+        size: 80,
       },
       {
         fieldMetadataId:
@@ -111,7 +115,18 @@ export const notaFiscalAllView = (
           )?.id ?? '',
         position: 9,
         isVisible: true,
-        size: 100,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          notaFiscalObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+          )?.id ?? '',
+        position: 10,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AggregateOperations.MIN,
       },
     ],
   };

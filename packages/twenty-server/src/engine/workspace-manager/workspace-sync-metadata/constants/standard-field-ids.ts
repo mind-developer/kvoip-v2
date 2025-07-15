@@ -319,6 +319,8 @@ export const NOTA_FISCAL_FIELD_IDS = {
   product: '81e0fdc3-525c-4e07-adff-47327baca957',
   searchVector: '809a78c5-3a28-481e-a9c8-fea97a026a68',
   focusNFe: 'd156564a-6e20-4c43-a61b-e2ee8ca4fcbc',
+  discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
+  timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -385,6 +387,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
+  notaFiscal: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

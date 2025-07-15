@@ -6,6 +6,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -24,11 +25,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
-import { NfStatusOptions } from 'src/modules/charges/types/NfStatus';
-import { NfTypeOptions } from 'src/modules/charges/types/NfType';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
+import { NfStatusOptions } from 'src/modules/focus-nfe/types/NfStatus';
+import { NfTypeOptions } from 'src/modules/focus-nfe/types/NfType';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -71,13 +73,13 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.totalAmount,
-    type: FieldMetadataType.NUMBER,
+    type: FieldMetadataType.TEXT,
     label: msg`Total Amount`,
     description: msg`Total amount`,
     icon: 'IconTag',
   })
   @WorkspaceIsNullable()
-  totalAmount: number;
+  totalAmount: string | null;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.percentNFe,
@@ -118,18 +120,6 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   percentNfcom: number;
-
-  @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.attachments,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Nota emitida`,
-    description: msg`Attachments linked to the Nota Fiscal`,
-    icon: 'IconFiles',
-    inverseSideTarget: () => AttachmentWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.nfStatus,
@@ -275,12 +265,22 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.discriminacao,
+    type: FieldMetadataType.TEXT,
+    label: msg`Discriminação`,
+    description: msg`Discriminação dos serviços prestados.`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  discriminacao: string;
+
   // Relations
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.charge,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Nota Fiscal`,
-    description: msg`Notas fiscais linked to the products`,
+    label: msg`Charge`,
+    description: msg`Notas fiscais linked to the charges`,
     icon: 'IconClipboardList',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'notaFiscal',
@@ -290,6 +290,18 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('charge')
   chargeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: NOTA_FISCAL_FIELD_IDS.attachments,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Nota emitida`,
+    description: msg`Attachments linked to the Nota Fiscal`,
+    icon: 'IconFiles',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.company,
@@ -321,6 +333,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('product')
   productId: string | null;
 
+  // CHECK: The integration with Focus NFe doesn't appear in the select, but it's working by adding the id manually in the field
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.focusNFe,
     type: RelationType.MANY_TO_ONE,
@@ -335,6 +348,19 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('focusNFe')
   focusNFeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: NOTA_FISCAL_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Events`,
+    description: msg`Events linked to the nota fiscal`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.searchVector,
