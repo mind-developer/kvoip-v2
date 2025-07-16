@@ -18,8 +18,8 @@ export class BillingProductMetadata {
   @Field(() => BillingProductKey)
   productKey: BillingProductKey;
 
-  @Field(() => BillingProductLimits, { nullable: true })
-  limits?: BillingProductLimits;
+  @Field(() => [BillingProductLimits], { nullable: true })
+  limits?: BillingProductLimits[];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: string | Record<string, any> | undefined;

@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum BillingProductLimitType {
   MAX_UNITS = 'MAX_UNITS',
+  EXECUTIONS = 'EXECUTIONS',
 }
 
 registerEnumType(BillingProductLimitType, {
