@@ -156,21 +156,38 @@ export class FocusNfeController {
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
         if (nfse.caminho_xml_nota_fiscal) {
+          const xmlResponse = await axios.get(nfse.caminho_xml_nota_fiscal, {
+            responseType: 'arraybuffer',
+          });
+
+          const xmlBuffer = Buffer.from(xmlResponse.data);
+          const xmlFilename = `nfse-${notaFiscal.id}.xml`;
+
+          const { files } = await this.fileUploadService.uploadFile({
+            file: xmlBuffer,
+            fileFolder: FileFolder.Invoice,
+            workspaceId,
+            filename: xmlFilename,
+            mimeType: 'application/xml',
+          });
+
+          const path = this.extractFullPathFromFilePath(files[0].path);
+
           attachments.push(
             attachmentRepository.create({
-              name: `NFSe XML - ${notaFiscal.id}`,
-              fullPath: nfse.caminho_xml_nota_fiscal,
+              name: `XML NFSe - ${notaFiscal.id}`,
+              fullPath: path,
               type: 'application/xml',
-              notaFiscal,
+              notaFiscal: notaFiscal,
             }),
           );
         }
 
-        await notaFiscalRepository.save(notaFiscal);
-
         if (attachments.length > 0) {
           await attachmentRepository.save(attachments);
         }
+
+        await notaFiscalRepository.save(notaFiscal);
 
         this.logger.log(
           `[${NfType.NFSE}] ref: ${notaFiscal.id} - issued and attachments saved successfully`,
