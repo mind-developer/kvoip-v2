@@ -191,9 +191,6 @@ export class FocusNFeEventListener {
 
         if (!nfcom) return;
 
-        // TODO: remove when development is finished
-        console.log(nfcom);
-
         const result = await this.focusNFeService.issueNF(
           'nfcom',
           nfcom,

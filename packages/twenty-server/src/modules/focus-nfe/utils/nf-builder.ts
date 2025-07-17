@@ -1,3 +1,5 @@
+import { formatInTimeZone } from 'date-fns-tz';
+
 import { NFCom, NFSe } from 'src/modules/focus-nfe/types/NotaFiscal.type';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
@@ -52,10 +54,15 @@ export function buildNFComPayload(
 
   if (!company || !product || !focusNFe?.token) return;
 
-  const today = new Date().toISOString().slice(0, 19);
+  const data = new Date();
+  const formattedDate = formatInTimeZone(
+    data,
+    'America/Sao_Paulo',
+    "yyyy-MM-dd'T'HH:mm:ss",
+  );
 
   return {
-    data_emissao: today,
+    data_emissao: formattedDate,
     numero_site: '0',
     municipio: codMunicipioEmitente,
     finalidade_nfcom: '0',
@@ -71,6 +78,7 @@ export function buildNFComPayload(
     bairro_emitente: focusNFe.neighborhood,
     uf_emitente: focusNFe.state,
     cep_emitente: focusNFe.cep,
+    codigo_municipio_emitente: codMunicipioEmitente,
     codigo_municipio_destinatario: codMunicipioDestinatario,
     nome_destinatario: company.name,
     indicador_ie_destinatario: '9',
@@ -83,6 +91,9 @@ export function buildNFComPayload(
     codigo_assinante: '123598764325', // Mandatory field, must be included in the entity
     tipo_assinante: '1', // Mandatory field, must be included in the entity
     tipo_servico: '1', // Mandatory field, must be included in the entity
+    numero_contato_assinante: '1234',
+    data_inicio_contrato: formattedDate,
+    indicador_cessao: '1',
     itens: [
       {
         cfop: product.cfop,

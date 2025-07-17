@@ -1,6 +1,11 @@
 /* eslint-disable @nx/workspace-rest-api-methods-should-be-guarded */
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common';
 
+import axios from 'axios';
+
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import {
@@ -18,6 +23,7 @@ export class FocusNfeController {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
   @Post('/webhook/:workspaceId/:integrationId/:type')
@@ -76,10 +82,27 @@ export class FocusNfeController {
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
         if (nfcom.caminho_xml) {
+          const xmlResponse = await axios.get(nfcom.caminho_xml, {
+            responseType: 'arraybuffer',
+          });
+
+          const xmlBuffer = Buffer.from(xmlResponse.data);
+          const xmlFilename = `nfcom-${notaFiscal.id}.xml`;
+
+          const { files } = await this.fileUploadService.uploadFile({
+            file: xmlBuffer,
+            fileFolder: FileFolder.Invoice,
+            workspaceId,
+            filename: xmlFilename,
+            mimeType: 'application/xml',
+          });
+
+          const path = this.extractFullPathFromFilePath(files[0].path);
+
           attachments.push(
             attachmentRepository.create({
               name: `XML NFCom - ${notaFiscal.id}`,
-              fullPath: nfcom.caminho_xml,
+              fullPath: path,
               type: 'application/xml',
               notaFiscal: notaFiscal,
             }),
@@ -87,10 +110,27 @@ export class FocusNfeController {
         }
 
         if (nfcom.caminho_danfecom) {
+          const pdfResponse = await axios.get(nfcom.caminho_danfecom, {
+            responseType: 'arraybuffer',
+          });
+
+          const pdfBuffer = Buffer.from(pdfResponse.data);
+          const pdfFilename = `danfecom-${notaFiscal.id}.pdf`;
+
+          const { files } = await this.fileUploadService.uploadFile({
+            file: pdfBuffer,
+            fileFolder: FileFolder.Invoice,
+            workspaceId,
+            filename: pdfFilename,
+            mimeType: 'application/pdf',
+          });
+
+          const path = this.extractFullPathFromFilePath(files[0].path);
+
           attachments.push(
             attachmentRepository.create({
               name: `DANFE-COM - ${notaFiscal.id}`,
-              fullPath: nfcom.caminho_danfecom,
+              fullPath: path,
               type: 'application/pdf',
               notaFiscal: notaFiscal,
             }),
@@ -139,5 +179,11 @@ export class FocusNfeController {
         return;
       }
     }
+  }
+
+  private extractFullPathFromFilePath(path: string) {
+    const matchRegex = /([^?]+)/;
+
+    return path.match(matchRegex)?.[1];
   }
 }

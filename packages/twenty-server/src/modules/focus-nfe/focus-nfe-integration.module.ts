@@ -5,6 +5,9 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -27,6 +30,9 @@ import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.lis
         TypeORMModule,
       ],
     }),
+    FileModule,
+    FileUploadModule,
+    FileStorageModule,
     DataSourceModule,
     forwardRef(() => WorkspaceModule),
   ],

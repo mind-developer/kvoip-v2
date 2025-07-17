@@ -47,6 +47,7 @@ export type NFCom = {
   bairro_emitente: string;
   uf_emitente: string;
   cep_emitente: string;
+  codigo_municipio_emitente: string;
   codigo_municipio_destinatario: string;
   nome_destinatario: string;
   indicador_ie_destinatario: string;
@@ -59,6 +60,9 @@ export type NFCom = {
   codigo_assinante: string;
   tipo_assinante: string;
   tipo_servico: string;
+  numero_contato_assinante: string;
+  data_inicio_contrato: string;
+  indicador_cessao: string;
   itens: ItemNFCom[];
 };
 
