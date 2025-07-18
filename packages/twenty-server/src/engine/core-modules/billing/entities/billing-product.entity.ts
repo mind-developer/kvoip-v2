@@ -61,6 +61,7 @@ export class BillingProduct {
 
   @OneToMany(() => BillingProductLimit, (limit) => limit.product, {
     nullable: true,
+    cascade: true,
   })
   limits: Relation<BillingProductLimit[]>;
 

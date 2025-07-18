@@ -12,14 +12,19 @@ import {
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductLimit } from 'src/engine/core-modules/billing/entities/billing-product-limit.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
 import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
 import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
-import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
+import {
+  getProductLimitsFromDatabaseProduct,
+  transformStripeProductToDatabaseProduct,
+} from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
 @Command({
   name: 'billing:sync-plans-data',
   description:
@@ -32,6 +37,8 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
     private readonly billingPriceRepository: Repository<BillingPrice>,
     @InjectRepository(BillingProduct, 'core')
     private readonly billingProductRepository: Repository<BillingProduct>,
+    @InjectRepository(BillingProductLimit, 'core')
+    private readonly billingProductLimitRepositotry: Repository<BillingProductLimit>,
     @InjectRepository(BillingMeter, 'core')
     private readonly billingMeterRepository: Repository<BillingMeter>,
     private readonly stripeBillingMeterService: StripeBillingMeterService,
@@ -73,6 +80,25 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
           {
             conflictPaths: ['stripeProductId'],
           },
+        );
+
+        const products = await this.billingProductRepository.find({
+          where: {
+            metadata: {
+              productKey: BillingProductKey.BASE_PRODUCT,
+            },
+          },
+        });
+
+        await Promise.all(
+          products.map(({ metadata: { planKey }, stripeProductId }) =>
+            this.billingProductLimitRepositotry.save(
+              getProductLimitsFromDatabaseProduct({
+                planKey,
+                productId: stripeProductId,
+              }),
+            ),
+          ),
         );
       }
       this.logger.log(`Upserted product: ${product.id}`);

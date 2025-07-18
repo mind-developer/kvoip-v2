@@ -41,9 +41,10 @@ export class BillingProductLimit {
   })
   limit: number;
 
-  @ManyToOne(() => BillingProduct, (product) => product.limits)
+  @ManyToOne(() => BillingProduct)
   @JoinColumn({
     name: 'productId',
+    referencedColumnName: 'stripeProductId',
   })
   product: Relation<BillingProduct>;
 
