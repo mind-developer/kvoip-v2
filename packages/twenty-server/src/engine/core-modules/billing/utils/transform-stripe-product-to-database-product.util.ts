@@ -2,9 +2,9 @@
 
 import Stripe from 'stripe';
 
-import { BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP } from 'src/engine/core-modules/billing/constants/billint-plan-to-product-limit-map.constant';
+import { BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP } from 'src/engine/core-modules/billing/constants/billing-plan-to-product-limit-map.constant';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
 export const transformStripeProductToDatabaseProduct = (
   data: Stripe.Product,
@@ -22,19 +22,18 @@ export const transformStripeProductToDatabaseProduct = (
     unitLabel: data.unit_label === null ? undefined : data.unit_label,
     url: data.url === null ? undefined : data.url,
     taxCode: data.tax_code ? String(data.tax_code) : undefined,
-    metadata: transformStripeProductMetadataToDatabaseProductMetadata(
+    metadata: data.metadata,
+    limits: transformStripeProductMetadataToDatabaseBaseProductMetadata(
       data.metadata,
     ),
   };
 };
 
-const transformStripeProductMetadataToDatabaseProductMetadata = (
+const transformStripeProductMetadataToDatabaseBaseProductMetadata = (
   metadata: Stripe.Product['metadata'],
 ) =>
-  ({
-    ...metadata,
-    limits:
-      BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP[
-        metadata?.planKey as BillingPlanKey
-      ],
-  }) as BillingProductMetadata;
+  metadata?.productKey === BillingProductKey.BASE_PRODUCT
+    ? BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP[
+        metadata.planKey as BillingPlanKey
+      ]
+    : undefined;

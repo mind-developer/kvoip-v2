@@ -1,11 +1,11 @@
+import { BillingProductLimit } from 'src/engine/core-modules/billing/entities/billing-product-limit.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingProductLimitType } from 'src/engine/core-modules/billing/enums/billint-product-limit-type-enum';
-import { BillingProductLimits } from 'src/engine/core-modules/billing/types/billing-product-limits.type';
+import { BillingProductLimitType } from 'src/engine/core-modules/billing/enums/billing-product-limit-type-enum';
 
 export const BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP: Record<
   BillingPlanKey,
-  BillingProductLimits[]
+  Pick<BillingProductLimit, 'productKey' | 'type' | 'limit'>[]
 > = {
   [BillingPlanKey.PRO]: [
     {
