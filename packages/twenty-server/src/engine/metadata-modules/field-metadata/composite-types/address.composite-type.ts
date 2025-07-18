@@ -53,6 +53,12 @@ export const addressCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
+    {
+      name: 'addressNumber',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
@@ -64,6 +70,7 @@ export type AddressMetadata = {
   addressState: string;
   addressZipCode: string;
   addressCountry: string;
+  addressNumber: string;
   addressLat: number;
   addressLng: number;
 };

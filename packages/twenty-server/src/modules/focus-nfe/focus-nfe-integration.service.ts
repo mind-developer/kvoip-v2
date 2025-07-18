@@ -59,6 +59,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!focusNFeRepository) {
@@ -86,13 +87,6 @@ export class FocusNFeIntegrationService {
       createdIntegration.cpf)!;
 
     await this.subscriptionWebhook(
-      'nfe',
-      validateDocument,
-      createdIntegration.token,
-      workspaceId,
-      createdIntegration.id,
-    );
-    await this.subscriptionWebhook(
       'nfse',
       validateDocument,
       createdIntegration.token,
@@ -115,6 +109,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!focusNFeRepository) {
@@ -136,6 +131,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await focusNFeRepository.findOne({
@@ -151,6 +147,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     const focusNfeIntegration = await this.findById(
@@ -209,6 +206,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (focusNFeRepository) {
@@ -235,6 +233,7 @@ export class FocusNFeIntegrationService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
         workspaceId,
         'focusNFe',
+        { shouldBypassPermissionChecks: true },
       );
 
     const integration = await this.findById(id, workspaceId);

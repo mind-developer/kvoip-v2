@@ -687,21 +687,6 @@ export type CreatePabxTrunkInput = {
   workspaceId: Scalars['ID']['input'];
 };
 
-export type CreateRelationInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  fromDescription?: InputMaybe<Scalars['String']['input']>;
-  fromIcon?: InputMaybe<Scalars['String']['input']>;
-  fromLabel: Scalars['String']['input'];
-  fromName: Scalars['String']['input'];
-  fromObjectMetadataId: Scalars['String']['input'];
-  relationType: RelationMetadataType;
-  toDescription?: InputMaybe<Scalars['String']['input']>;
-  toIcon?: InputMaybe<Scalars['String']['input']>;
-  toLabel: Scalars['String']['input'];
-  toName: Scalars['String']['input'];
-  toObjectMetadataId: Scalars['String']['input'];
-};
-
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON']['input'];
   foreignDataWrapperType: Scalars['String']['input'];
@@ -1039,9 +1024,9 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
-  InterCharge = 'InterCharge',
   BillingSubscriptionBill = 'BillingSubscriptionBill',
   ChargeBill = 'ChargeBill',
+  Invoice = 'Invoice',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',

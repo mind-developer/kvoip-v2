@@ -981,6 +981,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   BillingSubscriptionBill = 'BillingSubscriptionBill',
   ChargeBill = 'ChargeBill',
+  Invoice = 'Invoice',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -4349,7 +4350,7 @@ export type GetIssuersByWorkspaceQuery = { __typename?: 'Query', getIssuersByWor
 export type GetFocusNfeIntegrationsByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFocusNfeIntegrationsByWorkspaceQuery = { __typename?: 'Query', getFocusNfeIntegrationsByWorkspace: Array<{ __typename?: 'FocusNFeWorkspaceEntity', id: string, status?: string | null, name?: string | null, cnpj?: string | null, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime?: string | null }> };
+export type GetFocusNfeIntegrationsByWorkspaceQuery = { __typename?: 'Query', getFocusNfeIntegrationsByWorkspace: Array<{ __typename?: 'FocusNFeWorkspaceEntity', id: string, status?: string | null, name?: string | null, token: string, companyName?: string | null, cnpj?: string | null, cpf?: string | null, ie?: string | null, inscricaoMunicipal?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime?: string | null }> };
 
 export type CreateInterIntegrationMutationVariables = Exact<{
   createInput: CreateInterIntegrationInput;
@@ -7721,9 +7722,12 @@ export const GetFocusNfeIntegrationsByWorkspaceDocument = gql`
     id
     status
     name
+    token
+    companyName
     cnpj
     cpf
     ie
+    inscricaoMunicipal
     cnaeCode
     cep
     street
