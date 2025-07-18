@@ -310,6 +310,16 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   codigoTributarioMunicipio: string;
 
+  @WorkspaceField({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.classificacao,
+    type: FieldMetadataType.TEXT,
+    label: msg`Classificação`,
+    description: msg`Classificação do produto`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  classificacao: string;
+
   // Relations
   @WorkspaceRelation({
     standardId: PRODUCT_STANDARD_FIELD_IDS.company,

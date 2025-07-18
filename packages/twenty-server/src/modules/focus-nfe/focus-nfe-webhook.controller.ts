@@ -37,6 +37,7 @@ export class FocusNfeController {
       `[${type}] ${integrationId} - Received incoming Focus NFe data`,
     );
 
+    // TODO: remove after completing nfse test
     console.log(body);
 
     const notaFiscalRepository =

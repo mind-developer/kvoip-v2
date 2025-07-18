@@ -274,6 +274,46 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   discriminacao: string;
 
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.codAssinante,
+    type: FieldMetadataType.TEXT,
+    label: msg`Código do Assinante`,
+    description: msg`Código do assinante`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  codAssinante: string;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.numContratoAssinante,
+    type: FieldMetadataType.TEXT,
+    label: msg`Número do Contrato do Assinante`,
+    description: msg`Número do contrato do assinante`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  numContratoAssinante: string;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.classificacao,
+    type: FieldMetadataType.TEXT,
+    label: msg`Classificação`,
+    description: msg`Classificação do produto`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  classificacao: string;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.unidade,
+    type: FieldMetadataType.TEXT,
+    label: msg`Unidade Comercial`,
+    description: msg`Unidade comercial. Placeholder: UN`,
+    icon: 'IconBox',
+  })
+  @WorkspaceIsNullable()
+  unidade: string;
+
   // Relations
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.charge,

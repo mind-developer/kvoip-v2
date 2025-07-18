@@ -227,6 +227,7 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   itemListaServico: 'c4606156-e1b0-477d-972f-1373be7099f4',
   codigoTributarioMunicipio: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
   notaFiscal: '71aceb60-96b8-4c23-b5c0-aadd9f6b256e',
+  classificacao: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
@@ -321,6 +322,10 @@ export const NOTA_FISCAL_FIELD_IDS = {
   focusNFe: 'd156564a-6e20-4c43-a61b-e2ee8ca4fcbc',
   discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
   timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
+  codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
+  numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
+  classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
+  unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

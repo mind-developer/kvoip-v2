@@ -23,6 +23,8 @@ const PRODUCT_FIELDS: (keyof Pick<
   | 'unitOfMeasure'
   | 'cstIcmsCsosn'
   | 'totalAmount'
+  | 'classificacao'
+  | 'unidade'
 >)[] = [
   'cfop',
   'ncm',
@@ -37,6 +39,8 @@ const PRODUCT_FIELDS: (keyof Pick<
   'unitOfMeasure',
   'cstIcmsCsosn',
   'totalAmount',
+  'classificacao',
+  'unidade',
 ];
 
 const mapProductTypeToNfType: Record<ProductTypeStatus, NfType> = {

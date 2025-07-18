@@ -91,7 +91,7 @@ export class FocusNFeEventListener {
                 }
 
                 this.logger.log(
-                  `Invoice issued with id ${issueResult.data.ref}`,
+                  `Invoice [${notaFiscal.nfType}] issued with id ${issueResult.data.ref}`,
                 );
               } else {
                 notaFiscal.nfStatus = NfStatus.DRAFT;
@@ -149,6 +149,8 @@ export class FocusNFeEventListener {
 
         if (!nfse) return;
 
+        console.log('nfse: ', nfse);
+
         const result = await this.focusNFeService.issueNF(
           'nfse',
           nfse,
@@ -156,18 +158,7 @@ export class FocusNFeEventListener {
           focusNFe?.token,
         );
 
-        if (result.success) {
-          this.logger.log(
-            `NFSe issued successfully. Status: ${result.data.status}`,
-            JSON.stringify(nfse, null, 2),
-          );
-
-          return result;
-        } else {
-          this.logger.error(`Error when issuing NFSe: ${result.error}`);
-
-          return result;
-        }
+        return result;
       }
 
       case NfType.NFCOM: {
