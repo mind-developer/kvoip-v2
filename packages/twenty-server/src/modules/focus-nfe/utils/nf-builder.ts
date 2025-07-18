@@ -25,7 +25,7 @@ export const buildNFSePayload = (
       email: company.emails.primaryEmail,
       endereco: {
         logradouro: company.address.addressStreet1,
-        numero: '', // Mandatory field, need to change on frontend
+        numero: company.address.addressNumber,
         bairro: company.address.addressStreet2,
         codigo_municipio: codMunicipioTomador,
         uf: company.address.addressState,
@@ -76,7 +76,7 @@ export function buildNFComPayload(
     nome_destinatario: company.name,
     indicador_ie_destinatario: '9', // Não Contribuinte, que pode ou não possuir Inscrição Estadual no Cadastro de Contribuintes do ICMS
     logradouro_destinatario: company.address.addressStreet1,
-    numero_destinatario: '456',
+    numero_destinatario: company.address.addressNumber,
     bairro_destinatario: company.address.addressStreet2,
     municipio_destinatario: company.address.addressCity,
     uf_destinatario: company.address.addressState,
