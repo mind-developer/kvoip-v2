@@ -115,6 +115,7 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
           addressState
           addressCountry
           addressPostcode
+          addressNumber
           addressLat
           addressLng
         }

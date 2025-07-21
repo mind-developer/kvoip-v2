@@ -12,6 +12,7 @@ export const AddressFieldDisplay = () => {
     fieldValue?.addressCity,
     fieldValue?.addressPostcode,
     fieldValue?.addressCountry,
+    fieldValue?.addressNumber,
   ]
     .filter(isNonEmptyString)
     .join(', ');

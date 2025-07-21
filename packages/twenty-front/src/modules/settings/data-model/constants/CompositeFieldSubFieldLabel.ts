@@ -34,6 +34,7 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
     addressState: 'State',
     addressCountry: 'Country',
     addressPostcode: 'Post Code',
+    addressNumber: 'Post Code',
     addressLat: 'Latitude',
     addressLng: 'Longitude',
   },

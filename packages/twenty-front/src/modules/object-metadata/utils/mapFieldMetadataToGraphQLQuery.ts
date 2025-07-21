@@ -157,6 +157,7 @@ ${mapObjectMetadataToGraphQLQuery({
   addressState
   addressCountry
   addressPostcode
+  addressNumber
   addressLat
   addressLng
 }`;

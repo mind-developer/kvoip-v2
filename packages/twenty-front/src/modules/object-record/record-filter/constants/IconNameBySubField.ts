@@ -21,6 +21,7 @@ export const ICON_NAME_BY_SUB_FIELD: Partial<
   addressStreet1: 'IconMapPin',
   addressStreet2: 'IconMapPin',
   addressState: 'IconMapPin',
+  addressNumber: 'IconMapPin',
   firstName: 'IconTextSize',
   lastName: 'IconTextSize',
 };

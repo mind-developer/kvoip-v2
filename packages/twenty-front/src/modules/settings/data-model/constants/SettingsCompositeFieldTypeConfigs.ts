@@ -336,6 +336,15 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
+        subFieldName: 'addressNumber',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressNumber,
+        isImportable: true,
+        isFilterable: true,
+        isIncludedInUniqueConstraint: false,
+      },
+      {
         subFieldName: 'addressLat',
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
@@ -364,6 +373,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         addressPostcode: '90210',
         addressLat: 34.0522,
         addressLng: -118.2437,
+        addressNumber: null,
       },
       {
         addressStreet1: '123 Main Street',
@@ -374,6 +384,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         addressPostcode: '10001',
         addressLat: 40.7128,
         addressLng: -74.006,
+        addressNumber: null,
       },
       {
         addressStreet1: '8 rue Saint-Anne',
@@ -384,6 +395,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         addressPostcode: '75001',
         addressLat: 40.7128,
         addressLng: -74.006,
+        addressNumber: null,
       },
     ],
     category: 'Basic',

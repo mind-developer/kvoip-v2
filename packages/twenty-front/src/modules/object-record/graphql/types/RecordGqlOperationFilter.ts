@@ -86,6 +86,7 @@ export type AddressFilter = {
   addressState?: StringFilter;
   addressCountry?: StringFilter;
   addressPostcode?: StringFilter;
+  addressNumber?: StringFilter;
 };
 
 export type LinksFilter = {
