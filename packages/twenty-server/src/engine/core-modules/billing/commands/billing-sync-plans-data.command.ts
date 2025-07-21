@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import Stripe from 'stripe';
-import { Repository } from 'typeorm';
+import { JsonContains, Repository } from 'typeorm';
 
 import {
   MigrationCommandOptions,
@@ -38,7 +38,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
     @InjectRepository(BillingProduct, 'core')
     private readonly billingProductRepository: Repository<BillingProduct>,
     @InjectRepository(BillingProductLimit, 'core')
-    private readonly billingProductLimitRepositotry: Repository<BillingProductLimit>,
+    private readonly billingProductLimitRepository: Repository<BillingProductLimit>,
     @InjectRepository(BillingMeter, 'core')
     private readonly billingMeterRepository: Repository<BillingMeter>,
     private readonly stripeBillingMeterService: StripeBillingMeterService,
@@ -84,19 +84,24 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
 
         const products = await this.billingProductRepository.find({
           where: {
-            metadata: {
+            metadata: JsonContains({
               productKey: BillingProductKey.BASE_PRODUCT,
-            },
+            }),
           },
         });
 
+        this.logger.log(`Upserting limits on ${products.length} products.`);
+
         await Promise.all(
-          products.map(({ metadata: { planKey }, stripeProductId }) =>
-            this.billingProductLimitRepositotry.save(
+          products.map(({ id, metadata: { planKey } }) =>
+            this.billingProductLimitRepository.upsert(
               getProductLimitsFromDatabaseProduct({
                 planKey,
-                productId: stripeProductId,
+                productId: id,
               }),
+              {
+                conflictPaths: ['productId', 'productKey'],
+              },
             ),
           ),
         );

@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -16,6 +17,7 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { BillingProductLimitType } from 'src/engine/core-modules/billing/enums/billing-product-limit-type-enum';
 
 @Entity({ name: 'billingProductLimit', schema: 'core' })
+@Unique('IDX_PRODUCT_LIMIT_PER_KEY', ['productId', 'productKey'])
 @ObjectType()
 export class BillingProductLimit {
   @PrimaryGeneratedColumn('uuid')
@@ -41,10 +43,9 @@ export class BillingProductLimit {
   })
   limit: number;
 
-  @ManyToOne(() => BillingProduct)
+  @ManyToOne(() => BillingProduct, (product) => product.limits)
   @JoinColumn({
     name: 'productId',
-    referencedColumnName: 'stripeProductId',
   })
   product: Relation<BillingProduct>;
 

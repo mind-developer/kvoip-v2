@@ -35,4 +35,8 @@ export const getProductLimitsFromDatabaseProduct = ({
 }: {
   planKey: BillingPlanKey;
   productId: string;
-}) => BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP(productId)[planKey];
+}) =>
+  BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP[planKey].map((limit) => ({
+    productId,
+    ...limit,
+  }));
