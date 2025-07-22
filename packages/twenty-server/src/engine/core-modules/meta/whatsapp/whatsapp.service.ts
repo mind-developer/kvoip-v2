@@ -303,8 +303,6 @@ export class WhatsappService {
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
 
-    this.logger.log('MENSAGEM', messagesCollection);
-
     if (!docSnapshot.exists()) {
       await setDoc(docRef, {
         ...whatsappDoc,

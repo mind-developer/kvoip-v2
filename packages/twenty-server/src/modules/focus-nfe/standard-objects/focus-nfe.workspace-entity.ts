@@ -24,6 +24,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -98,6 +99,7 @@ registerEnumType(StatusOptions, {
   labelIdentifierStandardId: FOCUS_NFE_STANDARD_FIELD_ID.name,
 })
 @WorkspaceIsSystem()
+@WorkspaceIsSearchable()
 @ObjectType()
 export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
   // Integration Focus NF-e

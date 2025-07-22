@@ -31,6 +31,7 @@ import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-obje
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -76,6 +77,7 @@ registerEnumType(ChargeEntityType, {
   icon: 'IconSettings',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceIsSearchable()
 @WorkspaceIsNotAuditLogged()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
