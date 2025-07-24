@@ -122,12 +122,14 @@ export class FocusNFeService {
   }
 
   async getNoteStatus(
-    type: NfType,
+    type: string,
     referenceCode: string,
     token: string,
   ): Promise<FocusNFeResponse> {
     const endpoint =
-      type === NfType.NFSE ? `/nfse/${referenceCode}` : `/nfe/${referenceCode}`;
+      type === NfType.NFSE
+        ? `/nfse/${referenceCode}`
+        : `/nfcom/${referenceCode}`;
 
     return this.makeRequest(token, endpoint, 'GET');
   }

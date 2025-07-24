@@ -1,5 +1,7 @@
 export type NFSe = {
   data_emissao: string;
+  serie_dps: string;
+  numero_dps: string;
   prestador: {
     cnpj: string;
     inscricao_municipal: string;

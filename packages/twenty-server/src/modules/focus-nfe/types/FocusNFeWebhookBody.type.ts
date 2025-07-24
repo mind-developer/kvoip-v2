@@ -31,6 +31,7 @@ export interface FocusNFeWebhookBodyNFSe {
   data_emissao?: string;
   url?: string;
   caminho_xml_nota_fiscal?: string;
+  url_danfse?: string;
   caminho_xml_cancelamento?: string;
   erros?: {
     codigo: string;

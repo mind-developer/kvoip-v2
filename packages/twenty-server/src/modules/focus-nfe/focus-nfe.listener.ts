@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { compareDesc } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { IsNull, Not } from 'typeorm';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -74,11 +78,44 @@ export class FocusNFeEventListener {
           switch (notaFiscal.nfStatus) {
             case NfStatus.DRAFT:
             case NfStatus.ISSUED:
-            case NfStatus.CANCELLED:
+            case NfStatus.CANCELLED: {
+              if (!notaFiscal.focusNFe?.token || !notaFiscal.nfType) return;
+
+              const statusResult = await this.focusNFeService.getNoteStatus(
+                notaFiscal.nfType,
+                notaFiscal.id,
+                notaFiscal.focusNFe.token,
+              );
+
+              if (!statusResult.success || !statusResult.data?.status) {
+                this.logger.warn(
+                  `Could not get status for invoice ${notaFiscal.id}`,
+                );
+                break;
+              }
+
+              const statusMap: Record<string, NfStatus> = {
+                autorizado: NfStatus.ISSUED,
+                cancelado: NfStatus.CANCELLED,
+                erro_autorizacao: NfStatus.DRAFT,
+                permissao_negada: NfStatus.DRAFT,
+                processando_autorizacao: NfStatus.IN_PROCESS,
+              };
+
+              const newStatus = statusMap[statusResult.data.status];
+
+              if (newStatus) {
+                notaFiscal.nfStatus = newStatus;
+              } else {
+                this.logger.warn(
+                  `Unknown NF status '${statusResult.data.status}' for invoice [${notaFiscal.name}] id: ${notaFiscal.id}`,
+                );
+              }
               break;
+            }
 
             case NfStatus.ISSUE: {
-              const issueResult = await this.issueNf(notaFiscal);
+              const issueResult = await this.issueNf(notaFiscal, workspaceId);
 
               if (issueResult?.success) {
                 if (
@@ -102,8 +139,23 @@ export class FocusNFeEventListener {
               break;
             }
 
-            case NfStatus.CANCEL:
+            case NfStatus.CANCEL: {
+              const result = await this.cancelNf(notaFiscal);
+
+              if (result?.success) {
+                notaFiscal.nfStatus = NfStatus.CANCELLED;
+                this.logger.log(
+                  `Invoice [${notaFiscal.nfType}] cancelled with id ${notaFiscal.id}`,
+                );
+              } else {
+                this.logger.error(
+                  `Error cancelling invoice ${notaFiscal.id}: ${result?.error}`,
+                );
+              }
+
+              notaFiscal.nfStatus = NfStatus.CANCELLED;
               break;
+            }
 
             default:
               this.logger.warn(`Unable to issue invoice`);
@@ -122,13 +174,20 @@ export class FocusNFeEventListener {
     );
   }
 
-  private issueNf = async (notaFiscal: NotaFiscalWorkspaceEntity) => {
+  private issueNf = async (
+    notaFiscal: NotaFiscalWorkspaceEntity,
+    workspaceId: string,
+  ) => {
     const { product, company, focusNFe } = notaFiscal;
 
     if (!product || !company || !focusNFe?.token) return;
 
     switch (notaFiscal.nfType) {
       case NfType.NFSE: {
+        const lastInvoiceIssued = await this.getLastInvoiceIssued(workspaceId);
+
+        if (!lastInvoiceIssued) return;
+
         const codMunicipioPrestador =
           await this.focusNFeService.getCodigoMunicipio(
             focusNFe?.city,
@@ -145,11 +204,10 @@ export class FocusNFeEventListener {
           notaFiscal,
           codMunicipioPrestador,
           codMunicipioTomador,
+          lastInvoiceIssued?.numeroRps,
         );
 
         if (!nfse) return;
-
-        console.log('nfse: ', nfse);
 
         const result = await this.focusNFeService.issueNF(
           'nfse',
@@ -192,5 +250,67 @@ export class FocusNFeEventListener {
         return result;
       }
     }
+  };
+
+  private cancelNf = async (notaFiscal: NotaFiscalWorkspaceEntity) => {
+    const { focusNFe } = notaFiscal;
+
+    if (!focusNFe?.token) return;
+
+    switch (notaFiscal.nfType) {
+      case NfType.NFSE: {
+        const result = await this.focusNFeService.cancelNote(
+          notaFiscal.nfType,
+          notaFiscal.id,
+          notaFiscal.justificativa,
+          focusNFe?.token,
+        );
+
+        return result;
+      }
+    }
+  };
+
+  private getLastInvoiceIssued = async (
+    workspaceId: string,
+  ): Promise<
+    | {
+        id: string;
+        numeroRps: string;
+        dataEmissao: string;
+      }
+    | undefined
+  > => {
+    const notaFiscalRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+        workspaceId,
+        'notaFiscal',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const invoiceIssued = await notaFiscalRepository.find({
+      where: {
+        nfType: NfType.NFSE,
+        numeroRps: Not(IsNull()),
+        dataEmissao: Not(IsNull()),
+      },
+    });
+
+    const latestNFSe = invoiceIssued
+      .filter((nf) => nf.dataEmissao)
+      .sort((a, b) =>
+        compareDesc(
+          zonedTimeToUtc(new Date(a.dataEmissao || ''), 'America/Sao_Paulo'),
+          zonedTimeToUtc(new Date(b.dataEmissao || ''), 'America/Sao_Paulo'),
+        ),
+      )[0];
+
+    if (!latestNFSe) return undefined;
+
+    return {
+      id: latestNFSe.id,
+      numeroRps: latestNFSe.numeroRps || '',
+      dataEmissao: latestNFSe.dataEmissao || '',
+    };
   };
 }

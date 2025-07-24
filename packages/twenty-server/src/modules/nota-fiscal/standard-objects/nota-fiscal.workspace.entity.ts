@@ -314,6 +314,38 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   unidade: string;
 
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.justificativa,
+    type: FieldMetadataType.TEXT,
+    label: msg`Justificativa`,
+    description: msg`Justificativa de cancelamento da Nota Fiscal`,
+    icon: 'IconBox',
+  })
+  @WorkspaceIsNullable()
+  justificativa: string;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.dataEmissao,
+    type: FieldMetadataType.TEXT,
+    label: msg`Data de emissão`,
+    description: msg`Data de emissão da Nota Fiscal`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  dataEmissao: string | null;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.numeroRps,
+    type: FieldMetadataType.TEXT,
+    label: msg`Número RPS`,
+    description: msg`Número RPS`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  numeroRps: string | null;
+
   // Relations
   @WorkspaceRelation({
     standardId: NOTA_FISCAL_FIELD_IDS.charge,

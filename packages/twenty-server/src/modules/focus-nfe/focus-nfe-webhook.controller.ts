@@ -37,9 +37,6 @@ export class FocusNfeController {
       `[${type}] ${integrationId} - Received incoming Focus NFe data`,
     );
 
-    // TODO: remove after completing nfse test
-    console.log(body);
-
     const notaFiscalRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
         workspaceId,
@@ -156,6 +153,11 @@ export class FocusNfeController {
 
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
+        if (nfse.numero_rps && nfse.data_emissao) {
+          notaFiscal.numeroRps = nfse.numero_rps;
+          notaFiscal.dataEmissao = new Date(nfse.data_emissao).toISOString();
+        }
+
         if (nfse.caminho_xml_nota_fiscal) {
           const xmlResponse = await axios.get(nfse.caminho_xml_nota_fiscal, {
             responseType: 'arraybuffer',
@@ -179,6 +181,34 @@ export class FocusNfeController {
               name: `XML NFSe - ${notaFiscal.id}`,
               fullPath: path,
               type: 'application/xml',
+              notaFiscal: notaFiscal,
+            }),
+          );
+        }
+
+        if (nfse.url_danfse) {
+          const pdfResponse = await axios.get(nfse.url_danfse, {
+            responseType: 'arraybuffer',
+          });
+
+          const pdfBuffer = Buffer.from(pdfResponse.data);
+          const pdfFilename = `danfse-${notaFiscal.id}.pdf`;
+
+          const { files } = await this.fileUploadService.uploadFile({
+            file: pdfBuffer,
+            fileFolder: FileFolder.Invoice,
+            workspaceId,
+            filename: pdfFilename,
+            mimeType: 'application/pdf',
+          });
+
+          const path = this.extractFullPathFromFilePath(files[0].path);
+
+          attachments.push(
+            attachmentRepository.create({
+              name: `DANFESe - ${notaFiscal.id}`,
+              fullPath: path,
+              type: 'application/pdf',
               notaFiscal: notaFiscal,
             }),
           );

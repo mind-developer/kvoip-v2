@@ -172,13 +172,7 @@ export class FocusNFeIntegrationService {
     };
 
     if (focusNfeIntegration.token !== updatedFocusNfeIntegration.token) {
-      await this.subscriptionWebhook(
-        'nfe',
-        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
-        updatedFocusNfeIntegration.token,
-        workspaceId,
-        updatedFocusNfeIntegration.id,
-      );
+      // TODO: Delete previous webhook and then register again (create delete method)
       await this.subscriptionWebhook(
         'nfse',
         updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
@@ -251,7 +245,7 @@ export class FocusNFeIntegrationService {
     await focusNFeRepository.save(integration);
   }
 
-  async subscriptionWebhook(
+  private async subscriptionWebhook(
     event: string,
     cnpj: string,
     token: string,
@@ -279,6 +273,7 @@ export class FocusNFeIntegrationService {
         },
       });
 
+      // TODO: Redo log messages using the logger
       console.log('HTTP code:', response.status);
       console.log('Body:', response.data);
     } catch (error) {
@@ -291,7 +286,7 @@ export class FocusNFeIntegrationService {
     }
   }
 
-  convertToTaxRegimeEnum(taxRegime: string): TaxRegime | null {
+  private convertToTaxRegimeEnum(taxRegime: string): TaxRegime | null {
     switch (taxRegime) {
       case 'simples_nacional':
         return TaxRegime.SimplesNacional;

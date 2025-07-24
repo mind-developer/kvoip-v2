@@ -326,6 +326,9 @@ export const NOTA_FISCAL_FIELD_IDS = {
   numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
   classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
   unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
+  justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
+  dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
+  numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

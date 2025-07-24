@@ -7,13 +7,18 @@ export const buildNFSePayload = (
   notaFiscal: NotaFiscalWorkspaceEntity,
   codMunicipioPrestador: string,
   codMunicipioTomador: string,
+  numeroRps: string,
 ): NFSe | undefined => {
   const { product, company, focusNFe } = notaFiscal;
 
   if (!product || !company || !focusNFe?.token) return;
 
+  const nextNumRps = (parseInt(numeroRps, 10) + 1).toString();
+
   const nfse: NFSe = {
-    data_emissao: new Date().toISOString(),
+    data_emissao: getCurrentFormattedDate(),
+    serie_dps: '1',
+    numero_dps: nextNumRps, // Incremental, deve ser pela ultima RPS gerada
     prestador: {
       cnpj: focusNFe?.cnpj || focusNFe?.cpf || '',
       inscricao_municipal: focusNFe?.inscricaoMunicipal || '',
