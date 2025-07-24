@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import {
   UpdateSubscriptionQuantityJob,
   UpdateSubscriptionQuantityJobData,

@@ -20,8 +20,8 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
-import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';

@@ -15,6 +15,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductLimit } from 'src/engine/core-modules/billing/entities/billing-product-limit.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -58,6 +59,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
         BillingSubscriptionItem,
         BillingCustomer,
         BillingProduct,
+        BillingProductLimit,
         BillingPrice,
         BillingMeter,
         BillingEntitlement,
