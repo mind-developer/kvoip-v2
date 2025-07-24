@@ -256,6 +256,8 @@ export class WorkspaceInvitationService {
       };
     }
 
+    await this.canUseWorkspaceMembersProduct(workspace.id);
+
     const invitationsPr = await Promise.allSettled(
       emails.map(async (email) => {
         if (usePersonalInvitation) {
