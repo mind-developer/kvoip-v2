@@ -1202,6 +1202,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
+    description: 'Last number rps issued',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  LAST_NUMBER_RPS: number;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
     description: 'Enable or disable the attachment preview feature',
     type: ConfigVariableType.BOOLEAN,
   })

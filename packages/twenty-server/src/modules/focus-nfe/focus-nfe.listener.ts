@@ -7,6 +7,7 @@ import { IsNull, Not } from 'typeorm';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
@@ -15,6 +16,7 @@ import { NfType } from 'src/modules/focus-nfe/types/NfType';
 import {
   buildNFComPayload,
   buildNFSePayload,
+  getCurrentFormattedDate,
 } from 'src/modules/focus-nfe/utils/nf-builder';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
@@ -25,6 +27,7 @@ export class FocusNFeEventListener {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly focusNFeService: FocusNFeService,
+    private readonly environmentService: TwentyConfigService,
   ) {}
 
   @OnDatabaseBatchEvent('notaFiscal', DatabaseEventAction.UPDATED)
@@ -268,6 +271,16 @@ export class FocusNFeEventListener {
 
         return result;
       }
+      case NfType.NFCOM: {
+        const result = await this.focusNFeService.cancelNote(
+          notaFiscal.nfType,
+          notaFiscal.id,
+          notaFiscal.justificativa,
+          focusNFe?.token,
+        );
+
+        return result;
+      }
     }
   };
 
@@ -276,11 +289,13 @@ export class FocusNFeEventListener {
   ): Promise<
     | {
         id: string;
-        numeroRps: string;
+        numeroRps: number;
         dataEmissao: string;
       }
     | undefined
   > => {
+    const LAST_NUMBER_RPS = this.environmentService.get('LAST_NUMBER_RPS');
+
     const notaFiscalRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
         workspaceId,
@@ -305,11 +320,19 @@ export class FocusNFeEventListener {
         ),
       )[0];
 
-    if (!latestNFSe) return undefined;
+    const latestNumeroRps = Number(latestNFSe?.numeroRps || 2000);
+
+    if (LAST_NUMBER_RPS > latestNumeroRps) {
+      return {
+        id: '0',
+        numeroRps: LAST_NUMBER_RPS,
+        dataEmissao: getCurrentFormattedDate(),
+      };
+    }
 
     return {
       id: latestNFSe.id,
-      numeroRps: latestNFSe.numeroRps || '',
+      numeroRps: latestNumeroRps,
       dataEmissao: latestNFSe.dataEmissao || '',
     };
   };

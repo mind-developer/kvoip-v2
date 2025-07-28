@@ -114,7 +114,9 @@ export class FocusNFeService {
     token: string,
   ): Promise<FocusNFeResponse> {
     const endpoint =
-      type === NfType.NFSE ? `/nfse/${referenceCode}` : `/nfe/${referenceCode}`;
+      type === NfType.NFSE
+        ? `/nfse/${referenceCode}`
+        : `/nfcom/${referenceCode}`;
 
     return this.makeRequest(token, endpoint, 'DELETE', {
       justificativa: reason,

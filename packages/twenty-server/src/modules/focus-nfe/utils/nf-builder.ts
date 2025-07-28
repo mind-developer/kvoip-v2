@@ -7,13 +7,13 @@ export const buildNFSePayload = (
   notaFiscal: NotaFiscalWorkspaceEntity,
   codMunicipioPrestador: string,
   codMunicipioTomador: string,
-  numeroRps: string,
+  numeroRps: number,
 ): NFSe | undefined => {
   const { product, company, focusNFe } = notaFiscal;
 
   if (!product || !company || !focusNFe?.token) return;
 
-  const nextNumRps = (parseInt(numeroRps, 10) + 1).toString();
+  const nextNumRps = (numeroRps + 1).toString();
 
   const nfse: NFSe = {
     data_emissao: getCurrentFormattedDate(),
@@ -116,7 +116,7 @@ export function buildNFComPayload(
   };
 }
 
-const getCurrentFormattedDate = (): string => {
+export const getCurrentFormattedDate = (): string => {
   return formatInTimeZone(
     new Date(),
     'America/Sao_Paulo',
