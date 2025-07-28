@@ -55,6 +55,7 @@ export function validateNFCom(nfcom: NFCom): boolean {
     cnpj_destinatario: nfcom.cnpj_destinatario,
     cnpj_emitente: nfcom.cnpj_emitente,
     codigo_assinante: nfcom.codigo_assinante,
+    numero_contato_assinante: nfcom.numero_contato_assinante,
     codigo_municipio_destinatario: nfcom.codigo_municipio_destinatario,
     data_emissao: nfcom.data_emissao,
     finalidade_nfcom: nfcom.finalidade_nfcom,

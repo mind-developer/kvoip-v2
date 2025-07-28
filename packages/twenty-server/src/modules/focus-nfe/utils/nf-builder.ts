@@ -43,7 +43,9 @@ export const buildNFSePayload = (
       iss_retido: notaFiscal.issRetido,
       item_lista_servico: notaFiscal.itemListaServico,
       codigo_municipio: codMunicipioPrestador,
-      valor_servicos: Number(notaFiscal.totalAmount),
+      valor_servicos:
+        (Number(notaFiscal.totalAmount) * (notaFiscal.percentNfse ?? 100)) /
+        100,
     },
   };
 
@@ -58,6 +60,11 @@ export function buildNFComPayload(
   const { company, product, focusNFe } = notaFiscal;
 
   if (!company || !product || !focusNFe?.token) return;
+
+  const percentNfcom = notaFiscal.percentNfcom ?? 100;
+  const valueBase = Number(notaFiscal.totalAmount) || 0;
+  const unit = Number(notaFiscal.unidade) || 1;
+  const percentageValue = valueBase * (percentNfcom / 100);
 
   return {
     data_emissao: getCurrentFormattedDate(),
@@ -102,10 +109,8 @@ export function buildNFComPayload(
         numero_item: '1',
         quantidade_faturada: notaFiscal.unidade,
         unidade_medida: Number(product.unitOfMeasure),
-        valor_item: notaFiscal.totalAmount || '',
-        valor_total_item:
-          String(Number(notaFiscal.unidade) * Number(notaFiscal.totalAmount)) ||
-          '',
+        valor_item: String(percentageValue),
+        valor_total_item: String(unit * percentageValue),
       },
     ],
   };
