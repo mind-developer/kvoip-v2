@@ -165,6 +165,18 @@ const SettingsWorkspaceMembers = lazy(() =>
   })),
 );
 
+const SettingsFinancialClosing = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosing').then((module) => ({
+    default: module.SettingsFinancialClosing,
+  })),
+);
+
+const SettingsFinancialClosingNew = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingNew').then((module) => ({
+    default: module.SettingsFinancialClosingNew,
+  })),
+);
+
 const SettingsProfile = lazy(() =>
   import('~/pages/settings/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
@@ -706,6 +718,18 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Lab} element={<SettingsLab />} />
       </Route>
+
+
+      {/* Kvoip : TO-DO */}
+      <Route
+        path={SettingsPath.FinancialClosing}
+        element={<SettingsFinancialClosing />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingNew}
+        element={<SettingsFinancialClosingNew />}
+      />
+      
     </Routes>
   </Suspense>
 );

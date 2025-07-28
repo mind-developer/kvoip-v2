@@ -214,6 +214,17 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
       ],
     },
     {
+      label: t`KVoip`,
+      items: [
+        {
+          label: t`Fechamento`,
+          path: SettingsPath.FinancialClosing,
+          Icon: IconCalendarEvent,
+          // isHidden: !isAdminEnabled,
+        },
+      ],
+    },
+    {
       label: t`Other`,
       items: [
         {

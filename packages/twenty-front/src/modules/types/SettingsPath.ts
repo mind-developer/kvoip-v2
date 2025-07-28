@@ -30,6 +30,10 @@ export enum SettingsPath {
   ServiceCenterServiceLevel = 'service-center/sla',
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
 
+  FinancialClosing = 'financial-closing',
+  FinancialClosingNew = 'financial-closing/new',
+  FinancialClosingEdit = 'financial-closing/:financialClosingId/edit',
+
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
   Domain = 'general/domain',
