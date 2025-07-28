@@ -3,18 +3,18 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsFinancialClosingForm, FinancialClosingFormSchema} from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
+import { FinancialClosingFormSchema, SettingsFinancialClosingForm } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
+import { useCreateFinancialClosing } from '@/settings/financial-closing/hooks/useCreateFinancialClosing';
+import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
-import { useCreateFinancialClosing } from '@/settings/financial-closing/hooks/useCreateFinancialClosing';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 // const financialClosingFormSchema = z.object({
 //   name: z.string().min(3, 'Name is required'),
@@ -38,7 +38,7 @@ export const SettingsFinancialClosingNew = () => {
     resolver: zodResolver(newFinancialClosingFormSchema),
     defaultValues: {
       name: '',
-      last_day_month: false,
+      lastDayMonth: false,
       time: '00:00',
       workspaceId: currentWorkspace?.id,
     },
@@ -56,7 +56,7 @@ export const SettingsFinancialClosingNew = () => {
       const financialClosingData: CreateFinancialClosingInput = {
         name: formValue.name,
         day: formValue.day,
-        last_day_month: formValue.last_day_month,
+        lastDayMonth: formValue.lastDayMonth,
         time: formValue.time,
         billingModelIds: formValue.billingModelIds,
         workspaceId: formValue.workspaceId,

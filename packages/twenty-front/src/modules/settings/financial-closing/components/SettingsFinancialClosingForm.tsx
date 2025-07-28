@@ -1,18 +1,18 @@
-import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
+import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { Select } from '@/ui/input/components/Select';
 import { z } from 'zod';
 
 const financialClosingMetadataFormSchema = z.object({
   id: z.string(),
   name: z.string().min(3, 'Name is required'),
-  last_day_month: z.boolean(),
+  lastDayMonth: z.boolean(),
   
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Horário inválido'), // formato HH:mm
   day: z.number(),
@@ -23,7 +23,7 @@ const financialClosingMetadataFormSchema = z.object({
 export const FinancialClosingFormSchema = financialClosingMetadataFormSchema.pick({
   name: true,
   day: true,
-  last_day_month: true,
+  lastDayMonth: true,
   time: true,
   billingModelIds: true,
 });
@@ -146,7 +146,7 @@ export const SettingsFinancialClosingForm = ({
         </StyledSectionDateInputs>
 
         <Controller            
-          name="last_day_month"
+          name="lastDayMonth"
           control={control}
           render={({ field: { onChange, value } }) => (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

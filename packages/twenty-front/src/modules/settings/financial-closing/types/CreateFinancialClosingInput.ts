@@ -1,6 +1,6 @@
 export interface CreateFinancialClosingInput {
   name: string;
-  last_day_month: boolean;
+  lastDayMonth: boolean;
   time: string;
   day: number;
   billingModelIds: string[];
