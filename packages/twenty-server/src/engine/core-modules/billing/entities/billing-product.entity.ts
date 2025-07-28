@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProductLimit } from 'src/engine/core-modules/billing/entities/billing-product-limit.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
@@ -57,6 +58,12 @@ export class BillingProduct {
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: BillingProductMetadata;
+
+  @OneToMany(() => BillingProductLimit, (limit) => limit.product, {
+    nullable: true,
+    cascade: true,
+  })
+  limits: Relation<BillingProductLimit[]>;
 
   @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingProduct)
   billingPrices: Relation<BillingPrice[]>;

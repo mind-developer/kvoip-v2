@@ -2,9 +2,9 @@
 
 import { APP_LOCALES } from 'twenty-shared/translations';
 
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { User } from 'src/engine/core-modules/user/user.entity';

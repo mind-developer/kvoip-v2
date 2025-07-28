@@ -78,6 +78,7 @@ export class BillingSubscriptionService {
           'billingSubscriptionItems',
           'billingSubscriptionItems.billingProduct',
           'billingSubscriptionItems.billingProduct.billingPrices',
+          'billingSubscriptionItems.billingProduct.limits',
         ],
       });
 

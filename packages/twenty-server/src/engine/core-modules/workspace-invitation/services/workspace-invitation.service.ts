@@ -20,6 +20,12 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -46,6 +52,7 @@ export class WorkspaceInvitationService {
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly billingService: BillingService,
   ) {}
 
   async validatePersonalInvitation({
@@ -148,6 +155,8 @@ export class WorkspaceInvitationService {
   }
 
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
+    await this.canUseWorkspaceMembersProduct(workspace.id);
+
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
       email.toLowerCase(),
@@ -246,6 +255,8 @@ export class WorkspaceInvitationService {
         result: [],
       };
     }
+
+    await this.canUseWorkspaceMembersProduct(workspace.id);
 
     const invitationsPr = await Promise.allSettled(
       emails.map(async (email) => {
@@ -386,5 +397,26 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
+  }
+
+  async canUseWorkspaceMembersProduct(workspaceId: string) {
+    const productLimit = await this.billingService.getProductLimitByProductKey(
+      workspaceId,
+      BillingProductKey.WORSPACE_MEMBERS,
+    );
+
+    if (!productLimit) return;
+
+    const workspaceMembersCount = await this.userWorkspaceRepository.count({
+      where: {
+        workspaceId,
+      },
+    });
+
+    if (workspaceMembersCount >= productLimit.limit)
+      throw new BillingException(
+        'Workspace members limit reached',
+        BillingExceptionCode.BILLING_PRODUCT_LIMIT_REACHED,
+      );
   }
 }

@@ -23,11 +23,11 @@ import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos
 import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });

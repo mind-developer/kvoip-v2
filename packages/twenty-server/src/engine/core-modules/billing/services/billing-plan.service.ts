@@ -43,7 +43,7 @@ export class BillingPlanService {
         }),
         active: true,
       },
-      relations: ['billingPrices'],
+      relations: { billingPrices: true, limits: true },
     });
 
     return products;

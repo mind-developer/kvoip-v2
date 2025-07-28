@@ -620,6 +620,12 @@ export class AuthService {
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
 
+    if (workspace && !isAnExistingUser) {
+      await this.workspaceInvitationService.canUseWorkspaceMembersProduct(
+        workspace?.id,
+      );
+    }
+
     const email =
       userData.type === 'newUser'
         ? userData.newUserPayload.email
