@@ -4345,6 +4345,13 @@ export type CreateFinancialClosingMutationVariables = Exact<{
 
 export type CreateFinancialClosingMutation = { __typename?: 'Mutation', createFinancialClosing: { __typename?: 'FinancialClosing', id: any } };
 
+export type FinancialClosingsByWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type FinancialClosingsByWorkspaceQuery = { __typename?: 'Query', financialClosingsByWorkspace: Array<{ __typename?: 'FinancialClosing', id: any, name: string, day: number, lastDayMonth: boolean, time: string, billingModelIds: Array<any>, createdAt: string, updatedAt: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } }> };
+
 export type CreateFocusNfeIntegrationMutationVariables = Exact<{
   createInput: CreateFocusNfeIntegrationInput;
 }>;
@@ -7537,6 +7544,52 @@ export function useCreateFinancialClosingMutation(baseOptions?: Apollo.MutationH
 export type CreateFinancialClosingMutationHookResult = ReturnType<typeof useCreateFinancialClosingMutation>;
 export type CreateFinancialClosingMutationResult = Apollo.MutationResult<CreateFinancialClosingMutation>;
 export type CreateFinancialClosingMutationOptions = Apollo.BaseMutationOptions<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>;
+export const FinancialClosingsByWorkspaceDocument = gql`
+    query FinancialClosingsByWorkspace($workspaceId: String!) {
+  financialClosingsByWorkspace(workspaceId: $workspaceId) {
+    id
+    name
+    day
+    lastDayMonth
+    time
+    billingModelIds
+    workspace {
+      id
+      displayName
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFinancialClosingsByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useFinancialClosingsByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFinancialClosingsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFinancialClosingsByWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useFinancialClosingsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<FinancialClosingsByWorkspaceQuery, FinancialClosingsByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FinancialClosingsByWorkspaceQuery, FinancialClosingsByWorkspaceQueryVariables>(FinancialClosingsByWorkspaceDocument, options);
+      }
+export function useFinancialClosingsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FinancialClosingsByWorkspaceQuery, FinancialClosingsByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FinancialClosingsByWorkspaceQuery, FinancialClosingsByWorkspaceQueryVariables>(FinancialClosingsByWorkspaceDocument, options);
+        }
+export type FinancialClosingsByWorkspaceQueryHookResult = ReturnType<typeof useFinancialClosingsByWorkspaceQuery>;
+export type FinancialClosingsByWorkspaceLazyQueryHookResult = ReturnType<typeof useFinancialClosingsByWorkspaceLazyQuery>;
+export type FinancialClosingsByWorkspaceQueryResult = Apollo.QueryResult<FinancialClosingsByWorkspaceQuery, FinancialClosingsByWorkspaceQueryVariables>;
 export const CreateFocusNfeIntegrationDocument = gql`
     mutation CreateFocusNfeIntegration($createInput: CreateFocusNfeIntegrationInput!) {
   createFocusNfeIntegration(createInput: $createInput) {

@@ -41,9 +41,7 @@ export class FinancialClosingResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteFinancialClosing(
-    @Args('id') id: string,
-  ): Promise<boolean> {
-    return await this.financialClosingService.delete(id);
+  async deleteFinancialClosing(@Args('financialClosingId') financialClosingId: string): Promise<boolean> {
+    return await this.financialClosingService.delete(financialClosingId);
   }
 }

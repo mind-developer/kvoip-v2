@@ -36,7 +36,7 @@ export class FinancialClosing {
   @Column({ type: 'int' })
   day: number;
 
-  @Field(() => [UUIDScalarType])
+  @Field(() => [String])
   @Column('jsonb')
   billingModelIds: string[];
 
