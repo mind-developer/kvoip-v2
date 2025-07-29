@@ -32,6 +32,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -66,6 +67,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         TwoFactorMethod,
         WhatsappIntegration,
         Sector,
+        FinancialClosing,
         WorkspaceAgent,
         InterIntegration,
         Inbox,

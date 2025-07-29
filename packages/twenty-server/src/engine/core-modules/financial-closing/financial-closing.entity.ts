@@ -13,7 +13,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity({ name: 'financial_closing', schema: 'core' })
+@Entity({ name: 'financialClosing', schema: 'core' })
 @ObjectType()
 export class FinancialClosing {
   @IDField(() => UUIDScalarType)

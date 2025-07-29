@@ -24,4 +24,4 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   exports: [FinancialClosingService],
   providers: [FinancialClosingService, FinancialClosingResolver, TypeORMService],
 })
-export class SectorModule {}
+export class FinancialClosingModule {}

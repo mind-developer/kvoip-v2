@@ -59,12 +59,13 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-
+  
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 import { IssuerModule } from './issuer/issuer.module';
 import { StripeModule } from './stripe/stripe.module';
+import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { StripeModule } from './stripe/stripe.module';
     RedisClientModule,
     MetaModule,
     SectorModule,
+    FinancialClosingModule,
     AgentModule,
     InboxModule,
     GoogleStorageModule,

@@ -541,6 +541,15 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateFinancialClosingInput = {
+  billingModelIds: Array<Scalars['ID']>;
+  day: Scalars['Int'];
+  lastDayMonth: Scalars['Boolean'];
+  name: Scalars['String'];
+  time: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateFocusNfeIntegrationInput = {
   integrationName: Scalars['String'];
   status?: Scalars['String'];
@@ -981,6 +990,19 @@ export enum FilterIs {
   Null = 'Null'
 }
 
+export type FinancialClosing = {
+  __typename?: 'FinancialClosing';
+  billingModelIds: Array<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  day: Scalars['Float'];
+  id: Scalars['UUID'];
+  lastDayMonth: Scalars['Boolean'];
+  name: Scalars['String'];
+  time: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['String'];
@@ -1313,6 +1335,7 @@ export type Mutation = {
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFinancialClosing: FinancialClosing;
   createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
   createIssuer: IssuerDto;
@@ -1337,6 +1360,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteFinancialClosing: Scalars['Boolean'];
   deleteFocusNfeIntegration: Scalars['Boolean'];
   deleteIssuer: Scalars['Boolean'];
   deleteOneAgent: Agent;
@@ -1398,6 +1422,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFinancialClosing: FinancialClosing;
   updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
@@ -1493,6 +1518,11 @@ export type MutationCreateDialingPlanArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateFinancialClosingArgs = {
+  createInput: CreateFinancialClosingInput;
 };
 
 
@@ -1601,6 +1631,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteFinancialClosingArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1879,6 +1914,11 @@ export type MutationUpdateChatbotFlowArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFinancialClosingArgs = {
+  updateInput: UpdateFinancialClosingInput;
 };
 
 
@@ -2352,6 +2392,8 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  financialClosingById: FinancialClosing;
+  financialClosingsByWorkspace: Array<FinancialClosing>;
   findAllTelephony: Array<Telephony>;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
@@ -2436,6 +2478,16 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryFinancialClosingByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryFinancialClosingsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -3312,6 +3364,16 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateFinancialClosingInput = {
+  billingModelIds?: InputMaybe<Array<Scalars['ID']>>;
+  day?: InputMaybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  lastDayMonth?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  time?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpdateFocusNfeIntegrationInput = {
@@ -4275,6 +4337,13 @@ export type SwitchPlanMutationVariables = Exact<{
 
 
 export type SwitchPlanMutation = { __typename?: 'Mutation', switchPlan: { __typename?: 'BillingSwitchPlanOutput', planKey: BillingPlanKey, subscription: { __typename?: 'BillingSubscription', chargeType?: ChargeType | null, interval?: SubscriptionInterval | null, status: SubscriptionStatus }, baseProduct: { __typename?: 'BillingProduct', name: string, description: string, images?: Array<string> | null, marketingFeatures?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } } };
+
+export type CreateFinancialClosingMutationVariables = Exact<{
+  createInput: CreateFinancialClosingInput;
+}>;
+
+
+export type CreateFinancialClosingMutation = { __typename?: 'Mutation', createFinancialClosing: { __typename?: 'FinancialClosing', id: any } };
 
 export type CreateFocusNfeIntegrationMutationVariables = Exact<{
   createInput: CreateFocusNfeIntegrationInput;
@@ -7435,6 +7504,39 @@ export function useSwitchPlanMutation(baseOptions?: Apollo.MutationHookOptions<S
 export type SwitchPlanMutationHookResult = ReturnType<typeof useSwitchPlanMutation>;
 export type SwitchPlanMutationResult = Apollo.MutationResult<SwitchPlanMutation>;
 export type SwitchPlanMutationOptions = Apollo.BaseMutationOptions<SwitchPlanMutation, SwitchPlanMutationVariables>;
+export const CreateFinancialClosingDocument = gql`
+    mutation CreateFinancialClosing($createInput: CreateFinancialClosingInput!) {
+  createFinancialClosing(createInput: $createInput) {
+    id
+  }
+}
+    `;
+export type CreateFinancialClosingMutationFn = Apollo.MutationFunction<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>;
+
+/**
+ * __useCreateFinancialClosingMutation__
+ *
+ * To run a mutation, you first call `useCreateFinancialClosingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFinancialClosingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFinancialClosingMutation, { data, loading, error }] = useCreateFinancialClosingMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateFinancialClosingMutation(baseOptions?: Apollo.MutationHookOptions<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>(CreateFinancialClosingDocument, options);
+      }
+export type CreateFinancialClosingMutationHookResult = ReturnType<typeof useCreateFinancialClosingMutation>;
+export type CreateFinancialClosingMutationResult = Apollo.MutationResult<CreateFinancialClosingMutation>;
+export type CreateFinancialClosingMutationOptions = Apollo.BaseMutationOptions<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>;
 export const CreateFocusNfeIntegrationDocument = gql`
     mutation CreateFocusNfeIntegration($createInput: CreateFocusNfeIntegrationInput!) {
   createFocusNfeIntegration(createInput: $createInput) {
