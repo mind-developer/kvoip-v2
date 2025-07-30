@@ -1,5 +1,7 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import { BillingModelOptions } from '@/settings/financial-closing/constants/BillingModelOptions';
+import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
@@ -35,7 +37,7 @@ export type FinancialClosingFormValues = z.infer<
 type SettingsFinancialClosingFormProps = {
   disabled?: boolean;
   disableNameEdit?: boolean;
-  activeName?: string; 
+  activeFinancialClosing?: FinancialClosing | undefined; 
 };
 
 const StyledInputsContainer = styled.div`
@@ -56,15 +58,24 @@ const StyledSectionDateInputs = styled.div`
 export const SettingsFinancialClosingForm = ({
   disabled,
   disableNameEdit,
-  activeName,
+  activeFinancialClosing,
 }: SettingsFinancialClosingFormProps) => {
   const { control, reset } = useFormContext<FinancialClosingFormValues>();
 
   useEffect(() => {
-    if (activeName) {
-      reset({ name: activeName });
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (activeFinancialClosing) {
+      reset({
+        id: activeFinancialClosing.id ?? '',
+        name: activeFinancialClosing.name ?? '',
+        lastDayMonth: activeFinancialClosing.lastDayMonth ?? false,
+        day: activeFinancialClosing.day,
+        time: activeFinancialClosing.time ?? '00:00',
+        billingModelIds: activeFinancialClosing.billingModelIds ?? [],
+        // workspaceId: activeFinancialClosing.workspace.id ?? '',
+      });
     }
-  }, [activeName, reset]);
+  }, [activeFinancialClosing, reset]);
 
   return (
     <Section>
@@ -92,12 +103,13 @@ export const SettingsFinancialClosingForm = ({
             return (
               <FormMultiSelectFieldInput
                 label="Selecione os modelos de cobrança"
-                options={[
-                  { label: 'Pré-Pago', value: 'pre-pago' },
-                  { label: 'Pós-Pago', value: 'pos-pago' },
-                  { label: 'Pré-Ilimitado', value: 'pre-ilimitado' },
-                  { label: 'Pós-Ilimitado', value: 'pos-ilimitado' },
-                ]}
+                // options={[
+                //   { label: 'Pré-Pago', value: 'pre-pago' },
+                //   { label: 'Pós-Pago', value: 'pos-pago' },
+                //   { label: 'Pré-Ilimitado', value: 'pre-ilimitado' },
+                //   { label: 'Pós-Ilimitado', value: 'pos-ilimitado' },
+                // ]}
+                options={BillingModelOptions}
                 defaultValue={''}
                 onChange={onChange}
               />

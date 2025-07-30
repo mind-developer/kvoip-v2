@@ -46,10 +46,10 @@ export const SettingsFinancialClosings = ({
 
   const { deleteFinancialClosingById } = useDeleteFinancialClosing();
 
-  const handleEditSector = (sectorName: string) => {
-    const path = getSettingsPath(SettingsPath.ServiceCenterEditSector).replace(
-      ':sectorSlug',
-      sectorName,
+  const handleEditFinancialClosing = (id: string) => {
+    const path = getSettingsPath(SettingsPath.FinancialClosingEdit).replace(
+      ':financialClosingId',
+      id,
     );
 
     navigate(path);
@@ -71,7 +71,7 @@ export const SettingsFinancialClosings = ({
                   }}
                   scopeKey={financialClosing.name}
                   onEdit={() => {
-                    handleEditSector(financialClosing.name);
+                    handleEditFinancialClosing(financialClosing.name);
                   }}
                   onDelete={async () => {
                     await deleteFinancialClosingById(financialClosing.id);
