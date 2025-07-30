@@ -13,6 +13,7 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class BillingService {
     private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly kvoipAdminService: KvoipAdminService,
   ) {}
 
   isBillingEnabled() {
@@ -34,6 +36,10 @@ export class BillingService {
     const isBillingEnabled = this.isBillingEnabled();
 
     if (!isBillingEnabled) {
+      return true;
+    }
+
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
       return true;
     }
 
@@ -54,6 +60,10 @@ export class BillingService {
       return true;
     }
 
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
+      return true;
+    }
+
     return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
       workspaceId,
       entitlementKey,
@@ -71,6 +81,10 @@ export class BillingService {
     workspaceId: string,
     productKey: BillingProductKey,
   ) {
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
+      return false;
+    }
+
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
@@ -103,6 +117,10 @@ export class BillingService {
     productKey: Omit<BillingProductKey, 'BASE_PRODUCT'>,
   ) {
     if (!this.isBillingEnabled()) return;
+
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
+      return;
+    }
 
     const { billingProduct } =
       await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(

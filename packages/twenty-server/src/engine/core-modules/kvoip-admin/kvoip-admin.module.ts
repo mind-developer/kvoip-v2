@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CreateKvoipAdminWorkspaceCommand } from 'src/engine/core-modules/kvoip-admin/commands/create-kvoip-admin-workspace.command';
 import { CreateKvoipAdminWorkspaceCommandService } from 'src/engine/core-modules/kvoip-admin/commands/services/create-kvoip-admin-workspace-command.service';
+import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -25,7 +27,14 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [Workspace, User, UserWorkspace, ObjectMetadataEntity, FeatureFlag],
+      [
+        Workspace,
+        User,
+        UserWorkspace,
+        ObjectMetadataEntity,
+        FeatureFlag,
+        BillingSubscription,
+      ],
       'core',
     ),
     TypeORMModule,
@@ -45,6 +54,8 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
   providers: [
     CreateKvoipAdminWorkspaceCommand,
     CreateKvoipAdminWorkspaceCommandService,
+    KvoipAdminService,
   ],
+  exports: [KvoipAdminService],
 })
-export class KvoipAminModule {}
+export class KvoipAdminModule {}

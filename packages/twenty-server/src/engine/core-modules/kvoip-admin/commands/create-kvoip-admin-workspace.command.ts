@@ -7,9 +7,11 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CreateKvoipAdminWorkspaceCommandService } from 'src/engine/core-modules/kvoip-admin/commands/services/create-kvoip-admin-workspace-command.service';
+import { KVOIP_ADMIN_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-billing-subscription.constant';
 import { KVOIP_ADMIN_FEATURE_FLAGS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-feature-flags';
 import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user';
 import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user-workspaces';
@@ -42,7 +44,9 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspacRepository: Repository<UserWorkspace>,
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -74,8 +78,16 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
       throw new Error('Could not connect to workspace data source');
     }
 
-    // TODO: implement logic to ignore biling checks for admin workspace.
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    if (isBillingEnabled)
+      await this.billingSubscriptionRepository.upsert(
+        KVOIP_ADMIN_BILLING_SUBSCRIPTION,
+        {
+          conflictPaths: ['stripeSubscriptionId'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
 
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -100,11 +112,13 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
 
     await this.userRepository.upsert(KVOIP_ADMIN_USER, ['id']);
 
-    await this.userWorkspacRepository.upsert(KVOIP_ADMIN_USER_WORKSPACES, [
+    await this.userWorkspaceRepository.upsert(KVOIP_ADMIN_USER_WORKSPACES, [
       'id',
     ]);
 
-    await this.featureFlagRepository.upsert(KVOIP_ADMIN_FEATURE_FLAGS, ['id']);
+    await this.featureFlagRepository.upsert(KVOIP_ADMIN_FEATURE_FLAGS, {
+      conflictPaths: ['key', 'workspaceId'],
+    });
 
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -126,6 +140,15 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
       workspaceId: KVOIP_ADMIN_WORKSPACE.id,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
+    });
+
+    await this.createKvoipAdminWorkspaceCommandService.initPermissions(
+      KVOIP_ADMIN_WORKSPACE.id,
+    );
+
+    await this.createKvoipAdminWorkspaceCommandService.seed({
+      schemaName: dataSourceMetadata.schema,
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
     });
 
     await this.workspaceCacheStorageService.flush(
