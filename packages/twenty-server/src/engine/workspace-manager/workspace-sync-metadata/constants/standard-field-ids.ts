@@ -329,6 +329,7 @@ export const NOTA_FISCAL_FIELD_IDS = {
   justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
   dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
   numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
+  createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

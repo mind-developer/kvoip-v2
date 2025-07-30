@@ -30,6 +30,7 @@ import { NfStatusOptions } from 'src/modules/focus-nfe/types/NfStatus';
 import { NfTypeOptions } from 'src/modules/focus-nfe/types/NfType';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -345,6 +346,15 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   numeroRps: string | null;
+
+  @WorkspaceField({
+    standardId: NOTA_FISCAL_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Created by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The creator of the record`,
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({

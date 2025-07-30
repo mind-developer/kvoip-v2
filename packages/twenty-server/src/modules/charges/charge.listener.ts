@@ -48,12 +48,14 @@ export class ChargeEventListener {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
         workspaceId,
         'charge',
+        { shouldBypassPermissionChecks: true },
       );
 
     const attachmentRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
+        { shouldBypassPermissionChecks: true },
       );
 
     const charges = await Promise.all(
