@@ -17,6 +17,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -30,10 +31,15 @@ export class BillingUsageService {
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
+    private readonly kvoipAdminService: KvoipAdminService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return true;
+    }
+
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
       return true;
     }
 
