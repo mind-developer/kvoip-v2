@@ -102,6 +102,8 @@ export class BillingService {
     workspaceId: string,
     productKey: Omit<BillingProductKey, 'BASE_PRODUCT'>,
   ) {
+    if (!this.isBillingEnabled()) return;
+
     const { billingProduct } =
       await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
         workspaceId,
