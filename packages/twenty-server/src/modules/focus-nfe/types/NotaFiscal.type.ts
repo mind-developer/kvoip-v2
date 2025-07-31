@@ -65,6 +65,7 @@ export type NFCom = {
   numero_contato_assinante: string;
   data_inicio_contrato: string;
   indicador_cessao: string;
+  email_destinatario: string;
   itens: ItemNFCom[];
 };
 

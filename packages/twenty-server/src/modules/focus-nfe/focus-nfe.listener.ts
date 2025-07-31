@@ -18,6 +18,7 @@ import {
   buildNFSePayload,
   getCurrentFormattedDate,
 } from 'src/modules/focus-nfe/utils/nf-builder';
+import { UpdateProperties } from 'src/modules/nota-fiscal/nota-fiscal.listener';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
 @Injectable()
@@ -52,16 +53,26 @@ export class FocusNFeEventListener {
       );
 
     const nfRepository = await Promise.all(
-      events.map((event) =>
-        notaFiscalRepository.findOne({
+      events.map(async (event) => {
+        const notaFiscal = await notaFiscalRepository.findOne({
           where: { id: event.recordId },
           relations: ['product', 'product.company', 'company', 'focusNFe'],
-        }),
-      ),
+        });
+
+        const props =
+          event.properties as UpdateProperties<NotaFiscalWorkspaceEntity>;
+
+        const previousStatus = props.before.nfStatus;
+
+        return {
+          notaFiscal,
+          previousStatus,
+        };
+      }),
     );
 
     await Promise.all(
-      nfRepository.map(async (notaFiscal) => {
+      nfRepository.map(async ({ notaFiscal, previousStatus }) => {
         if (!notaFiscal) {
           this.logger.warn(`Invoice not found for recordId: ${notaFiscal}`);
 
@@ -143,6 +154,8 @@ export class FocusNFeEventListener {
             }
 
             case NfStatus.CANCEL: {
+              if (previousStatus !== NfStatus.ISSUED) return;
+
               const result = await this.cancelNf(notaFiscal);
 
               if (result?.success) {

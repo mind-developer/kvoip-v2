@@ -17,7 +17,7 @@ import {
 } from 'src/modules/nota-fiscal/utils/nota-fiscal-product.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface UpdateProperties<T = any> {
+export interface UpdateProperties<T = any> {
   before: Partial<T>;
   after: Partial<T>;
   updatedFields: string[];

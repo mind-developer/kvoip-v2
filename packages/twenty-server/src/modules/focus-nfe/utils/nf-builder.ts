@@ -99,6 +99,7 @@ export function buildNFComPayload(
     numero_contato_assinante: notaFiscal.numContratoAssinante,
     data_inicio_contrato: getCurrentFormattedDate(),
     indicador_cessao: '1', // Dispensa geração do grupo Fatura. Apenas para notas dos tipos Normal e Substituição com tipo de faturamento normal
+    email_destinatario: company.emails.primaryEmail,
     itens: [
       {
         cfop: notaFiscal.cfop,
