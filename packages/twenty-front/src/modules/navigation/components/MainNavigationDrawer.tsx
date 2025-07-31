@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { AdminWorkspaceNavigationItems } from '@/navigation/components/AdminWorkspaceNavigationItems';
 import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavigationDrawerFixedItems';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { SupportDropdown } from '@/support/components/SupportDropdown';
@@ -22,6 +23,10 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
 
       <NavigationDrawerScrollableContent>
         <MainNavigationDrawerScrollableItems />
+      </NavigationDrawerScrollableContent>
+
+      <NavigationDrawerScrollableContent>
+        <AdminWorkspaceNavigationItems />
       </NavigationDrawerScrollableContent>
 
       <NavigationDrawerFixedContent>
