@@ -11,8 +11,8 @@ export enum BillingModel {
 }
 
 export const BillingModelOptions: SelectOption<BillingModel>[] = [
-  { label: 'Pré-pago', value: BillingModel.Prepaid },
-  { label: 'Pós-pago', value: BillingModel.Postpaid },
+  { label: 'Pré-Pago', value: BillingModel.Prepaid },
+  { label: 'Pós-Pago', value: BillingModel.Postpaid },
   { label: 'Pré-Ilimitado', value: BillingModel.PrepaidUnlimited },
   { label: 'Pós-Ilimitado', value: BillingModel.PostpaidUnlimited },
 ];
@@ -21,6 +21,6 @@ const billingModelLabelMap = new Map(
   BillingModelOptions.map(option => [option.value, option.label])
 );
 
-export function getBillingModelLabel(value: BillingModel): string | undefined {
-  return billingModelLabelMap.get(value);
+export function getBillingModelLabel(value: BillingModel | string): string | undefined {
+  return billingModelLabelMap.get(value as BillingModel);
 }

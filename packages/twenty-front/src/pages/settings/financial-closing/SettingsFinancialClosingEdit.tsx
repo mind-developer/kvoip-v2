@@ -35,7 +35,6 @@ export const SettingsFinancialClosingEdit = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { financialClosings } = useFindAllFinancialClosings();
-  const { editSector } = useUpdateSector();
   const { editFinancialClosing } = useUpdateFinancialClosing();
 
   const { financialClosingId } = useParams<{ financialClosingId?: string }>();
@@ -54,32 +53,16 @@ export const SettingsFinancialClosingEdit = () => {
   const { isValid, isSubmitting } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
 
-  const onSave = async (formValues: SettingsEditFinancialClosingSchemaValues) => {
+  const onSave = async (formValues: any) => {
     const dirtyFieldsKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsEditFinancialClosingSchemaValues)[];
     try {
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (activeFinancialClosing?.id) {
-        // const topicsData =
-        //   formValues.topics?.length > 0
-        //     ? formValues.topics.map((topic) => ({
-        //         ...topic,
-        //         color: topic.color as ThemeColor,
-        //       }))
-        //     : activeSector.topics.map((topic) => ({
-        //         ...topic,
-        //         color: topic.color as ThemeColor,
-        //       }));
         const updatedValues = {
           ...pick(formValues, dirtyFieldsKeys),
           id: formValues.id,
-          // name: formValues.name || activeFinancialClosing.name,
-          // lastDayMonth: formValues.lastDayMonth || activeFinancialClosing.lastDayMonth,
-          // time: formValues.time || activeFinancialClosing.time,
-          // day: formValues.day || activeFinancialClosing.day,
-          // billingModelIds: formValues.billingModelIds || activeFinancialClosing.billingModelIds,
-          // workspaceId: activeFinancialClosing.workspace.id,
         };
 
         await editFinancialClosing(updatedValues);
@@ -91,7 +74,6 @@ export const SettingsFinancialClosingEdit = () => {
         variant: SnackBarVariant.Error,
       });
     }
-
     console.log('Submit', formValues);
   };
 

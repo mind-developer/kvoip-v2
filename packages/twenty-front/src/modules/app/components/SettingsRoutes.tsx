@@ -28,6 +28,7 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
+import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -728,6 +729,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.FinancialClosingNew}
         element={<SettingsFinancialClosingNew />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingEdit}
+        element={<SettingsFinancialClosingEdit />}
       />
       
     </Routes>

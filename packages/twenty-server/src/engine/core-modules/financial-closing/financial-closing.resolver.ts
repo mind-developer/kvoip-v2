@@ -19,6 +19,12 @@ export class FinancialClosingResolver {
     return await this.financialClosingService.create(createInput);
   }
 
+  // mutation CreateFinancialClosing($createInput: CreateFinancialClosing!) {
+  //   createFinancialClosing(createInput: $createInput) {
+  //     id
+  //   }
+  // }
+
   @Query(() => [FinancialClosing])
   async financialClosingsByWorkspace(
     @Args('workspaceId') workspaceId: string,

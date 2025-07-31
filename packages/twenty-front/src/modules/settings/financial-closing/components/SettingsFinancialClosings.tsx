@@ -51,7 +51,6 @@ export const SettingsFinancialClosings = ({
       ':financialClosingId',
       id,
     );
-
     navigate(path);
   };
 
@@ -71,7 +70,7 @@ export const SettingsFinancialClosings = ({
                   }}
                   scopeKey={financialClosing.name}
                   onEdit={() => {
-                    handleEditFinancialClosing(financialClosing.name);
+                    handleEditFinancialClosing(financialClosing.id);
                   }}
                   onDelete={async () => {
                     await deleteFinancialClosingById(financialClosing.id);

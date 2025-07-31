@@ -4,16 +4,16 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
-interface UseToggleFinancialClosingActiveReturn {
+interface UserUpdateFinancialClosingReturn {
   editFinancialClosing: (updateInput: UpdateFinancialClosingInput) => Promise<void>;
   loading: boolean;
   error: Error | undefined;
 }
 
-export const useUpdateFinancialClosing = (): UseToggleFinancialClosingActiveReturn => {
+export const useUpdateFinancialClosing = (): UserUpdateFinancialClosingReturn => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const [updateFinancialClosing, { loading, error }] = useMutation(
+  const [updateFinancialClosingMutation, { loading, error }] = useMutation(
     UPDATE_FINANCIAL_CLOSING, 
     {
     onError: (error) => {
@@ -30,7 +30,7 @@ export const useUpdateFinancialClosing = (): UseToggleFinancialClosingActiveRetu
 
   const editFinancialClosing = async (updateInput: UpdateFinancialClosingInput) => {
     try {
-      await updateFinancialClosing({
+      await updateFinancialClosingMutation({
         variables: {
           updateInput,
         },

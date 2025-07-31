@@ -20,6 +20,7 @@ const financialClosingMetadataFormSchema = z.object({
   day: z.number(),
 
   billingModelIds: z.array(z.string()).nonempty('At least one billing model ID is required'),
+  workspaceId: z.string(),
 });
 
 export const FinancialClosingFormSchema = financialClosingMetadataFormSchema.pick({
@@ -28,6 +29,7 @@ export const FinancialClosingFormSchema = financialClosingMetadataFormSchema.pic
   lastDayMonth: true,
   time: true,
   billingModelIds: true,
+  workspaceId: true,
 });
 
 export type FinancialClosingFormValues = z.infer<
@@ -72,7 +74,7 @@ export const SettingsFinancialClosingForm = ({
         day: activeFinancialClosing.day,
         time: activeFinancialClosing.time ?? '00:00',
         billingModelIds: activeFinancialClosing.billingModelIds ?? [],
-        // workspaceId: activeFinancialClosing.workspace.id ?? '',
+        workspaceId: activeFinancialClosing.workspace.id ?? '',
       });
     }
   }, [activeFinancialClosing, reset]);
@@ -102,17 +104,14 @@ export const SettingsFinancialClosingForm = ({
           render={({ field: { onChange } }) => {
             return (
               <FormMultiSelectFieldInput
+                key={activeFinancialClosing?.id}
                 label="Selecione os modelos de cobrança"
-                // options={[
-                //   { label: 'Pré-Pago', value: 'pre-pago' },
-                //   { label: 'Pós-Pago', value: 'pos-pago' },
-                //   { label: 'Pré-Ilimitado', value: 'pre-ilimitado' },
-                //   { label: 'Pós-Ilimitado', value: 'pos-ilimitado' },
-                // ]}
                 options={BillingModelOptions}
-                defaultValue={''}
+                defaultValue={activeFinancialClosing?.billingModelIds ?? []}
                 onChange={onChange}
               />
+
+              
             );
           }}
         />

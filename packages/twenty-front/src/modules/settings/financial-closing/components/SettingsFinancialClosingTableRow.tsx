@@ -4,6 +4,7 @@ import { OverflowingTextWithTooltip, Status, StyledText, useIcons } from 'twenty
 import { useTheme } from '@emotion/react';
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { Tag } from 'twenty-ui/components';
+import { getBillingModelLabel } from '@/settings/financial-closing/constants/BillingModelOptions';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -87,7 +88,7 @@ export const SettingsFinancialClosingTableRow = ({
                     <Tag
                       key={financialClosing.id + "_" + billingModel}
                       color={"green"}
-                      text={billingModel}
+                      text={getBillingModelLabel(billingModel) ?? billingModel}
                       weight="medium"
                     />
                   ))

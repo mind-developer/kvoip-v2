@@ -992,7 +992,7 @@ export enum FilterIs {
 
 export type FinancialClosing = {
   __typename?: 'FinancialClosing';
-  billingModelIds: Array<Scalars['UUID']>;
+  billingModelIds: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   day: Scalars['Float'];
   id: Scalars['UUID'];
@@ -1635,7 +1635,7 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 
 export type MutationDeleteFinancialClosingArgs = {
-  id: Scalars['String'];
+  financialClosingId: Scalars['String'];
 };
 
 
@@ -4345,12 +4345,26 @@ export type CreateFinancialClosingMutationVariables = Exact<{
 
 export type CreateFinancialClosingMutation = { __typename?: 'Mutation', createFinancialClosing: { __typename?: 'FinancialClosing', id: any } };
 
+export type DeleteFinancialClosingMutationVariables = Exact<{
+  financialClosingId: Scalars['String'];
+}>;
+
+
+export type DeleteFinancialClosingMutation = { __typename?: 'Mutation', deleteFinancialClosing: boolean };
+
+export type UpdateFinancialClosingMutationVariables = Exact<{
+  updateInput: UpdateFinancialClosingInput;
+}>;
+
+
+export type UpdateFinancialClosingMutation = { __typename?: 'Mutation', updateFinancialClosing: { __typename?: 'FinancialClosing', id: any, name: string, day: number, lastDayMonth: boolean, time: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } } };
+
 export type FinancialClosingsByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type FinancialClosingsByWorkspaceQuery = { __typename?: 'Query', financialClosingsByWorkspace: Array<{ __typename?: 'FinancialClosing', id: any, name: string, day: number, lastDayMonth: boolean, time: string, billingModelIds: Array<any>, createdAt: string, updatedAt: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } }> };
+export type FinancialClosingsByWorkspaceQuery = { __typename?: 'Query', financialClosingsByWorkspace: Array<{ __typename?: 'FinancialClosing', id: any, name: string, day: number, lastDayMonth: boolean, time: string, billingModelIds: Array<string>, createdAt: string, updatedAt: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } }> };
 
 export type CreateFocusNfeIntegrationMutationVariables = Exact<{
   createInput: CreateFocusNfeIntegrationInput;
@@ -7544,6 +7558,78 @@ export function useCreateFinancialClosingMutation(baseOptions?: Apollo.MutationH
 export type CreateFinancialClosingMutationHookResult = ReturnType<typeof useCreateFinancialClosingMutation>;
 export type CreateFinancialClosingMutationResult = Apollo.MutationResult<CreateFinancialClosingMutation>;
 export type CreateFinancialClosingMutationOptions = Apollo.BaseMutationOptions<CreateFinancialClosingMutation, CreateFinancialClosingMutationVariables>;
+export const DeleteFinancialClosingDocument = gql`
+    mutation DeleteFinancialClosing($financialClosingId: String!) {
+  deleteFinancialClosing(financialClosingId: $financialClosingId)
+}
+    `;
+export type DeleteFinancialClosingMutationFn = Apollo.MutationFunction<DeleteFinancialClosingMutation, DeleteFinancialClosingMutationVariables>;
+
+/**
+ * __useDeleteFinancialClosingMutation__
+ *
+ * To run a mutation, you first call `useDeleteFinancialClosingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFinancialClosingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFinancialClosingMutation, { data, loading, error }] = useDeleteFinancialClosingMutation({
+ *   variables: {
+ *      financialClosingId: // value for 'financialClosingId'
+ *   },
+ * });
+ */
+export function useDeleteFinancialClosingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFinancialClosingMutation, DeleteFinancialClosingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFinancialClosingMutation, DeleteFinancialClosingMutationVariables>(DeleteFinancialClosingDocument, options);
+      }
+export type DeleteFinancialClosingMutationHookResult = ReturnType<typeof useDeleteFinancialClosingMutation>;
+export type DeleteFinancialClosingMutationResult = Apollo.MutationResult<DeleteFinancialClosingMutation>;
+export type DeleteFinancialClosingMutationOptions = Apollo.BaseMutationOptions<DeleteFinancialClosingMutation, DeleteFinancialClosingMutationVariables>;
+export const UpdateFinancialClosingDocument = gql`
+    mutation UpdateFinancialClosing($updateInput: UpdateFinancialClosingInput!) {
+  updateFinancialClosing(updateInput: $updateInput) {
+    id
+    name
+    day
+    lastDayMonth
+    time
+    workspace {
+      id
+      displayName
+    }
+  }
+}
+    `;
+export type UpdateFinancialClosingMutationFn = Apollo.MutationFunction<UpdateFinancialClosingMutation, UpdateFinancialClosingMutationVariables>;
+
+/**
+ * __useUpdateFinancialClosingMutation__
+ *
+ * To run a mutation, you first call `useUpdateFinancialClosingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFinancialClosingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFinancialClosingMutation, { data, loading, error }] = useUpdateFinancialClosingMutation({
+ *   variables: {
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateFinancialClosingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFinancialClosingMutation, UpdateFinancialClosingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFinancialClosingMutation, UpdateFinancialClosingMutationVariables>(UpdateFinancialClosingDocument, options);
+      }
+export type UpdateFinancialClosingMutationHookResult = ReturnType<typeof useUpdateFinancialClosingMutation>;
+export type UpdateFinancialClosingMutationResult = Apollo.MutationResult<UpdateFinancialClosingMutation>;
+export type UpdateFinancialClosingMutationOptions = Apollo.BaseMutationOptions<UpdateFinancialClosingMutation, UpdateFinancialClosingMutationVariables>;
 export const FinancialClosingsByWorkspaceDocument = gql`
     query FinancialClosingsByWorkspace($workspaceId: String!) {
   financialClosingsByWorkspace(workspaceId: $workspaceId) {

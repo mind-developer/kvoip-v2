@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const UPDATE_FINANCIAL_CLOSING = gql`
-  mutation UpdateFinancialClosing($updateFinancialClosing: UpdateFinancialClosing!) {
-    updateFinancialClosing(updateFinancialClosing: $updateFinancialClosing) {
+  mutation UpdateFinancialClosing($updateInput: UpdateFinancialClosingInput!) {
+    updateFinancialClosing(updateInput: $updateInput) {
       id
       name
       day
