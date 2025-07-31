@@ -64,6 +64,10 @@ export class BillingUsageService {
     workspaceId: string;
     billingEvents: BillingUsageEvent[];
   }) {
+    if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
+      return;
+    }
+
     const workspaceStripeCustomer =
       await this.billingCustomerRepository.findOne({
         where: {

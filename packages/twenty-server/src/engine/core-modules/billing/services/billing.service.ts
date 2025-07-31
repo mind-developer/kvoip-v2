@@ -82,7 +82,7 @@ export class BillingService {
     productKey: BillingProductKey,
   ) {
     if (await this.kvoipAdminService.isKvoipAdminWorkspace(workspaceId)) {
-      return false;
+      return true;
     }
 
     const subscription =
