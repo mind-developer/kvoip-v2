@@ -74,7 +74,6 @@ export const SettingsFinancialClosingEdit = () => {
         variant: SnackBarVariant.Error,
       });
     }
-    console.log('Submit', formValues);
   };
 
   return (

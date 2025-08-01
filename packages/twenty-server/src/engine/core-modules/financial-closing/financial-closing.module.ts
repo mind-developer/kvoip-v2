@@ -5,6 +5,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { RunFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
 import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
 import { FinancialClosingResolver } from 'src/engine/core-modules/financial-closing/financial-closing.resolver';
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
@@ -22,6 +23,11 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     forwardRef(() => WorkspaceModule),
   ],
   exports: [FinancialClosingService],
-  providers: [FinancialClosingService, FinancialClosingResolver, TypeORMService],
+  providers: [
+    FinancialClosingService, 
+    FinancialClosingResolver, 
+    TypeORMService,
+    RunFinancialClosingJobProcessor,
+  ],
 })
 export class FinancialClosingModule {}

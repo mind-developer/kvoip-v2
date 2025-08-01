@@ -64,8 +64,6 @@ export const SettingsFinancialClosingNew = () => {
       
       await createFinancialClosing(financialClosingData);
 
-      console.log('Submit', financialClosingData)
-
       navigate(settingsFinancialClosingPagePath);
     } catch (err) {
       enqueueSnackBar((err as Error).message, {
