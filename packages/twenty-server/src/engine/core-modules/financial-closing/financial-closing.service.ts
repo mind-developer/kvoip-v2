@@ -28,25 +28,6 @@ export class FinancialClosingService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  // async create(createInput: CreateFinancialClosingInput): Promise<FinancialClosing> {
-  //   const workspace = await this.workspaceRepository.findOne({
-  //     where: { id: createInput.workspaceId },
-  //   });
-
-  //   if (!workspace) {
-  //     throw new Error('Workspace not found');
-  //   }
-
-  //   const created = this.financialClosingRepository.create({
-  //     ...createInput,
-  //     workspace,
-  //   });
-
-  //   const saved = await this.financialClosingRepository.save(created);
-
-  //   return saved;
-  // }
-
   async create(createInput: CreateFinancialClosingInput): Promise<FinancialClosing> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: createInput.workspaceId },
@@ -63,38 +44,10 @@ export class FinancialClosingService {
 
     const saved = await this.financialClosingRepository.save(created);
 
-    this.logger.log(`Registrando fechemento financeiro para o workspace ${workspace.id} com ID ${saved.id} ----------------------------|`);
-    
-    // Teste
-    const date = new Date();
-    const hours2 = date.getHours();
-    const minutes2 = date.getMinutes();
-    const seconds2 = date.getSeconds();
-    this.logger.log(`Horário atual: ${hours2}:${minutes2}:${seconds2}`);
-    
-    const minutes = createInput.time.split(':')[1];
-    const hours   = createInput.time.split(':')[0];
-    const day     = createInput.day;
+    const jobId = this.getJobId(saved.id);
+    const pattern = this.getCronPattern(saved.time, saved.day);
 
-    const pattern = `${minutes} ${hours} ${day} * *`;
-    const jobId = `${RunFinancialClosingJobProcessor.name}::${saved.id}`;
-
-    await this.messageQueueService.addCron<RunFinancialClosingJob>({
-      // jobName: `${RunFinancialClosingJobProcessor.name}::${saved.id}`,
-      jobName: `${RunFinancialClosingJobProcessor.name}`,
-      jobId: jobId,
-      data: {
-        financialClosingId: saved.id,
-        workspaceId: workspace.id,
-      },
-      options: {
-        repeat: {
-          pattern,
-        },
-      },
-    });
-
-    this.logger.log(`Job de fechamento financeiro agendado: ${RunFinancialClosingJobProcessor.name}::${saved.id} com padrão cron: ${pattern}`);
+    await this.scheduleCronJob(saved.id, workspace.id, jobId, pattern);
 
     return saved;
   }
@@ -114,6 +67,7 @@ export class FinancialClosingService {
   }
 
   async update(updateInput: UpdateFinancialClosingInput): Promise<FinancialClosing> {
+    
     const entity = await this.financialClosingRepository.findOne({
       where: { id: updateInput.id },
       relations: ['workspace'],
@@ -123,35 +77,33 @@ export class FinancialClosingService {
       throw new Error(`Financial closing not found`);
     }
 
-    const updated = {
+    this.logger.log(`updateInput.time: ${updateInput.time} updateInput.day: ${updateInput.day}`);
+
+    const jobId = this.getJobId(entity.id);
+
+    const time = updateInput.time || entity.time;
+    const day = updateInput.day || entity.day;
+
+    const oldPattern = this.getCronPattern(entity.time, entity.day);
+    const newPattern = this.getCronPattern(time, day);
+
+    this.logger.log(`Old pattern: ${oldPattern}, New pattern: ${newPattern}`);
+
+    if (oldPattern !== newPattern) {
+      await this.removeCronJob(jobId);
+    }
+
+    const updated = await this.financialClosingRepository.save({
       ...entity,
       ...updateInput,
-    };
+    });
 
-    return this.financialClosingRepository.save(updated);
+    if (oldPattern !== newPattern) {
+      await this.scheduleCronJob(updated.id, updated.workspace.id, jobId, newPattern);
+    }
+
+    return updated;
   }
-
-  // async delete(id: string): Promise<boolean> {
-  //   const entity = await this.financialClosingRepository.findOne({
-  //     where: { id },
-  //   });
-
-  //   if (entity) {
-  //     const { affected } = await this.financialClosingRepository.delete(id);
-
-  //     if (!affected) {
-  //       throw new BadRequestException(undefined, {
-  //         description: `Error when removing financial closing ${entity.name}`,
-  //       });
-  //     }
-
-  //     return true;
-  //   }
-
-  //   throw new BadRequestException(undefined, {
-  //     description: `Financial closing not found with id ${id}`,
-  //   });
-  // }
 
   async delete(id: string): Promise<boolean> {
     const entity = await this.financialClosingRepository.findOne({
@@ -165,14 +117,10 @@ export class FinancialClosingService {
       });
     }
 
-    const jobId = `${RunFinancialClosingJobProcessor.name}::${entity.id}`;
+    const jobId = this.getJobId(entity.id);
 
-    await this.messageQueueService.removeCron({
-      jobName: RunFinancialClosingJobProcessor.name,
-      jobId,
-    });
-
-    this.logger.log(`Job de fechamento financeiro removido: ${jobId}`);
+    await this.removeCronJob(jobId);
+    this.logger.log(`Job removido (delete): ${jobId}`);
 
     const { affected } = await this.financialClosingRepository.delete(id);
 
@@ -183,5 +131,45 @@ export class FinancialClosingService {
     }
 
     return true;
+  }
+
+  // =============================================================================|
+  // Private methods                                                              |
+  // =============================================================================|
+
+  private getCronPattern(time: string, day: number): string {
+    const [hours, minutes] = this.parseTime(time);
+    return `${minutes} ${hours} ${day} * *`;
+  }
+
+  private parseTime(time: string): [string, string] {
+    const regex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (!regex.test(time)) throw new BadRequestException(`Invalid time format: ${time}`);
+    const [hours, minutes] = time.split(':');
+    return [hours, minutes];
+  }
+
+  private getJobId(id: string): string {
+    return `${RunFinancialClosingJobProcessor.name}::${id}`;
+  }
+
+  private async scheduleCronJob(financialClosingId: string, workspaceId: string, jobId: string, pattern: string) {
+    await this.messageQueueService.addCron<RunFinancialClosingJob>({
+      jobName: RunFinancialClosingJobProcessor.name,
+      jobId,
+      data: { financialClosingId, workspaceId },
+      options: { repeat: { pattern } },
+    });
+
+    this.logger.log(`Scheduled job: ${jobId} with cron pattern: ${pattern}`);
+  }
+
+  private async removeCronJob(jobId: string) {
+    await this.messageQueueService.removeCron({
+      jobName: RunFinancialClosingJobProcessor.name,
+      jobId,
+    });
+
+    this.logger.log(`Job removed: ${jobId}`);
   }
 }
