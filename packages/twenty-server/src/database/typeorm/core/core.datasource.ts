@@ -2,6 +2,8 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/workspaces/worskspace.listener';
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
@@ -24,6 +26,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
           `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity.{ts,js}`,
           `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
         ],
+  subscribers: [WorkspaceSubscriber],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
