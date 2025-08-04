@@ -1,3 +1,6 @@
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -45,8 +48,8 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-// TODO: Maybe we should automate this with the DiscoverService of Nest.JS
-export const standardObjectMetadataDefinitions = [
+// Base standard objects that are available in all workspaces
+const baseStandardObjectMetadataDefinitions = [
   ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
@@ -94,3 +97,30 @@ export const standardObjectMetadataDefinitions = [
   FocusNFeWorkspaceEntity,
   NotaFiscalWorkspaceEntity,
 ];
+
+// Admin-specific objects that are only available in the kvoip admin workspace
+const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] =
+  [];
+
+/**
+ * Returns the standard object metadata definitions based on the workspace context
+ * This allows for workspace-specific objects to be included conditionally
+ */
+export function getStandardObjectMetadataDefinitions(
+  context: WorkspaceSyncContext,
+): (typeof BaseWorkspaceEntity)[] {
+  const standardObjects = [...baseStandardObjectMetadataDefinitions];
+
+  // Add admin-specific objects only for the admin workspace
+  if (context.featureFlags.IS_KVOIP_ADMIN) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    standardObjects.push(...(adminSpecificObjectMetadataDefinitions as any));
+  }
+
+  return standardObjects;
+}
+
+// TODO: Maybe we should automate this with the DiscoverService of Nest.JS
+// Keep the old export for backward compatibility, but mark as deprecated
+export const standardObjectMetadataDefinitions =
+  baseStandardObjectMetadataDefinitions;
