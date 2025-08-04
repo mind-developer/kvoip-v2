@@ -1,3 +1,5 @@
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-ids';
+
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
@@ -58,4 +60,5 @@ export const STANDARD_OBJECT_IDS = {
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
+  ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 };

@@ -15,6 +15,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
+import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -95,8 +96,9 @@ const baseStandardObjectMetadataDefinitions = [
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace
-const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] =
-  [];
+const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
+  WorkspacesWorkspaceEntity,
+];
 
 /**
  * Returns the standard object metadata definitions based on the workspace context
