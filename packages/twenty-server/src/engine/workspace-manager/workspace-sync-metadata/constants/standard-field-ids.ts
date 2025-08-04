@@ -151,6 +151,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+  billingModel: '4cc08331-5132-469f-97bf-c74d978c0ac5',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {

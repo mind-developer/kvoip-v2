@@ -4,10 +4,10 @@ export type SelectOption<T = string> = {
 };
 
 export enum BillingModel {
-  Prepaid = 'prepaid',
-  Postpaid = 'postpaid',
-  PrepaidUnlimited = 'prepaidUnlimited',
-  PostpaidUnlimited = 'postpaidUnlimited',
+  Prepaid = 'PREPAID',
+  Postpaid = 'POSTPAID',
+  PrepaidUnlimited = 'PREPAID_UNLIMITED',
+  PostpaidUnlimited = 'POSTPAID_UNLIMITED',
 }
 
 export const BillingModelOptions: SelectOption<BillingModel>[] = [

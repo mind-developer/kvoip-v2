@@ -363,4 +363,40 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.billingModel,
+    type: FieldMetadataType.SELECT,
+    label: msg`Modelo de Cobrança`,
+    description: msg`Defines how the company is billed: prepaid, postpaid, etc.`,
+    icon: 'IconCreditCard',
+    options: [
+        {
+          color: 'green',
+          label: 'Pré-Pago',
+          position: 0,
+          value: 'PREPAID',
+        },
+        {
+          color: 'orange',
+          label: 'Pós-Pago',
+          position: 1,
+          value: 'POSTPAID',
+        },
+        {
+          color: 'green',
+          label: 'Pré-Ilimitado',
+          position: 2,
+          value: 'PREPAID_UNLIMITED',
+        },
+        {
+          color: 'orange',
+          label: 'Pós-Ilimitado',
+          position: 3,
+          value: 'POSTPAID_UNLIMITED',
+        }
+      ],
+  })
+  @WorkspaceIsNullable()
+  billingModel: string | null;
 }
