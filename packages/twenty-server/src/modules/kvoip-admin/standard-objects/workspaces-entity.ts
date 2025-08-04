@@ -1,0 +1,116 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { WORKSPACES_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-field-ids';
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-ids';
+import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-object-icons';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+
+const NAME_FIELD_NAME = 'name';
+
+export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
+
+@WorkspaceEntity({
+  standardId: KVOIP_ADMIN_STANDARD_OBJECT_IDS.workspaces,
+  namePlural: 'workspaces',
+  labelSingular: msg`Workspaces`,
+  labelPlural: msg`Workspaces`,
+  description: msg`All Workspaces`,
+  icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.workspaces,
+  shortcut: 'C',
+  labelIdentifierStandardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.name,
+})
+@WorkspaceIsSearchable()
+export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.name,
+    type: FieldMetadataType.TEXT,
+    label: msg`Name`,
+    description: msg`The workspace name`,
+    icon: 'IconBuildingSkyscraper',
+  })
+  name: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.owner,
+    type: FieldMetadataType.FULL_NAME,
+    label: msg`Name`,
+    description: msg`Workspace owner name`,
+    icon: 'IconUser',
+  })
+  @WorkspaceIsNullable()
+  owener: FullNameMetadata | null;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.ownerEmail,
+    type: FieldMetadataType.TEXT,
+    label: msg`Workspace owner E-mail`,
+    description: msg`The workspace woner. The email of who created the workspace.`,
+    icon: 'IconLink',
+  })
+  ownerEmail: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.membersCount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Nº Members`,
+    description: msg`Number of members in the workspace`,
+    icon: 'IconUsers',
+    defaultValue: 1,
+  })
+  @WorkspaceIsNullable()
+  membersCount: number | null;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.extentionsCount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Nº Extentions`,
+    description: msg`Number of extentions in the workspace`,
+    icon: 'IconUsers',
+    defaultValue: 1,
+  })
+  @WorkspaceIsNullable()
+  extentionsCount: number | null;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Person record Position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
+
+  @WorkspaceField({
+    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_WORKSPACES,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: string;
+}

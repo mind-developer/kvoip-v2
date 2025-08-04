@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import {
+  DataSource,
   EntitySubscriberInterface,
   EventSubscriber,
   InsertEvent,
@@ -19,8 +21,12 @@ export class WorkspaceSubscriber
   private readonly logger = new Logger(WorkspaceSubscriber.name);
 
   constructor(
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {
+    this.dataSource.subscribers.push(this);
+  }
 
   listenTo() {
     return Workspace;
