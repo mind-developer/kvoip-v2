@@ -11,11 +11,11 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CreateKvoipAdminWorkspaceCommandService } from 'src/engine/core-modules/kvoip-admin/commands/services/create-kvoip-admin-workspace-command.service';
-import { KVOIP_ADMIN_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-billing-subscription.constant';
-import { KVOIP_ADMIN_FEATURE_FLAGS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-feature-flags';
-import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user';
-import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user-workspaces';
-import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-workspace';
+import { KVOIP_ADMIN_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-billing-subscription';
+import { KVOIP_ADMIN_FEATURE_FLAGS } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-feature-flags';
+import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user';
+import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user-workspaces';
+import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-workspace';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';

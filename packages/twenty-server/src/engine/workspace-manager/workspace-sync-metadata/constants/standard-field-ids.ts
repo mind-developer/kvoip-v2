@@ -1,4 +1,4 @@
-import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-field-ids';
+import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\

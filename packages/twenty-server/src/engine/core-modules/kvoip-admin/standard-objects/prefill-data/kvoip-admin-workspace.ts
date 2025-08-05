@@ -1,7 +1,7 @@
 import { version } from 'react';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user';
+import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user';
 
 export const KVOIP_ADMIN_WORKSPACE = {
   id: '3f3435c8-8eee-4303-9235-fc5fa4b78cc7',

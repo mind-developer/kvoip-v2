@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { KVOIP_ADMIN_ALL_VIEWS } from 'src/engine/core-modules/kvoip-admin/standard-objects/views/get-all-kvoip-admin-views';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
@@ -27,6 +28,7 @@ export const prefillViews = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  prefillAdminViews = false,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,
@@ -54,6 +56,10 @@ export const prefillViews = async (
     supportAllView(objectMetadataItems),
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),
+    // Kvoip admin views
+    ...(prefillAdminViews
+      ? KVOIP_ADMIN_ALL_VIEWS.map((view) => view(objectMetadataItems))
+      : []),
     notaFiscalAllView(objectMetadataItems),
     ...customViews,
   ];

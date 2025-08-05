@@ -1,5 +1,5 @@
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-workspace';
+import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-workspace';
 
 export const KVOIP_ADMIN_FEATURE_FLAGS = [
   {
