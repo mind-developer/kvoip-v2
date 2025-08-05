@@ -40,6 +40,10 @@ export class FinancialClosing {
   @Column('jsonb')
   billingModelIds: string[];
 
+  @Field(() => UUIDScalarType)
+  @Column()
+  workspaceId: string;
+
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   workspace: Relation<Workspace>;

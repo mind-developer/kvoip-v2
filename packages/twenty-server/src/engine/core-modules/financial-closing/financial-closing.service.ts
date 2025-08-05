@@ -12,6 +12,9 @@ import { RunFinancialClosingJob, RunFinancialClosingJobProcessor } from 'src/eng
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { getCompaniesToFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 
 
 export class FinancialClosingService {
@@ -26,6 +29,8 @@ export class FinancialClosingService {
 
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
+
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async create(createInput: CreateFinancialClosingInput): Promise<FinancialClosing> {
@@ -77,8 +82,6 @@ export class FinancialClosingService {
       throw new Error(`Financial closing not found`);
     }
 
-    this.logger.log(`updateInput.time: ${updateInput.time} updateInput.day: ${updateInput.day}`);
-
     const jobId = this.getJobId(entity.id);
 
     const time = updateInput.time || entity.time;
@@ -86,8 +89,6 @@ export class FinancialClosingService {
 
     const oldPattern = this.getCronPattern(entity.time, entity.day);
     const newPattern = this.getCronPattern(time, day);
-
-    this.logger.log(`Old pattern: ${oldPattern}, New pattern: ${newPattern}`);
 
     if (oldPattern !== newPattern) {
       await this.removeCronJob(jobId);
@@ -101,6 +102,9 @@ export class FinancialClosingService {
     if (oldPattern !== newPattern) {
       await this.scheduleCronJob(updated.id, updated.workspace.id, jobId, newPattern);
     }
+
+    // const workspaceId = updated.workspaceId ?? updated.workspace.id;
+    // const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
 
     return updated;
   }
