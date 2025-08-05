@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WORKSPACES_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-field-ids';
-import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-ids';
-import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-standard-object-icons';
+import { WORKSPACES_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
+import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -33,12 +33,13 @@ export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
   description: msg`All Workspaces`,
   icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.workspaces,
   shortcut: 'C',
-  labelIdentifierStandardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId: WORKSPACES_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceIsSystem()
 @WorkspaceIsSearchable()
 export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.name,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The workspace name`,
@@ -47,7 +48,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.owner,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.owner,
     type: FieldMetadataType.FULL_NAME,
     label: msg`Name`,
     description: msg`Workspace owner name`,
@@ -57,7 +58,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   owener: FullNameMetadata | null;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.ownerEmail,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.ownerEmail,
     type: FieldMetadataType.TEXT,
     label: msg`Workspace owner E-mail`,
     description: msg`The workspace woner. The email of who created the workspace.`,
@@ -66,7 +67,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   ownerEmail: string;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.membersCount,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.membersCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Nº Members`,
     description: msg`Number of members in the workspace`,
@@ -77,7 +78,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   membersCount: number | null;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.extentionsCount,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.extentionsCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Nº Extentions`,
     description: msg`Number of extentions in the workspace`,
@@ -88,7 +89,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   extentionsCount: number | null;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.position,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Person record Position`,
@@ -99,7 +100,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: WORKSPACES_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    standardId: WORKSPACES_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

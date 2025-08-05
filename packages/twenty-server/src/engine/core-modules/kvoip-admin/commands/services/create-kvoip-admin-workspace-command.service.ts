@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user';
-import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/constants/kvoip-admin-user-workspaces';
+import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user';
+import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user-workspaces';
 import {
   KVOIP_ADMIN_WORKSPACE_MEMBER_DATA_SEEDS,
   KVOIP_ADMIN_WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-} from 'src/engine/core-modules/kvoip-admin/constants/seed/workspace-member-seed-data.constant';
+} from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-workspace-member';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -115,6 +115,7 @@ export class CreateKvoipAdminWorkspaceCommandService {
           entityManager,
           schemaName,
           objectMetadataItems.filter((item) => !item.isCustom),
+          true,
         );
 
         await prefillWorkspaceFavorites(

@@ -93,6 +93,9 @@ export class ChargeService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
         workspace.id,
         'charge',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const charge = await chargeWorkspaceEntityRepository.findOne({
@@ -112,6 +115,9 @@ export class ChargeService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const { name, cpfCnpj, legalEntity, address, cep, city, stateUnity } =
