@@ -14,7 +14,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { getCompaniesToFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
+import { getCompaniesForFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 
 
 export class FinancialClosingService {
@@ -103,8 +103,16 @@ export class FinancialClosingService {
       await this.scheduleCronJob(updated.id, updated.workspace.id, jobId, newPattern);
     }
 
-    // const workspaceId = updated.workspaceId ?? updated.workspace.id;
-    // const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
+
+
+
+    const workspaceId = updated.workspaceId ?? updated.workspace.id;
+    
+    const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
+
+
+
+
 
     return updated;
   }

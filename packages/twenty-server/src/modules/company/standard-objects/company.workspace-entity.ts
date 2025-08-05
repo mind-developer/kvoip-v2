@@ -39,6 +39,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
@@ -370,33 +371,44 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Modelo de Cobrança`,
     description: msg`Defines how the company is billed: prepaid, postpaid, etc.`,
     icon: 'IconCreditCard',
-    options: [
-        {
-          color: 'green',
-          label: 'Pré-Pago',
-          position: 0,
-          value: 'PREPAID',
-        },
-        {
-          color: 'orange',
-          label: 'Pós-Pago',
-          position: 1,
-          value: 'POSTPAID',
-        },
-        {
-          color: 'green',
-          label: 'Pré-Ilimitado',
-          position: 2,
-          value: 'PREPAID_UNLIMITED',
-        },
-        {
-          color: 'orange',
-          label: 'Pós-Ilimitado',
-          position: 3,
-          value: 'POSTPAID_UNLIMITED',
-        }
-      ],
+    options: BILLING_MODEL_OPTIONS
+    // [
+    //   {
+    //     color: 'green',
+    //     label: 'Pré-Pago',
+    //     position: 0,
+    //     value: 'PREPAID',
+    //   },
+    //   {
+    //     color: 'orange',
+    //     label: 'Pós-Pago',
+    //     position: 1,
+    //     value: 'POSTPAID',
+    //   },
+    //   {
+    //     color: 'green',
+    //     label: 'Pré-Ilimitado',
+    //     position: 2,
+    //     value: 'PREPAID_UNLIMITED',
+    //   },
+    //   {
+    //     color: 'orange',
+    //     label: 'Pós-Ilimitado',
+    //     position: 3,
+    //     value: 'POSTPAID_UNLIMITED',
+    //   }
+    // ],
   })
   @WorkspaceIsNullable()
   billingModel: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.cdrId,
+    type: FieldMetadataType.TEXT,
+    label: msg`ID de Bilhetagem (CDR)`,
+    description: msg`Unique identifier for CDR integration`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  cdrId: string | null;
 }
