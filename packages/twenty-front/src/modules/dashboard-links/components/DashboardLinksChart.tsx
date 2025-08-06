@@ -1,4 +1,4 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+import { DashboardFilterDropdown } from '@/dashboard-links/components/ui/DashboardFilterDropdown';
 import styled from '@emotion/styled';
 import {
   Bar,
@@ -12,38 +12,53 @@ import {
 import { LinklogsChartData } from '~/types/LinkLogs';
 
 const StyledChartContainer = styled.div`
-  background-color: #fcfcfc;
+  background: ${({ theme }) => theme.background.secondary};
   height: 85%;
   padding: ${({ theme }) => theme.spacing(2)};
-  margin: ${({ theme }) => theme.spacing(3)};
-  width: 97.2%;
-  border: 1px solid #ebebeb;
+  margin: ${({ theme }) => theme.spacing(4)};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 8px;
+`;
+
+const StyledHeader = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 interface DashboardLinksChartProps {
   chartData: LinklogsChartData;
 }
 
+// TODO: Add filter functionality to the dropdown menu
 export const DashboardLinksChart = ({
   chartData: { data, sourceKeyColors },
 }: DashboardLinksChartProps) => {
   return (
     <StyledChartContainer>
-      <ResponsiveContainer width="100%" height="100%">
+      <StyledHeader>
+        <label>Origem dos acessos</label>
+        <DashboardFilterDropdown
+          onChange={() => console.log('Clicou')}
+          scopeKey="dashboard-filter"
+        />
+      </StyledHeader>
+      <ResponsiveContainer>
         <BarChart
+          data={data}
           margin={{
             top: 20,
             right: 30,
             left: 20,
-            bottom: 5,
+            bottom: 60,
           }}
-          data={data}
         >
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Legend />
+          <Legend align="left" />
           {Object.entries(sourceKeyColors).map(([key, color]) => (
             <Bar key={key} dataKey={key} stackId="a" fill={color} name={key} />
           ))}

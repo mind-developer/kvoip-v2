@@ -1208,6 +1208,10 @@ export class ConfigVariables {
   @IsOptional()
   FOCUS_NFE_BASE_URL: string;
 
+  @IsString()
+  @IsOptional()
+  GEOLOCATION_API_URL: string;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Last number rps issued',
