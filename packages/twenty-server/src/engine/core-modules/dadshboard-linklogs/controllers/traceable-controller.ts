@@ -18,12 +18,21 @@ export class TraceableController {
     @Param('workspaceId') workspaceId: string,
     @Param('traceableId') traceableId: string,
   ) {
+    const rawPlatform = req.headers['sec-ch-ua-platform'];
+    const platform =
+      typeof rawPlatform === 'string'
+        ? rawPlatform
+        : Array.isArray(rawPlatform)
+          ? rawPlatform[0]
+          : '';
+
     const { traceable, notFoundUrl } =
       await this.traceableService.handleLinkAccess({
         workspaceId,
         traceableId,
         userAgent: req.headers['user-agent'] || '',
         userIp: req.ip || '',
+        platform,
       });
 
     const finalUrl = traceable?.generatedUrl?.primaryLinkUrl;
