@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import {
   DataSource,
   EntitySubscriberInterface,
@@ -10,8 +11,8 @@ import {
   UpdateEvent,
 } from 'typeorm';
 
+import { WorkspacesService } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/services/workspaces.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @EventSubscriber()
 @Injectable()
@@ -23,7 +24,7 @@ export class WorkspaceSubscriber
   constructor(
     @InjectDataSource('core')
     private readonly dataSource: DataSource,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspacesService: WorkspacesService,
   ) {
     this.dataSource.subscribers.push(this);
   }
@@ -32,27 +33,17 @@ export class WorkspaceSubscriber
     return Workspace;
   }
 
-  beforeInsert(event: InsertEvent<Workspace>) {
-    this.logger.log(`BEFORE ENTITY INSERTED: `, event.entity);
+  async afterInsert(event: InsertEvent<Workspace>) {
+    await this.workspacesService.handleWorkspaceUpsert(event.entity);
   }
 
-  afterInsert(event: InsertEvent<Workspace>) {
-    this.logger.log(`AFTER ENTITY INSERTED: `, event.entity);
-  }
-
-  beforeUpdate(event: UpdateEvent<Workspace>) {
-    this.logger.log(`BEFORE ENTITY UPDATED: `, event.entity);
-  }
-
-  afterUpdate(event: UpdateEvent<Workspace>) {
+  async afterUpdate(event: UpdateEvent<Workspace>) {
     this.logger.log(`AFTER ENTITY UPDATED: `, event.entity);
   }
 
-  beforeRemove(event: RemoveEvent<Workspace>) {
-    this.logger.log(`BEFORE ENTITY REMOVED: `, event.entity);
-  }
-
-  afterRemove(event: RemoveEvent<Workspace>) {
-    this.logger.log(`AFTER ENTITY REMOVED: `, event.entity);
+  async afterRemove(event: RemoveEvent<Workspace>) {
+    if (isDefined(event.entity)) {
+      await this.workspacesService.handleWorkspaceDelete(event.entity.id);
+    }
   }
 }
