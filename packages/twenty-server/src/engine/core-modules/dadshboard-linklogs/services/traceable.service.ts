@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
@@ -76,6 +77,9 @@ export class TraceableService {
       };
     }
 
+    const { country, regionName, city } =
+      await this.getGeoLocationFromIp(userIp);
+
     const linklogsRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
         workspaceId,
@@ -91,6 +95,9 @@ export class TraceableService {
       utmMedium: traceable?.meansOfCommunication,
       utmCampaign: traceable?.campaignName,
       linkName: traceable?.name,
+      country,
+      regionName,
+      city,
     });
 
     await linklogsRepository.save(traceableAccessLog);
@@ -99,6 +106,40 @@ export class TraceableService {
       workspace,
       traceable,
       notFoundUrl,
+    };
+  }
+
+  private async getGeoLocationFromIp(ip: string): Promise<{
+    country: string | null;
+    regionName: string | null;
+    city: string | null;
+  }> {
+    try {
+      const response = await axios.get(
+        `${this.twentyConfigService.get('GEOLOCATION_API_URL')}/${ip}`,
+      );
+
+      const data = response.data;
+
+      if (data?.status === 'success') {
+        return {
+          country: data.country ?? null,
+          regionName: data.regionName ?? null,
+          city: data.city ?? null,
+        };
+      } else {
+        this.logger.warn(`IP lookup failed for ${ip}: ${data?.message}`);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error fetching IP info for ${ip}: ${error?.message || error}`,
+      );
+    }
+
+    return {
+      country: null,
+      regionName: null,
+      city: null,
     };
   }
 }

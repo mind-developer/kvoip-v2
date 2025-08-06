@@ -134,6 +134,36 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   userAgent: string | null;
 
   @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.country,
+    type: FieldMetadataType.TEXT,
+    label: msg`Country`,
+    description: msg`Country`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  country: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.regionName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Region name`,
+    description: msg`Region name`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  regionName: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.city,
+    type: FieldMetadataType.TEXT,
+    label: msg`City`,
+    description: msg`City`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  city: string | null;
+
+  @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -147,5 +177,5 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  searchVector: string;
 }

@@ -5,10 +5,9 @@ import { ReactNode } from 'react';
 const StyledPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 95vh;
-  margin-top: ${({ theme }: any) => theme.spacing(1)};
+  height: 100%;
+  margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-  padding: ${({ theme }: any) => theme.spacing(2)};
 `;
 
 type DashboardPageContainerProps = {
