@@ -262,6 +262,7 @@ export const LINKLOGS_STANDARD_FIELD_IDS = {
   regionName: '65fd53f5-f950-4fe3-b851-62512066a267',
   cityName: 'b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e',
   city: '25f0cf05-3e98-4e6a-9e18-4441c3431e07',
+  platform: 'bafd9c2b-c4c9-4886-9a47-4b394369385f',
 };
 
 export const INTEGRATION_STANDARD_FIELD_IDS = {

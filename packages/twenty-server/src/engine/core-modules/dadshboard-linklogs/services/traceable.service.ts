@@ -29,8 +29,9 @@ export class TraceableService {
     traceableId: string;
     userAgent: string;
     userIp: string;
+    platform: string;
   }): Promise<HandleLinkAccessResult> {
-    const { workspaceId, traceableId, userAgent, userIp } = input;
+    const { workspaceId, traceableId, userAgent, userIp, platform } = input;
 
     const notFoundUrl = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
 
@@ -77,6 +78,8 @@ export class TraceableService {
       };
     }
 
+    const normalizedPlatform = this.normalizePlatform(platform);
+
     const { country, regionName, city } =
       await this.getGeoLocationFromIp(userIp);
 
@@ -95,6 +98,7 @@ export class TraceableService {
       utmMedium: traceable?.meansOfCommunication,
       utmCampaign: traceable?.campaignName,
       linkName: traceable?.name,
+      platform: normalizedPlatform,
       country,
       regionName,
       city,
@@ -141,5 +145,30 @@ export class TraceableService {
       regionName: null,
       city: null,
     };
+  }
+
+  private normalizePlatform(rawPlatform?: string): string {
+    if (!rawPlatform) return 'Unknown';
+
+    const platform = rawPlatform.replace(/"/g, '').trim();
+
+    const mobilePlatforms = ['Android', 'iOS'];
+    const desktopPlatforms = [
+      'Chrome OS',
+      'Chromium OS',
+      'Linux',
+      'macOS',
+      'Windows',
+    ];
+
+    if (mobilePlatforms.includes(platform)) {
+      return `Mobile/${platform}`;
+    }
+
+    if (desktopPlatforms.includes(platform)) {
+      return `Desktop/${platform}`;
+    }
+
+    return 'Unknown';
   }
 }

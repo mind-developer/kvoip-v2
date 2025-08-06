@@ -134,6 +134,16 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   userAgent: string | null;
 
   @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.platform,
+    type: FieldMetadataType.TEXT,
+    label: msg`Platform`,
+    description: msg`Platform`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  platform: string | null;
+
+  @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.country,
     type: FieldMetadataType.TEXT,
     label: msg`Country`,
