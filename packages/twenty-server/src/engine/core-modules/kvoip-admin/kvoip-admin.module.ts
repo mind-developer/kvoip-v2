@@ -8,7 +8,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { CreateKvoipAdminWorkspaceCommand } from 'src/engine/core-modules/kvoip-admin/commands/create-kvoip-admin-workspace.command';
 import { CreateKvoipAdminWorkspaceCommandService } from 'src/engine/core-modules/kvoip-admin/commands/services/create-kvoip-admin-workspace-command.service';
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
-import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/worskspace.listener';
+import { KvoipAdminStandardObjectModule } from 'src/engine/core-modules/kvoip-admin/standard-objects/kvoip-admin-standard-object.module';
+import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/subscribers/worskspace.subsciber';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -51,12 +52,12 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     FeatureFlagModule,
     WorkspaceSyncMetadataModule,
     ObjectPermissionModule,
+    KvoipAdminStandardObjectModule,
   ],
   providers: [
     CreateKvoipAdminWorkspaceCommand,
     CreateKvoipAdminWorkspaceCommandService,
     KvoipAdminService,
-    WorkspaceSubscriber,
   ],
   exports: [KvoipAdminService, WorkspaceSubscriber],
 })
