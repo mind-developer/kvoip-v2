@@ -72,88 +72,94 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
     passedParams: string[],
     options?: CreateKvoipAdminWorkspaceCommandOptions,
   ): Promise<void> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
+    try {
+      const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (!mainDataSource) {
-      throw new Error('Could not connect to workspace data source');
-    }
+      if (!mainDataSource) {
+        throw new Error('Could not connect to workspace data source');
+      }
 
-    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+      const isBillingEnabled =
+        this.twentyConfigService.get('IS_BILLING_ENABLED');
 
-    if (isBillingEnabled)
-      await this.billingSubscriptionRepository.upsert(
-        KVOIP_ADMIN_BILLING_SUBSCRIPTION,
+      if (isBillingEnabled)
+        await this.billingSubscriptionRepository.upsert(
+          KVOIP_ADMIN_BILLING_SUBSCRIPTION,
+          {
+            conflictPaths: ['stripeSubscriptionId'],
+            skipUpdateIfNoValuesChanged: true,
+          },
+        );
+
+      const appVersion = this.twentyConfigService.get('APP_VERSION');
+
+      const kvoipAdminInviteHash = this.twentyConfigService.get(
+        'KVOIP_ADMIN_INVITE_HASH',
+      );
+
+      if (options?.dryRun) {
+        this.logger.log('Dry run mode enabled. No changes will be made.');
+
+        return;
+      }
+
+      await this.workspaceRepository.upsert(
         {
-          conflictPaths: ['stripeSubscriptionId'],
-          skipUpdateIfNoValuesChanged: true,
+          ...KVOIP_ADMIN_WORKSPACE,
+          inviteHash: kvoipAdminInviteHash,
+          version: appVersion,
         },
+        ['id'],
       );
 
-    const appVersion = this.twentyConfigService.get('APP_VERSION');
+      await this.userRepository.upsert(KVOIP_ADMIN_USER, ['id']);
 
-    const kvoipAdminInviteHash = this.twentyConfigService.get(
-      'KVOIP_ADMIN_INVITE_HASH',
-    );
+      await this.userWorkspaceRepository.upsert(KVOIP_ADMIN_USER_WORKSPACES, [
+        'id',
+      ]);
 
-    if (options?.dryRun) {
-      this.logger.log('Dry run mode enabled. No changes will be made.');
+      await this.featureFlagRepository.upsert(KVOIP_ADMIN_FEATURE_FLAGS, {
+        conflictPaths: ['key', 'workspaceId'],
+      });
 
-      return;
+      const schemaName =
+        await this.workspaceDataSourceService.createWorkspaceDBSchema(
+          KVOIP_ADMIN_WORKSPACE.id,
+        );
+
+      const dataSourceMetadata =
+        await this.dataSourceService.createDataSourceMetadata(
+          KVOIP_ADMIN_WORKSPACE.id,
+          schemaName,
+        );
+
+      const featureFlags =
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+          KVOIP_ADMIN_WORKSPACE.id,
+        );
+
+      await this.workspaceSyncMetadataService.synchronize({
+        workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+        dataSourceId: dataSourceMetadata.id,
+        featureFlags,
+      });
+
+      await this.createKvoipAdminWorkspaceCommandService.initPermissions(
+        KVOIP_ADMIN_WORKSPACE.id,
+      );
+
+      await this.createKvoipAdminWorkspaceCommandService.seed({
+        schemaName: dataSourceMetadata.schema,
+        workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+      });
+
+      await this.workspaceCacheStorageService.flush(
+        KVOIP_ADMIN_WORKSPACE.id,
+        undefined,
+      );
+    } catch (error) {
+      this.logger.error(error);
+      this.logger.error(error.stack);
     }
-
-    await this.workspaceRepository.upsert(
-      {
-        ...KVOIP_ADMIN_WORKSPACE,
-        inviteHash: kvoipAdminInviteHash,
-        version: appVersion,
-      },
-      ['id'],
-    );
-
-    await this.userRepository.upsert(KVOIP_ADMIN_USER, ['id']);
-
-    await this.userWorkspaceRepository.upsert(KVOIP_ADMIN_USER_WORKSPACES, [
-      'id',
-    ]);
-
-    await this.featureFlagRepository.upsert(KVOIP_ADMIN_FEATURE_FLAGS, {
-      conflictPaths: ['key', 'workspaceId'],
-    });
-
-    const schemaName =
-      await this.workspaceDataSourceService.createWorkspaceDBSchema(
-        KVOIP_ADMIN_WORKSPACE.id,
-      );
-
-    const dataSourceMetadata =
-      await this.dataSourceService.createDataSourceMetadata(
-        KVOIP_ADMIN_WORKSPACE.id,
-        schemaName,
-      );
-
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        KVOIP_ADMIN_WORKSPACE.id,
-      );
-
-    await this.workspaceSyncMetadataService.synchronize({
-      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
-      dataSourceId: dataSourceMetadata.id,
-      featureFlags,
-    });
-
-    await this.createKvoipAdminWorkspaceCommandService.initPermissions(
-      KVOIP_ADMIN_WORKSPACE.id,
-    );
-
-    await this.createKvoipAdminWorkspaceCommandService.seed({
-      schemaName: dataSourceMetadata.schema,
-      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
-    });
-
-    await this.workspaceCacheStorageService.flush(
-      KVOIP_ADMIN_WORKSPACE.id,
-      undefined,
-    );
   }
 }

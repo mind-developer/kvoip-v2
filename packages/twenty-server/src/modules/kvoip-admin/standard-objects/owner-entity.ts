@@ -68,6 +68,15 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata | null;
 
   @WorkspaceField({
+    standardId: OWNER_STANDARD_FIELD_IDS.userId,
+    type: FieldMetadataType.UUID,
+    label: msg`User Id`,
+    description: msg`Associated User Id`,
+  })
+  @WorkspaceIsSystem()
+  userId: string;
+
+  @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.emails,
     type: FieldMetadataType.EMAILS,
     label: msg`Emails`,
@@ -94,7 +103,7 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s phone numbers`,
     icon: 'IconPhone',
   })
-  phones: PhonesMetadata;
+  phones: PhonesMetadata | null;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.city,

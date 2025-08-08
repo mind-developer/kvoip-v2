@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -15,18 +16,25 @@ import { WorkspacesService } from 'src/engine/core-modules/kvoip-admin/standard-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @EventSubscriber()
-@Injectable()
 export class WorkspaceSubscriber
-  implements EntitySubscriberInterface<Workspace>
+  implements EntitySubscriberInterface<Workspace>, OnModuleInit
 {
   private readonly logger = new Logger(WorkspaceSubscriber.name);
 
+  private workspacesService: WorkspacesService;
+
   constructor(
+    private readonly moduleRef: ModuleRef,
     @InjectDataSource('core')
     private readonly dataSource: DataSource,
-    private readonly workspacesService: WorkspacesService,
   ) {
     this.dataSource.subscribers.push(this);
+  }
+
+  onModuleInit() {
+    this.workspacesService = this.moduleRef.get(WorkspacesService, {
+      strict: false,
+    });
   }
 
   listenTo() {
@@ -37,7 +45,7 @@ export class WorkspaceSubscriber
     await this.workspacesService.handleWorkspaceUpsert(event.entity);
   }
 
-  async afterUpdate(event: UpdateEvent<Workspace>) {
+  afterUpdate(event: UpdateEvent<Workspace>) {
     this.logger.log(`AFTER ENTITY UPDATED: `, event.entity);
   }
 

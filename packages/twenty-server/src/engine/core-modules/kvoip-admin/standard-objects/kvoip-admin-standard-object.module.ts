@@ -6,10 +6,10 @@ import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/standar
 
 @Module({
   providers: [
-    WorkspacesService,
-    WorkspaceSubscriber,
     UpdateWorkspacesMebersCountListener,
+    WorkspaceSubscriber,
+    WorkspacesService,
   ],
-  exports: [WorkspaceSubscriber],
+  exports: [WorkspacesService],
 })
 export class KvoipAdminStandardObjectModule {}
