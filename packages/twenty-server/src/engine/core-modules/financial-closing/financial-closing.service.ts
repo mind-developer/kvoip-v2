@@ -112,11 +112,8 @@ export class FinancialClosingService {
 
     const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, companies, updated);
 
-    this.logger.log(`Companies to be charged 3: ${companiesWithAmount.length}`);
+    this.logger.log(`Companies to be charged 0: ${companiesWithAmount.length}`);
     this.logger.log(`Companies to be charged: ${JSON.stringify(companiesWithAmount)}`);
-
-
-
 
 
     return updated;

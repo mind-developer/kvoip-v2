@@ -151,10 +151,16 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+
   billingModel: '4cc08331-5132-469f-97bf-c74d978c0ac5',
   cdrId: '90cdde6a-eaf2-4b96-8bd9-369a2a851e64',
-
-  
+  typeDiscount: '134bf698-f696-4c43-b8a8-9eb3e6a2cc41',
+  discount: '8f18333e-fd58-4a58-86e6-a1257b1f75c5',
+  quantitiesRemainingFinancialClosingsDiscounts: '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
+  totalValueCharged: '7f37e462-60dc-4088-8b84-90702f58abed',
+  valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
+  valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
+  slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {

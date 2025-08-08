@@ -38,6 +38,8 @@ import { FinancialClosing } from 'src/engine/core-modules/financial-closing/fina
 import { In } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import { BillingModelEnum } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
+import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { TypeDiscountEnum } from 'src/engine/core-modules/financial-closing/constants/type-discount.constants';
 
 const logger = new Logger('FinancialClosingUtils');
 
@@ -69,9 +71,11 @@ export async function getAmountToBeChargedToCompanies(
   companies: CompanyWorkspaceEntity[],
   financialClosing?: FinancialClosing,
 ): Promise<any[]> {
-  const resultados = [];
+  const results = [];
 
   for (const company of companies) {
+
+    let companyConsuption = 0;
 
     switch (company.billingModel) {
         
@@ -81,23 +85,13 @@ export async function getAmountToBeChargedToCompanies(
 
         case BillingModelEnum.POSTPAID:
 
-            const cdrId = company?.cdrId;
-
-            if (!cdrId) {
-                logger.log(`Empresa ${company?.name} - ${company?.id} não possui CdrId`);
+            if (!company?.cdrId) {
+                logger.log(`Não foi possível calcular o consumo no modelo pós-pago para a empresa ${company.name} - ${company.id} pois não possui cdrId`);
                 continue;
             }
 
             try {
-                const consumo = await getAmountToBeChargedByCdrId(cdrId);
-                resultados.push({
-                    companyId: company.id,
-                    cdrId,
-                    consumo,
-                });
-
-                logger.log(`Consumo para empresa ${company?.name}:`, consumo);
-
+                companyConsuption = await getPostpaidAmountTobeCharged(company, financialClosing);
             } catch (error) {
                 logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
             }
@@ -113,13 +107,19 @@ export async function getAmountToBeChargedToCompanies(
             break;
 
         default:   
-            logger.warn(`Billing model ${company.billingModel} not implemented for company ${company.id}`);
-            continue; // Skip to the next company if billing model is not implemented
+            logger.log(`Modelo de faturamento desconhecido para a empresa ${company.name} - ${company.id}`);
+            continue;
     }
 
+    results.push({
+      companyName: company.name,
+      // company: company,
+      amountToBeCharged: companyConsuption,
+      billingModel: company.billingModel,
+    });
   }  
 
-  return resultados;
+  return results;
 }
 
 
@@ -137,8 +137,39 @@ export async function getPostpaidAmountTobeCharged(
     financialClosing?: FinancialClosing
 ) : Promise<number> {
 
-    // Implement logic to calculate postpaid amount to be charged
-    return 0; 
+    const cdrConsuption = await getAmountToBeChargedByCdrId(company.cdrId ?? '');
+    const cdrConsuptionValue = cdrConsuption?.venda ? parseFloat(cdrConsuption.venda) : 0;
+
+    // Get the value minimum monthly from the company
+    const valueMinimumMonthly = await getValueInCurrencyData(company.valueMinimumMonthly);
+
+    // Get the value fixed monthly from the company
+    const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
+
+   
+    logger.log(`Consumo pós-pago para empresa ${company.name} - ${company.id}: ${cdrConsuptionValue}`);
+    logger.log(`Gasto minimo ${company.name} - ${company.id}: ${JSON.stringify(valueMinimumMonthly)}`);
+    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
+
+    let value = 0;
+
+    if (cdrConsuptionValue < valueMinimumMonthly) {
+
+        value = valueMinimumMonthly + valueFixedMonthly; 
+
+        logger.log(`Aplicando gasto mínimo para empresa ${company.name} - ${company.id}: ${value}`);
+    } else {
+
+        value = cdrConsuptionValue + valueFixedMonthly;
+
+        logger.log(`Aplicando valor do consumo para empresa ${company.name} - ${company.id}: ${value}`);
+    }
+
+    const valueWithDescount = await getDiscountForCompany(company, value);
+
+    logger.log(`Valor pós-pago com DESCONTO para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
+
+    return valueWithDescount; 
 }
 
 export async function getPrepaidUnlimitedAmountTobeCharged(
@@ -218,7 +249,7 @@ function formatSoapResponse(soapJson: any) {
     const venda = item?.venda?.['#text'] ?? '';
     const custo = item?.custo?.['#text'] ?? '';
     const duracaoRaw = item?.duracao?.['#text'] ?? '';
-    const duracaoFormatada = duracaoRaw ? formatDuration(parseFloat(duracaoRaw)) : '';
+    // const duracaoFormatada = duracaoRaw ? formatDuration(parseFloat(duracaoRaw)) : '';
 
     const camposPrincipais = {
       total_registros: Number(total_registros),
@@ -227,7 +258,7 @@ function formatSoapResponse(soapJson: any) {
       datahora,
       venda,
       custo,
-      duracao: duracaoFormatada,
+      // duracao: duracaoFormatada,
     };
 
     const outrosCampos = { ...retorno };
@@ -247,18 +278,55 @@ function formatSoapResponse(soapJson: any) {
 function formatDuration(minutosFloat: number) {
   if (!minutosFloat || isNaN(minutosFloat)) return '';
 
-  const totalSegundos = Math.floor(minutosFloat * 60);
-  const horas = Math.floor(totalSegundos / 3600);
-  const minutos = Math.floor((totalSegundos % 3600) / 60);
-  const segundos = totalSegundos % 60;
+  const totalSeconds = Math.floor(minutosFloat * 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const secunds = totalSeconds % 60;
 
   const pad = (num: number) => num.toString().padStart(2, '0');
 
-  return `${pad(horas)} Horas, ${pad(minutos)} Minutos, ${pad(segundos)} Segundos`;
+  return `${pad(hours)} Horas, ${pad(minutes)} Minutos, ${pad(secunds)} Segundos`;
 }
 
+export async function getDiscountForCompany(
+  company: CompanyWorkspaceEntity,
+  value: number
+): Promise<number> {
 
+  if (!value || !company.typeDiscount || !company.discount || company.quantitiesRemainingFinancialClosingsDiscounts == 0) {
+    return 0;
+  }
 
+  let valueDiscount = value;
+
+  if (company.typeDiscount == TypeDiscountEnum.PERCENT) {
+    valueDiscount = value * (company.discount / 100);
+  } else if (company.typeDiscount == TypeDiscountEnum.VALUE) {
+    valueDiscount = company.discount;
+  }
+
+  const valueWithDiscount = value - valueDiscount;
+  
+  // Aplicar logica de reduzir a quantidade de descontos restantes
+
+  logger.log(`Valor com desconto para empresa ${company.name} - ${company.id}: ${valueWithDiscount}, total: ${value}, desconto: ${valueDiscount}, tipo: ${company.typeDiscount}, quantidade restante: ${company.quantitiesRemainingFinancialClosingsDiscounts}`);
+  return valueWithDiscount < 0 ? 0 : valueWithDiscount;
+}
+
+export async function getValueInCurrencyData(obj: CurrencyMetadata | null | undefined): Promise<number> {
+
+  if (!obj) return 0;
+
+  let amountMicros = obj.amountMicros;
+
+  if (typeof amountMicros === 'string') amountMicros = parseFloat(amountMicros);
+
+  const valueInCurrency = amountMicros / 1000000;
+
+  logger.log(`amountMicros: ${amountMicros}, convertido: ${valueInCurrency}`);
+
+  return valueInCurrency || 0;
+}
 
 
 /*
@@ -270,6 +338,6 @@ function formatDuration(minutosFloat: number) {
     valor de gasto minimo - float      valueMinimumMonthly 
     valor mensalidade - float         valuefixedMonthly
     
-    dia de vencimento - int (Para o boleto de cobrança)   
+    dia de vencimento - int (Para o boleto de cobrança)        slipDueDate
 
 */
