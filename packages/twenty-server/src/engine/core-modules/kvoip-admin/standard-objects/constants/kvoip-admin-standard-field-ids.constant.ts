@@ -19,6 +19,7 @@ export const OWNER_STANDARD_FIELD_IDS = {
   position: '61ba4897-9f75-491a-842f-5bc5ccbf2b12',
   searchVector: 'be800ed6-23af-4e27-ab46-d2590cbf4e43',
   workspaces: '63e912e8-0ef4-4e19-9056-a39188d667c8',
+  userId: '34ef2ee8-b062-4bd4-b8ca-c4cc0fa681bf',
 };
 
 export const KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS = {
