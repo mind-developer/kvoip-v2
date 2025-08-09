@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { transformCoreWorkspaceToWorkspaces } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transform-core-workpace-to-workspaces.util';
 import { transformWorkspaceMemberToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transfsorm-workspace-member-to-owner.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -12,9 +15,15 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Injectable()
 export class WorkspacesService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
+  ) {}
 
   async handleWorkspaceUpsert(workspace: Workspace) {
+    if (!(await this.kvoipAdminWorkspaceExists())) return;
+
     const workspacesRepository =
       await this.twentyORMManager.getRepository<WorkspacesWorkspaceEntity>(
         'workspaces',
@@ -61,6 +70,8 @@ export class WorkspacesService {
   }
 
   async handleWorkspaceDelete(workspaceId: string) {
+    if (!(await this.kvoipAdminWorkspaceExists())) return;
+
     const workspacesRepository =
       await this.twentyORMManager.getRepository<WorkspacesWorkspaceEntity>(
         'workspaces',
@@ -75,5 +86,18 @@ export class WorkspacesService {
     if (isDefined(workspaceToDelete)) {
       await workspacesRepository.delete(workspaceToDelete.id);
     }
+  }
+
+  async kvoipAdminWorkspaceExists(): Promise<boolean> {
+    const kvoipAdminWorkspace = await this.workspaceRepository.findOne({
+      where: {
+        featureFlags: {
+          key: FeatureFlagKey.IS_KVOIP_ADMIN,
+          value: true,
+        },
+      },
+    });
+
+    return isDefined(kvoipAdminWorkspace);
   }
 }

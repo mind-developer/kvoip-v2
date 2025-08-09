@@ -31,10 +31,8 @@ export class WorkspaceSubscriber
     this.dataSource.subscribers.push(this);
   }
 
-  onModuleInit() {
-    this.workspacesService = this.moduleRef.get(WorkspacesService, {
-      strict: false,
-    });
+  async onModuleInit() {
+    this.workspacesService = await this.moduleRef.resolve(WorkspacesService);
   }
 
   listenTo() {
