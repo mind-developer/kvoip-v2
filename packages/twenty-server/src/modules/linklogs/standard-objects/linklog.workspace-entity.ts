@@ -141,6 +141,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   platform: string | null;
 
   @WorkspaceField({
@@ -151,6 +152,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   country: string | null;
 
   @WorkspaceField({
@@ -161,6 +163,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   regionName: string | null;
 
   @WorkspaceField({
@@ -171,6 +174,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   city: string | null;
 
   @WorkspaceField({

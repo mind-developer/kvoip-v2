@@ -1,4 +1,5 @@
 import { DashboardFilterDropdown } from '@/dashboard-links/components/ui/DashboardFilterDropdown';
+import { FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import styled from '@emotion/styled';
 import {
   Bar,
@@ -11,9 +12,9 @@ import {
 } from 'recharts';
 import { LinklogsChartData } from '~/types/LinkLogs';
 
-const StyledChartContainer = styled.div`
+const StyledChartContainer = styled.div<{ hasData: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  height: 85%;
+  height: ${({ hasData }) => (hasData ? '85%' : 'auto')};
   padding: ${({ theme }) => theme.spacing(2)};
   margin: ${({ theme }) => theme.spacing(4)};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -28,42 +29,60 @@ const StyledHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledText = styled.p`
+  color: ${({ theme }) => theme.font.color.secondary};
+  text-align: center;
+`;
+
 interface DashboardLinksChartProps {
   chartData: LinklogsChartData;
+  onFilterChange: (filter: FilterType) => void;
 }
 
-// TODO: Add filter functionality to the dropdown menu
 export const DashboardLinksChart = ({
   chartData: { data, sourceKeyColors },
+  onFilterChange,
 }: DashboardLinksChartProps) => {
+  const hasData = data.length > 0;
+
   return (
-    <StyledChartContainer>
+    <StyledChartContainer hasData={hasData}>
       <StyledHeader>
         <label>Origem dos acessos</label>
         <DashboardFilterDropdown
-          onChange={() => console.log('Clicou')}
+          onChange={onFilterChange}
           scopeKey="dashboard-filter"
         />
       </StyledHeader>
-      <ResponsiveContainer>
-        <BarChart
-          data={data}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 60,
-          }}
-        >
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend align="left" />
-          {Object.entries(sourceKeyColors).map(([key, color]) => (
-            <Bar key={key} dataKey={key} stackId="a" fill={color} name={key} />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+      {hasData ? (
+        <ResponsiveContainer>
+          <BarChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 60,
+            }}
+          >
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend align="left" />
+            {Object.entries(sourceKeyColors).map(([key, color]) => (
+              <Bar
+                key={key}
+                dataKey={key}
+                stackId="a"
+                fill={color}
+                name={key}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <StyledText>Nenhum dado para exibir</StyledText>
+      )}
     </StyledChartContainer>
   );
 };

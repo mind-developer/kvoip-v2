@@ -10,5 +10,10 @@ export const DASHBOARD_LINKLOGS_QUERY_FRAGMENT = gql`
     utmCampaign
     userIp
     userAgent
+    platform
+    country
+    regionName
+    city
+    createdAt
   }
 `;
