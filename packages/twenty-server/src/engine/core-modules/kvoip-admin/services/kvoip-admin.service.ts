@@ -14,6 +14,19 @@ export class KvoipAdminService {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
+  public async getKvoipAdminWorkspace() {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        featureFlags: {
+          key: FeatureFlagKey.IS_KVOIP_ADMIN,
+          value: true,
+        },
+      },
+    });
+
+    return workspace;
+  }
+
   public async isKvoipAdminWorkspace(workspaceId: string) {
     const workspace = await this.workspaceRepository.findOne({
       where: {

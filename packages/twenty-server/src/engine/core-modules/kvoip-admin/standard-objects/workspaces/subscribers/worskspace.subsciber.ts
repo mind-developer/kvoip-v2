@@ -43,8 +43,12 @@ export class WorkspaceSubscriber
     await this.workspacesService.handleWorkspaceUpsert(event.entity);
   }
 
-  afterUpdate(event: UpdateEvent<Workspace>) {
-    this.logger.log(`AFTER ENTITY UPDATED: `, event.entity);
+  async afterUpdate(event: UpdateEvent<Workspace>) {
+    if (isDefined(event.entity)) {
+      await this.workspacesService.handleWorkspaceUpsert(
+        event.entity as Workspace,
+      );
+    }
   }
 
   async afterRemove(event: RemoveEvent<Workspace>) {
