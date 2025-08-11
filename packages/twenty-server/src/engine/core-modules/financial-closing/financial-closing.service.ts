@@ -106,15 +106,16 @@ export class FinancialClosingService {
 
 
 
-    const workspaceId = updated.workspaceId ?? updated.workspace.id;
+    // const workspaceId = updated.workspaceId ?? updated.workspace.id;
 
-    const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
+    // const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
 
-    const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, companies, updated);
+    // const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, this.twentyORMGlobalManager, companies, updated);
 
-    this.logger.log(`Companies to be charged 0: ${companiesWithAmount.length}`);
-    this.logger.log(`Companies to be charged: ${JSON.stringify(companiesWithAmount)}`);
+    // this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
+    // this.logger.log(`Companies to be charged: ${JSON.stringify(companiesWithAmount)}`);
 
+    
 
     return updated;
   }

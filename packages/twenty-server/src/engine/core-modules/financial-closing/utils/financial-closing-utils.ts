@@ -1,35 +1,3 @@
-// import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-// import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-// import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
-// import { In } from 'typeorm';
-
-// export async function getCompaniesForFinancialClosing(
-//     workspaceId: string,
-//     twentyORMGlobalManager: TwentyORMGlobalManager,
-//     financialClosing: FinancialClosing,
-// ): Promise<CompanyWorkspaceEntity[]> {
-//     const companiesRepository =
-//     await twentyORMGlobalManager.getRepositoryForWorkspace<CompanyWorkspaceEntity>(
-//       workspaceId,
-//       'company',
-//       {
-//         shouldBypassPermissionChecks: true,
-//       },
-//     );
-
-//     const companies = await companiesRepository.find({
-//         where: {
-//             billingModel: In(financialClosing.billingModelIds),
-//         },
-//         // relations: {
-//         //   person: true,
-//         //   company: true,
-//         // },
-//     });
-
-//     return companies || [];
-// }
-
 import fetch from 'node-fetch';
 import { XMLParser } from 'fast-xml-parser';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -68,6 +36,7 @@ export async function getCompaniesForFinancialClosing(
 
 export async function getAmountToBeChargedToCompanies(
   workspaceId: string,
+  twentyORMGlobalManager: TwentyORMGlobalManager,
   companies: CompanyWorkspaceEntity[],
   financialClosing?: FinancialClosing,
 ): Promise<any[]> {
@@ -75,23 +44,38 @@ export async function getAmountToBeChargedToCompanies(
 
   for (const company of companies) {
 
+    logger.log(`-------------------------------------------------------------------------------------------------------------`);
+
     let companyConsuption = 0;
 
     switch (company.billingModel) {
         
         case BillingModelEnum.PREPAID:
-            logger.log(`Calculando consumo para empresa ${company.name} - ${company.id} com modelo PREPAID`);
+            
+            const errorMsgPrepaid = validateCompanyBillingModel(company, ['valueFixedMonthly', 'valueMinimumMonthly']);
+            if (errorMsgPrepaid) {
+              logger.log(errorMsgPrepaid);
+              continue;
+            }
+
+            try {
+                companyConsuption = await getPrepaidAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
+            } catch (error) {
+                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+            }
+
             break;
 
         case BillingModelEnum.POSTPAID:
 
-            if (!company?.cdrId) {
-                logger.log(`Não foi possível calcular o consumo no modelo pós-pago para a empresa ${company.name} - ${company.id} pois não possui cdrId`);
-                continue;
+            const errorMsgPostpaid = validateCompanyBillingModel(company, ['cdrId']);
+            if (errorMsgPostpaid) {
+              logger.log(errorMsgPostpaid);
+              continue;
             }
 
             try {
-                companyConsuption = await getPostpaidAmountTobeCharged(company, financialClosing);
+                companyConsuption = await getPostpaidAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
             } catch (error) {
                 logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
             }
@@ -99,11 +83,35 @@ export async function getAmountToBeChargedToCompanies(
             break;
 
         case BillingModelEnum.PREPAID_UNLIMITED:
-            logger.log(`Calculando consumo para empresa ${company.name} - ${company.id} com modelo PREPAID_UNLIMITED`);
+          
+            const errorMsgPrepaidUnlimited = validateCompanyBillingModel(company, ['valueFixedMonthly']);
+            if (errorMsgPrepaidUnlimited) {
+              logger.log(errorMsgPrepaidUnlimited);
+              continue;
+            }
+
+            try {
+                companyConsuption = await getPrepaidUnlimitedAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
+            } catch (error) {
+                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+            }
+
             break;
 
         case BillingModelEnum.POSTPAID_UNLIMITED:
-            logger.log(`Calculando consumo para empresa ${company.name} - ${company.id} com modelo POSTPAID_UNLIMITED`);
+            
+            const errorMsgPostpaidUnlimited = validateCompanyBillingModel(company, ['valueFixedMonthly']);
+            if (errorMsgPostpaidUnlimited) {
+              logger.log(errorMsgPostpaidUnlimited);
+              continue;
+            }
+
+            try {
+                companyConsuption = await getPostpaidUnlimitedAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
+            } catch (error) {
+                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+            }
+
             break;
 
         default:   
@@ -122,30 +130,44 @@ export async function getAmountToBeChargedToCompanies(
   return results;
 }
 
-
 export async function getPrepaidAmountTobeCharged(
+    workspaceId: string,
+    twentyORMGlobalManager: TwentyORMGlobalManager,
     company: CompanyWorkspaceEntity,
     financialClosing?: FinancialClosing
 ) : Promise<number> {
 
-    // Implement logic to calculate prepaid amount to be charged
-    return 0; 
+    const valueMinimumMonthly = await getValueInCurrencyData(company.valueMinimumMonthly);
+    const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
+
+    logger.log(`Gasto minimo ${company.name} - ${company.id}: ${JSON.stringify(valueMinimumMonthly)}`);
+    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
+
+    let value = valueMinimumMonthly + valueFixedMonthly;
+
+    logger.log(`Consumo pré-pago para empresa ${company.name} - ${company.id}: ${value}`);
+
+    const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, value);
+    
+    logger.log(`Consumo pré-pago com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
+
+    return valueWithDescount; 
 }
 
 export async function getPostpaidAmountTobeCharged(
+    workspaceId: string,
+    twentyORMGlobalManager: TwentyORMGlobalManager,
     company: CompanyWorkspaceEntity,
     financialClosing?: FinancialClosing
 ) : Promise<number> {
 
-    const cdrConsuption = await getAmountToBeChargedByCdrId(company.cdrId ?? '');
+    const dateRange = getPreviousMonthDateRange();
+
+    const cdrConsuption = await getAmountToBeChargedByCdrId(company.cdrId ?? '', dateRange.startDate, dateRange.endDate);
     const cdrConsuptionValue = cdrConsuption?.venda ? parseFloat(cdrConsuption.venda) : 0;
 
-    // Get the value minimum monthly from the company
     const valueMinimumMonthly = await getValueInCurrencyData(company.valueMinimumMonthly);
-
-    // Get the value fixed monthly from the company
     const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
-
    
     logger.log(`Consumo pós-pago para empresa ${company.name} - ${company.id}: ${cdrConsuptionValue}`);
     logger.log(`Gasto minimo ${company.name} - ${company.id}: ${JSON.stringify(valueMinimumMonthly)}`);
@@ -158,14 +180,14 @@ export async function getPostpaidAmountTobeCharged(
         value = valueMinimumMonthly + valueFixedMonthly; 
 
         logger.log(`Aplicando gasto mínimo para empresa ${company.name} - ${company.id}: ${value}`);
-    } else {
 
+    } else {
         value = cdrConsuptionValue + valueFixedMonthly;
 
         logger.log(`Aplicando valor do consumo para empresa ${company.name} - ${company.id}: ${value}`);
     }
 
-    const valueWithDescount = await getDiscountForCompany(company, value);
+    const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, value);
 
     logger.log(`Valor pós-pago com DESCONTO para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
 
@@ -173,26 +195,46 @@ export async function getPostpaidAmountTobeCharged(
 }
 
 export async function getPrepaidUnlimitedAmountTobeCharged(
+    workspaceId: string,
+    twentyORMGlobalManager: TwentyORMGlobalManager,
     company: CompanyWorkspaceEntity,
     financialClosing?: FinancialClosing
 ) : Promise<number> {
-    // Implement logic to calculate prepaid unlimited amount to be charged
-    return 0; 
+
+    const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
+
+    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
+
+    const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, valueFixedMonthly);
+    
+    logger.log(`Consumo pré-ilimitado com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
+
+    return valueWithDescount; 
 }
 
 export async function getPostpaidUnlimitedAmountTobeCharged(
+    workspaceId: string,
+    twentyORMGlobalManager: TwentyORMGlobalManager,
     company: CompanyWorkspaceEntity,
     financialClosing?: FinancialClosing
 ) : Promise<number> {
-    // Implement logic to calculate postpaid unlimited amount to be charged
-    return 0; 
+
+    const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
+
+    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
+
+    const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, valueFixedMonthly);
+    
+    logger.log(`Consumo pós-ilimitado com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
+
+    return valueWithDescount; 
 }
 
 
 // ===========================
 // Função SOAP
 // ===========================
-async function getAmountToBeChargedByCdrId(id: string | number) {
+async function getAmountToBeChargedByCdrId(id: string | number, startDate?: string, endDate?: string): Promise<any> {
 //   const url = 'http://localhost:4000/soap'; // Proxy URL
     const url = "https://log.kvoip.com.br/webservice/index.php";
     const xml = `
@@ -288,16 +330,40 @@ function formatDuration(minutosFloat: number) {
   return `${pad(hours)} Horas, ${pad(minutes)} Minutos, ${pad(secunds)} Segundos`;
 }
 
+function getPreviousMonthDateRange(): { startDate: string; endDate: string } {
+    const now = new Date();
+
+    // Mês anterior
+    const firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastDayPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0); // dia 0 do mês atual = último dia do anterior
+
+    // Formatar no padrão "YYYY-MM-DD HH:mm:ss"
+    const formatDate = (date: Date, endOfDay = false) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const time = endOfDay ? '23:59:59' : '00:00:00';
+        return `${year}-${month}-${day} ${time}`;
+    };
+
+    return {
+        startDate: formatDate(firstDayPrevMonth, false),
+        endDate: formatDate(lastDayPrevMonth, true),
+    };
+}
+
 export async function getDiscountForCompany(
+  workspaceId: string,
+  twentyORMGlobalManager: TwentyORMGlobalManager,
   company: CompanyWorkspaceEntity,
-  value: number
+  value: number,
 ): Promise<number> {
 
   if (!value || !company.typeDiscount || !company.discount || company.quantitiesRemainingFinancialClosingsDiscounts == 0) {
-    return 0;
+    return value;
   }
 
-  let valueDiscount = value;
+  let valueDiscount = 0;
 
   if (company.typeDiscount == TypeDiscountEnum.PERCENT) {
     valueDiscount = value * (company.discount / 100);
@@ -307,7 +373,26 @@ export async function getDiscountForCompany(
 
   const valueWithDiscount = value - valueDiscount;
   
-  // Aplicar logica de reduzir a quantidade de descontos restantes
+  if (
+    company.quantitiesRemainingFinancialClosingsDiscounts !== null &&
+    company.quantitiesRemainingFinancialClosingsDiscounts > 0
+  ) {
+    const newQuantity = company.quantitiesRemainingFinancialClosingsDiscounts - 1;
+
+
+    const companiesRepository =
+      await twentyORMGlobalManager.getRepositoryForWorkspace<CompanyWorkspaceEntity>(
+        workspaceId,
+        'company',
+        { shouldBypassPermissionChecks: true }
+      );
+
+    await companiesRepository.update(company.id, {
+      quantitiesRemainingFinancialClosingsDiscounts: newQuantity,
+    });
+
+    company.quantitiesRemainingFinancialClosingsDiscounts = newQuantity;
+  }
 
   logger.log(`Valor com desconto para empresa ${company.name} - ${company.id}: ${valueWithDiscount}, total: ${value}, desconto: ${valueDiscount}, tipo: ${company.typeDiscount}, quantidade restante: ${company.quantitiesRemainingFinancialClosingsDiscounts}`);
   return valueWithDiscount < 0 ? 0 : valueWithDiscount;
@@ -326,6 +411,15 @@ export async function getValueInCurrencyData(obj: CurrencyMetadata | null | unde
   logger.log(`amountMicros: ${amountMicros}, convertido: ${valueInCurrency}`);
 
   return valueInCurrency || 0;
+}
+
+function validateCompanyBillingModel(company: CompanyWorkspaceEntity, requiredFields: (keyof CompanyWorkspaceEntity)[]): string | null {
+  for (const field of requiredFields) {
+    if (!company[field]) {
+      return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois não possui ${field} configurado`;
+    }
+  }
+  return null;
 }
 
 
