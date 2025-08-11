@@ -46,7 +46,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
 export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACES_STANDARD_FIELD_IDS.coreWorkspaceId,
-    type: FieldMetadataType.UUID,
+    type: FieldMetadataType.TEXT,
     label: msg`Core schema workspace id`,
     description: msg`The workspace id from the core schema.`,
   })

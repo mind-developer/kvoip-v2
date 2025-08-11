@@ -1,79 +1,107 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, removeUndefinedFields } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { transformCoreWorkspaceToWorkspaces } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transform-core-workpace-to-workspaces.util';
 import { transformWorkspaceMemberToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transfsorm-workspace-member-to-owner.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner-entity';
 import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspacesService {
+  private readonly logger = new Logger(WorkspacesService.name);
+
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
+    private readonly kvoipAdminService: KvoipAdminService,
   ) {}
 
+  // TODO: This is a exemple on how to manipulate entity repositories inside typeorm subcribers, Move this to a README file inside kvoip-admin module.
+  private get workspaceRepository() {
+    return this.dataSource.getRepository(Workspace);
+  }
+
   async handleWorkspaceUpsert(workspace: Workspace) {
-    if (!(await this.kvoipAdminWorkspaceExists())) return;
+    const adminWorkspace = await this.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace) || adminWorkspace.id === workspace.id)
+      return;
 
     const workspacesRepository =
-      await this.twentyORMManager.getRepository<WorkspacesWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspacesWorkspaceEntity>(
+        adminWorkspace.id,
         'workspaces',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
         'workspaceMember',
       );
 
-    await workspacesRepository.upsert(
-      transformCoreWorkspaceToWorkspaces(workspace),
-      {
-        conflictPaths: ['coreWorkspaceId'],
+    const existingWorkspace = await workspacesRepository.findOne({
+      where: {
+        coreWorkspaceId: workspace.id,
       },
-    );
+    });
+
+    await workspacesRepository.save({
+      ...existingWorkspace,
+      ...removeUndefinedFields(transformCoreWorkspaceToWorkspaces(workspace)),
+    });
 
     if (isDefined(workspace?.creatorEmail)) {
-      const ownerWorkspaceMember = await workspaceMemberRepository.findOne({
+      const existingWokrpsaceMember = await workspaceMemberRepository.findOne({
         where: {
           userEmail: workspace?.creatorEmail,
         },
       });
 
-      if (isDefined(ownerWorkspaceMember)) {
+      if (isDefined(existingWokrpsaceMember)) {
         const ownerRepository =
-          await this.twentyORMManager.getRepository<OwnerWorkspaceEntity>(
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<OwnerWorkspaceEntity>(
+            adminWorkspace.id,
             'owner',
           );
 
-        await ownerRepository.upsert(
-          {
-            ...transformWorkspaceMemberToOwner(ownerWorkspaceMember),
+        const existingOwner = await ownerRepository.findOne({
+          where: {
             emails: {
-              primaryEmail: ownerWorkspaceMember.userEmail,
+              primaryEmail: existingWokrpsaceMember.userEmail,
             },
           },
-          {
-            conflictPaths: ['userId'],
+        });
+
+        await ownerRepository.save({
+          ...existingOwner,
+          ...transformWorkspaceMemberToOwner(existingWokrpsaceMember),
+          emails: {
+            primaryEmail: existingWokrpsaceMember.userEmail,
           },
-        );
+        });
       }
     }
   }
 
   async handleWorkspaceDelete(workspaceId: string) {
-    if (!(await this.kvoipAdminWorkspaceExists())) return;
+    const adminWorkspace = await this.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace) || adminWorkspace.id === workspaceId) return;
 
     const workspacesRepository =
-      await this.twentyORMManager.getRepository<WorkspacesWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspacesWorkspaceEntity>(
+        adminWorkspace.id,
         'workspaces',
       );
 
@@ -88,16 +116,10 @@ export class WorkspacesService {
     }
   }
 
-  async kvoipAdminWorkspaceExists(): Promise<boolean> {
-    const kvoipAdminWorkspace = await this.workspaceRepository.findOne({
-      where: {
-        featureFlags: {
-          key: FeatureFlagKey.IS_KVOIP_ADMIN,
-          value: true,
-        },
-      },
-    });
+  async kvoipAdminWorkspaceExists(): Promise<Workspace | null> {
+    const kvoipAdminWorkspace =
+      await this.kvoipAdminService.getKvoipAdminWorkspace();
 
-    return isDefined(kvoipAdminWorkspace);
+    return kvoipAdminWorkspace;
   }
 }
