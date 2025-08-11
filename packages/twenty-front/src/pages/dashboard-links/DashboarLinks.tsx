@@ -9,6 +9,10 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 
 import { DashboardLinksPageBodyLoader } from '@/dashboard-links/components/ui/DashboardLinksPageBodyLoader';
 import { GET_DASHBOARD_LINKLOGS } from '@/dashboard-links/graphql/queries/getDashboardLinklogs';
+import {
+  filterLinkLogsData,
+  FilterType,
+} from '@/dashboard-links/utils/filterLinkLogsData';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useQuery } from '@apollo/client';
@@ -21,7 +25,7 @@ import { Query } from '~/generated-metadata/graphql';
 import { groupLinkLogsData } from '~/utils/groupLinkLogsData';
 
 const StyledSection = styled(Section)`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSearchInput = styled(TextInput)`
@@ -30,6 +34,7 @@ const StyledSearchInput = styled(TextInput)`
 
 export const DashboardLinks = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<FilterType>('week');
 
   const { data, loading, error } = useQuery<
     Pick<Query, 'getDashboardLinklogs'>
@@ -40,7 +45,9 @@ export const DashboardLinks = () => {
       cause: error?.cause ?? JSON.stringify(data),
     });
 
-  const chartData = groupLinkLogsData(data?.getDashboardLinklogs ?? []);
+  const rawData = data?.getDashboardLinklogs ?? [];
+  const filteredData = filterLinkLogsData(rawData, filter);
+  const chartData = groupLinkLogsData(filteredData);
 
   return (
     <PageContainer>
@@ -51,7 +58,10 @@ export const DashboardLinks = () => {
             <DashboardLinksPageBodyLoader />
           ) : (
             <>
-              <DashboardLinksChart chartData={chartData} />
+              <DashboardLinksChart
+                chartData={chartData}
+                onFilterChange={setFilter}
+              />
               <StyledSection fullWidth>
                 <H2Title title="All links" />
 
