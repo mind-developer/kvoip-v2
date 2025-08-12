@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -37,7 +36,6 @@ export class WorkspaceManagerService {
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly moduleRef: ModuleRef,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(UserWorkspaceRoleEntity, 'core')

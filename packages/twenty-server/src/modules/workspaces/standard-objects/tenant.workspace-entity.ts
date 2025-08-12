@@ -4,7 +4,7 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { WORKSPACES_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { TENANT_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
 import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
@@ -23,7 +23,7 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner-entity';
+import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -32,29 +32,19 @@ export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: KVOIP_ADMIN_STANDARD_OBJECT_IDS.workspaces,
-  namePlural: 'workspaces',
+  standardId: KVOIP_ADMIN_STANDARD_OBJECT_IDS.tenant,
+  namePlural: 'tenants',
   labelSingular: msg`Workspaces`,
   labelPlural: msg`Workspaces`,
   description: msg`All Workspaces`,
-  icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.workspaces,
-  shortcut: 'C',
-  labelIdentifierStandardId: WORKSPACES_STANDARD_FIELD_IDS.name,
+  icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.tenant,
+  shortcut: 'W',
+  labelIdentifierStandardId: TENANT_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsSystem()
 @WorkspaceIsSearchable()
-export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
+export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.coreWorkspaceId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Core schema workspace id`,
-    description: msg`The workspace id from the core schema.`,
-  })
-  @WorkspaceIsSystem()
-  coreWorkspaceId: string;
-
-  @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.name,
+    standardId: TENANT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The workspace name`,
@@ -63,7 +53,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.ownerEmail,
+    standardId: TENANT_STANDARD_FIELD_IDS.ownerEmail,
     type: FieldMetadataType.TEXT,
     label: msg`Workspace owner primary e-mail`,
     description: msg`The workspace woner primary email.`,
@@ -72,7 +62,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   ownerEmail: string;
 
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.membersCount,
+    standardId: TENANT_STANDARD_FIELD_IDS.membersCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Nº Members`,
     description: msg`Number of members in the workspace`,
@@ -83,7 +73,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   membersCount: number | null;
 
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.extentionsCount,
+    standardId: TENANT_STANDARD_FIELD_IDS.extentionsCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Nº Extentions`,
     description: msg`Number of extentions in the workspace`,
@@ -93,8 +83,17 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   extentionsCount: number | null;
 
+  @WorkspaceField({
+    standardId: TENANT_STANDARD_FIELD_IDS.coreWorkspaceId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Core schema workspace id`,
+    description: msg`The workspace id from the core schema.`,
+  })
+  @WorkspaceIsSystem()
+  coreWorkspaceId: string;
+
   @WorkspaceRelation({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.owner,
+    standardId: TENANT_STANDARD_FIELD_IDS.owner,
     type: RelationType.MANY_TO_ONE,
     label: msg`Owner`,
     description: msg`Workspace owner`,
@@ -110,7 +109,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   ownerId: string | null;
 
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.position,
+    standardId: TENANT_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Person record Position`,
@@ -121,7 +120,7 @@ export class WorkspacesWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: WORKSPACES_STANDARD_FIELD_IDS.searchVector,
+    standardId: TENANT_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

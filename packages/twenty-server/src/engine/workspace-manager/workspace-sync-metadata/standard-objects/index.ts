@@ -15,8 +15,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
-import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner-entity';
-import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -47,6 +45,8 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 // Base standard objects that are available in all workspaces
 const baseStandardObjectMetadataDefinitions = [
@@ -98,7 +98,7 @@ const baseStandardObjectMetadataDefinitions = [
 
 // Admin-specific objects that are only available in the kvoip admin workspace
 const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
-  WorkspacesWorkspaceEntity,
+  TenantWorkspaceEntity,
   OwnerWorkspaceEntity,
 ];
 

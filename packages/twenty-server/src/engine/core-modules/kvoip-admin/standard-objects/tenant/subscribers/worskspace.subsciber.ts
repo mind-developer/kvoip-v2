@@ -12,7 +12,7 @@ import {
   UpdateEvent,
 } from 'typeorm';
 
-import { WorkspacesService } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/services/workspaces.service';
+import { TenantService } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/services/tenant.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @EventSubscriber()
@@ -21,7 +21,7 @@ export class WorkspaceSubscriber
 {
   private readonly logger = new Logger(WorkspaceSubscriber.name);
 
-  private workspacesService: WorkspacesService;
+  private tenantService: TenantService;
 
   constructor(
     private readonly moduleRef: ModuleRef,
@@ -32,7 +32,7 @@ export class WorkspaceSubscriber
   }
 
   async onModuleInit() {
-    this.workspacesService = await this.moduleRef.resolve(WorkspacesService);
+    this.tenantService = await this.moduleRef.resolve(TenantService);
   }
 
   listenTo() {
@@ -40,20 +40,18 @@ export class WorkspaceSubscriber
   }
 
   async afterInsert(event: InsertEvent<Workspace>) {
-    await this.workspacesService.handleWorkspaceUpsert(event.entity);
+    await this.tenantService.handleWorkspaceUpsert(event.entity);
   }
 
   async afterUpdate(event: UpdateEvent<Workspace>) {
     if (isDefined(event.entity)) {
-      await this.workspacesService.handleWorkspaceUpsert(
-        event.entity as Workspace,
-      );
+      await this.tenantService.handleWorkspaceUpsert(event.entity as Workspace);
     }
   }
 
   async afterRemove(event: RemoveEvent<Workspace>) {
     if (isDefined(event.entity)) {
-      await this.workspacesService.handleWorkspaceDelete(event.entity.id);
+      await this.tenantService.handleWorkspaceDelete(event.entity.id);
     }
   }
 }
