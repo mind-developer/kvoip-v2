@@ -28,6 +28,7 @@ export class DashboardLinklogsResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
         workspace.id,
         'linkLogs',
+        { shouldBypassPermissionChecks: true },
       );
 
     const linklogs = await linklogsRepository.find();

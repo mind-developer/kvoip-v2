@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-rest-api-methods-should-be-guarded */
 import { Controller, Get, Param, Req, Res, UseFilters } from '@nestjs/common';
 
 import { Request, Response } from 'express';

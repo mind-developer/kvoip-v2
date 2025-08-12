@@ -70,6 +70,16 @@ export const productsAllView = (
         isVisible: true,
         size: 150,
       },
+      {
+        fieldMetadataId:
+          productObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === PRODUCT_STANDARD_FIELD_IDS.productType,
+          )?.id ?? '',
+        position: 5,
+        isVisible: true,
+        size: 150,
+      },
     ],
   };
 };

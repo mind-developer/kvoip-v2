@@ -17,6 +17,7 @@ import { useToggleFocusNfeIntegrationStatus } from '@/settings/integrations/focu
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { FocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FocusNfeIntegration';
 
 type SettingsIntegrationFocusNfeConectionsListCardProps = {
   integration: SettingsIntegration;
@@ -82,7 +83,6 @@ const StyledButton = styled.button`
 export const SettingsIntegrationFocusNfeConectionsListCard = ({
   integration,
 }: SettingsIntegrationFocusNfeConectionsListCardProps) => {
-  // const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -116,33 +116,37 @@ export const SettingsIntegrationFocusNfeConectionsListCard = ({
       <StyledIntegrationsSection>
         {focusNfeIntegrations.length > 0 && (
           <>
-            {focusNfeIntegrations.map((focusNfeIntegrations) => (
-              <StyledCard key={focusNfeIntegrations.id}>
-                <StyledDiv>
-                  <StyledDatabaseLogo
-                    alt={focusNfeIntegrations.integrationName}
-                    src={integration.from.image}
-                  />
-                  {focusNfeIntegrations.integrationName}
-                </StyledDiv>
-                <StyledDiv>
-                  <SettingsIntegrationFocusNfeToggleStatusButton
-                    key={focusNfeIntegrations.id}
-                    actualStatus={focusNfeIntegrations.status ?? 'inactive'}
-                    onClick={() => handleToggleStatus(focusNfeIntegrations.id)}
-                    disabled={loading}
-                  />
-                  <IconButton
-                    onClick={() =>
-                      handleEditIntegration(focusNfeIntegrations.id)
-                    }
-                    variant="tertiary"
-                    size="medium"
-                    Icon={IconPencil}
-                  />
-                </StyledDiv>
-              </StyledCard>
-            ))}
+            {focusNfeIntegrations.map(
+              (focusNfeIntegrations: FocusNfeIntegration) => (
+                <StyledCard key={focusNfeIntegrations.id}>
+                  <StyledDiv>
+                    <StyledDatabaseLogo
+                      alt={focusNfeIntegrations.name}
+                      src={integration.from.image}
+                    />
+                    {focusNfeIntegrations.name}
+                  </StyledDiv>
+                  <StyledDiv>
+                    <SettingsIntegrationFocusNfeToggleStatusButton
+                      key={focusNfeIntegrations.id}
+                      actualStatus={focusNfeIntegrations.status ?? 'inactive'}
+                      onClick={() =>
+                        handleToggleStatus(focusNfeIntegrations.id)
+                      }
+                      disabled={loading}
+                    />
+                    <IconButton
+                      onClick={() =>
+                        handleEditIntegration(focusNfeIntegrations.id)
+                      }
+                      variant="tertiary"
+                      size="medium"
+                      Icon={IconPencil}
+                    />
+                  </StyledDiv>
+                </StyledCard>
+              ),
+            )}
           </>
         )}
         <StyledFooter>

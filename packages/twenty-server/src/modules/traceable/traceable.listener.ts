@@ -39,6 +39,7 @@ export class TraceableEventListener {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TraceableWorkspaceEntity>(
         workspaceId,
         'traceable',
+        { shouldBypassPermissionChecks: true },
       );
 
     const traceableEntities = await Promise.all(

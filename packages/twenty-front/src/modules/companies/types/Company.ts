@@ -21,6 +21,7 @@ export type Company = {
     addressState: string;
     addressPostcode: string;
     addressCountry: string;
+    addressNumber: string;
     addressLat: number | null;
     addressLng: number | null;
   };

@@ -37,6 +37,7 @@ export class TraceableService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TraceableWorkspaceEntity>(
         workspaceId,
         'traceable',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!workspaceId) {
@@ -79,6 +80,7 @@ export class TraceableService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
         workspaceId,
         'linkLogs',
+        { shouldBypassPermissionChecks: true },
       );
 
     const traceableAccessLog = linklogsRepository.create({

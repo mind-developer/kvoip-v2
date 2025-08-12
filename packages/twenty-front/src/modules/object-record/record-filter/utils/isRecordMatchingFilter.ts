@@ -261,6 +261,7 @@ export const isRecordMatchingFilter = ({
           'addressState',
           'addressCountry',
           'addressPostcode',
+          'addressNumber',
         ] as const;
 
         return keys.some((key) => {

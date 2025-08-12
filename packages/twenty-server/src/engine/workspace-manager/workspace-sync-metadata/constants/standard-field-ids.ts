@@ -49,6 +49,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
+  notaFiscal: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
 };
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -151,6 +152,11 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+  codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
+  product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
+  inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
+  emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
+  notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {
@@ -175,6 +181,7 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
+  notaFiscal: 'c3a90d91-f458-4331-8d55-ff86a066191d',
 };
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
@@ -213,6 +220,14 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   aliquotaPis: '542891a0-5388-4ac8-b58a-ce3404704f49',
   aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
   valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
+  productType: '73460110-2f05-49db-a76e-7c0ac0880888',
+  company: 'a9e553b0-b233-474a-a22b-5f76541e1f70',
+  aliquotaIss: 'cd4d2f86-ed16-4eee-b78a-412a2a5e3be9',
+  issRetido: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
+  itemListaServico: 'c4606156-e1b0-477d-972f-1373be7099f4',
+  codigoTributarioMunicipio: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
+  notaFiscal: '71aceb60-96b8-4c23-b5c0-aadd9f6b256e',
+  classificacao: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
@@ -253,6 +268,68 @@ export const INTEGRATION_STANDARD_FIELD_IDS = {
   attachments: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5e',
   position: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5f',
   searchVector: '85c71601-72f9-4b7b-b343-d00000b2a27a',
+};
+
+export const FOCUS_NFE_STANDARD_FIELD_ID = {
+  name: '967f34da-329a-474a-abd3-0d51be34f77c',
+  token: 'cf261d88-362b-43df-85fd-cf619db75673',
+  status: '2505caf2-55a0-4436-902b-7b701589e4c3',
+  companyName: '78ee798d-5159-4ef1-8605-d3feb5affdae',
+  cnpj: '69f06cd5-cd7d-4347-84ec-37a1c5d8c5c2',
+  cpf: '1c52a36f-a861-4be8-87cf-4886fdc0838d',
+  ie: 'de687d17-3e91-4006-bb96-d801164d8d5c',
+  inscricaoMunicipal: 'cf3a079a-6e94-4790-b34f-a586c994a48f',
+  cnaeCode: 'b1423921-bbbc-4f1f-9f64-6053b708fb54',
+  cep: '35971a54-f710-4320-b18c-90c1c6d6de86',
+  street: '535e3761-b827-4428-85a7-e4fd6a68308f',
+  number: '2c114dc6-c64e-4666-bf85-20ce99a68eca',
+  neighborhood: '02bcc412-be9b-4f36-a97f-d3e33b304a81',
+  city: '78109c24-df0d-46f7-a7d5-d239bafb363d',
+  state: '4eb18f9f-a1b6-469a-b877-064630d01635',
+  taxRegime: '25913ca9-c4e2-4333-a7e0-de84a621f520',
+  position: 'c7e01234-d211-4a85-94f2-bcd0ba8d00ea',
+  searchVector: '2e4ba6eb-fe44-44e4-b9e5-840925dda55b',
+  notaFiscal: 'df67718b-deba-4f31-b947-e9a8b4967976',
+};
+
+export const NOTA_FISCAL_FIELD_IDS = {
+  name: '1881e61b-4bd7-4aa7-ad37-6e507a99e9c6',
+  nfType: '2548531e-456f-4ca8-b85b-a7260326e696',
+  totalAmount: '18adc333-c20a-4131-99a6-394822409d0c',
+  unitOfMeasure: '75476681-7d40-4a1e-a561-d4438aa82d02',
+  percentNFe: '59d92ce3-4efd-47a3-b6c4-0ea3000e63ab',
+  percentNFSe: '3fde8ab9-95d7-4073-b722-b62f83b0d7dc',
+  percentNFCe: 'bdfb4309-1dc8-4dbf-a4ae-afcd417d9667',
+  percentNFCom: 'a1f67bd3-aaed-4b28-885a-f69d29b6a873',
+  attachments: '2a16bc6b-527a-410a-9813-c9b0565f5f6c',
+  nfStatus: '767cc322-394d-4c7d-82e1-23215603fc91',
+  ncm: 'c0cd3d9c-bcc2-4d75-8d8c-c8663e677cba',
+  cfop: '284b42dc-e264-431f-b7e9-3106f7ec8e98',
+  cstIcmsCsosn: '98ff97ad-a078-4188-b855-835db313c723',
+  origem: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1',
+  aliquotaIcms: 'eb601572-7c52-4dad-b077-585bc1615374',
+  aliquotaPis: '12f215c3-038e-44d3-8bc3-30a43a21aed9',
+  aliquotaCofins: '56df9004-2ad1-4a35-93d4-d5976768b525',
+  aliquotaIpi: '6f2f3e01-521d-4a14-8167-eed31cd1e698',
+  aliquotaIss: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f',
+  issRetido: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e',
+  itemListaServico: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd',
+  position: '50184293-008d-4d8e-84a4-d99f5d86ef98',
+  charge: '390bbb03-c3e8-4580-942a-897383695974',
+  company: '34b09c03-ae49-4293-8c08-c4e5a2b7c3bf',
+  product: '81e0fdc3-525c-4e07-adff-47327baca957',
+  searchVector: '809a78c5-3a28-481e-a9c8-fea97a026a68',
+  focusNFe: 'd156564a-6e20-4c43-a61b-e2ee8ca4fcbc',
+  discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
+  timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
+  codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
+  numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
+  classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
+  unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
+  justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
+  dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
+  numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
+  createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -319,6 +396,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
+  notaFiscal: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

@@ -10,6 +10,7 @@ export enum FileFolder {
   ServerlessFunction = 'serverless-function',
   BillingSubscriptionBill = 'billing-subscription-bill',
   ChargeBill = 'charge-bill',
+  Invoice = 'invoice',
 }
 
 registerEnumType(FileFolder, {
@@ -41,6 +42,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: true,
   },
   [FileFolder.ChargeBill]: {
+    ignoreExpirationToken: true,
+  },
+  [FileFolder.Invoice]: {
     ignoreExpirationToken: true,
   },
 };

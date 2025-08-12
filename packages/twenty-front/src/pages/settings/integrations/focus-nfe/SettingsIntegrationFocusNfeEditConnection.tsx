@@ -20,10 +20,24 @@ import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   id: z.string(),
-  integrationName: z.string().min(1),
+  name: z.string().min(1),
   token: z.string().optional(),
+  companyName: z.string().min(1),
+  cnpj: z.string().min(14),
+  cpf: z.string().optional().nullable(),
+  ie: z.string().min(1),
+  inscricaoMunicipal: z.string(),
+  cnaeCode: z.string(),
+  cep: z.string().min(1),
+  street: z.string(),
+  number: z.string(),
+  neighborhood: z.string(),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  taxRegime: z.string(),
 });
 
 export type SettingsEditIntegrationFocusNfeConnectionFormValues = z.infer<
@@ -69,8 +83,21 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
       resolver: zodResolver(settingsIntegrationFocusNfeConnectionFormSchema),
       defaultValues: {
         id: activeConnection?.id,
-        integrationName: activeConnection?.integrationName,
+        name: activeConnection?.name,
         token: activeConnection?.token,
+        companyName: activeConnection?.companyName,
+        cnpj: activeConnection?.cnpj,
+        cpf: activeConnection?.cpf || null,
+        ie: activeConnection?.ie || undefined,
+        inscricaoMunicipal: activeConnection?.inscricaoMunicipal,
+        cnaeCode: activeConnection?.cnaeCode || undefined,
+        cep: activeConnection?.cep,
+        street: activeConnection?.street,
+        number: activeConnection?.number,
+        neighborhood: activeConnection?.neighborhood,
+        city: activeConnection?.city,
+        state: activeConnection?.state,
+        taxRegime: activeConnection?.taxRegime,
       },
     });
 
@@ -82,8 +109,21 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
     try {
       await updateFocusNfeIntegration({
         id: formValues?.id,
-        integrationName: formValues?.integrationName,
-        token: formValues?.token ?? undefined,
+        name: formValues?.name,
+        token: formValues?.token,
+        companyName: formValues?.companyName,
+        cnpj: formValues?.cnpj,
+        cpf: formValues?.cpf || null,
+        ie: formValues?.ie || null,
+        inscricaoMunicipal: formValues?.inscricaoMunicipal,
+        cnaeCode: formValues?.cnaeCode || null,
+        cep: formValues?.cep,
+        street: formValues?.street,
+        number: formValues?.number,
+        neighborhood: formValues?.neighborhood,
+        city: formValues?.city,
+        state: formValues?.state,
+        taxRegime: formValues?.taxRegime,
       });
 
       navigate(SettingsPath.IntegrationFocusNfe);
@@ -96,7 +136,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={`Edit ${activeConnection?.integrationName}`}
+      title={`Edit ${activeConnection?.name}`}
       links={[
         {
           children: 'Workspace',
@@ -110,7 +150,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
           children: integration.text,
           href: `${settingsIntegrationsPagePath}/focus-nfe`,
         },
-        { children: `Edit ${activeConnection?.integrationName}` },
+        { children: `Edit ${activeConnection?.name}` },
       ]}
       actionButton={
         <SaveAndCancelButtons
