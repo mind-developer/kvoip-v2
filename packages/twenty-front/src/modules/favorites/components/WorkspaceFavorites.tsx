@@ -1,3 +1,4 @@
+import { FAVORITES_KVOIP_SYSTEM_EXCLUDE_ITEMS } from '@/favorites/constants/FavoritesKvoipSystemExcludeItems';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
@@ -16,7 +17,8 @@ export const WorkspaceFavorites = () => {
 
   const filteredWorkspaceFavoritesObjectMetadataItems =
     workspaceFavoritesObjectMetadataItems.filter(
-      (item: any) => !['traceables', 'chatbots'].includes(item.namePlural),
+      (item: any) =>
+        !FAVORITES_KVOIP_SYSTEM_EXCLUDE_ITEMS.includes(item.namePlural),
     );
 
   return (

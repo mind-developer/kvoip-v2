@@ -5,17 +5,17 @@ import { isDefined, removeUndefinedFields } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
-import { transformCoreWorkspaceToWorkspaces } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transform-core-workpace-to-workspaces.util';
-import { transformWorkspaceMemberToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/utils/transfsorm-workspace-member-to-owner.util';
+import { transformCoreWorkspaceToWorkspaces } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/utils/transform-core-workpace-to-workspaces.util';
+import { transformWorkspaceMemberToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/utils/transfsorm-workspace-member-to-owner.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner-entity';
-import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 @Injectable()
-export class WorkspacesService {
-  private readonly logger = new Logger(WorkspacesService.name);
+export class TenantService {
+  private readonly logger = new Logger(TenantService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -36,7 +36,7 @@ export class WorkspacesService {
       return;
 
     const workspacesRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspacesWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
         adminWorkspace.id,
         'workspaces',
         {
@@ -100,7 +100,7 @@ export class WorkspacesService {
     if (!isDefined(adminWorkspace) || adminWorkspace.id === workspaceId) return;
 
     const workspacesRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspacesWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
         adminWorkspace.id,
         'workspaces',
       );

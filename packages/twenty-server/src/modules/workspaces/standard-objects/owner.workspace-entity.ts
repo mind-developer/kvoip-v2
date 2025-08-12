@@ -20,7 +20,6 @@ import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -30,7 +29,7 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
+import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -69,7 +68,7 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.userId,
-    type: FieldMetadataType.UUID,
+    type: FieldMetadataType.TEXT,
     label: msg`User Id`,
     description: msg`Associated User Id`,
   })
@@ -93,7 +92,6 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s phone number`,
     icon: 'IconPhone',
   })
-  @WorkspaceIsDeprecated()
   phone: string;
 
   @WorkspaceField({
@@ -130,10 +128,10 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Workspaces`,
     description: msg`Workspaces linked to the person.`,
     icon: 'IconFileImport',
-    inverseSideTarget: () => WorkspacesWorkspaceEntity,
+    inverseSideTarget: () => TenantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  workspaces: Relation<WorkspacesWorkspaceEntity[]>;
+  workspaces: Relation<TenantWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.position,

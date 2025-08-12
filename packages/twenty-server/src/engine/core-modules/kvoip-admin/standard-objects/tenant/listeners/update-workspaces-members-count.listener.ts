@@ -10,8 +10,8 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { WorkspacesWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/workspaces-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 @Injectable()
 export class UpdateWorkspacesMebersCountListener {
@@ -28,7 +28,7 @@ export class UpdateWorkspacesMebersCountListener {
     >,
   ) {
     const workspacesRepository =
-      await this.twentyORMManager.getRepository<WorkspacesWorkspaceEntity>(
+      await this.twentyORMManager.getRepository<TenantWorkspaceEntity>(
         'workspaces',
       );
 

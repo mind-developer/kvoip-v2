@@ -2,9 +2,9 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { KvoipAdminModule } from 'src/engine/core-modules/kvoip-admin/kvoip-admin.module';
-import { UpdateWorkspacesMebersCountListener } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/listeners/update-workspaces-members-count.listener';
-import { WorkspacesService } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/services/workspaces.service';
-import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/standard-objects/workspaces/subscribers/worskspace.subsciber';
+import { UpdateWorkspacesMebersCountListener } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/listeners/update-workspaces-members-count.listener';
+import { TenantService } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/services/tenant.service';
+import { WorkspaceSubscriber } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/subscribers/worskspace.subsciber';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
@@ -15,8 +15,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
   providers: [
     UpdateWorkspacesMebersCountListener,
     WorkspaceSubscriber,
-    WorkspacesService,
+    TenantService,
   ],
-  exports: [WorkspacesService],
+  exports: [TenantService],
 })
 export class KvoipAdminStandardObjectModule {}

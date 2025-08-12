@@ -1,4 +1,4 @@
 export const KVOIP_ADMIN_STANRD_BOJECT_ICONS = {
-  workspaces: 'IconBuildingSkyscraper',
+  tenant: 'IconBuildingSkyscraper',
   owner: 'IconUser',
 };
