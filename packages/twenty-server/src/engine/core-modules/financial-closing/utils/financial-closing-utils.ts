@@ -120,8 +120,7 @@ export async function getAmountToBeChargedToCompanies(
     }
 
     results.push({
-      companyName: company.name,
-      // company: company,
+      data: company,
       amountToBeCharged: companyConsuption,
       billingModel: company.billingModel,
     });
@@ -359,7 +358,7 @@ export async function getDiscountForCompany(
   value: number,
 ): Promise<number> {
 
-  if (!value || !company.typeDiscount || !company.discount || company.quantitiesRemainingFinancialClosingsDiscounts == 0) {
+  if (!value || !company.typeDiscount || !company.discount || company.quantitiesRemainingFinancialClosingsDiscounts == 0 || company.discount <= 0) {
     return value;
   }
 

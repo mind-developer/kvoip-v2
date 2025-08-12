@@ -21,4 +21,5 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   subscriptionsQueue = 'subscriptions-queue',
   chargeQueue = 'charge-queue',
+  financialClosingQueue = 'financial-closing-queue',
 }
