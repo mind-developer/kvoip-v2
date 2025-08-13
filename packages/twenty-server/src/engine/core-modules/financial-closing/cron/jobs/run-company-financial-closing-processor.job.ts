@@ -20,7 +20,7 @@ export class RunCompanyFinancialClosingJobProcessor {
   @Process(RunCompanyFinancialClosingJobProcessor.name)
   async handle(data: CompanyFinancialClosingJobData): Promise<void> {
     this.logger.log(
-      `🏦 🏦 🏦 🏦 🏦 🏦 2 Processing company for financial closing ${data.financialClosingId} in workspace ${data.workspaceId}`
+      `🏦 🏦 🏦 🏦 🏦 🏦 2 Processing company for financial closing ${data.financialClosing.id} in workspace ${data.workspaceId}`
     );
 
     this.logger.log(`Company: ${JSON.stringify(data.company, null, 2)}`);
@@ -30,6 +30,7 @@ export class RunCompanyFinancialClosingJobProcessor {
     // await this.financialClosingChargeService.test();
 
     // await this.financialClosingChargeService.emitChargeForCompany(
+    
     //   data.workspaceId,
     //   data.company,
     //   data.amountToBeCharged,

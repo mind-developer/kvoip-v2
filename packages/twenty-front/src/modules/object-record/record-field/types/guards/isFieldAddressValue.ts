@@ -9,6 +9,7 @@ export const addressSchema = z.object({
   addressState: z.string().nullable(),
   addressPostcode: z.string().nullable(),
   addressCountry: z.string().nullable(),
+  addressNumber: z.string().nullable(),
   addressLat: z.number().nullable(),
   addressLng: z.number().nullable(),
 });

@@ -57,6 +57,7 @@ export const SettingsDataModelFieldAddressForm = ({
     addressCity: null,
     addressState: null,
     addressPostcode: null,
+    addressNumber: null,
     addressCountry: null,
     addressLat: null,
     addressLng: null,

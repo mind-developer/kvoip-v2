@@ -97,4 +97,22 @@ export class BillingService {
 
     return subscriptionItem?.hasReachedCurrentPeriodCap === false;
   }
+
+  async getProductLimitByProductKey(
+    workspaceId: string,
+    productKey: Omit<BillingProductKey, 'BASE_PRODUCT'>,
+  ) {
+    if (!this.isBillingEnabled()) return;
+
+    const { billingProduct } =
+      await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+        workspaceId,
+      );
+
+    const limit = billingProduct.limits.find(
+      (limit) => limit.productKey === productKey,
+    );
+
+    return limit;
+  }
 }

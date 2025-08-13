@@ -1,15 +1,25 @@
 import gql from 'graphql-tag';
 
 export const GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE = gql`
-  query GetFocusNfeIntegrationsByWorkspace($workspaceId: String!) {
-    getFocusNfeIntegrationsByWorkspace(workspaceId: $workspaceId) {
+  query GetFocusNfeIntegrationsByWorkspace {
+    getFocusNfeIntegrationsByWorkspace {
       id
-      integrationName
-      createdAt
       status
-      workspace {
-        displayName
-      }
+      name
+      token
+      companyName
+      cnpj
+      cpf
+      ie
+      inscricaoMunicipal
+      cnaeCode
+      cep
+      street
+      number
+      neighborhood
+      city
+      state
+      taxRegime
     }
   }
 `;

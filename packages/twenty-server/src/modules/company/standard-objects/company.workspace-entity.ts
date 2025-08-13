@@ -41,17 +41,22 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
 import { TYPE_DISCOUNT_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/type-discount.constants';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
 const CPF_CNPJ_FIELD_NAME = 'cpfCnpj';
 const INSCRICAO_ESTADUAL_FIELD_NAME = 'inscricaoEstadual';
+const EMAILS_FIELD_NAME = 'emails';
 
 export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
   { name: CPF_CNPJ_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: INSCRICAO_ESTADUAL_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
 ];
 
 @WorkspaceEntity({
@@ -168,6 +173,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   cpfCnpj: string | null;
 
   @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.inscricaoMunicipal,
+    type: FieldMetadataType.TEXT,
+    label: msg`Inscrição Municipal`,
+    description: msg`Inscrição municipal do prestador de serviços`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  inscricaoMunicipal: string | null;
+
+  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.INSCRICAO_ESTADUAL,
     type: FieldMetadataType.TEXT,
     label: msg`Inscrição Estadual`,
@@ -226,6 +241,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.emails,
+    type: FieldMetadataType.EMAILS,
+    label: msg`Emails`,
+    description: msg`Contact’s Emails`,
+    icon: 'IconMail',
+  })
+  @WorkspaceIsUnique()
+  emails: EmailsMetadata;
+
   // Relations
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
@@ -250,6 +275,17 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   charges: Relation<ChargeWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.product,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Products`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => ProductWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  products: Relation<ProductWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
@@ -338,6 +374,17 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.notaFiscal,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Nota Fiscal`,
+    description: msg`Notas fiscais to the company`,
+    icon: 'IconNotes',
+    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,

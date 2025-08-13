@@ -6,11 +6,19 @@ export const CREATE_FOCUS_NFE_INTEGRATION = gql`
   ) {
     createFocusNfeIntegration(createInput: $createInput) {
       id
-      integrationName
       status
-      workspace {
-        id
-      }
+      name
+      cnpj
+      cpf
+      ie
+      cnaeCode
+      cep
+      street
+      number
+      neighborhood
+      city
+      state
+      taxRegime
     }
   }
 `;

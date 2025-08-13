@@ -59,7 +59,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
 }: SettingsIntegrationFocusNfeIssuerFormProps) => {
   const { control } = useFormContext<IssuerFormValues>();
 
-  // TODO: Add masks for CNPJ, CPF, CEP, IE, CNAE if available/needed
+  // TODO: Add masks for CNPJ, CPSettingsIntegrationFocusNfeIssuerFormF, CEP, IE, CNAE if available/needed
   // For now, they are simple text inputs.
 
   return (

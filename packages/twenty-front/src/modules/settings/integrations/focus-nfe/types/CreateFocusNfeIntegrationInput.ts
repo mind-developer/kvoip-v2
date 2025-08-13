@@ -2,5 +2,5 @@ import { FocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/Foc
 
 export type CreateFocusNfeIntegrationInput = Omit<
   FocusNfeIntegration,
-  'id' | 'workspace' | 'workspaceId' | 'disabled'
+  'id' | 'disabled' | 'status'
 >;

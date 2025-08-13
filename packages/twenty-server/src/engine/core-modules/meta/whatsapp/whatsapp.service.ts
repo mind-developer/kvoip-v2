@@ -529,6 +529,8 @@ export class WhatsappService {
         const createdAtDate = waCreatedAt.toDate().getTime();
         const timeDifference = (now.getTime() - createdAtDate) / 1000 / 60;
 
+        if (!waDoc.workspaceId) return;
+
         const whatsappRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
             waDoc.workspaceId,

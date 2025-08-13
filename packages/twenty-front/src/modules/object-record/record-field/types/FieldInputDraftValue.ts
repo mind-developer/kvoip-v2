@@ -55,6 +55,7 @@ export type FieldAddressDraftValue = {
   addressState: string | null;
   addressPostcode: string | null;
   addressCountry: string | null;
+  addressNumber: string | null;
   addressLat: number | null;
   addressLng: number | null;
 };

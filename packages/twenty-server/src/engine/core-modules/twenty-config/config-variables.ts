@@ -543,6 +543,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
+    description: 'Enabled or disable billing on worlfow executions',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  IS_BILLING_WORKFLOW_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
     description: 'Link required for billing plan',
     type: ConfigVariableType.STRING,
   })
@@ -1195,6 +1203,19 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   FIREBASE_APP_ID: string;
+
+  @IsString()
+  @IsOptional()
+  FOCUS_NFE_BASE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Last number rps issued',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  LAST_NUMBER_RPS: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
