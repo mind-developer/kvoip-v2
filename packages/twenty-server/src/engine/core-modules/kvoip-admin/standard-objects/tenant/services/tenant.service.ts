@@ -35,33 +35,44 @@ export class TenantService {
     if (!isDefined(adminWorkspace) || adminWorkspace.id === workspace.id)
       return;
 
-    const workspacesRepository =
+    const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
         adminWorkspace.id,
-        'workspaces',
+        'tenant',
         {
           shouldBypassPermissionChecks: true,
         },
       );
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-      );
-
-    const existingWorkspace = await workspacesRepository.findOne({
+    const existingWorkspace = await this.workspaceRepository.findOne({
       where: {
-        coreWorkspaceId: workspace.id,
+        id: workspace.id,
       },
     });
 
-    await workspacesRepository.save({
-      ...existingWorkspace,
+    const existingTenant = await tenantRepository.findOne({
+      where: [
+        {
+          coreWorkspaceId: workspace.id,
+        },
+        {
+          ownerEmail: workspace?.creatorEmail,
+        },
+      ],
+    });
+
+    await tenantRepository.save({
+      ...existingTenant,
       ...removeUndefinedFields(transformCoreWorkspaceToWorkspaces(workspace)),
     });
 
-    if (isDefined(workspace?.creatorEmail)) {
+    if (isDefined(existingWorkspace) && isDefined(workspace.creatorEmail)) {
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+          workspace.id,
+          'workspaceMember',
+        );
+
       const existingWokrpsaceMember = await workspaceMemberRepository.findOne({
         where: {
           userEmail: workspace?.creatorEmail,
@@ -99,20 +110,20 @@ export class TenantService {
 
     if (!isDefined(adminWorkspace) || adminWorkspace.id === workspaceId) return;
 
-    const workspacesRepository =
+    const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
         adminWorkspace.id,
-        'workspaces',
+        'tenant',
       );
 
-    const workspaceToDelete = await workspacesRepository.findOne({
+    const tenantToDelete = await tenantRepository.findOne({
       where: {
         coreWorkspaceId: workspaceId,
       },
     });
 
-    if (isDefined(workspaceToDelete)) {
-      await workspacesRepository.delete(workspaceToDelete.id);
+    if (isDefined(tenantToDelete)) {
+      await tenantRepository.delete(tenantToDelete.id);
     }
   }
 

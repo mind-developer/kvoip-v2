@@ -47,10 +47,10 @@ export const AdminWorkspaceNavigationItems = () => {
         <NavigationDrawerSectionTitle label={t`Admin`} />
         <NavigationDrawerItem
           label={t`Workspaces`}
-          to={getNavigationPath('workspaces')}
+          to={getNavigationPath('tenants')}
           // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
           onClick={() => {
-            navigate(getNavigationPath('workspaces'));
+            navigate(getNavigationPath('tenants'));
           }}
           Icon={IconBuildingSkyscraper}
         />
