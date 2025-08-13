@@ -55,6 +55,7 @@
 
 import { Logger, Scope } from '@nestjs/common';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
+import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
 import { getAmountToBeChargedToCompanies, getCompaniesForFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -71,17 +72,12 @@ export type RunFinancialClosingJob = {
 };
 
 export type CompanyFinancialClosingJobData = {
-  financialClosingId: string;
+  financialClosing: FinancialClosing;
   workspaceId: string;
   company: any;
   amountToBeCharged: number;
   billingModel: string;
 };
-
-      // data: company,
-      // amountToBeCharged: companyConsuption,
-      // billingModel: company.billingModel,
-
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -124,7 +120,7 @@ export class RunFinancialClosingJobProcessor {
         await this.messageQueueService.add<CompanyFinancialClosingJobData>(
           RunCompanyFinancialClosingJobProcessor.name,
           {
-            financialClosingId,
+            financialClosing,
             workspaceId,
             company: company.data,
             amountToBeCharged: company.amountToBeCharged,

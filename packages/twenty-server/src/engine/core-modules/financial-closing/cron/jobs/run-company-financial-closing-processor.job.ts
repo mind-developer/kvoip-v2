@@ -29,6 +29,13 @@ export class RunCompanyFinancialClosingJobProcessor {
 
     await this.financialClosingChargeService.test();
 
+    await this.financialClosingChargeService.emitChargeForCompany(
+      data.workspaceId,
+      data.company,
+      data.amountToBeCharged,
+      data.financialClosing,
+    );
+
     // Aqui você coloca a lógica para cobrar/processar cada empresa individualmente
   }
 }

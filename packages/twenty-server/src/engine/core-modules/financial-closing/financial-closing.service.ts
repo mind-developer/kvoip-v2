@@ -102,21 +102,7 @@ export class FinancialClosingService {
     if (oldPattern !== newPattern) {
       await this.scheduleCronJob(updated.id, updated.workspace.id, jobId, newPattern);
     }
-
-
-
-
-    // const workspaceId = updated.workspaceId ?? updated.workspace.id;
-
-    // const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, updated);
-
-    // const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, this.twentyORMGlobalManager, companies, updated);
-
-    // this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
-    // this.logger.log(`Companies to be charged: ${JSON.stringify(companiesWithAmount)}`);
-
     
-
     return updated;
   }
 
