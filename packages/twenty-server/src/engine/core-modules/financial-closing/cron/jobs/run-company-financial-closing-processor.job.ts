@@ -27,14 +27,14 @@ export class RunCompanyFinancialClosingJobProcessor {
     this.logger.log(`Amount to be charged: ${data.amountToBeCharged}`);
     this.logger.log(`Billing model: ${data.billingModel}`);
 
-    await this.financialClosingChargeService.test();
+    // await this.financialClosingChargeService.test();
 
-    await this.financialClosingChargeService.emitChargeForCompany(
-      data.workspaceId,
-      data.company,
-      data.amountToBeCharged,
-      data.financialClosing,
-    );
+    // await this.financialClosingChargeService.emitChargeForCompany(
+    //   data.workspaceId,
+    //   data.company,
+    //   data.amountToBeCharged,
+    //   data.financialClosing,
+    // );
 
     // Aqui você coloca a lógica para cobrar/processar cada empresa individualmente
   }
