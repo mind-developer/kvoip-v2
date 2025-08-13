@@ -11,12 +11,14 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/searc
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
@@ -41,6 +43,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
   shortcut: 'W',
   labelIdentifierStandardId: TENANT_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceDuplicateCriteria([['ownerEmail'], ['coreWorkspaceId']])
 @WorkspaceIsSearchable()
 export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -50,6 +53,7 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workspace name`,
     icon: 'IconBuildingSkyscraper',
   })
+  @WorkspaceIsNullable()
   name: string;
 
   @WorkspaceField({
@@ -59,7 +63,8 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workspace woner primary email.`,
     icon: 'IconLink',
   })
-  ownerEmail: string;
+  @WorkspaceIsNullable()
+  ownerEmail: string | null;
 
   @WorkspaceField({
     standardId: TENANT_STANDARD_FIELD_IDS.membersCount,
@@ -89,6 +94,7 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Core schema workspace id`,
     description: msg`The workspace id from the core schema.`,
   })
+  @WorkspaceIsUnique()
   @WorkspaceIsSystem()
   coreWorkspaceId: string;
 

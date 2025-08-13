@@ -72,8 +72,9 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`User Id`,
     description: msg`Associated User Id`,
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  userId: string;
+  userId: string | null;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.emails,
@@ -82,8 +83,9 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s Emails`,
     icon: 'IconMail',
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsUnique()
-  emails: EmailsMetadata;
+  emails: EmailsMetadata | null;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.phone,
@@ -92,7 +94,8 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s phone number`,
     icon: 'IconPhone',
   })
-  phone: string;
+  @WorkspaceIsNullable()
+  phone: string | null;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.phones,
@@ -101,6 +104,7 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s phone numbers`,
     icon: 'IconPhone',
   })
+  @WorkspaceIsNullable()
   phones: PhonesMetadata | null;
 
   @WorkspaceField({
@@ -110,7 +114,8 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s city`,
     icon: 'IconMap',
   })
-  city: string;
+  @WorkspaceIsNullable()
+  city: string | null;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.avatarUrl,
@@ -119,8 +124,9 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s avatar`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @WorkspaceRelation({
     standardId: OWNER_STANDARD_FIELD_IDS.workspaces,
