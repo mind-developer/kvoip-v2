@@ -1,11 +1,10 @@
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
-export const transformWorkspaceMemberToOwner = (
-  member: WorkspaceMemberWorkspaceEntity,
-) => ({
-  name: member.name,
-  phone: member.userPhone?.primaryPhoneNumber,
-  phones: member.userPhone,
-  avatarUrl: member.avatarUrl,
-  userId: member.userId,
+export const transformDatabaseUserToOwner = (user: User) => ({
+  name: {
+    firstName: user.firstName,
+    lasName: user.lastName,
+  },
+  avatarUrl: user.defaultAvatarUrl,
+  userId: user.id,
 });

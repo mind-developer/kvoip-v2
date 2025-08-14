@@ -6,10 +6,10 @@ import { DataSource } from 'typeorm';
 
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { transformCoreWorkspaceToWorkspaces } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/utils/transform-core-workpace-to-workspaces.util';
-import { transformWorkspaceMemberToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/utils/transfsorm-workspace-member-to-owner.util';
+import { transformDatabaseUserToOwner } from 'src/engine/core-modules/kvoip-admin/standard-objects/tenant/utils/transfsorm-workspace-member-to-owner.util';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
 import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
@@ -24,9 +24,12 @@ export class TenantService {
     private readonly kvoipAdminService: KvoipAdminService,
   ) {}
 
-  // TODO: This is a exemple on how to manipulate entity repositories inside typeorm subcribers, Move this to a README file inside kvoip-admin module.
   private get workspaceRepository() {
     return this.dataSource.getRepository(Workspace);
+  }
+
+  private get userRepository() {
+    return this.dataSource.getRepository(User);
   }
 
   async handleWorkspaceUpsert(workspace: Workspace) {
@@ -81,41 +84,76 @@ export class TenantService {
     });
 
     if (isDefined(workspace.creatorEmail)) {
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
-          'workspaceMember',
-        );
-
-      const existingWokrpsaceMember = await workspaceMemberRepository.findOne({
+      const existingUser = await this.userRepository.findOne({
         where: {
-          userEmail: workspace?.creatorEmail,
+          email: workspace?.creatorEmail,
         },
       });
 
-      if (isDefined(existingWokrpsaceMember)) {
-        const ownerRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<OwnerWorkspaceEntity>(
-            adminWorkspace.id,
-            'owner',
-          );
-
-        const existingOwner = await ownerRepository.findOne({
-          where: {
-            emails: {
-              primaryEmail: existingWokrpsaceMember.userEmail,
-            },
-          },
-        });
-
-        await ownerRepository.save({
-          ...existingOwner,
-          ...transformWorkspaceMemberToOwner(existingWokrpsaceMember),
-          emails: {
-            primaryEmail: existingWokrpsaceMember.userEmail,
-          },
+      if (isDefined(existingUser)) {
+        await this.handleUserUpsert({
+          user: existingUser,
+          workspaceId: existingWorkspace.id,
         });
       }
+    }
+  }
+
+  async handleUserUpsert({
+    user,
+    workspaceId,
+  }: {
+    user: User;
+    workspaceId?: string;
+  }) {
+    const adminWorkspace = await this.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace)) return;
+
+    const ownerRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<OwnerWorkspaceEntity>(
+        adminWorkspace.id,
+        'owner',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const existingOwner = await ownerRepository.findOne({
+      where: {
+        emails: {
+          primaryEmail: user.email,
+        },
+      },
+    });
+
+    const owner = await ownerRepository.save({
+      ...existingOwner,
+      ...transformDatabaseUserToOwner(user),
+      emails: {
+        primaryEmail: user.email,
+      },
+    });
+
+    const tenantRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
+        adminWorkspace.id,
+        'tenant',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const tenant = await tenantRepository.findOne({
+      where: {
+        coreWorkspaceId: workspaceId,
+      },
+    });
+
+    if (isDefined(tenant)) {
+      await tenantRepository.update(tenant.id, {
+        ownerId: owner.id,
+      });
     }
   }
 
@@ -128,6 +166,9 @@ export class TenantService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
         adminWorkspace.id,
         'tenant',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const tenantToDelete = await tenantRepository.findOne({

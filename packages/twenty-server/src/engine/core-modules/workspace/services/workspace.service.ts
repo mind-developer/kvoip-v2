@@ -446,6 +446,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     await this.workspaceRepository.update(workspace.id, {
+      id: workspace.id,
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
       creatorEmail: user.email,
     });
@@ -464,6 +465,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await this.workspaceRepository.update(workspace.id, {
+      id: workspace.id,
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       version: extractVersionMajorMinorPatch(appVersion),
@@ -657,6 +659,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       }
 
       await this.workspaceRepository.update(workspace.id, {
+        id: workspace.id,
         pabxCompanyId: companyId,
         pabxTrunkId: trunkAPIId,
         pabxDialingPlanId: dialingPlanAPIId,

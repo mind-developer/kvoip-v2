@@ -14,7 +14,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 @Injectable()
-export class UpdateWorkspacesMebersCountListener {
+export class WorkspacesMeberistener {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -32,13 +32,13 @@ export class UpdateWorkspacesMebersCountListener {
         'tenant',
       );
 
-    const workspace = await tenantRepository.findOne({
+    const tenant = await tenantRepository.findOne({
       where: {
         coreWorkspaceId: payload.workspaceId,
       },
     });
 
-    if (!isDefined(workspace)) return;
+    if (!isDefined(tenant)) return;
 
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
@@ -55,7 +55,7 @@ export class UpdateWorkspacesMebersCountListener {
       return;
     }
 
-    await tenantRepository.update(workspace.id, {
+    await tenantRepository.update(tenant.id, {
       membersCount: workspaceMembersCount,
     });
   }
