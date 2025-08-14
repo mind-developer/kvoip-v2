@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -18,12 +18,14 @@ import { getAmountToBeChargedToCompanies, getCompaniesForFinancialClosing } from
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
+import { InterCustomerType } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
-
+@Injectable()
 export class FinancialClosingChargeService {
   private readonly logger = new Logger(FinancialClosingChargeService.name);
 
   constructor(
+    
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
   ) {}
@@ -32,103 +34,116 @@ export class FinancialClosingChargeService {
     this.logger.log(`SERVICE INTERNO EXECUTADO`);
   }
 
-  // async emitChargeForCompany(
-  //   workspaceId: string,
-  //   company: CompanyWorkspaceEntity, 
-  //   amountToBeCharged: number,
-  //   financialClosing?: FinancialClosing, 
-  // ): Promise<{ requestCode: string }> {
+  async emitChargeForCompany(
+    workspaceId: string,
+    company: CompanyWorkspaceEntity, 
+    amountToBeCharged: number,
+    financialClosing: FinancialClosing, 
+  ): Promise<{ requestCode: string }> {
     
-  //   if (!true) {
-  //     // Inserir aqui qualquer validação de company
-  //   }
+    if (!true) {
+      // Inserir aqui qualquer validação de company
+    }
 
-  //   const attachmentRepository =
-  //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
-  //       workspaceId,
-  //       'attachment',
-  //       { shouldBypassPermissionChecks: true },
-  //     );
+    const attachmentRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+        workspaceId,
+        'attachment',
+        { shouldBypassPermissionChecks: true },
+      );
 
-  //   const client = {
-  //     nome: company.name || '',
-  //     cpfCnpj: company.cpfCnpj || '',
-  //     tipoPessoa: chargeEntityTypeToInterCustomerTypeMap(company.entityType),
-  //     endereco: company.address?.addressStreet1 || 'Rua ...',
-  //     // telefone: company.phone || '',
-  //     telefone: '',
-  //     cep: company.address?.addressZipCode || '00000000',
-  //     cidade: company.address?.addressCity || '',
-  //     uf: company.address?.addressState || 'SP',
-  //     // ddd: company.phone?.replace(/^\+/, '') || '',
-  //     ddd: '',
-  //     bairro: company.address?.addressStreet1 || '',
-  //     // email: company.emails?.primaryEmail || '',
-  //     email: '',
-  //     complemento: '-',
-  //     numero: '-',
-  //   };
+    this.logger.log(`TESTE: Emissão de cobrança para empresa ${company.name} - ${company.id} no workspace ${workspaceId}`); 
 
-  //   const numberCharge = `${company.id.slice(0, 8)}-${Date.now()}`;
+    const client = {
+      nome: company.name || '',
+      cpfCnpj: company.cpfCnpj || '',
+      tipoPessoa: InterCustomerType.JURIDICA,
+      endereco: company.address?.addressStreet1 || 'Rua ...',
+      telefone: '',
+      cep: company.address?.addressZipCode || '00000000',
+      cidade: company.address?.addressCity || '',
+      uf: company.address?.addressState || 'SP',
+      // ddd: company.phone?.replace(/^\+/, '') || '',
+      ddd: '',
+      bairro: company.address?.addressStreet1 || '',
+      email: company.emails.primaryEmail || '',
+      complemento: '-',
+      numero: '-',
+    };
 
-  //   const getSlipDueDay = (): string => {
-  //     if (company.slipDueDay) {
-  //       const today = new Date();
-  //       let year = today.getFullYear();
-  //       let month = today.getMonth(); // 0-11
+    this.logger.log(`Dados da coimpany: ${JSON.stringify(company, null, 2)}`);
 
-  //       // Se o dia do vencimento já passou no mês atual, joga para o próximo mês
-  //       if (today.getDate() > company.slipDueDay) {
-  //         month++;
-  //         if (month > 11) {
-  //           month = 0;
-  //           year++;
-  //         }
-  //       }
+    this.logger.log(`Dados do cliente: ${JSON.stringify(client, null, 2)}`);
+    
+    const numberCharge = `${company.id.slice(0, 8)}-${Date.now()}`;
 
-  //       // Monta a data
-  //       const dueDate = new Date(year, month, company.slipDueDay);
-  //       return dueDate.toISOString().split('T')[0]; // YYYY-MM-DD
-  //     }
+    this.logger.log(`Número da cobrança: ${numberCharge}`);
 
-  //     // Caso não tenha slipDueDay, adiciona +10 dias a partir de hoje
-  //     const date = new Date();
-  //     date.setDate(date.getDate() + 10);
-  //     return date.toISOString().split('T')[0];
-  //   };
+    const getSlipDueDay = (): string => {
+      if (company.slipDueDay) {
+        const today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth(); // 0-11
 
-  //   try {
-  //     const response =
-  //       await this.interApiService.issueChargeAndStoreAttachment(
-  //         workspaceId,
-  //         attachmentRepository,
-  //         {
-  //           id: company.id,
-  //           authorId: company.id,
-  //           seuNumero: numberCharge,
-  //           valorNominal: amountToBeCharged,
-  //           dataVencimento: getSlipDueDay(),
-  //           numDiasAgenda: 60,
-  //           pagador: { ...client },
-  //           mensagem: { linha1: '-' },
-  //         },
-  //       );
+        // Se o dia do vencimento já passou no mês atual, joga para o próximo mês
+        if (today.getDate() > company.slipDueDay) {
+          month++;
+          if (month > 11) {
+            month = 0;
+            year++;
+          }
+        }
 
-  //     this.logger.log(
-  //       `Cobrança emitida para empresa ${company.name} (Cód: ${response.codigoSolicitacao})`,
-  //     );
+        const dueDate = new Date(year, month, company.slipDueDay);
+        return dueDate.toISOString().split('T')[0]; // YYYY-MM-DD
+      }
 
-  //     return { requestCode: response.codigoSolicitacao };
+      // Caso não tenha slipDueDay, adiciona +10 dias a partir de hoje (Default)
+      const date = new Date();
+      date.setDate(date.getDate() + 10);
+      return date.toISOString().split('T')[0];
+    };
 
-  //   } catch (err) {
-  //     // TODO: realizar o informe e atualizar logs para ser possivel repetir novamente
-  //     this.logger.error(
-  //       `Erro ao emitir cobrança para empresa ${company.name}: ${err.message}`,
-  //       err.stack,
-  //     );
-  //     throw err;
-  //   }
-  // }
+    this.logger.log(`Data de vencimento: ${getSlipDueDay()}`);
+
+    try {
+      const response =
+        await this.interApiService.issueChargeAndStoreAttachment(
+          workspaceId,
+          attachmentRepository,
+          {
+            id: company.id,
+            authorId: company.id,
+            seuNumero: numberCharge,
+            valorNominal: amountToBeCharged,
+            dataVencimento: getSlipDueDay(),
+            numDiasAgenda: 60,
+            pagador: { ...client },
+            mensagem: { linha1: '-' },
+          },
+        );
+
+      this.logger.log(
+        `Cobrança emitida para empresa ${company.name} (Cód: ${response.codigoSolicitacao})`,
+      );
+
+      this.logger.log(
+        `RESPONSE: ${JSON.stringify(response, null, 2)}`,
+      );
+
+      return { requestCode: response.codigoSolicitacao };
+
+    } catch (err) {
+      // TODO: realizar o informe e atualizar logs para ser possivel repetir novamente
+      this.logger.error(
+        `Erro ao emitir cobrança para empresa ${company.name}: ${err.message}`,
+        err.stack,
+      );
+      throw err;
+    }
+
+    // return { requestCode: 'response.codigoSolicitacao' };
+  }
 
   
 

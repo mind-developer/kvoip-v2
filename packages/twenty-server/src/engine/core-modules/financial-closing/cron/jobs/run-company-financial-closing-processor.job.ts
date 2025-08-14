@@ -23,21 +23,18 @@ export class RunCompanyFinancialClosingJobProcessor {
       `🏦 🏦 🏦 🏦 🏦 🏦 2 Processing company for financial closing ${data.financialClosing.id} in workspace ${data.workspaceId}`
     );
 
-    this.logger.log(`Company: ${JSON.stringify(data.company, null, 2)}`);
-    this.logger.log(`Amount to be charged: ${data.amountToBeCharged}`);
-    this.logger.log(`Billing model: ${data.billingModel}`);
+    // this.logger.log(`Company: ${JSON.stringify(data.company, null, 2)}`);
+    // this.logger.log(`Amount to be charged: ${data.amountToBeCharged}`);
+    // this.logger.log(`Billing model: ${data.billingModel}`);
 
     // await this.financialClosingChargeService.test();
 
-    // await this.financialClosingChargeService.emitChargeForCompany(
-    
-    //   data.workspaceId,
-    //   data.company,
-    //   data.amountToBeCharged,
-    //   data.financialClosing,
-    // );
-
-    // Aqui você coloca a lógica para cobrar/processar cada empresa individualmente
+    await this.financialClosingChargeService.emitChargeForCompany(
+      data.workspaceId,
+      data.company,
+      data.amountToBeCharged,
+      data.financialClosing,
+    );
   }
 }
 

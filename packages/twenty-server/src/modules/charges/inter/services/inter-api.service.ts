@@ -76,10 +76,15 @@ export class InterApiService {
     const cert = this.formatCertificate(integration.certificate);
     const key = this.formatCertificate(integration.privateKey);
 
+    this.logger.log(
+      `Using certificate for integration ${integration.id} in workspace ${integration.workspace.id}`,
+    );
+
     return new https.Agent({
       cert,
       key,
       rejectUnauthorized: true,
+      // minVersion: 'TLSv1.2',
     });
   }
 

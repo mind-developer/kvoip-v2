@@ -44,8 +44,6 @@ export async function getAmountToBeChargedToCompanies(
 
   for (const company of companies) {
 
-    logger.log(`-------------------------------------------------------------------------------------------------------------`);
-
     let companyConsuption = 0;
 
     switch (company.billingModel) {
@@ -139,17 +137,10 @@ export async function getPrepaidAmountTobeCharged(
     const valueMinimumMonthly = await getValueInCurrencyData(company.valueMinimumMonthly);
     const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
 
-    logger.log(`Gasto minimo ${company.name} - ${company.id}: ${JSON.stringify(valueMinimumMonthly)}`);
-    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
-
     let value = valueMinimumMonthly + valueFixedMonthly;
-
-    logger.log(`Consumo pré-pago para empresa ${company.name} - ${company.id}: ${value}`);
 
     const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, value);
     
-    logger.log(`Consumo pré-pago com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
-
     return valueWithDescount; 
 }
 
@@ -167,28 +158,16 @@ export async function getPostpaidAmountTobeCharged(
 
     const valueMinimumMonthly = await getValueInCurrencyData(company.valueMinimumMonthly);
     const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
-   
-    logger.log(`Consumo pós-pago para empresa ${company.name} - ${company.id}: ${cdrConsuptionValue}`);
-    logger.log(`Gasto minimo ${company.name} - ${company.id}: ${JSON.stringify(valueMinimumMonthly)}`);
-    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
 
     let value = 0;
 
     if (cdrConsuptionValue < valueMinimumMonthly) {
-
         value = valueMinimumMonthly + valueFixedMonthly; 
-
-        logger.log(`Aplicando gasto mínimo para empresa ${company.name} - ${company.id}: ${value}`);
-
     } else {
         value = cdrConsuptionValue + valueFixedMonthly;
-
-        logger.log(`Aplicando valor do consumo para empresa ${company.name} - ${company.id}: ${value}`);
     }
 
     const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, value);
-
-    logger.log(`Valor pós-pago com DESCONTO para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
 
     return valueWithDescount; 
 }
@@ -201,13 +180,8 @@ export async function getPrepaidUnlimitedAmountTobeCharged(
 ) : Promise<number> {
 
     const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
-
-    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
-
     const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, valueFixedMonthly);
     
-    logger.log(`Consumo pré-ilimitado com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
-
     return valueWithDescount; 
 }
 
@@ -219,13 +193,8 @@ export async function getPostpaidUnlimitedAmountTobeCharged(
 ) : Promise<number> {
 
     const valueFixedMonthly = await getValueInCurrencyData(company.valueFixedMonthly);
-
-    logger.log(`Gasto fixo ${company.name} - ${company.id}: ${JSON.stringify(valueFixedMonthly)}`);
-
     const valueWithDescount = await getDiscountForCompany(workspaceId, twentyORMGlobalManager, company, valueFixedMonthly);
     
-    logger.log(`Consumo pós-ilimitado com desconto para empresa ${company.name} - ${company.id}: ${valueWithDescount}`);
-
     return valueWithDescount; 
 }
 
@@ -393,7 +362,7 @@ export async function getDiscountForCompany(
     company.quantitiesRemainingFinancialClosingsDiscounts = newQuantity;
   }
 
-  logger.log(`Valor com desconto para empresa ${company.name} - ${company.id}: ${valueWithDiscount}, total: ${value}, desconto: ${valueDiscount}, tipo: ${company.typeDiscount}, quantidade restante: ${company.quantitiesRemainingFinancialClosingsDiscounts}`);
+  // logger.log(`Valor com desconto para empresa ${company.name} - ${company.id}: ${valueWithDiscount}, total: ${value}, desconto: ${valueDiscount}, tipo: ${company.typeDiscount}, quantidade restante: ${company.quantitiesRemainingFinancialClosingsDiscounts}`);
   return valueWithDiscount < 0 ? 0 : valueWithDiscount;
 }
 
@@ -407,8 +376,6 @@ export async function getValueInCurrencyData(obj: CurrencyMetadata | null | unde
 
   const valueInCurrency = amountMicros / 1000000;
 
-  logger.log(`amountMicros: ${amountMicros}, convertido: ${valueInCurrency}`);
-
   return valueInCurrency || 0;
 }
 
@@ -420,17 +387,3 @@ function validateCompanyBillingModel(company: CompanyWorkspaceEntity, requiredFi
   }
   return null;
 }
-
-
-/*
-
-    tipo de desconto - percent or value     typeDiscount
-    quantidade de desconto - float          discount
-    quantidades de fechamentos restantes com descontos - int         quantitiesRemainingFinancialClosingsDiscounts
-    valor (valor total a ser cobrado de forma fix - sem descontos) - float          totalValueCharged
-    valor de gasto minimo - float      valueMinimumMonthly 
-    valor mensalidade - float         valuefixedMonthly
-    
-    dia de vencimento - int (Para o boleto de cobrança)        slipDueDate
-
-*/

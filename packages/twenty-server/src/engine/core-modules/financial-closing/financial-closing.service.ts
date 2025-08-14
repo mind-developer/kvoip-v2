@@ -30,7 +30,7 @@ export class FinancialClosingService {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
 
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    // private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async create(createInput: CreateFinancialClosingInput): Promise<FinancialClosing> {
