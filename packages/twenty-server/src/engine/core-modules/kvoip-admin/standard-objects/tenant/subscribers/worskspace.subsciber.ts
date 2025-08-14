@@ -40,11 +40,16 @@ export class WorkspaceSubscriber
   }
 
   async afterInsert(event: InsertEvent<Workspace>) {
-    await this.tenantService.handleWorkspaceUpsert(event.entity);
+    if (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail)) {
+      await this.tenantService.handleWorkspaceUpsert(event.entity);
+    }
   }
 
   async afterUpdate(event: UpdateEvent<Workspace>) {
-    if (isDefined(event.entity)) {
+    if (
+      isDefined(event.entity) &&
+      (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail))
+    ) {
       await this.tenantService.handleWorkspaceUpsert(event.entity as Workspace);
     }
   }

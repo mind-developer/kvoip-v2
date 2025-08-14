@@ -32,8 +32,21 @@ export class TenantService {
   async handleWorkspaceUpsert(workspace: Workspace) {
     const adminWorkspace = await this.kvoipAdminWorkspaceExists();
 
-    if (!isDefined(adminWorkspace) || adminWorkspace.id === workspace.id)
-      return;
+    if (!isDefined(adminWorkspace)) return;
+
+    const existingWorkspace = await this.workspaceRepository.findOneBy([
+      {
+        id: workspace.id,
+      },
+      {
+        creatorEmail: workspace.creatorEmail,
+      },
+    ]);
+
+    if (!isDefined(existingWorkspace)) return;
+
+    // Prevent upserting the admin workspace tenant
+    if (existingWorkspace.id === adminWorkspace.id) return;
 
     const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
@@ -43,12 +56,6 @@ export class TenantService {
           shouldBypassPermissionChecks: true,
         },
       );
-
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspace.id,
-      },
-    });
 
     const existingTenant = await tenantRepository.findOne({
       where: [
@@ -61,12 +68,19 @@ export class TenantService {
       ],
     });
 
+    const tenantNewData = removeUndefinedFields(
+      transformCoreWorkspaceToWorkspaces({
+        ...existingWorkspace,
+        ...workspace,
+      }),
+    );
+
     await tenantRepository.save({
       ...existingTenant,
-      ...removeUndefinedFields(transformCoreWorkspaceToWorkspaces(workspace)),
+      ...tenantNewData,
     });
 
-    if (isDefined(existingWorkspace) && isDefined(workspace.creatorEmail)) {
+    if (isDefined(workspace.creatorEmail)) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspace.id,
