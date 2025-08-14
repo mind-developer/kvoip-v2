@@ -27,12 +27,12 @@ export class UpdateWorkspacesMebersCountListener {
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
     >,
   ) {
-    const workspacesRepository =
+    const tenantRepository =
       await this.twentyORMManager.getRepository<TenantWorkspaceEntity>(
-        'workspaces',
+        'tenant',
       );
 
-    const workspace = await workspacesRepository.findOne({
+    const workspace = await tenantRepository.findOne({
       where: {
         coreWorkspaceId: payload.workspaceId,
       },
@@ -55,7 +55,7 @@ export class UpdateWorkspacesMebersCountListener {
       return;
     }
 
-    await workspacesRepository.update(workspace.id, {
+    await tenantRepository.update(workspace.id, {
       membersCount: workspaceMembersCount,
     });
   }
