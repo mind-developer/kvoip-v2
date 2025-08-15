@@ -29,6 +29,13 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
+// TODO: check if this can be deleted
+// export const COMMENT_STANDARD_FIELD_IDS = {
+//   body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
+//   author: '20202020-2ab1-427e-a981-cf089de3a9bd',
+//   activity: '20202020-c8d9-4c30-a35e-dc7f44388070',
+// };
+
 export const API_KEY_STANDARD_FIELD_IDS = {
   name: '20202020-72e6-4079-815b-436ce8a62f23',
   expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
@@ -114,13 +121,6 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
-// TODO: check if this can be deleted
-export const COMMENT_STANDARD_FIELD_IDS = {
-  body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
-  author: '20202020-2ab1-427e-a981-cf089de3a9bd',
-  activity: '20202020-c8d9-4c30-a35e-dc7f44388070',
-};
-
 export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
@@ -157,12 +157,13 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   cdrId: '90cdde6a-eaf2-4b96-8bd9-369a2a851e64',
   typeDiscount: '134bf698-f696-4c43-b8a8-9eb3e6a2cc41',
   discount: '8f18333e-fd58-4a58-86e6-a1257b1f75c5',
-  quantitiesRemainingFinancialClosingsDiscounts: '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
+  quantitiesRemainingFinancialClosingsDiscounts:
+    '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
   totalValueCharged: '7f37e462-60dc-4088-8b84-90702f58abed',
   valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
   valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
   slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
-  
+
   codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
@@ -496,6 +497,12 @@ export const MESSAGE_STANDARD_FIELD_IDS = {
   receivedAt: '20202020-140a-4a2a-9f86-f13b6a979afc',
   messageParticipants: '20202020-7cff-4a74-b63c-73228448cbd9',
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
+};
+
+export const COMMENT_STANDARD_FIELD_IDS = {
+  name: '20202020-4f3b-4b3b-8b3b-7f8d6a1d7d5a',
+  text: '20202020-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+  body: '20202020-8e7f-6a5b-4c3d-2e1f0a9b8c7d',
 };
 
 export const NOTE_STANDARD_FIELD_IDS = {
