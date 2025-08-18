@@ -33,6 +33,7 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { RecordCommentWorkspaceEntity } from 'src/modules/record-comment/standard-objects/record-comment.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
@@ -244,6 +245,22 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('note')
   noteId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.recordComment,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Record Comment`,
+    description: msg`Event record comment`,
+    icon: 'IconTargetArrow',
+    inverseSideTarget: () => RecordCommentWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  recordComment: Relation<RecordCommentWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('recordComment')
+  recordCommentId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task,
