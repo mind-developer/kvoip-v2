@@ -4388,6 +4388,7 @@ msgid "Permissions · {objectLabelSingular}"
 msgstr ""
 
 #. js-lingui-id: 19jdAl
+#: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Person type"
 msgstr ""
