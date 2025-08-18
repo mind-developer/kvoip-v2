@@ -247,22 +247,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   noteId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.recordComment,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Record Comment`,
-    description: msg`Event record comment`,
-    icon: 'IconTargetArrow',
-    inverseSideTarget: () => RecordCommentWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivities',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  recordComment: Relation<RecordCommentWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('recordComment')
-  recordCommentId: string | null;
-
-  @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,
     label: msg`Task`,

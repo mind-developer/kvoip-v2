@@ -32,7 +32,7 @@ export const recordCommentsAllView = (objectMetadataItems: ObjectMetadataEntity[
       {
         fieldMetadataId:
           recordCommentObjectMetadata.fields.find(
-            (field) => field.standardId === RECORD_COMMENT_STANDARD_FIELD_IDS.body
+            (field) => field.standardId === RECORD_COMMENT_STANDARD_FIELD_IDS.bodyV2
           )?.id ?? '',
         position: 1,
         isVisible: true,

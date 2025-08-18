@@ -24,7 +24,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { PERSON_STANDARD_FIELD_IDS, RECORD_COMMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
@@ -42,6 +42,7 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
+import { RecordCommentWorkspaceEntity } from 'src/modules/record-comment/standard-objects/record-comment.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -158,7 +159,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   avatarUrl: string;
 
-  @WorkspaceField({
+  @WorkspaceFeeld({
     standardId: PERSON_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -252,6 +253,22 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.person,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Comment`,
+    description: msg`Person comment`,
+    icon: 'IconMessageCircle',
+    inverseSideTarget: () => RecordCommentWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  recordComment: Relation<RecordCommentWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('recordComment')
+  recordCommentId: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.favorites,

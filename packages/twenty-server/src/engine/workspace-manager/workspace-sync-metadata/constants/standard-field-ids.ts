@@ -335,10 +335,11 @@ export const NOTA_FISCAL_FIELD_IDS = {
 export const RECORD_COMMENT_STANDARD_FIELD_IDS = {
   position: '222ff88e-9b7d-4975-96c0-fc637741bc1e',
   title: 'dd336d24-8212-49c4-8c63-7caf68ebaca8',
-  body: 'd1ab44ec-3847-40ec-ae65-df15d1213d9e',
+  bodyV2: 'd1ab44ec-3847-40ec-ae65-df15d1213d9e',
   searchVector: 'bb6d2565-01b2-49db-ab56-8e0a3f9cf730',
   createdBy: '4bd0d0c3-cfbb-4cd5-b3b5-6e4cee3b8382',
   timelineActivities: 'aff3867e-c1b3-4eb8-bc38-3cd2d1393f7a',
+  people: '9e10078d-8d29-49e6-b219-49b260e70ae4',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -558,6 +559,8 @@ export const PERSON_STANDARD_FIELD_IDS = {
   activityTargets: '20202020-dee7-4b7f-b50a-1f50bd3be452',
   taskTargets: '20202020-584b-4d3e-88b6-53ab1fa03c3a',
   noteTargets: '20202020-c8fc-4258-8250-15905d3fcfec',
+  person: '2c4366ae-7778-48d6-9fd5-c9c80a7c011b',
+  recordComment: 'a2284b44-6812-48c3-bbda-afd972fc0723',
   favorites: '20202020-4073-4117-9cf1-203bcdc91cbd',
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',

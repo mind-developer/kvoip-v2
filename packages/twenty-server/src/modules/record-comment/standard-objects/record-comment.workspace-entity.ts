@@ -1,5 +1,6 @@
 import { msg } from "@lingui/core/macro";
 import { SEARCH_VECTOR_FIELD } from "src/engine/metadata-modules/constants/search-vector-field.constants";
+import { RichTextV2Metadata } from "src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type";
 import { RelationType } from "src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface";
 import { IndexType } from "src/engine/metadata-modules/index-metadata/index-metadata.entity";
 import { RelationOnDeleteAction } from "src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type";
@@ -15,28 +16,27 @@ import { WorkspaceRelation } from "src/engine/twenty-orm/decorators/workspace-re
 import { RECORD_COMMENT_STANDARD_FIELD_IDS } from "src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids";
 import { STANDARD_OBJECT_IDS } from "src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids";
 import { FieldTypeAndNameMetadata, getTsVectorColumnExpressionFromFields } from "src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util";
-import { TimelineActivityWorkspaceEntity } from "src/modules/timeline/standard-objects/timeline-activity.workspace-entity";
+import { PersonWorkspaceEntity } from "src/modules/person/standard-objects/person.workspace-entity";
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Relation } from "typeorm";
 
 const TITLE_FIELD_NAME = 'title';
-const BODY_FIELD_NAME = 'body';
+const BODY_V2_FIELD_NAME = 'bodyV2';
 
-export const SEARCH_FIELDS_FOR_RECORD_COMMENT: FieldTypeAndNameMetadata[] = [
+export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.recordComment,
   namePlural: 'recordComments',
-  labelSingular: msg`Record Comment`,
-  labelPlural: msg`Record Comments`,
+  labelSingular: msg`Comment`,
+  labelPlural: msg`Comments`,
   icon: 'IconMessageCircle',
   labelIdentifierStandardId: RECORD_COMMENT_STANDARD_FIELD_IDS.title,
 })
-
 @WorkspaceIsSearchable()
-@WorkspaceIsNotAuditLogged()
 export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.position,
@@ -51,7 +51,7 @@ export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.title,
-    label: msg`Comment title`,
+    label: msg`Title`,
     type: FieldMetadataType.TEXT,
     icon: 'IconPencil',
   })
@@ -59,33 +59,34 @@ export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
   title: string | null;
 
   @WorkspaceField({
-    standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.body,
-    label: msg`Comment body`,
-    type: FieldMetadataType.TEXT,
-    icon: "IconBlockquote"
+    standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.bodyV2,
+    type: FieldMetadataType.RICH_TEXT_V2,
+    label: msg`Body`,
+    description: msg`Comment body`,
+    icon: 'IconBlockquote',
   })
   @WorkspaceIsNullable()
-  body: string | null;
+  bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.createdBy,
-    label: msg`Comment body`,
+    label: msg`Comment creator`,
     type: FieldMetadataType.ACTOR,
     icon: "IconUser"
   })
   createdBy: string;
 
   @WorkspaceRelation({
-    standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.timelineActivities,
+    standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.people,
+    label: msg`People`,
+    description: msg`People tied to this comment`,
+    icon: 'IconFileImport',
     type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the record comment.`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  people: Relation<PersonWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.searchVector,
@@ -95,7 +96,7 @@ export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_RECORD_COMMENT,
+      SEARCH_FIELDS_FOR_NOTES,
     ),
   })
   @WorkspaceIsNullable()
