@@ -332,6 +332,13 @@ export const NOTA_FISCAL_FIELD_IDS = {
   createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
 };
 
+export const RECORD_COMMENT_STANDARD_FIELD_IDS = {
+  position: '222ff88e-9b7d-4975-96c0-fc637741bc1e',
+  title: 'dd336d24-8212-49c4-8c63-7caf68ebaca8',
+  body: 'd1ab44ec-3847-40ec-ae65-df15d1213d9e',
+  searchVector: 'bb6d2565-01b2-49db-ab56-8e0a3f9cf730',
+};
+
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
   provider: '20202020-ebb0-4516-befc-a9e95935efd5',

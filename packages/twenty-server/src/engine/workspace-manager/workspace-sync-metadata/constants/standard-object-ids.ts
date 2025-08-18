@@ -60,4 +60,5 @@ export const STANDARD_OBJECT_IDS = {
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
   focusNFe: 'aaadd2ab-25b5-4717-9712-7de5b7253633',
   notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
+  recordComment: '3ab005bc-c0b7-48d1-9c78-803196a8467e'
 };
