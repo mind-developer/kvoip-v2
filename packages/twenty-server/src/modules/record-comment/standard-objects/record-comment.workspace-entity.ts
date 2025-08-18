@@ -18,7 +18,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
   labelSingular: msg`Record Comment`,
   labelPlural: msg`Record Comments`,
   icon: 'IconMessageCircle',
+  labelIdentifierStandardId: RECORD_COMMENT_STANDARD_FIELD_IDS.title,
 })
+
 export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.title,
@@ -26,14 +28,16 @@ export class RecordCommentWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     icon: 'IconPencil',
   })
+  @WorkspaceIsNullable()
   title: string | null;
 
   @WorkspaceField({
     standardId: RECORD_COMMENT_STANDARD_FIELD_IDS.body,
     label: msg`Comment body`,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.RICH_TEXT_V2,
     icon: "IconBlockquote"
   })
+  @WorkspaceIsNullable()
   body: RichTextV2Metadata | null;
 
   @WorkspaceField({
