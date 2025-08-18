@@ -83,7 +83,7 @@ export class InterApiService {
     return new https.Agent({
       cert,
       key,
-      rejectUnauthorized: true,
+      rejectUnauthorized: false,
       // minVersion: 'TLSv1.2',
     });
   }
@@ -300,6 +300,7 @@ export class InterApiService {
       );
 
       return response?.data?.pdf;
+
     } catch (error) {
       this.logger.error(
         `Failed to retrieve charge PDF for seuNumero=${seuNumero}: ${error.response?.data || error.message}`,
@@ -318,11 +319,35 @@ export class InterApiService {
     }
   }
 
+  private async waitForChargePdf(
+    integration: InterIntegration,
+    workspaceId: string,
+    seuNumero: string,
+    maxRetries = 5,
+    delayMs = 2000
+  ): Promise<string> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        this.logger.log(`Tentando obter PDF (tentativa ${attempt}/${maxRetries})`);
+        return await this.getChargePdf({ integration, workspaceId, seuNumero });
+      } catch (error) {
+        // se for erro de "processamento", aguarda e tenta de novo
+        if (error.response?.status === 400 &&
+            error.response?.data?.detail?.includes('após conclusão do processamento')) {
+          await new Promise(res => setTimeout(res, delayMs));
+          continue;
+        }
+        throw error;
+      }
+    }
+    throw new Error(`PDF não disponível após ${maxRetries} tentativas`);
+  }
+
   async issueChargeAndStoreAttachment(
     workspaceId: string,
     attachmentRepository: Repository<AttachmentWorkspaceEntity>,
     data: ChargeData,
-  ): Promise<ChargeResponse> {
+  ): Promise<ChargeResponse | any> {
     this.logger.log(
       `Iniciando emissão de charge para workspace ${workspaceId}`,
     );
@@ -342,6 +367,7 @@ export class InterApiService {
       numDiasAgenda: data.numDiasAgenda,
       pagador: data.pagador,
       // mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
+      mensagem: { linha1: 'João nao trabalha' },
     };
 
     try {
@@ -357,13 +383,25 @@ export class InterApiService {
         },
       );
 
+      this.logger.log(`RESPONSE da charge: ${JSON.stringify(response.data, null, 2)}`);
+
       const requestCode = response?.data?.codigoSolicitacao || '';
+
+      // EMISSAO DO PDF DESABILITADA TEMPORARIAMENTO: TODO: jogar para uma fila
+
+      this.logger.log(`requestCode: ${requestCode}`)
+
+      // Aguarda 5 segundos
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      this.logger.log(`Tempo passou`)
+
       const pdfBuffer = await this.getChargePdf({
         workspaceId,
         integration,
         seuNumero: requestCode,
       });
-
+      
       const filename = `${randomUUID()}_boleto.pdf`;
       const folder = 'attachment';
 
@@ -394,12 +432,43 @@ export class InterApiService {
       this.logger.log(`Attachment salvo com sucesso: ${folder}/${filename}`);
 
       return response.data;
+
+
+
+    // } catch (error) {
+    //   const isInterApiError = isAxiosError(error);
+
+    //   const message = isInterApiError
+    //     ? error.response?.data
+    //     : error.message || 'Unknown error';
+
+    //   if (isInterApiError) {
+    //     throw new Error(
+    //       `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
+    //     );
+    //   }
+
+    //   throw new InternalServerErrorException(message, {
+    //     cause: error,
+    //     description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
+    //   });
+    // }
+
+
     } catch (error) {
       const isInterApiError = isAxiosError(error);
 
-      const message = isInterApiError
-        ? error.response?.data
-        : error.message || 'Unknown error';
+      let message: any;
+
+      if (isInterApiError) {
+        message = {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        };
+      } else {
+        message = error.message || 'Unknown error';
+      }
 
       if (isInterApiError) {
         throw new Error(

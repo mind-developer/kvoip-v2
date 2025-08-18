@@ -115,7 +115,7 @@ export class RunFinancialClosingJobProcessor {
       // this.logger.log(JSON.stringify(companiesWithAmount, null, 2));
 
       for (const company of companiesWithAmount) {
-
+        this.logger.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@`);
         await this.messageQueueService.add<CompanyFinancialClosingJobData>(
           RunCompanyFinancialClosingJobProcessor.name,
           {
@@ -127,8 +127,6 @@ export class RunFinancialClosingJobProcessor {
           },
           // { attempts: 3, removeOnComplete: true }
         );
-
-
       }
 
     } catch (error) {
