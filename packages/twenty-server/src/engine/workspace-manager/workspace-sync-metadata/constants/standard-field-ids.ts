@@ -337,6 +337,8 @@ export const RECORD_COMMENT_STANDARD_FIELD_IDS = {
   title: 'dd336d24-8212-49c4-8c63-7caf68ebaca8',
   body: 'd1ab44ec-3847-40ec-ae65-df15d1213d9e',
   searchVector: 'bb6d2565-01b2-49db-ab56-8e0a3f9cf730',
+  createdBy: '4bd0d0c3-cfbb-4cd5-b3b5-6e4cee3b8382',
+  timelineActivities: 'aff3867e-c1b3-4eb8-bc38-3cd2d1393f7a',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -391,6 +393,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
   note: '20202020-ec55-4135-8da5-3a20badc0156',
+  recordComment: '7398075f-f10c-433a-92a7-0716639a8054',
   workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
   workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
   workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',

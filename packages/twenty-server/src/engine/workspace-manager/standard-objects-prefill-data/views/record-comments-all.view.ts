@@ -18,6 +18,7 @@ export const recordCommentsAllView = (objectMetadataItems: ObjectMetadataEntity[
     key: 'INDEX',
     position: 0,
     icon: 'IconMessageCircle',
+    filters: [],
     fields: [
       {
         fieldMetadataId:
