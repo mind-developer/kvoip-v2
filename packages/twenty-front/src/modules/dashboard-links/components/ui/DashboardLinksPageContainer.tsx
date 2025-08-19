@@ -8,6 +8,7 @@ const StyledPageContainer = styled.div`
   height: 100%;
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  overflow: auto;
 `;
 
 type DashboardPageContainerProps = {
