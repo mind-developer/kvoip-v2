@@ -4,6 +4,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -79,18 +81,6 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
         throw new Error('Could not connect to workspace data source');
       }
 
-      const isBillingEnabled =
-        this.twentyConfigService.get('IS_BILLING_ENABLED');
-
-      if (isBillingEnabled)
-        await this.billingSubscriptionRepository.upsert(
-          KVOIP_ADMIN_BILLING_SUBSCRIPTION,
-          {
-            conflictPaths: ['stripeSubscriptionId'],
-            skipUpdateIfNoValuesChanged: true,
-          },
-        );
-
       const appVersion = this.twentyConfigService.get('APP_VERSION');
 
       const kvoipAdminInviteHash = this.twentyConfigService.get(
@@ -103,14 +93,42 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
         return;
       }
 
+      this.logger.log('Seeding core schema...');
+
+      const existingWorkspace = await this.workspaceRepository.findOneBy({
+        id: KVOIP_ADMIN_WORKSPACE.id,
+      });
+
+      const workspaceAlreadyExists = isDefined(existingWorkspace);
+
       await this.workspaceRepository.upsert(
         {
           ...KVOIP_ADMIN_WORKSPACE,
+          activationStatus: workspaceAlreadyExists
+            ? existingWorkspace.activationStatus
+            : KVOIP_ADMIN_WORKSPACE.activationStatus,
+          defaultRoleId: workspaceAlreadyExists
+            ? existingWorkspace.defaultRoleId
+            : undefined,
           inviteHash: kvoipAdminInviteHash,
           version: appVersion,
         },
-        ['id'],
+        {
+          conflictPaths: ['id'],
+        },
       );
+
+      const isBillingEnabled =
+        this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+      if (isBillingEnabled)
+        await this.billingSubscriptionRepository.upsert(
+          KVOIP_ADMIN_BILLING_SUBSCRIPTION,
+          {
+            conflictPaths: ['stripeSubscriptionId'],
+            skipUpdateIfNoValuesChanged: true,
+          },
+        );
 
       await this.userRepository.upsert(KVOIP_ADMIN_USER, ['id']);
 
@@ -138,15 +156,22 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
           KVOIP_ADMIN_WORKSPACE.id,
         );
 
+      this.logger.log('Sincronizing worksapce metadata...');
       await this.workspaceSyncMetadataService.synchronize({
         workspaceId: KVOIP_ADMIN_WORKSPACE.id,
         dataSourceId: dataSourceMetadata.id,
         featureFlags,
       });
 
-      await this.createKvoipAdminWorkspaceCommandService.initPermissions(
-        KVOIP_ADMIN_WORKSPACE.id,
-      );
+      if (
+        workspaceAlreadyExists &&
+        existingWorkspace.activationStatus !== WorkspaceActivationStatus.ACTIVE
+      ) {
+        this.logger.log('Initiating worksapce permissions...');
+        await this.createKvoipAdminWorkspaceCommandService.initPermissions(
+          KVOIP_ADMIN_WORKSPACE.id,
+        );
+      }
 
       await this.createKvoipAdminWorkspaceCommandService.seed({
         schemaName: dataSourceMetadata.schema,
