@@ -106,6 +106,25 @@ export class OwnerService {
     }
   }
 
+  async handleOwnerWorkspaceMemberUpsert({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    if (isDefined(user)) {
+      await this.handleOwnerUpsert({
+        user,
+        workspaceId,
+      });
+    }
+  }
+
   async kvoipAdminWorkspaceExists(): Promise<Workspace | null> {
     const kvoipAdminWorkspace =
       await this.kvoipAdminService.getKvoipAdminWorkspace();
