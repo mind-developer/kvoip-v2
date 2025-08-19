@@ -10,6 +10,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
 import { RunFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
 import { FinancialClosingChargeService } from 'src/engine/core-modules/financial-closing/financial-closing-charge.service';
+import { FinancialClosingNFService } from 'src/engine/core-modules/financial-closing/financial-closing-focusnf.service';
 import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
 import { FinancialClosingResolver } from 'src/engine/core-modules/financial-closing/financial-closing.resolver';
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
@@ -30,10 +31,11 @@ import { InterApiService } from 'src/modules/charges/inter/services/inter-api.se
     FileModule,
     FileUploadModule,
   ],
-  exports: [FinancialClosingService, FinancialClosingChargeService],
+  exports: [FinancialClosingService, FinancialClosingChargeService, FinancialClosingNFService],
   providers: [
     FinancialClosingService, 
     FinancialClosingChargeService,
+    FinancialClosingNFService,
     FinancialClosingResolver, 
     TypeORMService,
     RunFinancialClosingJobProcessor,

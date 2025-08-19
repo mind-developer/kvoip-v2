@@ -162,6 +162,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
   valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
   slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
+  typeEmissionNF: '2dc5ea21-1510-42fd-b3a8-cd38dab6d10d',
   
   codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',

@@ -44,6 +44,7 @@ import { TYPE_DISCOUNT_OPTIONS } from 'src/engine/core-modules/financial-closing
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { TYPE_EMISSION_NF_OPTIONS, TypeEmissionNFEnum } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
@@ -504,11 +505,21 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   cdrId: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.typeEmissionNF,
+    type: FieldMetadataType.SELECT,
+    label: msg`Tipo de Emissão de NF`,
+    description: msg`Type of invoice issuance, sets the time of issuance`,
+    icon: 'IconNote',
+    options: TYPE_EMISSION_NF_OPTIONS,
+    defaultValue: TypeEmissionNFEnum.NONE,
+  })
+  @WorkspaceIsNullable()
+  typeEmissionNF: string | null;
 }
 
-
 /*
-
     tipo de desconto - percent or value     typeDiscount
     quantidade de desconto - float          discount
     quantidades de fechamentos restantes com descontos - int         quantitiesRemainingFinancialClosingsDiscounts

@@ -35,6 +35,9 @@ export class RunCompanyFinancialClosingJobProcessor {
       data.amountToBeCharged,
       data.financialClosing,
     );
+
+    
+
   }
 }
 

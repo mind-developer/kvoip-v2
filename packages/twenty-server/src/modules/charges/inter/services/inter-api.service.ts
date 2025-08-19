@@ -319,30 +319,6 @@ export class InterApiService {
     }
   }
 
-  private async waitForChargePdf(
-    integration: InterIntegration,
-    workspaceId: string,
-    seuNumero: string,
-    maxRetries = 5,
-    delayMs = 2000
-  ): Promise<string> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        this.logger.log(`Tentando obter PDF (tentativa ${attempt}/${maxRetries})`);
-        return await this.getChargePdf({ integration, workspaceId, seuNumero });
-      } catch (error) {
-        // se for erro de "processamento", aguarda e tenta de novo
-        if (error.response?.status === 400 &&
-            error.response?.data?.detail?.includes('após conclusão do processamento')) {
-          await new Promise(res => setTimeout(res, delayMs));
-          continue;
-        }
-        throw error;
-      }
-    }
-    throw new Error(`PDF não disponível após ${maxRetries} tentativas`);
-  }
-
   async issueChargeAndStoreAttachment(
     workspaceId: string,
     attachmentRepository: Repository<AttachmentWorkspaceEntity>,
@@ -366,8 +342,7 @@ export class InterApiService {
       dataVencimento: data.dataVencimento,
       numDiasAgenda: data.numDiasAgenda,
       pagador: data.pagador,
-      // mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
-      mensagem: { linha1: 'João nao trabalha' },
+      mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
     };
 
     try {
@@ -387,11 +362,10 @@ export class InterApiService {
 
       const requestCode = response?.data?.codigoSolicitacao || '';
 
-      // EMISSAO DO PDF DESABILITADA TEMPORARIAMENTO: TODO: jogar para uma fila
 
       this.logger.log(`requestCode: ${requestCode}`)
 
-      // Aguarda 5 segundos
+      // Aguarda 5 segundos - SOLUÇÃO TEMPORARIA, TODO: INSERIR NUMA FILA A PARTE
       await new Promise(resolve => setTimeout(resolve, 5000));
 
       this.logger.log(`Tempo passou`)
