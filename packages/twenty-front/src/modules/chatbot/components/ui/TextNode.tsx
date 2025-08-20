@@ -1,7 +1,8 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
-import styled from '@emotion/styled';
+import { StyledLabel } from '@/chatbot/components/ui/StyledLabel';
+import { StyledOption } from '@/chatbot/components/ui/StyledOption';
 import {
   Handle,
   Node,
@@ -11,27 +12,6 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
-
-const StyledDiv = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
-const StyledTextContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.quaternary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
-  white-space: pre-wrap;
-  word-break: break-all;
-  width: 100%;
-`;
 
 function TextNode({
   id,
@@ -112,11 +92,10 @@ function TextNode({
           isConnectable={isConnectable}
         />
       )}
-      <StyledDiv>
-        <StyledTextContainer>
-          {data.text ?? 'Insert text to be sent'}
-        </StyledTextContainer>
-      </StyledDiv>
+      <StyledLabel>Message body</StyledLabel>
+      <StyledOption icon="IconTextPlus">
+        {data.text ?? 'Insert text to be sent'}
+      </StyledOption>
       <Handle
         type="source"
         position={Position.Bottom}
