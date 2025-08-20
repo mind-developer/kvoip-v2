@@ -29,6 +29,7 @@ import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { InterModule } from 'src/engine/core-modules/inter/inter.module';
+import { KvoipAdminModule } from 'src/engine/core-modules/kvoip-admin/kvoip-admin.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LoggerModule } from 'src/engine/core-modules/logger/logger.module';
 import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.module-factory';
@@ -73,6 +74,7 @@ import { StripeModule } from './stripe/stripe.module';
     AuditModule,
     AuthModule,
     BillingModule,
+    KvoipAdminModule,
     BillingWebhookModule,
     ClientConfigModule,
     FeatureFlagModule,

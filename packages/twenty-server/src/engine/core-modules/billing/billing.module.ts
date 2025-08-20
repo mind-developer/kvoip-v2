@@ -37,6 +37,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -87,9 +88,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
     CheckExpiredSubscriptionsCronCommand,
-    // TODO: This is not the optimal solution, find a way to import InterModule here instead.
     InterInstanceService,
     InterService,
+    KvoipAdminService,
   ],
   exports: [
     BillingSubscriptionService,

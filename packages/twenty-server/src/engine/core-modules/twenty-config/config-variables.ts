@@ -1404,6 +1404,16 @@ export class ConfigVariables {
   @IsNotEmpty()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   INTER_SECRET_CERT_PATH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Kvoip admin invite hash',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  KVOIP_ADMIN_INVITE_HASH: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

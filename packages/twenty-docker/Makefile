@@ -35,6 +35,9 @@ prod-build:
 kvoip-prod-build:
 	@cd ../.. && docker build -t kvoipcrm/v2:canary -f ./packages/twenty-docker/twenty/Dockerfile .
 
+kvoip-add-workspace-admin:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod kvoip:add-admin-workspace"
+
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty:$(TAG)
 

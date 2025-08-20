@@ -1,3 +1,5 @@
+import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
@@ -812,4 +814,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
   chatbot: CHATBOT_STANDARD_FIELD_IDS,
+  ...KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS,
 };

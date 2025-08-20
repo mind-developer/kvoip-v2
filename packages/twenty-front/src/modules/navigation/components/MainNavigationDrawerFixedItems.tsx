@@ -91,6 +91,7 @@ export const MainNavigationDrawerFixedItems = () => {
           <NavigationDrawerItem
             label="Chatbot"
             to={chatbotPath}
+            // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
             onClick={() => {
               navigate(chatbotPath);
             }}
@@ -105,6 +106,7 @@ export const MainNavigationDrawerFixedItems = () => {
         <NavigationDrawerItem
           label="Traceable link"
           to={traceablePath}
+          // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
           onClick={() => {
             navigate(traceablePath);
           }}

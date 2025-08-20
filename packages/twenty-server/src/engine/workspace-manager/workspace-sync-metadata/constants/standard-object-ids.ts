@@ -1,3 +1,5 @@
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
+
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
@@ -60,4 +62,5 @@ export const STANDARD_OBJECT_IDS = {
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
   focusNFe: 'aaadd2ab-25b5-4717-9712-7de5b7253633',
   notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
+  ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 };
