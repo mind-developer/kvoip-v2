@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
+import { StyledOption } from '@/chatbot/components/ui/StyledOption';
 import {
   NewConditionalState,
   RecordType,
@@ -16,7 +17,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
-import { H3Title, Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui/display';
 
 const initialState: NewConditionalState = {
   logicNodes: [],
@@ -29,7 +30,6 @@ const StyledDiv = styled.div`
   justify-content: center;
   width: 100%;
   gap: 12px;
-  margin-top: 8px;
 `;
 
 const StyledLogicNodeWrapper = styled.div`
@@ -37,42 +37,13 @@ const StyledLogicNodeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
-`;
-
-const StyledTextContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.quaternary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
-  white-space: pre-wrap;
-  width: 100%;
-`;
-
-const StyledH3Title = styled(H3Title)`
-  font-size: ${({ theme }) => theme.font.size.md};
 `;
 
 const StyledOptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledOption = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.quaternary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: relative;
 `;
 
 const StyledLabel = styled(Label)`
@@ -84,7 +55,7 @@ const StyledHandle = styled(Handle)`
   right: 0;
 `;
 
-function CondicionalNode({
+function ConditionalNode({
   id,
   data,
   isConnectable,
@@ -151,7 +122,7 @@ function CondicionalNode({
   }
 
   return (
-    <BaseNode icon={'IconHierarchy'} title={data.title ?? 'Node title'}>
+    <BaseNode icon={'IconHierarchy'} title={data.title ?? 'Conditional Node'}>
       <Handle
         title={data.title}
         type="target"
@@ -160,15 +131,18 @@ function CondicionalNode({
       />
       <StyledDiv>
         <StyledLogicNodeWrapper>
-          {data.text && <StyledTextContainer>{data.text}</StyledTextContainer>}
-          <StyledH3Title title={'Options'} />
+          {data.text && (
+            <>
+              <StyledLabel>Message body</StyledLabel>
+              <StyledOption icon="IconTextPlus">{data.text}</StyledOption>
+            </>
+          )}
+          <StyledLabel>Options</StyledLabel>
           <StyledOptionsContainer>
             {state.logicNodeData.map((nodeData) => {
               return (
-                <StyledOption key={nodeData.option}>
-                  <StyledLabel>
-                    {nodeData.option} - {getDisplayValueForCondition(nodeData)}
-                  </StyledLabel>
+                <StyledOption icon="IconPoint" key={nodeData.option}>
+                  {nodeData.option}. {getDisplayValueForCondition(nodeData)}
                   <StyledHandle
                     id={`b-${nodeData.option}`}
                     type="source"
@@ -185,4 +159,4 @@ function CondicionalNode({
   );
 }
 
-export default memo(CondicionalNode);
+export default memo(ConditionalNode);

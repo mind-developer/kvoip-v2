@@ -1,6 +1,6 @@
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
 import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
-import CondicionalNode from '@/chatbot/components/ui/CondicionalNode';
+import ConditionalNode from '@/chatbot/components/ui/ConditionalNode';
 import FileNode from '@/chatbot/components/ui/FileNode';
 import ImageNode from '@/chatbot/components/ui/ImageNode';
 import TextNode from '@/chatbot/components/ui/TextNode';
@@ -19,7 +19,7 @@ interface TargetableObject {
 
 const types: NodeTypes = {
   text: TextNode,
-  condition: CondicionalNode,
+  condition: ConditionalNode,
   image: ImageNode,
   file: FileNode,
 };
