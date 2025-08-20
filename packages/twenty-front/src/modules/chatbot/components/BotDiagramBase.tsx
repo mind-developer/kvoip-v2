@@ -21,6 +21,7 @@ import {
   applyNodeChanges,
   Background,
   Connection,
+  Controls,
   Edge,
   Node,
   NodeTypes,
@@ -262,6 +263,7 @@ export const BotDiagramBase = ({
         isValidConnection={isValidConnection}
         fitView
       >
+        <Controls showZoom={true} />
         <Background color={theme.border.color.medium} size={2} />
       </ReactFlow>
 
