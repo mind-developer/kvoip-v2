@@ -112,7 +112,8 @@ export const isFieldValueEmpty = ({
         isValueEmpty(fieldValue?.addressCity) &&
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
-        isValueEmpty(fieldValue?.addressCountry))
+        isValueEmpty(fieldValue?.addressCountry) &&
+        isValueEmpty(fieldValue?.addressNumber))
     );
   }
 

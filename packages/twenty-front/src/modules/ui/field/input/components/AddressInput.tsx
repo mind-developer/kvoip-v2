@@ -77,6 +77,7 @@ export const AddressInput = ({
   const addressCityInputRef = useRef<HTMLInputElement>(null);
   const addressStateInputRef = useRef<HTMLInputElement>(null);
   const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
+  const addressNumberInputRef = useRef<HTMLInputElement>(null);
 
   const inputRefs: {
     [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
@@ -86,6 +87,7 @@ export const AddressInput = ({
     addressCity: addressCityInputRef,
     addressState: addressStateInputRef,
     addressPostcode: addressPostcodeInputRef,
+    addressNumber: addressNumberInputRef,
   };
 
   const [focusPosition, setFocusPosition] =
@@ -204,7 +206,7 @@ export const AddressInput = ({
         autoFocus
         value={internalValue.addressStreet1 ?? ''}
         ref={inputRefs['addressStreet1']}
-        label="Address 1"
+        label="Address"
         fullWidth
         onChange={getChangeHandler('addressStreet1')}
         onFocus={getFocusHandler('addressStreet1')}
@@ -212,7 +214,7 @@ export const AddressInput = ({
       <TextInputV2
         value={internalValue.addressStreet2 ?? ''}
         ref={inputRefs['addressStreet2']}
-        label="Address 2"
+        label="Neighbourhood"
         fullWidth
         onChange={getChangeHandler('addressStreet2')}
         onFocus={getFocusHandler('addressStreet2')}
@@ -243,6 +245,14 @@ export const AddressInput = ({
           fullWidth
           onChange={getChangeHandler('addressPostcode')}
           onFocus={getFocusHandler('addressPostcode')}
+        />
+        <TextInputV2
+          value={internalValue.addressNumber ?? ''}
+          ref={inputRefs['addressNumber']}
+          label="Number"
+          fullWidth
+          onChange={getChangeHandler('addressNumber')}
+          onFocus={getFocusHandler('addressNumber')}
         />
         <CountrySelect
           label="Country"

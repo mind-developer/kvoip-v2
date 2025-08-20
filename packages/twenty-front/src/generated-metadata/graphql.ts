@@ -556,10 +556,21 @@ export type CreateFieldInput = {
 };
 
 export type CreateFocusNfeIntegrationInput = {
-  integrationName: Scalars['String']['input'];
-  status?: Scalars['String']['input'];
+  cep: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  cnaeCode: Scalars['String']['input'];
+  cnpj: Scalars['String']['input'];
+  companyName: Scalars['String']['input'];
+  cpf: Scalars['String']['input'];
+  ie: Scalars['String']['input'];
+  inscricaoMunicipal: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  neighborhood: Scalars['String']['input'];
+  number: Scalars['String']['input'];
+  state: Scalars['String']['input'];
+  street: Scalars['String']['input'];
+  taxRegime: Scalars['String']['input'];
   token: Scalars['String']['input'];
-  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateInterIntegrationInput = {
@@ -1017,6 +1028,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   BillingSubscriptionBill = 'BillingSubscriptionBill',
   ChargeBill = 'ChargeBill',
+  Invoice = 'Invoice',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1045,14 +1057,25 @@ export type FindManyRemoteTablesInput = {
   shouldFetchPendingSchemaUpdates?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type FocusNfeIntegrationPublicDto = {
-  __typename?: 'FocusNfeIntegrationPublicDto';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  integrationName?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  workspace?: Maybe<Workspace>;
+export type FocusNFeWorkspaceEntity = {
+  __typename?: 'FocusNFeWorkspaceEntity';
+  cep: Scalars['String']['output'];
+  city: Scalars['String']['output'];
+  cnaeCode?: Maybe<Scalars['String']['output']>;
+  cnpj?: Maybe<Scalars['String']['output']>;
+  companyName?: Maybe<Scalars['String']['output']>;
+  cpf?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  ie?: Maybe<Scalars['String']['output']>;
+  inscricaoMunicipal?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  neighborhood: Scalars['String']['output'];
+  number: Scalars['String']['output'];
+  state: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+  street: Scalars['String']['output'];
+  taxRegime?: Maybe<Scalars['String']['output']>;
+  token: Scalars['String']['output'];
 };
 
 export type FullName = {
@@ -1367,7 +1390,7 @@ export type Mutation = {
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
-  createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
+  createFocusNfeIntegration: FocusNFeWorkspaceEntity;
   createInterIntegration: InterIntegration;
   createIssuer: IssuerDto;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -1457,7 +1480,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
-  updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
+  updateFocusNfeIntegration: FocusNFeWorkspaceEntity;
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -2473,8 +2496,8 @@ export type Query = {
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
-  getFocusNfeIntegrationById: FocusNfeIntegrationPublicDto;
-  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegrationPublicDto>;
+  getFocusNfeIntegrationById: FocusNFeWorkspaceEntity;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNFeWorkspaceEntity>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String']['output'];
   getIssuerById: IssuerDto;
@@ -2625,11 +2648,6 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String']['input'];
-};
-
-
-export type QueryGetFocusNfeIntegrationsByWorkspaceArgs = {
-  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -3480,9 +3498,21 @@ export type UpdateFieldInput = {
 };
 
 export type UpdateFocusNfeIntegrationInput = {
+  cep?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  cnaeCode?: InputMaybe<Scalars['String']['input']>;
+  cnpj?: InputMaybe<Scalars['String']['input']>;
+  companyName?: InputMaybe<Scalars['String']['input']>;
+  cpf?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
-  integrationName?: InputMaybe<Scalars['String']['input']>;
-  status?: Scalars['String']['input'];
+  ie?: InputMaybe<Scalars['String']['input']>;
+  inscricaoMunicipal?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  neighborhood?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+  street?: InputMaybe<Scalars['String']['input']>;
+  taxRegime?: InputMaybe<Scalars['String']['input']>;
   token?: InputMaybe<Scalars['String']['input']>;
 };
 

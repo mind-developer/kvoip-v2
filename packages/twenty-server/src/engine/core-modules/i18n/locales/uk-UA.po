@@ -108,6 +108,11 @@ msgstr "Група пов'язаних повідомлень (наприкла�
 msgid "A integration"
 msgstr ""
 
+#. js-lingui-id: qRZgwf
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "A integration of Focus NFe"
+msgstr ""
+
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -259,31 +264,49 @@ msgstr "Агрегована / відфільтрована подія для в
 
 #. js-lingui-id: RNKcKo
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota COFINS (%)"
 msgstr ""
 
 #. js-lingui-id: mOmfu+
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota do COFINS. Placeholder: 7.60"
 msgstr ""
 
 #. js-lingui-id: zLG1Ah
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota do ICMS. Placeholder: 18.00"
+msgstr ""
+
+#. js-lingui-id: RBenhP
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais."
 msgstr ""
 
 #. js-lingui-id: 0Yz+Xy
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota do PIS. Placeholder: 1.65"
 msgstr ""
 
 #. js-lingui-id: ATtJLL
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota ICMS (%)"
+msgstr ""
+
+#. js-lingui-id: GAnlTp
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Alíquota ISS"
 msgstr ""
 
 #. js-lingui-id: xFH3kf
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Alíquota PIS (%)"
 msgstr ""
 
@@ -432,6 +455,11 @@ msgstr ""
 msgid "Attachment name"
 msgstr "Назва вкладення"
 
+#. js-lingui-id: FAlybx
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment nota fiscal"
+msgstr ""
+
 #. js-lingui-id: FWlOXr
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
@@ -493,6 +521,11 @@ msgstr "Вкладення, пов'язані з контактом."
 #. js-lingui-id: gQGDh8
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 msgid "Attachments linked to the integration"
+msgstr ""
+
+#. js-lingui-id: Pr/M5Q
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Attachments linked to the Nota Fiscal"
 msgstr ""
 
 #. js-lingui-id: kw0mLu
@@ -699,6 +732,12 @@ msgstr ""
 msgid "Campaign Source"
 msgstr ""
 
+#. js-lingui-id: V9PU36
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "CEP"
+msgstr ""
+
 #. js-lingui-id: X8ziyh
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "CEST"
@@ -706,6 +745,7 @@ msgstr ""
 
 #. js-lingui-id: fsRh5D
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "CFOP"
 msgstr ""
 
@@ -723,6 +763,7 @@ msgstr "Тип каналу"
 #. js-lingui-id: VcWwIy
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -803,17 +844,54 @@ msgstr ""
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "City"
 msgstr "Місто"
+
+#. js-lingui-id: xecKvk
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Classificação"
+msgstr ""
+
+#. js-lingui-id: 4M1z1+
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Classificação do produto"
+msgstr ""
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Дата закриття"
 
+#. js-lingui-id: bVcWKN
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "CNAE Code"
+msgstr ""
+
+#. js-lingui-id: hurL0d
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "CNPJ"
+msgstr ""
+
 #. js-lingui-id: hqcPre
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Código da Situação Tributária ou CSOSN. Placeholder: 102"
+msgstr ""
+
+#. js-lingui-id: W9stsD
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Código do assinante"
+msgstr ""
+
+#. js-lingui-id: gR0HXY
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Código do Assinante"
 msgstr ""
 
 #. js-lingui-id: FIb+mG
@@ -823,7 +901,13 @@ msgstr ""
 
 #. js-lingui-id: OsS1Qp
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Código Fiscal de Operações. Placeholder: 5102"
+msgstr ""
+
+#. js-lingui-id: 8fQ/81
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Código Tributário Município"
 msgstr ""
 
 #. js-lingui-id: 96YB1a
@@ -844,9 +928,11 @@ msgstr "Компанії"
 #. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -856,6 +942,27 @@ msgstr "Компанія"
 #. js-lingui-id: TQzDDQ
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company linked to the charge"
+msgstr ""
+
+#. js-lingui-id: SLnmTn
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Company linked to the Nota Fiscal"
+msgstr ""
+
+#. js-lingui-id: yWSIMK
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Company linked to the products"
+msgstr ""
+
+#. js-lingui-id: RA55Iu
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Company name"
+msgstr ""
+
+#. js-lingui-id: zGbOVS
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Company Name"
 msgstr ""
 
 #. js-lingui-id: yA1de7
@@ -919,6 +1026,7 @@ msgstr "Компанія контакту"
 #. js-lingui-id: ITlFIB
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "Електронні адреси контакту"
 
@@ -964,6 +1072,12 @@ msgstr "Контекст"
 msgid "Cost"
 msgstr ""
 
+#. js-lingui-id: iBn7DY
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "CPF"
+msgstr ""
+
 #. js-lingui-id: UuEIJ+
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "CPF or CNPJ identifier for the charge"
@@ -980,6 +1094,7 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -1025,6 +1140,11 @@ msgstr ""
 msgid "CST PIS"
 msgstr ""
 
+#. js-lingui-id: JLxg3N
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "CST/CSOSN"
+msgstr ""
+
 #. js-lingui-id: 876pfE
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Customer"
@@ -1033,6 +1153,16 @@ msgstr ""
 #. js-lingui-id: 8bcj0/
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Customer linked to the charge"
+msgstr ""
+
+#. js-lingui-id: V/hOKM
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Data de emissão"
+msgstr ""
+
+#. js-lingui-id: knQldp
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Data de emissão da Nota Fiscal"
 msgstr ""
 
 #. js-lingui-id: Lhd0oQ
@@ -1073,6 +1203,16 @@ msgstr "Напрямок"
 msgid "Discount"
 msgstr ""
 
+#. js-lingui-id: bcqrX0
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Discriminação"
+msgstr ""
+
+#. js-lingui-id: 4owEp1
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Discriminação dos serviços prestados."
+msgstr ""
+
 #. js-lingui-id: 0gS7M5
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -1104,6 +1244,7 @@ msgstr "Термін виконання"
 #. js-lingui-id: BXEcos
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Emails"
 msgstr "Електронні адреси"
 
@@ -1185,6 +1326,11 @@ msgstr "Назва події"
 #~ msgid "Event name/type"
 #~ msgstr "Назва/тип події"
 
+#. js-lingui-id: 85QkF8
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event nota fiscal"
+msgstr ""
+
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event note"
@@ -1241,6 +1387,7 @@ msgstr "Член робочого простору події"
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
@@ -1254,6 +1401,11 @@ msgstr ""
 #. js-lingui-id: Pds2Ui
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 msgid "Events linked to the integration"
+msgstr ""
+
+#. js-lingui-id: FOjMfO
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Events linked to the nota fiscal"
 msgstr ""
 
 #. js-lingui-id: fHL+iH
@@ -1491,6 +1643,22 @@ msgstr "Поле, що використовується для повнотек�
 msgid "Field Value"
 msgstr "Значення поля"
 
+#. js-lingui-id: Hdl5PA
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Focus NF-e integration status"
+msgstr ""
+
+#. js-lingui-id: kUK0H8
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Focus NFe Integration"
+msgstr ""
+
+#. js-lingui-id: 0M5zqI
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Focus NFe Integrations"
+msgstr ""
+
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
@@ -1578,6 +1746,11 @@ msgstr ""
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ідеальний портрет клієнта: Визначає чи є компанія найбільш підходящим і цінним клієнтом для вас"
 
+#. js-lingui-id: m+vtsd
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "IE"
+msgstr ""
+
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "If the event is related to a particular object"
@@ -1588,9 +1761,47 @@ msgstr "Ідеальний портрет клієнта: Визначає чи 
 msgid "Indicates if the entity is an individual or a company"
 msgstr ""
 
+#. js-lingui-id: TzTH7/
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003."
+msgstr ""
+
+#. js-lingui-id: yK2h6g
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Informar o código tributário de acordo com a tabela de cada município (não há um padrão)."
+msgstr ""
+
+#. js-lingui-id: B4A4Lu
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Informar true (verdadeiro) ou false (falso) se o ISS foi retido"
+msgstr ""
+
+#. js-lingui-id: PSIrtk
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Inscrição estadual"
+msgstr ""
+
 #. js-lingui-id: girw5z
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Inscrição Estadual"
+msgstr ""
+
+#. js-lingui-id: KFgYVS
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Inscrição municipal"
+msgstr ""
+
+#. js-lingui-id: bzGSrZ
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Inscrição Municipal"
+msgstr ""
+
+#. js-lingui-id: RYXSrV
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Inscrição municipal do prestador de serviços"
 msgstr ""
 
 #. js-lingui-id: AHWM9N
@@ -1612,13 +1823,20 @@ msgstr ""
 msgid "Integration linked to the Chatbot"
 msgstr ""
 
+#. js-lingui-id: kh85bV
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Integration linked to the Nota Fiscal"
+msgstr ""
+
 #. js-lingui-id: u4iuBc
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Integration name"
 msgstr ""
 
 #. js-lingui-id: DdoWBE
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Integration record position"
 msgstr ""
 
@@ -1671,6 +1889,23 @@ msgstr "Чи є організатор"
 msgid "Is Sync Enabled"
 msgstr "Чи включено синхронізацію"
 
+#. js-lingui-id: mbGP1T
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "ISS Retido"
+msgstr ""
+
+#. js-lingui-id: gtGLOq
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Issue name"
+msgstr ""
+
+#. js-lingui-id: /tNICq
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Item Lista Serviço"
+msgstr ""
+
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
@@ -1706,6 +1941,16 @@ msgstr "Json-об'єкт для надання тригера"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Json-значення для деталей події"
+
+#. js-lingui-id: UH0PTY
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Justificativa"
+msgstr ""
+
+#. js-lingui-id: UQ6FtA
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Justificativa de cancelamento da Nota Fiscal"
+msgstr ""
 
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2014,9 +2259,11 @@ msgstr "Токен оновлення провайдера послуг пові
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
@@ -2045,12 +2292,98 @@ msgstr "Назва запуску робочого процесу"
 
 #. js-lingui-id: 1VGoRg
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "NCM"
+msgstr ""
+
+#. js-lingui-id: jyxrtr
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Neighborhood"
+msgstr ""
+
+#. js-lingui-id: GsDa9d
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "NF Type"
+msgstr ""
+
+#. js-lingui-id: NzG02o
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "NF-Com"
+msgstr ""
+
+#. js-lingui-id: 6CDvDj
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "NF-e"
+msgstr ""
+
+#. js-lingui-id: vIp1C2
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "NFC-e"
+msgstr ""
+
+#. js-lingui-id: Uq58U2
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "NFS-e"
 msgstr ""
 
 #. js-lingui-id: U8O0LR
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12"
+msgstr ""
+
+#. js-lingui-id: RQyWdD
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Nota emitida"
+msgstr ""
+
+#. js-lingui-id: Ybt31x
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Nota fiscal"
+msgstr ""
+
+#. js-lingui-id: LJ4EO1
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Nota Fiscal"
+msgstr ""
+
+#. js-lingui-id: u9NP/V
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Nota Fiscal linked to the Focus NFe Integration"
+msgstr ""
+
+#. js-lingui-id: VyW1ij
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Nota Fiscal using this product"
+msgstr ""
+
+#. js-lingui-id: nPM5it
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Notas Fiscais"
+msgstr ""
+
+#. js-lingui-id: nU8wSD
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Notas fiscais linked to the charges"
+msgstr ""
+
+#. js-lingui-id: d4bNPb
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Notas fiscais to the company"
+msgstr ""
+
+#. js-lingui-id: wNRuNO
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Notas fiscais using this charge"
 msgstr ""
 
 #. js-lingui-id: KiJn9B
@@ -2154,10 +2487,32 @@ msgstr "NoteTarget особа"
 msgid "NoteTarget support"
 msgstr ""
 
+#. js-lingui-id: HptUxX
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Number"
+msgstr ""
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "Кількість працівників у компанії"
+
+#. js-lingui-id: 91jcCE
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Número do contrato do assinante"
+msgstr ""
+
+#. js-lingui-id: HhJRga
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Número do Contrato do Assinante"
+msgstr ""
+
+#. js-lingui-id: ugWWBB
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Número RPS"
+msgstr ""
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -2272,11 +2627,13 @@ msgstr "Опціональний секрет, який використовує
 
 #. js-lingui-id: 3qocCh
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Origem da Mercadoria"
 msgstr ""
 
 #. js-lingui-id: aefXyf
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Origem da mercadoria (0-8). Placeholder: 0"
 msgstr ""
 
@@ -2312,21 +2669,25 @@ msgid "People linked to the company."
 msgstr "Особи пов'язані з компанією."
 
 #. js-lingui-id: jbDhKI
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)"
 msgstr ""
 
 #. js-lingui-id: 017kfr
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Percentage for Nota Fiscal de Comunicação (Communication Invoice)"
 msgstr ""
 
 #. js-lingui-id: +zipdG
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)"
 msgstr ""
 
 #. js-lingui-id: CWKrq3
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)"
 msgstr ""
@@ -2398,8 +2759,10 @@ msgstr "Контактна особа"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2449,6 +2812,7 @@ msgstr "Ймовірність"
 
 #. js-lingui-id: K47k8R
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product"
 msgstr ""
@@ -2480,6 +2844,7 @@ msgstr ""
 
 #. js-lingui-id: jGuXaa
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Product record position"
 msgstr ""
 
@@ -2495,11 +2860,13 @@ msgstr ""
 
 #. js-lingui-id: C74sUy
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Product unit of measure (e.g., kg, unit, liter)"
 msgstr ""
 
 #. js-lingui-id: N0qXpE
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Products"
 msgstr ""
 
@@ -2632,6 +2999,12 @@ msgstr "Стадія"
 msgid "Start Date"
 msgstr "Дата початку"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "State"
+msgstr ""
+
 #. js-lingui-id: 47Ailm
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "State Registration number for tax purposes in Brazil"
@@ -2641,8 +3014,15 @@ msgstr ""
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Status"
 msgstr "Статус"
+
+#. js-lingui-id: il/4qG
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Status da Nota Fiscal"
+msgstr ""
 
 #. js-lingui-id: sPl2pb
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -2655,6 +3035,12 @@ msgstr ""
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Statuses"
 msgstr "Статуси"
+
+#. js-lingui-id: Uv4dnT
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Street"
+msgstr ""
 
 #. js-lingui-id: g4jxXh
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2919,6 +3305,7 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -3147,6 +3534,17 @@ msgstr "Дії на часовій шкалі, пов'язані з <b>{label}</
 msgid "Timeline Activity"
 msgstr "Дія в таймлайні"
 
+#. js-lingui-id: oZPZ+V
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Tipo de nota fiscal"
+msgstr ""
+
+#. js-lingui-id: tVodDu
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Tipo de produto"
+msgstr ""
+
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -3154,6 +3552,22 @@ msgstr "Дія в таймлайні"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Заголовок"
+
+#. js-lingui-id: TP9/K5
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+msgid "Token"
+msgstr ""
+
+#. js-lingui-id: V6wYl1
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Total amount"
+msgstr ""
+
+#. js-lingui-id: NrYZ3H
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+msgid "Total Amount"
+msgstr ""
 
 #. js-lingui-id: 2jNX/d
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
@@ -3195,16 +3609,19 @@ msgstr "Тип"
 
 #. js-lingui-id: yS0vV0
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Unidade Comercial"
 msgstr ""
 
 #. js-lingui-id: QHdsoa
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Unidade comercial. Placeholder: UN"
 msgstr ""
 
 #. js-lingui-id: aSwfbR
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Unit"
 msgstr ""
 
@@ -3287,11 +3704,13 @@ msgstr ""
 
 #. js-lingui-id: 9ifduX
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00"
 msgstr ""
 
 #. js-lingui-id: 1eObHA
 #: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Valor/Alíquota IPI"
 msgstr ""
 

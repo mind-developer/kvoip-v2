@@ -6,14 +6,20 @@ export const UPDATE_FOCUS_NFE_INTEGRATION = gql`
   ) {
     updateFocusNfeIntegration(updateInput: $updateInput) {
       id
-      integrationName
       status
-      createdAt
-      updatedAt
-      workspace {
-        displayName
-        id
-      }
+      name
+      cnpj
+      cpf
+      ie
+      inscricaoMunicipal
+      cnaeCode
+      cep
+      street
+      number
+      neighborhood
+      city
+      state
+      taxRegime
     }
   }
 `;

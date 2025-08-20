@@ -27,9 +27,11 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -75,6 +77,7 @@ registerEnumType(ChargeEntityType, {
   icon: 'IconSettings',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceIsSearchable()
 @WorkspaceIsNotAuditLogged()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -290,6 +293,18 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   personId: string;
 
   @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.notaFiscal,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Notas Fiscais`,
+    description: msg`Notas fiscais using this charge`,
+    icon: 'IconSettings',
+    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
@@ -328,6 +343,5 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  searchVector: any;
+  searchVector: string;
 }

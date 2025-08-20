@@ -234,6 +234,7 @@ export type FieldAddressValue = {
   addressCountry: string | null;
   addressLat: number | null;
   addressLng: number | null;
+  addressNumber: string | null;
 };
 export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;

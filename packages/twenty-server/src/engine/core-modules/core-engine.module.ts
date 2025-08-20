@@ -25,7 +25,6 @@ import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FocusNfeModule } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
@@ -60,6 +59,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { FocusNfeModule } from 'src/modules/focus-nfe/focus-nfe-integration.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';

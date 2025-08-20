@@ -16,7 +16,6 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -32,6 +31,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FocusNfeIntegration } from 'src/modules/focus-nfe/focus-nfe-integration.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 
 @Injectable()
