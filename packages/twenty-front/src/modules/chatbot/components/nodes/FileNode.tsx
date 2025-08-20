@@ -1,6 +1,8 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
-import BaseNode from '@/chatbot/components/ui/BaseNode';
+import BaseNode from '@/chatbot/components/nodes/BaseNode';
+import { StyledOption } from '@/chatbot/components/ui/StyledOption';
+import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -11,22 +13,20 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
+import { useIcons } from 'twenty-ui/display';
 
-const StyledDiv = styled.div`
+const StyledIcon = styled.div`
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.accent.accent3570};
+  padding: 1px 1px;
+  border-radius: 2px;
   display: flex;
-  width: 100%;
+  width: 14px;
+  height: 14px;
 `;
 
-const StyledImage = styled.img`
-  align-items: end;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  object-fit: cover;
-  width: 100%;
-`;
-
-function ImageNode({
+function FileNode({
   id,
   data,
   isConnectable,
@@ -34,10 +34,12 @@ function ImageNode({
   Node<{
     icon: string;
     title: string;
-    imageUrl?: string;
+    fileUrl?: string;
   }>
 >) {
   const { updateNodeData } = useReactFlow();
+  const { getIcon } = useIcons();
+  const IconFileText = getIcon('IconFileText');
 
   const targetConnections = useNodeConnections({
     id,
@@ -76,16 +78,19 @@ function ImageNode({
   }, [targetConnections, sourceConnections]);
 
   return (
-    <BaseNode icon={'IconPhoto'} title={data.title ?? 'Node title'}>
+    <BaseNode icon={'IconFileImport'} title={data.title ?? 'Node title'}>
       <Handle
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
       />
-      {data.imageUrl && (
-        <StyledDiv>
-          <StyledImage src={data.imageUrl} />
-        </StyledDiv>
+      {data.fileUrl && (
+        <StyledOption>
+          <StyledIcon>
+            <IconFileText color={'red'} />
+          </StyledIcon>
+          {renameFile(data.fileUrl)}
+        </StyledOption>
       )}
       <Handle
         type="source"
@@ -96,4 +101,4 @@ function ImageNode({
   );
 }
 
-export default memo(ImageNode);
+export default memo(FileNode);

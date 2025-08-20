@@ -1,9 +1,9 @@
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
 import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
-import ConditionalNode from '@/chatbot/components/ui/ConditionalNode';
-import FileNode from '@/chatbot/components/ui/FileNode';
-import ImageNode from '@/chatbot/components/ui/ImageNode';
-import TextNode from '@/chatbot/components/ui/TextNode';
+import ConditionalNode from '@/chatbot/components/nodes/ConditionalNode';
+import FileNode from '@/chatbot/components/nodes/FileNode';
+import ImageNode from '@/chatbot/components/nodes/ImageNode';
+import TextNode from '@/chatbot/components/nodes/TextNode';
 import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';

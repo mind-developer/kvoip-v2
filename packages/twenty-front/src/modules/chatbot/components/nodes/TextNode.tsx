@@ -1,6 +1,6 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
-import BaseNode from '@/chatbot/components/ui/BaseNode';
+import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { StyledLabel } from '@/chatbot/components/ui/StyledLabel';
 import { StyledOption } from '@/chatbot/components/ui/StyledOption';
 import {

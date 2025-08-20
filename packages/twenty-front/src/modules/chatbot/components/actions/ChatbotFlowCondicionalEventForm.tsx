@@ -1,5 +1,5 @@
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
-import { LogicOption } from '@/chatbot/components/ui/LogicOption';
+import { LogicOption } from '@/chatbot/components/nodes/LogicOption';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
