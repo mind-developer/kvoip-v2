@@ -7,12 +7,16 @@ const StyledBaseNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.background.quaternary};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: rgba(100, 100, 111, 0.15) 0px 4px 16px 0px;
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   width: 250px;
+  &:hover {
+    background-color: ${({ theme }) => theme.background.secondary};
+    border-color: ${({ theme }) => theme.color.blue};
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -48,7 +52,7 @@ const StyledNodeType = styled.div`
   padding: ${({ theme }) => theme.spacing(0.5)}
     ${({ theme }) => theme.spacing(2)};
   color: ${({ theme }) => theme.background.primary};
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `.withComponent(Label);
 
 const BaseNode = ({
