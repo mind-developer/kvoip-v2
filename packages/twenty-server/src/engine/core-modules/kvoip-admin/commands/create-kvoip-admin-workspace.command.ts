@@ -164,8 +164,7 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
       });
 
       if (
-        workspaceAlreadyExists &&
-        existingWorkspace.activationStatus !== WorkspaceActivationStatus.ACTIVE
+        existingWorkspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE
       ) {
         this.logger.log('Initiating worksapce permissions...');
         await this.createKvoipAdminWorkspaceCommandService.initPermissions(

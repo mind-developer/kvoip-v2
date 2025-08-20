@@ -23,15 +23,24 @@ export class OwnerWorkspaceMemberListener {
   ) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DELETED)
   async handleCreateOrDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
     >,
   ) {
+    const adminWorkspace = await this.ownerService.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace)) return;
+
     const tenantRepository =
-      await this.twentyORMManager.getRepository<TenantWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
+        adminWorkspace.id,
         'tenant',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const tenant = await tenantRepository.findOne({
@@ -44,8 +53,8 @@ export class OwnerWorkspaceMemberListener {
 
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        'workspaceMember',
         payload.workspaceId,
+        'workspaceMember',
         {
           shouldBypassPermissionChecks: true,
         },
@@ -53,15 +62,9 @@ export class OwnerWorkspaceMemberListener {
 
     const workspaceMembersCount = await workspaceMemberRepository.count();
 
-    if (!workspaceMembersCount || workspaceMembersCount <= 0) {
-      return;
-    }
-
     await tenantRepository.update(tenant.id, {
       membersCount: workspaceMembersCount,
     });
-
-    const adminWorkspace = await this.ownerService.kvoipAdminWorkspaceExists();
 
     if (isDefined(adminWorkspace)) {
       const ownerWorkspaceMmberPayloadEvent = payload.events.find(
