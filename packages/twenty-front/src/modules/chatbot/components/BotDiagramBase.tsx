@@ -236,7 +236,7 @@ export const BotDiagramBase = ({
     }
 
     const viewportX =
-      (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
+      (containerRef?.current?.offsetWidth ?? 0 + visibleRightDrawerWidth) / 2 -
       (flowBounds.width ?? 2) / 2;
 
     reactflow.setViewport(

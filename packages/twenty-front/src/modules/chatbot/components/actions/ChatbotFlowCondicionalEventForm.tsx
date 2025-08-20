@@ -208,6 +208,7 @@ export const ChatbotFlowCondicionalEventForm = ({
       comparison: '==',
       sectorId: '',
       conditionValue: '||',
+      recordType: '',
     };
 
     const updated = {
