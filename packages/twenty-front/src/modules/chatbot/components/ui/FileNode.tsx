@@ -1,9 +1,9 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
+import { StyledOption } from '@/chatbot/components/ui/StyledOption';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
-import { IconFileText } from '@tabler/icons-react';
 import {
   Handle,
   Node,
@@ -13,21 +13,12 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
-
-const StyledOption = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.quaternary};
-  padding: 3px 4px;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-`;
+import { useIcons } from 'twenty-ui/display';
 
 const StyledIcon = styled.div`
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.accent.accent4060};
+  background-color: ${({ theme }) => theme.accent.accent3570};
   padding: 1px 1px;
   border-radius: 2px;
   display: flex;
@@ -47,6 +38,8 @@ function FileNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
+  const { getIcon } = useIcons();
+  const IconFileText = getIcon('IconFileText');
 
   const targetConnections = useNodeConnections({
     id,
@@ -94,7 +87,7 @@ function FileNode({
       {data.fileUrl && (
         <StyledOption>
           <StyledIcon>
-            <IconFileText color={'white'} />
+            <IconFileText color={'red'} />
           </StyledIcon>
           {renameFile(data.fileUrl)}
         </StyledOption>
