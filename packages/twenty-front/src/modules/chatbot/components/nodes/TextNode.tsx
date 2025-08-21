@@ -1,17 +1,23 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
-import { StyledLabel } from '@/chatbot/components/ui/StyledLabel';
-import { StyledOption } from '@/chatbot/components/ui/StyledOption';
+import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
+import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
+import { GenericNode } from '@/chatbot/types/GenericNode';
+import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
+import { TextArea } from '@/ui/input/components/TextArea';
 import {
   Handle,
   Node,
   NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
+  useNodes,
   useReactFlow,
 } from '@xyflow/react';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
 function TextNode({
   id,
@@ -19,6 +25,7 @@ function TextNode({
   isConnectable,
 }: NodeProps<
   Node<{
+    id: string;
     icon: string;
     title: string;
     text?: string;
@@ -26,7 +33,15 @@ function TextNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const nodeId = useNodeId();
+  const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
+
+  const { updateFlow } = useUpdateChatbotFlow();
+  const chatbotFlow = useRecoilState(chatbotFlowState)[0];
+
+  //possibly move to useRecoil
+  const [titleValue, setTitleValue] = useState(data.title ?? '');
+  const [textValue, setTextValue] = useState(data.text ?? '');
 
   const targetConnections = useNodeConnections({
     id,
@@ -71,19 +86,36 @@ function TextNode({
     }
   }, [targetConnections, sourceConnections]);
 
-  useEffect(() => {
+  const handleKeyUpdate = (key: string, e: string, node: GenericNode) => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '30px';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (chatbotFlow?.chatbotId) {
+      const flow = {
+        edges: [...chatbotFlow.edges],
+        nodes: [
+          ...chatbotFlow.nodes,
+          { ...node, data: { ...node.data, [key]: e } },
+        ],
+        chatbotId: chatbotFlow.chatbotId,
+        viewport: chatbotFlow.viewport,
+      };
+      updateFlow(flow as ChatbotFlowData);
     }
-  }, [data.text]);
+    updateNodeData(id, {
+      ...node.data,
+      [key]: e,
+    });
+  };
 
   return (
     <BaseNode
       icon={'IconTextSize'}
-      title={data.title ?? 'Node title'}
+      title={titleValue ?? 'Node title'}
       nodeStart={data.nodeStart}
+      nodeTypeDescription="Message node"
+      onTitleChange={(e) => setTitleValue(e)}
+      onTitleBlur={() => {
+        handleKeyUpdate('text', titleValue, node);
+      }}
     >
       {!data.nodeStart && (
         <Handle
@@ -92,10 +124,17 @@ function TextNode({
           isConnectable={isConnectable}
         />
       )}
-      <StyledLabel>Message body</StyledLabel>
-      <StyledOption icon="IconTextPlus">
-        {data.text ?? 'Insert text to be sent'}
-      </StyledOption>
+      <>
+        <TextArea
+          label="Message body"
+          placeholder="Text message to be sent"
+          value={textValue}
+          onChange={(e) => setTextValue(e)}
+          onBlur={() => {
+            handleKeyUpdate('text', textValue, node);
+          }}
+        />
+      </>
       <Handle
         type="source"
         position={Position.Bottom}
