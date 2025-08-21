@@ -1,7 +1,7 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Label, useIcons } from 'twenty-ui/display';
 import { ThemeColor } from 'twenty-ui/theme';
 
@@ -57,19 +57,28 @@ const StyledNodeType = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `.withComponent(Label);
 
+const StyledLabel = styled(Label)`
+  padding: ${({ theme }) => theme.spacing(0, 1.25)} 0px;
+`;
 const BaseNode = ({
   icon,
   title,
   children,
   nodeStart,
   iconColor,
+  onTitleChange,
+  onTitleBlur,
+  nodeTypeDescription,
 }: {
   icon?: string;
-  title?: string;
+  title: string;
   children: ReactNode;
   nodeStart?: boolean;
   newNode?: boolean;
   iconColor?: ThemeColor;
+  nodeTypeDescription: string;
+  onTitleChange: (value: string) => void;
+  onTitleBlur: () => void;
 }) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(icon);
@@ -78,10 +87,11 @@ const BaseNode = ({
   const iconHeader = (
     <Icon size={18} color={theme.color[iconColor ?? 'gray']}></Icon>
   );
-  const { toggleCommandMenu } = useCommandMenu();
+
+  const [customTitle, setCustomTitle] = useState<string>(title);
 
   return (
-    <div onClick={toggleCommandMenu}>
+    <div>
       {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
       <StyledBaseNodeWrapper>
         <div
@@ -89,14 +99,28 @@ const BaseNode = ({
             width: '20%',
             height: 4,
             backgroundColor: theme.border.color.medium,
-            // marginBottom: theme.spacing(3),
             alignSelf: 'center',
             borderRadius: theme.border.radius.sm,
           }}
         />
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
-          {title && <p>{title}</p>}
+          <div>
+            {title && (
+              <TitleInput
+                placeholder={title}
+                value={customTitle}
+                onEscape={onTitleBlur}
+                onEnter={onTitleBlur}
+                onClickOutside={onTitleBlur}
+                onChange={(e: string) => {
+                  onTitleChange(e);
+                  setCustomTitle(e);
+                }}
+              />
+            )}
+            <StyledLabel>{nodeTypeDescription}</StyledLabel>
+          </div>
         </StyledHeader>
         {children}
       </StyledBaseNodeWrapper>
