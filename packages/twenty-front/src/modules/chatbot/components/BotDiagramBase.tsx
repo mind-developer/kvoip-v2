@@ -1,20 +1,26 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-constant-condition */
+
 import {
   initialEdges,
   initialNodes,
 } from '@/chatbot/flow-templates/mockFlowTemplate';
+
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
 import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
+
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
+
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
 // eslint-disable-next-line no-restricted-imports
 import { IconPlus } from '@tabler/icons-react';
+
 import {
   addEdge,
   applyEdgeChanges,
@@ -30,12 +36,16 @@ import {
   ReactFlowInstance,
   useReactFlow,
 } from '@xyflow/react';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
-import { THEME_COMMON } from 'twenty-ui/theme';
+
+import { GenericNode } from '../types/GenericNode';
+import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
@@ -64,12 +74,15 @@ const StyledResetReactflowStyles = styled.div`
     min-height: 0;
     min-width: 0;
   }
+
   .react-flow__handle-top {
     transform: translate(-50%, -50%);
   }
+
   .react-flow__handle-bottom {
     transform: translate(-50%, 100%);
   }
+
   .react-flow__handle.connectionindicator {
     cursor: pointer;
   }
@@ -108,18 +121,15 @@ export const BotDiagramBase = ({
   tagText,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+
+  const [nodes, setNodes] = useState<GenericNode[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
-    Node,
-    Edge
-  > | null>(null);
+  const [rfInstance, setRfInstance] =
+    useState<ReactFlowInstance<Node, Edge> | null>(null);
 
   const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
-
   const { chatbotFlow } = useValidateChatbotFlow();
   const { updateFlow } = useUpdateChatbotFlow();
-
   const chatbotFlowId = useRecoilValue(chatbotFlowIdState);
 
   const { chatbotFlowData, refetch } = useGetChatbotFlowById(
@@ -129,19 +139,17 @@ export const BotDiagramBase = ({
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
 
-  type FlowType = () => [Node[], Edge[]] | undefined;
+  type FlowType = () => [GenericNode[], Edge[]] | undefined;
 
   const defineFlow: FlowType = () => {
     if (!chatbotFlowData) {
       return undefined;
     }
-
     return [chatbotFlowData.nodes, chatbotFlowData.edges];
   };
 
   useEffect(() => {
     const [resNode, resEdges] = defineFlow() ?? [];
-
     if (resNode && resEdges) {
       setNodes(resNode);
       setEdges(resEdges);
@@ -157,29 +165,34 @@ export const BotDiagramBase = ({
     ) {
       chatbotFlow({ nodes, edges, chatbotId: chatbotFlowId });
       hasValidatedRef.current = true;
+      saveFlow();
     }
   }, [nodes, edges, chatbotFlowId]);
 
-  const onSave = useCallback(() => {
+  const saveFlow = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-
       if (!chatbotFlowId) return;
 
       const newFlow = { ...flow, chatbotId: chatbotFlowId };
-
-      updateFlow(newFlow);
+      updateFlow(newFlow as ChatbotFlowData);
       refetch();
     }
   }, [rfInstance]);
 
   const onNodesChange = useCallback(
-    (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: any) =>
+      setNodes((nds) =>
+        applyNodeChanges(structuredClone(changes), structuredClone(nds)),
+      ),
     [],
   );
 
   const onEdgesChange = useCallback(
-    (changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes: any) =>
+      setEdges((eds) =>
+        applyEdgeChanges(structuredClone(changes), structuredClone(eds)),
+      ),
     [],
   );
 
@@ -188,7 +201,6 @@ export const BotDiagramBase = ({
       const targetAlreadyConnected = edges.some(
         (edge) => edge.target === connection.target,
       );
-
       if (!targetAlreadyConnected) {
         setEdges((eds) => addEdge(connection, eds));
       }
@@ -202,11 +214,12 @@ export const BotDiagramBase = ({
       if (!source || !target) return false;
 
       const sameSourceHandleAlreadyUsed = edges.some(
-        (edge) => edge.source === source && edge.sourceHandle === sourceHandle,
+        (edge) =>
+          edge.source === source && edge.sourceHandle === sourceHandle,
       );
-
       const sameTargetHandleAlreadyUsed = edges.some(
-        (edge) => edge.target === target && edge.targetHandle === targetHandle,
+        (edge) =>
+          edge.target === target && edge.targetHandle === targetHandle,
       );
 
       return !sameSourceHandleAlreadyUsed && !sameTargetHandleAlreadyUsed;
@@ -216,10 +229,6 @@ export const BotDiagramBase = ({
 
   const reactflow = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { rightDrawerState } = useRightDrawerState();
-  const rightDrawerWidth = Number(
-    THEME_COMMON.rightDrawerWidth.replace('px', ''),
-  );
 
   useEffect(() => {
     if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
@@ -227,26 +236,17 @@ export const BotDiagramBase = ({
     }
 
     const currentViewport = reactflow.getViewport();
-
     const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
-    let visibleRightDrawerWidth = 0;
-    if (rightDrawerState === 'normal') {
-      visibleRightDrawerWidth = rightDrawerWidth;
-    }
-
     const viewportX =
-      (containerRef?.current?.offsetWidth ?? 0 + visibleRightDrawerWidth) / 2 -
+      (containerRef?.current?.offsetWidth ?? 0) / 2 -
       (flowBounds.width ?? 2) / 2;
 
     reactflow.setViewport(
-      {
-        ...currentViewport,
-        x: viewportX - visibleRightDrawerWidth,
-      },
+      { ...currentViewport, x: viewportX },
       { duration: 300 },
     );
-  }, [reactflow, rightDrawerState, rightDrawerWidth]);
+  }, [reactflow]);
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -270,6 +270,7 @@ export const BotDiagramBase = ({
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
+
       <StyledButtonContainer>
         <StyledButton
           accent="default"
@@ -279,8 +280,9 @@ export const BotDiagramBase = ({
             chatbotFlowId && openChatbotFlowCommandMenu(chatbotFlowId)
           }
         />
-        <StyledButton accent="blue" title="Save" onClick={onSave} />
+        <StyledButton accent="blue" title="Save" onClick={saveFlow} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>
   );
 };
+

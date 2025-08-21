@@ -1,6 +1,7 @@
-import { Edge, Node } from '@xyflow/react';
+import { Edge } from '@xyflow/react';
+import { GenericNode } from '../types/GenericNode';
 
-export const initialNodes: Node[] = [
+export const initialNodes: GenericNode[] = [
   {
     id: '1',
     type: 'text',
@@ -26,6 +27,7 @@ export const initialNodes: Node[] = [
             conditionValue: '||',
             outgoingEdgeId: 'b-1',
             outgoingNodeId: '3',
+            recordType: 'text',
           },
         ],
       },

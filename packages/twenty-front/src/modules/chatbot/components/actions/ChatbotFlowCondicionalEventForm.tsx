@@ -4,6 +4,7 @@ import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
+import { GenericNode } from '@/chatbot/types/GenericNode';
 import {
   NewConditionalState,
   NewLogicNodeData,
@@ -169,7 +170,7 @@ export const ChatbotFlowCondicionalEventForm = ({
   const persistNode = (updatedLogic?: NewConditionalState) => {
     if (!chatbotFlow) return;
 
-    const updatedNode: Node = {
+    const updatedNode = {
       ...selectedNode,
       data: {
         ...selectedNode.data,
@@ -179,13 +180,12 @@ export const ChatbotFlowCondicionalEventForm = ({
       },
     };
 
-    const updatedNodes = chatbotFlow.nodes.map((n) =>
+    const updatedNodes = chatbotFlow.nodes.map((n: GenericNode) =>
       n.id === selectedNode.id ? updatedNode : n,
     );
 
-    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
     // TODO: Build a type using Omit<...> instead.
-    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,

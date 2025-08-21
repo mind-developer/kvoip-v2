@@ -5,7 +5,7 @@ import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { Node } from '@xyflow/react';
 import { NodeHandler } from './NodeHandler';
 
-export class CondicionalInputHandler implements NodeHandler {
+export class ConditionalInputHandler implements NodeHandler {
   private askedNodes = new Set<string>();
 
   private compare(
@@ -31,7 +31,7 @@ export class CondicionalInputHandler implements NodeHandler {
     private recipient: string,
     private chatbotName: string,
     private sectors: { id: string; name: string }[],
-  ) {}
+  ) { }
 
   async process(
     node: Node,

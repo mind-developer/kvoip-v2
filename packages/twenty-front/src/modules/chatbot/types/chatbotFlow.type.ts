@@ -1,12 +1,11 @@
-import { Edge, Node } from '@xyflow/react';
+import { Edge } from '@xyflow/react';
+import { GenericNode } from './GenericNode';
 
-export type ChatbotFlow = {
-  nodes: Node[];
+export type ChatbotFlowData = {
+  nodes: GenericNode[];
   edges: Edge[];
   chatbotId: string;
   viewport?: { x: number; y: number; zoom: number };
 };
 
-export type ChatbotFlowInput = Omit<ChatbotFlow, 'viewport'>;
-
-export type UpdateChatbotFlow = ChatbotFlow;
+export type ChatbotFlowInput = Omit<ChatbotFlowData, 'viewport'>;

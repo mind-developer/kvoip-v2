@@ -4,7 +4,7 @@ import { Node } from '@xyflow/react';
 
 import { SendMessageType } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { NodeType } from '@/chatbot/constants/NodeTypes';
-import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
+import { ConditionalInputHandler as ConditionalInputHandler } from '@/chatbot/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from '@/chatbot/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from '@/chatbot/engine/handlers/ImageInputHandler';
 import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
@@ -38,7 +38,7 @@ export class ExecuteFlow {
         recipient,
         chatbotName,
       ),
-      [NodeType.CONDITION]: new CondicionalInputHandler(
+      [NodeType.CONDITION]: new ConditionalInputHandler(
         sendMessage,
         integrationId,
         recipient,
