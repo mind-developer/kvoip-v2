@@ -1,5 +1,6 @@
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { KVOIP_ADMIN_OBJECT_METADATA_DEFINITIONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-object-metadata-definitions.constant';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -16,8 +17,6 @@ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/stand
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
-import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
-import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -51,7 +50,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // Base standard objects that are available in all workspaces
-const baseStandardObjectMetadataDefinitions = [
+export const baseStandardObjectMetadataDefinitions = [
   ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
@@ -100,12 +99,6 @@ const baseStandardObjectMetadataDefinitions = [
   NotaFiscalWorkspaceEntity,
 ];
 
-// Admin-specific objects that are only available in the kvoip admin workspace
-const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
-  TenantWorkspaceEntity,
-  OwnerWorkspaceEntity,
-];
-
 /**
  * Returns the standard object metadata definitions based on the workspace context
  * This allows for workspace-specific objects to be included conditionally
@@ -118,7 +111,7 @@ export function getStandardObjectMetadataDefinitions(
   // Add admin-specific objects only for the admin workspace
   if (context.featureFlags.IS_KVOIP_ADMIN) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    standardObjects.push(...(adminSpecificObjectMetadataDefinitions as any));
+    standardObjects.push(...(KVOIP_ADMIN_OBJECT_METADATA_DEFINITIONS as any));
   }
 
   return standardObjects;
