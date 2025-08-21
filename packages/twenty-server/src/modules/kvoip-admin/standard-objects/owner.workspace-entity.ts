@@ -29,7 +29,8 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
+import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscriptions.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -138,6 +139,17 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   workspaces: Relation<TenantWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: OWNER_STANDARD_FIELD_IDS.subscriptions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Subscriptions`,
+    description: msg`Subscriptions linked to the owner.`,
+    icon: 'IconFileImport',
+    inverseSideTarget: () => TenantWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  subscriptions: Relation<SubscriptionWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.position,
