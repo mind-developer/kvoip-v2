@@ -19,12 +19,12 @@ export const buildNFSePayload = (
     data_emissao: getCurrentFormattedDate(),
     serie_dps: '1',
     numero_dps: nextNumRps, // Incremental, deve ser pela ultima RPS gerada
-    prestador: {
+    prestador: { // kvoip
       cnpj: focusNFe?.cnpj || focusNFe?.cpf || '',
       inscricao_municipal: focusNFe?.inscricaoMunicipal || '',
       codigo_municipio: codMunicipioPrestador,
     },
-    tomador: {
+    tomador: { // Outras empresas
       cnpj: company.cpfCnpj || '',
       razao_social: company.name,
       email: company.emails.primaryEmail,

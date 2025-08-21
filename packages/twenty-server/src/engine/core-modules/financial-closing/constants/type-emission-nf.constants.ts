@@ -1,7 +1,7 @@
 import { TagColor } from "src/engine/metadata-modules/field-metadata/dtos/options.input";
 
 export enum TypeEmissionNFEnum {
-  NONE = 'NONE',
+  NOTHING = 'NOTHING',
   AFTER = 'AFTER',
   BEFORE = 'BEFORE'
 }
@@ -13,7 +13,7 @@ type TypeEmissionNFMetadata = {
 };
 
 export const TYPE_EMISSION_NF_METADATA: Record<TypeEmissionNFEnum, TypeEmissionNFMetadata> = {
-  [TypeEmissionNFEnum.NONE]: {
+  [TypeEmissionNFEnum.NOTHING]: {
     label: 'Não emitir nota fiscal',
     color: 'red',
     position: 0,
@@ -24,7 +24,7 @@ export const TYPE_EMISSION_NF_METADATA: Record<TypeEmissionNFEnum, TypeEmissionN
     position: 1,
   },
   [TypeEmissionNFEnum.BEFORE]: {
-    label: 'Emitir nota fiscal no fechamento',
+    label: 'Emitir nota fiscal junto ao fechamento',
     color: 'blue',
     position: 1,
   },

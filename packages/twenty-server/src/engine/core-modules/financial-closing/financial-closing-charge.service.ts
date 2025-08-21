@@ -142,7 +142,7 @@ export class FinancialClosingChargeService {
     company: CompanyWorkspaceEntity, 
     amountToBeCharged: number,
     financialClosing: FinancialClosing, 
-  ): Promise<{ requestCode: string }> {
+  ): Promise<ChargeWorkspaceEntity> {
     
     const attachmentRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
@@ -215,7 +215,7 @@ export class FinancialClosingChargeService {
           ? ChargeEntityType.INDIVIDUAL
           : ChargeEntityType.COMPANY,
         chargeAction: ChargeAction.ISSUE,
-        company: company, // relação ManyToOne
+        company: company,
       });
 
       charge = await chargeRepository.save(charge);
@@ -247,7 +247,7 @@ export class FinancialClosingChargeService {
         `Cobrança emitida para empresa ${company.name} (Cód: ${response.codigoSolicitacao})`,
       );
 
-      return { requestCode: response.codigoSolicitacao };
+      return charge;
 
     } catch (err) {
       this.logger.error(

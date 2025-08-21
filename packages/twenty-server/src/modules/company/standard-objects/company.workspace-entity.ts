@@ -513,20 +513,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Type of invoice issuance, sets the time of issuance`,
     icon: 'IconNote',
     options: TYPE_EMISSION_NF_OPTIONS,
-    defaultValue: TypeEmissionNFEnum.NONE,
   })
   @WorkspaceIsNullable()
   typeEmissionNF: string | null;
 }
-
-/*
-    tipo de desconto - percent or value     typeDiscount
-    quantidade de desconto - float          discount
-    quantidades de fechamentos restantes com descontos - int         quantitiesRemainingFinancialClosingsDiscounts
-    valor (valor total a ser cobrado de forma fix - sem descontos) - float          totalValueCharged
-    valor de gasto minimo - float      valueMinimumMonthly 
-    valor mensalidade - float         valuefixedMonthly
-    
-    dia de vencimento - int (Para o boleto de cobrança)        slipDueDay
-
-*/

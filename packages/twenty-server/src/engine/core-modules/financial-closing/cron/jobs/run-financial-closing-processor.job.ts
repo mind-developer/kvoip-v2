@@ -65,6 +65,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
 export type RunFinancialClosingJob = {
   financialClosingId: string;
@@ -74,7 +75,7 @@ export type RunFinancialClosingJob = {
 export type CompanyFinancialClosingJobData = {
   financialClosing: FinancialClosing;
   workspaceId: string;
-  company: any;
+  company: CompanyWorkspaceEntity;
   amountToBeCharged: number;
   billingModel: string;
 };
