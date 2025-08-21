@@ -18,6 +18,7 @@ import { InterIntegration } from 'src/engine/core-modules/inter/integration/inte
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
+import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { InterApiService } from 'src/modules/charges/inter/services/inter-api.se
     FinancialClosingService, 
     FinancialClosingChargeService,
     FinancialClosingNFService,
+    FocusNFeService,
     FinancialClosingResolver, 
     TypeORMService,
     RunFinancialClosingJobProcessor,

@@ -2,6 +2,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { NFCom, NFSe } from 'src/modules/focus-nfe/types/NotaFiscal.type';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 export const buildNFSePayload = (
   notaFiscal: NotaFiscalWorkspaceEntity,
@@ -56,10 +57,11 @@ export function buildNFComPayload(
   notaFiscal: NotaFiscalWorkspaceEntity,
   codMunicipioEmitente: string,
   codMunicipioDestinatario: string,
+  product: ProductWorkspaceEntity,
 ): NFCom | undefined {
-  const { company, product, focusNFe } = notaFiscal;
+  const { company, focusNFe } = notaFiscal;
 
-  if (!company || !product || !focusNFe?.token) return;
+  if (!company || !focusNFe?.token) return;
 
   const percentNfcom = notaFiscal.percentNfcom ?? 100;
   const valueBase = Number(notaFiscal.totalAmount) || 0;

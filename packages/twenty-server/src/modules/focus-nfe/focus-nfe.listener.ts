@@ -13,11 +13,6 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
-import {
-  buildNFComPayload,
-  buildNFSePayload,
-  getCurrentFormattedDate,
-} from 'src/modules/focus-nfe/utils/nf-builder';
 import { UpdateProperties } from 'src/modules/nota-fiscal/nota-fiscal.listener';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
@@ -28,7 +23,6 @@ export class FocusNFeEventListener {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly focusNFeService: FocusNFeService,
-    private readonly environmentService: TwentyConfigService,
   ) {}
 
   @OnDatabaseBatchEvent('notaFiscal', DatabaseEventAction.UPDATED)
@@ -36,6 +30,8 @@ export class FocusNFeEventListener {
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     const { workspaceId, name: eventName, events } = payload;
+
+    this.logger.log('CAIU NO LISTENER DA FOCUS NFE')
 
     if (!workspaceId || !eventName) {
       this.logger.error(
@@ -129,7 +125,7 @@ export class FocusNFeEventListener {
             }
 
             case NfStatus.ISSUE: {
-              const issueResult = await this.issueNf(notaFiscal, workspaceId);
+              const issueResult = await this.focusNFeService.preIssueNf(notaFiscal, workspaceId);
 
               if (issueResult?.success) {
                 if (
@@ -190,84 +186,6 @@ export class FocusNFeEventListener {
     );
   }
 
-  private issueNf = async (
-    notaFiscal: NotaFiscalWorkspaceEntity,
-    workspaceId: string,
-  ) => {
-    const { product, company, focusNFe } = notaFiscal;
-
-    if (!product || !company || !focusNFe?.token) return;
-
-    switch (notaFiscal.nfType) {
-      case NfType.NFSE: {
-        const lastInvoiceIssued = await this.getLastInvoiceIssued(workspaceId);
-
-        if (!lastInvoiceIssued) return;
-
-        const codMunicipioPrestador =
-          await this.focusNFeService.getCodigoMunicipio(
-            focusNFe?.city,
-            focusNFe?.token,
-          );
-
-        const codMunicipioTomador =
-          await this.focusNFeService.getCodigoMunicipio(
-            notaFiscal.company?.address.addressCity || '',
-            focusNFe?.token,
-          );
-
-        const nfse = buildNFSePayload(
-          notaFiscal,
-          codMunicipioPrestador,
-          codMunicipioTomador,
-          lastInvoiceIssued?.numeroRps,
-        );
-
-        if (!nfse) return;
-
-        const result = await this.focusNFeService.issueNF(
-          'nfse',
-          nfse,
-          notaFiscal.id,
-          focusNFe?.token,
-        );
-
-        return result;
-      }
-
-      case NfType.NFCOM: {
-        const codMunicipioEmitente =
-          await this.focusNFeService.getCodigoMunicipio(
-            focusNFe?.city,
-            focusNFe?.token,
-          );
-
-        const codMunicipioTomador =
-          await this.focusNFeService.getCodigoMunicipio(
-            notaFiscal.company?.address.addressCity || '',
-            focusNFe?.token,
-          );
-
-        const nfcom = buildNFComPayload(
-          notaFiscal,
-          codMunicipioEmitente,
-          codMunicipioTomador,
-        );
-
-        if (!nfcom) return;
-
-        const result = await this.focusNFeService.issueNF(
-          'nfcom',
-          nfcom,
-          notaFiscal.id,
-          focusNFe?.token,
-        );
-
-        return result;
-      }
-    }
-  };
-
   private cancelNf = async (notaFiscal: NotaFiscalWorkspaceEntity) => {
     const { focusNFe } = notaFiscal;
 
@@ -295,58 +213,5 @@ export class FocusNFeEventListener {
         return result;
       }
     }
-  };
-
-  private getLastInvoiceIssued = async (
-    workspaceId: string,
-  ): Promise<
-    | {
-        id: string;
-        numeroRps: number;
-        dataEmissao: string;
-      }
-    | undefined
-  > => {
-    const LAST_NUMBER_RPS = this.environmentService.get('LAST_NUMBER_RPS');
-
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
-        workspaceId,
-        'notaFiscal',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const invoiceIssued = await notaFiscalRepository.find({
-      where: {
-        nfType: NfType.NFSE,
-        numeroRps: Not(IsNull()),
-        dataEmissao: Not(IsNull()),
-      },
-    });
-
-    const latestNFSe = invoiceIssued
-      .filter((nf) => nf.dataEmissao)
-      .sort((a, b) =>
-        compareDesc(
-          zonedTimeToUtc(new Date(a.dataEmissao || ''), 'America/Sao_Paulo'),
-          zonedTimeToUtc(new Date(b.dataEmissao || ''), 'America/Sao_Paulo'),
-        ),
-      )[0];
-
-    const latestNumeroRps = Number(latestNFSe?.numeroRps || 2000);
-
-    if (LAST_NUMBER_RPS > latestNumeroRps) {
-      return {
-        id: '0',
-        numeroRps: LAST_NUMBER_RPS,
-        dataEmissao: getCurrentFormattedDate(),
-      };
-    }
-
-    return {
-      id: latestNFSe.id,
-      numeroRps: latestNumeroRps,
-      dataEmissao: latestNFSe.dataEmissao || '',
-    };
   };
 }

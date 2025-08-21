@@ -31,112 +31,6 @@ export class FinancialClosingChargeService {
     private readonly interApiService: InterApiService,
   ) {}
 
-  // async emitChargeForCompany(
-  //   workspaceId: string,
-  //   company: CompanyWorkspaceEntity, 
-  //   amountToBeCharged: number,
-  //   financialClosing: FinancialClosing, 
-  // ): Promise<{ requestCode: string }> {
-    
-  //   if (!true) {
-  //     // Inserir aqui qualquer validação de company
-  //   }
-
-  //   const attachmentRepository =
-  //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
-  //       workspaceId,
-  //       'attachment',
-  //       { shouldBypassPermissionChecks: true },
-  //     );
-
-  //   const client = {
-  //     nome: company.name || '',
-  //     cpfCnpj: company.cpfCnpj || '',
-  //     tipoPessoa: this.getTipoPessoa(company.cpfCnpj || ''),
-  //     endereco: company.address?.addressStreet1 || 'Rua ...',
-  //     telefone: '',
-  //     cep: company.address?.addressPostcode || '00000000',
-  //     cidade: company.address?.addressCity || '',
-  //     uf: company.address?.addressState || 'SP',
-  //     // ddd: company.phone?.replace(/^\+/, '') || '',
-  //     ddd: '',
-  //     bairro: company.address?.addressStreet1 || '',
-  //     email: company.emails.primaryEmail || '',
-  //     complemento: '-',
-  //     numero: '-',
-  //   };
-
-  //   this.logger.log(`Dados da company: ${JSON.stringify(company, null, 2)}`);
-
-  //   this.logger.log(`Dados do cliente: ${JSON.stringify(client, null, 2)}`);
-    
-  //   // const numberCharge = `${company.id.slice(0, 8)}-${Date.now()}`;
-  //   const numberCharge = `${company.id.replace(/\d/g, '').slice(0, 2)}${Date.now()}`.slice(0, 15);
-
-  //   this.logger.log(`Número da cobrança: ${numberCharge}`);
-
-  //   const getSlipDueDay = (): string => {
-  //     if (company.slipDueDay) {
-  //       const today = new Date();
-  //       let year = today.getFullYear();
-  //       let month = today.getMonth(); // 0-11
-
-  //       // Se o dia do vencimento já passou no mês atual, joga para o próximo mês
-  //       if (today.getDate() > company.slipDueDay) {
-  //         month++;
-  //         if (month > 11) {
-  //           month = 0;
-  //           year++;
-  //         }
-  //       }
-
-  //       const dueDate = new Date(year, month, company.slipDueDay);
-  //       return dueDate.toISOString().split('T')[0]; // YYYY-MM-DD
-  //     }
-
-  //     // Caso não tenha slipDueDay, adiciona +10 dias a partir de hoje (Default)
-  //     const date = new Date();
-  //     date.setDate(date.getDate() + 10);
-  //     return date.toISOString().split('T')[0];
-  //   };
-
-  //   try {
-  //     const response =
-  //       await this.interApiService.issueChargeAndStoreAttachment(
-  //         workspaceId,
-  //         attachmentRepository,
-  //         {
-  //           id: numberCharge,
-  //           authorId: company.id,
-  //           seuNumero: numberCharge,
-  //           valorNominal: amountToBeCharged,
-  //           dataVencimento: getSlipDueDay(),
-  //           numDiasAgenda: 60,
-  //           pagador: { ...client },
-  //           mensagem: { linha1: '-' },
-  //         },
-  //       );
-
-  //     this.logger.log(
-  //       `Cobrança emitida para empresa ${company.name} (Cód: ${response.codigoSolicitacao})`,
-  //     );
-
-  //     this.logger.log(
-  //       `RESPONSE: ${JSON.stringify(response, null, 2)}`,
-  //     );
-
-  //     return { requestCode: response.codigoSolicitacao };
-
-  //   } catch (err) {
-  //     // TODO: realizar o informe e atualizar logs para ser possivel repetir novamente
-  //     this.logger.error(
-  //       `2 Erro ao emitir cobrança para empresa ${company.name}: ${err.message}`,
-  //       err.stack,
-  //     );
-  //     throw err;
-  //   }
-  // }
-
   async emitChargeForCompany(
     workspaceId: string,
     company: CompanyWorkspaceEntity, 
@@ -220,7 +114,7 @@ export class FinancialClosingChargeService {
 
       charge = await chargeRepository.save(charge);
 
-      this.logger.log(`Charge criada localmente: ${JSON.stringify(charge, null, 2)}`);
+      // this.logger.log(`Charge criada localmente: ${JSON.stringify(charge, null, 2)}`);
 
       // 2. Emitir cobrança na API do Inter
       const response =

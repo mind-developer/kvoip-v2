@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FocusNFeResponse } from 'src/modules/focus-nfe/types/FocusNFeResponse.type';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
 import { FiscalNote } from 'src/modules/focus-nfe/types/NotaFiscal.type';
@@ -12,12 +13,23 @@ import {
   validateNFCom,
   validateNFSe,
 } from 'src/modules/focus-nfe/utils/validateNF';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { IsNull, Not } from 'typeorm';
+import { compareDesc } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { buildNFComPayload, buildNFSePayload, getCurrentFormattedDate } from 'src/modules/focus-nfe/utils/nf-builder';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 type NFValidator = (data: FiscalNote) => boolean;
 
 @Injectable()
 export class FocusNFeService {
-  constructor(private readonly environmentService: TwentyConfigService) {}
+  private readonly logger = new Logger('FocusNFeService');
+
+  constructor(
+    private readonly environmentService: TwentyConfigService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   private createAxiosInstance(token: string): AxiosInstance {
     const FOCUS_NFE_BASE_URL =
@@ -83,10 +95,98 @@ export class FocusNFeService {
   > = {
     nfcom: { validate: validateNFCom, endpoint: '/nfcom' },
     nfse: { validate: validateNFSe, endpoint: '/nfse' },
-    // nfe: { validate: validateNFe, endpoint: '/nfe' },
-    // nfce: { validate: validateNFCe, endpoint: '/nfce' },
+    // nfe: { validate: validateNFe, endpoint: '/nfe' },  // TODO: habilitar os demais modelos de NF
+    // nfce: { validate: validateNFCe, endpoint: '/nfce' }, 
   };
 
+  async preIssueNf(
+    notaFiscal: NotaFiscalWorkspaceEntity,
+    workspaceId: string,
+    productObj?: ProductWorkspaceEntity,
+  ): Promise<FocusNFeResponse | void> {
+
+    const { company, focusNFe } = notaFiscal;
+
+    const product = productObj ? productObj : notaFiscal.product;
+
+    if (!product || !company || !focusNFe?.token) return;
+
+    switch (notaFiscal.nfType) {
+      case NfType.NFSE: {
+        const lastInvoiceIssued = await this.getLastInvoiceIssued(workspaceId);
+
+        if (!lastInvoiceIssued) return;
+
+        const codMunicipioPrestador =
+          await this.getCodigoMunicipio(
+            focusNFe?.city,
+            focusNFe?.token,
+          );
+
+        const codMunicipioTomador =
+          await this.getCodigoMunicipio(
+            notaFiscal.company?.address.addressCity || '',
+            focusNFe?.token,
+          );
+
+        const nfse = buildNFSePayload(
+          notaFiscal,
+          codMunicipioPrestador,
+          codMunicipioTomador,
+          lastInvoiceIssued?.numeroRps,
+        );
+        
+        // if (!nfse) return;
+
+        // const result = await this.issueNF(
+        //   'nfse',
+        //   nfse,
+        //   notaFiscal.id,
+        //   focusNFe?.token,
+        // );
+
+        // return result;
+      }
+
+      case NfType.NFCOM: {
+        const codMunicipioEmitente =
+          await this.getCodigoMunicipio(
+            focusNFe?.city,
+            focusNFe?.token,
+          );
+
+        const codMunicipioTomador =
+          await this.getCodigoMunicipio(
+            notaFiscal.company?.address.addressCity || '',
+            focusNFe?.token,
+          );
+
+        // const nfcom = buildNFComPayload(
+        //   notaFiscal,
+        //   codMunicipioEmitente,
+        //   codMunicipioTomador,
+        //   product,
+        // );
+
+        // if (!nfcom) return;
+
+        this.logger.log(`DADOS DA NF:`);
+        this.logger.log(`codMunicipioEmitente: ${codMunicipioEmitente}`);
+        this.logger.log(`codMunicipioTomador: ${codMunicipioTomador}`);
+        // this.logger.log(`nfcom: ${JSON.stringify(nfcom, null, 2)}`);
+
+        // const result = await this.issueNF(
+        //   'nfcom',
+        //   nfcom,
+        //   notaFiscal.id,
+        //   focusNFe?.token,
+        // );
+
+        // return result;
+      }
+    }
+  };
+  
   async issueNF(
     type: keyof typeof this.nfStrategies,
     data: FiscalNote,
@@ -143,6 +243,61 @@ export class FocusNFeService {
       'GET',
     );
 
+    this.logger.log(`getCodigoMunicipio: ${JSON.stringify(response, null, 2)}`);
+
     return response.data[0].codigo_municipio;
   }
+
+  private getLastInvoiceIssued = async (
+    workspaceId: string,
+  ): Promise<
+    | {
+        id: string;
+        numeroRps: number;
+        dataEmissao: string;
+      }
+    | undefined
+  > => {
+    const LAST_NUMBER_RPS = this.environmentService.get('LAST_NUMBER_RPS');
+
+    const notaFiscalRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+        workspaceId,
+        'notaFiscal',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const invoiceIssued = await notaFiscalRepository.find({
+      where: {
+        nfType: NfType.NFSE,
+        numeroRps: Not(IsNull()),
+        dataEmissao: Not(IsNull()),
+      },
+    });
+
+    const latestNFSe = invoiceIssued
+      .filter((nf) => nf.dataEmissao)
+      .sort((a, b) =>
+        compareDesc(
+          zonedTimeToUtc(new Date(a.dataEmissao || ''), 'America/Sao_Paulo'),
+          zonedTimeToUtc(new Date(b.dataEmissao || ''), 'America/Sao_Paulo'),
+        ),
+      )[0];
+
+    const latestNumeroRps = Number(latestNFSe?.numeroRps || 2000);
+
+    if (LAST_NUMBER_RPS > latestNumeroRps) {
+      return {
+        id: '0',
+        numeroRps: LAST_NUMBER_RPS,
+        dataEmissao: getCurrentFormattedDate(),
+      };
+    }
+
+    return {
+      id: latestNFSe.id,
+      numeroRps: latestNumeroRps,
+      dataEmissao: latestNFSe.dataEmissao || '',
+    };
+  };
 }

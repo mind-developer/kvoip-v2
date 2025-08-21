@@ -112,7 +112,8 @@ export class RunFinancialClosingJobProcessor {
       const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, financialClosing);
       const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, this.twentyORMGlobalManager, companies, financialClosing);
 
-      this.logger.log(`Companies to be charged 2: ${companiesWithAmount.length}`);
+      this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
+
 
       for (const company of companiesWithAmount) {
         await this.messageQueueService.add<CompanyFinancialClosingJobData>(
