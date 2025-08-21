@@ -49,6 +49,13 @@ function ImageNode({
     handleType: 'source',
   });
 
+  const handleTitleChange = (e: string) => {
+    updateNodeData(id, {
+      ...data,
+      title: e,
+    });
+  };
+
   useEffect(() => {
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
@@ -76,7 +83,13 @@ function ImageNode({
   }, [targetConnections, sourceConnections]);
 
   return (
-    <BaseNode icon={'IconPhoto'} title={data.title ?? 'Node title'}>
+    <BaseNode
+      icon={'IconPhoto'}
+      title={data.title ?? 'Node title'}
+      nodeTypeDescription="Image node"
+      onTitleChange={handleTitleChange}
+      onTitleBlur={() => {}}
+    >
       <Handle
         type="target"
         position={Position.Left}

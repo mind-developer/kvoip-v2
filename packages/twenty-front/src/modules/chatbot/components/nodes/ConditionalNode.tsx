@@ -7,6 +7,7 @@ import {
   RecordType,
 } from '@/chatbot/types/LogicNodeDataType';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -72,6 +73,18 @@ function ConditionalNode({
     handleType: 'source',
   });
 
+  const handleTitleChange = (e: string) => {
+    updateNodeData(id, {
+      ...data,
+      title: e,
+    });
+  };
+  const handleMessageBodyChange = (e: string) => {
+    updateNodeData(id, {
+      text: e,
+    });
+  };
+
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
@@ -122,7 +135,13 @@ function ConditionalNode({
   }
 
   return (
-    <BaseNode icon={'IconHierarchy'} title={data.title ?? 'Conditional Node'}>
+    <BaseNode
+      icon={'IconHierarchy'}
+      title={data.title ?? 'Conditional Node'}
+      nodeTypeDescription="Conditional node"
+      onTitleChange={handleTitleChange}
+      onTitleBlur={() => {}}
+    >
       <Handle
         title={data.title}
         type="target"
@@ -134,7 +153,11 @@ function ConditionalNode({
           {data.text && (
             <>
               <StyledLabel>Message body</StyledLabel>
-              <StyledOption icon="IconTextPlus">{data.text}</StyledOption>
+              <TextArea
+                placeholder="Text message to be sent"
+                value={data.text}
+                onChange={handleMessageBodyChange}
+              />
             </>
           )}
           <StyledLabel>Options</StyledLabel>
