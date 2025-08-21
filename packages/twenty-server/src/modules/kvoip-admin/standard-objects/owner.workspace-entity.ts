@@ -146,7 +146,7 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Subscriptions`,
     description: msg`Subscriptions linked to the owner.`,
     icon: 'IconFileImport',
-    inverseSideTarget: () => TenantWorkspaceEntity,
+    inverseSideTarget: () => SubscriptionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   subscriptions: Relation<SubscriptionWorkspaceEntity[]>;
