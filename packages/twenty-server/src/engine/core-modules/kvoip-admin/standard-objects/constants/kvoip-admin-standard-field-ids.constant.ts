@@ -34,12 +34,23 @@ export const SUBSCRIPTION_STANDARD_FIELD_IDS = {
   trialEnd: 'e4156740-394d-44f4-819c-1f9b3bd96a4e',
   owner: '126962e5-6e86-48a8-8053-57ccbf27e0d7',
   tenant: 'd7819a1b-c995-485f-9490-4449d4e64ad9',
+  subscriptionPlan: 'a1fc7aed-6ce9-4b83-8981-166e0745ce85',
   position: '6296d60e-b108-4bbf-9944-01df1816555e',
   searchVector: 'b18a4fb4-d868-4164-9f84-3e3d4c10c0d8',
+};
+
+export const SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS = {
+  name: '14e5594d-7537-4bc7-8470-04307e47139b',
+  planKey: 'a2a22f85-88f8-4834-95af-950cc8b7c6ac',
+  status: '25f7aa01-f903-4e3f-ab01-465a663643ae',
+  subscriptions: '455d575e-c6b3-4244-8069-d0d255312a55',
+  position: 'd113aba9-5696-46c2-b60e-0af1cc57328d',
+  searchVector: '1bababaa-2232-484c-9d4e-efcbede362a1',
 };
 
 export const KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS = {
   tenant: TENANT_STANDARD_FIELD_IDS,
   owner: OWNER_STANDARD_FIELD_IDS,
   subscription: SUBSCRIPTION_STANDARD_FIELD_IDS,
+  subscriptionPlan: SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS,
 };

@@ -29,6 +29,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
+import { SubscriptionPlanWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity';
 import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 
 const NAME_FIELD_NAME = 'identifier';
@@ -159,7 +160,7 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.paymentProvider,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Gateway`,
     description: msg`The payment gateway used for the subscription`,
     icon: 'IconMap',
@@ -170,7 +171,7 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.recurrence,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
     description: msg`Number of members in the workspace`,
     icon: 'IconUsers',
@@ -181,7 +182,7 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Status`,
     description: msg`The subscription status`,
     icon: 'IconStatusChange',
@@ -203,7 +204,7 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.trialStart,
     type: FieldMetadataType.DATE_TIME,
-    label: msg`Status`,
+    label: msg`Trial Start`,
     description: msg`The subscription trial period start date`,
     icon: 'IconCalendar',
   })
@@ -213,7 +214,7 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.trialEnd,
     type: FieldMetadataType.DATE_TIME,
-    label: msg`Status`,
+    label: msg`Trial End`,
     description: msg`The subscription trial period end date`,
     icon: 'IconCalendar',
   })
@@ -235,6 +236,22 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('owner')
   ownerId: string | null;
+
+  @WorkspaceRelation({
+    standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.subscriptionPlan,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Plan`,
+    description: msg`Subscription plan`,
+    icon: 'IconUser',
+    inverseSideTarget: () => SubscriptionPlanWorkspaceEntity,
+    inverseSideFieldKey: 'subscriptions',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  subscriptionPlan: Relation<SubscriptionPlanWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('subscriptionPlan')
+  subscriptionPlanId: string | null;
 
   @WorkspaceRelation({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.tenant,
