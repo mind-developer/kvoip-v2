@@ -1334,7 +1334,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CHATBOT_ENABLED = true;
+  IS_CHATBOT_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
