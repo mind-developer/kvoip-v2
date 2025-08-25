@@ -1,24 +1,12 @@
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable no-constant-condition */
-
-import {
-  initialEdges,
-  initialNodes,
-} from '@/chatbot/flow-templates/mockFlowTemplate';
-
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
-import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
-import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
 
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
-import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-// eslint-disable-next-line no-restricted-imports
 import { IconPlus } from '@tabler/icons-react';
 
 import {
@@ -29,7 +17,7 @@ import {
   Connection,
   Controls,
   Edge,
-  Node,
+  NodeChange,
   NodeTypes,
   OnConnect,
   ReactFlow,
@@ -38,14 +26,17 @@ import {
 } from '@xyflow/react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
 
+import { useHandleNodeValue } from '../hooks/useHandleNodeValue';
 import { GenericNode } from '../types/GenericNode';
 import { ChatbotFlowData } from '../types/chatbotFlow.type';
+import { chatbotFlowSelectedNodeState } from '../state/chatbotFlowSelectedNodeState';
+import { chatbotFlowState } from '../state/chatbotFlowState';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
@@ -119,73 +110,70 @@ export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
+  chatbotId
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
 
-  const [nodes, setNodes] = useState<GenericNode[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const chatbotFlowData = useRecoilState(chatbotFlowState)[0]
+
+  const [nodes, setNodes] = useState<GenericNode[]>(chatbotFlowData?.nodes ?? []);
+  const [edges, setEdges] = useState<Edge[]>(chatbotFlowData?.edges ?? []);
+
+
+  const reactFlow = useReactFlow();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [rfInstance, setRfInstance] =
-    useState<ReactFlowInstance<Node, Edge> | null>(null);
+    useState<ReactFlowInstance<GenericNode, Edge> | null>(null);
 
+  //ideally remove this hook
   const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
+
+  //what exactly does this validation do? and what's up with the naming?
   const { chatbotFlow } = useValidateChatbotFlow();
-  const { updateFlow } = useUpdateChatbotFlow();
-  const chatbotFlowId = useRecoilValue(chatbotFlowIdState);
-
-  const { chatbotFlowData, refetch } = useGetChatbotFlowById(
-    chatbotFlowId ?? '',
-  );
-
-  // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
 
-  type FlowType = () => [GenericNode[], Edge[]] | undefined;
+  //ideally redo this hook...
+  const { updateFlow } = useUpdateChatbotFlow();
 
-  const defineFlow: FlowType = () => {
-    if (!chatbotFlowData) {
-      return undefined;
-    }
-    return [chatbotFlowData.nodes, chatbotFlowData.edges];
-  };
+  const selectedNode = useRecoilState(chatbotFlowSelectedNodeState)
 
-  useEffect(() => {
-    const [resNode, resEdges] = defineFlow() ?? [];
-    if (resNode && resEdges) {
-      setNodes(resNode);
-      setEdges(resEdges);
-    }
-  }, [chatbotFlowData]);
+  const { savePositionValue } = useHandleNodeValue();
 
   useEffect(() => {
     if (
       nodes.length > 0 &&
       edges.length > 0 &&
-      chatbotFlowId &&
+      chatbotId &&
       !hasValidatedRef.current
     ) {
-      chatbotFlow({ nodes, edges, chatbotId: chatbotFlowId });
+      chatbotFlow({ nodes, edges, chatbotId: chatbotId });
       hasValidatedRef.current = true;
-      saveFlow();
     }
-  }, [nodes, edges, chatbotFlowId]);
+  }, [nodes, edges, chatbotId]);
 
   const saveFlow = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      if (!chatbotFlowId) return;
+      if (!chatbotId) return;
 
-      const newFlow = { ...flow, chatbotId: chatbotFlowId };
+      const newFlow = { ...flow, chatbotId: chatbotId };
       updateFlow(newFlow as ChatbotFlowData);
-      refetch();
     }
   }, [rfInstance]);
 
   const onNodesChange = useCallback(
-    (changes: any) =>
-      setNodes((nds) =>
-        applyNodeChanges(structuredClone(changes), structuredClone(nds)),
-      ),
-    [],
+    (newNodesState: NodeChange[]) =>
+      setNodes((nds) => {
+        const appliedNodeChanges = applyNodeChanges(structuredClone(newNodesState), structuredClone(nds))
+        newNodesState.forEach((newNodeState: NodeChange) => {
+          if (newNodeState.type === 'position' && !newNodeState.dragging) {
+            updateFlow({ ...rfInstance!.toObject(), nodes: appliedNodeChanges, chatbotId })
+          }
+        })
+        return appliedNodeChanges
+      }),
+    [selectedNode],
   );
 
   const onEdgesChange = useCallback(
@@ -208,6 +196,7 @@ export const BotDiagramBase = ({
     [edges, setEdges],
   );
 
+  //this is ok
   const isValidConnection = useCallback(
     (connection: Edge | Connection) => {
       const { source, sourceHandle, target, targetHandle } = connection;
@@ -227,26 +216,24 @@ export const BotDiagramBase = ({
     [edges],
   );
 
-  const reactflow = useReactFlow();
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
+    if (!isDefined(containerRef.current) || !reactFlow.viewportInitialized) {
       return;
     }
 
-    const currentViewport = reactflow.getViewport();
-    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+    const currentViewport = reactFlow.getViewport();
+    const flowBounds = reactFlow.getNodesBounds(reactFlow.getNodes());
 
     const viewportX =
       (containerRef?.current?.offsetWidth ?? 0) / 2 -
       (flowBounds.width ?? 2) / 2;
 
-    reactflow.setViewport(
+    reactFlow.setViewport(
       { ...currentViewport, x: viewportX },
       { duration: 300 },
     );
-  }, [reactflow]);
+  }, [reactFlow]);
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -277,7 +264,7 @@ export const BotDiagramBase = ({
           Icon={IconPlus}
           title="Add node"
           onClick={() =>
-            chatbotFlowId && openChatbotFlowCommandMenu(chatbotFlowId)
+            chatbotId && openChatbotFlowCommandMenu(chatbotId)
           }
         />
         <StyledButton accent="blue" title="Save" onClick={saveFlow} />

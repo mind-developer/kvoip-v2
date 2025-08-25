@@ -1,11 +1,9 @@
 import { UPDATE_CHATBOT_FLOW } from '@/chatbot/graphql/mutation/updateChatbotFlow';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 interface UseUpdateChatbotFlowReturn {
   updateFlow: (updateChatbotInput: ChatbotFlowData) => Promise<any>;
@@ -13,7 +11,6 @@ interface UseUpdateChatbotFlowReturn {
 
 export const useUpdateChatbotFlow = (): UseUpdateChatbotFlowReturn => {
   const { enqueueSnackBar } = useSnackBar();
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
 
   const [updateChatbotFlow, { data }] = useMutation(UPDATE_CHATBOT_FLOW, {
     onError: (error) => {
@@ -32,8 +29,6 @@ export const useUpdateChatbotFlow = (): UseUpdateChatbotFlowReturn => {
     if (!data) {
       return;
     }
-
-    setChatbotFlow(data?.updateChatbotFlow);
   }, [data]);
 
   const updateFlow = async (updateChatbotInput: ChatbotFlowData) => {
