@@ -10,10 +10,13 @@ import {
   NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
+  useNodes,
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
+import { ChatbotFlowFileEventForm } from '../actions/ChatbotFlowFileEventForm';
 
 const StyledIcon = styled.div`
   align-items: center;
@@ -38,6 +41,8 @@ function FileNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
+  const nodeId = useNodeId()
+  const node = useNodes().filter(filterNodes => filterNodes.id === nodeId)[0]
   const { getIcon } = useIcons();
   const IconFileText = getIcon('IconFileText');
 
@@ -78,7 +83,7 @@ function FileNode({
   }, [targetConnections, sourceConnections]);
 
   return (
-    <BaseNode icon={'IconFileImport'} title={data.title ?? 'Node title'} nodeTypeDescription='File node'>
+    <BaseNode onTitleBlur={() => { }} onTitleChange={() => { }} icon={'IconFileImport'} title={data.title ?? 'Node title'} nodeTypeDescription='File node'>
       <Handle
         type="target"
         position={Position.Left}
@@ -92,6 +97,7 @@ function FileNode({
           {renameFile(data.fileUrl)}
         </StyledOption>
       )}
+      <ChatbotFlowFileEventForm selectedNode={node} />
       <Handle
         type="source"
         position={Position.Right}

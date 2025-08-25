@@ -89,7 +89,7 @@ const BaseNode = ({
 
   const theme = useTheme();
   const iconHeader = (
-    <Icon size={18} color={theme.color[iconColor ?? 'gray']}></Icon>
+    <Icon size={18} color={theme.color[iconColor ?? 'gray']}/>
   );
 
   const [customTitle, setCustomTitle] = useState<string>(title);

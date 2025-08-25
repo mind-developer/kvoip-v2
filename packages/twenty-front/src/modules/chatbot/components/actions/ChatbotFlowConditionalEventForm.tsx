@@ -14,6 +14,7 @@ import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
+import { Handle, Position } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconPlus, Label } from 'twenty-ui/display';
@@ -176,15 +177,17 @@ export const ChatbotFlowConditionalEventForm = ({
         />
         {nodeData.logicNodes.map((_, index) => {
           return (
-            <LogicOption
-              key={index}
-              nodeIndex={index}
-              condition={nodeData.logicNodeData[index]}
-              onDelete={() => deleteCondition(index)}
-              onUpdate={(updates) => updateCondition(index, updates)}
-              showDeleteButton={nodeData.logicNodes.length > 1}
-            />
-          );
+            <>
+              <LogicOption
+                key={index}
+                nodeIndex={index}
+                condition={nodeData.logicNodeData[index]}
+                onDelete={() => deleteCondition(index)}
+                onUpdate={(updates) => updateCondition(index, updates)}
+                showDeleteButton={nodeData.logicNodes.length > 1}
+              />
+            </>
+          )
         })}
         <Button
           onClick={addCondition}

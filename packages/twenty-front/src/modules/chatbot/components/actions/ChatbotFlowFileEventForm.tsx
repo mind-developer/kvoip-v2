@@ -57,8 +57,8 @@ const StyledStepBody = styled.div`
   flex-direction: column;
   height: 100%;
   overflow-y: scroll;
-  padding-block: ${({ theme }) => theme.spacing(4)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
+  // padding-block: ${({ theme }) => theme.spacing(4)};
+  // padding-inline: ${({ theme }) => theme.spacing(3)};
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
@@ -187,30 +187,11 @@ export const ChatbotFlowFileEventForm = ({
 
   return (
     <>
-      <StyledHeader>
-        <StyledHeaderInfo>
-          <StyledHeaderTitle>
-            <TitleInput
-              sizeVariant="md"
-              value={title as string}
-              onChange={handleChange}
-              onEscape={() => {
-                setTitle(initialTitle);
-              }}
-              onClickOutside={() => handleFieldBlur('title', title)}
-            />
-          </StyledHeaderTitle>
-          <StyledHeaderType>
-            {getChatbotNodeLabel(selectedNode.type ?? '')}
-          </StyledHeaderType>
-        </StyledHeaderInfo>
-      </StyledHeader>
       <ChatbotFlowEventContainerForm
         onClick={() => deleteSelectedNode(selectedNode.id)}
       >
         <StyledStepBody>
           <StyledDiv>
-            <Label>File</Label>
             {file && (
               <StyledLink href={file} target="_blank" rel="noreferrer">
                 <H3Title title={renameFile(file)} />

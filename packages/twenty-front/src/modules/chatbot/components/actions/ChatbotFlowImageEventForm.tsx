@@ -17,76 +17,14 @@ type ChatbotFlowImageEventFormProps = {
   selectedNode: Node;
 };
 
-const StyledHeader = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  display: flex;
-  flex-direction: row;
-  padding: ${({ theme }) => theme.spacing(4)};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledHeaderInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledHeaderTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  width: fit-content;
-  max-width: 420px;
-  & > input:disabled {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
-`;
-
-const StyledHeaderType = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledStepBody = styled.div`
   background: ${({ theme }) => theme.background.primary};
+  max-width: 240px;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   height: 100%;
   overflow-y: scroll;
-  padding-block: ${({ theme }) => theme.spacing(4)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
-  row-gap: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledDiv = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-
-  textarea {
-    resize: none;
-    width: 100%;
-    padding: ${({ theme }) => theme.spacing(2)};
-    border: none;
-    outline: none;
-    color: ${({ theme }) => theme.font.color.primary};
-    font-size: ${({ theme }) => theme.font.size.sm};
-    box-sizing: border-box;
-    background-color: ${({ theme }) => theme.background.quaternary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-
-    &:focus {
-      border: 1px solid ${({ theme }) => theme.color.blue};
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
 `;
 
 export const ChatbotFlowImageEventForm = ({
@@ -212,37 +150,16 @@ export const ChatbotFlowImageEventForm = ({
 
   return (
     <>
-      <StyledHeader>
-        <StyledHeaderInfo>
-          <StyledHeaderTitle>
-            <TitleInput
-              sizeVariant="md"
-              value={title as string}
-              onChange={handleChange}
-              onEscape={() => {
-                setTitle(initialTitle);
-              }}
-              onClickOutside={() => handleFieldBlur('title', title)}
-            />
-          </StyledHeaderTitle>
-          <StyledHeaderType>
-            {getChatbotNodeLabel(selectedNode.type ?? '')}
-          </StyledHeaderType>
-        </StyledHeaderInfo>
-      </StyledHeader>
       <ChatbotFlowEventContainerForm
         onClick={() => deleteSelectedNode(selectedNode.id)}
       >
         <StyledStepBody>
-          <StyledDiv>
-            <Label>File</Label>
-            <ImageInput
-              picture={image}
-              onUpload={handleSendFile}
-              onRemove={handleRemoveFile}
-              maxSize="5"
-            />
-          </StyledDiv>
+          <ImageInput
+            picture={image}
+            onUpload={handleSendFile}
+            onRemove={handleRemoveFile}
+            maxSize="5"
+          />
         </StyledStepBody>
       </ChatbotFlowEventContainerForm>
     </>

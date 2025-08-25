@@ -8,9 +8,12 @@ import {
   NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
+  useNodes,
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
+import { ChatbotFlowImageEventForm } from '../actions/ChatbotFlowImageEventForm';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -37,6 +40,8 @@ function ImageNode({
     imageUrl?: string;
   }>
 >) {
+  const nodeId = useNodeId()
+  const node = useNodes().filter(filterNodes => filterNodes.id === nodeId)[0]
   const { updateNodeData } = useReactFlow();
 
   const targetConnections = useNodeConnections({
@@ -100,6 +105,7 @@ function ImageNode({
           <StyledImage src={data.imageUrl} />
         </StyledDiv>
       )}
+      <ChatbotFlowImageEventForm selectedNode={node} />
       <Handle
         type="source"
         position={Position.Right}
