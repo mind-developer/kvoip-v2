@@ -24,7 +24,7 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscriptions.workspace-entity';
+import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
