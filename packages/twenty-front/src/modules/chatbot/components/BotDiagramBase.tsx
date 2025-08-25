@@ -26,17 +26,17 @@ import {
 } from '@xyflow/react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
 
-import { useHandleNodeValue } from '../hooks/useHandleNodeValue';
-import { GenericNode } from '../types/GenericNode';
-import { ChatbotFlowData } from '../types/chatbotFlow.type';
+import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
 import { chatbotFlowSelectedNodeState } from '../state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '../state/chatbotFlowState';
+import { GenericNode } from '../types/GenericNode';
+import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
@@ -119,6 +119,8 @@ export const BotDiagramBase = ({
   const [nodes, setNodes] = useState<GenericNode[]>(chatbotFlowData?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(chatbotFlowData?.edges ?? []);
 
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const reactFlow = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,8 +139,6 @@ export const BotDiagramBase = ({
   const { updateFlow } = useUpdateChatbotFlow();
 
   const selectedNode = useRecoilState(chatbotFlowSelectedNodeState)
-
-  const { savePositionValue } = useHandleNodeValue();
 
   useEffect(() => {
     if (
@@ -216,6 +216,11 @@ export const BotDiagramBase = ({
     [edges],
   );
 
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setContextMenuPosition({ x: e.clientX, y: e.clientY });
+    setIsContextMenuOpen(prev => !prev);
+  }
 
   useEffect(() => {
     if (!isDefined(containerRef.current) || !reactFlow.viewportInitialized) {
@@ -249,6 +254,9 @@ export const BotDiagramBase = ({
         fitViewOptions={{ padding: 2 }}
         isValidConnection={isValidConnection}
         fitView
+        onClick={() => setIsContextMenuOpen(false)}
+        onDragStart={() => setIsContextMenuOpen(false)}
+        onContextMenu={handleContextMenu}
       >
         <Controls showZoom={true} />
         <Background color={theme.border.color.medium} size={2} />
@@ -257,6 +265,8 @@ export const BotDiagramBase = ({
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
+
+      {isContextMenuOpen && <div style={{ position: 'absolute', top: contextMenuPosition.y, left: contextMenuPosition.x }}><ChatbotActionMenu /></div>}
 
       <StyledButtonContainer>
         <StyledButton
