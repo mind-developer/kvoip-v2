@@ -406,9 +406,28 @@ export class WhatsappService {
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
-
+    if (!docSnapshot.exists()) {
+      console.warn('saveEventMessageAtFirebase: documento não encontrado no Firestore para iniciar atendimento. Payload:', JSON.stringify(whatsappDoc, null, 2));
+      return false;
+    }
     const whatsappIntegration = docSnapshot.data() as WhatsappDocument;
 
+    // Se não houver messages, apenas atualiza status, agent, sector e timeline
+    if (!whatsappDoc.messages || !Array.isArray(whatsappDoc.messages) || !whatsappDoc.messages[0]) {
+      whatsappIntegration.status = whatsappDoc.status || statusEnum.InProgress;
+
+      if (whatsappDoc.agent) whatsappIntegration.agent = whatsappDoc.agent;
+      if (whatsappDoc.sector) whatsappIntegration.sector = whatsappDoc.sector;
+
+      if (whatsappDoc.timeline && Array.isArray(whatsappDoc.timeline) && whatsappDoc.timeline[0]) {
+        whatsappIntegration.timeline = whatsappIntegration.timeline || [];
+        whatsappIntegration.timeline.push({ ...whatsappDoc.timeline[0] });
+      }
+      await setDoc(docRef, whatsappIntegration);
+      return true;
+    }
+
+    // Fluxo normal se houver messages
     whatsappIntegration.messages.push({ ...whatsappDoc.messages[0] });
     whatsappIntegration.timeline.push({ ...whatsappDoc.timeline[0] });
     whatsappIntegration.status = whatsappDoc.status;

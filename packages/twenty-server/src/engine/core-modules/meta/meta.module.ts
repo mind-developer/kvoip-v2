@@ -55,4 +55,4 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     WhatsappCronCommand,
   ],
 })
-export class MetaModule {}
+export class MetaModule { }

@@ -4,8 +4,10 @@ import {
 } from '@/chatbot/types/LogicNodeDataType';
 import { comparisonOptions } from '@/chatbot/types/condicionalOptions';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
-import { Select } from '@/ui/input/components/Select';
+import { Select, SelectValue } from '@/ui/input/components/Select';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
+import { Handle, Position } from '@xyflow/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { IconTrash, Label, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -19,62 +21,35 @@ interface LogicOptionProps {
 }
 
 const StyledLogicNodeWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.background.quaternary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
-  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  margin-right: 5px;
 `;
 
-const StyledHeaderOption = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledDiv = styled.div`
+const StyledSelect = styled(Select)`
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-
-  textarea {
-    resize: none;
-    width: 100%;
-    padding: ${({ theme }) => theme.spacing(2)};
-    border: none;
-    outline: none;
-    color: ${({ theme }) => theme.font.color.primary};
-    font-size: ${({ theme }) => theme.font.size.sm};
-    box-sizing: border-box;
-    background-color: ${({ theme }) => theme.background.quaternary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-
-    &:focus {
-      border: 1px solid ${({ theme }) => theme.color.blue};
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
 `;
+
+const StyledTextInput = styled(TextInput)`
+  width: 100%;
+`
 
 const StyledLabel = styled(Label)`
+  padding-bottom: ${({ theme }) => theme.spacing(1)}
+`
+
+const StyledOptionLabel = styled(Label)`
   display: flex;
-  justify-content: flex-end;
-  width: 100%;
-`;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  border-bottom: ${({ theme }) => theme.border.color.light}
+  margin-bottom: ${({ theme }) => theme.spacing(8)}
+`
 
 export const LogicOption: React.FC<LogicOptionProps> = ({
-  nodeIndex,
   condition,
   onDelete,
   onUpdate,
@@ -90,7 +65,6 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   );
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -122,11 +96,12 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
     }
   };
 
-  const handleSector = (val: string) => {
+  const handleSector = (val: SelectValue) => {
+    if (!val) return
     if (val !== condition.sectorId) {
       const updated = {
         ...condition,
-        sectorId: val,
+        sectorId: val.toString(),
         recordType,
       };
       onUpdate(updated);
@@ -134,53 +109,68 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   };
 
   return (
-    <>
-      <StyledHeaderOption>
-        <label>Option {condition.option}</label>
-        {showDeleteButton && <Button Icon={IconTrash} onClick={onDelete} />}
-      </StyledHeaderOption>
+    <div>
+      <StyledOptionLabel>{condition.option}.</StyledOptionLabel>
       <StyledLogicNodeWrapper>
-        <Select
+        {showDeleteButton &&
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <StyledLabel>Delete</StyledLabel>
+            <Button Icon={IconTrash} onClick={onDelete} />
+          </div>
+        }
+        <StyledSelect
+          label="Record"
+          dropdownId={`select-record-type-${condition.option}`}
+          options={recordTypeOptions}
+          value={recordType}
+          onChange={(val) => setRecordType(val?.toString() as RecordType)}
+        />
+        <StyledSelect
           label="Comparison"
           dropdownId={`select-comparison-condition-${condition.option}`}
           options={comparisonOptions}
           value={condition.comparison}
           onChange={(val) => {
-            onUpdate({ ...condition, comparison: val });
+            onUpdate({ ...condition, comparison: val?.toString() ?? '' });
           }}
         />
-        <Select
-          label="Record"
-          dropdownId={`select-record-type-${condition.option}`}
-          options={recordTypeOptions}
-          value={recordType}
-          onChange={(val) => setRecordType(val)}
-        />
-
         {recordType === 'sectors' && (
-          <Select
-            label="Options"
-            dropdownId={`select-sector-condition-${condition.option}`}
-            options={sectorsOptions}
-            value={condition.sectorId}
-            onChange={handleSector}
-          />
-        )}
-
-        {recordType === 'text' && (
-          <StyledDiv>
-            <Label>Options</Label>
-            <textarea
-              ref={textareaRef}
-              value={localMessage}
-              onChange={(e) => setLocalMessage(e.target.value)}
-              onBlur={handleTextBlur}
-              maxLength={40}
+          <>
+            <StyledSelect
+              label="Options"
+              dropdownId={`select-sector-condition-${condition.option}`}
+              options={sectorsOptions}
+              value={condition.sectorId}
+              onChange={handleSector}
             />
-            <StyledLabel>{localMessage.length}/40</StyledLabel>
-          </StyledDiv>
+            <Handle
+              id={`b-${condition.option}`}
+              type="source"
+              position={Position.Right}
+              isConnectable={true}
+              onDragEnd={(e) => console.log(e)}
+            />
+          </>
+        )}
+        {recordType === 'text' && (
+          <>
+            <StyledTextInput
+              label="Text"
+              value={localMessage}
+              onChange={(e) => setLocalMessage(e)}
+              onBlur={handleTextBlur}
+              disabled={localMessage.length > 40}
+            />
+            <Handle
+              id={`b-${condition.option}`}
+              type="source"
+              position={Position.Right}
+              isConnectable={true}
+              onDragEnd={(e) => console.log(e)}
+            />
+          </>
         )}
       </StyledLogicNodeWrapper>
-    </>
+    </div>
   );
 };

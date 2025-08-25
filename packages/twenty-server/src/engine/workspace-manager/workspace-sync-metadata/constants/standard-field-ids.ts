@@ -722,6 +722,8 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
+  tipoApi: 'c0a80101-0000-0000-0000-000000000001',
+
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {

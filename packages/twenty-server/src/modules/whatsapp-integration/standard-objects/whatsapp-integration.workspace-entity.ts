@@ -156,4 +156,13 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: any;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.tipoApi,
+    type: FieldMetadataType.TEXT,
+    label: msg`Tipo API`,
+    description: msg`Tipo da API do WhatsApp`,
+  })
+  @Field(() => String, { nullable: true })
+  tipoApi?: string;
 }

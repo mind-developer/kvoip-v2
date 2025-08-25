@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -8,12 +9,15 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import axios from 'axios';
+import { Response } from 'express';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -22,7 +26,7 @@ export class WhatsappController {
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
     private readonly whatsappService: WhatsappService,
-  ) {}
+  ) { }
 
   @Get('/webhook/:workspaceId/:id')
   async handleVerification(
@@ -124,10 +128,238 @@ export class WhatsappController {
         lastMessage,
       };
 
+      console.log('Payload enviado ao Firestore:', JSON.stringify(whatsappIntegration, null, 2));
       await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
         true,
       );
+    }
+  }
+
+  @Post('start/:sessionId')
+  async startSession(@Param('sessionId') sessionId: string, @Body() body: any) {
+    return this.whatsappIntegrationService.startBaileysSession(sessionId, body);
+  }
+
+  @Delete('stop/:sessionId')
+  async stopSession(@Param('sessionId') sessionId: string) {
+    return this.whatsappIntegrationService.stopBaileysSession(sessionId);
+  }
+
+  @Get('status/:sessionId')
+  async getStatus(@Param('sessionId') sessionId: string) {
+    return this.whatsappIntegrationService.getBaileysStatus(sessionId);
+  }
+
+  @Get('qr/:sessionId')
+  async getQr(@Param('sessionId') sessionId: string) {
+    return this.whatsappIntegrationService.getBaileysQr(sessionId);
+  }
+}
+
+@Controller('rest/whatsapp')
+export class WhatsappRestController {
+  protected readonly logger = new Logger(WhatsappRestController.name);
+  constructor(
+    private whatsappIntegrationService: WhatsappIntegrationService,
+    private readonly whatsappService: WhatsappService,
+  ) { }
+  @Get('/qrold/:sessionId')
+  async getQrCodeold(@Param('sessionId') sessionId: string) {
+    try {
+      this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
+      this.logger.log(`Session ID: ${sessionId}`);
+      this.logger.log(`URL de destino: http://localhost:3002/api/session/${sessionId}/qr`);
+
+      const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`, {
+        timeout: 10000, // 10 second timeout
+      });
+
+      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
+      this.logger.log(`Status: ${response.status}`);
+      this.logger.log(`Headers:`, response.headers);
+      this.logger.log(`Data:`, response.data);
+
+      return response.data;
+    } catch (error) {
+      this.logger.error(`=== ERRO NA REQUISIÇÃO ===`);
+      this.logger.error(`Session ID: ${sessionId}`);
+      this.logger.error(`Erro completo:`, error);
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        this.logger.error(`Status do erro: ${error.response.status}`);
+        this.logger.error(`Dados do erro:`, error.response.data);
+        throw new HttpException(
+          `Baileys service error: ${error.response.status} - ${error.response.statusText}`,
+          error.response.status,
+        );
+      } else if (error.request) {
+        // The request was made but no response was received
+        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
+        throw new HttpException(
+          'Baileys service is not responding',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        throw new HttpException(
+          `Error setting up request: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  // NOVO ENDPOINT PROXY PARA STATUS
+  @Get('/status/:sessionId')
+  @UseGuards()
+  async getStatus(@Param('sessionId') sessionId: string) {
+    try {
+      this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
+      this.logger.log(`Session ID: ${sessionId}`);
+      this.logger.log(`URL de destino: http://localhost:3002/api/session/status/${sessionId}`);
+
+      const response = await axios.get(`http://localhost:3002/api/session/status/${sessionId}`, {
+        timeout: 10000, // 10 second timeout
+      });
+
+      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
+      this.logger.log(`Status: ${response.status}`);
+      this.logger.log(`Headers:`, response.headers);
+      this.logger.log(`Data:`, response.data);
+
+      return response.data;
+    } catch (error) {
+      this.logger.error(`=== ERRO NA REQUISIÇÃO STATUS ===`);
+      this.logger.error(`Session ID: ${sessionId}`);
+      this.logger.error(`Erro completo:`, error);
+
+      if (error.response) {
+        this.logger.error(`Status do erro: ${error.response.status}`);
+        this.logger.error(`Dados do erro:`, error.response.data);
+        throw new HttpException(
+          error.response.data,
+          error.response.status,
+        );
+      } else if (error.request) {
+        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
+        throw new HttpException(
+          'Baileys service is not responding',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      } else {
+        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        throw new HttpException(
+          `Error setting up request: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+}
+
+// Controller separado para endpoints REST
+@Controller('Whats-App-rest/whatsapp')
+export class WhatsappRestController2 {
+  protected readonly logger = new Logger(WhatsappRestController.name);
+
+  constructor(
+    private whatsappIntegrationService: WhatsappIntegrationService,
+    private readonly whatsappService: WhatsappService,
+  ) { }
+
+  // NOVO ENDPOINT PROXY PARA STATUS
+  @Get('/status/:sessionId')
+  @UseGuards()
+  async getStatus(@Param('sessionId') sessionId: string) {
+    try {
+      this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
+      this.logger.log(`Session ID: ${sessionId}`);
+      this.logger.log(`URL de destino: http://localhost:3002/api/session/status/${sessionId}`);
+
+      const response = await axios.get(`http://localhost:3002/api/session/status/${sessionId}`, {
+        timeout: 10000, // 10 second timeout
+      });
+
+      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
+      this.logger.log(`Status: ${response.status}`);
+      this.logger.log(`Headers:`, response.headers);
+      this.logger.log(`Data:`, response.data);
+
+      return response.data;
+    } catch (error) {
+      this.logger.error(`=== ERRO NA REQUISIÇÃO STATUS ===`);
+      this.logger.error(`Session ID: ${sessionId}`);
+      this.logger.error(`Erro completo:`, error);
+
+      if (error.response) {
+        this.logger.error(`Status do erro: ${error.response.status}`);
+        this.logger.error(`Dados do erro:`, error.response.data);
+        throw new HttpException(
+          error.response.data,
+          error.response.status,
+        );
+      } else if (error.request) {
+        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
+        throw new HttpException(
+          'Baileys service is not responding',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      } else {
+        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        throw new HttpException(
+          `Error setting up request: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+
+  } @Get('/qr/:sessionId')
+  async getQrCode(@Param('sessionId') sessionId: string) {
+    try {
+      this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
+      this.logger.log(`Session ID: ${sessionId}`);
+      this.logger.log(`URL de destino: http://localhost:3002/api/session/${sessionId}/qr`);
+
+      const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`, {
+        timeout: 10000, // 10 second timeout
+      });
+      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
+      this.logger.log(`Status: ${response.status}`);
+      this.logger.log(`Headers:`, response.headers);
+      this.logger.log(`Data:`, response.data);
+      return response.data;
+    } catch (error) {
+      this.logger.error(`=== ERRO NA REQUISIÇÃO ===`);
+      this.logger.error(`Session ID: ${sessionId}`);
+      this.logger.error(`Erro completo:`, error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        this.logger.error(`Status do erro: ${error.response.status}`);
+        this.logger.error(`Dados do erro:`, error.response.data);
+        throw new HttpException(
+          `Baileys service error: ${error.response.status} - ${error.response.statusText}`,
+          error.response.status,
+        );
+      } else if (error.request) {
+        // The request was made but no response was received
+        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
+        throw new HttpException(
+          'Baileys service is not responding',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        throw new HttpException(
+          `Error setting up request: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
 }

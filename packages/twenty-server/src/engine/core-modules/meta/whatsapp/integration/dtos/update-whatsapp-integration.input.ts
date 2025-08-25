@@ -38,4 +38,9 @@ export class UpdateWhatsappIntegrationInput {
   @IsOptional()
   @IsString()
   accessToken?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  tipoApi?: string;
 }

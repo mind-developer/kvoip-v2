@@ -127,13 +127,12 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   const userNameToDisplay =
     chat.lastMessage.from !== 'system' ? chat.client.name : 'Current User';
 
-  const messageToDisplay = `${userNameToDisplay}: ${
-    chat.lastMessage.message?.length > 20
-      ? (chat.lastMessage.message.at(19) === ' '
-          ? chat.lastMessage.message.slice(0, 19)
-          : chat.lastMessage.message.slice(0, 20)) + '...'
-      : chat.lastMessage.message
-  }`;
+  const messageToDisplay = `${userNameToDisplay}: ${chat.lastMessage.message?.length > 20
+    ? (chat.lastMessage.message.at(19) === ' '
+      ? chat.lastMessage.message.slice(0, 19)
+      : chat.lastMessage.message.slice(0, 20)) + '...'
+    : chat.lastMessage.message
+    }`;
 
   const agent = agents.find((agent: any) => agent.id === chat.agent);
 
@@ -161,9 +160,35 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
               src={WhatsappIcon}
               // src={platform === 'whatsapp' ? WhatsappIcon : MessengerIcon}
               alt={'Whatsapp'}
-              //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
+            //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
             />
-            {integration?.name}
+
+            {integration?.name}{' '}
+            {/*integration?.tipo_api === 'Baileys' ? 'Baileys' : 'MetaAPI'*/}
+            {/* Ícone condicional por imagem */}
+            {integration?.tipoApi === 'Baileys' ? (
+              <img
+                src="https://raw.githubusercontent.com/WhiskeySockets/Baileys/refs/heads/master/Media/logo.png"
+                alt="Baileys Logo"
+                style={{
+                  width: '100%',
+                  height: '14px',
+                  marginLeft: '8px',
+                  verticalAlign: 'middle',
+                }}
+              />
+            ) : (
+              <img
+                src="https://kvoip.com.br/metaapi.png"
+                alt="MetaAPI Logo"
+                style={{
+                  width: '100%',
+                  height: '14px',
+                  marginLeft: '8px',
+                  verticalAlign: 'middle',
+                }}
+              />
+            )}
           </StyledIntegrationCard>
           {isAdmin && chat.agent !== 'empty' && (
             <StyledIntegrationCard isSelected={isSelected}>
