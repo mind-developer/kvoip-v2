@@ -33,17 +33,7 @@ function TextNode({
   const { saveDataValue } = useHandleNodeValue()
 
   const [titleValue, setTitleValue] = useState<string>(data.title)
-  const [textValue, setTextValue] = useState<string>(data.title);
-  let [hasHydratedInitialValues, setHasHydratedInitialValues] = useState(false);
-
-  useEffect(() => {
-    if (!data.title && !data.text) return
-    if (!hasHydratedInitialValues) {
-      setHasHydratedInitialValues(true)
-      setTitleValue(data.title ?? "")
-      setTextValue(data.text ?? "")
-    }
-  }, [data.title, data.text])
+  const [textValue, setTextValue] = useState<string>(data.text ?? "");
 
   const targetConnections = useNodeConnections({
     id,
@@ -92,7 +82,7 @@ function TextNode({
   return (
     <BaseNode
       icon={'IconTextSize'}
-      title={titleValue}
+      title={titleValue ?? "Text node"}
       nodeStart={data.nodeStart}
       nodeTypeDescription="Text node"
       onTitleChange={(e) => setTitleValue(e)}
@@ -103,7 +93,7 @@ function TextNode({
       {!data.nodeStart && (
         <Handle
           type="target"
-          position={Position.Top}
+          position={Position.Left}
           isConnectable={isConnectable}
           onDragEnd={(e) => console.log(e)}
         />
@@ -117,12 +107,11 @@ function TextNode({
           onBlur={() => {
             saveDataValue('text', textValue, node);
           }}
-          className="nodrag"
         />
       </>
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
         isConnectable={isConnectable} />
     </BaseNode>
   );
