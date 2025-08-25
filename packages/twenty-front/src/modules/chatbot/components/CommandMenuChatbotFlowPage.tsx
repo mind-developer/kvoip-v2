@@ -10,9 +10,8 @@ import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/co
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+
 import { useSaveChatbotFlowState } from '../hooks/useSaveChatbotFlowState';
-import { useReactFlow } from '@xyflow/react';
-import { useUpdateChatbotFlow } from '../hooks/useUpdateChatbotFlow';
 
 export const CommandMenuChatbotFlowPage = () => {
   const { getIcon } = useIcons();
@@ -35,7 +34,8 @@ export const CommandMenuChatbotFlowPage = () => {
     }
 
     const updatedChatbotFlow = {
-      ...chatbotFlow,
+      chatbotId: chatbotFlow.chatbotId,
+      edges: [...chatbotFlow.edges],
       nodes: [...chatbotFlow.nodes, newNode],
       viewport: { x: 0, y: 0, zoom: 0 },
     };
