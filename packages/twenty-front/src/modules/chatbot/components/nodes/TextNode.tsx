@@ -1,10 +1,5 @@
-/* eslint-disable @nx/workspace-component-props-naming */
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
-import { GenericNode } from '@/chatbot/types/GenericNode';
-import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { TextArea } from '@/ui/input/components/TextArea';
 import {
   Handle,
@@ -17,7 +12,6 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 function TextNode({
   id,
@@ -32,16 +26,24 @@ function TextNode({
     nodeStart: boolean;
   }>
 >) {
-  const { updateNodeData } = useReactFlow();
   const nodeId = useNodeId();
   const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
 
-  const { updateFlow } = useUpdateChatbotFlow();
-  const chatbotFlow = useRecoilState(chatbotFlowState)[0];
+  const { updateNodeData } = useReactFlow();
+  const { saveDataValue } = useHandleNodeValue()
 
-  //possibly move to useRecoil
-  const [titleValue, setTitleValue] = useState(data.title ?? '');
-  const [textValue, setTextValue] = useState(data.text ?? '');
+  const [titleValue, setTitleValue] = useState<string>(data.title)
+  const [textValue, setTextValue] = useState<string>(data.title);
+  let [hasHydratedInitialValues, setHasHydratedInitialValues] = useState(false);
+
+  useEffect(() => {
+    if (!data.title && !data.text) return
+    if (!hasHydratedInitialValues) {
+      setHasHydratedInitialValues(true)
+      setTitleValue(data.title ?? "")
+      setTextValue(data.text ?? "")
+    }
+  }, [data.title, data.text])
 
   const targetConnections = useNodeConnections({
     id,
@@ -86,35 +88,16 @@ function TextNode({
     }
   }, [targetConnections, sourceConnections]);
 
-  const handleKeyUpdate = (key: string, e: string, node: GenericNode) => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (chatbotFlow?.chatbotId) {
-      const flow = {
-        edges: [...chatbotFlow.edges],
-        nodes: [
-          ...chatbotFlow.nodes,
-          { ...node, data: { ...node.data, [key]: e } },
-        ],
-        chatbotId: chatbotFlow.chatbotId,
-        viewport: chatbotFlow.viewport,
-      };
-      updateFlow(flow as ChatbotFlowData);
-    }
-    updateNodeData(id, {
-      ...node.data,
-      [key]: e,
-    });
-  };
 
   return (
     <BaseNode
       icon={'IconTextSize'}
-      title={titleValue ?? 'Node title'}
+      title={titleValue}
       nodeStart={data.nodeStart}
-      nodeTypeDescription="Message node"
+      nodeTypeDescription="Text node"
       onTitleChange={(e) => setTitleValue(e)}
       onTitleBlur={() => {
-        handleKeyUpdate('text', titleValue, node);
+        saveDataValue('title', titleValue, node);
       }}
     >
       {!data.nodeStart && (
@@ -122,6 +105,7 @@ function TextNode({
           type="target"
           position={Position.Top}
           isConnectable={isConnectable}
+          onDragEnd={(e) => console.log(e)}
         />
       )}
       <>
@@ -131,15 +115,15 @@ function TextNode({
           value={textValue}
           onChange={(e) => setTextValue(e)}
           onBlur={() => {
-            handleKeyUpdate('text', textValue, node);
+            saveDataValue('text', textValue, node);
           }}
+          className="nodrag"
         />
       </>
       <Handle
         type="source"
         position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
+        isConnectable={isConnectable} />
     </BaseNode>
   );
 }

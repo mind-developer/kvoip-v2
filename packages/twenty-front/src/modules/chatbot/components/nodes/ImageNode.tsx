@@ -88,7 +88,7 @@ function ImageNode({
       title={data.title ?? 'Node title'}
       nodeTypeDescription="Image node"
       onTitleChange={handleTitleChange}
-      onTitleBlur={() => {}}
+      onTitleBlur={() => { }}
     >
       <Handle
         type="target"

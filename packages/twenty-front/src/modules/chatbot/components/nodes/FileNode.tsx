@@ -78,7 +78,7 @@ function FileNode({
   }, [targetConnections, sourceConnections]);
 
   return (
-    <BaseNode icon={'IconFileImport'} title={data.title ?? 'Node title'}>
+    <BaseNode icon={'IconFileImport'} title={data.title ?? 'Node title'} nodeTypeDescription='File node'>
       <Handle
         type="target"
         position={Position.Left}
