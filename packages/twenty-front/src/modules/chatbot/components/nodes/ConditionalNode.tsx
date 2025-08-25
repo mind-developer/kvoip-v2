@@ -1,13 +1,12 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
-import { StyledOption } from '@/chatbot/components/ui/StyledOption';
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import {
   NewConditionalState,
   RecordType,
 } from '@/chatbot/types/LogicNodeDataType';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
-import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -15,10 +14,13 @@ import {
   NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
+  useNodes,
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
-import { Label } from 'twenty-ui/display';
+import { ChatbotFlowConditionalEventForm } from '../actions/ChatbotFlowConditionalEventForm'
+import { GenericNodeData } from '@/chatbot/types/GenericNode';
 
 const initialState: NewConditionalState = {
   logicNodes: [],
@@ -41,31 +43,21 @@ const StyledLogicNodeWrapper = styled.div`
   position: relative;
 `;
 
-const StyledOptionsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledLabel = styled(Label)`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const StyledHandle = styled(Handle)`
-  position: absolute;
-  right: 0;
-`;
-
 function ConditionalNode({
   id,
   data,
   isConnectable,
 }: NodeProps<
-  Node<{ title: string; text?: string; logic: NewConditionalState }>
+  Node<GenericNodeData>
 >) {
-  const [state, setState] = useState<NewConditionalState>(initialState);
+  const [logicState, setLogicState] = useState<NewConditionalState>(initialState);
+  const [titleInput, setTitleInput] = useState(data.title ?? "");
+
+  const thisNodeId = useNodeId()
+  const thisNode = useNodes().find(node => node.id === thisNodeId)
 
   const { updateNodeData } = useReactFlow();
+  const { saveDataValue } = useHandleNodeValue()
   const { sectors } = useFindAllSectors();
 
   const sourceConnections = useNodeConnections({
@@ -73,31 +65,18 @@ function ConditionalNode({
     handleType: 'source',
   });
 
-  const handleTitleChange = (e: string) => {
-    updateNodeData(id, {
-      ...data,
-      title: e,
-    });
-  };
-  const handleMessageBodyChange = (e: string) => {
-    updateNodeData(id, {
-      text: e,
-    });
-  };
-
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
-      setState(data.logic);
+      setLogicState(data.logic);
     }
   }, [data.logic]);
 
   useEffect(() => {
-    if (!state.logicNodeData.length) return;
+    if (!logicState.logicNodeData.length) return;
 
     const updatedLogic = {
-      logicNodes: [...state.logicNodes],
-      logicNodeData: state.logicNodeData.map((nodeData) => {
+      logicNodes: [...logicState.logicNodes],
+      logicNodeData: logicState.logicNodeData.map((nodeData) => {
         const handleId = `b-${nodeData.option}`;
         const conn = sourceConnections.find((c) => c.sourceHandle === handleId);
 
@@ -114,7 +93,7 @@ function ConditionalNode({
       logic: updatedLogic,
     });
 
-    setState(updatedLogic);
+    setLogicState(updatedLogic);
   }, [sourceConnections]);
 
   function getDisplayValueForCondition(condition: {
@@ -134,13 +113,14 @@ function ConditionalNode({
     }
   }
 
-  return (
+  if (thisNode) return (
     <BaseNode
       icon={'IconHierarchy'}
       title={data.title ?? 'Conditional Node'}
-      nodeTypeDescription="Conditional node"
-      onTitleChange={handleTitleChange}
-      onTitleBlur={() => {}}
+      //add this description to node data
+      nodeTypeDescription="If/else node"
+      onTitleChange={e => setTitleInput(e)}
+      onTitleBlur={() => { saveDataValue('title', titleInput ? titleInput : 'Conditional Node', thisNode) }}
     >
       <Handle
         title={data.title}
@@ -150,32 +130,7 @@ function ConditionalNode({
       />
       <StyledDiv>
         <StyledLogicNodeWrapper>
-          {data.text && (
-            <>
-              <StyledLabel>Message body</StyledLabel>
-              <TextArea
-                placeholder="Text message to be sent"
-                value={data.text}
-                onChange={handleMessageBodyChange}
-              />
-            </>
-          )}
-          <StyledLabel>Options</StyledLabel>
-          <StyledOptionsContainer>
-            {state.logicNodeData.map((nodeData) => {
-              return (
-                <StyledOption icon="IconPoint" key={nodeData.option}>
-                  {nodeData.option}. {getDisplayValueForCondition(nodeData)}
-                  <StyledHandle
-                    id={`b-${nodeData.option}`}
-                    type="source"
-                    position={Position.Right}
-                    isConnectable={isConnectable}
-                  />
-                </StyledOption>
-              );
-            })}
-          </StyledOptionsContainer>
+          <ChatbotFlowConditionalEventForm selectedNode={thisNode} />
         </StyledLogicNodeWrapper>
       </StyledDiv>
     </BaseNode>

@@ -10,12 +10,11 @@ const StyledBaseNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   border: 2px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  // box-shadow: ${({ theme }) => theme.boxShadow.light};
+  min-width: 270px;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  width: 250px;
   &:hover {
     border-color: ${({ theme }) => theme.color.blue};
   }
@@ -59,7 +58,12 @@ const StyledNodeType = styled.div`
 
 const StyledLabel = styled(Label)`
   padding: ${({ theme }) => theme.spacing(0, 1.25)} 0px;
+  marginTop: -${({ theme }) => theme.spacing(90)};
 `;
+
+const StyledTitleInput = styled(TitleInput)`
+  padding-bottom: 0px;
+`
 const BaseNode = ({
   icon,
   title,
@@ -93,21 +97,12 @@ const BaseNode = ({
   return (
     <div>
       {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
-      <StyledBaseNodeWrapper>
-        <div
-          style={{
-            width: '20%',
-            height: 4,
-            backgroundColor: theme.border.color.medium,
-            alignSelf: 'center',
-            borderRadius: theme.border.radius.sm,
-          }}
-        />
+      <StyledBaseNodeWrapper className="nopan">
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
           <div>
             {title && (
-              <TitleInput
+              <StyledTitleInput
                 placeholder={title}
                 value={customTitle}
                 onEscape={onTitleBlur}
