@@ -34,24 +34,24 @@ const StyledText = styled.p`
   text-align: center;
 `;
 
-interface DashboardLinksChartProps {
+interface DashboardAccessOverTimeProps {
   chartData: LinklogsChartData;
   onFilterChange: (filter: FilterType) => void;
 }
 
-export const DashboardLinksChart = ({
+export const DashboardAccessOverTime = ({
   chartData: { data, sourceKeyColors },
   onFilterChange,
-}: DashboardLinksChartProps) => {
+}: DashboardAccessOverTimeProps) => {
   const hasData = data.length > 0;
 
   return (
     <StyledChartContainer hasData={hasData}>
       <StyledHeader>
-        <label>Origem dos acessos</label>
+        <label>Acessos ao longo do tempo</label>
         <DashboardFilterDropdown
           onChange={onFilterChange}
-          scopeKey="dashboard-filter"
+          scopeKey="dashboard-filter-access-over-time"
         />
       </StyledHeader>
       {hasData ? (

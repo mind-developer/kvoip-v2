@@ -395,6 +395,7 @@ export enum ChatbotStatus {
 
 export type ChatbotWorkspaceEntity = {
   __typename?: 'ChatbotWorkspaceEntity';
+  createdAt: Scalars['String'];
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   statuses?: Maybe<ChatbotStatus>;
@@ -1013,6 +1014,7 @@ export type FocusNFeWorkspaceEntity = {
   cnpj?: Maybe<Scalars['String']>;
   companyName?: Maybe<Scalars['String']>;
   cpf?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
   id: Scalars['String'];
   ie?: Maybe<Scalars['String']>;
   inscricaoMunicipal?: Maybe<Scalars['String']>;
@@ -1274,10 +1276,15 @@ export type IssuerDto = {
 
 export type LinkLogsWorkspaceEntity = {
   __typename?: 'LinkLogsWorkspaceEntity';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
   id: Scalars['String'];
   linkId?: Maybe<Scalars['String']>;
   linkName?: Maybe<Scalars['String']>;
+  platform?: Maybe<Scalars['String']>;
   product: Scalars['String'];
+  regionName?: Maybe<Scalars['String']>;
   userAgent?: Maybe<Scalars['String']>;
   userIp?: Maybe<Scalars['String']>;
   utmCampaign: Scalars['String'];
@@ -3662,6 +3669,7 @@ export type WhatsappWorkspaceEntity = {
   appKey: Scalars['String'];
   businessAccountId: Scalars['String'];
   chatbot?: Maybe<ChatbotWorkspaceEntity>;
+  createdAt: Scalars['String'];
   disabled: Scalars['Boolean'];
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
@@ -4203,12 +4211,12 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type DashboardLinklogsQueryFragmentFragment = { __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null };
+export type DashboardLinklogsQueryFragmentFragment = { __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null, platform?: string | null, country?: string | null, regionName?: string | null, city?: string | null, createdAt: string };
 
 export type GetDashboardLinklogsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDashboardLinklogsQuery = { __typename?: 'Query', getDashboardLinklogs: Array<{ __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null }> };
+export type GetDashboardLinklogsQuery = { __typename?: 'Query', getDashboardLinklogs: Array<{ __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null, platform?: string | null, country?: string | null, regionName?: string | null, city?: string | null, createdAt: string }> };
 
 export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4960,6 +4968,11 @@ export const DashboardLinklogsQueryFragmentFragmentDoc = gql`
   utmCampaign
   userIp
   userAgent
+  platform
+  country
+  regionName
+  city
+  createdAt
 }
     `;
 export const SettingPermissionFragmentFragmentDoc = gql`

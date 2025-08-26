@@ -404,6 +404,7 @@ export enum ChatbotStatus {
 
 export type ChatbotWorkspaceEntity = {
   __typename?: 'ChatbotWorkspaceEntity';
+  createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   statuses?: Maybe<ChatbotStatus>;
@@ -1065,6 +1066,7 @@ export type FocusNFeWorkspaceEntity = {
   cnpj?: Maybe<Scalars['String']['output']>;
   companyName?: Maybe<Scalars['String']['output']>;
   cpf?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   ie?: Maybe<Scalars['String']['output']>;
   inscricaoMunicipal?: Maybe<Scalars['String']['output']>;
@@ -1326,10 +1328,15 @@ export type IssuerDto = {
 
 export type LinkLogsWorkspaceEntity = {
   __typename?: 'LinkLogsWorkspaceEntity';
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   linkId?: Maybe<Scalars['String']['output']>;
   linkName?: Maybe<Scalars['String']['output']>;
+  platform?: Maybe<Scalars['String']['output']>;
   product: Scalars['String']['output'];
+  regionName?: Maybe<Scalars['String']['output']>;
   userAgent?: Maybe<Scalars['String']['output']>;
   userIp?: Maybe<Scalars['String']['output']>;
   utmCampaign: Scalars['String']['output'];
@@ -3843,6 +3850,7 @@ export type WhatsappWorkspaceEntity = {
   appKey: Scalars['String']['output'];
   businessAccountId: Scalars['String']['output'];
   chatbot?: Maybe<ChatbotWorkspaceEntity>;
+  createdAt: Scalars['String']['output'];
   disabled: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
