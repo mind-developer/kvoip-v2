@@ -31,10 +31,10 @@ export class FocusNFeEventListener {
   ) {
     const { workspaceId, name: eventName, events } = payload;
 
-    this.logger.log('CAIU NO LISTENER DA FOCUS NFE')
+    this.logger.log('CAIU NO LISTENER DA FOCUS NFE');
 
     if (!workspaceId || !eventName) {
-      this.logger.error(
+      this.logger.log(
         `Missing workspaceId or eventName in payload ${JSON.stringify(payload)}`,
       );
 
@@ -70,7 +70,7 @@ export class FocusNFeEventListener {
     await Promise.all(
       nfRepository.map(async ({ notaFiscal, previousStatus }) => {
         if (!notaFiscal) {
-          this.logger.warn(`Invoice not found for recordId: ${notaFiscal}`);
+          this.logger.log(`Invoice not found for recordId: ${notaFiscal}`);
 
           return;
         }
@@ -125,7 +125,10 @@ export class FocusNFeEventListener {
             }
 
             case NfStatus.ISSUE: {
-              const issueResult = await this.focusNFeService.preIssueNf(notaFiscal, workspaceId);
+              const issueResult = await this.focusNFeService.preIssueNf(
+                notaFiscal,
+                workspaceId,
+              );
 
               if (issueResult?.success) {
                 if (

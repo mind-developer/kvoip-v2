@@ -114,7 +114,6 @@ export class RunFinancialClosingJobProcessor {
 
       this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
 
-
       for (const company of companiesWithAmount) {
         await this.messageQueueService.add<CompanyFinancialClosingJobData>(
           RunCompanyFinancialClosingJobProcessor.name,

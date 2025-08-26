@@ -37,196 +37,200 @@ export class FocusNfeController {
       `[${type}] ${integrationId} - Received incoming Focus NFe data`,
     );
 
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
-        workspaceId,
-        'notaFiscal',
-        { shouldBypassPermissionChecks: true },
-      );
+    // const notaFiscalRepository =
+    //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+    //     workspaceId,
+    //     'notaFiscal',
+    //     { shouldBypassPermissionChecks: true },
+    //   );
 
-    const notaFiscal = await notaFiscalRepository.findOne({
-      where: { id: body.ref },
-    });
+    // const notaFiscal = await notaFiscalRepository.findOne({
+    //   where: { id: body.ref },
+    // });
 
-    if (!notaFiscal) {
-      this.logger.warn(
-        `Invoice with id (ref) ${body.ref} not found in workspace ${workspaceId}`,
-      );
+    // if (!notaFiscal) {
+    //   this.logger.warn(
+    //     `Invoice with id (ref) ${body.ref} not found in workspace ${workspaceId}`,
+    //   );
 
-      return;
-    }
+    //   return;
+    // }
 
-    if (body.status === 'erro_autorizacao') {
-      notaFiscal.nfStatus = NfStatus.DRAFT;
+    // if (body.status === 'erro_autorizacao') {
+    //   notaFiscal.nfStatus = NfStatus.DRAFT;
 
-      await notaFiscalRepository.save(notaFiscal);
+    //   await notaFiscalRepository.save(notaFiscal);
 
-      return;
-    }
+    //   return;
+    // }
 
-    if (body.status === 'autorizado') {
-      const attachmentRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
-          workspaceId,
-          'attachment',
-          { shouldBypassPermissionChecks: true },
-        );
+    // if (body.status === 'autorizado') {
+    //   const attachmentRepository =
+    //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+    //       workspaceId,
+    //       'attachment',
+    //       { shouldBypassPermissionChecks: true },
+    //     );
 
-      const attachments: AttachmentWorkspaceEntity[] = [];
+    //   const attachments: AttachmentWorkspaceEntity[] = [];
 
-      if (type === NfType.NFCOM) {
-        const nfcom = body as FocusNFeWebhookBodyNFCom;
+    //   if (type === NfType.NFCOM) {
+    //     const nfcom = body as FocusNFeWebhookBodyNFCom;
 
-        notaFiscal.nfStatus = NfStatus.ISSUED;
+    //     notaFiscal.nfStatus = NfStatus.ISSUED;
 
-        if (nfcom.caminho_xml) {
-          const xmlResponse = await axios.get(nfcom.caminho_xml, {
-            responseType: 'arraybuffer',
-          });
+    //     if (nfcom.caminho_xml) {
+    //       const xmlResponse = await axios.get(nfcom.caminho_xml, {
+    //         responseType: 'arraybuffer',
+    //       });
 
-          const xmlBuffer = Buffer.from(xmlResponse.data);
-          const xmlFilename = `nfcom-${notaFiscal.id}.xml`;
+    //       const xmlBuffer = Buffer.from(xmlResponse.data);
+    //       const xmlFilename = `nfcom-${notaFiscal.id}.xml`;
 
-          const { files } = await this.fileUploadService.uploadFile({
-            file: xmlBuffer,
-            fileFolder: FileFolder.Invoice,
-            workspaceId,
-            filename: xmlFilename,
-            mimeType: 'application/xml',
-          });
+    //       const { files } = await this.fileUploadService.uploadFile({
+    //         file: xmlBuffer,
+    //         fileFolder: FileFolder.Invoice,
+    //         workspaceId,
+    //         filename: xmlFilename,
+    //         mimeType: 'application/xml',
+    //       });
 
-          const path = this.extractFullPathFromFilePath(files[0].path);
+    //       const path = this.extractFullPathFromFilePath(files[0].path);
 
-          attachments.push(
-            attachmentRepository.create({
-              name: `XML NFCom - ${notaFiscal.id}`,
-              fullPath: path,
-              type: 'application/xml',
-              notaFiscal: notaFiscal,
-            }),
-          );
-        }
+    //       attachments.push(
+    //         attachmentRepository.create({
+    //           name: `XML NFCom - ${notaFiscal.id}`,
+    //           fullPath: path,
+    //           type: 'application/xml',
+    //           notaFiscal: notaFiscal,
+    //         }),
+    //       );
+    //     }
 
-        if (nfcom.caminho_danfecom) {
-          const pdfResponse = await axios.get(nfcom.caminho_danfecom, {
-            responseType: 'arraybuffer',
-          });
+    //     if (nfcom.caminho_danfecom) {
+    //       const pdfResponse = await axios.get(nfcom.caminho_danfecom, {
+    //         responseType: 'arraybuffer',
+    //       });
 
-          const pdfBuffer = Buffer.from(pdfResponse.data);
-          const pdfFilename = `danfecom-${notaFiscal.id}.pdf`;
+    //       const pdfBuffer = Buffer.from(pdfResponse.data);
+    //       const pdfFilename = `danfecom-${notaFiscal.id}.pdf`;
 
-          const { files } = await this.fileUploadService.uploadFile({
-            file: pdfBuffer,
-            fileFolder: FileFolder.Invoice,
-            workspaceId,
-            filename: pdfFilename,
-            mimeType: 'application/pdf',
-          });
+    //       const { files } = await this.fileUploadService.uploadFile({
+    //         file: pdfBuffer,
+    //         fileFolder: FileFolder.Invoice,
+    //         workspaceId,
+    //         filename: pdfFilename,
+    //         mimeType: 'application/pdf',
+    //       });
 
-          const path = this.extractFullPathFromFilePath(files[0].path);
+    //       const path = this.extractFullPathFromFilePath(files[0].path);
 
-          attachments.push(
-            attachmentRepository.create({
-              name: `DANFE-COM - ${notaFiscal.id}`,
-              fullPath: path,
-              type: 'application/pdf',
-              notaFiscal: notaFiscal,
-            }),
-          );
-        }
+    //       attachments.push(
+    //         attachmentRepository.create({
+    //           name: `DANFE-COM - ${notaFiscal.id}`,
+    //           fullPath: path,
+    //           type: 'application/pdf',
+    //           notaFiscal: notaFiscal,
+    //         }),
+    //       );
+    //     }
 
-        if (attachments.length > 0) {
-          await attachmentRepository.save(attachments);
-        }
+    //     if (attachments.length > 0) {
+    //       await attachmentRepository.save(attachments);
+    //     }
 
-        await notaFiscalRepository.save(notaFiscal);
+    //     await notaFiscalRepository.save(notaFiscal);
 
-        this.logger.log(
-          `[${NfType.NFCOM}] ref: ${notaFiscal.id} - issued and attachments saved successfully`,
-        );
+    //     this.logger.log(
+    //       `[${NfType.NFCOM}] ref: ${notaFiscal.id} - issued and attachments saved successfully`,
+    //     );
 
-        return;
-      }
+    //     return;
+    //   }
 
-      if (type === NfType.NFSE) {
-        const nfse = body as FocusNFeWebhookBodyNFSe;
+    //   if (type === NfType.NFSE) {
+    //     this.logger.log('TESTE NFSE ----');
 
-        notaFiscal.nfStatus = NfStatus.ISSUED;
+    //     const nfse = body as FocusNFeWebhookBodyNFSe;
 
-        if (nfse.numero_rps && nfse.data_emissao) {
-          notaFiscal.numeroRps = nfse.numero_rps;
-          notaFiscal.dataEmissao = new Date(nfse.data_emissao).toISOString();
-        }
+    //     notaFiscal.nfStatus = NfStatus.ISSUED;
 
-        if (nfse.caminho_xml_nota_fiscal) {
-          const xmlResponse = await axios.get(nfse.caminho_xml_nota_fiscal, {
-            responseType: 'arraybuffer',
-          });
+    //     if (nfse.numero_rps && nfse.data_emissao) {
+    //       notaFiscal.numeroRps = nfse.numero_rps;
+    //       notaFiscal.dataEmissao = new Date(nfse.data_emissao).toISOString();
+    //     }
 
-          const xmlBuffer = Buffer.from(xmlResponse.data);
-          const xmlFilename = `nfse-${notaFiscal.id}.xml`;
+    //     if (nfse.caminho_xml_nota_fiscal) {
+    //       const xmlResponse = await axios.get(nfse.caminho_xml_nota_fiscal, {
+    //         responseType: 'arraybuffer',
+    //       });
 
-          const { files } = await this.fileUploadService.uploadFile({
-            file: xmlBuffer,
-            fileFolder: FileFolder.Invoice,
-            workspaceId,
-            filename: xmlFilename,
-            mimeType: 'application/xml',
-          });
+    //       // const xmlBuffer = Buffer.from(xmlResponse.data);
+    //       // const xmlFilename = `nfse-${notaFiscal.id}.xml`;
 
-          const path = this.extractFullPathFromFilePath(files[0].path);
+    //       // const { files } = await this.fileUploadService.uploadFile({
+    //       //   file: xmlBuffer,
+    //       //   fileFolder: FileFolder.Invoice,
+    //       //   workspaceId,
+    //       //   filename: xmlFilename,
+    //       //   mimeType: 'application/xml',
+    //       // });
 
-          attachments.push(
-            attachmentRepository.create({
-              name: `XML NFSe - ${notaFiscal.id}`,
-              fullPath: path,
-              type: 'application/xml',
-              notaFiscal: notaFiscal,
-            }),
-          );
-        }
+    //       this.logger.log('TESTE NFSE 2');
 
-        if (nfse.url_danfse) {
-          const pdfResponse = await axios.get(nfse.url_danfse, {
-            responseType: 'arraybuffer',
-          });
+    //       // const path = this.extractFullPathFromFilePath(files[0].path);
 
-          const pdfBuffer = Buffer.from(pdfResponse.data);
-          const pdfFilename = `danfse-${notaFiscal.id}.pdf`;
+    //       // this.logger.log(
+    //       //   `[${NfType.NFSE}] CHEGOU AQUI: ${path}`,
+    //       // );
+          
+    //       // attachments.push(
+    //       //   attachmentRepository.create({
+    //       //     name: `XML NFSe - ${notaFiscal.id}`,
+    //       //     fullPath: path,
+    //       //     type: 'application/xml',
+    //       //     notaFiscal: { id: notaFiscal.id } as any,
+    //       //   }),
+    //       // );
+    //     }
 
-          const { files } = await this.fileUploadService.uploadFile({
-            file: pdfBuffer,
-            fileFolder: FileFolder.Invoice,
-            workspaceId,
-            filename: pdfFilename,
-            mimeType: 'application/pdf',
-          });
+    //     // if (nfse.url_danfse) {
+    //     //   const pdfResponse = await axios.get(nfse.url_danfse, {
+    //     //     responseType: 'arraybuffer',
+    //     //   });
 
-          const path = this.extractFullPathFromFilePath(files[0].path);
+    //     //   const pdfBuffer = Buffer.from(pdfResponse.data);
+    //     //   const pdfFilename = `danfse-${notaFiscal.id}.pdf`;
 
-          attachments.push(
-            attachmentRepository.create({
-              name: `DANFESe - ${notaFiscal.id}`,
-              fullPath: path,
-              type: 'application/pdf',
-              notaFiscal: notaFiscal,
-            }),
-          );
-        }
+    //     //   const { files } = await this.fileUploadService.uploadFile({
+    //     //     file: pdfBuffer,
+    //     //     fileFolder: FileFolder.Invoice,
+    //     //     workspaceId,
+    //     //     filename: pdfFilename,
+    //     //     mimeType: 'application/pdf',
+    //     //   });
 
-        if (attachments.length > 0) {
-          await attachmentRepository.save(attachments);
-        }
+    //     //   const path = this.extractFullPathFromFilePath(files[0].path);
 
-        await notaFiscalRepository.save(notaFiscal);
+    //     //   attachments.push(
+    //     //     attachmentRepository.create({
+    //     //       name: `DANFESe - ${notaFiscal.id}`,
+    //     //       fullPath: path,
+    //     //       type: 'application/pdf',
+    //     //       notaFiscal: { id: notaFiscal.id } as any,
+    //     //     }),
+    //     //   );
+    //     // }
 
-        this.logger.log(
-          `[${NfType.NFSE}] ref: ${notaFiscal.id} - issued and attachments saved successfully`,
-        );
+    //     // if (attachments.length > 0) {
+    //     //   await attachmentRepository.save(attachments);
+    //     // }
 
-        return;
-      }
-    }
+    //     // await notaFiscalRepository.save(notaFiscal);
+
+    //     return;
+    //   }
+    // }
   }
 
   private extractFullPathFromFilePath(path: string) {

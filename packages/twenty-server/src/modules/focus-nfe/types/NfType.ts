@@ -46,3 +46,8 @@ registerEnumType(NfType, {
   name: 'NfType',
   description: 'Product NF type options',
 });
+
+export function getNfTypeLabel(value: NfType): string {
+  const option = NfTypeOptions.find(opt => opt.value === value);
+  return option ? option.label : value; // fallback se não achar
+}

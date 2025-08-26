@@ -108,6 +108,7 @@ export class FocusNFeService {
     const { company, focusNFe } = notaFiscal;
 
     const product = productObj ? productObj : notaFiscal.product;
+    let result: FocusNFeResponse | undefined = undefined;
 
     if (!product || !company || !focusNFe?.token) return;
 
@@ -135,17 +136,33 @@ export class FocusNFeService {
           codMunicipioTomador,
           lastInvoiceIssued?.numeroRps,
         );
-        
-        // if (!nfse) return;
 
-        // const result = await this.issueNF(
-        //   'nfse',
-        //   nfse,
-        //   notaFiscal.id,
-        //   focusNFe?.token,
-        // );
+        if (!nfse) {
+          this.logger.log('Erro ao construir o objeto de envio para emissão da NF-se.');
+          return;
+        };
 
-        // return result;
+        this.logger.log(`DADOS DA NF:`);
+        this.logger.log(`codMunicipioPrestador: ${codMunicipioPrestador}`);
+        this.logger.log(`codMunicipioTomador: ${codMunicipioTomador}`);
+        this.logger.log(`nfse: ${JSON.stringify(nfse, null, 2)}`);
+
+        result = await this.issueNF(
+          'nfse',
+          nfse,
+          notaFiscal.id,
+          focusNFe?.token,
+        );
+
+        // adiciona o rps no result
+        result.data = {
+          ...result.data,
+          rps: lastInvoiceIssued?.numeroRps,
+        };
+
+        this.logger.log(`RESPONSE NF: ${JSON.stringify(result, null, 2)}`);
+
+        break;
       }
 
       case NfType.NFCOM: {
@@ -161,30 +178,37 @@ export class FocusNFeService {
             focusNFe?.token,
           );
 
-        // const nfcom = buildNFComPayload(
-        //   notaFiscal,
-        //   codMunicipioEmitente,
-        //   codMunicipioTomador,
-        //   product,
-        // );
+        const nfcom = buildNFComPayload(
+          notaFiscal,
+          codMunicipioEmitente,
+          codMunicipioTomador,
+          product,
+        );
 
-        // if (!nfcom) return;
+        if (!nfcom) {
+          this.logger.log('Erro ao construir o objeto de envio para emissão da NF-Com.');
+          return;
+        };
 
         this.logger.log(`DADOS DA NF:`);
         this.logger.log(`codMunicipioEmitente: ${codMunicipioEmitente}`);
         this.logger.log(`codMunicipioTomador: ${codMunicipioTomador}`);
-        // this.logger.log(`nfcom: ${JSON.stringify(nfcom, null, 2)}`);
+        this.logger.log(`nfcom: ${JSON.stringify(nfcom, null, 2)}`);
 
-        // const result = await this.issueNF(
-        //   'nfcom',
-        //   nfcom,
-        //   notaFiscal.id,
-        //   focusNFe?.token,
-        // );
+        result = await this.issueNF(
+          'nfcom',
+          nfcom,
+          notaFiscal.id,
+          focusNFe?.token,
+        );
 
-        // return result;
+        this.logger.log(`RESPONSE NF: ${JSON.stringify(result, null, 2)}`);
+
+        break;
       }
     }
+
+    return result;  
   };
   
   async issueNF(
@@ -193,6 +217,9 @@ export class FocusNFeService {
     referenceCode: string,
     token: string,
   ): Promise<FocusNFeResponse> {
+
+    this.logger.log(`REFERENCE CODE: ${referenceCode}`);
+
     const strategy = this.nfStrategies[type];
 
     if (!strategy.validate(data)) {
@@ -284,7 +311,7 @@ export class FocusNFeService {
         ),
       )[0];
 
-    const latestNumeroRps = Number(latestNFSe?.numeroRps || 2000);
+    const latestNumeroRps = Number(latestNFSe?.numeroRps);
 
     if (LAST_NUMBER_RPS > latestNumeroRps) {
       return {
