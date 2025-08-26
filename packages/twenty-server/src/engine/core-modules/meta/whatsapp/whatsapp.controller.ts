@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -12,12 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import axios from 'axios';
-
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -29,6 +27,7 @@ export class WhatsappController {
   ) {}
 
   @Get('/webhook/:workspaceId/:id')
+  @UseGuards(PublicEndpointGuard)
   async handleVerification(
     @Param('workspaceId') workspaceId: string,
     @Param('id') id: string,
@@ -55,6 +54,7 @@ export class WhatsappController {
   }
 
   @Post('/webhook/:workspaceId/:id')
+  @UseGuards(PublicEndpointGuard)
   async handleIncomingMessage(
     @Param('workspaceId') workspaceId: string,
     @Param('id') id: string,
@@ -78,405 +78,144 @@ export class WhatsappController {
     const isReceiving = body.entry[0].changes[0].value.messages;
     const messages = body.entry[0].changes[0].value.messages[0];
 
-    let mediaId: string | undefined;
-    let fileUrl;
+    for (const msg of messages) {
+      let mediaId: string | undefined;
+      let fileUrl;
 
-    switch (messages.type) {
-      case 'image':
-        mediaId = messages.image.id;
-        break;
-      case 'audio':
-        mediaId = messages.audio.id;
-        break;
-      case 'document':
-        mediaId = messages.document.id;
-        break;
-      case 'video':
-        mediaId = messages.video.id;
-        break;
-      default:
-        mediaId = undefined;
-        break;
-    }
-
-    if (isReceiving) {
-      this.logger.log('IS RECEIVING');
-      // Novo fluxo: verifica se é mídia e se existe base64
-      let isBase64Media = false;
-      let base64String = '';
-      let mimeType = '';
-      let fileName = '';
-
-      if (
-        ['image', 'video', 'audio', 'document'].includes(messages.type) &&
-        messages[messages.type] &&
-        messages[messages.type].base64
-      ) {
-        isBase64Media = true;
-        base64String = messages[messages.type].base64;
-        mimeType =
-          messages[messages.type].mime_type || 'application/octet-stream';
-        fileName = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}`;
+      switch (msg.type) {
+        case 'image':
+          mediaId = msg.image.id;
+          break;
+        case 'audio':
+          mediaId = msg.audio.id;
+          break;
+        case 'document':
+          mediaId = msg.document.id;
+          break;
+        case 'video':
+          mediaId = msg.video.id;
+          break;
+        default:
+          mediaId = undefined;
+          break;
       }
 
-      if (isBase64Media) {
-        try {
-          this.logger.log('Recebendo mídia em base64');
-          // Remove prefixo se existir
-          if (base64String.startsWith('data:')) {
-            base64String = base64String.split(',')[1];
-            this.logger.log('Prefixo data: removido do base64');
-          }
-          const buffer = Buffer.from(base64String, 'base64');
+      if (isReceiving) {
+        this.logger.log('IS RECEIVING');
+        // Novo fluxo: verifica se é mídia e se existe base64
+        let isBase64Media = false;
+        let base64String = '';
+        let mimeType = '';
+        let fileName = '';
 
-          this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
-          // Gera extensão correta
-          let ext = '';
+        if (
+          ['image', 'video', 'audio', 'document'].includes(msg.type) &&
+          msg.type &&
+          msg.type.base64
+        ) {
+          isBase64Media = true;
+          base64String = messages[messages.type].base64;
+          mimeType = msg[msg.type].mime_type || 'application/octet-stream';
+          fileName = `${msg.from}_${Date.now()}`;
+        }
 
-          if (mimeType && mimeType.includes('/')) {
-            ext =
-              '.' + mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
-          }
-          const fileNameWithExt = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}${ext}`;
+        if (isBase64Media) {
+          try {
+            this.logger.log('Recebendo mídia em base64');
+            // Remove prefixo se existir
+            if (base64String.startsWith('data:')) {
+              base64String = base64String.split(',')[1];
+              this.logger.log('Prefixo data: removido do base64');
+            }
+            const buffer = Buffer.from(base64String, 'base64');
 
-          this.logger.log(
-            `Nome do arquivo gerado para upload: ${fileNameWithExt}`,
-          );
-          this.logger.log(
-            `Diretório do bucket: workspaceId=${workspaceId}, tipo=${messages.type}`,
-          );
-          const file = {
-            originalname: fileNameWithExt,
-            buffer,
-            mimetype: mimeType,
-          };
+            this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
+            // Gera extensão correta
+            let ext = '';
 
-          fileUrl =
-            await this.whatsappService.googleStorageService.uploadFileToBucket(
-              workspaceId,
-              messages.type,
-              file,
-              false,
+            if (mimeType && mimeType.includes('/')) {
+              ext =
+                '.' +
+                mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
+            }
+            const fileNameWithExt = `${msg.from}_${Date.now()}${ext}`;
+
+            this.logger.log(
+              `Nome do arquivo gerado para upload: ${fileNameWithExt}`,
             );
-          this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
-        } catch (err) {
-          this.logger.error('Erro ao salvar mídia base64:', err);
-          throw new HttpException(
-            'Erro ao salvar mídia base64: ' + (err?.message || err),
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            this.logger.log(
+              `Diretório do bucket: workspaceId=${workspaceId}, tipo=${msg.type}`,
+            );
+            const file = {
+              originalname: fileNameWithExt,
+              buffer,
+              mimetype: mimeType,
+            };
+
+            fileUrl =
+              await this.whatsappService.googleStorageService.uploadFileToBucket(
+                workspaceId,
+                msg.type,
+                file,
+                false,
+              );
+            this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
+          } catch (err) {
+            this.logger.error('Erro ao salvar mídia base64:', err);
+            throw new HttpException(
+              'Erro ao salvar mídia base64: ' + (err?.message || err),
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+        } else if (mediaId) {
+          // Fluxo normal: baixa a mídia
+          fileUrl = await this.whatsappService.downloadMedia(
+            mediaId,
+            id,
+            msg.from,
+            msg.type,
+            workspaceId,
           );
         }
-      } else if (mediaId) {
-        // Fluxo normal: baixa a mídia
-        fileUrl = await this.whatsappService.downloadMedia(
-          mediaId,
-          id,
-          body.entry[0].changes[0].value.messages[0].from,
-          messages.type,
-          workspaceId,
-        );
-      }
 
-      const fromMe = body.entry[0].changes[0].value.messages[0].fromMe;
-      const lastMessage = {
-        createdAt: new Date(),
-        id: body.entry[0].changes[0].value.messages[0].id,
-        from: body.entry[0].changes[0].value.contacts[0].profile.name,
-        message:
-          mediaId || isBase64Media
-            ? fileUrl
-            : body.entry[0].changes[0].value.messages[0].text.body,
-        type: body.entry[0].changes[0].value.messages[0].type,
-        fromMe,
-      };
+        const lastMessage = {
+          createdAt: new Date(),
+          id: msg.id,
+          from: body.entry[0].changes[0].value.contacts[0].profile.name,
+          message: mediaId || isBase64Media ? fileUrl : msg.text.body,
+          type: msg.type,
+          fromMe: msg.fromMe,
+        };
 
-      const whatsappIntegration: Omit<
-        WhatsappDocument,
-        'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
-      > = {
-        integrationId: id,
-        workspaceId: workspaceId,
-        client: {
-          phone: body.entry[0].changes[0].value.messages[0].from.replace(
-            '@s.whatsapp.net',
-            '',
-          ),
-          name: body.entry[0].changes[0].value.contacts[0].profile.name,
-          ppUrl: body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
-        },
-        messages: [
-          {
-            ...lastMessage,
+        const whatsappIntegration: Omit<
+          WhatsappDocument,
+          'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
+        > = {
+          integrationId: id,
+          workspaceId: workspaceId,
+          client: {
+            phone: msg.from.replace('@s.whatsapp.net', ''),
+            name: body.entry[0].changes[0].value.contacts[0].profile.name,
+            ppUrl: body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
           },
-        ],
-        status: statusEnum.Waiting,
-        lastMessage,
-      };
+          messages: [
+            {
+              ...lastMessage,
+            },
+          ],
+          status: statusEnum.Waiting,
+          lastMessage,
+        };
 
-      this.logger.log(
-        'Payload enviado ao Firestore:',
-        JSON.stringify(whatsappIntegration, null, 2),
-      );
-
-      await this.whatsappService.saveMessageAtFirebase(
-        whatsappIntegration,
-        true,
-        workspaceId,
-      );
-    }
-  }
-
-  @Post('start/:sessionId')
-  async startSession(@Param('sessionId') sessionId: string, @Body() body: any) {
-    return this.whatsappIntegrationService.startBaileysSession(sessionId, body);
-  }
-
-  @Delete('stop/:sessionId')
-  async stopSession(@Param('sessionId') sessionId: string) {
-    return this.whatsappIntegrationService.stopBaileysSession(sessionId);
-  }
-
-  @Get('status/:sessionId')
-  async getStatus(@Param('sessionId') sessionId: string) {
-    return this.whatsappIntegrationService.getBaileysStatus(sessionId);
-  }
-
-  @Get('qr/:sessionId')
-  async getQr(@Param('sessionId') sessionId: string) {
-    return this.whatsappIntegrationService.getBaileysQr(sessionId);
-  }
-}
-
-// Controller separado para endpoints REST
-@Controller('rest/whatsapp')
-export class WhatsappRestController {
-  protected readonly logger = new Logger(WhatsappRestController.name);
-
-  constructor(
-    private whatsappIntegrationService: WhatsappIntegrationService,
-    private readonly whatsappService: WhatsappService,
-  ) {}
-
-  @Get('/qrold/:sessionId')
-  async getQrCodeold(@Param('sessionId') sessionId: string) {
-    try {
-      this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
-      this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/${sessionId}/qr`,
-      );
-
-      const response = await axios.get(
-        `http://localhost:3002/api/session/${sessionId}/qr`,
-        {
-          timeout: 10000, // 10 second timeout
-        },
-      );
-
-      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
-      this.logger.log(`Status: ${response.status}`);
-      this.logger.log(`Headers:`, response.headers);
-      this.logger.log(`Data:`, response.data);
-
-      return response.data;
-    } catch (error) {
-      this.logger.error(`=== ERRO NA REQUISIÇÃO ===`);
-      this.logger.error(`Session ID: ${sessionId}`);
-      this.logger.error(`Erro completo:`, error);
-
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        this.logger.error(`Status do erro: ${error.response.status}`);
-        this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(
-          `Baileys service error: ${error.response.status} - ${error.response.statusText}`,
-          error.response.status,
+        this.logger.log(
+          'Payload enviado ao Firestore:',
+          JSON.stringify(whatsappIntegration, null, 2),
         );
-      } else if (error.request) {
-        // The request was made but no response was received
-        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
-        throw new HttpException(
-          'Baileys service is not responding',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        this.logger.error(
-          `Erro na configuração da requisição: ${error.message}`,
-        );
-        throw new HttpException(
-          `Error setting up request: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
 
-  // NOVO ENDPOINT PROXY PARA STATUS
-  @Get('/status/:sessionId')
-  @UseGuards()
-  async getStatus(@Param('sessionId') sessionId: string) {
-    try {
-      this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
-      this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/status/${sessionId}`,
-      );
-
-      const response = await axios.get(
-        `http://localhost:3002/api/session/status/${sessionId}`,
-        {
-          timeout: 10000, // 10 second timeout
-        },
-      );
-
-      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
-      this.logger.log(`Status: ${response.status}`);
-      this.logger.log(`Headers:`, response.headers);
-      this.logger.log(`Data:`, response.data);
-
-      return response.data;
-    } catch (error) {
-      this.logger.error(`=== ERRO NA REQUISIÇÃO STATUS ===`);
-      this.logger.error(`Session ID: ${sessionId}`);
-      this.logger.error(`Erro completo:`, error);
-
-      if (error.response) {
-        this.logger.error(`Status do erro: ${error.response.status}`);
-        this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(error.response.data, error.response.status);
-      } else if (error.request) {
-        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
-        throw new HttpException(
-          'Baileys service is not responding',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      } else {
-        this.logger.error(
-          `Erro na configuração da requisição: ${error.message}`,
-        );
-        throw new HttpException(
-          `Error setting up request: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
-}
-
-// Controller separado para endpoints REST
-@Controller('Whats-App-rest/whatsapp')
-export class WhatsappRestController2 {
-  protected readonly logger = new Logger(WhatsappRestController.name);
-
-  constructor(
-    private whatsappIntegrationService: WhatsappIntegrationService,
-    private readonly whatsappService: WhatsappService,
-  ) {}
-
-  // NOVO ENDPOINT PROXY PARA STATUS
-  @Get('/status/:sessionId')
-  @UseGuards()
-  async getStatus(@Param('sessionId') sessionId: string) {
-    try {
-      this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
-      this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/status/${sessionId}`,
-      );
-
-      const response = await axios.get(
-        `http://localhost:3002/api/session/status/${sessionId}`,
-        {
-          timeout: 10000, // 10 second timeout
-        },
-      );
-
-      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
-      this.logger.log(`Status: ${response.status}`);
-      this.logger.log(`Headers:`, response.headers);
-      this.logger.log(`Data:`, response.data);
-
-      return response.data;
-    } catch (error) {
-      this.logger.error(`=== ERRO NA REQUISIÇÃO STATUS ===`);
-      this.logger.error(`Session ID: ${sessionId}`);
-      this.logger.error(`Erro completo:`, error);
-
-      if (error.response) {
-        this.logger.error(`Status do erro: ${error.response.status}`);
-        this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(error.response.data, error.response.status);
-      } else if (error.request) {
-        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
-        throw new HttpException(
-          'Baileys service is not responding',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      } else {
-        this.logger.error(
-          `Erro na configuração da requisição: ${error.message}`,
-        );
-        throw new HttpException(
-          `Error setting up request: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
-
-  @Get('/qr/:sessionId')
-  async getQrCode(@Param('sessionId') sessionId: string) {
-    try {
-      this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
-      this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/${sessionId}/qr`,
-      );
-
-      const response = await axios.get(
-        `http://localhost:3002/api/session/${sessionId}/qr`,
-        {
-          timeout: 10000, // 10 second timeout
-        },
-      );
-
-      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
-      this.logger.log(`Status: ${response.status}`);
-      this.logger.log(`Headers:`, response.headers);
-      this.logger.log(`Data:`, response.data);
-
-      return response.data;
-    } catch (error) {
-      this.logger.error(`=== ERRO NA REQUISIÇÃO ===`);
-      this.logger.error(`Session ID: ${sessionId}`);
-      this.logger.error(`Erro completo:`, error);
-
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        this.logger.error(`Status do erro: ${error.response.status}`);
-        this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(
-          `Baileys service error: ${error.response.status} - ${error.response.statusText}`,
-          error.response.status,
-        );
-      } else if (error.request) {
-        // The request was made but no response was received
-        this.logger.error(`Nenhuma resposta recebida do Baileys service`);
-        throw new HttpException(
-          'Baileys service is not responding',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        this.logger.error(
-          `Erro na configuração da requisição: ${error.message}`,
-        );
-        throw new HttpException(
-          `Error setting up request: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        await this.whatsappService.saveMessageAtFirebase(
+          whatsappIntegration,
+          true,
+          workspaceId,
         );
       }
     }
