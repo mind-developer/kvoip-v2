@@ -39,21 +39,29 @@ export class UserSubscriber
   }
 
   async afterInsert(event: InsertEvent<User>) {
-    if (isDefined(event.entity.id) || isDefined(event.entity.email)) {
-      await this.ownerService.handleOwnerUpsert({
-        user: event.entity,
-      });
+    try {
+      if (isDefined(event.entity.id) || isDefined(event.entity.email)) {
+        await this.ownerService.handleOwnerUpsert({
+          user: event.entity,
+        });
+      }
+    } catch (error) {
+      this.logger.log(error);
     }
   }
 
   async afterUpdate(event: UpdateEvent<User>) {
-    if (
-      isDefined(event.entity) &&
-      (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail))
-    ) {
-      await this.ownerService.handleOwnerUpsert({
-        user: event.entity as User,
-      });
+    try {
+      if (
+        isDefined(event.entity) &&
+        (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail))
+      ) {
+        await this.ownerService.handleOwnerUpsert({
+          user: event.entity as User,
+        });
+      }
+    } catch (error) {
+      this.logger.log(error);
     }
   }
 }
