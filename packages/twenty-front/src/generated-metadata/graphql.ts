@@ -278,7 +278,8 @@ export type BillingProduct = {
 /** The different billing products available */
 export enum BillingProductKey {
   BASE_PRODUCT = 'BASE_PRODUCT',
-  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION',
+  WORSPACE_MEMBERS = 'WORSPACE_MEMBERS'
 }
 
 export type BillingProductMetadata = {
@@ -771,6 +772,7 @@ export type CreateWhatsappIntegrationInput = {
   businessAccountId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phoneId: Scalars['String']['input'];
+  tipoApi?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -3028,6 +3030,7 @@ export type SendMessageInput = {
   from: Scalars['String']['input'];
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
+  tipoApi: Scalars['String']['input'];
   to: Scalars['String']['input'];
   type: Scalars['String']['input'];
 };
@@ -3681,6 +3684,7 @@ export type UpdateWhatsappIntegrationInput = {
   id: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   phoneId?: InputMaybe<Scalars['String']['input']>;
+  tipoApi?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -3846,6 +3850,7 @@ export type WhatsappWorkspaceEntity = {
   name?: Maybe<Scalars['String']['output']>;
   phoneId: Scalars['String']['output'];
   sla: Scalars['Float']['output'];
+  tipoApi?: Maybe<Scalars['String']['output']>;
   verifyToken: Scalars['String']['output'];
 };
 

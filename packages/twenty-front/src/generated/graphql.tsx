@@ -269,7 +269,8 @@ export type BillingProduct = {
 /** The different billing products available */
 export enum BillingProductKey {
   BASE_PRODUCT = 'BASE_PRODUCT',
-  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION',
+  WORSPACE_MEMBERS = 'WORSPACE_MEMBERS'
 }
 
 export type BillingProductMetadata = {
@@ -726,6 +727,7 @@ export type CreateWhatsappIntegrationInput = {
   businessAccountId: Scalars['String'];
   name: Scalars['String'];
   phoneId: Scalars['String'];
+  tipoApi?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -2865,6 +2867,7 @@ export type SendMessageInput = {
   from: Scalars['String'];
   integrationId: Scalars['String'];
   message?: InputMaybe<Scalars['String']>;
+  tipoApi: Scalars['String'];
   to: Scalars['String'];
   type: Scalars['String'];
 };
@@ -3510,6 +3513,7 @@ export type UpdateWhatsappIntegrationInput = {
   id: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   phoneId?: InputMaybe<Scalars['String']>;
+  tipoApi?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -3665,6 +3669,7 @@ export type WhatsappWorkspaceEntity = {
   name?: Maybe<Scalars['String']>;
   phoneId: Scalars['String'];
   sla: Scalars['Float'];
+  tipoApi?: Maybe<Scalars['String']>;
   verifyToken: Scalars['String'];
 };
 
@@ -4385,7 +4390,7 @@ export type CreateWhatsappIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string } };
+export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string, tipoApi?: string | null } };
 
 export type ToggleWhatsappIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
@@ -4404,7 +4409,7 @@ export type UpdateWhatsappIntegrationMutation = { __typename?: 'Mutation', updat
 export type WhatsappIntegrationsByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number, chatbot?: { __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null } | null }> };
+export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number, tipoApi?: string | null, chatbot?: { __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null } | null }> };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -7928,12 +7933,14 @@ export type InterIntegrationsByWorkspaceQueryResult = Apollo.QueryResult<InterIn
 export const CreateWhatsappIntegrationDocument = gql`
     mutation CreateWhatsappIntegration($createInput: CreateWhatsappIntegrationInput!) {
   createWhatsappIntegration(createInput: $createInput) {
+    id
     name
     phoneId
     businessAccountId
     accessToken
     appId
     appKey
+    tipoApi
   }
 }
     `;
@@ -8044,6 +8051,7 @@ export const WhatsappIntegrationsByWorkspaceDocument = gql`
     appKey
     disabled
     sla
+    tipoApi
     chatbot {
       id
       name
