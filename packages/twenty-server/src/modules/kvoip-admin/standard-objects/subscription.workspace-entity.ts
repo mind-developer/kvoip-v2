@@ -270,6 +270,16 @@ export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
   tenantId: string | null;
 
   @WorkspaceField({
+    standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.billingSubscriptionId,
+    type: FieldMetadataType.UUID,
+    label: msg`Billing subscription Id`,
+    description: msg`Associated Billing Subscription Id`,
+    icon: 'IconMoneybag',
+  })
+  @WorkspaceIsSystem()
+  billingSubscriptionId: string;
+
+  @WorkspaceField({
     standardId: SUBSCRIPTION_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,

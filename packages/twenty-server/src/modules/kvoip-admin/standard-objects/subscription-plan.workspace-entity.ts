@@ -47,7 +47,7 @@ const subscriptionKeyOptions: FieldMetadataComplexOption[] = [
   },
 ];
 
-enum SubscriptionPlanStatus {
+export enum SubscriptionPlanStatus {
   Active = 'Active',
   Inactive = 'Inactive',
 }

@@ -2,6 +2,7 @@ import { Logger, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import {
   DataSource,
   EntitySubscriberInterface,
@@ -39,23 +40,33 @@ export class BillingSubscriptionSubscriber
   }
 
   async afterInsert(event: InsertEvent<BillingSubscription>) {
-    this.logger.log(event.entity);
-    // if (isDefined(event.entity.id) || isDefined(event.entity.email)) {
-    //   await this.SubscriptionService.handleOwnerUpsert({
-    //     BillingSubscription: event.entity,
-    //   });
-    // }
+    try {
+      if (
+        isDefined(event.entity?.id) ||
+        isDefined(event.entity?.stripeSubscriptionId)
+      ) {
+        await this.subscriptionService.handleSubscriptionUpsert(
+          event.entity?.id || event.entity?.stripeSubscriptionId,
+        );
+      }
+    } catch (error) {
+      this.logger.log(error);
+    }
   }
 
   async afterUpdate(event: UpdateEvent<BillingSubscription>) {
-    this.logger.log(event.entity);
-    // if (
-    //   isDefined(event.entity) &&
-    //   (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail))
-    // ) {
-    //   await this.SubscriptionService.handleOwnerUpsert({
-    //     BillingSubscription: event.entity as BillingSubscription,
-    //   });
-    // }
+    try {
+      if (
+        isDefined(event.entity?.id) ||
+        isDefined(event.entity?.stripeSubscriptionId)
+      ) {
+        await this.subscriptionService.handleSubscriptionUpsert(
+          (event.entity as BillingSubscription)?.id ||
+            (event.entity as BillingSubscription)?.stripeSubscriptionId,
+        );
+      }
+    } catch (error) {
+      this.logger.log(error);
+    }
   }
 }

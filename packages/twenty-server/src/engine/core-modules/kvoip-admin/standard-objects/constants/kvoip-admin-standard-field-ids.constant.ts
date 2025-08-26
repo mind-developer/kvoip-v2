@@ -35,6 +35,7 @@ export const SUBSCRIPTION_STANDARD_FIELD_IDS = {
   owner: '126962e5-6e86-48a8-8053-57ccbf27e0d7',
   tenant: 'd7819a1b-c995-485f-9490-4449d4e64ad9',
   subscriptionPlan: 'a1fc7aed-6ce9-4b83-8981-166e0745ce85',
+  billingSubscriptionId: 'a6a5371c-004c-4dfd-bcc6-f495c93baf1f',
   position: '6296d60e-b108-4bbf-9944-01df1816555e',
   searchVector: 'b18a4fb4-d868-4164-9f84-3e3d4c10c0d8',
 };

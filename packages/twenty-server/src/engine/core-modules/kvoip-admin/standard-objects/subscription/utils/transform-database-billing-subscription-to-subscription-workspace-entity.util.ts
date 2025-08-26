@@ -1,6 +1,9 @@
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { IDENTIFIDER_PREFIX_MAP } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/constants/subscription-identifier-prefix-map.constant';
 import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
 
 type SubscriptionWorkspaceEntityUpsertData = Pick<
@@ -15,35 +18,49 @@ type SubscriptionWorkspaceEntityUpsertData = Pick<
   | 'ownerId'
   | 'subscriptionPlanId'
   | 'tenantId'
+  | 'billingSubscriptionId'
 >;
+
+export const getSubscriptionIdentifier = (
+  id: string,
+  provider: BillingPaymentProviders,
+) =>
+  `${IDENTIFIDER_PREFIX_MAP[provider]}${id.replace(/[^a-zA-Z0-9]/g, '').slice(0, 15)}`;
 
 export const transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity =
   ({
-    billing,
+    billingSubscription,
     price,
-    ownerId,
     subscriptionPlanId,
     tenantId,
+    ownerId,
   }: {
-    billing: BillingSubscription;
+    billingSubscription: BillingSubscription;
     price: BillingPrice;
-    ownerId: string;
-    subscriptionPlanId: string;
     tenantId: string;
+    ownerId?: string;
+    subscriptionPlanId: string;
   }): SubscriptionWorkspaceEntityUpsertData => ({
-    identifier:
-      billing.stripeSubscriptionId ||
-      `inter-sub_${billing.id.replace(/[^a-zA-Z0-9]/g, '').slice(0, 15)}`,
-    paymentProvider: billing.provider,
-    recurrence: billing.interval as SubscriptionInterval,
-    status: billing.status,
+    billingSubscriptionId: billingSubscription.id,
+    identifier: getSubscriptionIdentifier(
+      billingSubscription.stripeSubscriptionId || billingSubscription.id,
+      billingSubscription.provider,
+    ),
+    paymentProvider: billingSubscription.provider,
+    recurrence: billingSubscription.interval as SubscriptionInterval,
+    status: billingSubscription.status,
     amount: {
-      amountMicros: price.unitAmount as number,
+      amountMicros:
+        billingSubscription.provider === BillingPaymentProviders.Stripe
+          ? getPriceFromStripeDecimal(
+              price.unitAmountDecimal?.toString() as string,
+            )
+          : (price.unitAmount as number),
       currencyCode: price.currency,
     },
-    trialStart: billing.trialStart,
-    trialEnd: billing.trialEnd,
-    ownerId,
+    trialStart: billingSubscription.trialStart,
+    trialEnd: billingSubscription.trialEnd,
     subscriptionPlanId,
     tenantId,
+    ownerId: ownerId || null,
   });

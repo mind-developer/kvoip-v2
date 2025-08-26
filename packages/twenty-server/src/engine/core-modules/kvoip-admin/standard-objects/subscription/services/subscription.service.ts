@@ -1,10 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
+import { transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/utils/transform-database-billing-subscription-to-subscription-workspace-entity.util';
+import { translformDatabaseProductActiveToSubscriptonPlanStatus } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/utils/transform-database-product-active-to-subscription-plan-status.util';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -28,20 +33,123 @@ export class SubscriptionService {
     return this.dataSource.getRepository(Workspace);
   }
 
-  private get subscriptionRepository() {
+  private get billingSubscriptionRepository() {
     return this.dataSource.getRepository(BillingSubscription);
   }
 
-  async handleSubscriptionUpsertById(subscriptionId: BillingSubscription) {}
+  private async getBaseProductFromBillingSubscription(
+    subscription: BillingSubscription,
+  ) {
+    const baseProdcut = subscription.billingSubscriptionItems.find((item) => {
+      item.billingProduct.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT;
+    })?.billingProduct;
 
-  async handleSubscriptionUpsertByCustomerId(
-    subscriptionCustomerId: BillingSubscription,
-  ) {}
+    if (!isDefined(baseProdcut))
+      throw new Error('Base product not fond for subscription');
 
-  async kvoipAdminWorkspaceExists(): Promise<Workspace | null> {
-    const kvoipAdminWorkspace =
-      await this.kvoipAdminService.getKvoipAdminWorkspace();
+    return baseProdcut;
+  }
 
-    return kvoipAdminWorkspace;
+  private async handleUpsertSubscriptionPlanFromProduct(
+    product: BillingProduct,
+  ) {
+    const subscriptionPlanWorkspaceRepository =
+      await this.kvoipAdminService.getSubscriptionPlanRepository();
+
+    const status = translformDatabaseProductActiveToSubscriptonPlanStatus(
+      product.active,
+    );
+
+    const exsitingSubscriptionPlan =
+      await subscriptionPlanWorkspaceRepository.findOne({
+        where: {
+          planKey: product.metadata.planKey,
+          status,
+        },
+      });
+
+    return await subscriptionPlanWorkspaceRepository.save({
+      ...exsitingSubscriptionPlan,
+      name: product.metadata.planKey,
+      planKey: product.metadata.planKey,
+      status,
+    });
+  }
+
+  private async upsertWorkspaceSubscription(
+    billingSubscription: BillingSubscription,
+  ) {
+    const tenantRepository = await this.kvoipAdminService.getTenantRepository();
+
+    const tenant = await tenantRepository.findOne({
+      where: {
+        coreWorkspaceId: billingSubscription.workspaceId,
+      },
+      relations: {
+        owner: true,
+      },
+    });
+
+    if (!isDefined(tenant))
+      throw new Error('Workspace not found inside admin workspace.');
+
+    const subscriptionBaseProduct =
+      await this.getBaseProductFromBillingSubscription(billingSubscription);
+
+    const activePrice = subscriptionBaseProduct.billingPrices.find(
+      (price) => price.active,
+    );
+
+    if (!isDefined(activePrice)) throw new Error('Price not found');
+
+    const subscriptionPlan = await this.handleUpsertSubscriptionPlanFromProduct(
+      subscriptionBaseProduct,
+    );
+
+    const subscriptionWorkspaceRepository =
+      await this.kvoipAdminService.getSubscriptionRepository();
+
+    const existingSubscription = await subscriptionWorkspaceRepository.findOne({
+      where: {
+        billingSubscriptionId: billingSubscription.id,
+      },
+    });
+
+    await subscriptionWorkspaceRepository.save({
+      ...existingSubscription,
+      ...transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity({
+        billingSubscription,
+        price: activePrice,
+        tenantId: tenant.id,
+        subscriptionPlanId: subscriptionPlan.id,
+        ownerId: tenant?.owner?.id,
+      }),
+    });
+  }
+
+  async handleSubscriptionUpsert(subscriptionId: string) {
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: [
+        {
+          id: subscriptionId,
+        },
+        {
+          stripeSubscriptionId: subscriptionId,
+        },
+      ],
+      relations: {
+        billingSubscriptionItems: {
+          billingProduct: {
+            billingPrices: true,
+          },
+        },
+      },
+    });
+
+    if (!isDefined(subscription))
+      throw new Error('BillingSubscription not found.');
+
+    await this.upsertWorkspaceSubscription(subscription);
   }
 }
