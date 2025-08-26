@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
@@ -48,7 +48,7 @@ export class WhatsappService {
     @InjectRepository(Workspace, 'core')
     private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
-    private readonly googleStorageService: GoogleStorageService,
+    public readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector, 'core')
     private sectorRepository: Repository<Sector>,
     @InjectRepository(WorkspaceAgent, 'core')
@@ -127,6 +127,8 @@ export class WhatsappService {
       where: { id: integrationId },
     });
 
+    const tipoApi = integration?.tipoApi || 'MetaAPI';
+
     if (!integration) {
       throw new InternalServerError('Whatsapp integration not found');
     }
@@ -176,13 +178,21 @@ export class WhatsappService {
     };
 
     try {
-      await axios.post(url, fields, { headers });
+      if (tipoApi === 'MetaAPI') await axios.post(url, fields, { headers })
+      else {
+        const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`
+        axios.post(baileysUrl, { to: to + "@s.whatsapp.net", message }).then(() => {
+        }).catch((e) => {
+          console.warn(`Failed to send message to ${baileysUrl}: ${e}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        })
 
+      }
       return true;
+
     } catch (error) {
-      throw new InternalServerErrorException(
+      console.warn(
         'Failed to send message',
-        error.message,
+        error,
       );
     }
   }

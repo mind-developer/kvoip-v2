@@ -62,8 +62,6 @@ export class WhatsappIntegrationService {
       workspace,
     );
 
-    await this.subscribeWebhook(savedIntegration, workspaceId);
-
     if (savedIntegration.tipoApi === 'MetaAPI') {
       await this.subscribeWebhook(savedIntegration, workspaceId);
     }

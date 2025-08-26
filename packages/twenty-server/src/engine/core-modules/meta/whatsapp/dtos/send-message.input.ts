@@ -46,7 +46,7 @@ export class MessageAgent {
 }
 
 @InputType()
-export class MessageSector extends MessageAgent {}
+export class MessageSector extends MessageAgent { }
 
 @InputType()
 export class SendEventMessageInput extends MessageInput {

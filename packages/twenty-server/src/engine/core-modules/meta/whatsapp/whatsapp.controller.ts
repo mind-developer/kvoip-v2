@@ -11,13 +11,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import axios from 'axios';
+import { Response } from 'express';
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
-import axios from 'axios';
-import { Response } from 'express';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -90,7 +90,58 @@ export class WhatsappController {
     }
 
     if (isReceiving) {
-      if (mediaId) {
+      // Novo fluxo: verifica se é mídia e se existe base64
+      let isBase64Media = false;
+      let base64String = '';
+      let mimeType = '';
+      let fileName = '';
+      if (
+        ['image', 'video', 'audio', 'document'].includes(messages.type) &&
+        messages[messages.type] &&
+        messages[messages.type].base64
+      ) {
+        isBase64Media = true;
+        base64String = messages[messages.type].base64;
+        mimeType = messages[messages.type].mime_type || 'application/octet-stream';
+        fileName = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}`;
+      }
+
+      if (isBase64Media) {
+        try {
+          this.logger.log('Recebendo mídia em base64');
+          // Remove prefixo se existir
+          if (base64String.startsWith('data:')) {
+            base64String = base64String.split(',')[1];
+            this.logger.log('Prefixo data: removido do base64');
+          }
+          const buffer = Buffer.from(base64String, 'base64');
+          this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
+          // Gera extensão correta
+          let ext = '';
+          if (mimeType && mimeType.includes('/')) {
+            ext = '.' + mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
+          }
+          const fileNameWithExt = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}${ext}`;
+          this.logger.log(`Nome do arquivo gerado para upload: ${fileNameWithExt}`);
+          this.logger.log(`Diretório do bucket: workspaceId=${workspaceId}, tipo=${messages.type}`);
+          const file = {
+            originalname: fileNameWithExt,
+            buffer,
+            mimetype: mimeType,
+          };
+          fileUrl = await this.whatsappService.googleStorageService.uploadFileToBucket(
+            workspaceId,
+            messages.type,
+            file,
+            false,
+          );
+          this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
+        } catch (err) {
+          this.logger.error('Erro ao salvar mídia base64:', err);
+          throw new HttpException('Erro ao salvar mídia base64: ' + (err?.message || err), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      } else if (mediaId) {
+        // Fluxo normal: baixa a mídia
         fileUrl = await this.whatsappService.downloadMedia(
           mediaId,
           id,
@@ -103,7 +154,7 @@ export class WhatsappController {
       const lastMessage = {
         createdAt: new Date(),
         from: body.entry[0].changes[0].value.contacts[0].profile.name,
-        message: mediaId
+        message: (mediaId || isBase64Media)
           ? fileUrl
           : body.entry[0].changes[0].value.messages[0].text.body,
         type: body.entry[0].changes[0].value.messages[0].type,
@@ -129,6 +180,7 @@ export class WhatsappController {
       };
 
       console.log('Payload enviado ao Firestore:', JSON.stringify(whatsappIntegration, null, 2));
+
       await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
         true,
@@ -157,13 +209,16 @@ export class WhatsappController {
   }
 }
 
+// Controller separado para endpoints REST
 @Controller('rest/whatsapp')
 export class WhatsappRestController {
   protected readonly logger = new Logger(WhatsappRestController.name);
+
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
     private readonly whatsappService: WhatsappService,
   ) { }
+
   @Get('/qrold/:sessionId')
   async getQrCodeold(@Param('sessionId') sessionId: string) {
     try {
@@ -214,7 +269,7 @@ export class WhatsappRestController {
   }
 
   // NOVO ENDPOINT PROXY PARA STATUS
-  @Get('/status/:sessionId')
+  @Get('/statuus/:sessionId')
   @UseGuards()
   async getStatus(@Param('sessionId') sessionId: string) {
     try {
@@ -260,6 +315,7 @@ export class WhatsappRestController {
     }
   }
 }
+
 
 // Controller separado para endpoints REST
 @Controller('Whats-App-rest/whatsapp')
@@ -316,8 +372,9 @@ export class WhatsappRestController2 {
         );
       }
     }
+  }
 
-  } @Get('/qr/:sessionId')
+  @Get('/qr/:sessionId')
   async getQrCode(@Param('sessionId') sessionId: string) {
     try {
       this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
@@ -327,15 +384,18 @@ export class WhatsappRestController2 {
       const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`, {
         timeout: 10000, // 10 second timeout
       });
+
       this.logger.log(`=== RESPOSTA RECEBIDA ===`);
       this.logger.log(`Status: ${response.status}`);
       this.logger.log(`Headers:`, response.headers);
       this.logger.log(`Data:`, response.data);
+
       return response.data;
     } catch (error) {
       this.logger.error(`=== ERRO NA REQUISIÇÃO ===`);
       this.logger.error(`Session ID: ${sessionId}`);
       this.logger.error(`Erro completo:`, error);
+
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx

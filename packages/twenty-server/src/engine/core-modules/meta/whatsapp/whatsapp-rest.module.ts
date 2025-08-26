@@ -9,7 +9,6 @@ import { WhatsappIntegration } from './integration/whatsapp-integration.entity';
 import { Workspace } from '../../workspace/workspace.entity';
 import { Inbox } from '../../inbox/inbox.entity';
 import { Sector } from '../../sector/sector.entity';
-// import { Agent } from '../../agent/agent.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';

@@ -31,5 +31,5 @@ export class CreateWhatsappIntegrationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  tipoApi?: string
+  tipoApi: string
 }
