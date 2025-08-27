@@ -58,7 +58,6 @@ const StyledNodeType = styled.div`
 `.withComponent(Label);
 
 const StyledLabel = styled(Label)`
-  margin-top: -${({ theme }) => theme.spacing(90)};
   padding: ${({ theme }) => theme.spacing(0, 1.25)} 0px;
 `;
 
