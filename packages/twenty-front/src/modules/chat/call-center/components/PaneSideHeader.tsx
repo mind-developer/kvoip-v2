@@ -154,35 +154,32 @@ export const PaneSideHeader = () => {
         <StyledActionsContainer>
           <StyledIconButton
             onClick={() => setIsSearchOpen(!isSearchOpen)}
-            variant="primary"
-            accent="blue"
+            variant="secondary"
             size="medium"
             Icon={(props) => (
               // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconSearch {...props} color={theme.font.color.inverted} />
+              <IconSearch {...props} />
             )}
           />
           <StyledIconButton
             onClick={() => sortChats()}
-            variant="primary"
-            accent="blue"
+            variant="secondary"
+            // accent="blue"
             size="medium"
             Icon={(props) => (
               <IconSortDescending
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...props}
-                color={theme.font.color.inverted}
               />
             )}
           />
           <StyledIconButton
             onClick={() => setIsStartChatOpen(!isStartChatOpen)}
-            variant="primary"
-            accent="blue"
+            variant="secondary"
             size="medium"
             Icon={(props) => (
               // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconEdit {...props} color={theme.font.color.inverted} />
+              <IconEdit {...props} />
             )}
           />
           {isStartChatOpen && (

@@ -79,12 +79,12 @@ export const PaneChatHeader = () => {
         <StyledActionsContainer>
           <StyledIconButton
             onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
-            variant="primary"
+            variant="secondary"
             accent="danger"
             size="medium"
             Icon={(props) => (
               // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconX {...props} color={theme.font.color.inverted} />
+              <IconX {...props} />
             )}
           />
           <TransferChatOptionsDropdown />
@@ -92,12 +92,12 @@ export const PaneChatHeader = () => {
             onClick={() => {
               openCommandMenuTicket(selectedChat);
             }}
-            variant="primary"
-            accent="blue"
+            variant="secondary"
+            accent="default"
             size="medium"
             Icon={(props) => (
               // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconDotsVertical {...props} color={theme.font.color.inverted} />
+              <IconDotsVertical {...props} />
             )}
           />
         </StyledActionsContainer>

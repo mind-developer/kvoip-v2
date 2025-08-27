@@ -36,7 +36,7 @@ const StyledUserName = styled.p`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 600;
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledLastMessagePreview = styled.p`
@@ -82,10 +82,11 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   width: max-content;
 
   & img {
-    height: 14px;
-    padding-right: ${({ theme }) => theme.spacing(1)};
-    width: 14px;
+    height: 10px;
+    margin-right: ${({ theme }) => theme.spacing(1)};
+    width: 10px;
   }
+  font-size: 10px;
 `;
 
 const StyledContainer = styled.div`
@@ -127,12 +128,13 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   const userNameToDisplay =
     chat.lastMessage.from !== 'system' ? chat.client.name : 'Current User';
 
-  const messageToDisplay = `${userNameToDisplay}: ${chat.lastMessage.message?.length > 20
-    ? (chat.lastMessage.message.at(19) === ' '
-      ? chat.lastMessage.message.slice(0, 19)
-      : chat.lastMessage.message.slice(0, 20)) + '...'
-    : chat.lastMessage.message
-    }`;
+  const messageToDisplay = `${userNameToDisplay}: ${
+    chat.lastMessage.message?.length > 20
+      ? (chat.lastMessage.message.at(19) === ' '
+          ? chat.lastMessage.message.slice(0, 19)
+          : chat.lastMessage.message.slice(0, 20)) + '...'
+      : chat.lastMessage.message
+  }`;
 
   const agent = agents.find((agent: any) => agent.id === chat.agent);
 
@@ -156,16 +158,8 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
       <StyledContentContainer>
         <StyledContainerPills>
           <StyledIntegrationCard isSelected={isSelected}>
-            <img
-              src={WhatsappIcon}
-              // src={platform === 'whatsapp' ? WhatsappIcon : MessengerIcon}
-              alt={'Whatsapp'}
-            //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
-            />
-
+            <img src={WhatsappIcon} alt={'Whatsapp'} />
             {integration?.name}{' '}
-            {/*integration?.tipo_api === 'Baileys' ? 'Baileys' : 'MetaAPI'*/}
-            {/* Ícone condicional por imagem */}
             {integration?.tipoApi === 'Baileys' ? (
               <img
                 src="https://raw.githubusercontent.com/WhiskeySockets/Baileys/refs/heads/master/Media/logo.png"

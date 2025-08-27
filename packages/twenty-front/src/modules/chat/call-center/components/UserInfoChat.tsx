@@ -35,7 +35,7 @@ export const AvatarComponent: React.FC<WhatsappProps> = ({
       placeholder={message.from}
       placeholderColorSeed={message.from}
       type={'rounded'}
-      size="xl"
+      size="lg"
     />
   );
 };

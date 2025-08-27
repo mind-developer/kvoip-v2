@@ -3,10 +3,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
-import {
-  AvatarComponent,
-  UsernameComponent,
-} from '@/chat/call-center/components/UserInfoChat';
+import { StyledMessageBubble } from '@/chat/call-center/components/StyledMessageBubble';
+import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
@@ -34,14 +32,14 @@ const StyledPaneChatContainer = styled.div`
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(0)};
   width: 100%;
 `;
 
 const StyledChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(0)};
   max-width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -71,7 +69,7 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
-  gap: ${({ theme }) => theme.spacing(1.5)};
+  gap: ${({ theme }) => theme.spacing(1)};
   width: auto;
   max-width: 70%;
   margin-left: ${({ isSystemMessage, theme }) =>
@@ -236,19 +234,6 @@ const StyledModalImage = styled.img`
   max-width: 90%;
   max-height: 90dvh;
   object-fit: contain;
-`;
-
-const StyledBalloon = styled.div<{ isSystemMessage: boolean }>`
-  background-color: ${({ isSystemMessage, theme }) =>
-    isSystemMessage
-      ? theme.name === 'dark'
-        ? '#171E2C'
-        : '#E8EFFD'
-      : theme.background.tertiary};
-  padding: ${({ theme }) => theme.spacing(3)};
-  border-radius: ${({ theme }) => theme.spacing(3)};
-  max-width: max-content;
-  word-wrap: break-word;
 `;
 
 const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -787,18 +772,21 @@ export const PaneChat = () => {
                       key={index}
                       isSystemMessage={isSystemMessage}
                     >
-                      <StyledBalloon isSystemMessage={isSystemMessage}>
+                      <StyledMessageBubble
+                        time={formatDate(message.createdAt).time}
+                        isSystemMessage={isSystemMessage}
+                      >
                         {messageContent}
-                      </StyledBalloon>
+                      </StyledMessageBubble>
                       <StyledNameAndTimeContainer
                         isSystemMessage={isSystemMessage}
                       >
-                        <UsernameComponent message={message} />
-                        <StyledDateContainer>
-                          {formatDate(message.createdAt).date}
-                          <span> - </span>
-                          {formatDate(message.createdAt).time}
-                        </StyledDateContainer>
+                        {/* <UsernameComponent message={message} /> */}
+                        {isMessageOlderThan24Hours(message) ?? (
+                          <StyledDateContainer>
+                            {formatDate(message.createdAt).date}
+                          </StyledDateContainer>
+                        )}
                       </StyledNameAndTimeContainer>
                     </StyledMessageItem>
                   </StyledContainer>
