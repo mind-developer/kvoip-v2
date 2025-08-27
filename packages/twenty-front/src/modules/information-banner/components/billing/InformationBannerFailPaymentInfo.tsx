@@ -1,7 +1,7 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useHandleUpdateSubscription } from '@/settings/billing/hooks/useHandleUpdateSubscription';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSubscriptioProvider } from '@/workspace/hooks/useSubscriptionProvider';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -9,10 +9,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BillingPaymentProviders,
-  SettingPermissionType,
+  PermissionFlagType,
   SubscriptionStatus,
   useBillingPortalSessionQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerFailPaymentInfo = () => {
@@ -33,8 +33,8 @@ export const InformationBannerFailPaymentInfo = () => {
   });
 
   const {
-    [SettingPermissionType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = useSettingsPermissionMap();
+    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
+  } = usePermissionFlagMap();
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

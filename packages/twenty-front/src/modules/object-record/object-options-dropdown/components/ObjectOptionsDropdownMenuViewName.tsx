@@ -1,15 +1,12 @@
-import { Key } from 'ts-key-enum';
-
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { View } from '@/views/types/View';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { type View } from '@/views/types/View';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -17,7 +14,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -44,6 +42,7 @@ const StyledMenuIconContainer = styled.div`
   justify-content: center;
   width: ${({ theme }) => theme.spacing(6)};
 `;
+
 const StyledMainText = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
@@ -61,12 +60,12 @@ export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: ObjectOptionsDropdownMenuViewNameProps) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
-    useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
+    useRecoilComponentState(viewPickerSelectedIconComponentState);
 
-  const viewPickerIsPersisting = useRecoilComponentValueV2(
+  const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingComponentState,
   );
-  const setViewPickerIsDirty = useSetRecoilComponentStateV2(
+  const setViewPickerIsDirty = useSetRecoilComponentState(
     viewPickerIsDirtyComponentState,
   );
 
@@ -75,6 +74,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
   const [viewName, setViewName] = useState(currentView?.name);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
@@ -86,7 +87,6 @@ export const ObjectOptionsDropdownMenuViewName = ({
       await updateViewFromCurrentState();
     },
     focusId: VIEW_PICKER_DROPDOWN_ID,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
   });
 
@@ -104,23 +104,28 @@ export const ObjectOptionsDropdownMenuViewName = ({
     setViewPickerSelectedIcon(currentView.icon);
   }, [currentView.icon, setViewPickerSelectedIcon]);
 
+  useEffect(() => {
+    if (currentView?.key !== 'INDEX' && inputRef.current !== null) {
+      inputRef.current.focus();
+    }
+  }, [currentView?.key]);
+
   const theme = useTheme();
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 
   return (
     <>
-      {currentView?.key === 'INDEX' && (
+      {currentView?.key === 'INDEX' ? (
         <StyledMenuTitleContainer>
           <StyledMenuIconContainer>
             <MainIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           </StyledMenuIconContainer>
           <StyledMainText>
-            <OverflowingTextWithTooltip text={currentView?.name} />
+            <OverflowingTextWithTooltip text={currentView.name} />
           </StyledMainText>
         </StyledMenuTitleContainer>
-      )}
-      {currentView?.key !== 'INDEX' && (
+      ) : (
         <DropdownMenuItemsContainer>
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker
@@ -128,7 +133,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
             />
-            <TextInputV2
+            <TextInput
               value={viewName}
               onChange={(value) => {
                 setViewName(value);

@@ -1,29 +1,41 @@
-import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+  FieldInputEventContext,
+  type FieldInputClickOutsideEvent,
+  type FieldInputEvent,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { useContext } from 'react';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-  const { isReadOnly } = useContext(FieldContext);
 
-  const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
+  const instanceId = useAvailableComponentInstanceId(
+    RecordFieldComponentInstanceContext,
+  );
+
+  const { persistFieldFromFieldInputContext } =
+    usePersistFieldFromFieldInputContext();
+
+  const handleEnter: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
     onCloseTableCell();
     onMoveFocus('down');
   };
 
-  const handleSubmit: FieldInputEvent = (persistField) => {
-    persistField();
+  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
     onCloseTableCell();
   };
@@ -34,51 +46,65 @@ export const RecordTableCellFieldInput = () => {
 
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
-      (persistField, event) => {
-        const hotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+      ({ newValue, event, skipPersist }) => {
+        const currentFocusId = snapshot
+          .getLoadable(currentFocusIdSelector)
           .getValue();
-        if (hotkeyScope.scope !== TableHotkeyScope.CellEditMode) {
+
+        if (currentFocusId !== instanceId) {
           return;
         }
-        event.stopImmediatePropagation();
+        event?.preventDefault();
+        event?.stopImmediatePropagation();
 
-        persistField();
+        if (skipPersist !== true) {
+          persistFieldFromFieldInputContext(newValue);
+        }
+
         onCloseTableCell();
       },
-    [onCloseTableCell],
+    [onCloseTableCell, instanceId, persistFieldFromFieldInputContext],
   );
 
-  const handleEscape: FieldInputEvent = (persistField) => {
-    persistField();
+  const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
     onCloseTableCell();
   };
 
-  const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
+  const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
     onCloseTableCell();
     onMoveFocus('right');
   };
 
-  const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
+  const handleShiftTab: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
     onCloseTableCell();
     onMoveFocus('left');
   };
 
   return (
-    <FieldInput
-      onCancel={handleCancel}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onSubmit={handleSubmit}
-      onTab={handleTab}
-      isReadOnly={isReadOnly}
-    />
+    <FieldInputEventContext.Provider
+      value={{
+        onCancel: handleCancel,
+        onEnter: handleEnter,
+        onEscape: handleEscape,
+        onClickOutside: handleClickOutside,
+        onShiftTab: handleShiftTab,
+        onSubmit: handleSubmit,
+        onTab: handleTab,
+      }}
+    >
+      <FieldInput />
+    </FieldInputEventContext.Provider>
   );
 };

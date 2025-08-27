@@ -2,8 +2,11 @@ import { CommandMenuTicketPage } from '@/chat/call-center/components/CommandMenu
 import { CommandMenuChatbotFlowEditStep } from '@/chatbot/components/CommandMenuChatbotFlowEditStep';
 import { CommandMenuChatbotFlowPage } from '@/chatbot/components/CommandMenuChatbotFlowPage';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { CommandMenuAIChatThreadsPage } from '@/command-menu/pages/AIChatThreads/components/CommandMenuAIChatThreadsPage';
+import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuMergeRecordPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuEditRichTextPage } from '@/command-menu/pages/rich-text-page/components/CommandMenuEditRichTextPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
@@ -20,6 +23,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
 >([
   [CommandMenuPages.Root, <CommandMenu />],
   [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
+  [CommandMenuPages.MergeRecords, <CommandMenuMergeRecordPage />],
   [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
   [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],
@@ -38,4 +42,6 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.ChatbotFlow, <CommandMenuChatbotFlowPage />],
   [CommandMenuPages.ChatbotFlowStepEdit, <CommandMenuChatbotFlowEditStep />],
   [CommandMenuPages.Ticket, <CommandMenuTicketPage />],
+  [CommandMenuPages.AskAI, <CommandMenuAskAIPage />],
+  [CommandMenuPages.ViewPreviousAIChats, <CommandMenuAIChatThreadsPage />],
 ]);

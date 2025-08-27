@@ -1,9 +1,9 @@
 import { v4 } from 'uuid';
 
 import { KVOIP_ADMIN_ALL_VIEWS } from 'src/engine/core-modules/kvoip-admin/standard-objects/views/get-all-kvoip-admin-views';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
 import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
@@ -111,7 +111,7 @@ const createWorkspaceViews = async (
           kanbanAggregateOperationFieldMetadataId,
         }) => ({
           id,
-          name,
+          name: name as string,
           objectMetadataId,
           type,
           key,

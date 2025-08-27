@@ -1,15 +1,16 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { WorkflowVariablesDropdownAllItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems';
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
-import { WorkflowVariablesDropdownObjectItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -32,28 +33,36 @@ const StyledDropdownVariableButtonContainer = styled(
 `;
 
 export const WorkflowVariablesDropdown = ({
-  inputId,
+  instanceId,
   onVariableSelect,
   disabled,
-  objectNameSingularToSelect,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+  fieldTypesToExclude,
   multiline,
+  clickableComponent,
 }: {
-  inputId: string;
+  instanceId: string;
   onVariableSelect: (variableName: string) => void;
+  shouldDisplayRecordFields: boolean;
+  shouldDisplayRecordObjects: boolean;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
   disabled?: boolean;
-  objectNameSingularToSelect?: string;
   multiline?: boolean;
+  clickableComponent?: React.ReactNode;
 }) => {
   const theme = useTheme();
 
-  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
+  const isDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
     dropdownId,
   );
   const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
-    objectNameSingularToSelect,
+    shouldDisplayRecordFields,
+    shouldDisplayRecordObjects,
+    fieldTypesToExclude,
   });
 
   const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
@@ -102,12 +111,14 @@ export const WorkflowVariablesDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <StyledDropdownVariableButtonContainer
-          isUnfolded={isDropdownOpen}
-          transparentBackground
-        >
-          <IconVariablePlus size={theme.icon.size.sm} />
-        </StyledDropdownVariableButtonContainer>
+        clickableComponent ?? (
+          <StyledDropdownVariableButtonContainer
+            isUnfolded={isDropdownOpen}
+            transparentBackground
+          >
+            <IconVariablePlus size={theme.icon.size.sm} />
+          </StyledDropdownVariableButtonContainer>
+        )
       }
       dropdownComponents={
         !isDefined(selectedStep) ? (
@@ -116,8 +127,8 @@ export const WorkflowVariablesDropdown = ({
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
           />
-        ) : isDefined(objectNameSingularToSelect) ? (
-          <WorkflowVariablesDropdownObjectItems
+        ) : shouldDisplayRecordObjects ? (
+          <WorkflowVariablesDropdownAllItems
             step={selectedStep}
             onSelect={handleSubItemSelect}
             onBack={handleBack}

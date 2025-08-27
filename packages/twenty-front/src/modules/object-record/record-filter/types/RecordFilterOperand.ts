@@ -1,1 +1,1 @@
-export { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
+export { ViewFilterOperand as RecordFilterOperand } from 'twenty-shared/types';

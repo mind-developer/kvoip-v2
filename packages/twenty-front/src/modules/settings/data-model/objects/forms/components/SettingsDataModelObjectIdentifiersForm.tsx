@@ -1,21 +1,21 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ZodError, isDirty, z } from 'zod';
+import { ZodError, isDirty, type z } from 'zod';
 
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useNavigate } from 'react-router-dom';
 import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -48,7 +48,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
   });
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const handleSave = async (
@@ -67,12 +67,12 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       formConfig.reset(undefined, { keepValues: true });
     } catch (error) {
       if (error instanceof ZodError) {
-        enqueueSnackBar(error.issues[0].message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.issues[0].message,
         });
       } else {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     }
@@ -134,6 +134,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
+              disabled={!objectMetadataItem.isCustom}
               callToActionButton={
                 label === t`Record label`
                   ? {

@@ -1,4 +1,4 @@
-import { WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
 
 export const OTHER_TRIGGER_TYPES: Array<{
   defaultLabel: string;
@@ -11,7 +11,7 @@ export const OTHER_TRIGGER_TYPES: Array<{
     icon: 'IconHandMove',
   },
   {
-    defaultLabel: 'On a Schedule',
+    defaultLabel: 'On a schedule',
     type: 'CRON',
     icon: 'IconClock',
   },

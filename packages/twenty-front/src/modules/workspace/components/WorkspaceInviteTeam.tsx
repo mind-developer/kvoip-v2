@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,7 +70,7 @@ type FormInput = {
 export const WorkspaceInviteTeam = () => {
   const { t } = useLingui();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const { reset, handleSubmit, control, formState, watch } = useForm<FormInput>(
@@ -89,21 +88,19 @@ export const WorkspaceInviteTeam = () => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({ emails: emailsList });
     if (isDefined(data) && data.sendInvitations.result.length > 0) {
-      enqueueSnackBar(
-        `${data.sendInvitations.result.length} invitations sent`,
-        {
-          variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: `${data.sendInvitations.result.length} invitations sent`,
+        options: {
           duration: 2000,
         },
-      );
+      });
       return;
     }
     if (isDefined(data) && !data.sendInvitations.success) {
-      data.sendInvitations.errors.forEach((error) => {
-        enqueueSnackBar(error, {
-          variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        options: {
           duration: 5000,
-        });
+        },
       });
     }
   });
@@ -125,7 +122,8 @@ export const WorkspaceInviteTeam = () => {
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => {
               return (
-                <TextInput
+                <SettingsTextInput
+                  instanceId="workspace-invite-team-emails"
                   placeholder="tim@apple.com, jony.ive@apple.dev"
                   value={value}
                   onChange={onChange}

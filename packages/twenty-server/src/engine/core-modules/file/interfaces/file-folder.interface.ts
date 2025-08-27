@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { KebabCase } from 'type-fest';
+import { type KebabCase } from 'type-fest';
 
 export enum FileFolder {
   ProfilePicture = 'profile-picture',
@@ -11,6 +11,7 @@ export enum FileFolder {
   BillingSubscriptionBill = 'billing-subscription-bill',
   ChargeBill = 'charge-bill',
   Invoice = 'invoice',
+  File = 'file',
 }
 
 registerEnumType(FileFolder, {
@@ -46,6 +47,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   },
   [FileFolder.Invoice]: {
     ignoreExpirationToken: true,
+  },
+  [FileFolder.File]: {
+    ignoreExpirationToken: false,
   },
 };
 

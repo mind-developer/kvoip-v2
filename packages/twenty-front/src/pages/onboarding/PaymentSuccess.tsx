@@ -12,9 +12,9 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import {
-  GetCurrentUserQuery,
+  type GetCurrentUserQuery,
   useGetCurrentUserLazyQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledLoaderContainer = styled.div`

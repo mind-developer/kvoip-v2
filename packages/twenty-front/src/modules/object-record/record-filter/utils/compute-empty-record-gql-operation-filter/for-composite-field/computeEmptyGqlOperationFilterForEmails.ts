@@ -1,10 +1,11 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  EmailsFilter,
-  RecordGqlOperationFilter,
+  type EmailsFilter,
+  type RecordGqlOperationFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { CustomError } from '@/error-handler/CustomError';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeEmptyGqlOperationFilterForEmails = ({
@@ -52,7 +53,10 @@ export const computeEmptyGqlOperationFilterForEmails = ({
         };
       }
       default: {
-        throw new Error(`Unknown subfield name ${subFieldName}`);
+        throw new CustomError(
+          `Unknown subfield name ${subFieldName}`,
+          'UNKNOWN_SUBFIELD_NAME',
+        );
       }
     }
   }

@@ -3,8 +3,8 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useUpdateWorkspaceMemberRoleMutation,
-  WorkspaceMember,
-} from '~/generated/graphql';
+  type WorkspaceMember,
+} from '~/generated-metadata/graphql';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;

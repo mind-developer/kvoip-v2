@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -9,11 +9,9 @@ const meta: Meta<typeof TitleInput> = {
   decorators: [ComponentDecorator],
   args: {
     placeholder: 'Enter title',
-    hotkeyScope: 'titleInput',
     sizeVariant: 'md',
   },
   argTypes: {
-    hotkeyScope: { control: false },
     sizeVariant: { control: false },
   },
 };

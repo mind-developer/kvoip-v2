@@ -2,17 +2,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  ObjectRecordsPermissions,
-  ObjectRecordsPermissionsByRoleId,
+  type ObjectsPermissionsByRoleIdDeprecated,
+  type ObjectsPermissionsDeprecated,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
@@ -25,6 +27,11 @@ type CacheResult<T, U> = {
 
 export const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
 export const ROLES_PERMISSIONS = 'Roles permissions';
+const WORKFLOW_STANDARD_OBJECT_IDS = [
+  STANDARD_OBJECT_IDS.workflow,
+  STANDARD_OBJECT_IDS.workflowRun,
+  STANDARD_OBJECT_IDS.workflowVersion,
+] as const;
 
 @Injectable()
 export class WorkspacePermissionsCacheService {
@@ -35,9 +42,10 @@ export class WorkspacePermissionsCacheService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   async recomputeRolesPermissionsCache({
@@ -47,7 +55,9 @@ export class WorkspacePermissionsCacheService {
     workspaceId: string;
     roleIds?: string[];
   }): Promise<void> {
-    let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+    let currentRolesPermissions:
+      | ObjectsPermissionsByRoleIdDeprecated
+      | undefined;
 
     if (roleIds) {
       currentRolesPermissions =
@@ -87,7 +97,7 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         freshUserWorkspaceRoleMap,
       );
-    } catch (error) {
+    } catch {
       // Flush stale userWorkspaceRoleMap
       await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMap(
         workspaceId,
@@ -99,8 +109,11 @@ export class WorkspacePermissionsCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, ObjectRecordsPermissionsByRoleId>> {
-    return getFromCacheWithRecompute<string, ObjectRecordsPermissionsByRoleId>({
+  }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
+    return getFromCacheWithRecompute<
+      string,
+      ObjectsPermissionsByRoleIdDeprecated
+    >({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getRolesPermissions(
@@ -156,13 +169,13 @@ export class WorkspacePermissionsCacheService {
     return userWorkspaceRoleMap[userWorkspaceId];
   }
 
-  private async getObjectRecordPermissionsForRoles({
+  async getObjectRecordPermissionsForRoles({
     workspaceId,
     roleIds,
   }: {
     workspaceId: string;
     roleIds?: string[];
-  }): Promise<ObjectRecordsPermissionsByRoleId> {
+  }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
     let roles: RoleEntity[] = [];
 
     roles = await this.roleRepository.find({
@@ -170,16 +183,16 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         ...(roleIds ? { id: In(roleIds) } : {}),
       },
-      relations: ['objectPermissions', 'settingPermissions'],
+      relations: ['objectPermissions', 'permissionFlags', 'fieldPermissions'],
     });
 
     const workspaceObjectMetadataCollection =
       await this.getWorkspaceObjectMetadataCollection(workspaceId);
 
-    const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
+    const permissionsByRoleId: ObjectsPermissionsByRoleIdDeprecated = {};
 
     for (const role of roles) {
-      const objectRecordsPermissions: ObjectRecordsPermissions = {};
+      const objectRecordsPermissions: ObjectsPermissionsDeprecated = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
         const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
@@ -188,14 +201,13 @@ export class WorkspacePermissionsCacheService {
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
+        const restrictedFields: RestrictedFieldsPermissions = {};
 
         if (
           standardId &&
-          [
-            STANDARD_OBJECT_IDS.workflow,
-            STANDARD_OBJECT_IDS.workflowRun,
-            STANDARD_OBJECT_IDS.workflowVersion,
-          ].includes(standardId)
+          WORKFLOW_STANDARD_OBJECT_IDS.includes(
+            standardId as (typeof WORKFLOW_STANDARD_OBJECT_IDS)[number],
+          )
         ) {
           const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
 
@@ -230,6 +242,23 @@ export class WorkspacePermissionsCacheService {
             objectRecordPermissionsOverride?.canDestroyObjectRecords,
             canDestroy,
           );
+
+          const fieldPermissions = role.fieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId,
+          );
+
+          for (const fieldPermission of fieldPermissions) {
+            if (
+              isDefined(fieldPermission.canReadFieldValue) ||
+              isDefined(fieldPermission.canUpdateFieldValue)
+            ) {
+              restrictedFields[fieldPermission.fieldMetadataId] = {
+                canRead: fieldPermission.canReadFieldValue,
+                canUpdate: fieldPermission.canUpdateFieldValue,
+              };
+            }
+          }
         }
 
         objectRecordsPermissions[objectMetadataId] = {
@@ -237,6 +266,7 @@ export class WorkspacePermissionsCacheService {
           canUpdate,
           canSoftDelete,
           canDestroy,
+          restrictedFields,
         };
 
         permissionsByRoleId[role.id] = objectRecordsPermissions;
@@ -264,14 +294,15 @@ export class WorkspacePermissionsCacheService {
   }: {
     workspaceId: string;
   }): Promise<UserWorkspaceRoleMap> {
-    const userWorkspaceRoleMap = await this.userWorkspaceRoleRepository.find({
+    const roleTargetsMap = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
+        userWorkspaceId: Not(IsNull()),
       },
     });
 
-    return userWorkspaceRoleMap.reduce((acc, userWorkspaceRole) => {
-      acc[userWorkspaceRole.userWorkspaceId] = userWorkspaceRole.roleId;
+    return roleTargetsMap.reduce((acc, roleTarget) => {
+      acc[roleTarget.userWorkspaceId] = roleTarget.roleId;
 
       return acc;
     }, {} as UserWorkspaceRoleMap);
@@ -280,15 +311,79 @@ export class WorkspacePermissionsCacheService {
   private hasWorkflowsPermissions(role: RoleEntity): boolean {
     const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
     const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
-      role.settingPermissions.find(
-        (settingPermission) =>
-          settingPermission.setting === SettingPermissionType.WORKFLOWS,
+      role.permissionFlags.find(
+        (permissionFlag) =>
+          permissionFlag.flag === PermissionFlagType.WORKFLOWS,
       ),
     );
 
     return (
       hasWorkflowsPermissionFromRole ||
       hasWorkflowsPermissionsFromSettingPermissions
+    );
+  }
+
+  async recomputeApiKeyRoleMapCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      const freshApiKeyRoleMap = await this.getApiKeyRoleMapFromDatabase({
+        workspaceId,
+      });
+
+      await this.workspacePermissionsCacheStorageService.setApiKeyRoleMap(
+        workspaceId,
+        freshApiKeyRoleMap,
+      );
+    } catch {
+      // Flush stale apiKeyRoleMap
+      await this.workspacePermissionsCacheStorageService.removeApiKeyRoleMap(
+        workspaceId,
+      );
+    }
+  }
+
+  async getApiKeyRoleMapFromCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<CacheResult<undefined, Record<string, string>>> {
+    return getFromCacheWithRecompute<undefined, Record<string, string>>({
+      workspaceId,
+      getCacheData: () =>
+        this.workspacePermissionsCacheStorageService.getApiKeyRoleMap(
+          workspaceId,
+        ),
+      recomputeCache: (params) => this.recomputeApiKeyRoleMapCache(params),
+      cachedEntityName: 'API_KEY_ROLE_MAP',
+      exceptionCode: TwentyORMExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND,
+      logger: this.logger,
+    });
+  }
+
+  private async getApiKeyRoleMapFromDatabase({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<Record<string, string>> {
+    const roleTargetsMap = await this.roleTargetsRepository.find({
+      where: {
+        workspaceId,
+        apiKeyId: Not(IsNull()),
+      },
+    });
+
+    return roleTargetsMap.reduce(
+      (acc, roleTarget) => {
+        if (roleTarget.apiKeyId) {
+          acc[roleTarget.apiKeyId] = roleTarget.roleId;
+        }
+
+        return acc;
+      },
+      {} as Record<string, string>,
     );
   }
 }

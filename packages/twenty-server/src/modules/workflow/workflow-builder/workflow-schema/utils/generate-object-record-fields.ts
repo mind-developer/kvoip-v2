@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
+import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
 
 const MAXIMUM_DEPTH = 1;
@@ -15,20 +15,21 @@ export const generateObjectRecordFields = ({
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
   depth?: number;
-}): BaseOutputSchema => {
+}): Record<string, FieldOutputSchema> => {
   const objectMetadata = objectMetadataInfo.objectMetadataItemWithFieldsMaps;
 
   return Object.values(objectMetadata.fieldsById).reduce(
-    (acc: BaseOutputSchema, field) => {
+    (acc: Record<string, FieldOutputSchema>, field) => {
       if (!shouldGenerateFieldFakeValue(field)) {
         return acc;
       }
 
       if (field.type !== FieldMetadataType.RELATION) {
-        acc[field.name] = generateFakeField({
+        acc[field.name] = generateFakeRecordField({
           type: field.type,
           label: field.label,
-          icon: field.icon,
+          icon: field.icon ?? undefined,
+          fieldMetadataId: field.id,
         });
 
         return acc;
@@ -43,10 +44,16 @@ export const generateObjectRecordFields = ({
             field.relationTargetObjectMetadataId
           ];
 
+        if (!isDefined(relationTargetObjectMetadata)) {
+          return acc;
+        }
+
         acc[field.name] = {
           isLeaf: false,
-          icon: field.icon,
+          icon: field.icon ?? undefined,
           label: field.label,
+          type: field.type,
+          fieldMetadataId: field.id,
           value: generateFakeObjectRecord({
             objectMetadataInfo: {
               objectMetadataItemWithFieldsMaps: relationTargetObjectMetadata,
@@ -59,6 +66,6 @@ export const generateObjectRecordFields = ({
 
       return acc;
     },
-    {} as BaseOutputSchema,
+    {} as Record<string, FieldOutputSchema>,
   );
 };

@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
+import { type z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -29,6 +29,8 @@ export const SettingsDataModelFieldDescriptionForm = ({
   const { control } =
     useFormContext<SettingsDataModelFieldDescriptionFormValues>();
 
+  const descriptionTextAreaId = `${fieldMetadataItem?.id}-description`;
+
   return (
     <Controller
       name="description"
@@ -36,6 +38,7 @@ export const SettingsDataModelFieldDescriptionForm = ({
       defaultValue={fieldMetadataItem?.description}
       render={({ field: { onChange, value } }) => (
         <TextArea
+          textAreaId={descriptionTextAreaId}
           placeholder={t`Write a description`}
           minRows={4}
           value={value ?? undefined}

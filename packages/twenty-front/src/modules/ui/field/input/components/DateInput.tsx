@@ -1,18 +1,18 @@
 import { useRef, useState } from 'react';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import {
   DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useRecoilCallback } from 'recoil';
-import { Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
+  instanceId: string;
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
@@ -26,10 +26,10 @@ export type DateInputProps = {
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
-  hotkeyScope: string;
 };
 
 export const DateInput = ({
+  instanceId,
   value,
   onEnter,
   onEscape,
@@ -40,7 +40,6 @@ export const DateInput = ({
   onClear,
   onSubmit,
   hideHeaderInput,
-  hotkeyScope,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -61,23 +60,19 @@ export const DateInput = ({
     onSubmit?.(newDate);
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
+  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
 
   const handleEnter = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
 
     onEnter(internalValue);
   };
 
   const handleEscape = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
 
     onEscape(internalValue);
   };
@@ -85,33 +80,32 @@ export const DateInput = ({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
-        const hotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+        const currentFocusId = snapshot
+          .getLoadable(currentFocusIdSelector)
           .getValue();
 
-        if (hotkeyScope?.scope === TableHotkeyScope.CellEditMode) {
-          closeDropdownYearSelect();
-          closeDropdownMonthSelect();
-          onEscape(internalValue);
+        if (currentFocusId === instanceId) {
+          closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+          closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
           onClickOutside(event, internalValue);
         }
       },
     [
+      instanceId,
       closeDropdownYearSelect,
       closeDropdownMonthSelect,
-      onEscape,
       onClickOutside,
       internalValue,
     ],
   );
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalValue,
     onEnter: handleEnter,
     onEscape: handleEscape,
     onClickOutside: handleClickOutside,
-    hotkeyScope: hotkeyScope,
   });
 
   return (

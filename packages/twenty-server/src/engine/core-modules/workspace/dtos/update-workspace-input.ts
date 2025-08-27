@@ -9,6 +9,8 @@ import {
   Matches,
 } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @InputType()
 export class UpdateWorkspaceInput {
   @Field({ nullable: true })
@@ -192,8 +194,13 @@ export class UpdateWorkspaceInput {
   @Field(() => String, { nullable: true })
   onesignalApiKey?: string;
 
-  @Field({ nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
   defaultRoleId?: string;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isTwoFactorAuthenticationEnforced?: boolean;
 }

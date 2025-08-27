@@ -1,7 +1,7 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
+import { type RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { fireEvent, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -44,14 +44,14 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
   },
 };
 
 export const HeaderMenuOpen: Story = {
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const headerMenuButton = await canvas.findByText('Domain Name');
 
@@ -69,7 +69,7 @@ export const ScrolledLeft: Story = {
   },
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = document.body.querySelector(
       '.scroll-wrapper-x-enabled',
@@ -99,7 +99,7 @@ export const ScrolledBottom: Story = {
   },
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = document.body.querySelector(
       '.scroll-wrapper-y-enabled',

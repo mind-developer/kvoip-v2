@@ -1,14 +1,17 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectRecordFilterInput, useSearchQuery } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  useSearchQuery,
+} from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
@@ -33,7 +36,8 @@ export const useObjectRecordSearchRecords = ({
     objectNameSingular,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { data, loading, error, previousData } = useSearchQuery({
     skip:
@@ -48,17 +52,15 @@ export const useObjectRecordSearchRecords = ({
       includedObjectNameSingulars: [objectNameSingular],
     },
     fetchPolicy: fetchPolicy,
+    client: apolloCoreClient,
     onError: (error) => {
       logError(
         `useSearchRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
-      enqueueSnackBar(
-        `Error during useSearchRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        apolloError: error,
+      });
     },
   });
 

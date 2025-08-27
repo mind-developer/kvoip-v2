@@ -1,16 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-
 @Injectable()
 export class RestApiCreateManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const body = request.body;
@@ -56,23 +58,16 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
 
     const createdRecords = await repository.save(recordsToCreate);
 
-    this.apiEventEmitterService.emitCreateEvents({
-      records: createdRecords,
-      authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadata.objectMetadataMapItem,
-      ),
-    });
-
     const records = await this.getRecord({
       recordIds: createdRecords.map((record) => record.id),
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     if (records.length !== body.length) {
-      throw new Error(
+      throw new InternalServerErrorException(
         `Error when creating records. ${body.length - records.length} records are missing after creation.`,
       );
     }

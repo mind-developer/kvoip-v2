@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 import { useMemo } from 'react';
@@ -6,17 +5,18 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import z from 'zod';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const filterQueryParamsSchema = z.object({
@@ -34,7 +34,7 @@ const filterQueryParamsSchema = z.object({
 export type FilterQueryParams = z.infer<typeof filterQueryParamsSchema>;
 
 export const useViewFromQueryParams = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const [searchParams] = useSearchParams();
   const { objectNamePlural = '' } = useParams();
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -118,7 +118,7 @@ export const useViewFromQueryParams = () => {
                   (Array.isArray(filterValueFromURL) ||
                     satisfiesRelationFilterSchema)
                 ) {
-                  const queryResult = await apolloClient.query<
+                  const queryResult = await apolloCoreClient.query<
                     Record<string, { edges: { node: ObjectRecord }[] }>
                   >({
                     query: generateFindManyRecordsQuery({
@@ -180,7 +180,7 @@ export const useViewFromQueryParams = () => {
         ).filter(isDefined);
       },
     [
-      apolloClient,
+      apolloCoreClient,
       filterQueryParams,
       hasFiltersQueryParams,
       objectMetadataItem.fields,

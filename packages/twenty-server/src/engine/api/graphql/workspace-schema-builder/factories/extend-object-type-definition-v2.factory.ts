@@ -1,21 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLFieldConfigArgumentMap,
-  GraphQLFieldConfigMap,
   GraphQLObjectType,
+  type GraphQLFieldConfigArgumentMap,
+  type GraphQLFieldConfigMap,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 import { ArgsFactory } from './args.factory';
 
@@ -44,8 +45,9 @@ export class ExtendObjectTypeDefinitionV2Factory {
   ) {}
 
   public create(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
+    objectMetadataCollection: ObjectMetadataEntity[],
   ): ObjectTypeDefinition {
     const kind = ObjectTypeDefinitionKind.Plain;
     const gqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
@@ -94,42 +96,50 @@ export class ExtendObjectTypeDefinitionV2Factory {
         ...config,
         fields: () => ({
           ...config.fields,
-          ...this.generateFields(objectMetadata, options),
+          ...this.generateFields(
+            objectMetadata,
+            options,
+            objectMetadataCollection,
+          ),
         }),
       }),
     };
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    objectMetadataCollection: ObjectMetadataEntity[],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       // Ignore non-relation fields as they are already defined
-      if (
-        !isFieldMetadataInterfaceOfType(
+      const isRelation =
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
-        )
-      ) {
+        ) ||
+        isFieldMetadataEntityOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        );
+
+      if (!isRelation) {
         continue;
       }
 
       if (!fieldMetadata.settings) {
         throw new Error(
-          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no settings`,
+          `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no settings`,
         );
       }
 
       if (!fieldMetadata.relationTargetObjectMetadataId) {
         throw new Error(
-          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
+          `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
         );
       }
 
@@ -148,7 +158,27 @@ export class ExtendObjectTypeDefinitionV2Factory {
         );
       }
 
-      fields[fieldMetadata.name] = {
+      const objectMetadataTarget = objectMetadataCollection.find(
+        (objectMetadata) =>
+          objectMetadata.id === fieldMetadata.relationTargetObjectMetadataId,
+      );
+
+      if (!objectMetadataTarget) {
+        throw new Error(
+          `Object Metadata Target not found for Id: ${fieldMetadata.relationTargetObjectMetadataId} on fieldMetadata name: ${fieldMetadata.name}`,
+        );
+      }
+
+      const fieldName =
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+          ? computeMorphRelationFieldName({
+              fieldName: fieldMetadata.name,
+              relationDirection: fieldMetadata.settings.relationType,
+              targetObjectMetadata: objectMetadataTarget,
+            })
+          : fieldMetadata.name;
+
+      fields[fieldName] = {
         type: relationType,
         args: argsType,
         description: fieldMetadata.description,

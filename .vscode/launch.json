@@ -5,7 +5,7 @@
     {
       "name": "twenty-server - start debug",
       "type": "node",
-      "runtimeVersion": "22.12",
+      "runtimeVersion": "24.5",
       "request": "launch",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
@@ -38,7 +38,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeVersion": "22.12",
+      "runtimeVersion": "24.5",
       "runtimeArgs": [
         "nx",
         "run",
@@ -74,6 +74,27 @@
         "--",
         "--config",
         "./jest-integration.config.ts",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/packages/twenty-server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      },
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "twenty-server - debug unit test file (to launch with test file open)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:jest",
+        "--",
+        "--config",
+        "./jest.config.mjs",
         "${relativeFile}"
       ],
       "cwd": "${workspaceFolder}/packages/twenty-server",

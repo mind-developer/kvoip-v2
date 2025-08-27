@@ -1,9 +1,11 @@
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { t } from '@lingui/core/macro';
+
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export function assertWorkflowVersionTriggerIsDefined(
   workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -17,6 +19,9 @@ export function assertWorkflowVersionTriggerIsDefined(
     throw new WorkflowTriggerException(
       'Workflow version does not contain trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+      {
+        userFriendlyMessage: t`Workflow version does not contain trigger`,
+      },
     );
   }
 }

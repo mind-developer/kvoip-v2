@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
-import { EmailThread } from '@/activities/emails/types/EmailThread';
-import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
+import { type EmailThread } from '@/activities/emails/types/EmailThread';
+import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 
-import { MessageChannel } from '@/accounts/types/MessageChannel';
-import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
+import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 // to improve - https://github.com/twentyhq/twenty/issues/12190
 export const useEmailThreadInCommandMenu = () => {
-  const viewableRecordId = useRecoilComponentValueV2(
+  const viewableRecordId = useRecoilComponentValue(
     viewableRecordIdComponentState,
   );
   const { upsertRecords } = useUpsertRecordsInStore();
@@ -139,6 +139,7 @@ export const useEmailThreadInCommandMenu = () => {
         connectedAccount: {
           id: true,
           provider: true,
+          connectionParameters: true,
         },
       },
       skip: !lastMessageChannelId,
@@ -175,12 +176,16 @@ export const useEmailThreadInCommandMenu = () => {
       ? messageChannelData[0]?.connectedAccount
       : null;
   const connectedAccountProvider = connectedAccount?.provider ?? null;
+  const connectedAccountConnectionParameters =
+    connectedAccount?.connectionParameters;
+
   return {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
     connectedAccountHandle,
     connectedAccountProvider,
+    connectedAccountConnectionParameters,
     threadLoading: messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,

@@ -1,7 +1,8 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
-import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useMemo } from 'react';
@@ -25,9 +26,13 @@ export const useAggregateRecordsQuery = ({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
   const availableAggregations = useMemo(
-    () => getAvailableAggregationsFromObjectFields(objectMetadataItem.fields),
-    [objectMetadataItem.fields],
+    () =>
+      getAvailableAggregationsFromObjectFields(
+        objectMetadataItem.readableFields,
+      ),
+    [objectMetadataItem.readableFields],
   );
 
   const recordGqlFields: RecordGqlFields = {};
@@ -40,14 +45,15 @@ export const useAggregateRecordsQuery = ({
           availableAggregations[fieldName]?.[aggregateOperation];
 
         if (!isDefined(fieldToQuery)) {
-          throw new Error(
-            `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
-          );
+          return;
         }
         gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
         recordGqlFields[fieldToQuery] = true;
       });
+    },
+    {
+      client: apolloCoreClient,
     },
   );
 

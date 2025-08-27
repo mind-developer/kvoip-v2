@@ -1,23 +1,27 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { UserContext } from '@/users/contexts/UserContext';
-import {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useRecoilValue } from 'recoil';
+import {
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
+} from 'twenty-shared/types';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,
@@ -322,7 +326,16 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-const ReactDatePicker = lazy(() => import('react-datepicker'));
+type DatePickerPropsType = ReactDatePickerLibProps<
+  boolean | undefined,
+  boolean | undefined
+>;
+
+const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
+  import('react-datepicker').then((mod) => ({
+    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+  })),
+);
 
 export const DateTimePicker = ({
   date,
@@ -342,21 +355,17 @@ export const DateTimePicker = ({
   const { timeZone } = useContext(UserContext);
   const theme = useTheme();
 
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
-
+  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const handleClear = () => {
     closeDropdowns();
     onClear?.();
   };
 
   const closeDropdowns = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
   };
 
   const handleClose = (newDate: Date) => {
@@ -506,6 +515,12 @@ export const DateTimePicker = ({
             openToDate={hasDate ? dateToUse : new Date()}
             disabledKeyboardNavigation
             onChange={handleDateChange as any}
+            calendarStartDay={
+              currentWorkspaceMember?.calendarStartDay ===
+              CalendarStartDay.SYSTEM
+                ? CalendarStartDay[detectCalendarStartDay()]
+                : (currentWorkspaceMember?.calendarStartDay ?? undefined)
+            }
             customInput={
               <DateTimeInput
                 date={internalDate}

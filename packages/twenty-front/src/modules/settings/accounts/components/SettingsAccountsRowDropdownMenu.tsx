@@ -1,16 +1,18 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
+  IconAt,
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
@@ -25,22 +27,23 @@ type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
 
-const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
-
 export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
+  const deleteAccountModalId = `delete-account-modal-${account.id}`;
+  const accountHandle = account.handle;
+
   const { t } = useLingui();
   const { openModal } = useModal();
 
   const navigate = useNavigateSettings();
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
-  const { triggerApisOAuth } = useTriggerApisOAuth();
+  const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
   const deleteAccount = async () => {
     await destroyOneRecord(account.id);
@@ -57,12 +60,25 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
+              {account.provider ===
+                ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
+                <MenuItem
+                  text={t`Connection settings`}
+                  LeftIcon={IconAt}
+                  onClick={() => {
+                    navigate(SettingsPath.EditImapSmtpCaldavConnection, {
+                      connectedAccountId: account.id,
+                    });
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              )}
               <MenuItem
                 LeftIcon={IconMail}
                 text={t`Emails settings`}
                 onClick={() => {
                   navigate(SettingsPath.AccountsEmails);
-                  closeDropdown();
+                  closeDropdown(dropdownId);
                 }}
               />
               <MenuItem
@@ -70,7 +86,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 text={t`Calendar settings`}
                 onClick={() => {
                   navigate(SettingsPath.AccountsCalendars);
-                  closeDropdown();
+                  closeDropdown(dropdownId);
                 }}
               />
               {account.authFailedAt && (
@@ -78,8 +94,8 @@ export const SettingsAccountsRowDropdownMenu = ({
                   LeftIcon={IconRefresh}
                   text={t`Reconnect`}
                   onClick={() => {
-                    triggerApisOAuth(account.provider);
-                    closeDropdown();
+                    triggerProviderReconnect(account.provider, account.id);
+                    closeDropdown(dropdownId);
                   }}
                 />
               )}
@@ -88,8 +104,8 @@ export const SettingsAccountsRowDropdownMenu = ({
                 LeftIcon={IconTrash}
                 text={t`Remove account`}
                 onClick={() => {
-                  closeDropdown();
-                  openModal(DELETE_ACCOUNT_MODAL_ID);
+                  closeDropdown(dropdownId);
+                  openModal(deleteAccountModalId);
                 }}
               />
             </DropdownMenuItemsContainer>
@@ -97,11 +113,12 @@ export const SettingsAccountsRowDropdownMenu = ({
         }
       />
       <ConfirmationModal
-        modalId={DELETE_ACCOUNT_MODAL_ID}
+        modalId={deleteAccountModalId}
         title={t`Data deletion`}
         subtitle={
           <Trans>
-            All emails and events linked to this account will be deleted
+            All emails and events linked to this account ({accountHandle}) will
+            be deleted
           </Trans>
         }
         onConfirmClick={deleteAccount}

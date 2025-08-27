@@ -9,8 +9,8 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import {
   defineConfig,
   loadEnv,
-  PluginOption,
   searchForWorkspaceRoot,
+  type PluginOption,
 } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -83,9 +83,8 @@ export default defineConfig(({ command, mode }) => {
 
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
-      lintCommand:
-        // Appended to packages/twenty-front/.eslintrc.cjs
-        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+      lintCommand: 'eslint ../../packages/twenty-front --max-warnings 0',
+      useFlatConfig: true,
     };
   }
 
@@ -201,7 +200,7 @@ export default defineConfig(({ command, mode }) => {
                 const oversizedChunks: string[] = [];
 
                 Object.entries(bundle).forEach(([fileName, chunk]) => {
-                  if (chunk.type === 'chunk' && chunk.code) {
+                  if (chunk.type === 'chunk' && chunk.code !== undefined) {
                     const size = Buffer.byteLength(chunk.code, 'utf8');
                     const isMainChunk =
                       fileName.includes('index') && chunk.isEntry;

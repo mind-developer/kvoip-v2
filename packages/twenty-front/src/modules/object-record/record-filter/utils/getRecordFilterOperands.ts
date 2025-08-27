@@ -1,12 +1,14 @@
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import {
-  FilterableAndTSVectorFieldType,
-  FilterableFieldType,
+  type FilterableAndTSVectorFieldType,
+  type FilterableFieldType,
 } from '@/object-record/record-filter/types/FilterableFieldType';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import {
+  FieldMetadataType,
+  ViewFilterOperand as RecordFilterOperand,
+} from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
@@ -69,13 +71,13 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   CURRENCY: [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   NUMBER: [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   RAW_JSON: [
@@ -105,8 +107,8 @@ export const FILTER_OPERANDS_MAP = {
   ],
   RATING: [
     RecordFilterOperand.Is,
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     ...emptyOperands,
   ],
   RELATION: [...relationOperands, ...emptyOperands],
@@ -139,8 +141,8 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
       ...emptyOperands,
     ],
     amountMicros: [
-      RecordFilterOperand.GreaterThan,
-      RecordFilterOperand.LessThan,
+      RecordFilterOperand.GreaterThanOrEqual,
+      RecordFilterOperand.LessThanOrEqual,
       RecordFilterOperand.Is,
       RecordFilterOperand.IsNot,
       ...emptyOperands,

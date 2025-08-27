@@ -34,6 +34,7 @@ import {
   useBillingPortalSessionQuery,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
+
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';

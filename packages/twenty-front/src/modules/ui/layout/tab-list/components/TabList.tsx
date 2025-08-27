@@ -1,12 +1,12 @@
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
-import { TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
+import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
+import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -62,7 +62,7 @@ export const TabList = ({
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+  const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );
@@ -87,7 +87,7 @@ export const TabList = ({
   const hasHiddenTabs = hiddenTabsCount > 0;
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -215,7 +215,7 @@ export const TabList = ({
               <TabListDropdown
                 dropdownId={dropdownId}
                 onClose={() => {
-                  closeDropdown();
+                  closeDropdown(dropdownId);
                 }}
                 overflow={{
                   hiddenTabsCount,

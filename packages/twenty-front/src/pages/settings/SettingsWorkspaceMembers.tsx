@@ -12,17 +12,17 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
+import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -38,7 +38,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
+import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
@@ -76,7 +76,7 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -94,7 +94,7 @@ const StyledNoMembers = styled(TableCell)`
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
@@ -127,9 +127,9 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   useGetWorkspaceInvitationsQuery({
-    onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+    onError: (error: ApolloError) => {
+      enqueueErrorSnackBar({
+        apolloError: error,
       });
     },
     onCompleted: (data) => {
@@ -140,9 +140,11 @@ export const SettingsWorkspaceMembers = () => {
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error deleting invitation`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error deleting invitation`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
@@ -150,9 +152,11 @@ export const SettingsWorkspaceMembers = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error resending invitation`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error resending invitation`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
@@ -212,6 +216,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <StyledSearchContainer>
             <StyledSearchInput
+              instanceId="workspace-members-search"
               value={searchFilter}
               onChange={handleSearchChange}
               placeholder={t`Search a team member...`}

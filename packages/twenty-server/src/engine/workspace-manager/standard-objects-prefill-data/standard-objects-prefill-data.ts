@@ -1,7 +1,7 @@
-import { DataSource } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillIntegration } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-integration';
@@ -22,7 +22,7 @@ export const standardObjectsPrefillData = async (
 
     await prefillPeople(entityManager, schemaName);
 
-    await prefillWorkflows(entityManager, schemaName);
+    await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
 
     const viewDefinitionsWithId = await prefillViews(
       entityManager,

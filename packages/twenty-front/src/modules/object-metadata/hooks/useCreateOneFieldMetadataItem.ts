@@ -1,27 +1,26 @@
 import { useMutation } from '@apollo/client';
 
 import {
-  CreateFieldInput,
-  CreateOneFieldMetadataItemMutation,
-  CreateOneFieldMetadataItemMutationVariables,
+  type CreateFieldInput,
+  type CreateOneFieldMetadataItemMutation,
+  type CreateOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
 
 export const useCreateOneFieldMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
   const [mutate] = useMutation<
     CreateOneFieldMetadataItemMutation,
     CreateOneFieldMetadataItemMutationVariables
-  >(CREATE_ONE_FIELD_METADATA_ITEM, {
-    client: apolloMetadataClient,
-  });
+  >(CREATE_ONE_FIELD_METADATA_ITEM);
+
+  const { refreshCachedViews } = useRefreshCachedViews();
 
   const createOneFieldMetadataItem = async (input: CreateFieldInput) => {
     const result = await mutate({
@@ -33,6 +32,8 @@ export const useCreateOneFieldMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
+
+    await refreshCachedViews();
 
     return result;
   };

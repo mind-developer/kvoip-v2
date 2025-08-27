@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
 import {
-  BeforeUpdateOneHook,
-  UpdateOneInputType,
+  type BeforeUpdateOneHook,
+  type UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -13,10 +13,11 @@ import {
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
   standardOverrides?: FieldStandardOverridesDTO;
@@ -26,7 +27,10 @@ interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
 export class BeforeUpdateOneField<T extends UpdateFieldInput>
   implements BeforeUpdateOneHook<T>
 {
-  constructor(readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    readonly fieldMetadataService: FieldMetadataService,
+    readonly objectMetadataService: ObjectMetadataService,
+  ) {}
 
   async run(
     instance: UpdateOneInputType<T>,
@@ -45,7 +49,11 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     const fieldMetadata = await this.getFieldMetadata(instance, workspaceId);
 
     if (!fieldMetadata.isCustom) {
-      return this.handleStandardFieldUpdate(instance, fieldMetadata, locale);
+      return await this.handleStandardFieldUpdate(
+        instance,
+        fieldMetadata,
+        locale,
+      );
     }
 
     return instance;
@@ -69,11 +77,11 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     return fieldMetadata;
   }
 
-  private handleStandardFieldUpdate(
+  private async handleStandardFieldUpdate(
     instance: UpdateOneInputType<T>,
     fieldMetadata: FieldMetadataEntity,
     locale?: keyof typeof APP_LOCALES,
-  ): UpdateOneInputType<T> {
+  ): Promise<UpdateOneInputType<T>> {
     const update: StandardFieldUpdate = {};
     const updatableFields = [
       'isActive',
@@ -81,6 +89,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       'options',
       'settings',
       'defaultValue',
+      'isUnique',
     ];
     const overridableFields = ['label', 'icon', 'description'];
 
@@ -89,21 +98,9 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
 
-    const isUpdatingLabelWhenSynced =
-      instance.update.label &&
-      fieldMetadata.isLabelSyncedWithName &&
-      instance.update.isLabelSyncedWithName !== false &&
-      instance.update.label !== fieldMetadata.label;
-
-    if (isUpdatingLabelWhenSynced) {
-      throw new ValidationError(
-        'Cannot update label when it is synced with name',
-      );
-    }
-
     if (nonUpdatableFields.length > 0) {
       throw new ValidationError(
-        `Only isActive, isLabelSyncedWithName, label, icon, description and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
+        `Only isActive, isLabelSyncedWithName, label, icon, description, isUnique and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
       );
     }
 
@@ -118,11 +115,49 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleOptionsField(instance, update);
     this.handleSettingsField(instance, update);
     this.handleDefaultValueField(instance, update);
+    await this.handleIsUniqueField(instance, fieldMetadata, update);
 
     return {
       id: instance.id,
       update: update as T,
     };
+  }
+
+  private async handleIsUniqueField(
+    instance: UpdateOneInputType<T>,
+    fieldMetadata: FieldMetadataEntity,
+    update: StandardFieldUpdate,
+  ) {
+    if (!isDefined(instance.update.isUnique)) {
+      return;
+    }
+
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(
+        fieldMetadata.workspaceId,
+        {
+          where: {
+            id: fieldMetadata.objectMetadataId,
+          },
+        },
+      );
+
+    const hasStandardUniqueIndex = objectMetadata?.indexMetadatas.some(
+      (index) =>
+        index.isUnique &&
+        !index.isCustom &&
+        index.indexFieldMetadatas?.some(
+          (field) => field.fieldMetadataId === fieldMetadata.id,
+        ),
+    );
+
+    if (hasStandardUniqueIndex && instance.update.isUnique === false) {
+      throw new ValidationError(
+        'Unique standard field cannot be updated to non-unique.',
+      );
+    }
+
+    update.isUnique = instance.update.isUnique;
   }
 
   private handleDefaultValueField(
@@ -219,7 +254,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate;
     overrideKey: 'label' | 'description' | 'icon';
     newValue: string;
-    originalValue: string;
+    originalValue: string | null;
     locale?: keyof typeof APP_LOCALES | undefined;
   }): boolean {
     // Handle localized overrides
@@ -250,7 +285,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
@@ -280,7 +315,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
   ): boolean {
     if (newValue !== originalValue) {
       return false;
@@ -390,13 +425,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     locale?: keyof typeof APP_LOCALES,
   ): void {
-    if (
-      fieldMetadata.isLabelSyncedWithName ||
-      update.isLabelSyncedWithName === true
-    ) {
-      return;
-    }
-
     if (!isDefined(instance.update.label)) {
       return;
     }

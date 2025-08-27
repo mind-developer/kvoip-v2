@@ -1,6 +1,5 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { WorkflowExecutorOutput } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -15,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import {
-  GetJsonNodeHighlighting,
+  type GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
 } from 'twenty-ui/json-visualizer';
@@ -30,18 +29,18 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  if (!isDefined(workflowRun?.output?.stepsOutput)) {
+  if (!isDefined(workflowRun?.state?.stepInfos)) {
     return null;
   }
 
-  const stepOutput = workflowRun.output.stepsOutput[stepId] as
-    | WorkflowExecutorOutput
-    | undefined;
+  const stepInfo = workflowRun.state.stepInfos[stepId];
+
+  const { status: _, ...stepInfoWithoutStatus } = stepInfo ?? {};
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
-    trigger: workflowRun.output.flow.trigger,
-    steps: workflowRun.output.flow.steps,
+    trigger: workflowRun.state.flow.trigger,
+    steps: workflowRun.state.flow.steps,
   });
   if (
     !isDefined(stepDefinition?.definition) ||
@@ -57,7 +56,10 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       : getActionIcon(stepDefinition.definition.type);
   const headerIconColor =
     stepDefinition.type === 'trigger'
-      ? getTriggerIconColor({ theme })
+      ? getTriggerIconColor({
+          theme,
+          triggerType: stepDefinition.definition.type,
+        })
       : getActionIconColorOrThrow({
           theme,
           actionType: stepDefinition.definition.type,
@@ -87,7 +89,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
       <WorkflowRunStepJsonContainer>
         <JsonTree
-          value={stepOutput ?? t`No output available`}
+          value={stepInfoWithoutStatus ?? t`No output available`}
           shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
@@ -95,7 +97,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel={t`Expand`}
           arrowButtonExpandedLabel={t`Collapse`}
           getNodeHighlighting={
-            isDefined(stepOutput?.error)
+            isDefined(stepInfo?.error)
               ? setRedHighlightingForEveryNode
               : undefined
           }

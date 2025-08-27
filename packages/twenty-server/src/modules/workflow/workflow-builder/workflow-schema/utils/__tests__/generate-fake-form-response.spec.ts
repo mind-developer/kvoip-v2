@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
-import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 
 const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
   (item) => item.nameSingular === 'company',
@@ -10,7 +10,7 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 
 describe('generateFakeFormResponse', () => {
   it('should generate fake responses for a form schema', async () => {
-    const schema: FormFieldMetadata[] = [
+    const formFieldMetadataItems: FormFieldMetadata[] = [
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e6',
         name: 'name',
@@ -51,38 +51,72 @@ describe('generateFakeFormResponse', () => {
       },
     };
 
-    const result = await generateFakeFormResponse({
-      formMetadata: schema,
+    const result = generateFakeFormResponse({
+      formFieldMetadataItems,
       objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
-      name: {
-        isLeaf: true,
-        label: 'Name',
-        type: FieldMetadataType.TEXT,
-        value: 'My text',
-        icon: undefined,
-      },
       age: {
         isLeaf: true,
         label: 'Age',
-        type: FieldMetadataType.NUMBER,
+        type: 'NUMBER',
         value: 20,
-        icon: undefined,
       },
       company: {
         isLeaf: false,
         label: 'Company',
         value: {
           _outputSchemaType: 'RECORD',
-          fields: {},
+          fields: {
+            domainName: {
+              fieldMetadataId: 'domainNameFieldMetadataId',
+              icon: 'test-field-icon',
+              isLeaf: false,
+              label: 'Domain Name',
+              type: 'LINKS',
+              value: {
+                primaryLinkLabel: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Primary Link Label',
+                  type: 'TEXT',
+                  value: 'My text',
+                },
+                primaryLinkUrl: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Primary Link Url',
+                  type: 'TEXT',
+                  value: 'My text',
+                },
+                secondaryLinks: {
+                  fieldMetadataId: 'domainNameFieldMetadataId',
+                  isCompositeSubField: true,
+                  isLeaf: true,
+                  label: 'Secondary Links',
+                  type: 'RAW_JSON',
+                  value: null,
+                },
+              },
+            },
+            name: {
+              fieldMetadataId: 'nameFieldMetadataId',
+              icon: 'test-field-icon',
+              isLeaf: true,
+              label: 'Name',
+              type: 'TEXT',
+              value: 'My text',
+            },
+          },
           object: {
-            isLeaf: true,
-            label: 'Company',
             fieldIdName: 'id',
             icon: 'test-company-icon',
-            nameSingular: 'company',
+            isLeaf: true,
+            label: 'Company',
+            objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
             value: 'A company',
           },
         },
@@ -90,9 +124,14 @@ describe('generateFakeFormResponse', () => {
       date: {
         isLeaf: true,
         label: 'Date',
-        type: FieldMetadataType.DATE,
+        type: 'DATE',
         value: 'mm/dd/yyyy',
-        icon: undefined,
+      },
+      name: {
+        isLeaf: true,
+        label: 'Name',
+        type: 'TEXT',
+        value: 'My text',
       },
     });
   });

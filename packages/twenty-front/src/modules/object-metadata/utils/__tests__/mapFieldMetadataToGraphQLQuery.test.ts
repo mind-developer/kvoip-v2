@@ -1,5 +1,5 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { normalizeGQLField } from '~/utils/normalizeGQLField';
 
 const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -229,3 +229,5 @@ idealCustomerProfile
     );
   });
 });
+
+// todo @guillim add a test for the morph relation

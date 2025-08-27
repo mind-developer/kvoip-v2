@@ -1,20 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -29,7 +30,7 @@ describe('WorkspaceManagerService', () => {
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceFieldMetadataRepository: Repository<FieldMetadataEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
-  let userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>;
+  let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
 
   beforeEach(async () => {
@@ -71,7 +72,7 @@ describe('WorkspaceManagerService', () => {
           },
         },
         {
-          provide: getRepositoryToken(UserWorkspaceRoleEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
@@ -115,6 +116,14 @@ describe('WorkspaceManagerService', () => {
             deleteObjectsMetadata: jest.fn(),
           },
         },
+        {
+          provide: AgentService,
+          useValue: {
+            createOneAgent: jest
+              .fn()
+              .mockResolvedValue({ id: 'mock-agent-id' }),
+          },
+        },
       ],
     }).compile();
 
@@ -134,9 +143,9 @@ describe('WorkspaceManagerService', () => {
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
-    userWorkspaceRoleRepository = module.get<
-      Repository<UserWorkspaceRoleEntity>
-    >(getRepositoryToken(UserWorkspaceRoleEntity, 'core'));
+    roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
+      getRepositoryToken(RoleTargetsEntity, 'core'),
+    );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity, 'core'),
     );
@@ -159,7 +168,7 @@ describe('WorkspaceManagerService', () => {
       expect(dataSourceRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(userWorkspaceRoleRepository.delete).toHaveBeenCalledWith({
+      expect(roleTargetsRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(roleRepository.delete).toHaveBeenCalledWith({

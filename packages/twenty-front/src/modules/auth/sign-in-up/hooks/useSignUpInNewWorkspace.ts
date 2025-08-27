@@ -1,18 +1,18 @@
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { AppPath } from '@/types/AppPath';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { type ApolloError } from '@apollo/client';
+import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const createWorkspace = () => {
-    signUpInNewWorkspaceMutation({
+  const createWorkspace = async ({ newTab } = { newTab: true }) => {
+    await signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
@@ -20,13 +20,11 @@ export const useSignUpInNewWorkspace = () => {
           {
             loginToken: data.signUpInNewWorkspace.loginToken.token,
           },
-          '_blank',
+          newTab ? '_blank' : '_self',
         );
       },
-      onError: (error: Error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-        });
+      onError: (error: ApolloError) => {
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

@@ -1,37 +1,49 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import {
-  WorkflowStepType,
-  WorkflowWithCurrentVersion,
+  type WorkflowStepType,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { isDefined } from 'twenty-shared/utils';
 import { useState } from 'react';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setWorkflowLastCreatedStepId = useSetRecoilComponentStateV2(
+  const setWorkflowLastCreatedStepId = useSetRecoilComponentState(
     workflowLastCreatedStepIdComponentState,
   );
 
-  const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  if (!isDefined(workflow)) {
+    return {
+      createStep: async () => undefined,
+    };
+  }
 
-  const createStep = async (newStepType: WorkflowStepType) => {
+  const createStep = async ({
+    newStepType,
+    parentStepId,
+    nextStepId,
+    position,
+  }: {
+    newStepType: WorkflowStepType;
+    parentStepId: string | undefined;
+    nextStepId: string | undefined;
+    position?: { x: number; y: number };
+  }) => {
     if (isLoading === true) {
       return;
     }
@@ -39,33 +51,28 @@ export const useCreateStep = ({
     setIsLoading(true);
 
     try {
-      if (!isDefined(workflowInsertStepIds.parentStepId)) {
-        throw new Error(
-          'No parentStepId. Please select a parent step to create from.',
-        );
-      }
+      const workflowVersionId = await getUpdatableWorkflowVersion();
 
-      const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-      const createdStep = (
+      const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           workflowVersionId,
           stepType: newStepType,
-          parentStepId: workflowInsertStepIds.parentStepId,
-          nextStepId: workflowInsertStepIds.nextStepId,
+          parentStepId,
+          nextStepId,
+          position,
         })
       )?.data?.createWorkflowVersionStep;
 
-      if (!createdStep) {
-        return;
+      const createdStep = workflowVersionStepChanges?.createdStep;
+
+      if (!isDefined(createdStep)) {
+        throw new Error("Couldn't create step");
       }
 
       setWorkflowSelectedNode(createdStep.id);
       setWorkflowLastCreatedStepId(createdStep.id);
-      setWorkflowInsertStepIds({
-        parentStepId: undefined,
-        nextStepId: undefined,
-      });
+
+      return createdStep;
     } finally {
       setIsLoading(false);
     }

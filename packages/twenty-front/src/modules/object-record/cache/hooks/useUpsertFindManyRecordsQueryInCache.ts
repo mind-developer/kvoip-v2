@@ -1,12 +1,12 @@
-import { useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
 export const useUpsertFindManyRecordsQueryInCache = ({
@@ -14,7 +14,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -48,7 +48,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       computeReferences,
     });
 
-    apolloClient.writeQuery({
+    apolloCoreClient.writeQuery({
       query: findManyRecordsQueryForCacheOverwrite,
       variables: queryVariables,
       data: {

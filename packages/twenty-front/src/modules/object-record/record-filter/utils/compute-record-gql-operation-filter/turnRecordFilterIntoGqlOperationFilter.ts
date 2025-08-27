@@ -1,36 +1,36 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  BooleanFilter,
-  CurrencyFilter,
-  DateFilter,
-  FloatFilter,
-  MultiSelectFilter,
-  PhonesFilter,
-  RatingFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  SelectFilter,
-  StringFilter,
-  TSVectorFilter,
-  UUIDFilter,
+  type ActorFilter,
+  type AddressFilter,
+  type ArrayFilter,
+  type BooleanFilter,
+  type CurrencyFilter,
+  type DateFilter,
+  type FloatFilter,
+  type MultiSelectFilter,
+  type PhonesFilter,
+  type RatingFilter,
+  type RawJsonFilter,
+  type RecordGqlOperationFilter,
+  type RelationFilter,
+  type SelectFilter,
+  type StringFilter,
+  type TSVectorFilter,
+  type UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { Field } from '~/generated/graphql';
+import { type Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
-  convertGreaterThanRatingToArrayOfRatingValues,
-  convertLessThanRatingToArrayOfRatingValues,
+  convertGreaterThanOrEqualRatingToArrayOfRatingValues,
+  convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
@@ -268,18 +268,18 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
-        case RecordFilterOperand.GreaterThan:
+        case RecordFilterOperand.GreaterThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
-              in: convertGreaterThanRatingToArrayOfRatingValues(
+              in: convertGreaterThanOrEqualRatingToArrayOfRatingValues(
                 parseFloat(recordFilter.value),
               ),
             } as RatingFilter,
           };
-        case RecordFilterOperand.LessThan:
+        case RecordFilterOperand.LessThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
-              in: convertLessThanRatingToArrayOfRatingValues(
+              in: convertLessThanOrEqualRatingToArrayOfRatingValues(
                 parseFloat(recordFilter.value),
               ),
             } as RatingFilter,
@@ -291,16 +291,22 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'NUMBER':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.GreaterThan:
+        case RecordFilterOperand.GreaterThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
               gte: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
-        case RecordFilterOperand.LessThan:
+        case RecordFilterOperand.LessThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
               lte: parseFloat(recordFilter.value),
+            } as FloatFilter,
+          };
+        case RecordFilterOperand.Is:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              eq: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
         default:
@@ -401,13 +407,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         !isSubFieldFilter
       ) {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.GreaterThan:
+          case RecordFilterOperand.GreaterThanOrEqual:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { gte: parseFloat(recordFilter.value) * 1000000 },
               } as CurrencyFilter,
             };
-          case RecordFilterOperand.LessThan:
+          case RecordFilterOperand.LessThanOrEqual:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { lte: parseFloat(recordFilter.value) * 1000000 },

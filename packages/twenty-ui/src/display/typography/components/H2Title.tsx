@@ -53,7 +53,7 @@ export const H2Title = ({
       <StyledDescription>
         <OverflowingTextWithTooltip
           text={description}
-          displayedMaxRows={2}
+          displayedMaxRows={5}
           isTooltipMultiline={true}
         />
       </StyledDescription>

@@ -1,4 +1,4 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -17,6 +17,9 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
       return msg`HTTP Request`;
     case 'AI_AGENT':
       return msg`AI Agent`;
+    case 'FILTER': {
+      return msg`Filter`;
+    }
 
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);

@@ -5,11 +5,11 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
@@ -19,7 +19,7 @@ export const useTriggerActionMenuDropdown = ({
     ActionMenuComponentInstanceContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -27,12 +27,13 @@ export const useTriggerActionMenuDropdown = ({
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
 
-  const recordIndexActionMenuDropdownPositionState = extractComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
-  );
+  const recordIndexActionMenuDropdownPositionCallbackState =
+    useRecoilComponentCallbackState(
+      recordIndexActionMenuDropdownPositionComponentState,
+      actionMenuDropdownId,
+    );
 
-  const { openDropdown } = useDropdown(actionMenuDropdownId);
+  const { openDropdown } = useOpenDropdown();
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -41,7 +42,7 @@ export const useTriggerActionMenuDropdown = ({
       (event: React.MouseEvent, recordId: string) => {
         event.preventDefault();
 
-        set(recordIndexActionMenuDropdownPositionState, {
+        set(recordIndexActionMenuDropdownPositionCallbackState, {
           x: event.pageX,
           y: event.pageY,
         });
@@ -57,13 +58,16 @@ export const useTriggerActionMenuDropdown = ({
 
         closeCommandMenu();
 
-        openDropdown();
+        openDropdown({
+          dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+        });
       },
     [
-      recordIndexActionMenuDropdownPositionState,
+      recordIndexActionMenuDropdownPositionCallbackState,
       isRowSelectedFamilyState,
       closeCommandMenu,
       openDropdown,
+      actionMenuDropdownId,
     ],
   );
 

@@ -7,12 +7,13 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -22,7 +23,7 @@ import { TASK_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
+  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -71,16 +72,6 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconNotes',
   })
   title: string;
-
-  @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
-    label: msg`Body (deprecated)`,
-    description: msg`Task body`,
-    icon: 'IconFilePencil',
-  })
-  @WorkspaceIsNullable()
-  body: string | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
@@ -135,6 +126,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
@@ -147,6 +139,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -159,6 +152,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -187,6 +181,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({

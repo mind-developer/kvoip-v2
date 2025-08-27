@@ -9,23 +9,29 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 
-import Stripe from 'stripe';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import type Stripe from 'stripe';
+
+import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
+import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
+import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
-import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
@@ -41,8 +47,11 @@ export class BillingPortalWorkspaceService {
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionItem, 'core')
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(UserWorkspace, 'core')
@@ -61,6 +70,84 @@ export class BillingPortalWorkspaceService {
     interChargeData,
     chargeType = ChargeType.ONE_TIME,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
+    const { successUrl, cancelUrl, customer, stripeSubscriptionLineItems } =
+      await this.prepareSubscriptionParameters({
+        workspace,
+        billingPricesPerPlan,
+        successUrlPath,
+        paymentProvider,
+        locale,
+        interChargeData,
+        chargeType,
+      });
+
+    const checkoutSession =
+      await this.stripeCheckoutService.createCheckoutSession({
+        user,
+        workspaceId: workspace.id,
+        stripeSubscriptionLineItems,
+        successUrl,
+        cancelUrl,
+        stripeCustomerId: customer?.stripeCustomerId,
+        plan,
+        requirePaymentMethod,
+        withTrialPeriod:
+          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+      });
+
+    assert(checkoutSession.url, 'Error: missing checkout.session.url');
+
+    return checkoutSession.url;
+  }
+
+  async createDirectSubscription({
+    user,
+    workspace,
+    billingPricesPerPlan,
+    successUrlPath,
+    plan,
+    requirePaymentMethod,
+  }: BillingPortalCheckoutSessionParameters): Promise<string> {
+    const { successUrl, customer, stripeSubscriptionLineItems } =
+      await this.prepareSubscriptionParameters({
+        workspace,
+        billingPricesPerPlan,
+        successUrlPath,
+      });
+
+    const subscription =
+      await this.stripeCheckoutService.createDirectSubscription({
+        user,
+        workspaceId: workspace.id,
+        stripeSubscriptionLineItems,
+        stripeCustomerId: customer?.stripeCustomerId,
+        plan,
+        requirePaymentMethod,
+        withTrialPeriod:
+          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+      });
+
+    await this.syncSubscriptionToDatabase(workspace.id, subscription);
+
+    return successUrl;
+  }
+
+  private async prepareSubscriptionParameters({
+    workspace,
+    billingPricesPerPlan,
+    successUrlPath,
+    paymentProvider,
+    interChargeData,
+    locale,
+    chargeType,
+  }: {
+    workspace: Workspace;
+    billingPricesPerPlan?: BillingGetPricesPerPlanResult;
+    successUrlPath?: string;
+  } & Pick<
+    BillingPortalCheckoutSessionParameters,
+    'paymentProvider' | 'interChargeData' | 'locale' | 'chargeType'
+  >) {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
@@ -141,22 +228,73 @@ export class BillingPortalWorkspaceService {
       billingPricesPerPlan,
     });
 
-    const checkoutSession =
-      await this.stripeCheckoutService.createCheckoutSession({
-        user,
-        workspaceId: workspace.id,
-        stripeSubscriptionLineItems,
-        successUrl,
-        cancelUrl,
-        stripeCustomerId: customer?.stripeCustomerId,
-        plan,
-        requirePaymentMethod,
-        withTrialPeriod: false,
-      });
+    return {
+      successUrl,
+      cancelUrl,
+      quantity,
+      customer,
+      stripeSubscriptionLineItems,
+    };
+  }
 
-    assert(checkoutSession.url, 'Error: missing checkout.session.url');
+  private async syncSubscriptionToDatabase(
+    workspaceId: string,
+    subscription: Stripe.Subscription,
+  ) {
+    await this.billingCustomerRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, {
+        object: subscription,
+      }),
+      {
+        conflictPaths: ['workspaceId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
-    return checkoutSession.url;
+    await this.billingSubscriptionRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, {
+        object: subscription,
+      }),
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    const billingSubscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    const createdBillingSubscription = billingSubscriptions.find(
+      (sub) => sub.stripeSubscriptionId === subscription.id,
+    );
+
+    if (!createdBillingSubscription) {
+      throw new BillingException(
+        'Billing subscription not found after creation',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+    await this.billingSubscriptionItemRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+        createdBillingSubscription.id,
+        {
+          object: subscription,
+        },
+      ),
+      {
+        conflictPaths: ['stripeSubscriptionItemId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
+      createdBillingSubscription.id,
+    );
+
+    this.logger.log(
+      `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
+    );
   }
 
   async computeBillingPortalSessionURLOrThrow(

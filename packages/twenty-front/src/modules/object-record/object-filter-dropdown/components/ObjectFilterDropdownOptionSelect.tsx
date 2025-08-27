@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -14,11 +13,11 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,11 +34,11 @@ export const ObjectFilterDropdownOptionSelect = ({
 }: {
   focusId: string;
 }) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useRecoilComponentValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
@@ -47,7 +46,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     ObjectFilterDropdownComponentInstanceContext,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
@@ -64,11 +63,11 @@ export const ObjectFilterDropdownOptionSelect = ({
     [objectFilterDropdownCurrentRecordFilter?.value],
   );
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     componentInstanceId,
   );
@@ -103,7 +102,6 @@ export const ObjectFilterDropdownOptionSelect = ({
       resetSelectedItem();
     },
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [closeDropdown, resetSelectedItem],
   });
 
@@ -154,7 +152,6 @@ export const ObjectFilterDropdownOptionSelect = ({
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
       focusId={focusId}
-      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (

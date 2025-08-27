@@ -1,22 +1,22 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { useActivateWorkspaceMutation } from '~/generated/graphql';
+import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -76,11 +76,11 @@ const StyledLogoWrapper = styled.div`
 
 export const CreateWorkspace = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
-  const { loadCurrentUser } = useAuth();
+  const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,
@@ -138,14 +138,15 @@ export const CreateWorkspace = () => {
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
+
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     },
     [
       activateWorkspace,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
       loadCurrentUser,
       refreshObjectMetadataItems,
       setNextOnboardingStatus,
@@ -227,7 +228,7 @@ export const CreateWorkspace = () => {
                   field: { onChange, onBlur, value },
                   fieldState: { error },
                 }) => (
-                  <TextInputV2
+                  <TextInput
                     autoFocus
                     value={value}
                     placeholder="Apple"

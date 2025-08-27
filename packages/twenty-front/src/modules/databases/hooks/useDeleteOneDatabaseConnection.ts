@@ -3,15 +3,15 @@ import { getOperationName } from '@apollo/client/utilities';
 
 import { DELETE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/deleteOneDatabaseConnection';
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  DeleteServerMutation,
-  DeleteServerMutationVariables,
-  RemoteServerIdInput,
+  type DeleteServerMutation,
+  type DeleteServerMutationVariables,
+  type RemoteServerIdInput,
 } from '~/generated-metadata/graphql';
 
 export const useDeleteOneDatabaseConnection = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
 
   const [mutate] = useMutation<
     DeleteServerMutation,

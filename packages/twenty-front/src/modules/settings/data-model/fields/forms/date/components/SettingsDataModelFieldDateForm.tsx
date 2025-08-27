@@ -2,16 +2,15 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
-import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/types/guards/isDateFIeldCustomDisplayFormat';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { getDisplayFormatSelectDescription } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription';
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
@@ -34,7 +33,7 @@ export const settingsDataModelFieldDateFormSchema = z.object({
   settings: fieldDateSettings.optional(),
 });
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(SettingsTextInput)`
   padding: ${({ theme }) => theme.spacing(4)};
   padding-top: 0;
 `;
@@ -45,12 +44,12 @@ export type SettingsDataModelFieldDateFormValues = z.infer<
 
 type SettingsDataModelFieldDateFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'settings'>;
+  existingFieldMetadataId: string;
 };
 
 export const SettingsDataModelFieldDateForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldDateFormProps) => {
   const { t } = useLingui();
 
@@ -59,7 +58,7 @@ export const SettingsDataModelFieldDateForm = ({
 
   const { initialDisplayFormat, initialCustomUnicodeDateFormat } =
     useDateSettingsFormInitialValues({
-      fieldMetadataItem,
+      fieldMetadataId: existingFieldMetadataId,
     });
 
   const displayFormatFromForm = watch('settings.displayFormat');
@@ -117,6 +116,7 @@ export const SettingsDataModelFieldDateForm = ({
           defaultValue={initialCustomUnicodeDateFormat}
           render={({ field: { onChange, value } }) => (
             <StyledTextInput
+              instanceId="custom-date-format-input"
               placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
               value={value}
               onChange={(value) => onChange(value)}

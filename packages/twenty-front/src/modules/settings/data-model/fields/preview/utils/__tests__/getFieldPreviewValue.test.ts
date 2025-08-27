@@ -1,7 +1,7 @@
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
@@ -25,11 +25,13 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {
@@ -45,7 +47,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
@@ -68,7 +72,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then

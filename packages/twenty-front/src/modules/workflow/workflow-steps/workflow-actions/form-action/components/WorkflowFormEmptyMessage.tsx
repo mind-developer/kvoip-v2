@@ -1,6 +1,6 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
-import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
@@ -47,7 +47,10 @@ export const WorkflowFormEmptyMessage = () => {
     <StyledMessageContainer>
       <FormFieldInputContainer>
         <FormFieldInputRowContainer multiline maxHeight={124}>
-          <FormFieldInputInnerContainer hasRightElement={false}>
+          <FormFieldInputInnerContainer
+            formFieldInputInstanceId="empty-form-message"
+            hasRightElement={false}
+          >
             <StyledFieldContainer>
               <StyledMessageContentContainer>
                 <StyledMessageTitle data-testid="empty-form-message-title">

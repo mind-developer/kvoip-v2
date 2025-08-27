@@ -1,11 +1,11 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 
 import { GET_ONE_DATABASE_CONNECTION } from '@/databases/graphql/queries/findOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  GetOneDatabaseConnectionQuery,
-  GetOneDatabaseConnectionQueryVariables,
+  type GetOneDatabaseConnectionQuery,
+  type GetOneDatabaseConnectionQueryVariables,
 } from '~/generated-metadata/graphql';
 
 type UseGetDatabaseConnectionParams = {
@@ -21,7 +21,7 @@ export const useGetDatabaseConnection = ({
   skip,
   fetchPolicy,
 }: UseGetDatabaseConnectionParams) => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
   const foreignDataWrapperType = getForeignDataWrapperType(databaseKey);
 
   const fetchPolicyOption = fetchPolicy ? { fetchPolicy: fetchPolicy } : {};

@@ -44,4 +44,4 @@ export const STANDARD_OBJECT_ICONS = {
   workspaceMember: 'IconUserCircle',
   chatbot: 'IconSettingsAutomation',
   ...KVOIP_ADMIN_STANRD_BOJECT_ICONS,
-};
+} as const;

@@ -1,7 +1,11 @@
 import { useHotkeysOnFocusedElementCallback } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElementCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
+import {
+  type HotkeyCallback,
+  type Keys,
+  type Options,
+} from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,16 +15,12 @@ export const useHotkeysOnFocusedElement = ({
   keys,
   callback,
   focusId,
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope,
   dependencies,
   options,
 }: {
   keys: Keys;
   callback: HotkeyCallback;
   focusId: string;
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string;
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
@@ -59,7 +59,6 @@ export const useHotkeysOnFocusedElement = ({
           setPendingHotkey(null);
         },
         focusId,
-        scope,
         preventDefault,
       });
     },

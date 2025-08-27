@@ -1,3 +1,4 @@
+import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
@@ -19,17 +20,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
-import { Entries } from 'type-fest';
+import { type Entries } from 'type-fest';
 import {
-  BillingPaymentProviders,
-  BillingPlanKey,
+  type BillingPaymentProviders,
+  type BillingPlanKey,
   useBillingBaseProductPricesQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
-import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
-import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
 
 const StyledChooseProviderContainer = styled.div`
@@ -88,13 +88,11 @@ export const ChooseYourPlan = () => {
 
   const onboardingPlanStep = useRecoilValue(onboardingPlanStepState);
 
-  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
-    verifyEmailNextPathState,
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
+    verifyEmailRedirectPathState,
   );
-
-  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-  if (isDefined(verifyEmailNextPath)) {
-    setVerifyEmailNextPath(undefined);
+  if (isDefined(verifyEmailRedirectPath)) {
+    setVerifyEmailRedirectPath(undefined);
   }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
@@ -123,6 +121,7 @@ export const ChooseYourPlan = () => {
     plan: billingCheckoutSession.plan,
     requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
     paymentProvider: billingCheckoutSession.paymentProvider,
+    successUrlPath: AppPath.PlanRequiredSuccess,
   });
 
   const handleChangePaymentProviderChange = (

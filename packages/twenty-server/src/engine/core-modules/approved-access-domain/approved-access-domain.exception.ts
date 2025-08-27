@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ApprovedAccessDomainException extends CustomException {
-  declare code: ApprovedAccessDomainExceptionCode;
-  constructor(message: string, code: ApprovedAccessDomainExceptionCode) {
-    super(message, code);
-  }
-}
+export class ApprovedAccessDomainException extends CustomException<ApprovedAccessDomainExceptionCode> {}
 
 export enum ApprovedAccessDomainExceptionCode {
   APPROVED_ACCESS_DOMAIN_NOT_FOUND = 'APPROVED_ACCESS_DOMAIN_NOT_FOUND',

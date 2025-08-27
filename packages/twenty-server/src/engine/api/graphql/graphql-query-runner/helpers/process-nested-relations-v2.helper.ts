@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
+import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -11,22 +11,21 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { getFieldMetadataFromGraphQLField } from 'src/engine/api/graphql/graphql-query-runner/utils/get-field-metadata-from-graphql-field.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
-import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
-  constructor(
-    private readonly processAggregateHelper: ProcessAggregateHelper,
-  ) {}
+  constructor() {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
     objectMetadataMaps,
@@ -40,6 +39,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource,
     roleId,
     shouldBypassPermissionChecks,
+    selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -52,6 +52,8 @@ export class ProcessNestedRelationsV2Helper {
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    selectedFields: Record<string, any>;
     roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -69,6 +71,10 @@ export class ProcessNestedRelationsV2Helper {
           workspaceDataSource,
           shouldBypassPermissionChecks,
           roleId,
+          selectedFields:
+            selectedFields[sourceFieldName] instanceof Object
+              ? selectedFields[sourceFieldName]
+              : undefined,
         }),
     );
 
@@ -88,6 +94,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
+    selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -102,16 +109,22 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
+    selectedFields: Record<string, unknown>;
   }): Promise<void> {
-    const sourceFieldMetadataId =
-      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const sourceFieldMetadata =
-      parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
+    const sourceFieldMetadata = getFieldMetadataFromGraphQLField({
+      objectMetadataItem: parentObjectMetadataItem,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
+    });
 
     if (
-      !isFieldMetadataInterfaceOfType(
+      !isFieldMetadataEntityOfType(
         sourceFieldMetadata,
         FieldMetadataType.RELATION,
+      ) &&
+      !isFieldMetadataEntityOfType(
+        sourceFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       // TODO: Maybe we should throw an error here ?
@@ -126,7 +139,7 @@ export class ProcessNestedRelationsV2Helper {
     }
 
     const relationType = sourceFieldMetadata.settings?.relationType;
-    const { targetRelationName, targetObjectMetadata } =
+    const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
         objectMetadataMaps,
         parentObjectMetadataItem,
@@ -139,29 +152,48 @@ export class ProcessNestedRelationsV2Helper {
       roleId,
     );
 
-    const targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
+    let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectMetadata.nameSingular,
     );
+
+    const columnsToSelect = buildColumnsToSelect({
+      select: selectedFields,
+      relations: nestedRelations,
+      objectMetadataItemWithFieldMaps: targetObjectMetadata,
+      objectMetadataMaps,
+    });
+
+    targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
+      select: columnsToSelect,
+    });
 
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
       idField:
         relationType === RelationType.ONE_TO_MANY
           ? 'id'
-          : `${sourceFieldName}Id`,
+          : (sourceFieldMetadata.settings.joinColumnName ??
+            `${sourceFieldName}Id`),
     });
+
+    const fieldMetadataTargetRelationColumnName =
+      targetRelation &&
+      isFieldMetadataEntityOfType(
+        targetRelation,
+        FieldMetadataType.MORPH_RELATION,
+      )
+        ? `${targetRelation.settings?.joinColumnName}`
+        : `${targetRelationName}Id`;
 
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
         referenceQueryBuilder: targetObjectQueryBuilder,
         column:
           relationType === RelationType.ONE_TO_MANY
-            ? `"${targetRelationName}Id"`
+            ? `"${fieldMetadataTargetRelationColumnName}"`
             : 'id',
         ids: relationIds,
         limit: limit * parentObjectRecords.length,
-        objectMetadataMaps,
-        targetObjectMetadata,
         aggregate,
         sourceFieldName,
       });
@@ -174,7 +206,7 @@ export class ProcessNestedRelationsV2Helper {
       sourceFieldName,
       joinField:
         relationType === RelationType.ONE_TO_MANY
-          ? `${targetRelationName}Id`
+          ? `${fieldMetadataTargetRelationColumnName}`
           : 'id',
       relationType,
     });
@@ -208,6 +240,7 @@ export class ProcessNestedRelationsV2Helper {
         workspaceDataSource,
         shouldBypassPermissionChecks,
         roleId,
+        selectedFields,
       });
     }
   }
@@ -221,10 +254,11 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
-    const targetFieldMetadataId =
-      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const targetFieldMetadata =
-      parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+    const targetFieldMetadata = getFieldMetadataFromGraphQLField({
+      objectMetadataItem: parentObjectMetadataItem,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
+    });
 
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
@@ -241,12 +275,17 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
+    const targetRelation =
+      objectMetadataMaps.byId[
+        targetFieldMetadata.relationTargetObjectMetadataId
+      ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId];
+
     const targetRelationName =
       objectMetadataMaps.byId[
         targetFieldMetadata.relationTargetObjectMetadataId
       ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId]?.name;
 
-    return { targetRelationName, targetObjectMetadata };
+    return { targetRelationName, targetObjectMetadata, targetRelation };
   }
 
   private getUniqueIds({
@@ -265,8 +304,6 @@ export class ProcessNestedRelationsV2Helper {
     column,
     ids,
     limit,
-    objectMetadataMaps,
-    targetObjectMetadata,
     aggregate,
     sourceFieldName,
   }: {
@@ -276,12 +313,10 @@ export class ProcessNestedRelationsV2Helper {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ids: any[];
     limit: number;
-    objectMetadataMaps: ObjectMetadataMaps;
-    targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
@@ -295,12 +330,10 @@ export class ProcessNestedRelationsV2Helper {
     if (aggregateForRelation) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
-      this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
-        {
-          selectedAggregatedFields: aggregateForRelation,
-          queryBuilder: aggregateQueryBuilder,
-        },
-      );
+      ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
+        selectedAggregatedFields: aggregateForRelation,
+        queryBuilder: aggregateQueryBuilder,
+      });
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
         .addSelect(column)
@@ -324,20 +357,21 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
+    const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
+    const columnWithoutQuotes = column.replace(/["']/g, '');
+
     const result = await referenceQueryBuilder
+      .setFindOptions({
+        ...queryBuilderOptions,
+        select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
+      })
       .where(`${column} IN (:...ids)`, {
         ids,
       })
       .take(limit)
       .getMany();
 
-    const relationResults = formatResult<ObjectRecord[]>(
-      result,
-      targetObjectMetadata,
-      objectMetadataMaps,
-    );
-
-    return { relationResults, relationAggregatedFieldsResult };
+    return { relationResults: result, relationAggregatedFieldsResult };
   }
 
   private assignRelationResults({

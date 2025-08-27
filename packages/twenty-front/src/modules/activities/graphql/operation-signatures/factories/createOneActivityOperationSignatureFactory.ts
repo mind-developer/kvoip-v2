@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
+import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const createOneActivityOperationSignatureFactory: RecordGqlOperationSignatureFactory =
   ({ objectNameSingular }: { objectNameSingular: CoreObjectNameSingular }) =>
@@ -13,7 +13,7 @@ export const createOneActivityOperationSignatureFactory: RecordGqlOperationSigna
             createdAt: true,
             updatedAt: true,
             attachments: true,
-            body: true,
+            bodyV2: true,
             title: true,
           },
         }
@@ -32,7 +32,7 @@ export const createOneActivityOperationSignatureFactory: RecordGqlOperationSigna
               __typename: true,
             },
             attachments: true,
-            body: true,
+            bodyV2: true,
             title: true,
             status: true,
             dueAt: true,

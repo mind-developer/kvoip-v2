@@ -4,7 +4,7 @@ import { QueueMetricsDataPoint } from 'src/engine/core-modules/admin-panel/dtos/
 
 @ObjectType()
 export class QueueMetricsSeries {
-  @Field()
+  @Field(() => String)
   id: string;
 
   @Field(() => [QueueMetricsDataPoint])

@@ -3,26 +3,26 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Chip,
   AvatarChip,
-  AvatarChipVariant,
-  ChipSize,
+  type ChipSize,
   ChipVariant,
-  LinkAvatarChip,
+  LinkChip,
 } from 'twenty-ui/components';
-import { TriggerEventType } from 'twenty-ui/utilities';
+import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
-  variant?: AvatarChipVariant;
+  variant?: ChipVariant.Highlighted | ChipVariant.Transparent;
   forceDisableClick?: boolean;
   maxWidth?: number;
   to?: string | undefined;
@@ -72,39 +72,42 @@ export const RecordChip = ({
 
   // TODO temporary until we create a record show page for Workspaces members
 
+  const avatarChip = (
+    <AvatarChip
+      placeholder={recordChipData.name}
+      placeholderColorSeed={record.id}
+      avatarType={recordChipData.avatarType}
+      avatarUrl={recordChipData.avatarUrl ?? ''}
+    />
+  );
+
   if (
     forceDisableClick ||
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember
   ) {
     return (
-      <AvatarChip
+      <Chip
+        label={recordChipData.name}
         size={size}
         maxWidth={maxWidth}
-        placeholderColorSeed={record.id}
-        name={recordChipData.name}
-        avatarType={recordChipData.avatarType}
-        avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
         variant={ChipVariant.Transparent}
+        leftComponent={avatarChip}
       />
     );
   }
 
   return (
-    <LinkAvatarChip
+    <LinkChip
       size={size}
       maxWidth={maxWidth}
-      placeholderColorSeed={record.id}
-      name={recordChipData.name}
+      label={recordChipData.name}
       isLabelHidden={isLabelHidden}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
+      leftComponent={avatarChip}
       className={className}
       variant={
         variant ??
-        (!forceDisableClick
-          ? AvatarChipVariant.Regular
-          : AvatarChipVariant.Transparent)
+        (!forceDisableClick ? ChipVariant.Highlighted : ChipVariant.Transparent)
       }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}

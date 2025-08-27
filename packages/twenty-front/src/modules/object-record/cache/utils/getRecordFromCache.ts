@@ -1,13 +1,13 @@
-import { ApolloCache, gql } from '@apollo/client';
+import { type ApolloCache, gql } from '@apollo/client';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -17,7 +17,10 @@ export type GetRecordFromCacheArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   recordGqlFields?: RecordGqlFields;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 };
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,

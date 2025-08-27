@@ -2,11 +2,11 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
 import { GraphQLInputObjectType } from 'graphql';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.utils';
+import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.util';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 import { InputTypeFactory } from './input-type.factory';
@@ -32,15 +32,20 @@ export class InputTypeDefinitionFactory {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public create(
-    objectMetadata: ObjectMetadataInterface,
-    kind: InputTypeDefinitionKind,
-    options: WorkspaceBuildSchemaOptions,
-  ): InputTypeDefinition {
+  public create({
+    objectMetadata,
+    kind,
+    options,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+    kind: InputTypeDefinitionKind;
+    options: WorkspaceBuildSchemaOptions;
+  }): InputTypeDefinition {
     // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
       description: objectMetadata.description,
+      // @ts-expect-error legacy noImplicitAny
       fields: () => {
         switch (kind) {
           /**
@@ -55,12 +60,12 @@ export class InputTypeDefinitionFactory {
             });
 
             return {
-              ...generateFields(
+              ...generateFields({
                 objectMetadata,
                 kind,
                 options,
-                this.inputTypeFactory,
-              ),
+                typeFactory: this.inputTypeFactory,
+              }),
               and: {
                 type: andOrType,
               },
@@ -78,12 +83,12 @@ export class InputTypeDefinitionFactory {
            * Other input types are generated with fields only
            */
           default:
-            return generateFields(
+            return generateFields({
               objectMetadata,
               kind,
               options,
-              this.inputTypeFactory,
-            );
+              typeFactory: this.inputTypeFactory,
+            });
         }
       },
     });

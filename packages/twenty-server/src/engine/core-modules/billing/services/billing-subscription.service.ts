@@ -6,10 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
-import Stripe from 'stripe';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import {
+  type APP_LOCALES,
+  type SOURCE_LOCALE,
+} from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { getSubscriptionStatus } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
@@ -18,7 +22,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
@@ -37,7 +41,7 @@ import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/util
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingSubscriptionService {

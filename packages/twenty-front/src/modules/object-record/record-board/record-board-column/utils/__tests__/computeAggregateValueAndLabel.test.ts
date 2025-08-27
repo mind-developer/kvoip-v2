@@ -1,13 +1,13 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { enUS } from 'date-fns/locale';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 

@@ -2,20 +2,19 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advance
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
 
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ViewFilterOperand } from 'twenty-shared/types';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
@@ -31,18 +30,18 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
 }: AdvancedFilterRecordFilterOperandSelectContentProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { applyObjectFilterDropdownOperand } =
     useApplyObjectFilterDropdownOperand();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     applyObjectFilterDropdownOperand(operand);
   };
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -69,7 +68,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                 (operand) => operand,
               )}
               selectableListInstanceId={dropdownId}
-              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               {operandsForFilterType.map((filterOperand, index) => (
                 <SelectableListItem

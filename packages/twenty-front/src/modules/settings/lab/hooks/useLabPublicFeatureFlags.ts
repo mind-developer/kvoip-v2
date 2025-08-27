@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
+  type FeatureFlagKey,
   useUpdateLabPublicFeatureFlagMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useLabPublicFeatureFlags = () => {
   const [error, setError] = useState<string | null>(null);

@@ -15,14 +15,14 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
-import { ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const StyledForm = styled(Form)`
   display: flex;

@@ -1,26 +1,27 @@
 import styled from '@emotion/styled';
-import { MouseEvent, useMemo, useRef, useState } from 'react';
+import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { selectIsInModalState } from '@/ui/input/states/selectIsInModalState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconComponent } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type IconComponent } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 export type SelectSizeVariant = 'small' | 'default';
@@ -30,8 +31,6 @@ type CallToActionButton = {
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   Icon?: IconComponent;
 };
-
-export type SelectValue = string | number | boolean | null;
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
@@ -103,6 +102,7 @@ export const Select = <Value extends SelectValue>({
     options.find(({ value: key }) => key === value) ||
     emptyOption ||
     options[0];
+
   const filteredOptions = useMemo(
     () =>
       searchInputValue
@@ -119,7 +119,7 @@ export const Select = <Value extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const dropDownMenuWidth =
     dropdownWidthAuto && selectContainerRef.current?.clientWidth
@@ -128,12 +128,20 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     dropdownId,
   );
 
   const { isInModal } = useRecoilValue(selectIsInModalState);
+
+  const { setSelectedItemId } = useSelectableList(dropdownId);
+
+  const handleDropdownOpen = () => {
+    if (selectedOption && !searchInputValue) {
+      setSelectedItemId(selectedOption.label);
+    }
+  };
 
   return (
     <StyledContainer
@@ -156,6 +164,7 @@ export const Select = <Value extends SelectValue>({
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
+          onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
               selectedOption={selectedOption}
@@ -183,7 +192,6 @@ export const Select = <Value extends SelectValue>({
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
-                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem
@@ -192,7 +200,7 @@ export const Select = <Value extends SelectValue>({
                         onEnter={() => {
                           onChange?.(option.value);
                           onBlur?.();
-                          closeDropdown();
+                          closeDropdown(dropdownId);
                         }}
                       >
                         <MenuItemSelect
@@ -204,7 +212,7 @@ export const Select = <Value extends SelectValue>({
                           onClick={() => {
                             onChange?.(option.value);
                             onBlur?.();
-                            closeDropdown();
+                            closeDropdown(dropdownId);
                           }}
                         />
                       </SelectableListItem>

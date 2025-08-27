@@ -1,10 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class WorkflowVersionStepException extends CustomException {
-  constructor(message: string, code: WorkflowVersionStepExceptionCode) {
-    super(message, code);
-  }
-}
+export class WorkflowVersionStepException extends CustomException<WorkflowVersionStepExceptionCode> {}
+
 export enum WorkflowVersionStepExceptionCode {
   UNKNOWN = 'UNKNOWN',
   NOT_FOUND = 'NOT_FOUND',

@@ -21,5 +21,6 @@ export const WORKSPACE_MEMBER_QUERY_FRAGMENT = gql`
       primaryPhoneCallingCode
       additionalPhones
     }
+    calendarStartDay
   }
 `;

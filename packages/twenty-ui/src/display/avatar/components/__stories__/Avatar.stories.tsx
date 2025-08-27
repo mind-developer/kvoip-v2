@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import {
   AVATAR_URL_MOCK,
@@ -15,7 +15,7 @@ const meta: Meta<typeof Avatar> = {
   args: {
     avatarUrl: AVATAR_URL_MOCK,
     size: 'md',
-    placeholder: 'L',
+    placeholder: 'E',
     type: 'rounded',
   },
 };

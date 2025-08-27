@@ -10,6 +10,7 @@
 
 .nx/installation
 .nx/cache
+.nx/workspace-data
 
 .pnp.*
 .yarn/*
@@ -47,3 +48,4 @@ dump.rdb
 .react-email/
 
 mcp.json
+/.junie/

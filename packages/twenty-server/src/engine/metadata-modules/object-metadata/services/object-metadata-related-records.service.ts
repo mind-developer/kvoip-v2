@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
-import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { type ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Injectable()
 export class ObjectMetadataRelatedRecordsService {
@@ -62,7 +64,7 @@ export class ObjectMetadataRelatedRecordsService {
     await viewFieldRepository.insert(viewFields);
   }
 
-  private async createViewWorkspaceFavorite(
+  public async createViewWorkspaceFavorite(
     workspaceId: string,
     viewId: string,
   ): Promise<void> {
@@ -99,7 +101,9 @@ export class ObjectMetadataRelatedRecordsService {
       { objectMetadataId: updatedObjectMetadata.id, key: 'INDEX' },
       {
         name: `All ${updatedObjectMetadata.labelPlural}`,
-        icon: updatedObjectMetadata.icon,
+        ...(isDefined(updatedObjectMetadata.icon)
+          ? { icon: updatedObjectMetadata.icon }
+          : {}),
       },
     );
   }
@@ -112,6 +116,9 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
         'view',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     await viewRepository.delete({

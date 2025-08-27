@@ -1,5 +1,8 @@
-import { SubscriptionInterval } from '~/generated-metadata/graphql';
-import { BillingPaymentProviders, BillingPlanKey } from '~/generated/graphql';
+import { type SubscriptionInterval } from '~/generated-metadata/graphql';
+import {
+  type BillingPaymentProviders,
+  type BillingPlanKey,
+} from '~/generated/graphql';
 
 export type BillingCheckoutSession = {
   plan: BillingPlanKey;

@@ -4,11 +4,11 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const currentTableCellInEditModePositionState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       recordTableCellEditModePositionComponentState,
       recordTableId,
     );
@@ -27,7 +27,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
         goBackToPreviousDropdownFocusId();
 
         removeLastFocusItemFromFocusStackByComponentType({
-          componentType: FocusComponentType.OPEN_FIELD_INPUT,
+          componentType: FocusComponentType.OPENED_FIELD_INPUT,
         });
       };
     },

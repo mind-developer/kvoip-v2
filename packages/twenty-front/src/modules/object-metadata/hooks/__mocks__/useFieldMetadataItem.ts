@@ -20,6 +20,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -102,6 +103,7 @@ export const queries = {
         icon
         isCustom
         isActive
+        isUnique
         isNullable
         createdAt
         updatedAt
@@ -232,6 +234,7 @@ export const variables = {
         options: undefined,
         settings: undefined,
         isLabelSyncedWithName: true,
+        isUnique: undefined,
         objectMetadataId,
         type: 'TEXT',
       },
@@ -297,7 +300,7 @@ export const responseData = {
       },
       workspaceMembers: [],
       currentUserWorkspace: {
-        settingsPermissions: ['DATA_MODEL'],
+        permissionFlags: ['DATA_MODEL'],
         objectRecordsPermissions: [
           PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
           PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,

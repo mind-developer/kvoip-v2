@@ -1,26 +1,27 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  CurrencyFilter,
-  DateFilter,
-  FloatFilter,
-  MultiSelectFilter,
-  PhonesFilter,
-  RatingFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  SelectFilter,
-  StringFilter,
+  type ActorFilter,
+  type AddressFilter,
+  type ArrayFilter,
+  type CurrencyFilter,
+  type DateFilter,
+  type FloatFilter,
+  type MultiSelectFilter,
+  type PhonesFilter,
+  type RatingFilter,
+  type RawJsonFilter,
+  type RecordGqlOperationFilter,
+  type RelationFilter,
+  type SelectFilter,
+  type StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { computeEmptyGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Field } from '~/generated/graphql';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { type Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 type GetEmptyRecordGqlOperationFilterParams = {
@@ -384,7 +385,10 @@ export const getEmptyRecordGqlOperationFilter = ({
       });
       break;
     default:
-      throw new Error(`Unsupported empty filter type ${filterType}`);
+      throw new CustomError(
+        `Unsupported empty filter type ${filterType}`,
+        'UNSUPPORTED_EMPTY_FILTER_TYPE',
+      );
   }
 
   switch (operand) {
@@ -395,6 +399,9 @@ export const getEmptyRecordGqlOperationFilter = ({
         not: emptyRecordFilter,
       };
     default:
-      throw new Error(`Unknown operand ${operand} for ${filterType} filter`);
+      throw new CustomError(
+        `Unknown operand ${operand} for ${filterType} filter`,
+        'UNKNOWN_OPERAND_FOR_FILTER',
+      );
   }
 };

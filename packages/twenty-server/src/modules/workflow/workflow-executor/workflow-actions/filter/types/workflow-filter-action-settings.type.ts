@@ -1,9 +1,10 @@
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 
-import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 
 export type WorkflowFilterActionSettings = BaseWorkflowActionSettings & {
   input: {
-    filter: Partial<ObjectRecordFilter>;
+    stepFilterGroups?: StepFilterGroup[];
+    stepFilters?: StepFilter[];
   };
 };

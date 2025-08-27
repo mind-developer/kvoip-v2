@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  API_KEY_DATA_SEED_COLUMNS,
-  API_KEY_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -86,17 +82,12 @@ import {
   TASK_TARGET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import {
-  WORKFLOW_DATA_SEED_COLUMNS,
-  WORKFLOW_DATA_SEEDS,
-  WORKFLOW_VERSION_DATA_SEED_COLUMNS,
-  WORKFLOW_VERSION_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/workflow-data-seeds.constants';
-import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
   WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
+import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 const RECORD_SEEDS_CONFIGS = [
@@ -129,11 +120,6 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'opportunity',
     pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
     recordSeeds: OPPORTUNITY_DATA_SEEDS,
-  },
-  {
-    tableName: 'apiKey',
-    pgColumns: API_KEY_DATA_SEED_COLUMNS,
-    recordSeeds: API_KEY_DATA_SEEDS,
   },
   {
     tableName: 'connectedAccount',
@@ -184,16 +170,6 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'messageParticipant',
     pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
     recordSeeds: MESSAGE_PARTICIPANT_DATA_SEEDS,
-  },
-  {
-    tableName: 'workflow',
-    pgColumns: WORKFLOW_DATA_SEED_COLUMNS,
-    recordSeeds: WORKFLOW_DATA_SEEDS,
-  },
-  {
-    tableName: 'workflowVersion',
-    pgColumns: WORKFLOW_VERSION_DATA_SEED_COLUMNS,
-    recordSeeds: WORKFLOW_VERSION_DATA_SEEDS,
   },
   {
     tableName: '_pet',
@@ -270,15 +246,13 @@ export class DevSeederDataService {
           workspaceId,
         });
 
-        // For now views/favorites are auto-created for custom
-        // objects but not for standard objects.
-        // This is probably something we want to fix in the future.
-
         const viewDefinitionsWithId = await prefillViews(
           entityManager,
           schemaName,
           objectMetadataItems.filter((item) => !item.isCustom),
         );
+
+        await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
 
         await prefillWorkspaceFavorites(
           viewDefinitionsWithId

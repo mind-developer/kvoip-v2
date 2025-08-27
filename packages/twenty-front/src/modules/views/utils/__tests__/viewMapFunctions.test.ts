@@ -1,17 +1,17 @@
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ViewField } from '@/views/types/ViewField';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { ViewSort } from '@/views/types/ViewSort';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ViewField } from '@/views/types/ViewField';
+import { type ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const baseFieldMetadataItem = {
   id: '05731f68-6e7a-4903-8374-c0b6a9063482',

@@ -1,10 +1,9 @@
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { expect } from '@storybook/test';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 describe('computeContextStoreFilters', () => {
   const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -21,17 +20,25 @@ describe('computeContextStoreFilters', () => {
       selectedRecordIds: ['1', '2', '3'],
     };
 
-    const filters = computeContextStoreFilters(
+    const filters = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
-      [],
-      personObjectMetadataItem,
-      mockFilterValueDependencies,
-    );
+      contextStoreFilters: [],
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItem,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: '',
+    });
 
     expect(filters).toEqual({
-      id: {
-        in: ['1', '2', '3'],
-      },
+      and: [
+        {},
+        {
+          id: {
+            in: ['1', '2', '3'],
+          },
+        },
+        {},
+      ],
     });
   });
 
@@ -57,15 +64,18 @@ describe('computeContextStoreFilters', () => {
       },
     ];
 
-    const filters = computeContextStoreFilters(
+    const filters = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
-      personObjectMetadataItem,
-      mockFilterValueDependencies,
-    );
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItem,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: '',
+    });
 
     expect(filters).toEqual({
       and: [
+        {},
         {
           or: [
             {

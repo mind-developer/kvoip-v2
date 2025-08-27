@@ -1,7 +1,12 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useState } from 'react';
-import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
@@ -12,19 +17,19 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
+import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { selectIsInModalState } from '@/ui/input/states/selectIsInModalState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -81,7 +86,7 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -183,15 +188,15 @@ export const CreateProfile = () => {
 
         setNextOnboardingStatus();
       } catch (error: any) {
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     },
     [
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
       setCurrentWorkspaceMember,
       setCurrentUser,
       updateOneRecord,
@@ -200,15 +205,18 @@ export const CreateProfile = () => {
 
   const [isEditingMode, setIsEditingMode] = useState(false);
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (isEditingMode) {
-        onSubmit(getValues());
-      }
-    },
-    PageHotkeyScope.CreateProfile,
-  );
+  const handleEnter = () => {
+    if (isEditingMode) {
+      onSubmit(getValues());
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: handleEnter,
+    focusId: PageFocusId.CreateProfile,
+    dependencies: [handleEnter],
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
@@ -237,7 +245,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoFocus
                   label={t`First Name`}
                   value={value}
@@ -260,7 +268,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   label={t`Last Name`}
                   value={value}
                   onFocus={() => setIsEditingMode(true)}
@@ -301,7 +309,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   label="Document"
                   value={value}
                   onFocus={() => setIsEditingMode(true)}

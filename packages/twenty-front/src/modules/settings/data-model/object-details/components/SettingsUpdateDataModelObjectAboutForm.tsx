@@ -1,13 +1,13 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
-  SettingsDataModelObjectAboutFormValues,
+  type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -23,7 +23,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
   const navigate = useNavigateSettings();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const setUpdatedObjectNamePlural = useSetRecoilState(
     updatedObjectNamePluralState,
   );
@@ -95,8 +95,9 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 
     if (!objectMetadataItem.isCustom) {
       const {
-        nameSingular: _,
-        namePlural: __,
+        nameSingular: _nameSingular,
+        namePlural: _namePlural,
+        isLabelSyncedWithName: _isLabelSyncedWithName,
         ...payloadWithoutNames
       } = updatePayload;
 
@@ -117,15 +118,20 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     console.error(error);
 
     if (error instanceof ZodError) {
-      enqueueSnackBar(error.issues[0].message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: error.issues[0].message,
       });
       return;
     }
 
-    enqueueSnackBar((error as Error).message, {
-      variant: SnackBarVariant.Error,
-    });
+    if (error instanceof ApolloError) {
+      enqueueErrorSnackBar({
+        apolloError: error,
+      });
+      return;
+    }
+
+    enqueueErrorSnackBar({});
   };
 
   return (

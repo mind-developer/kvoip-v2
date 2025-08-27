@@ -1,32 +1,19 @@
 import { useContext } from 'react';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
-import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
-import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 
 type RecordTitleCellFieldInputProps = {
-  onClickOutside?: (
-    persist: () => void,
-    event: MouseEvent | TouchEvent,
-  ) => void;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
+  instanceId: string;
   sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCellFieldInput = ({
+  instanceId,
   sizeVariant,
-  onEnter,
-  onEscape,
-  onShiftTab,
-  onTab,
-  onClickOutside,
 }: RecordTitleCellFieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
@@ -38,24 +25,11 @@ export const RecordTitleCellFieldInput = ({
     <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellTextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
+          instanceId={instanceId}
           sizeVariant={sizeVariant}
-          hotkeyScope={TitleInputHotkeyScope.TitleInput}
         />
       ) : isFieldFullName(fieldDefinition) ? (
-        <RecordTitleFullNameFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-          sizeVariant={sizeVariant}
-          hotkeyScope={TitleInputHotkeyScope.TitleInput}
-        />
+        <RecordTitleFullNameFieldInput sizeVariant={sizeVariant} />
       ) : null}
     </>
   );
