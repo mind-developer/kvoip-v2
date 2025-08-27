@@ -21,7 +21,7 @@ export class WhatsappIntegrationService {
     private readonly environmentService: TwentyConfigService,
     private readonly inboxService: InboxService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) { }
+  ) {}
 
   async create(
     createInput: CreateWhatsappIntegrationInput,
@@ -247,23 +247,38 @@ export class WhatsappIntegrationService {
       workspaceID: workspaceId,
       canalID: id,
     };
+
     try {
       console.log('Enviando POST para Baileys:', payload);
-      const response = await axios.post(`http://localhost:3002/api/session/${name}`, payload, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await axios.post(
+        `http://localhost:3002/api/session/${name}`,
+        payload,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
 
-      console.log('Resposta do POST Baileys:', response.status, response.statusText);
+      console.log(
+        'Resposta do POST Baileys:',
+        response.status,
+        response.statusText,
+      );
     } catch (err) {
       console.error('Erro ao enviar webhook para Baileys:', err);
       // Não falhar a criação da integração se o webhook falhar
     }
   }
+
   async startBaileysSession(sessionId: string, payload: any) {
     try {
-      const response = await axios.post(`http://localhost:3002/api/session/${sessionId}`, payload, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await axios.post(
+        `http://localhost:3002/api/session/${sessionId}`,
+        payload,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+
       return { success: true, data: response.data };
     } catch (err) {
       return { success: false, error: err.message };
@@ -272,7 +287,10 @@ export class WhatsappIntegrationService {
 
   async stopBaileysSession(sessionId: string) {
     try {
-      const response = await axios.delete(`http://localhost:3002/api/session/${sessionId}`);
+      const response = await axios.delete(
+        `http://localhost:3002/api/session/${sessionId}`,
+      );
+
       return { success: true, data: response.data };
     } catch (err) {
       return { success: false, error: err.message };
@@ -281,7 +299,10 @@ export class WhatsappIntegrationService {
 
   async getBaileysStatus(sessionId: string) {
     try {
-      const response = await axios.get(`http://localhost:3002/api/session/status/${sessionId}`);
+      const response = await axios.get(
+        `http://localhost:3002/api/session/status/${sessionId}`,
+      );
+
       return response.data;
     } catch (err) {
       return { error: err.message };
@@ -290,7 +311,10 @@ export class WhatsappIntegrationService {
 
   async getBaileysQr(sessionId: string) {
     try {
-      const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`);
+      const response = await axios.get(
+        `http://localhost:3002/api/session/${sessionId}/qr`,
+      );
+
       return response.data;
     } catch (err) {
       return { error: err.message };
