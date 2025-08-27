@@ -67,31 +67,22 @@ export const PaneSide = () => {
     },
   ];
 
-  const nonResolvedWhatsappChats = whatsappChats.filter(
+  const activeWhatsappChats = whatsappChats.filter(
     (chat) => chat.status !== statusEnum.Resolved,
   );
 
-  const isScrollable = nonResolvedWhatsappChats.length > 5;
+  const isScrollable = activeWhatsappChats.length > 5;
 
-  const renderWhatsappChats = () => {
-    return whatsappChats.map((chat: any) => {
-      if (chat.status === statusEnum.Resolved) return <></>;
-
-      return (
-        <ChatCell
-          key={chat.client.phone}
-          platform="whatsapp"
-          chat={chat}
-          isSelected={
-            selectedChatId === `${chat.integrationId}_${chat.client.phone}`
-          }
-          onSelect={() => {
-            setSelectedChatId(`${chat.integrationId}_${chat.client.phone}`);
-          }}
-        />
-      );
-    });
-  };
+  const renderWhatsappChats = () =>
+    activeWhatsappChats.map(({ client, integrationId, ...chat }) => (
+      <ChatCell
+        key={`${integrationId}_${client.phone}`}
+        platform="whatsapp"
+        chat={{ client, integrationId, ...chat }}
+        isSelected={selectedChatId === `${integrationId}_${client.phone}`}
+        onSelect={() => setSelectedChatId(`${integrationId}_${client.phone}`)}
+      />
+    ));
 
   // const renderMessengerChats = () => {
   //   return messengerChats.map((chat: any) => {
