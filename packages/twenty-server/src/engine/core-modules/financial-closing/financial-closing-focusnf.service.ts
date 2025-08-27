@@ -95,7 +95,7 @@ export class FinancialClosingNFService {
         percentNfcom: company.percentNfcom,
         // ncm: company.ncm,
         cfop: cfop,
-        cstIcmsCsosn: "00",
+        cstIcmsCsosn: '00',
         // origem: company.origem,
         // aliquotaIcms: company.aliquotaIcms,
         // aliquotaPis: company.aliquotaPis,
@@ -103,8 +103,8 @@ export class FinancialClosingNFService {
         // aliquotaIpi: company.aliquotaIpi,0
         // aliquotaIss: company.aliquotaIss,
         // issRetido: company.issRetido,
-        unitOfMeasure: "4", // 4 - 'UN'
-        unidade: "1.00",
+        unitOfMeasure: '4', // 4 - 'UN'
+        unidade: '1.00',
         // itemListaServico: company.itemListaServico,
         // discriminacao: company.discriminacao,
         classificacao: '0100101', // 	Assinatura de serviços de telefonia (Tabela cClass NFCom)
@@ -131,27 +131,37 @@ export class FinancialClosingNFService {
         id: nfCom.id,
         name: 'Plano de telefonia',
         producttype: ProductTypeStatus.COMMODITY,
-        unitOfMeasure: "4", // 4 - 'UN'
-        unidade: "1",
+        unitOfMeasure: '4', // 4 - 'UN'
+        unidade: '1',
         classificacao: '0100101',
-        cstIcmsCsosn: "00", // Caso Regime normal 00, caso Simples Nacional (SN) 102.
+        cstIcmsCsosn: '00', // Caso Regime normal 00, caso Simples Nacional (SN) 102.
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       } as unknown as ProductWorkspaceEntity;
 
-      const issueResult = await this.focusNFeService.preIssueNf(nfCom, workspaceId, fakeProductNfCom);
+      const issueResult = await this.focusNFeService.preIssueNf(
+        nfCom,
+        workspaceId,
+        fakeProductNfCom,
+      );
 
       if (issueResult && issueResult.success) {
-        this.logger.log(`NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`);
+        this.logger.log(
+          `NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
+        );
 
         nfCom.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
         await notaFiscalRepository.save(nfCom);
 
       } else {
         if (issueResult) {
-          this.logger.error(`NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`);
+          this.logger.error(
+            `NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
+          );
         } else {
-          this.logger.error(`NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`);
+          this.logger.error(
+            `NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`,
+          );
         }
 
         nfCom.nfStatus = NfStatus.CANCELLED;
@@ -168,14 +178,15 @@ export class FinancialClosingNFService {
         nfType: NfType.NFSE,
         nfStatus: NfStatus.DRAFT,
         dataEmissao: new Date().toISOString(),
-        totalAmount: typeof charge.price === "number" 
-          ? charge.price.toString() 
-          : charge.price,
+        totalAmount:
+          typeof charge.price === 'number'
+            ? charge.price.toString()
+            : charge.price,
 
         aliquotaIss: 0.05, // Varia de acordo com o municipio, 2% a 5%
-        discriminacao: "Serviço de telefonia",
+        discriminacao: 'Serviço de telefonia',
         issRetido: false,
-        itemListaServico: "2919",
+        itemListaServico: '2919',
         percentNfse: company.percentNfse,
 
         company: company,
@@ -190,7 +201,9 @@ export class FinancialClosingNFService {
 
       nfse.company = company;
 
-      this.logger.log(`NOTA FISCALL CRIADA nfse: ${JSON.stringify(nfse, null, 2)}`);
+      this.logger.log(
+        `NOTA FISCALL CRIADA nfse: ${JSON.stringify(nfse, null, 2)}`,
+      );
 
       const fakeProductNfse = {
         id: nfse.id,
@@ -201,20 +214,29 @@ export class FinancialClosingNFService {
         updatedAt: new Date().toISOString(),
       } as unknown as ProductWorkspaceEntity;
 
-      const issueResult = await this.focusNFeService.preIssueNf(nfse, workspaceId, fakeProductNfse);
+      const issueResult = await this.focusNFeService.preIssueNf(
+        nfse,
+        workspaceId,
+        fakeProductNfse,
+      );
 
       if (issueResult && issueResult.success) {
-        this.logger.log(`NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`);
+        this.logger.log(
+          `NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
+        );
 
         nfse.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
-        
-        await notaFiscalRepository.save(nfse);
 
+        await notaFiscalRepository.save(nfse);
       } else {
         if (issueResult) {
-          this.logger.error(`NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`);
+          this.logger.error(
+            `NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
+          );
         } else {
-          this.logger.error(`NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`);
+          this.logger.error(
+            `NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`,
+          );
         }
 
         nfse.nfStatus = NfStatus.CANCELLED;
@@ -228,7 +250,9 @@ export class FinancialClosingNFService {
     clientState: string,
   ): string {
     if (!emitterState || !clientState) {
-      throw new Error('Estados do emissor e do cliente são obrigatórios para definir o CFOP.');
+      throw new Error(
+        'Estados do emissor e do cliente são obrigatórios para definir o CFOP.',
+      );
     }
 
     const normalizedEmitter = emitterState.trim().toUpperCase();
@@ -236,8 +260,33 @@ export class FinancialClosingNFService {
 
     // Exterior → não tem UF válida no Brasil
     const validUFs = [
-      'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR',
-      'PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'
+      'AC',
+      'AL',
+      'AP',
+      'AM',
+      'BA',
+      'CE',
+      'DF',
+      'ES',
+      'GO',
+      'MA',
+      'MT',
+      'MS',
+      'MG',
+      'PA',
+      'PB',
+      'PR',
+      'PE',
+      'PI',
+      'RJ',
+      'RN',
+      'RS',
+      'RO',
+      'RR',
+      'SC',
+      'SP',
+      'SE',
+      'TO',
     ];
     const isClientExterior = !validUFs.includes(normalizedClient);
 
