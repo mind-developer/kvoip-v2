@@ -11,8 +11,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+
 import axios from 'axios';
-import { Response } from 'express';
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
@@ -26,7 +26,7 @@ export class WhatsappController {
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
     private readonly whatsappService: WhatsappService,
-  ) { }
+  ) {}
 
   @Get('/webhook/:workspaceId/:id')
   async handleVerification(
@@ -95,6 +95,7 @@ export class WhatsappController {
       let base64String = '';
       let mimeType = '';
       let fileName = '';
+
       if (
         ['image', 'video', 'audio', 'document'].includes(messages.type) &&
         messages[messages.type] &&
@@ -102,7 +103,8 @@ export class WhatsappController {
       ) {
         isBase64Media = true;
         base64String = messages[messages.type].base64;
-        mimeType = messages[messages.type].mime_type || 'application/octet-stream';
+        mimeType =
+          messages[messages.type].mime_type || 'application/octet-stream';
         fileName = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}`;
       }
 
@@ -115,30 +117,43 @@ export class WhatsappController {
             this.logger.log('Prefixo data: removido do base64');
           }
           const buffer = Buffer.from(base64String, 'base64');
+
           this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
           // Gera extensão correta
           let ext = '';
+
           if (mimeType && mimeType.includes('/')) {
-            ext = '.' + mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
+            ext =
+              '.' + mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
           }
           const fileNameWithExt = `${body.entry[0].changes[0].value.messages[0].from}_${Date.now()}${ext}`;
-          this.logger.log(`Nome do arquivo gerado para upload: ${fileNameWithExt}`);
-          this.logger.log(`Diretório do bucket: workspaceId=${workspaceId}, tipo=${messages.type}`);
+
+          this.logger.log(
+            `Nome do arquivo gerado para upload: ${fileNameWithExt}`,
+          );
+          this.logger.log(
+            `Diretório do bucket: workspaceId=${workspaceId}, tipo=${messages.type}`,
+          );
           const file = {
             originalname: fileNameWithExt,
             buffer,
             mimetype: mimeType,
           };
-          fileUrl = await this.whatsappService.googleStorageService.uploadFileToBucket(
-            workspaceId,
-            messages.type,
-            file,
-            false,
-          );
+
+          fileUrl =
+            await this.whatsappService.googleStorageService.uploadFileToBucket(
+              workspaceId,
+              messages.type,
+              file,
+              false,
+            );
           this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
         } catch (err) {
           this.logger.error('Erro ao salvar mídia base64:', err);
-          throw new HttpException('Erro ao salvar mídia base64: ' + (err?.message || err), HttpStatus.INTERNAL_SERVER_ERROR);
+          throw new HttpException(
+            'Erro ao salvar mídia base64: ' + (err?.message || err),
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
         }
       } else if (mediaId) {
         // Fluxo normal: baixa a mídia
@@ -154,9 +169,10 @@ export class WhatsappController {
       const lastMessage = {
         createdAt: new Date(),
         from: body.entry[0].changes[0].value.contacts[0].profile.name,
-        message: (mediaId || isBase64Media)
-          ? fileUrl
-          : body.entry[0].changes[0].value.messages[0].text.body,
+        message:
+          mediaId || isBase64Media
+            ? fileUrl
+            : body.entry[0].changes[0].value.messages[0].text.body,
         type: body.entry[0].changes[0].value.messages[0].type,
       };
 
@@ -167,7 +183,10 @@ export class WhatsappController {
         integrationId: id,
         workspaceId: workspaceId,
         client: {
-          phone: body.entry[0].changes[0].value.messages[0].from,
+          phone: body.entry[0].changes[0].value.messages[0].from.replace(
+            '@s.whatsapp.net',
+            '',
+          ),
           name: body.entry[0].changes[0].value.contacts[0].profile.name,
         },
         messages: [
@@ -179,7 +198,10 @@ export class WhatsappController {
         lastMessage,
       };
 
-      console.log('Payload enviado ao Firestore:', JSON.stringify(whatsappIntegration, null, 2));
+      console.log(
+        'Payload enviado ao Firestore:',
+        JSON.stringify(whatsappIntegration, null, 2),
+      );
 
       await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
@@ -217,18 +239,23 @@ export class WhatsappRestController {
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
     private readonly whatsappService: WhatsappService,
-  ) { }
+  ) {}
 
   @Get('/qrold/:sessionId')
   async getQrCodeold(@Param('sessionId') sessionId: string) {
     try {
       this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
       this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(`URL de destino: http://localhost:3002/api/session/${sessionId}/qr`);
+      this.logger.log(
+        `URL de destino: http://localhost:3002/api/session/${sessionId}/qr`,
+      );
 
-      const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`, {
-        timeout: 10000, // 10 second timeout
-      });
+      const response = await axios.get(
+        `http://localhost:3002/api/session/${sessionId}/qr`,
+        {
+          timeout: 10000, // 10 second timeout
+        },
+      );
 
       this.logger.log(`=== RESPOSTA RECEBIDA ===`);
       this.logger.log(`Status: ${response.status}`);
@@ -259,7 +286,9 @@ export class WhatsappRestController {
         );
       } else {
         // Something happened in setting up the request that triggered an Error
-        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        this.logger.error(
+          `Erro na configuração da requisição: ${error.message}`,
+        );
         throw new HttpException(
           `Error setting up request: ${error.message}`,
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -269,17 +298,22 @@ export class WhatsappRestController {
   }
 
   // NOVO ENDPOINT PROXY PARA STATUS
-  @Get('/statuus/:sessionId')
+  @Get('/status/:sessionId')
   @UseGuards()
   async getStatus(@Param('sessionId') sessionId: string) {
     try {
       this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
       this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(`URL de destino: http://localhost:3002/api/session/status/${sessionId}`);
+      this.logger.log(
+        `URL de destino: http://localhost:3002/api/session/status/${sessionId}`,
+      );
 
-      const response = await axios.get(`http://localhost:3002/api/session/status/${sessionId}`, {
-        timeout: 10000, // 10 second timeout
-      });
+      const response = await axios.get(
+        `http://localhost:3002/api/session/status/${sessionId}`,
+        {
+          timeout: 10000, // 10 second timeout
+        },
+      );
 
       this.logger.log(`=== RESPOSTA RECEBIDA ===`);
       this.logger.log(`Status: ${response.status}`);
@@ -295,10 +329,7 @@ export class WhatsappRestController {
       if (error.response) {
         this.logger.error(`Status do erro: ${error.response.status}`);
         this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(
-          error.response.data,
-          error.response.status,
-        );
+        throw new HttpException(error.response.data, error.response.status);
       } else if (error.request) {
         this.logger.error(`Nenhuma resposta recebida do Baileys service`);
         throw new HttpException(
@@ -306,7 +337,9 @@ export class WhatsappRestController {
           HttpStatus.SERVICE_UNAVAILABLE,
         );
       } else {
-        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        this.logger.error(
+          `Erro na configuração da requisição: ${error.message}`,
+        );
         throw new HttpException(
           `Error setting up request: ${error.message}`,
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -316,7 +349,6 @@ export class WhatsappRestController {
   }
 }
 
-
 // Controller separado para endpoints REST
 @Controller('Whats-App-rest/whatsapp')
 export class WhatsappRestController2 {
@@ -325,7 +357,7 @@ export class WhatsappRestController2 {
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
     private readonly whatsappService: WhatsappService,
-  ) { }
+  ) {}
 
   // NOVO ENDPOINT PROXY PARA STATUS
   @Get('/status/:sessionId')
@@ -334,11 +366,16 @@ export class WhatsappRestController2 {
     try {
       this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
       this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(`URL de destino: http://localhost:3002/api/session/status/${sessionId}`);
+      this.logger.log(
+        `URL de destino: http://localhost:3002/api/session/status/${sessionId}`,
+      );
 
-      const response = await axios.get(`http://localhost:3002/api/session/status/${sessionId}`, {
-        timeout: 10000, // 10 second timeout
-      });
+      const response = await axios.get(
+        `http://localhost:3002/api/session/status/${sessionId}`,
+        {
+          timeout: 10000, // 10 second timeout
+        },
+      );
 
       this.logger.log(`=== RESPOSTA RECEBIDA ===`);
       this.logger.log(`Status: ${response.status}`);
@@ -354,10 +391,7 @@ export class WhatsappRestController2 {
       if (error.response) {
         this.logger.error(`Status do erro: ${error.response.status}`);
         this.logger.error(`Dados do erro:`, error.response.data);
-        throw new HttpException(
-          error.response.data,
-          error.response.status,
-        );
+        throw new HttpException(error.response.data, error.response.status);
       } else if (error.request) {
         this.logger.error(`Nenhuma resposta recebida do Baileys service`);
         throw new HttpException(
@@ -365,7 +399,9 @@ export class WhatsappRestController2 {
           HttpStatus.SERVICE_UNAVAILABLE,
         );
       } else {
-        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        this.logger.error(
+          `Erro na configuração da requisição: ${error.message}`,
+        );
         throw new HttpException(
           `Error setting up request: ${error.message}`,
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -379,11 +415,16 @@ export class WhatsappRestController2 {
     try {
       this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
       this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(`URL de destino: http://localhost:3002/api/session/${sessionId}/qr`);
+      this.logger.log(
+        `URL de destino: http://localhost:3002/api/session/${sessionId}/qr`,
+      );
 
-      const response = await axios.get(`http://localhost:3002/api/session/${sessionId}/qr`, {
-        timeout: 10000, // 10 second timeout
-      });
+      const response = await axios.get(
+        `http://localhost:3002/api/session/${sessionId}/qr`,
+        {
+          timeout: 10000, // 10 second timeout
+        },
+      );
 
       this.logger.log(`=== RESPOSTA RECEBIDA ===`);
       this.logger.log(`Status: ${response.status}`);
@@ -414,7 +455,9 @@ export class WhatsappRestController2 {
         );
       } else {
         // Something happened in setting up the request that triggered an Error
-        this.logger.error(`Erro na configuração da requisição: ${error.message}`);
+        this.logger.error(
+          `Erro na configuração da requisição: ${error.message}`,
+        );
         throw new HttpException(
           `Error setting up request: ${error.message}`,
           HttpStatus.INTERNAL_SERVER_ERROR,

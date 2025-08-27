@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
@@ -14,6 +15,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+
+import axios from 'axios';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -47,8 +50,10 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   );
 
   const [showQrCode, setShowQrCode] = useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [integrationName, setIntegrationName] = useState('');
+  const [baileysSessionValid, setBaileysSessionValid] = useState(false);
+  const [baileysValidationTries, setBaileysValidationTries] = useState(0);
+  const [baileysValidationFailed, setBaileysValidationFailed] = useState(false);
 
   const [qrCodeValue, setQrCodeValue] = useState<string | null>(null);
   const [qrCodeError, setQrCodeError] = useState<string | null>(null);
@@ -60,6 +65,43 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const integration = integrationCategoryAll.integrations.find(
     ({ from: { key } }) => key === 'whatsapp',
   );
+
+  const validateBaileysSession = async (sessionName: string, id: string) => {
+    axios
+      .get(
+        `http://localhost:3000/Whats-App-rest/whatsapp/status/${sessionName}`,
+      )
+      .then((r) => {
+        if (r.data.connected === true) {
+          setBaileysSessionValid(true);
+          return;
+        }
+        if (baileysValidationTries < 10) {
+          setTimeout(() => {
+            validateBaileysSession(sessionName, id);
+            setBaileysValidationTries(baileysValidationTries + 1);
+          }, 5000);
+          return;
+        }
+        setBaileysValidationFailed(true);
+      })
+      .catch(() => {
+        if (baileysValidationTries < 10)
+          setTimeout(() => {
+            validateBaileysSession(sessionName, id);
+            setBaileysValidationTries(baileysValidationTries + 1);
+          }, 5000);
+      });
+  };
+
+  useEffect(() => {
+    if (baileysSessionValid) {
+      enqueueSnackBar('Integração criada com sucesso!', {
+        variant: SnackBarVariant.Success,
+      });
+      navigate(SettingsPath.IntegrationWhatsappDatabase);
+    }
+  }, [baileysSessionValid, enqueueSnackBar, navigate]);
 
   const isIntegrationAvailable = !!integration;
 
@@ -77,24 +119,33 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     mode: 'onTouched',
     resolver: zodResolver(settingsIntegrationWhatsappConnectionFormSchema),
     defaultValues: {
-      tipoApi: 'MetaAPI'
-    }
+      tipoApi: 'MetaAPI',
+    },
   });
 
   const canSave = formConfig.formState.isValid;
   // Função para buscar QR code com retry
-  const fetchQrCodeWithRetry = async (sessionName: string, maxRetries = 5, delay = 2000) => {
+  const fetchQrCodeWithRetry = async (
+    sessionName: string,
+    maxRetries = 5,
+    delay = 2000,
+  ) => {
     setIsLoadingQrCode(true);
     setQrCodeError(null);
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`Tentativa ${attempt}/${maxRetries} de buscar QR code para: ${sessionName}`);
-        const response = await fetch(`http://localhost:3000/Whats-App-rest/whatsapp/qr/${sessionName}`, {
-          headers: {
-            Authorization: `Bearer ${tokenPair?.accessToken?.token}`,
+        console.log(
+          `Tentativa ${attempt}/${maxRetries} de buscar QR code para: ${sessionName}`,
+        );
+        const response = await fetch(
+          `http://localhost:3000/Whats-App-rest/whatsapp/qr/${sessionName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenPair?.accessToken?.token}`,
+            },
           },
-        });
+        );
 
         console.log(`Tentativa ${attempt} - Status:`, response.status);
 
@@ -110,33 +161,42 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           }
         } else {
           const errorText = await response.text();
-          console.log(`Tentativa ${attempt} - Erro:`, response.status, errorText);
+          console.log(
+            `Tentativa ${attempt} - Erro:`,
+            response.status,
+            errorText,
+          );
           //
           // Se for 404, continuar tentando
           if (response.status === 404) {
             if (attempt < maxRetries) {
-              console.log(`Aguardando ${delay}ms antes da próxima tentativa...`);
-              await new Promise(resolve => setTimeout(resolve, delay));
+              console.log(
+                `Aguardando ${delay}ms antes da próxima tentativa...`,
+              );
+              await new Promise((resolve) => setTimeout(resolve, delay));
               continue;
             }
           }
           // Para outros erros, parar
-          throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(
+            `Erro HTTP ${response.status}: ${response.statusText}`,
+          );
         }
       } catch (error) {
         console.error(`Erro na tentativa ${attempt}:`, error);
         if (attempt === maxRetries) {
           setQrCodeError(
-            `Erro ao buscar QR code: ${typeof error === 'object' && error !== null && 'message' in error
-              ? (error as { message?: string }).message
-              : String(error)
-            }`
+            `Erro ao buscar QR code: ${
+              typeof error === 'object' && error !== null && 'message' in error
+                ? (error as { message?: string }).message
+                : String(error)
+            }`,
           );
           setIsLoadingQrCode(false);
           return;
         }
         // Aguardar antes da próxima tentativa
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
     setQrCodeError('QR code não disponível após várias tentativas');
@@ -147,7 +207,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      await createWhatsappIntegration({
+      const integration = await createWhatsappIntegration({
         name: formValues.name,
         phoneId: formValues.phoneId,
         businessAccountId: formValues.businessAccountId,
@@ -169,6 +229,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         }
         // Buscar o valor do QR code
         await fetchQrCodeWithRetry(formValues.name);
+        validateBaileysSession(formValues.name, integration.id);
       } else {
         navigate(SettingsPath.IntegrationWhatsappDatabase);
       }
@@ -203,8 +264,8 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
             isSaveDisabled={false}
             onCancel={() => navigate(SettingsPath.IntegrationWhatsappDatabase)}
             onSave={() => navigate(SettingsPath.IntegrationWhatsappDatabase)}
-          // saveButtonText="Voltar à Lista"
-          // cancelButtonText="Cancelar"
+            // saveButtonText="Voltar à Lista"
+            // cancelButtonText="Cancelar"
           />
         ) : (
           <SaveAndCancelButtons
@@ -246,7 +307,10 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                           console.error('Erro ao carregar QR code:', e);
                           e.currentTarget.style.display = 'none';
                           if (e.currentTarget.nextElementSibling)
-                            (e.currentTarget.nextElementSibling as HTMLImageElement).style.display = 'block';
+                            (
+                              e.currentTarget
+                                .nextElementSibling as HTMLImageElement
+                            ).style.display = 'block';
                         }}
                       />
                       <div
@@ -272,9 +336,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                       }}
                     >
                       <p>{qrCodeError}</p>
-                      <p>
-                        URL: /Whats-App-rest/whatsapp/qr/{integrationName}
-                      </p>
+                      <p>URL: /Whats-App-rest/whatsapp/qr/{integrationName}</p>
                     </div>
                   ) : isLoadingQrCode ? (
                     <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -288,7 +350,8 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                   )}
                 </div>
                 <p style={{ fontSize: '14px', color: '#666' }}>
-                  Após escanear o QR code, sua integração estará ativa e pronta para uso.
+                  Após escanear o QR code, sua integração estará ativa e pronta
+                  para uso.
                 </p>
               </div>
             ) : (
