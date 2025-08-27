@@ -2,13 +2,13 @@
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 type ChatbotFlowImageEventFormProps = {
@@ -28,11 +28,15 @@ const StyledStepBody = styled.div`
 export const ChatbotFlowImageEventForm = ({
   selectedNode,
 }: ChatbotFlowImageEventFormProps) => {
-  const initialImage = selectedNode.data?.imageUrl as string | undefined;
+  const [image, setImage] = useState(
+    selectedNode.data?.imageUrl as string | undefined,
+  );
 
-  const [image, setImage] = useState<string | undefined>(initialImage);
+  useEffect(() => {
+    setImage(selectedNode.data?.imageUrl as string | undefined);
+  }, [selectedNode.data]);
 
-  const { updateFlow } = useUpdateChatbotFlow();
+  const saveChatbotFlowState = useSaveChatbotFlowState();
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
 
@@ -63,7 +67,7 @@ export const ChatbotFlowImageEventForm = ({
         node.id === selectedNode.id ? updatedNode : node,
       );
 
-      updateFlow({
+      saveChatbotFlowState({
         chatbotId: chatbotFlow.chatbotId,
         nodes: updatedNodes,
         edges: chatbotFlow.edges,
@@ -90,7 +94,7 @@ export const ChatbotFlowImageEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    updateFlow({
+    saveChatbotFlowState({
       chatbotId: chatbotFlow.chatbotId,
       nodes: updatedNodes,
       edges: chatbotFlow.edges,
