@@ -46,10 +46,12 @@ export class TenantService {
       },
     ]);
 
-    if (!isDefined(existingWorkspace)) return;
-
     // Prevent upserting the admin workspace tenant
-    if (existingWorkspace.id === adminWorkspace.id) return;
+    if (
+      !isDefined(existingWorkspace) ||
+      existingWorkspace.id === adminWorkspace.id
+    )
+      return;
 
     const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(

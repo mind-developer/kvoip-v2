@@ -128,14 +128,20 @@ export class SubscriptionService {
     });
   }
 
-  async handleSubscriptionUpsert(subscriptionId: string) {
+  async handleSubscriptionUpsert({
+    id,
+    stripeSubscriptionId,
+  }: {
+    id?: string;
+    stripeSubscriptionId?: string;
+  }) {
     const subscription = await this.billingSubscriptionRepository.findOne({
       where: [
         {
-          id: subscriptionId,
+          id,
         },
         {
-          stripeSubscriptionId: subscriptionId,
+          stripeSubscriptionId,
         },
       ],
       relations: {

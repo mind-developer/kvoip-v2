@@ -41,7 +41,9 @@ export class WorkspaceSubscriber
 
   async afterInsert(event: InsertEvent<Workspace>) {
     try {
-      if (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail)) {
+      const { id, creatorEmail } = event.entity;
+
+      if (isDefined(id) || isDefined(creatorEmail)) {
         await this.tenantService.handleWorkspaceUpsert(event.entity);
       }
     } catch (error) {
@@ -51,13 +53,14 @@ export class WorkspaceSubscriber
 
   async afterUpdate(event: UpdateEvent<Workspace>) {
     try {
-      if (
-        isDefined(event.entity) &&
-        (isDefined(event.entity.id) || isDefined(event.entity.creatorEmail))
-      ) {
-        await this.tenantService.handleWorkspaceUpsert(
-          event.entity as Workspace,
-        );
+      if (isDefined(event.entity)) {
+        const { id, creatorEmail } = event.entity as Partial<Workspace>;
+
+        if (isDefined(id) || isDefined(creatorEmail)) {
+          await this.tenantService.handleWorkspaceUpsert(
+            event.entity as Workspace,
+          );
+        }
       }
     } catch (error) {
       this.logger.log(error);

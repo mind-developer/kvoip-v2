@@ -41,14 +41,11 @@ export class BillingSubscriptionSubscriber
 
   async afterInsert(event: InsertEvent<BillingSubscription>) {
     try {
-      if (
-        isDefined(event.entity?.id) ||
-        isDefined(event.entity?.stripeSubscriptionId)
-      ) {
-        await this.subscriptionService.handleSubscriptionUpsert(
-          event.entity?.id || event.entity?.stripeSubscriptionId,
-        );
-      }
+      const { id } = event.entity;
+
+      await this.subscriptionService.handleSubscriptionUpsert({
+        id,
+      });
     } catch (error) {
       this.logger.log(error);
     }
@@ -56,14 +53,14 @@ export class BillingSubscriptionSubscriber
 
   async afterUpdate(event: UpdateEvent<BillingSubscription>) {
     try {
-      if (
-        isDefined(event.entity?.id) ||
-        isDefined(event.entity?.stripeSubscriptionId)
-      ) {
-        await this.subscriptionService.handleSubscriptionUpsert(
-          (event.entity as BillingSubscription)?.id ||
-            (event.entity as BillingSubscription)?.stripeSubscriptionId,
-        );
+      const { id, stripeSubscriptionId } =
+        event.entity as Partial<BillingSubscription>;
+
+      if (isDefined(id) || isDefined(stripeSubscriptionId)) {
+        await this.subscriptionService.handleSubscriptionUpsert({
+          id,
+          stripeSubscriptionId,
+        });
       }
     } catch (error) {
       this.logger.log(error);
