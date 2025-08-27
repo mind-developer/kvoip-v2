@@ -35,7 +35,8 @@ export class TenantService {
   async handleWorkspaceUpsert(workspace: Workspace) {
     const adminWorkspace = await this.kvoipAdminWorkspaceExists();
 
-    if (!isDefined(adminWorkspace)) return;
+    if (!isDefined(adminWorkspace))
+      throw new Error('Kvoip admin workspace not found');
 
     const existingWorkspace = await this.workspaceRepository.findOneBy([
       {
@@ -48,10 +49,10 @@ export class TenantService {
 
     // Prevent upserting the admin workspace tenant
     if (
-      !isDefined(existingWorkspace) ||
+      isDefined(existingWorkspace) &&
       existingWorkspace.id === adminWorkspace.id
     )
-      return;
+      throw new Error('Current workspace is kvoip admin workspace.');
 
     const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
@@ -92,7 +93,7 @@ export class TenantService {
         },
       });
 
-      if (isDefined(existingUser)) {
+      if (isDefined(existingUser) && isDefined(existingWorkspace)) {
         await this.handleUserUpsert({
           user: existingUser,
           workspaceId: existingWorkspace.id,
