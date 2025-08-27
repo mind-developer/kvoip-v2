@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { Button } from 'twenty-ui/input';
 
 type ChatbotFlowEventContainerFormProps = {
   children: ReactNode;

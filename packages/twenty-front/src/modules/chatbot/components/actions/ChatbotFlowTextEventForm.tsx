@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
@@ -113,7 +114,6 @@ export const ChatbotFlowTextEventForm = ({
   );
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -153,18 +153,13 @@ export const ChatbotFlowTextEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
-    // TODO: Build a type using Omit<...> instead.
-    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
-
-    const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
+    updateFlow({
+      chatbotId: chatbotFlow.chatbotId,
+      edges: chatbotFlow.edges,
       nodes: updatedNodes,
       viewport: { x: 0, y: 0, zoom: 0 },
-    };
-
+    });
     setChatbotFlowSelectedNode(updatedNode);
-    updateFlow(updatedChatbotFlow);
   };
 
   return (

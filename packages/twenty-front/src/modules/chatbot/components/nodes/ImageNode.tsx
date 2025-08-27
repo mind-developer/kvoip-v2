@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
@@ -40,8 +41,8 @@ function ImageNode({
     imageUrl?: string;
   }>
 >) {
-  const nodeId = useNodeId()
-  const node = useNodes().filter(filterNodes => filterNodes.id === nodeId)[0]
+  const nodeId = useNodeId();
+  const node = useNodes().filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { updateNodeData } = useReactFlow();
 
   const targetConnections = useNodeConnections({
@@ -93,7 +94,7 @@ function ImageNode({
       title={data.title ?? 'Node title'}
       nodeTypeDescription="Image node"
       onTitleChange={handleTitleChange}
-      onTitleBlur={() => { }}
+      onTitleBlur={() => {}}
     >
       <Handle
         type="target"

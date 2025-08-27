@@ -16,7 +16,7 @@ import { useSaveChatbotFlowState } from '../hooks/useSaveChatbotFlowState';
 export const CommandMenuChatbotFlowPage = () => {
   const { getIcon } = useIcons();
 
-  const saveChatbotFlowState = useSaveChatbotFlowState()
+  const saveChatbotFlowState = useSaveChatbotFlowState();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
 
@@ -40,7 +40,7 @@ export const CommandMenuChatbotFlowPage = () => {
       viewport: { x: 0, y: 0, zoom: 0 },
     };
 
-    saveChatbotFlowState(updatedChatbotFlow)
+    saveChatbotFlowState(updatedChatbotFlow);
   };
 
   return (

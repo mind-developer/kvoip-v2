@@ -2,13 +2,13 @@ import {
   NewLogicNodeData,
   RecordType,
 } from '@/chatbot/types/LogicNodeDataType';
-import { comparisonOptions } from '@/chatbot/types/condicionalOptions';
+import { comparisonOptions } from '@/chatbot/types/conditionalOptions';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Select, SelectValue } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { IconTrash, Label, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -34,11 +34,11 @@ const StyledSelect = styled(Select)`
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
-`
+`;
 
 const StyledLabel = styled(Label)`
-  padding-bottom: ${({ theme }) => theme.spacing(1)}
-`
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+`;
 
 const StyledOptionLabel = styled(Label)`
   display: flex;
@@ -47,7 +47,7 @@ const StyledOptionLabel = styled(Label)`
   gap: 40px;
   border-bottom: ${({ theme }) => theme.border.color.light}
   margin-bottom: ${({ theme }) => theme.spacing(8)}
-`
+`;
 
 export const LogicOption: React.FC<LogicOptionProps> = ({
   condition,
@@ -57,19 +57,11 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
 }) => {
   const { getIcon } = useIcons();
   const { sectors } = useFindAllSectors();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [localMessage, setLocalMessage] = useState(condition.message ?? '');
   const [recordType, setRecordType] = useState<RecordType>(
     condition.recordType ?? '',
   );
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '30px';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [localMessage]);
 
   if (!sectors) return null;
 
@@ -97,7 +89,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   };
 
   const handleSector = (val: SelectValue) => {
-    if (!val) return
+    if (!val) return;
     if (val !== condition.sectorId) {
       const updated = {
         ...condition,
@@ -112,12 +104,12 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
     <div>
       <StyledOptionLabel>{condition.option}.</StyledOptionLabel>
       <StyledLogicNodeWrapper>
-        {showDeleteButton &&
+        {showDeleteButton && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <StyledLabel>Delete</StyledLabel>
             <Button Icon={IconTrash} onClick={onDelete} />
           </div>
-        }
+        )}
         <StyledSelect
           label="Record"
           dropdownId={`select-record-type-${condition.option}`}
@@ -148,7 +140,6 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               type="source"
               position={Position.Right}
               isConnectable={true}
-              onDragEnd={(e) => console.log(e)}
             />
           </>
         )}
@@ -166,7 +157,6 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               type="source"
               position={Position.Right}
               isConnectable={true}
-              onDragEnd={(e) => console.log(e)}
             />
           </>
         )}

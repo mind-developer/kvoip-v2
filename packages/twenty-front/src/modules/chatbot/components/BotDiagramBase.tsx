@@ -1,3 +1,6 @@
+/* eslint-disable @nx/workspace-no-state-useref */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
@@ -6,8 +9,6 @@ import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/compon
 
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconPlus } from '@tabler/icons-react';
 
 import {
   addEdge,
@@ -30,6 +31,7 @@ import { useRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
@@ -110,25 +112,31 @@ export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
-  chatbotId
+  chatbotId,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
 
-  const chatbotFlowData = useRecoilState(chatbotFlowState)[0]
+  const chatbotFlowData = useRecoilState(chatbotFlowState)[0];
 
-  const [nodes, setNodes] = useState<GenericNode[]>(chatbotFlowData?.nodes ?? []);
+  const [nodes, setNodes] = useState<GenericNode[]>(
+    chatbotFlowData?.nodes ?? [],
+  );
   const [edges, setEdges] = useState<Edge[]>(chatbotFlowData?.edges ?? []);
 
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [contextMenuPosition, setContextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
 
   const reactFlow = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [rfInstance, setRfInstance] =
-    useState<ReactFlowInstance<GenericNode, Edge> | null>(null);
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
+    GenericNode,
+    Edge
+  > | null>(null);
 
-  //ideally remove this hook
   const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
 
   //what exactly does this validation do? and what's up with the naming?
@@ -138,7 +146,7 @@ export const BotDiagramBase = ({
   //ideally redo this hook...
   const { updateFlow } = useUpdateChatbotFlow();
 
-  const selectedNode = useRecoilState(chatbotFlowSelectedNodeState)
+  const chatbotFlowSelectedNode = useRecoilState(chatbotFlowSelectedNodeState);
 
   useEffect(() => {
     if (
@@ -165,15 +173,24 @@ export const BotDiagramBase = ({
   const onNodesChange = useCallback(
     (newNodesState: NodeChange[]) =>
       setNodes((nds) => {
-        const appliedNodeChanges = applyNodeChanges(structuredClone(newNodesState), structuredClone(nds))
+        const appliedNodeChanges = applyNodeChanges(
+          structuredClone(newNodesState),
+          structuredClone(nds),
+        );
         newNodesState.forEach((newNodeState: NodeChange) => {
           if (newNodeState.type === 'position' && !newNodeState.dragging) {
-            updateFlow({ ...rfInstance!.toObject(), nodes: appliedNodeChanges, chatbotId })
+            if (rfInstance) {
+              updateFlow({
+                ...rfInstance.toObject(),
+                nodes: appliedNodeChanges,
+                chatbotId,
+              });
+            }
           }
-        })
-        return appliedNodeChanges
+        });
+        return appliedNodeChanges;
       }),
-    [selectedNode],
+    [chatbotFlowSelectedNode],
   );
 
   const onEdgesChange = useCallback(
@@ -203,12 +220,10 @@ export const BotDiagramBase = ({
       if (!source || !target) return false;
 
       const sameSourceHandleAlreadyUsed = edges.some(
-        (edge) =>
-          edge.source === source && edge.sourceHandle === sourceHandle,
+        (edge) => edge.source === source && edge.sourceHandle === sourceHandle,
       );
       const sameTargetHandleAlreadyUsed = edges.some(
-        (edge) =>
-          edge.target === target && edge.targetHandle === targetHandle,
+        (edge) => edge.target === target && edge.targetHandle === targetHandle,
       );
 
       return !sameSourceHandleAlreadyUsed && !sameTargetHandleAlreadyUsed;
@@ -217,10 +232,10 @@ export const BotDiagramBase = ({
   );
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     setContextMenuPosition({ x: e.clientX, y: e.clientY });
-    setIsContextMenuOpen(prev => !prev);
-  }
+    setIsContextMenuOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     if (!isDefined(containerRef.current) || !reactFlow.viewportInitialized) {
@@ -266,20 +281,27 @@ export const BotDiagramBase = ({
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
 
-      {isContextMenuOpen && <div style={{ position: 'absolute', top: contextMenuPosition.y, left: contextMenuPosition.x }}><ChatbotActionMenu /></div>}
+      {isContextMenuOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: contextMenuPosition.y,
+            left: contextMenuPosition.x,
+          }}
+        >
+          <ChatbotActionMenu />
+        </div>
+      )}
 
       <StyledButtonContainer>
         <StyledButton
           accent="default"
           Icon={IconPlus}
           title="Add node"
-          onClick={() =>
-            chatbotId && openChatbotFlowCommandMenu(chatbotId)
-          }
+          onClick={() => chatbotId && openChatbotFlowCommandMenu(chatbotId)}
         />
         <StyledButton accent="blue" title="Save" onClick={saveFlow} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>
   );
 };
-

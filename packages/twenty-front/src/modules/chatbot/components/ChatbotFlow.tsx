@@ -1,5 +1,7 @@
-import '@xyflow/react/dist/style.css';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { NodeTypes, ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 import ConditionalNode from '@/chatbot/components/nodes/ConditionalNode';
 import FileNode from '@/chatbot/components/nodes/FileNode';
@@ -34,30 +36,34 @@ export const ChatbotFlow = ({
   const { chatbot } = useGetChatbot(targetableObjectId);
   const status = chatbot?.statuses ?? 'DEACTIVATED';
 
-  const setFlowState = useSetRecoilState(chatbotFlowState)
-  const [canRender, setCanRender] = useState(false)
+  const setFlowState = useSetRecoilState(chatbotFlowState);
+  const [canRender, setCanRender] = useState(false);
 
   const { refetch, loading } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
     variables: { chatbotId: targetableObjectId },
     onCompleted: (d) => {
-      setFlowState(d.getChatbotFlowById)
-      setCanRender(true)
+      setFlowState(d.getChatbotFlowById);
+      setCanRender(true);
     },
     onError: () => {
-      setFlowState({ nodes: initialNodes, edges: initialEdges, chatbotId: targetableObjectId })
-      setCanRender(true)
-    }
+      setFlowState({
+        nodes: initialNodes,
+        edges: initialEdges,
+        chatbotId: targetableObjectId,
+      });
+      setCanRender(true);
+    },
   });
 
   useEffect(() => {
-    if (chatbot?.id) refetch()
+    if (chatbot?.id) refetch();
   }, [chatbot]);
 
   const tagProps = chatbotStatusTagProps({
     chatbotStatus: status,
   });
 
-  if (loading) return <p>Loading</p>
+  if (loading) return <p>Loading</p>;
   if (canRender) {
     return (
       <ReactFlowProvider>

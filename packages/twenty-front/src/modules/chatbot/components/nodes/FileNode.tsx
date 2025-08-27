@@ -41,8 +41,8 @@ function FileNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
-  const nodeId = useNodeId()
-  const node = useNodes().filter(filterNodes => filterNodes.id === nodeId)[0]
+  const nodeId = useNodeId();
+  const node = useNodes().filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { getIcon } = useIcons();
   const IconFileText = getIcon('IconFileText');
 
@@ -80,10 +80,17 @@ function FileNode({
         outgoingNodeId: nodeId,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetConnections, sourceConnections]);
 
   return (
-    <BaseNode onTitleBlur={() => { }} onTitleChange={() => { }} icon={'IconFileImport'} title={data.title ?? 'Node title'} nodeTypeDescription='File node'>
+    <BaseNode
+      onTitleBlur={() => {}}
+      onTitleChange={() => {}}
+      icon={'IconFileImport'}
+      title={data.title ?? 'Node title'}
+      nodeTypeDescription="File node"
+    >
       <Handle
         type="target"
         position={Position.Left}

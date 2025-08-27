@@ -1,3 +1,5 @@
+/* eslint-disable @nx/workspace-component-props-naming */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -5,7 +7,6 @@ import { ReactNode, useState } from 'react';
 import { Label, useIcons } from 'twenty-ui/display';
 import { ThemeColor } from 'twenty-ui/theme';
 
-// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledBaseNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   border: 2px solid ${({ theme }) => theme.border.color.medium};
@@ -57,13 +58,14 @@ const StyledNodeType = styled.div`
 `.withComponent(Label);
 
 const StyledLabel = styled(Label)`
+  margin-top: -${({ theme }) => theme.spacing(90)};
   padding: ${({ theme }) => theme.spacing(0, 1.25)} 0px;
-  marginTop: -${({ theme }) => theme.spacing(90)};
 `;
 
 const StyledTitleInput = styled(TitleInput)`
   padding-bottom: 0px;
-`
+`;
+
 const BaseNode = ({
   icon,
   title,
@@ -89,7 +91,7 @@ const BaseNode = ({
 
   const theme = useTheme();
   const iconHeader = (
-    <Icon size={18} color={theme.color[iconColor ?? 'gray']}/>
+    <Icon size={18} color={theme.color[iconColor ?? 'gray']} />
   );
 
   const [customTitle, setCustomTitle] = useState<string>(title);

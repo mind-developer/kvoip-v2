@@ -1,26 +1,21 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { LogicOption } from '@/chatbot/components/nodes/LogicOption';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
-import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { GenericNode } from '@/chatbot/types/GenericNode';
 import {
   NewConditionalState,
   NewLogicNodeData,
 } from '@/chatbot/types/LogicNodeDataType';
-import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconPlus, Label } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
-type ChatbotFlowCondicionalEventFormProps = {
+type ChatbotFlowConditionalEventFormProps = {
   selectedNode: GenericNode;
 };
 
@@ -40,34 +35,24 @@ const StyledStepBody = styled.div`
 
 export const ChatbotFlowConditionalEventForm = ({
   selectedNode,
-}: ChatbotFlowCondicionalEventFormProps) => {
-  const initialText =
-    (selectedNode.data?.text) ?? '';
+}: ChatbotFlowConditionalEventFormProps) => {
+  const initialText = selectedNode.data?.text ?? '';
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [title, setTitle] = useState("Conditional Node");
   const [text, setText] = useState<string>(initialText);
   const [nodeData, setNodeData] = useState<NewConditionalState>(initialState);
 
-  const { updateFlow } = useUpdateChatbotFlow();
   const { deleteSelectedNode } = useDeleteSelectedNode();
-  const { saveDataValue } = useHandleNodeValue()
-
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
-  const setChatbotFlowSelectedNode = useSetRecoilState(
-    chatbotFlowSelectedNodeState,
-  );
+  const { saveDataValue } = useHandleNodeValue();
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (selectedNode.data.logic) {
       setNodeData(selectedNode.data.logic);
     }
   }, [selectedNode.data.logic]);
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -84,41 +69,11 @@ export const ChatbotFlowConditionalEventForm = ({
     if (e.length > 4000) {
       return;
     }
-    setText(e)
-  };
-
-  const persistNode = (updatedLogic?: NewConditionalState) => {
-    if (!chatbotFlow) return;
-
-    const updatedNode = {
-      ...selectedNode,
-      data: {
-        ...selectedNode.data,
-        title,
-        text,
-        logic: updatedLogic ?? nodeData,
-      },
-    };
-
-    const updatedNodes = chatbotFlow.nodes.map((n: GenericNode) =>
-      n.id === selectedNode.id ? updatedNode : n,
-    );
-
-    // TODO: Build a type using Omit<...> instead.
-    const { ...chatbotFlowWithoutId } = chatbotFlow;
-
-    const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
-      nodes: updatedNodes,
-      viewport: { x: 0, y: 0, zoom: 0 },
-    };
-
-    setChatbotFlowSelectedNode(updatedNode);
-    updateFlow(updatedChatbotFlow);
+    setText(e);
   };
 
   const handleTextBlur = () => {
-    saveDataValue('text', text, selectedNode)
+    saveDataValue('text', text, selectedNode);
   };
 
   const addCondition = () => {
@@ -146,7 +101,7 @@ export const ChatbotFlowConditionalEventForm = ({
 
     const updated = { ...nodeData, logicNodeData: newData };
 
-    saveDataValue('logic', updated, selectedNode)
+    saveDataValue('logic', updated, selectedNode);
   };
 
   const deleteCondition = (index: number) => {
@@ -187,7 +142,7 @@ export const ChatbotFlowConditionalEventForm = ({
                 showDeleteButton={nodeData.logicNodes.length > 1}
               />
             </>
-          )
+          );
         })}
         <Button
           onClick={addCondition}
