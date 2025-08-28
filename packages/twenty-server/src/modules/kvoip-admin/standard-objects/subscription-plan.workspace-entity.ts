@@ -42,7 +42,7 @@ const subscriptionKeyOptions: FieldMetadataComplexOption[] = [
   {
     value: BillingPlanKey.ENTERPRISE,
     label: 'Enterprise',
-    position: 0,
+    position: 1,
     color: 'blue',
   },
 ];
@@ -90,7 +90,7 @@ export class SubscriptionPlanWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS.planKey,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
     description: msg`Number of members in the workspace`,
     icon: 'IconUsers',
@@ -101,7 +101,7 @@ export class SubscriptionPlanWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
     description: msg`Number of members in the workspace`,
     icon: 'IconUsers',

@@ -40,10 +40,13 @@ export class SubscriptionService {
   private async getBaseProductFromBillingSubscription(
     subscription: BillingSubscription,
   ) {
-    const baseProdcut = subscription.billingSubscriptionItems.find((item) => {
+
+    if(subscription.billingSubscriptionItems.length === 0) throw new Error('Subscrioption doesnt contain any items.')
+
+    const baseProdcut = subscription.billingSubscriptionItems.find((item) => 
       item.billingProduct.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT;
-    })?.billingProduct;
+        BillingProductKey.BASE_PRODUCT
+    )?.billingProduct;
 
     if (!isDefined(baseProdcut))
       throw new Error('Base product not fond for subscription');
@@ -135,7 +138,7 @@ export class SubscriptionService {
     id?: string;
     stripeSubscriptionId?: string;
   }) {
-    const subscription = await this.billingSubscriptionRepository.findOne({
+    const subscription = await this.billingSubscriptionRepository.findOneOrFail({
       where: [
         {
           id,

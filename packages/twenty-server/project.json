@@ -242,7 +242,7 @@
       },
       "defaultConfiguration": "seed"
     },
-    "kvoip:admin-workspace": {
+    "kvoip:add-workspace-admin": {
       "executor": "nx:run-commands",
       "dependsOn": [
         "build"

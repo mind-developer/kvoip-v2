@@ -2,7 +2,6 @@ import { Logger, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
 import {
   DataSource,
   EntitySubscriberInterface,
@@ -13,6 +12,7 @@ import {
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionService } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/services/subscription.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @EventSubscriber()
 export class BillingSubscriptionSubscriber
@@ -41,11 +41,14 @@ export class BillingSubscriptionSubscriber
 
   async afterInsert(event: InsertEvent<BillingSubscription>) {
     try {
-      const { id } = event.entity;
+      const { id, stripeSubscriptionId } = event.entity;
 
-      await this.subscriptionService.handleSubscriptionUpsert({
-        id,
-      });
+      if(isDefined(id) || isDefined(stripeSubscriptionId)) {
+        await this.subscriptionService.handleSubscriptionUpsert({
+          id,
+          stripeSubscriptionId
+        });
+      }
     } catch (error) {
       this.logger.log(error);
     }
