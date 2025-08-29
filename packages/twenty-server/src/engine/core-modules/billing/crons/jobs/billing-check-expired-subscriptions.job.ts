@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -48,6 +49,14 @@ export class CheckExpiredSubscriptionsJob {
     this.logger.log(`Found ${workspacesCount} active workspaces`);
 
     for (const workspace of workspaces) {
+      const isAdmin = await workspace.featureFlags.find(
+        (feature) =>
+          feature.key === FeatureFlagKey.IS_KVOIP_ADMIN &&
+          feature.value === true,
+      );
+
+      if (isAdmin) continue;
+
       const subscription = await this.billingSubscriptionRepository.findOne({
         where: {
           workspaceId: workspace.id,
