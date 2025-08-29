@@ -19,11 +19,15 @@ type IClient = {
   name?: string;
 };
 
-type IMessage = {
+export type IMessage = {
   from: string;
   message: string;
   createdAt: Date;
   type: string;
+  sent?: boolean;
+  received?: boolean;
+  read?: boolean;
+  edited?: boolean;
 };
 
 type ITimeline = {

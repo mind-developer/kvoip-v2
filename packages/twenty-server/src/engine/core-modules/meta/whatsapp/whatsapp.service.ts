@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpException, HttpStatus, InternalServerErrorException, Logger } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import {
   collection,
   doc,
@@ -12,6 +12,7 @@ import {
   query,
   setDoc,
   Timestamp,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { Repository } from 'typeorm';
@@ -27,8 +28,13 @@ import {
   SendMessageInput,
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+import { UpdateMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
-import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
+import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
+import {
+  IMessage,
+  WhatsappDocument,
+} from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -114,7 +120,10 @@ export class WhatsappService {
     }
   }
 
-  async sendMessage(sendMessageInput: SendMessageInput, workspaceId: string) {
+  async sendMessage(
+    sendMessageInput: SendMessageInput,
+    workspaceId: string,
+  ): Promise<SendMessageResponse | null> {
     const { integrationId, to, type, message, fileId } = sendMessageInput;
 
     const whatsappRepository =
@@ -170,30 +179,26 @@ export class WhatsappService {
         throw new InternalServerError('Invalid message type');
     }
 
-    const url = `${this.META_API_URL}/${integration.phoneId}/messages`;
+    const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
+    const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
 
     const headers = {
       Authorization: `Bearer ${integration.accessToken}`,
       'Content-Type': 'application/json',
     };
 
+    let response = {} as AxiosResponse<SendMessageResponse>;
+
     try {
-      if (tipoApi === 'MetaAPI') await axios.post(url, fields, { headers })
-      else {
-        const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`
-        axios.post(baileysUrl, { to: to + "@s.whatsapp.net", message }).then(() => {
-        }).catch((e) => {
-          console.warn(`Failed to send message to ${baileysUrl}: ${e}`, HttpStatus.INTERNAL_SERVER_ERROR);
-        })
-
+      if (tipoApi === 'MetaAPI') {
+        response = await axios.post(metaUrl, fields, { headers });
+        return response.data;
       }
-      return true;
-
+      response = await axios.post(baileysUrl, { fields });
+      return response.data;
     } catch (error) {
-      console.warn(
-        'Failed to send message',
-        error,
-      );
+      console.warn('Failed to send message:', error.message);
+      return null;
     }
   }
 
@@ -203,8 +208,6 @@ export class WhatsappService {
   ): Promise<WhatsappTemplatesResponse> {
     if (!integrationId) {
       // eslint-disable-next-line no-console
-      console.error('Whatsapp integration id not found');
-
       return { templates: [] };
     }
 
@@ -289,6 +292,24 @@ export class WhatsappService {
       );
 
       return false;
+    }
+  }
+
+  async updateMessageAtFirebase(
+    updateMessageInput: UpdateMessageInput,
+    integrationId: string,
+  ) {
+    const messagesCollection = collection(this.firestoreDb, 'whatsapp');
+    const docId = `${integrationId}_${updateMessageInput.clientPhoneNumber}`;
+    const docRef = doc(messagesCollection, docId);
+    const docSnapshot = await getDoc(docRef);
+    const data = docSnapshot.data();
+    if (data) {
+      //todo: optimize (probably)
+      const updatedMessages = data.messages.map((message: IMessage) => {
+        return { ...message, updateMessageInput };
+      });
+      await updateDoc(docRef, { messages: updatedMessages });
     }
   }
 
@@ -416,24 +437,38 @@ export class WhatsappService {
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
+
     if (!docSnapshot.exists()) {
-      console.warn('saveEventMessageAtFirebase: documento não encontrado no Firestore para iniciar atendimento. Payload:', JSON.stringify(whatsappDoc, null, 2));
+      console.warn(
+        'saveEventMessageAtFirebase: documento não encontrado no Firestore para iniciar atendimento. Payload:',
+        JSON.stringify(whatsappDoc, null, 2),
+      );
+
       return false;
     }
     const whatsappIntegration = docSnapshot.data() as WhatsappDocument;
 
     // Se não houver messages, apenas atualiza status, agent, sector e timeline
-    if (!whatsappDoc.messages || !Array.isArray(whatsappDoc.messages) || !whatsappDoc.messages[0]) {
+    if (
+      !whatsappDoc.messages ||
+      !Array.isArray(whatsappDoc.messages) ||
+      !whatsappDoc.messages[0]
+    ) {
       whatsappIntegration.status = whatsappDoc.status || statusEnum.InProgress;
 
       if (whatsappDoc.agent) whatsappIntegration.agent = whatsappDoc.agent;
       if (whatsappDoc.sector) whatsappIntegration.sector = whatsappDoc.sector;
 
-      if (whatsappDoc.timeline && Array.isArray(whatsappDoc.timeline) && whatsappDoc.timeline[0]) {
+      if (
+        whatsappDoc.timeline &&
+        Array.isArray(whatsappDoc.timeline) &&
+        whatsappDoc.timeline[0]
+      ) {
         whatsappIntegration.timeline = whatsappIntegration.timeline || [];
         whatsappIntegration.timeline.push({ ...whatsappDoc.timeline[0] });
       }
       await setDoc(docRef, whatsappIntegration);
+
       return true;
     }
 

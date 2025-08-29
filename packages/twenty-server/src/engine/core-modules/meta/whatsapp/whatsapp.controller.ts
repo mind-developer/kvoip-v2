@@ -64,6 +64,8 @@ export class WhatsappController {
   ) {
     this.logger.log(`${id} - Received incoming message`);
 
+    //se for atualização de estado, inserir aqui updateMessage e passar id de integração, além do UpdateMessageInput
+
     const isReceiving = !!body.entry[0].changes[0].value.messages;
 
     const messages = body.entry[0].changes[0].value.messages[0];
