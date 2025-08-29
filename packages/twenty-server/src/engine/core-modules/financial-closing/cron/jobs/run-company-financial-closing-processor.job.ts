@@ -33,21 +33,23 @@ export class RunCompanyFinancialClosingJobProcessor {
       data.financialClosing,
     );
 
-    { // Caso emissão esteja desabilitada ou nao configurada na company
-      data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
+    // data.financialClosingExecutionsRepository
 
-        await this.financialClosingNFService.emitNFForCompany(
-          data.workspaceId,
-          data.company,
-          charge,
-          data.financialClosing,
-        )
+    // { // Caso emissão esteja desabilitada ou nao configurada na company
+    //   data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
 
-      ) : (
-        // Aqui deve atualizar os relatorios para nao emissao do boleto TODO
-        null
-      )
-    }
+    //     await this.financialClosingNFService.emitNFForCompany(
+    //       data.workspaceId,
+    //       data.company,
+    //       charge,
+    //       data.financialClosing,
+    //     )
+
+    //   ) : (
+    //     // Aqui deve atualizar os relatorios para nao emissao do boleto TODO
+    //     null
+    //   )
+    // }
 
   }
 }
