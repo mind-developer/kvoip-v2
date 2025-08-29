@@ -305,6 +305,21 @@ msgstr "Alíquota ISS"
 msgid "Alíquota PIS (%)"
 msgstr "Alíquota PIS (%)"
 
+#. js-lingui-id: 3ed5PO
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "All subscription plans"
+msgstr "All subscription plans"
+
+#. js-lingui-id: Iv0EBT
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "All Subscriptions"
+msgstr "All Subscriptions"
+
+#. js-lingui-id: UwV99B
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "All Workspaces"
+msgstr "All Workspaces"
+
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
@@ -395,6 +410,11 @@ msgstr "Assignee"
 msgid "Associated Agent Id"
 msgstr "Associated Agent Id"
 
+#. js-lingui-id: iM9x1n
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Associated Billing Subscription Id"
+msgstr "Associated Billing Subscription Id"
+
 #. js-lingui-id: j1ztQ8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated extensionNumber"
@@ -407,6 +427,7 @@ msgstr "Associated User Document"
 
 #. js-lingui-id: Max2GU
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Associated User Id"
 
@@ -587,6 +608,7 @@ msgstr "Automatically create records for people you participated with in an even
 
 #. js-lingui-id: kfcRb0
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Avatar"
 msgstr "Avatar"
 
@@ -604,6 +626,11 @@ msgstr "Avatar Url"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #~ msgid "Behavioral Events"
 #~ msgstr "Behavioral Events"
+
+#. js-lingui-id: 9bpGMC
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Billing subscription Id"
+msgstr "Billing subscription Id"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -839,6 +866,7 @@ msgstr "Chatbots"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "City"
@@ -1005,11 +1033,13 @@ msgstr "Contact auto creation policy"
 
 #. js-lingui-id: RnsmQs
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s avatar"
 msgstr "Contact’s avatar"
 
 #. js-lingui-id: pL+pqi
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s city"
 msgstr "Contact’s city"
 
@@ -1021,6 +1051,7 @@ msgstr "Contact’s company"
 #. js-lingui-id: ITlFIB
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "Contact’s Emails"
@@ -1037,17 +1068,20 @@ msgstr "Contact’s Linkedin account"
 
 #. js-lingui-id: 6xPSVt
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s name"
 msgstr "Contact’s name"
 
 #. js-lingui-id: Y37CZ4
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s phone number"
 msgstr "Contact’s phone number"
 
 #. js-lingui-id: zsW3gg
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "Contact’s phone numbers"
 
@@ -1061,6 +1095,11 @@ msgstr "Contact’s X/Twitter account"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Context"
 msgstr "Context"
+
+#. js-lingui-id: 6cItrN
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Core schema workspace id"
+msgstr "Core schema workspace id"
 
 #. js-lingui-id: I99Miw
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -1239,6 +1278,7 @@ msgstr "Due Date"
 #. js-lingui-id: BXEcos
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Emails"
 msgstr "Emails"
@@ -1679,6 +1719,11 @@ msgstr "Folder name"
 msgid "Full path"
 msgstr "Full path"
 
+#. js-lingui-id: Mv7bH1
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Gateway"
+msgstr "Gateway"
+
 #. js-lingui-id: XM2gXm
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "Generated URL"
@@ -1750,6 +1795,12 @@ msgstr "ID of the traceable link associated with this log"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
+
+#. js-lingui-id: sJGljQ
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "Identifier"
+msgstr "Identifier"
 
 #. js-lingui-id: m+vtsd
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
@@ -2267,6 +2318,8 @@ msgstr "Messaging provider refresh token"
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2333,6 +2386,16 @@ msgstr "NFC-e"
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "NFS-e"
 msgstr "NFS-e"
+
+#. js-lingui-id: rSwDb8
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Nº Extentions"
+msgstr "Nº Extentions"
+
+#. js-lingui-id: xlBk6I
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Nº Members"
+msgstr "Nº Members"
 
 #. js-lingui-id: U8O0LR
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -2503,6 +2566,19 @@ msgstr "Number"
 msgid "Number of employees in the company"
 msgstr "Number of employees in the company"
 
+#. js-lingui-id: DhTzyr
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Number of extentions in the workspace"
+msgstr "Number of extentions in the workspace"
+
+#. js-lingui-id: CRfF1b
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "Number of members in the workspace"
+msgstr "Number of members in the workspace"
+
 #. js-lingui-id: 91jcCE
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 msgid "Número do contrato do assinante"
@@ -2647,6 +2723,14 @@ msgstr "Origem da mercadoria (0-8). Placeholder: 0"
 msgid "Output"
 msgstr "Output"
 
+#. js-lingui-id: LtI9AS
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "Owner"
+msgstr "Owner"
+
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group"
@@ -2725,11 +2809,15 @@ msgstr "Person linked to the support"
 
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Person record Position"
 msgstr "Person record Position"
 
 #. js-lingui-id: zmwvG2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Phone"
 msgstr "Phone"
 
@@ -2741,8 +2829,14 @@ msgstr "Phone ID"
 #. js-lingui-id: m2ivgq
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Phones"
 msgstr "Phones"
+
+#. js-lingui-id: GdgCoi
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Plan"
+msgstr "Plan"
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2766,6 +2860,10 @@ msgstr "Point of Contact"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2897,6 +2995,9 @@ msgstr "Received At"
 #~ msgstr "Record id"
 
 #. js-lingui-id: QBQXiF
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Recurrence"
 msgstr "Recurrence"
@@ -3020,6 +3121,7 @@ msgstr "State Registration number for tax purposes in Brazil"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Status"
 msgstr "Status"
@@ -3058,6 +3160,59 @@ msgstr "Sub field name"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Subject"
+
+#. js-lingui-id: WVzGc2
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "Subscription"
+msgstr "Subscription"
+
+#. js-lingui-id: 05zA+u
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Subscription plan"
+msgstr "Subscription plan"
+
+#. js-lingui-id: sacFDm
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "Subscription record position"
+msgstr "Subscription record position"
+
+#. js-lingui-id: BbNdfy
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Subscription workspace"
+msgstr "Subscription workspace"
+
+#. js-lingui-id: HK1xRp
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Subscription workspace owner"
+msgstr "Subscription workspace owner"
+
+#. js-lingui-id: AYS5SS
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "SubscriptionPlan plan"
+msgstr "SubscriptionPlan plan"
+
+#. js-lingui-id: FFXf1g
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "SubscriptionPlan plans"
+msgstr "SubscriptionPlan plans"
+
+#. js-lingui-id: P6F38F
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "Subscriptions"
+msgstr "Subscriptions"
+
+#. js-lingui-id: /561Ja
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "Subscriptions linked to the owner."
+msgstr "Subscriptions linked to the owner."
+
+#. js-lingui-id: lyCRLa
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Subscriptions linked to the workspace."
+msgstr "Subscriptions linked to the workspace."
 
 #. js-lingui-id: XYLcNv
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3382,6 +3537,16 @@ msgstr "The name of the whatsapp integration"
 msgid "The opportunity name"
 msgstr "The opportunity name"
 
+#. js-lingui-id: Bmr02S
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "The payment gateway used for the subscription"
+msgstr "The payment gateway used for the subscription"
+
+#. js-lingui-id: T63gib
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "The person who is responsible for managing the workspace and its resources."
+msgstr "The person who is responsible for managing the workspace and its resources."
+
 #. js-lingui-id: bDvBRk
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 msgid "The phone number ID obtained from Facebook Developer"
@@ -3391,6 +3556,32 @@ msgstr "The phone number ID obtained from Facebook Developer"
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "The source of the traceable link (e.g., Google, Facebook)"
 msgstr "The source of the traceable link (e.g., Google, Facebook)"
+
+#. js-lingui-id: LIu93i
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "The subscription price paid"
+msgstr "The subscription price paid"
+
+#. js-lingui-id: IBljiz
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "The subscription status"
+msgstr "The subscription status"
+
+#. js-lingui-id: 07sSDJ
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "The subscription trial period end date"
+msgstr "The subscription trial period end date"
+
+#. js-lingui-id: Hjkxd9
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "The subscription trial period start date"
+msgstr "The subscription trial period start date"
+
+#. js-lingui-id: 1XPu/N
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "The unique indentifier code for the subscription"
+msgstr "The unique indentifier code for the subscription"
 
 #. js-lingui-id: ftaTVP
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
@@ -3446,6 +3637,26 @@ msgstr "The workflow version name"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "The workflow version status"
+
+#. js-lingui-id: OJGOvt
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "The workspace id from the core schema."
+msgstr "The workspace id from the core schema."
+
+#. js-lingui-id: Ca8aJs
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "The workspace name"
+msgstr "The workspace name"
+
+#. js-lingui-id: zgBOw5
+#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
+msgid "The workspace subscription plan"
+msgstr "The workspace subscription plan"
+
+#. js-lingui-id: SUTQ8V
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "The workspace woner primary email."
+msgstr "The workspace woner primary email."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3605,6 +3816,16 @@ msgstr "Traceable URL"
 msgid "Traceables"
 msgstr "Traceables"
 
+#. js-lingui-id: PmdF/i
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Trial End"
+msgstr "Trial End"
+
+#. js-lingui-id: zNilp2
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Trial Start"
+msgstr "Trial Start"
+
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3658,6 +3879,7 @@ msgstr "User Email"
 
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "User Id"
 msgstr "User Id"
 
@@ -3721,6 +3943,7 @@ msgstr "Valor/Alíquota IPI"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
 msgid "Value"
 msgstr "Value"
 
@@ -4163,6 +4386,11 @@ msgstr "WorkflowVersion"
 msgid "WorkflowVersion workflow"
 msgstr "WorkflowVersion workflow"
 
+#. js-lingui-id: pmUArF
+#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+msgid "Workspace"
+msgstr "Workspace"
+
 #. js-lingui-id: CbGxon
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Workspace member"
@@ -4198,11 +4426,33 @@ msgstr "Workspace member position"
 msgid "Workspace Members"
 msgstr "Workspace Members"
 
+#. js-lingui-id: Gu6kUh
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Workspace owner"
+msgstr "Workspace owner"
+
+#. js-lingui-id: wXBT2b
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Workspace owner primary e-mail"
+msgstr "Workspace owner primary e-mail"
+
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "WorkspaceMember"
+
+#. js-lingui-id: pmt7u4
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "Workspaces"
+msgstr "Workspaces"
+
+#. js-lingui-id: laxJ8N
+#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
+msgid "Workspaces linked to the person."
+msgstr "Workspaces linked to the person."
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
