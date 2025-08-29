@@ -11,6 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
 import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class OwnerService {
@@ -103,23 +104,48 @@ export class OwnerService {
       await tenantRepository.update(tenant.id, {
         ownerId: owner.id,
       });
+
+      const subscriptionRepository =
+        await this.kvoipAdminService.getSubscriptionRepository();
+
+      const exsitingSubscriptionForWorkspace =
+        await subscriptionRepository.findOneBy({
+          tenantId: tenant.id,
+        });
+
+      if (isDefined(exsitingSubscriptionForWorkspace)) {
+        await subscriptionRepository.update(
+          exsitingSubscriptionForWorkspace.id,
+          {
+            ownerId: owner.id,
+          },
+        );
+      }
     }
   }
 
   async handleOwnerWorkspaceMemberUpsert({
     userId,
     workspaceId,
+    member,
   }: {
     userId: string;
     workspaceId: string;
+    member: WorkspaceMemberWorkspaceEntity;
   }) {
     const user = await this.userRepository.findOneBy({
       id: userId,
     });
 
     if (isDefined(user)) {
+      const updatedUser = await this.userRepository.save({
+        id: user.id,
+        firstName: member.name.firstName,
+        lastName: member.name.lastName,
+      });
+
       await this.handleOwnerUpsert({
-        user,
+        user: updatedUser,
         workspaceId,
       });
     }
