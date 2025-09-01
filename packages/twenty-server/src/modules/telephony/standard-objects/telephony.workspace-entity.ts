@@ -132,11 +132,11 @@ export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.listenToCalls,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.BOOLEAN,
     label: msg`Listen to Calls`,
   })
   @Field(() => String, { nullable: true })
-  listenToCalls: string | null;
+  listenToCalls: boolean | null = false;
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.recordCalls,
@@ -144,7 +144,7 @@ export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Record Calls`,
   })
   @Field(() => Boolean, { nullable: true })
-  recordCalls: boolean | null;
+  recordCalls: boolean | null = false;
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.blockExtension,
@@ -152,7 +152,7 @@ export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Block Extension`,
   })
   @Field(() => Boolean, { nullable: true })
-  blockExtension: boolean | null;
+  blockExtension: boolean | null = false;
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.enableMailbox,
@@ -160,7 +160,7 @@ export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Enable Mailbox`,
   })
   @Field(() => Boolean, { nullable: true })
-  enableMailbox: boolean | null;
+  enableMailbox: boolean | null = false;
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.emailForMailbox,

@@ -4,6 +4,7 @@ import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects
 
 export type UpdateTelephonyArgs = {
   id: string;
+  workspaceId: string;
   data: UpdateTelephonyInput;
 };
 
