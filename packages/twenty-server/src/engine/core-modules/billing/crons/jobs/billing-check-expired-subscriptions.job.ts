@@ -42,6 +42,9 @@ export class CheckExpiredSubscriptionsJob {
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
+      relations: {
+        featureFlags: true,
+      },
     });
 
     const workspacesCount = workspaces.length;
@@ -49,7 +52,7 @@ export class CheckExpiredSubscriptionsJob {
     this.logger.log(`Found ${workspacesCount} active workspaces`);
 
     for (const workspace of workspaces) {
-      const isAdmin = await workspace.featureFlags.find(
+      const isAdmin = workspace.featureFlags.find(
         (feature) =>
           feature.key === FeatureFlagKey.IS_KVOIP_ADMIN &&
           feature.value === true,
