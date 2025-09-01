@@ -10,6 +10,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
@@ -67,12 +68,14 @@ export class RunFinancialClosingJobProcessor {
         },
       );
   
-    const newExecutionLog = financialClosingExecutionsRepository.create({
+    let newExecutionLog = financialClosingExecutionsRepository.create({
       name: `Execução do fechamento ${financialClosing.id}`,
       executedAt: new Date(),
       billingModelIds: financialClosing.billingModelIds,
       financialClosingId: financialClosing.id,
     });
+
+    newExecutionLog = await financialClosingExecutionsRepository.save(newExecutionLog);
 
     await addFinancialClosingExecutionLog(
       newExecutionLog,
@@ -80,6 +83,31 @@ export class RunFinancialClosingJobProcessor {
       'info',
       `Iniciando execução do fechamento ${financialClosing.id}`,
     );
+
+    // -------------------------------------------------------
+
+    // const companyFinancialClosingExecutionsRepository =
+    //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+    //     workspaceId,
+    //     'companyFinancialClosingExecution',
+    //     {
+    //       shouldBypassPermissionChecks: true,
+    //     },
+    //   );
+
+    // let newCompanyExecutionLog = companyFinancialClosingExecutionsRepository.create({
+    //   name: `Execução do fechamento ${financialClosing.id} - Company`,
+    //   executedAt: new Date(),
+    //   // financialClosingExecution: null,
+    //   financialClosingExecutionId: newExecutionLog.id,
+    //   status: FinancialClosingExecutionStatusEnum.PENDING, // ou 'RUNNING' | 'SUCCESS' | 'FAILED'
+    //   companyId: 'company-uuid-5678',
+    //   chargeValue: 1500.75,
+    // });
+
+    // newCompanyExecutionLog = await companyFinancialClosingExecutionsRepository.save(newCompanyExecutionLog);
+    
+    // this.logger.log(`COMPANY FINANCIAL CLOSING EXECUTION LOG: ${JSON.stringify(newCompanyExecutionLog, null, 2)}`);
     
     try {
       const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, financialClosing);
@@ -95,20 +123,28 @@ export class RunFinancialClosingJobProcessor {
 
       this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
 
+
+      // const companyFinancialClosingExecutionsRepository =
+      //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+      //     workspaceId,
+      //     'companyFinancialClosingExecution',
+      //     { shouldBypassPermissionChecks: true },
+      //   );
+
       for (const company of companiesWithAmount) {
-        // await this.messageQueueService.add<CompanyFinancialClosingJobData>(
-        //   RunCompanyFinancialClosingJobProcessor.name,
-        //   {
-        //     financialClosing,
-        //     workspaceId,
-        //     company: company.data,
-        //     amountToBeCharged: company.amountToBeCharged,
-        //     billingModel: company.billingModel,
-        //     executionLog: newExecutionLog,
-        //     financialClosingExecutionsRepository
-        //   },
-        //   // { attempts: 3, removeOnComplete: true }
-        // );
+
+        // let newCompanyExecution = companyFinancialClosingExecutionsRepository.create({
+        //   name: `Execução do fechamento ${financialClosing.id} - ${company.data.name}`,
+        //   executedAt: new Date(),
+        //   financialClosingExecutionId: newExecutionLog.id,
+        //   status: FinancialClosingExecutionStatusEnum.PENDING,
+        //   companyId: company.data.id,
+        //   chargeValue: company.amountToBeCharged,
+        //   calculatedChargeValue: true,
+        //   invoiceEmissionType: company.data.typeEmissionNF, // se existir no objeto
+        // });
+
+        // newCompanyExecution = await companyFinancialClosingExecutionsRepository.save(newCompanyExecution);
 
         try {
           await this.messageQueueService.add<CompanyFinancialClosingJobData>(
@@ -147,6 +183,7 @@ export class RunFinancialClosingJobProcessor {
       });
 
     } catch (error) {
+
       await financialClosingExecutionsRepository.update(newExecutionLog.id, {
         status: FinancialClosingExecutionStatusEnum.ERROR,
       });

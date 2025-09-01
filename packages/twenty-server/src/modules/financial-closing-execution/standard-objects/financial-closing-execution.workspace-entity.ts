@@ -20,17 +20,7 @@ import { FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS, TRACEABLE_STANDARD_FIEL
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
-import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_FINANCIAL_CLOSING_EXECUTION: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.financialClosingExecution,
@@ -167,19 +157,15 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
     timestamp: string;
   }[];
 
-  @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.searchVector,
-    type: FieldMetadataType.TS_VECTOR,
-    label: SEARCH_VECTOR_FIELD.label,
-    description: SEARCH_VECTOR_FIELD.description,
-    icon: 'IconUser',
-    generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_FINANCIAL_CLOSING_EXECUTION,
-    ),
+  @WorkspaceRelation({
+    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Company Financial Closing Executions`,
+    description: msg`Reference to company financial closing executions`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    inverseSideFieldKey: 'financialClosingExecution',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: string;
+  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
 }
