@@ -69,6 +69,7 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
   width: auto;
   max-width: 70%;
@@ -283,6 +284,8 @@ const StyledUnreadMarker = styled.div`
     background-color: ${({ theme }) => theme.color.red};
     margin-left: ${({ theme }) => theme.spacing(2)};
   }
+
+  user-select: none;
 `;
 
 export const PaneChat = () => {
@@ -660,7 +663,8 @@ export const PaneChat = () => {
         <PaneChatHeader />
         <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
           {selectedChat.messages.map((message: any, index: number) => {
-            const isSystemMessage = message.from !== selectedChat.client.name;
+            const isSystemMessage =
+              message.from !== selectedChat.client.name || message.fromMe;
 
             const validMessageType =
               message.type === MessageType.STARTED ||
@@ -775,13 +779,13 @@ export const PaneChat = () => {
                       <StyledMessageBubble
                         time={formatDate(message.createdAt).time}
                         isSystemMessage={isSystemMessage}
+                        status={message.status}
                       >
                         {messageContent}
                       </StyledMessageBubble>
                       <StyledNameAndTimeContainer
                         isSystemMessage={isSystemMessage}
                       >
-                        {/* <UsernameComponent message={message} /> */}
                         {isMessageOlderThan24Hours(message) ?? (
                           <StyledDateContainer>
                             {formatDate(message.createdAt).date}

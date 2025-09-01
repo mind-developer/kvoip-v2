@@ -20,6 +20,7 @@ type IClient = {
 };
 
 export type IMessage = {
+  id?: string;
   from: string;
   message: string;
   createdAt: Date;
@@ -28,6 +29,7 @@ export type IMessage = {
   received?: boolean;
   read?: boolean;
   edited?: boolean;
+  fromMe?: boolean;
 };
 
 type ITimeline = {

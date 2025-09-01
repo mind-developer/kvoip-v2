@@ -63,8 +63,22 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     this.logger.log(`${id} - Received incoming message`);
+    console.log(body);
 
-    //se for atualização de estado, inserir aqui updateMessage e passar id de integração, além do UpdateMessageInput
+    if (body.entry[0].changes[0].statuses) {
+      console.log('got update status:', body.entry[0].changes[0]);
+      this.whatsappService.updateMessageAtFirebase({
+        integrationId: id,
+        id: body.entry[0].changes[0].statuses[0].id,
+        clientPhoneNumber:
+          body.entry[0].changes[0].statuses[0].baileysRecipientId.replace(
+            '@s.whatsapp.net',
+            '',
+          ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
+        status: body.entry[0].changes[0].statuses[0].status ?? null,
+      });
+      return;
+    }
 
     const isReceiving = !!body.entry[0].changes[0].value.messages;
 
@@ -176,6 +190,7 @@ export class WhatsappController {
             ? fileUrl
             : body.entry[0].changes[0].value.messages[0].text.body,
         type: body.entry[0].changes[0].value.messages[0].type,
+        fromMe: body.entry[0].changes[0].value.messages[0].fromMe,
       };
 
       const whatsappIntegration: Omit<

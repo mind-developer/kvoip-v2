@@ -7,7 +7,7 @@ import {
   SendMessageInput,
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
-import { UpdateMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-input';
+import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
@@ -105,6 +105,7 @@ export class WhatsappResolver {
           : sendMessageInput.message || '',
         type: sendMessageInput.type,
         messageId: sendMessageConfirmation.messages[0].id,
+        status: 'pending',
       };
 
       const whatsappIntegration: Omit<
@@ -134,12 +135,11 @@ export class WhatsappResolver {
   }
 
   @Mutation(() => Boolean)
-  async updateMessage(
-    @Args('updateMessageInput') updateMessageInput: UpdateMessageInput,
+  async updateMessageData(
+    @Args('updateMessageInput') updateMessageInput: UpdateMessageDataInput,
   ) {
     return await this.whatsappService.updateMessageAtFirebase(
       updateMessageInput,
-      integrationId,
     );
   }
 

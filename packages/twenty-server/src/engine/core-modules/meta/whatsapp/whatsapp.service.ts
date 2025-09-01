@@ -28,7 +28,7 @@ import {
   SendMessageInput,
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
-import { UpdateMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-input';
+import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
 import {
@@ -295,19 +295,20 @@ export class WhatsappService {
     }
   }
 
-  async updateMessageAtFirebase(
-    updateMessageInput: UpdateMessageInput,
-    integrationId: string,
-  ) {
+  async updateMessageAtFirebase(updateMessageInput: UpdateMessageDataInput) {
     const messagesCollection = collection(this.firestoreDb, 'whatsapp');
-    const docId = `${integrationId}_${updateMessageInput.clientPhoneNumber}`;
+    const docId = `${updateMessageInput.integrationId}_${updateMessageInput.clientPhoneNumber}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
     const data = docSnapshot.data();
+
     if (data) {
-      //todo: optimize (probably)
-      const updatedMessages = data.messages.map((message: IMessage) => {
-        return { ...message, updateMessageInput };
+      let updatedMessages = data.messages.map((message: IMessage) => {
+        if (message.id !== updateMessageInput.id) return message;
+        return {
+          ...message,
+          ...updateMessageInput,
+        };
       });
       await updateDoc(docRef, { messages: updatedMessages });
     }

@@ -3,10 +3,14 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class UpdateMessageInput {
+export class UpdateMessageDataInput {
   @Field()
   @IsString()
   id: string;
+
+  @Field()
+  @IsString()
+  integrationId: string;
 
   @Field()
   @IsString()
@@ -18,19 +22,14 @@ export class UpdateMessageInput {
   message?: string;
 
   @Field()
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  sent?: boolean;
+  status?: 'sent' | 'delivered' | 'read';
 
   @Field()
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  received?: boolean;
-
-  @Field()
-  @IsBoolean()
-  @IsOptional()
-  read?: boolean;
+  deleted?: boolean;
 
   @Field()
   @IsBoolean()

@@ -1484,6 +1484,7 @@ export type Mutation = {
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateMessageData: Scalars['Boolean']['output'];
   updateOneAgent: Agent;
   updateOneField: Field;
   updateOneObject: Object;
@@ -2018,6 +2019,11 @@ export type MutationUpdateIssuerArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateMessageDataArgs = {
+  updateMessageInput: UpdateMessageDataInput;
 };
 
 
@@ -3030,7 +3036,6 @@ export type SendMessageInput = {
   from: Scalars['String']['input'];
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
-  tipoApi: Scalars['String']['input'];
   to: Scalars['String']['input'];
   type: Scalars['String']['input'];
 };
@@ -3547,6 +3552,16 @@ export type UpdateIssuerInput = {
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
+};
+
+export type UpdateMessageDataInput = {
+  clientPhoneNumber: Scalars['String']['input'];
+  deleted: Scalars['Boolean']['input'];
+  edited: Scalars['Boolean']['input'];
+  id: Scalars['String']['input'];
+  integrationId: Scalars['String']['input'];
+  message: Scalars['String']['input'];
+  status: Scalars['String']['input'];
 };
 
 export type UpdateObjectPayload = {
