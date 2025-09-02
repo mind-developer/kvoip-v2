@@ -60,23 +60,24 @@ const StyledMessageContainer = styled.div<{ isSystemMessage: boolean }>`
 `;
 
 const StyledAvatarMessage = styled.div`
-  align-self: flex-start;
-  margin-top: 4px;
+  align-self: flex-end;
+  // margin-top: 4px;
+  z-index: 1;
 `;
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
-  flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
+  justify-items: center;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing(1)};
   width: auto;
   max-width: 70%;
   margin-left: ${({ isSystemMessage, theme }) =>
     isSystemMessage ? '0' : theme.spacing(2)};
   margin-right: ${({ isSystemMessage, theme }) =>
     isSystemMessage ? theme.spacing(2) : '0'};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -139,15 +140,13 @@ const StyledLine = styled.p`
 `;
 
 const StyledInputContainer = styled.div`
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-inline: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(1)};
-  position: relative;
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.xxl};
+  padding: ${({ theme }) => theme.spacing(2)} 0;
+  /* position: relative; */
 `;
 
 const StyledInput = styled.textarea`
@@ -157,10 +156,10 @@ const StyledInput = styled.textarea`
   outline: none;
   resize: none;
   font-size: ${({ theme }) => theme.font.size.md};
+  font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding-right: ${({ theme }) => theme.spacing(15)};
   padding-left: ${({ theme }) => theme.spacing(12)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
   min-height: 20px;
   max-height: 200px;
 `;
@@ -239,9 +238,8 @@ const StyledModalImage = styled.img`
 
 const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
+  justify-items: 'flex-end';
   justify-content: ${({ isSystemMessage }) =>
-    isSystemMessage ? 'flex-end' : 'none'};
-  align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'none'};
   width: 100%;
 `;
@@ -307,6 +305,7 @@ export const PaneChat = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
+  const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -347,6 +346,7 @@ export const PaneChat = () => {
       to: `${identifier}`,
       type,
       from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+      fromMe: true,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -384,7 +384,9 @@ export const PaneChat = () => {
     if (type === MessageType.TEXT) {
       const sendMessageInput = {
         ...sendMessageInputBase,
-        message: newMessage.trim(),
+        message:
+          `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n` +
+          newMessage.trim(),
       };
 
       sendWhatsappMessage(sendMessageInput);
@@ -421,6 +423,35 @@ export const PaneChat = () => {
     // }
   };
 
+  const audioCtx = new window.AudioContext();
+
+  function getAudioBufferFromBlob(blob: Blob) {
+    return new Promise<AudioBuffer>((resolve, reject) => {
+      blob.arrayBuffer().then((b) => {
+        audioCtx
+          .decodeAudioData(b)
+          .then((audioBuffer) => resolve(audioBuffer))
+          .catch((error) => reject(error));
+      });
+    });
+  }
+
+  function getAmplitudeFromAudioBuffer(audioBuffer: AudioBuffer) {
+    const channelData = audioBuffer.getChannelData(0);
+
+    let rmsSum = 0;
+
+    for (let i = 0; i < channelData.length; i++) {
+      const sample = channelData[i];
+      rmsSum += sample * sample;
+    }
+
+    const rmsAmplitude = Math.sqrt(rmsSum / channelData.length);
+
+    console.log(rmsAmplitude);
+    return rmsAmplitude;
+  }
+
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
@@ -430,6 +461,12 @@ export const PaneChat = () => {
     try {
       recorder.ondataavailable = (event) => {
         chunks.push(event.data);
+        getAudioBufferFromBlob(event.data).then((audioBuffer) => {
+          setAmplitudeValues((prev) => [
+            ...prev,
+            getAmplitudeFromAudioBuffer(audioBuffer),
+          ]);
+        });
       };
 
       recorder.onstop = () => {
@@ -601,6 +638,19 @@ export const PaneChat = () => {
             ref={textareaRef}
             onKeyDown={handleInputKeyDown}
           />
+          {amplitudeValues.map((amplitudeValue) => {
+            return (
+              <>
+                <div
+                  style={{
+                    height: amplitudeValue,
+                    width: '5px',
+                    backgroundColor: 'blue',
+                  }}
+                />
+              </>
+            );
+          })}
           <StyledDiv>
             <StyledIconButton
               disabled={selectedChat.lastMessage.type === 'template'}
@@ -637,6 +687,7 @@ export const PaneChat = () => {
               accent="blue"
               size="medium"
             />
+            )
           </StyledDiv>
         </StyledInputContainer>
       );
@@ -663,8 +714,7 @@ export const PaneChat = () => {
         <PaneChatHeader />
         <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
           {selectedChat.messages.map((message: any, index: number) => {
-            const isSystemMessage =
-              message.from !== selectedChat.client.name || message.fromMe;
+            const isSystemMessage = message.fromMe;
 
             const validMessageType =
               message.type === MessageType.STARTED ||
@@ -744,7 +794,12 @@ export const PaneChat = () => {
               default:
                 messageContent = (
                   <StyledMessage key={index} isSystemMessage={isSystemMessage}>
-                    {formatMessageContent(message.message)}
+                    {formatMessageContent(
+                      message.message.replace(
+                        `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n`,
+                        '',
+                      ),
+                    )}
                   </StyledMessage>
                 );
                 break;
@@ -780,6 +835,7 @@ export const PaneChat = () => {
                         time={formatDate(message.createdAt).time}
                         isSystemMessage={isSystemMessage}
                         status={message.status}
+                        messageText={message.message}
                       >
                         {messageContent}
                       </StyledMessageBubble>

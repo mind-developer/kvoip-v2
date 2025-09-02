@@ -16,6 +16,11 @@ class MessageInput {
   @IsString()
   @IsOptional()
   message?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  fromMe?: boolean;
 }
 
 @InputType()

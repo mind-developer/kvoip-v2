@@ -303,14 +303,16 @@ export class WhatsappService {
     const data = docSnapshot.data();
 
     if (data) {
-      let updatedMessages = data.messages.map((message: IMessage) => {
-        if (message.id !== updateMessageInput.id) return message;
-        return {
-          ...message,
-          ...updateMessageInput,
-        };
-      });
+      let updatedMessages = data.messages.map((message: IMessage) =>
+        message.id !== updateMessageInput.id
+          ? message
+          : {
+              ...message,
+              ...updateMessageInput,
+            },
+      );
       await updateDoc(docRef, { messages: updatedMessages });
+      return true;
     }
   }
 
@@ -422,6 +424,7 @@ export class WhatsappService {
         }
       }
 
+      console.log('saved to firebase');
       return true;
     }
 

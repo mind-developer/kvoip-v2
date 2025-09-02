@@ -1,56 +1,73 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { MessageStatus } from '@/chat/call-center/types/MessageStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChecks } from '@tabler/icons-react';
+import { IconChecks, IconTrash } from '@tabler/icons-react';
 import { ReactNode } from 'react';
-import { IconCheck, IconTrash } from 'twenty-ui/display';
+import { IconCheck } from 'twenty-ui/display';
 
-const StyledMessageBubbleContainer = styled.div<{ isSystemMessage: boolean }>`
-  background-color: ${({ isSystemMessage, theme }) =>
+const StyledMessageBubbleContainer = styled.div<{
+  messageText: string;
+  isSystemMessage: boolean;
+}>`
+  position: relative;
+  align-self: ${({ isSystemMessage }) =>
+    isSystemMessage ? 'flex-end' : 'flex-start'};
+
+  background: ${({ isSystemMessage, theme }) =>
     isSystemMessage
       ? theme.name === 'dark'
-        ? '#171E2C'
-        : '#E8EFFD'
-      : theme.background.tertiary};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(3)};
-  border-radius: ${({ theme }) => theme.spacing(4)};
-  max-width: max-content;
+        ? '#274238'
+        : '#D9FDD3'
+      : theme.background.quaternary};
+
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(3)}`};
+  border-radius: 15px;
+  // max-width: 75%;
   word-wrap: break-word;
   display: flex;
-  gap: 10px;
+  flex-direction: ${({ messageText }) =>
+    messageText.length < 30 ? 'row' : 'column'};
+  gap: 6px;
 
-  &:before,
-  &:after {
+  ${({ isSystemMessage, theme }) => `
+  &:before, &:after {
     content: '';
     position: absolute;
     bottom: 0;
-    height: 25px;
+    height: 15px;
   }
 
   &:before {
-    right: -7px;
+    ${isSystemMessage ? 'right' : 'left'}: -8px;
     width: 20px;
-    background-color: ${({ theme }) => theme.background.primary};
-    border-bottom-left-radius: 16px 14px;
+    background: ${
+      isSystemMessage
+        ? theme.name === 'dark'
+          ? '#274238'
+          : '#D9FDD3'
+        : theme.background.quaternary
+    };
+    border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 15px;
+    z-index: 0;
   }
 
   &:after {
-    right: -26px;
-    width: 26px;
-    background-color: ${({ theme }) => theme.background.primary};
-    border-bottom-left-radius: 10px;
+    ${isSystemMessage ? 'right' : 'left'}: -21px;
+    width: 21px;
+    background-color: ${theme.background.primary};
+    border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 5px;
   }
+`}
 `;
 
 const StyledTime = styled.p`
-  align-self: right;
+  align-self: flex-end;
   text-align: right;
   font-size: 11px;
   align-items: center;
   display: flex;
   gap: 5px;
-  color: ${({ theme }) => theme.background.invertedPrimary};
+  color: ${({ theme }) => theme.font.color.primary};
   opacity: 0.5;
   margin: 0;
   margin-top: ${({ theme }) => theme.spacing(1)};
@@ -59,11 +76,13 @@ const StyledTime = styled.p`
 
 export const StyledMessageBubble = ({
   children,
+  messageText,
   isSystemMessage,
   time,
   status,
 }: {
   children: ReactNode;
+  messageText: string;
   isSystemMessage: boolean;
   time: string;
   status: MessageStatus;
@@ -75,8 +94,7 @@ export const StyledMessageBubble = ({
 
   switch (status) {
     case 'read':
-      statusColor =
-        theme.name === 'dark' ? theme.color.blue30 : theme.color.blue80;
+      statusColor = theme.name === 'dark' ? '#08a5e9' : '#1B8BF7';
       StatusIcon = IconChecks;
       break;
     case 'delivered':
@@ -87,7 +105,10 @@ export const StyledMessageBubble = ({
   }
 
   return (
-    <StyledMessageBubbleContainer isSystemMessage={isSystemMessage}>
+    <StyledMessageBubbleContainer
+      messageText={messageText}
+      isSystemMessage={isSystemMessage}
+    >
       {children}
       <StyledTime>
         {time}

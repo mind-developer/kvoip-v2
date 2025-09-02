@@ -6,6 +6,7 @@ export interface SendMessageInputBase {
   message?: string;
   type: MessageType;
   fileId?: string;
+  fromMe?: boolean;
 }
 
 export interface SendEventMessageInput extends SendMessageInputBase {

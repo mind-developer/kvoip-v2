@@ -27,13 +27,13 @@ export const AvatarComponent: React.FC<WhatsappProps> = ({
   return (
     <Avatar
       avatarUrl={
-        message.from ===
+        message.from.replace('_', '') ===
         `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`
           ? currentWorkspaceMember?.avatarUrl
           : message.from
       }
-      placeholder={message.from}
-      placeholderColorSeed={message.from}
+      placeholder={message.from.replace('_', '')}
+      placeholderColorSeed={message.from.replace('_', '')}
       type={'rounded'}
       size="lg"
     />

@@ -100,11 +100,12 @@ export class WhatsappResolver {
       const lastMessage = {
         createdAt: new Date(),
         from: sendMessageInput.from,
+        fromMe: sendMessageInput.fromMe,
         message: sendMessageInput.fileId
           ? sendMessageInput.fileId
           : sendMessageInput.message || '',
         type: sendMessageInput.type,
-        messageId: sendMessageConfirmation.messages[0].id,
+        id: sendMessageConfirmation.messages[0].id,
         status: 'pending',
       };
 

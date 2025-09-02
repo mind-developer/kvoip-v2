@@ -62,12 +62,9 @@ export class WhatsappController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
-    this.logger.log(`${id} - Received incoming message`);
-    console.log(body);
-
     if (body.entry[0].changes[0].statuses) {
-      console.log('got update status:', body.entry[0].changes[0]);
-      this.whatsappService.updateMessageAtFirebase({
+      this.logger.log('got update status:', body.entry[0].changes[0]);
+      return await this.whatsappService.updateMessageAtFirebase({
         integrationId: id,
         id: body.entry[0].changes[0].statuses[0].id,
         clientPhoneNumber:
@@ -77,11 +74,9 @@ export class WhatsappController {
           ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
         status: body.entry[0].changes[0].statuses[0].status ?? null,
       });
-      return;
     }
 
-    const isReceiving = !!body.entry[0].changes[0].value.messages;
-
+    const isReceiving = body.entry[0].changes[0].value.messages;
     const messages = body.entry[0].changes[0].value.messages[0];
 
     let mediaId: string | undefined;
@@ -106,6 +101,7 @@ export class WhatsappController {
     }
 
     if (isReceiving) {
+      this.logger.log('IS RECEIVING');
       // Novo fluxo: verifica se é mídia e se existe base64
       let isBase64Media = false;
       let base64String = '';
@@ -184,6 +180,7 @@ export class WhatsappController {
 
       const lastMessage = {
         createdAt: new Date(),
+        id: body.entry[0].changes[0].value.messages[0].id,
         from: body.entry[0].changes[0].value.contacts[0].profile.name,
         message:
           mediaId || isBase64Media
@@ -215,7 +212,7 @@ export class WhatsappController {
         lastMessage,
       };
 
-      console.log(
+      this.logger.log(
         'Payload enviado ao Firestore:',
         JSON.stringify(whatsappIntegration, null, 2),
       );
