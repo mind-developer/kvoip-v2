@@ -1,11 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -16,15 +13,17 @@ import {
   COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
-import { Relation } from 'typeorm';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { TYPE_EMISSION_NF_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
+import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.companyFinancialClosingExecution,
@@ -83,15 +82,6 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   })
   status: string;
 
-  // @WorkspaceField({
-  //   standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companyId,
-  //   type: FieldMetadataType.TEXT,
-  //   label: msg`Company ID`,
-  //   description: msg`Reference to the company`,
-  //   icon: 'IconBuilding',
-  // })
-  // companyId: string;
-
   @WorkspaceRelation({
     standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
@@ -138,6 +128,38 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   })
   completedBoletoIssuance: boolean;
 
+  @WorkspaceRelation({
+    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.charge,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Charge`,
+    description: msg`Reference to the charge`,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    inverseSideFieldKey: 'companyFinancialClosingExecutions',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  charge: Relation<ChargeWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('charge')
+  chargeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notaFiscal,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Nota Fiscal`,
+    description: msg`Reference to the nota fiscal`,
+    icon: 'IconReceipt',
+    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    inverseSideFieldKey: 'companyFinancialClosingExecutions',
+    onDelete: RelationOnDeleteAction.SET_NULL, 
+  })
+  @WorkspaceIsNullable()
+  notaFiscal: Relation<NotaFiscalWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('notaFiscal')
+  notaFiscalId: string | null;
+
   @WorkspaceField({
     standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoiceEmissionType,
     type: FieldMetadataType.SELECT,
@@ -158,6 +180,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
     defaultValue: false,
   })
   completedInvoiceIssuance: boolean;
+
+  
 
   @WorkspaceField({
     standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.logs,

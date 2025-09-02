@@ -31,6 +31,7 @@ import { NfTypeOptions } from 'src/modules/focus-nfe/types/NfType';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -442,6 +443,18 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecutions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Company Financial Closing Executions`,
+    description: msg`Reference to the company Financial Closing Executions`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.searchVector,

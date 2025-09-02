@@ -196,6 +196,7 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
   notaFiscal: 'c3a90d91-f458-4331-8d55-ff86a066191d',
+  companyFinancialClosingExecutions: '8eecb7cc-889b-4192-90d9-32626d021c9e',
 };
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
@@ -286,6 +287,8 @@ export const COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
   completedBoletoIssuance: 'a97ed23b-6ef5-49a2-9e9d-28c3f76e8b2c',
   invoiceEmissionType: '2c1b2c94-6ff2-44e6-9d12-dc2d7af08420',
   completedInvoiceIssuance: '71bfc1f2-65cd-40e4-8c6f-89453f2a5e0b',
+  charge: '4c8b620c-33db-470a-a080-61c86e23cea5',
+  notaFiscal: '53f5a4de-a603-48f5-afc2-c8ae8792af42',
   logs: 'ce3b3f25-dba1-46f2-9c33-bc2a94f5c10e',
 };
 
@@ -374,6 +377,7 @@ export const NOTA_FISCAL_FIELD_IDS = {
   dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
   numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
   createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
+  companyFinancialClosingExecutions: 'ce57261a-9711-4a7b-8515-ff4e7cecb5ce',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

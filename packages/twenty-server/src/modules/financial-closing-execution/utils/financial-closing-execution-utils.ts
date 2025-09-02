@@ -1,12 +1,13 @@
 import { Repository } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 const logger = new Logger('FinancialClosingExecutionUtils');
 
 export async function addFinancialClosingExecutionLog(
-  execution: FinancialClosingExecutionWorkspaceEntity,
-  repo: Repository<FinancialClosingExecutionWorkspaceEntity>,
+  execution: FinancialClosingExecutionWorkspaceEntity | CompanyFinancialClosingExecutionWorkspaceEntity,
+  repo: Repository<FinancialClosingExecutionWorkspaceEntity | CompanyFinancialClosingExecutionWorkspaceEntity>,
   level: 'error' | 'warn' | 'info',
   message: string,
 ): Promise<void> {

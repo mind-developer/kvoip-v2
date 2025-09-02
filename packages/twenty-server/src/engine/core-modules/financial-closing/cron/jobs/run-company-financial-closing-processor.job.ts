@@ -7,6 +7,8 @@ import { FinancialClosingNFService } from 'src/engine/core-modules/financial-clo
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -18,10 +20,19 @@ export class RunCompanyFinancialClosingJobProcessor {
   constructor(
     private readonly financialClosingChargeService: FinancialClosingChargeService,
     private readonly financialClosingNFService: FinancialClosingNFService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager, // precisa injetar aqui
   ) {}
 
   @Process(RunCompanyFinancialClosingJobProcessor.name)
   async handle(data: CompanyFinancialClosingJobData): Promise<void> {
+
+    const companyFinancialClosingExecutionsRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+        data.workspaceId,
+        'companyFinancialClosingExecution',
+        { shouldBypassPermissionChecks: true },
+      );
+
     this.logger.log(
       `🏦 🏦 🏦 🏦 🏦 🏦 2 Processing company for financial closing ${data.financialClosing.id} in workspace ${data.workspaceId}`
     );
@@ -32,6 +43,13 @@ export class RunCompanyFinancialClosingJobProcessor {
       data.amountToBeCharged,
       data.financialClosing,
     );
+
+    if(charge) {
+      await companyFinancialClosingExecutionsRepository.update(data.companyExecutionLog.id, {
+        chargeId: charge.id,
+        completedBoletoIssuance: true,
+      });
+    }
 
     // data.financialClosingExecutionsRepository
 

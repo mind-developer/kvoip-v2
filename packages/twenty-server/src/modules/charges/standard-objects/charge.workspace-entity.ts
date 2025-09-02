@@ -32,6 +32,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -328,6 +329,18 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Company Financial Closing Executions`,
+    description: msg`Company Financial Closing Executions linked to the charge`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.searchVector,

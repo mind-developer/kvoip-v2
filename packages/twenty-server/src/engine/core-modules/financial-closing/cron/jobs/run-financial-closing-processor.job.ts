@@ -29,6 +29,7 @@ export type CompanyFinancialClosingJobData = {
   amountToBeCharged: number;
   billingModel: string;
   executionLog: FinancialClosingExecutionWorkspaceEntity;
+  companyExecutionLog: CompanyFinancialClosingExecutionWorkspaceEntity;
 };
 
 @Processor({
@@ -77,6 +78,8 @@ export class RunFinancialClosingJobProcessor {
 
     newExecutionLog = await financialClosingExecutionsRepository.save(newExecutionLog);
 
+    this.logger.log(`newExecutionLog: ${JSON.stringify(newExecutionLog, null, 2)}`);
+
     await addFinancialClosingExecutionLog(
       newExecutionLog,
       financialClosingExecutionsRepository,
@@ -117,34 +120,37 @@ export class RunFinancialClosingJobProcessor {
         completedCompanySearch: true,
       });
 
-      const companiesWithAmount = await getAmountToBeChargedToCompanies(workspaceId, this.twentyORMGlobalManager, companies, financialClosing);
+      const companiesWithAmount = await getAmountToBeChargedToCompanies(
+        workspaceId, 
+        this.twentyORMGlobalManager, 
+        companies, 
+        financialClosing
+      );
 
       await financialClosingExecutionsRepository.update(newExecutionLog.id, { completedCostIdentification: true,});
 
       this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
 
-
-      // const companyFinancialClosingExecutionsRepository =
-      //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
-      //     workspaceId,
-      //     'companyFinancialClosingExecution',
-      //     { shouldBypassPermissionChecks: true },
-      //   );
+      const companyFinancialClosingExecutionsRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+          workspaceId,
+          'companyFinancialClosingExecution',
+          { shouldBypassPermissionChecks: true },
+        );
 
       for (const company of companiesWithAmount) {
 
-        // let newCompanyExecution = companyFinancialClosingExecutionsRepository.create({
-        //   name: `Execução do fechamento ${financialClosing.id} - ${company.data.name}`,
-        //   executedAt: new Date(),
-        //   financialClosingExecutionId: newExecutionLog.id,
-        //   status: FinancialClosingExecutionStatusEnum.PENDING,
-        //   companyId: company.data.id,
-        //   chargeValue: company.amountToBeCharged,
-        //   calculatedChargeValue: true,
-        //   invoiceEmissionType: company.data.typeEmissionNF, // se existir no objeto
-        // });
+        let newCompanyExecution = companyFinancialClosingExecutionsRepository.create({
+          name: `Execução do fechamento ${financialClosing.id} - ${company.data.name}`,
+          executedAt: new Date(),
+          financialClosingExecutionId: newExecutionLog.id,
+          companyId: company.data.id,
+          chargeValue: company.amountToBeCharged,
+          calculatedChargeValue: true,
+          invoiceEmissionType: company.data.typeEmissionNF, // se existir no objeto
+        });
 
-        // newCompanyExecution = await companyFinancialClosingExecutionsRepository.save(newCompanyExecution);
+        newCompanyExecution = await companyFinancialClosingExecutionsRepository.save(newCompanyExecution);
 
         try {
           await this.messageQueueService.add<CompanyFinancialClosingJobData>(
@@ -156,9 +162,11 @@ export class RunFinancialClosingJobProcessor {
               amountToBeCharged: company.amountToBeCharged,
               billingModel: company.billingModel,
               executionLog: newExecutionLog,
+              companyExecutionLog: newCompanyExecution,
             },
             // { attempts: 3, removeOnComplete: true }
           );
+
         } catch (jobError) {
 
           this.logger.error(`Error adding job for company ${company.data.id}: ${jobError.message}`, jobError.stack);
@@ -168,6 +176,13 @@ export class RunFinancialClosingJobProcessor {
             financialClosingExecutionsRepository,
             'error',
             `Erro ao adicionar job para a empresa ${company.data.id}: ${jobError.message}`,
+          );
+
+          await addFinancialClosingExecutionLog(
+            newCompanyExecution,
+            companyFinancialClosingExecutionsRepository,
+            'error',
+            `Erro na emissão: ${company.data.id}: ${jobError.message}`,
           );
 
           await financialClosingExecutionsRepository.increment(

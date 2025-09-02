@@ -56,11 +56,11 @@ export async function getAmountToBeChargedToCompanies(
               continue;
             }
 
-            try {
+            // try {
                 companyConsuption = await getPrepaidAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
-            } catch (error) {
-                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
-            }
+            // } catch (error) {
+            //     logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+            // }
 
             break;
 

@@ -525,7 +525,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Reference to the company Financial Closing Executions`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
-    inverseSideFieldKey: 'company',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
