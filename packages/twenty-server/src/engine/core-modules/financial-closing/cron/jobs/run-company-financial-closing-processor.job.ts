@@ -51,8 +51,6 @@ export class RunCompanyFinancialClosingJobProcessor {
       });
     }
 
-    // data.financialClosingExecutionsRepository
-
     // { // Caso emissão esteja desabilitada ou nao configurada na company
     //   data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
 

@@ -527,6 +527,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
 }

@@ -144,21 +144,33 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   @WorkspaceJoinColumn('charge')
   chargeId: string | null;
 
+  // @WorkspaceRelation({
+  //   standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notaFiscal,
+  //   type: RelationType.MANY_TO_ONE,
+  //   label: msg`Nota Fiscal`,
+  //   description: msg`Reference to the nota fiscal`,
+  //   icon: 'IconReceipt',
+  //   inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+  //   inverseSideFieldKey: 'companyFinancialClosingExecutions',
+  //   onDelete: RelationOnDeleteAction.SET_NULL, 
+  // })
+  // @WorkspaceIsNullable()
+  // notaFiscal: Relation<NotaFiscalWorkspaceEntity> | null;
+
+  // @WorkspaceJoinColumn('notaFiscal')
+  // notaFiscalId: string | null;
+
   @WorkspaceRelation({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notaFiscal,
-    type: RelationType.MANY_TO_ONE,
+    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notasFiscais,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Nota Fiscal`,
     description: msg`Reference to the nota fiscal`,
     icon: 'IconReceipt',
     inverseSideTarget: () => NotaFiscalWorkspaceEntity,
-    inverseSideFieldKey: 'companyFinancialClosingExecutions',
-    onDelete: RelationOnDeleteAction.SET_NULL, 
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  notaFiscal: Relation<NotaFiscalWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('notaFiscal')
-  notaFiscalId: string | null;
+  notasFiscais: Relation<NotaFiscalWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoiceEmissionType,
@@ -180,8 +192,6 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
     defaultValue: false,
   })
   completedInvoiceIssuance: boolean;
-
-  
 
   @WorkspaceField({
     standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.logs,

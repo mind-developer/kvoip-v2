@@ -339,6 +339,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]> | null;
 

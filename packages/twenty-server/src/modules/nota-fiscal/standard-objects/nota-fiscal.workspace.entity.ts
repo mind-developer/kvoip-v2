@@ -444,17 +444,34 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
+  // @WorkspaceRelation({
+  //   standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecutions,
+  //   type: RelationType.ONE_TO_MANY,
+  //   label: msg`Company Financial Closing Executions`,
+  //   description: msg`Reference to the company Financial Closing Executions`,
+  //   icon: 'IconBuildingSkyscraper',
+  //   inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+  //   onDelete: RelationOnDeleteAction.CASCADE,
+  // })
+  // @WorkspaceIsNullable()
+  // companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
+
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecutions,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Company Financial Closing Executions`,
-    description: msg`Reference to the company Financial Closing Executions`,
+    standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecution,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Company Financial Closing Execution`,
+    description: msg`Reference to the company financial closing execution`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
+    inverseSideFieldKey: 'notasFiscais',
+    onDelete: RelationOnDeleteAction.SET_NULL, 
   })
+  @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
+  companyFinancialClosingExecution: Relation<NotaFiscalWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('companyFinancialClosingExecution')
+  companyFinancialClosingExecutionId: string | null;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.searchVector,
