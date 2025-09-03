@@ -63,7 +63,6 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     if (body.entry[0].changes[0].statuses) {
-      this.logger.log('got update status:', body.entry[0].changes[0]);
       return await this.whatsappService.updateMessageAtFirebase({
         integrationId: id,
         id: body.entry[0].changes[0].statuses[0].id,
