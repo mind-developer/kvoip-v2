@@ -147,6 +147,7 @@ const subscriptionStatusOptions: FieldMetadataComplexOption[] = [
   shortcut: 'S',
   labelIdentifierStandardId: SUBSCRIPTION_STANDARD_FIELD_IDS.identifier,
 })
+@WorkspaceIsSystem()
 @WorkspaceIsSearchable()
 export class SubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

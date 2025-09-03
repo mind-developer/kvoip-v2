@@ -10,8 +10,6 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/utils/transform-database-billing-subscription-to-subscription-workspace-entity.util';
 import { translformDatabaseProductActiveToSubscriptonPlanStatus } from 'src/engine/core-modules/kvoip-admin/standard-objects/subscription/utils/transform-database-product-active-to-subscription-plan-status.util';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -25,14 +23,6 @@ export class SubscriptionService {
     private readonly kvoipAdminService: KvoipAdminService,
   ) {}
 
-  private get userRepository() {
-    return this.dataSource.getRepository(User);
-  }
-
-  private get workspaceRepository() {
-    return this.dataSource.getRepository(Workspace);
-  }
-
   private get billingSubscriptionRepository() {
     return this.dataSource.getRepository(BillingSubscription);
   }
@@ -40,12 +30,13 @@ export class SubscriptionService {
   private async getBaseProductFromBillingSubscription(
     subscription: BillingSubscription,
   ) {
+    if (subscription.billingSubscriptionItems.length === 0)
+      throw new Error('Subscrioption doesnt contain any items.');
 
-    if(subscription.billingSubscriptionItems.length === 0) throw new Error('Subscrioption doesnt contain any items.')
-
-    const baseProdcut = subscription.billingSubscriptionItems.find((item) => 
-      item.billingProduct.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT
+    const baseProdcut = subscription.billingSubscriptionItems.find(
+      (item) =>
+        item.billingProduct.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT,
     )?.billingProduct;
 
     if (!isDefined(baseProdcut))
@@ -138,23 +129,25 @@ export class SubscriptionService {
     id?: string;
     stripeSubscriptionId?: string;
   }) {
-    const subscription = await this.billingSubscriptionRepository.findOneOrFail({
-      where: [
-        {
-          id,
-        },
-        {
-          stripeSubscriptionId,
-        },
-      ],
-      relations: {
-        billingSubscriptionItems: {
-          billingProduct: {
-            billingPrices: true,
+    const subscription = await this.billingSubscriptionRepository.findOneOrFail(
+      {
+        where: [
+          {
+            id,
+          },
+          {
+            stripeSubscriptionId,
+          },
+        ],
+        relations: {
+          billingSubscriptionItems: {
+            billingProduct: {
+              billingPrices: true,
+            },
           },
         },
       },
-    });
+    );
 
     if (!isDefined(subscription))
       throw new Error('BillingSubscription not found.');

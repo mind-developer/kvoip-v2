@@ -51,11 +51,9 @@ export const transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity =
     status: billingSubscription.status,
     amount: {
       amountMicros:
-        billingSubscription.provider === BillingPaymentProviders.Stripe
-          ? getPriceFromStripeDecimal(
-              price.unitAmountDecimal?.toString() as string,
-            )
-          : (price.unitAmount as number),
+        (billingSubscription.provider === BillingPaymentProviders.Stripe
+          ? getPriceFromStripeDecimal(price.unitAmountDecimal as string)
+          : (price.unitAmount as number)) * 1_000_000,
       currencyCode: price.currency,
     },
     trialStart: billingSubscription.trialStart,
