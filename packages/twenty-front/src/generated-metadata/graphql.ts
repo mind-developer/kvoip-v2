@@ -3015,6 +3015,7 @@ export type SendEventMessageInput = {
   agent?: InputMaybe<MessageAgent>;
   eventStatus: Scalars['String']['input'];
   from: Scalars['String']['input'];
+  fromMe?: InputMaybe<Scalars['Boolean']['input']>;
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
   sector?: InputMaybe<MessageSector>;
@@ -3034,6 +3035,7 @@ export type SendInvitationsOutput = {
 export type SendMessageInput = {
   fileId?: InputMaybe<Scalars['String']['input']>;
   from: Scalars['String']['input'];
+  fromMe?: InputMaybe<Scalars['Boolean']['input']>;
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
   to: Scalars['String']['input'];
