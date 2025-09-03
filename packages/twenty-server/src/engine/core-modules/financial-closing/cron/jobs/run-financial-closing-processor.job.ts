@@ -15,6 +15,7 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
 import { addFinancialClosingExecutionLog } from 'src/modules/financial-closing-execution/utils/financial-closing-execution-utils';
+import { addCompanyFinancialClosingExecutionErrorLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 import { In, Repository } from 'typeorm';
 
 export type RunFinancialClosingJob = {
@@ -51,7 +52,7 @@ export class RunFinancialClosingJobProcessor {
   async handle(data: RunFinancialClosingJob): Promise<void> {
     const { financialClosingId, workspaceId } = data;
 
-    this.logger.log(`Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
+    this.logger.log(`11111111111111111111111111111 Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
     
     const financialClosing = await this.financialClosingService.findById(financialClosingId);
 
@@ -87,49 +88,14 @@ export class RunFinancialClosingJobProcessor {
       `Iniciando execução do fechamento ${financialClosing.id}`,
     );
 
-    // -------------------------------------------------------
-
-    // const companyFinancialClosingExecutionsRepository =
-    //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
-    //     workspaceId,
-    //     'companyFinancialClosingExecution',
-    //     {
-    //       shouldBypassPermissionChecks: true,
-    //     },
-    //   );
-
-    // let newCompanyExecutionLog = companyFinancialClosingExecutionsRepository.create({
-    //   name: `Execução do fechamento ${financialClosing.id} - Company`,
-    //   executedAt: new Date(),
-    //   // financialClosingExecution: null,
-    //   financialClosingExecutionId: newExecutionLog.id,
-    //   status: FinancialClosingExecutionStatusEnum.PENDING, // ou 'RUNNING' | 'SUCCESS' | 'FAILED'
-    //   companyId: 'company-uuid-5678',
-    //   chargeValue: 1500.75,
-    // });
-
-    // newCompanyExecutionLog = await companyFinancialClosingExecutionsRepository.save(newCompanyExecutionLog);
-    
-    // this.logger.log(`COMPANY FINANCIAL CLOSING EXECUTION LOG: ${JSON.stringify(newCompanyExecutionLog, null, 2)}`);
-    
     try {
       const companies = await getCompaniesForFinancialClosing(workspaceId, this.twentyORMGlobalManager, financialClosing);
 
+      // Marco de finalização da busca de empresas
       await financialClosingExecutionsRepository.update(newExecutionLog.id, {
         companiesTotal: companies.length,
         completedCompanySearch: true,
       });
-
-      const companiesWithAmount = await getAmountToBeChargedToCompanies(
-        workspaceId, 
-        this.twentyORMGlobalManager, 
-        companies, 
-        financialClosing
-      );
-
-      await financialClosingExecutionsRepository.update(newExecutionLog.id, { completedCostIdentification: true,});
-
-      this.logger.log(`Companies to be charged: ${companiesWithAmount.length}`);
 
       const companyFinancialClosingExecutionsRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
@@ -138,19 +104,54 @@ export class RunFinancialClosingJobProcessor {
           { shouldBypassPermissionChecks: true },
         );
 
-      for (const company of companiesWithAmount) {
-
+      // Cria os logs iniciais de execuções para cada empresa
+      const companyExecutions = new Map<string, CompanyFinancialClosingExecutionWorkspaceEntity>();
+      
+      for (const company of companies) {
         let newCompanyExecution = companyFinancialClosingExecutionsRepository.create({
-          name: `Execução do fechamento ${financialClosing.id} - ${company.data.name}`,
+          name: `Execução do fechamento ${financialClosing.id} - ${company.name}`,
           executedAt: new Date(),
           financialClosingExecutionId: newExecutionLog.id,
-          companyId: company.data.id,
-          chargeValue: company.amountToBeCharged,
-          calculatedChargeValue: true,
-          invoiceEmissionType: company.data.typeEmissionNF, // se existir no objeto
+          companyId: company.id,
+          status: FinancialClosingExecutionStatusEnum.PENDING,
         });
 
         newCompanyExecution = await companyFinancialClosingExecutionsRepository.save(newCompanyExecution);
+        companyExecutions.set(company.id, newCompanyExecution);
+      }
+
+      const companiesWithAmount = await getAmountToBeChargedToCompanies(
+        workspaceId, 
+        this.twentyORMGlobalManager, 
+        companies, 
+        financialClosing,
+        companyFinancialClosingExecutionsRepository,
+        companyExecutions
+      );
+
+      // Marco de finalização do cálculo de custo
+      await financialClosingExecutionsRepository.update(newExecutionLog.id, { completedCostIdentification: true,});
+
+      for (const company of companiesWithAmount) {
+
+        // Buscar a execução já criada para esta empresa
+        const companyExecution = companyExecutions.get(company.data.id);
+        if (!companyExecution) {
+          this.logger.error(`Execução não encontrada para empresa ${company.data.id}`);
+          continue;
+        }
+
+        // Atualizar a execução com os valores calculados
+        await companyFinancialClosingExecutionsRepository.update(companyExecution.id, {
+          chargeValue: company.amountToBeCharged,
+          calculatedChargeValue: true,
+          invoiceEmissionType: company.data.typeEmissionNF,
+        });
+
+        // Atualizar o objeto local
+        companyExecution.chargeValue = company.amountToBeCharged;
+        companyExecution.calculatedChargeValue = true;
+        companyExecution.invoiceEmissionType = company.data.typeEmissionNF;
 
         try {
           await this.messageQueueService.add<CompanyFinancialClosingJobData>(
@@ -162,15 +163,22 @@ export class RunFinancialClosingJobProcessor {
               amountToBeCharged: company.amountToBeCharged,
               billingModel: company.billingModel,
               executionLog: newExecutionLog,
-              companyExecutionLog: newCompanyExecution,
+              companyExecutionLog: companyExecution,
             },
             // { attempts: 3, removeOnComplete: true }
           );
+
+          // Marco de finalização da emissão de boletos e notas fiscais
+          await financialClosingExecutionsRepository.update(newExecutionLog.id, {
+            completedBoletoIssuance: true,
+            completedInvoiceIssuance: true,
+          });
 
         } catch (jobError) {
 
           this.logger.error(`Error adding job for company ${company.data.id}: ${jobError.message}`, jobError.stack);
 
+          // Log no fechamento geral
           await addFinancialClosingExecutionLog(
             newExecutionLog,
             financialClosingExecutionsRepository,
@@ -178,12 +186,13 @@ export class RunFinancialClosingJobProcessor {
             `Erro ao adicionar job para a empresa ${company.data.id}: ${jobError.message}`,
           );
 
-          await addFinancialClosingExecutionLog(
-            newCompanyExecution,
-            companyFinancialClosingExecutionsRepository,
-            'error',
-            `Erro na emissão: ${company.data.id}: ${jobError.message}`,
-          );
+          // Caso erro geral, atualiza o status da execução da empresa atual do processo
+          await addCompanyFinancialClosingExecutionErrorLog(
+             companyExecution,
+             companyFinancialClosingExecutionsRepository,
+             `Erro na emissão: ${jobError.message}`,
+             company.data
+           );
 
           await financialClosingExecutionsRepository.increment(
             { id: newExecutionLog.id },

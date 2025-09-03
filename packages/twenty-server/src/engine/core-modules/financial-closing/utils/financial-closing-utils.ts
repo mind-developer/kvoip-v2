@@ -8,6 +8,9 @@ import { Logger } from '@nestjs/common';
 import { BillingModelEnum } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { TypeDiscountEnum } from 'src/engine/core-modules/financial-closing/constants/type-discount.constants';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
+import { Repository } from 'typeorm';
+import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 
 const logger = new Logger('FinancialClosingUtils');
 
@@ -39,6 +42,8 @@ export async function getAmountToBeChargedToCompanies(
   twentyORMGlobalManager: TwentyORMGlobalManager,
   companies: CompanyWorkspaceEntity[],
   financialClosing?: FinancialClosing,
+  companyExecutionRepository?: Repository<CompanyFinancialClosingExecutionWorkspaceEntity>,
+  companyExecutions?: Map<string, CompanyFinancialClosingExecutionWorkspaceEntity>
 ): Promise<any[]> {
   const results = [];
 
@@ -51,17 +56,37 @@ export async function getAmountToBeChargedToCompanies(
         case BillingModelEnum.PREPAID:
             
             const errorMsgPrepaid = validateCompanyBillingModel(company, ['valueFixedMonthly', 'valueMinimumMonthly']);
-            if (errorMsgPrepaid) {
-              logger.log(errorMsgPrepaid);
+
+            if (errorMsgPrepaid) {              
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    errorMsgPrepaid,
+                    company
+                  );
+                }
+              }
               continue;
             }
 
-            // try {
+            try {
                 companyConsuption = await getPrepaidAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
-            // } catch (error) {
-            //     logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
-            // }
-
+            } catch (error) {
+                if (companyExecutionRepository && companyExecutions) {
+                  const companyExecution = companyExecutions.get(company.id);
+                  if (companyExecution) {
+                    await addCompanyFinancialClosingExecutionErrorLog(
+                      companyExecution,
+                      companyExecutionRepository,
+                      `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
+                      company
+                    );
+                  }
+                }
+            }
             break;
 
         case BillingModelEnum.POSTPAID:
@@ -69,15 +94,37 @@ export async function getAmountToBeChargedToCompanies(
             const errorMsgPostpaid = validateCompanyBillingModel(company, ['cdrId']);
             if (errorMsgPostpaid) {
               logger.log(errorMsgPostpaid);
+              
+              // Se temos os repositórios, usar a função centralizada para log de erro
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    errorMsgPostpaid,
+                    company
+                  );
+                }
+              }
               continue;
             }
 
             try {
                 companyConsuption = await getPostpaidAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
             } catch (error) {
-                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
+                    company
+                  );
+                }
+              }
             }
-
             break;
 
         case BillingModelEnum.PREPAID_UNLIMITED:
@@ -85,15 +132,37 @@ export async function getAmountToBeChargedToCompanies(
             const errorMsgPrepaidUnlimited = validateCompanyBillingModel(company, ['valueFixedMonthly']);
             if (errorMsgPrepaidUnlimited) {
               logger.log(errorMsgPrepaidUnlimited);
+              
+              // Se temos os repositórios, usar a função centralizada para log de erro
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    errorMsgPrepaidUnlimited,
+                    company
+                  );
+                }
+              }
               continue;
             }
 
             try {
                 companyConsuption = await getPrepaidUnlimitedAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
             } catch (error) {
-                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
+                    company
+                  );
+                }
+              }
             }
-
             break;
 
         case BillingModelEnum.POSTPAID_UNLIMITED:
@@ -101,20 +170,68 @@ export async function getAmountToBeChargedToCompanies(
             const errorMsgPostpaidUnlimited = validateCompanyBillingModel(company, ['valueFixedMonthly']);
             if (errorMsgPostpaidUnlimited) {
               logger.log(errorMsgPostpaidUnlimited);
+              
+              // Se temos os repositórios, usar a função centralizada para log de erro
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    errorMsgPostpaidUnlimited,
+                    company
+                  );
+                }
+              }
               continue;
             }
 
             try {
                 companyConsuption = await getPostpaidUnlimitedAmountTobeCharged(workspaceId, twentyORMGlobalManager, company, financialClosing);
             } catch (error) {
-                logger.error(`Erro ao buscar consumo para empresa ${company?.id}:`, error);
+              if (companyExecutionRepository && companyExecutions) {
+                const companyExecution = companyExecutions.get(company.id);
+                if (companyExecution) {
+                  await addCompanyFinancialClosingExecutionErrorLog(
+                    companyExecution,
+                    companyExecutionRepository,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
+                    company
+                  );
+                }
+              }
             }
-
             break;
 
         default:   
-            logger.log(`Modelo de faturamento desconhecido para a empresa ${company.name} - ${company.id}`);
-            continue;
+          if (companyExecutionRepository && companyExecutions) {
+            const companyExecution = companyExecutions.get(company.id);
+            if (companyExecution) {
+              await addCompanyFinancialClosingExecutionErrorLog(
+                companyExecution,
+                companyExecutionRepository,
+                `Modelo de faturamento desconhecido para a empresa ${company.name} - ${company.id}`,
+                company
+              );
+            }
+          }
+          break;
+    }
+
+    // caso valor seja 0 ou menor
+    if (!companyConsuption) {
+      if (companyExecutionRepository && companyExecutions) {
+        const companyExecution = companyExecutions.get(company.id);
+        if (companyExecution) {
+          await addCompanyFinancialClosingExecutionErrorLog(
+            companyExecution,
+            companyExecutionRepository,
+            `Valor a ser cobrado é 0 para a empresa ${company.name} - ${company.id}`,
+            company
+          );
+        }
+      }
+      continue;
     }
 
     results.push({
@@ -379,10 +496,94 @@ export async function getValueInCurrencyData(obj: CurrencyMetadata | null | unde
   return valueInCurrency || 0;
 }
 
+/**
+ * Função centralizada para adicionar logs de erro em empresas com problemas
+ * durante o processo de fechamento financeiro
+ */
+export async function addCompanyFinancialClosingExecutionErrorLog(
+  companyExecution: CompanyFinancialClosingExecutionWorkspaceEntity,
+  companyExecutionRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity>,
+  errorMessage: string,
+  company?: CompanyWorkspaceEntity
+): Promise<void> {
+  await addCompanyFinancialClosingExecutionLog(
+    companyExecution,
+    companyExecutionRepository,
+    errorMessage,
+    'error',
+    FinancialClosingExecutionStatusEnum.ERROR,
+    company
+  );
+}
+
+/**
+ * Função centralizada para adicionar logs em empresas durante o processo de fechamento financeiro
+ */
+export async function addCompanyFinancialClosingExecutionLog(
+  companyExecution: CompanyFinancialClosingExecutionWorkspaceEntity,
+  companyExecutionRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity>,
+  message: string,
+  level: 'info' | 'error' | 'warn' = 'info',
+  status?: FinancialClosingExecutionStatusEnum,
+  company?: CompanyWorkspaceEntity
+): Promise<void> {
+  const logEntry = {
+    level,
+    message,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Inicializa logs se não existir
+  companyExecution.logs = companyExecution.logs ?? [];
+  companyExecution.logs.push(logEntry);
+
+  // Log no console baseado no nível
+  const logMessage = `${level.toUpperCase()} no fechamento financeiro${company ? ` para empresa ${company.name} (${company.id})` : ''}: ${message}`;
+  
+  switch (level) {
+    case 'error':
+      logger.error(logMessage);
+      break;
+    case 'warn':
+      logger.warn(logMessage);
+      break;
+    default:
+      logger.log(logMessage);
+  }
+
+  // Prepara dados para atualização
+  const updateData: any = { logs: companyExecution.logs };
+  if (status) {
+    updateData.status = status;
+    companyExecution.status = status;
+  }
+
+  // Salva ou atualiza a execução com o novo log
+  if (companyExecution.id) {
+    await companyExecutionRepository.update(companyExecution.id, updateData);
+  } else {
+    Object.assign(companyExecution, updateData);
+    const saved = await companyExecutionRepository.save(companyExecution);
+    companyExecution.id = saved.id;
+  }
+}
+
 function validateCompanyBillingModel(company: CompanyWorkspaceEntity, requiredFields: (keyof CompanyWorkspaceEntity)[]): string | null {
   for (const field of requiredFields) {
-    if (!company[field]) {
+    const fieldValue = company[field];
+    
+    if (!fieldValue) {
       return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois não possui ${field} configurado`;
+    }
+    
+    // Se o campo é um objeto com estrutura de moeda (amountMicros/currencyCode)
+    if (typeof fieldValue === 'object' && fieldValue !== null && 'amountMicros' in fieldValue) {
+      const currencyField = fieldValue as { amountMicros: string | number | null; currencyCode: string };
+      
+      // Verifica o valor
+      if ( !currencyField.amountMicros || currencyField.amountMicros === '0') {
+        return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois o campo ${field} não possui valor`;
+      }
     }
   }
   return null;
