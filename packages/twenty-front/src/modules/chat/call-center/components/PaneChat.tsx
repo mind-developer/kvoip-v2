@@ -23,7 +23,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui/display';
+import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
@@ -145,8 +145,7 @@ const StyledInputContainer = styled.div`
   justify-content: space-between;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.xxl};
-  padding: ${({ theme }) => theme.spacing(2)} 0;
-  /* position: relative; */
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInput = styled.textarea`
@@ -158,27 +157,21 @@ const StyledInput = styled.textarea`
   font-size: ${({ theme }) => theme.font.size.md};
   font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding-right: ${({ theme }) => theme.spacing(15)};
-  padding-left: ${({ theme }) => theme.spacing(12)};
-  min-height: 20px;
+  height: 20px;
   max-height: 200px;
+  &::placeholder {
+    line-height: 20px;
+  }
 `;
 
 const StyledDiv = styled.div`
-  bottom: ${({ theme }) => theme.spacing(3.5)};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  right: 0;
 `;
 
 const StyledAnexDiv = styled.div`
   bottom: ${({ theme }) => theme.spacing(3)};
   cursor: pointer;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
 `;
 
 const StyledImageContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -296,11 +289,12 @@ export const PaneChat = () => {
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
-  const { getIcon } = useIcons();
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
 
-  const [isRecording, setIsRecording] = useState(false);
+  const [recordingState, setRecordingState] = useState<
+    'none' | 'recording' | 'paused'
+  >('none');
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
@@ -317,6 +311,8 @@ export const PaneChat = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { getIcon } = useIcons();
 
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
@@ -423,62 +419,72 @@ export const PaneChat = () => {
     // }
   };
 
-  const audioCtx = new window.AudioContext();
-
-  function getAudioBufferFromBlob(blob: Blob) {
-    return new Promise<AudioBuffer>((resolve, reject) => {
-      blob.arrayBuffer().then((b) => {
-        audioCtx
-          .decodeAudioData(b)
-          .then((audioBuffer) => resolve(audioBuffer))
-          .catch((error) => reject(error));
-      });
-    });
-  }
-
-  function getAmplitudeFromAudioBuffer(audioBuffer: AudioBuffer) {
-    const channelData = audioBuffer.getChannelData(0);
-
-    let rmsSum = 0;
-
-    for (let i = 0; i < channelData.length; i++) {
-      const sample = channelData[i];
-      rmsSum += sample * sample;
+  let audioCtx = new window.AudioContext();
+  const visualize = (stream: MediaStream, recorder: MediaRecorder) => {
+    if (!audioCtx) {
+      audioCtx = new AudioContext();
     }
 
-    const rmsAmplitude = Math.sqrt(rmsSum / channelData.length);
+    const source = audioCtx.createMediaStreamSource(stream);
 
-    console.log(rmsAmplitude);
-    return rmsAmplitude;
-  }
+    const bufferLength = 2048;
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = bufferLength;
+    const dataArray = new Float32Array(bufferLength);
+
+    source.connect(analyser);
+
+    const setValues = () => {
+      analyser.getFloatTimeDomainData(dataArray);
+      const dataSquared = dataArray.map((data) => data ** 2);
+      let total = 0;
+      dataSquared.forEach((data) => (total += data));
+      const rms = parseFloat(Math.sqrt(total / dataSquared.length).toFixed(5));
+      setAmplitudeValues((prev) => [...prev.slice(-50), rms]);
+    };
+
+    const timeout = () =>
+      setTimeout(() => {
+        if (recorder.state === 'recording') setValues();
+        if (stream.active) timeout();
+      }, 250);
+    timeout();
+  };
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
+    visualize(stream, recorder);
 
     const chunks: Blob[] = [];
+    // setAudioBlob(null);
 
     try {
       recorder.ondataavailable = (event) => {
         chunks.push(event.data);
-        getAudioBufferFromBlob(event.data).then((audioBuffer) => {
-          setAmplitudeValues((prev) => [
-            ...prev,
-            getAmplitudeFromAudioBuffer(audioBuffer),
-          ]);
-        });
-      };
-
-      recorder.onstop = () => {
         const audioBlob = new Blob(chunks, {
           type: 'audio/webm',
         });
         setAudioBlob(audioBlob);
       };
 
-      recorder.start();
+      recorder.onstop = () => {
+        setRecordingState('none');
+        setAudioBlob(null);
+        setAmplitudeValues([]);
+      };
+
+      recorder.onpause = () => {
+        setRecordingState('paused');
+      };
+
+      recorder.onresume = () => {
+        setRecordingState('recording');
+      };
+
+      recorder.start(500);
       setMediaRecorder(recorder);
-      setIsRecording(true);
+      setRecordingState('recording');
     } catch (error) {
       enqueueSnackBar('Failed to start recording. Check microphone access.', {
         variant: SnackBarVariant.Warning,
@@ -489,15 +495,18 @@ export const PaneChat = () => {
   const handleStopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      setIsRecording(false);
     }
   };
 
-  const handleToggleRecording = () => {
-    if (isRecording) {
-      handleStopRecording();
-    } else {
-      handleStartRecording();
+  const handlePauseRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.pause();
+    }
+  };
+
+  const handleResumeRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.resume();
     }
   };
 
@@ -526,7 +535,7 @@ export const PaneChat = () => {
 
   const handleInputChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = ev.target;
-    textarea.style.height = 'auto';
+    textarea.style.height = '20px';
     textarea.style.height = `${textarea.scrollHeight}px`;
 
     setNewMessage(ev.target.value);
@@ -589,9 +598,8 @@ export const PaneChat = () => {
   };
 
   const renderButtons = () => {
-    const IconX = getIcon('IconX');
     const IconMicrophone = getIcon('IconMicrophone');
-    const IconArrowRight = getIcon('IconArrowRight');
+    const IconArrowUp = getIcon('IconArrowUp');
 
     if (isWhatsappDocument(selectedChat) && showStartConversationButton) {
       return (
@@ -617,10 +625,16 @@ export const PaneChat = () => {
           <StyledAnexDiv>
             <IconButton
               disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={AnexIcon}
-              accent="default"
+              Icon={recordingState === 'none' ? AnexIcon : IconTrash}
+              accent={recordingState === 'none' ? 'default' : 'danger'}
               variant="tertiary"
-              onClick={() => setIsAnexOpen(!isAnexOpen)}
+              onClick={() => {
+                if (recordingState === 'none') {
+                  setIsAnexOpen(!isAnexOpen);
+                  return;
+                }
+                handleStopRecording();
+              }}
             />
           </StyledAnexDiv>
           {isAnexOpen && (
@@ -629,65 +643,81 @@ export const PaneChat = () => {
               from={`_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
             />
           )}
-          <StyledInput
-            disabled={selectedChat.lastMessage.type === 'template'}
-            className="new-message-input"
-            placeholder="Message"
-            onInput={handleInputChange}
-            value={newMessage}
-            ref={textareaRef}
-            onKeyDown={handleInputKeyDown}
-          />
-          {amplitudeValues.map((amplitudeValue) => {
-            return (
-              <>
-                <div
-                  style={{
-                    height: amplitudeValue,
-                    width: '5px',
-                    backgroundColor: 'blue',
-                  }}
-                />
-              </>
-            );
-          })}
+          {recordingState !== 'none' && (
+            <div
+              onClick={(e) => e.preventDefault()}
+              style={{
+                maxWidth: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: 30,
+                overflow: 'clip',
+                gap: 2,
+                pointerEvents: 'none',
+              }}
+            >
+              {amplitudeValues.map((amplitudeValue) => {
+                return (
+                  <div
+                    style={{
+                      height: Math.min(60 * amplitudeValue + 1, 20),
+                      width: '2px',
+                      backgroundColor: '#274238',
+                      position: 'relative',
+                      borderRadius: 2,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+          {recordingState === 'none' && (
+            <StyledInput
+              disabled={selectedChat.lastMessage.type === 'template'}
+              className="new-message-input"
+              placeholder="Message"
+              onInput={handleInputChange}
+              value={newMessage}
+              ref={textareaRef}
+              onKeyDown={handleInputKeyDown}
+            />
+          )}
           <StyledDiv>
-            <StyledIconButton
-              disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={
-                isRecording
-                  ? (props) => (
-                      // eslint-disable-next-line react/jsx-props-no-spreading
-                      <IconX {...props} color={theme.font.color.inverted} />
-                    )
-                  : (props) => (
-                      <IconMicrophone
-                        // eslint-disable-next-line react/jsx-props-no-spreading
-                        {...props}
-                        color={theme.font.color.inverted}
-                      />
-                    )
-              }
-              onClick={handleToggleRecording}
-              variant="primary"
-              accent={isRecording ? 'danger' : 'blue'}
-              size="medium"
-            />
-            <StyledIconButton
-              disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={(props) => (
-                <IconArrowRight
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...props}
-                  color={theme.font.color.inverted}
-                />
-              )}
-              onClick={handleSendMessage}
-              variant="primary"
-              accent="blue"
-              size="medium"
-            />
-            )
+            {!newMessage.length && (
+              <StyledIconButton
+                Icon={
+                  recordingState !== 'recording'
+                    ? IconMicrophone
+                    : IconPlayerPause
+                }
+                onClick={() => {
+                  if (recordingState === 'none') handleStartRecording();
+                  if (recordingState === 'recording') handlePauseRecording();
+                  if (recordingState === 'paused') handleResumeRecording();
+                }}
+                size="medium"
+              />
+            )}
+            {(newMessage.length > 0 || recordingState !== 'none') && (
+              <StyledIconButton
+                disabled={selectedChat.lastMessage.type === 'template'}
+                Icon={(props) => (
+                  <IconArrowUp
+                    {...props}
+                    color={theme.font.color.inverted}
+                    style={{ pointerEvents: 'none' }}
+                  />
+                )}
+                onClick={() => {
+                  handleSendMessage();
+                  handleStopRecording();
+                }}
+                variant="primary"
+                accent="blue"
+                size="medium"
+              />
+            )}
           </StyledDiv>
         </StyledInputContainer>
       );

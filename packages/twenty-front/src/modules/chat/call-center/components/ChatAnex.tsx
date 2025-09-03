@@ -29,6 +29,7 @@ const StyledMainContainer = styled.div`
   flex-direction: column;
   position: absolute;
   width: 180px;
+  z-index: 10;
 `;
 
 const StyledLabel = styled.label<LabelProps>`
