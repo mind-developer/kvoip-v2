@@ -4,21 +4,19 @@ import https from 'https';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { PabxServiceInterface } from 'src/modules/telephony/interfaces/pabxService.interface';
 
-import {
-  CreateDialingPlanInput,
-  UpdateRoutingRulesInput,
-} from 'src/engine/core-modules/telephony/inputs';
-import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
-import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
-import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ExtetionBody } from 'src/modules/telephony/types/Extention.type';
 import {
   ListCommonArgs,
   ListExtentionsArgs,
-} from 'src/engine/core-modules/telephony/types/pabx.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+} from 'src/modules/telephony/types/pabx.type';
+import { InsereEmpresa } from 'src/modules/telephony/types/Create/InsereEmpresa.type';
+import { InsereTronco } from 'src/modules/telephony/types/Create/InsereTronco.type';
+import { UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
+import { CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
 
 @Injectable()
 export class PabxService implements PabxServiceInterface {

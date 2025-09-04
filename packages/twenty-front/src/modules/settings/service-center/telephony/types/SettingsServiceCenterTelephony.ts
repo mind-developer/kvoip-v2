@@ -2,9 +2,6 @@ export interface Telephony {
   id: string;
   memberId: string;
   numberExtension: string;
-  workspace: {
-    id: string;
-  };
   type: string;
   extensionName: string;
   extensionGroup: string;
@@ -123,7 +120,6 @@ export interface Encaminhamento {
 export interface CreateTelephonyInput {
   memberId: string;
   numberExtension: string;
-  workspaceId: string;
   type: string;
   extensionName: string;
   extensionGroup: string;

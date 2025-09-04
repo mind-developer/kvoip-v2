@@ -5,7 +5,10 @@ export const UPDATE_TELEPHONY = gql`
     $id: ID!
     $updateTelephonyInput: UpdateTelephonyInput!
   ) {
-    updateTelephony(id: $id, updateTelephonyInput: $updateTelephonyInput) {
+    updateTelephonyIntegration(
+      id: $id
+      updateTelephonyInput: $updateTelephonyInput
+    ) {
       id
       memberId
       numberExtension

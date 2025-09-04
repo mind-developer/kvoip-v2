@@ -718,7 +718,6 @@ export type CreateTelephonyInput = {
   ramal_id?: InputMaybe<Scalars['String']>;
   recordCalls?: InputMaybe<Scalars['Boolean']>;
   type?: InputMaybe<Scalars['String']>;
-  workspaceId: Scalars['ID'];
 };
 
 export type CreateWhatsappIntegrationInput = {
@@ -1361,7 +1360,7 @@ export type Mutation = {
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
-  createTelephony: Telephony;
+  createTelephony: TelephonyWorkspaceEntity;
   createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
@@ -1444,7 +1443,7 @@ export type Mutation = {
   updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
-  updateTelephony: Telephony;
+  updateTelephony: TelephonyWorkspaceEntity;
   updateWhatsappIntegration: WhatsappWorkspaceEntity;
   updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
@@ -2384,7 +2383,7 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAllTelephony: Array<Telephony>;
+  findAllTelephony: Array<TelephonyWorkspaceEntity>;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -3089,49 +3088,6 @@ export type TarifaTroncoInput = {
   tarifa: Scalars['Int'];
 };
 
-export type Telephony = {
-  __typename?: 'Telephony';
-  SIPPassword?: Maybe<Scalars['String']>;
-  advancedFowarding1?: Maybe<Scalars['String']>;
-  advancedFowarding1Value?: Maybe<Scalars['String']>;
-  advancedFowarding2?: Maybe<Scalars['String']>;
-  advancedFowarding2Value?: Maybe<Scalars['String']>;
-  advancedFowarding3?: Maybe<Scalars['String']>;
-  advancedFowarding3Value?: Maybe<Scalars['String']>;
-  advancedFowarding4?: Maybe<Scalars['String']>;
-  advancedFowarding4Value?: Maybe<Scalars['String']>;
-  advancedFowarding5?: Maybe<Scalars['String']>;
-  advancedFowarding5Value?: Maybe<Scalars['String']>;
-  areaCode?: Maybe<Scalars['String']>;
-  blockExtension?: Maybe<Scalars['Boolean']>;
-  callerExternalID?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
-  destinyMailboxBusy?: Maybe<Scalars['String']>;
-  dialingPlan?: Maybe<Scalars['String']>;
-  emailForMailbox?: Maybe<Scalars['String']>;
-  enableMailbox?: Maybe<Scalars['Boolean']>;
-  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
-  extensionBusy?: Maybe<Scalars['String']>;
-  extensionGroup?: Maybe<Scalars['String']>;
-  extensionName?: Maybe<Scalars['String']>;
-  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
-  externalNumberBusy?: Maybe<Scalars['String']>;
-  fowardAllCalls?: Maybe<Scalars['String']>;
-  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
-  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  listenToCalls?: Maybe<Scalars['Boolean']>;
-  memberId: Scalars['String'];
-  numberExtension: Scalars['String'];
-  pullCalls?: Maybe<Scalars['String']>;
-  ramal_id?: Maybe<Scalars['String']>;
-  recordCalls?: Maybe<Scalars['Boolean']>;
-  type?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-};
-
 export type TelephonyCallFlow = {
   __typename?: 'TelephonyCallFlow';
   fluxo_chamada_id?: Maybe<Scalars['ID']>;
@@ -3194,6 +3150,48 @@ export type TelephonyExtension = {
   senha_web?: Maybe<Scalars['String']>;
   tipo?: Maybe<Scalars['String']>;
   usuario_autenticacao?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyWorkspaceEntity = {
+  __typename?: 'TelephonyWorkspaceEntity';
+  SIPPassword?: Maybe<Scalars['String']>;
+  advancedFowarding1?: Maybe<Scalars['String']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']>;
+  advancedFowarding2?: Maybe<Scalars['String']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']>;
+  advancedFowarding3?: Maybe<Scalars['String']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']>;
+  advancedFowarding4?: Maybe<Scalars['String']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']>;
+  advancedFowarding5?: Maybe<Scalars['String']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']>;
+  areaCode?: Maybe<Scalars['String']>;
+  blockExtension?: Maybe<Scalars['Boolean']>;
+  callerExternalID?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']>;
+  dialingPlan?: Maybe<Scalars['String']>;
+  emailForMailbox?: Maybe<Scalars['String']>;
+  enableMailbox?: Maybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
+  extensionBusy?: Maybe<Scalars['String']>;
+  extensionGroup?: Maybe<Scalars['String']>;
+  extensionName?: Maybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
+  externalNumberBusy?: Maybe<Scalars['String']>;
+  fowardAllCalls?: Maybe<Scalars['String']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  listenToCalls?: Maybe<Scalars['String']>;
+  memberId: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  numberExtension: Scalars['String'];
+  pullCalls?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['String']>;
+  recordCalls?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type Template = {
@@ -4612,7 +4610,7 @@ export type CreateTelephonyMutationVariables = Exact<{
 }>;
 
 
-export type CreateTelephonyMutation = { __typename?: 'Mutation', createTelephony: { __typename?: 'Telephony', id: any } };
+export type CreateTelephonyMutation = { __typename?: 'Mutation', createTelephony: { __typename?: 'TelephonyWorkspaceEntity', id: string } };
 
 export type UpdateTelephonyMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -4620,7 +4618,7 @@ export type UpdateTelephonyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTelephonyMutation = { __typename?: 'Mutation', updateTelephony: { __typename?: 'Telephony', id: any, memberId: string, numberExtension: string } };
+export type UpdateTelephonyMutation = { __typename?: 'Mutation', updateTelephony: { __typename?: 'TelephonyWorkspaceEntity', id: string, memberId: string, numberExtension: string } };
 
 export type GetTelephonyCallFlowsQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -4655,7 +4653,7 @@ export type GetAllTelephonysQueryVariables = Exact<{
 }>;
 
 
-export type GetAllTelephonysQuery = { __typename?: 'Query', findAllTelephony: Array<{ __typename?: 'Telephony', id: any, memberId: string, numberExtension: string, createdAt: string, updatedAt: string, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: boolean | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
+export type GetAllTelephonysQuery = { __typename?: 'Query', findAllTelephony: Array<{ __typename?: 'TelephonyWorkspaceEntity', id: string, memberId: string, numberExtension: string, createdAt: string, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: string | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null }> };
 
 export type GetTelephonyUrAsQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -9309,11 +9307,7 @@ export const GetAllTelephonysDocument = gql`
     id
     memberId
     numberExtension
-    workspace {
-      id
-    }
     createdAt
-    updatedAt
     SIPPassword
     areaCode
     blockExtension

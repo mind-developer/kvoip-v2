@@ -2,7 +2,7 @@ import { Field, ID, InputType, Int } from '@nestjs/graphql';
 
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { TarifaTroncoInput } from 'src/engine/core-modules/telephony/inputs';
+import { TarifaTroncoInput } from 'src/modules/telephony/dtos/tarifa-tronco.input';
 
 @InputType()
 export class CreatePabxTrunkInput {

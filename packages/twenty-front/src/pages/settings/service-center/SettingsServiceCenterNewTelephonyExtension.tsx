@@ -78,7 +78,6 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
       const telephonyData: CreateTelephonyInput = {
         memberId: formValue.memberId,
         numberExtension: formValue.extensionNumber,
-        workspaceId: currentWorkspace?.id,
         areaCode: formValue.areaCode,
         blockExtension: formValue.blockExtension,
         dialingPlan: formValue.dialingPlan,

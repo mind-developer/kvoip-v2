@@ -1,8 +1,8 @@
-import { useMutation } from '@apollo/client';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client';
 import { CREATE_TELEPHONY } from '../graphql/mutations/createTelephony';
+import { CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
 
 interface UserCreateTelephonyReturn {
   createTelephony: (inputTelephony: CreateTelephonyInput) => Promise<void>;

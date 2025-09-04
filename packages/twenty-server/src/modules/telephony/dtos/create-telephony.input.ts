@@ -10,10 +10,6 @@ export class CreateTelephonyInput {
 
   @Field(() => ID)
   @IsString()
-  workspaceId: string;
-
-  @Field(() => ID)
-  @IsString()
   numberExtension: string;
 
   @Field({ nullable: true })

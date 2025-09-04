@@ -763,7 +763,6 @@ export type CreateTelephonyInput = {
   ramal_id?: InputMaybe<Scalars['String']['input']>;
   recordCalls?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
-  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateWhatsappIntegrationInput = {
@@ -1414,7 +1413,7 @@ export type Mutation = {
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
-  createTelephony: Telephony;
+  createTelephony: TelephonyWorkspaceEntity;
   createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
@@ -1502,7 +1501,7 @@ export type Mutation = {
   updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
-  updateTelephony: Telephony;
+  updateTelephony: TelephonyWorkspaceEntity;
   updateWhatsappIntegration: WhatsappWorkspaceEntity;
   updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
@@ -2482,7 +2481,7 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAllTelephony: Array<Telephony>;
+  findAllTelephony: Array<TelephonyWorkspaceEntity>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
@@ -3252,49 +3251,6 @@ export type TarifaTroncoInput = {
   tarifa: Scalars['Int']['input'];
 };
 
-export type Telephony = {
-  __typename?: 'Telephony';
-  SIPPassword?: Maybe<Scalars['String']['output']>;
-  advancedFowarding1?: Maybe<Scalars['String']['output']>;
-  advancedFowarding1Value?: Maybe<Scalars['String']['output']>;
-  advancedFowarding2?: Maybe<Scalars['String']['output']>;
-  advancedFowarding2Value?: Maybe<Scalars['String']['output']>;
-  advancedFowarding3?: Maybe<Scalars['String']['output']>;
-  advancedFowarding3Value?: Maybe<Scalars['String']['output']>;
-  advancedFowarding4?: Maybe<Scalars['String']['output']>;
-  advancedFowarding4Value?: Maybe<Scalars['String']['output']>;
-  advancedFowarding5?: Maybe<Scalars['String']['output']>;
-  advancedFowarding5Value?: Maybe<Scalars['String']['output']>;
-  areaCode?: Maybe<Scalars['String']['output']>;
-  blockExtension?: Maybe<Scalars['Boolean']['output']>;
-  callerExternalID?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
-  destinyMailboxBusy?: Maybe<Scalars['String']['output']>;
-  dialingPlan?: Maybe<Scalars['String']['output']>;
-  emailForMailbox?: Maybe<Scalars['String']['output']>;
-  enableMailbox?: Maybe<Scalars['Boolean']['output']>;
-  extensionAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
-  extensionBusy?: Maybe<Scalars['String']['output']>;
-  extensionGroup?: Maybe<Scalars['String']['output']>;
-  extensionName?: Maybe<Scalars['String']['output']>;
-  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
-  externalNumberBusy?: Maybe<Scalars['String']['output']>;
-  fowardAllCalls?: Maybe<Scalars['String']['output']>;
-  fowardBusyNotAvailable?: Maybe<Scalars['String']['output']>;
-  fowardOfflineWithoutService?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  listenToCalls?: Maybe<Scalars['Boolean']['output']>;
-  memberId: Scalars['String']['output'];
-  numberExtension: Scalars['String']['output'];
-  pullCalls?: Maybe<Scalars['String']['output']>;
-  ramal_id?: Maybe<Scalars['String']['output']>;
-  recordCalls?: Maybe<Scalars['Boolean']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  workspace: Workspace;
-};
-
 export type TelephonyCallFlow = {
   __typename?: 'TelephonyCallFlow';
   fluxo_chamada_id?: Maybe<Scalars['ID']['output']>;
@@ -3357,6 +3313,48 @@ export type TelephonyExtension = {
   senha_web?: Maybe<Scalars['String']['output']>;
   tipo?: Maybe<Scalars['String']['output']>;
   usuario_autenticacao?: Maybe<Scalars['String']['output']>;
+};
+
+export type TelephonyWorkspaceEntity = {
+  __typename?: 'TelephonyWorkspaceEntity';
+  SIPPassword?: Maybe<Scalars['String']['output']>;
+  advancedFowarding1?: Maybe<Scalars['String']['output']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding2?: Maybe<Scalars['String']['output']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding3?: Maybe<Scalars['String']['output']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding4?: Maybe<Scalars['String']['output']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding5?: Maybe<Scalars['String']['output']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']['output']>;
+  areaCode?: Maybe<Scalars['String']['output']>;
+  blockExtension?: Maybe<Scalars['Boolean']['output']>;
+  callerExternalID?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']['output']>;
+  dialingPlan?: Maybe<Scalars['String']['output']>;
+  emailForMailbox?: Maybe<Scalars['String']['output']>;
+  enableMailbox?: Maybe<Scalars['Boolean']['output']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  extensionBusy?: Maybe<Scalars['String']['output']>;
+  extensionGroup?: Maybe<Scalars['String']['output']>;
+  extensionName?: Maybe<Scalars['String']['output']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  externalNumberBusy?: Maybe<Scalars['String']['output']>;
+  fowardAllCalls?: Maybe<Scalars['String']['output']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']['output']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  listenToCalls?: Maybe<Scalars['String']['output']>;
+  memberId: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  numberExtension: Scalars['String']['output'];
+  pullCalls?: Maybe<Scalars['String']['output']>;
+  ramal_id?: Maybe<Scalars['String']['output']>;
+  recordCalls?: Maybe<Scalars['Boolean']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type Template = {

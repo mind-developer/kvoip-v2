@@ -20,10 +20,10 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 
-const NAME_FIELD_NAME = 'name';
+const MEMBER_ID_FIELD = 'memberId';
 
 export const SEARCH_FIELDS_FOR_TELEPHONY: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: MEMBER_ID_FIELD, type: FieldMetadataType.TEXT },
 ];
 
 @WorkspaceEntity({
@@ -33,21 +33,12 @@ export const SEARCH_FIELDS_FOR_TELEPHONY: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Telephonies`,
   description: msg`A telephony integration`,
   icon: 'IconHeadset',
-  labelIdentifierStandardId: TELEPHONY_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId: TELEPHONY_STANDARD_FIELD_IDS.memberId,
 })
 @WorkspaceIsSearchable()
 @WorkspaceIsSystem()
 @ObjectType()
 export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
-  @WorkspaceField({
-    standardId: TELEPHONY_STANDARD_FIELD_IDS.name,
-    type: FieldMetadataType.TEXT,
-    label: msg`Name`,
-    description: msg`The name of the telepohny integration`,
-  })
-  @Field(() => String, { nullable: true })
-  name: string | null;
-
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.memberId,
     type: FieldMetadataType.TEXT,
