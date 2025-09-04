@@ -1,4 +1,5 @@
 import { MessageStatus } from '@/chat/call-center/types/MessageStatus';
+import { MessageType } from '@/chat/types/MessageType';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChecks, IconTrash } from '@tabler/icons-react';
@@ -7,7 +8,10 @@ import { IconCheck } from 'twenty-ui/display';
 
 const StyledMessageBubbleContainer = styled.div<{
   messageText: string;
+  messageType: string;
   isSystemMessage: boolean;
+  index: number;
+  hasTail: boolean;
 }>`
   position: relative;
   align-self: ${({ isSystemMessage }) =>
@@ -20,16 +24,20 @@ const StyledMessageBubbleContainer = styled.div<{
         : '#D9FDD3'
       : theme.background.quaternary};
 
-  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(3)}`};
-  border-radius: 15px;
-  // max-width: 75%;
+  padding: ${({ theme, messageType }) =>
+    `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' ? 3 : 1)}`};
+  border-radius: ${({ messageText, messageType }) =>
+    messageText.length < 30 ? '20px' : '15px'};
   word-wrap: break-word;
   display: flex;
-  flex-direction: ${({ messageText }) =>
-    messageText.length < 30 ? 'row' : 'column'};
+  flex-direction: ${({ messageText, messageType }) =>
+    messageText.length < 30 || messageType === 'audio' ? 'row' : 'column'};
   gap: 6px;
 
-  ${({ isSystemMessage, theme }) => `
+  ${({ hasTail, isSystemMessage, theme }) =>
+    !hasTail
+      ? ''
+      : `
   &:before, &:after {
     content: '';
     position: absolute;
@@ -58,9 +66,20 @@ const StyledMessageBubbleContainer = styled.div<{
     border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 5px;
   }
 `}
+  animation: popup 250ms;
+  animation-timing-function: cubic-bezier(0, -0.01, 0, 0.93);
+
+  @keyframes popup {
+    0% {
+      transform: translateY(25px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
 `;
 
-const StyledTime = styled.p`
+const StyledTime = styled.p<{ messageType: MessageType }>`
   align-self: flex-end;
   text-align: right;
   font-size: 11px;
@@ -72,20 +91,35 @@ const StyledTime = styled.p`
   margin: 0;
   margin-top: ${({ theme }) => theme.spacing(1)};
   user-select: none;
+  z-index: 3;
+  ${(props) =>
+    props.messageType === 'image'
+      ? `
+    position: absolute; 
+    right: 13px;
+    bottom: 8px;
+  `
+      : ''}
 `;
 
 export const StyledMessageBubble = ({
   children,
   messageText,
+  messageType,
   isSystemMessage,
   time,
   status,
+  index,
+  hasTail,
 }: {
   children: ReactNode;
   messageText: string;
+  messageType: MessageType;
   isSystemMessage: boolean;
   time: string;
   status: MessageStatus;
+  index: number;
+  hasTail: boolean;
 }) => {
   const theme = useTheme();
 
@@ -107,12 +141,15 @@ export const StyledMessageBubble = ({
   return (
     <StyledMessageBubbleContainer
       messageText={messageText}
+      messageType={messageType}
       isSystemMessage={isSystemMessage}
+      index={index}
+      hasTail={hasTail}
     >
       {children}
-      <StyledTime>
+      <StyledTime messageType={messageType}>
         {time}
-        {isSystemMessage && <StatusIcon size={16} color={statusColor} />}
+        {/* {isSystemMessage && <StatusIcon size={16} color={statusColor} />} */}
       </StyledTime>
     </StyledMessageBubbleContainer>
   );

@@ -3,6 +3,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
+import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { StyledMessageBubble } from '@/chat/call-center/components/StyledMessageBubble';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
@@ -11,7 +12,7 @@ import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContex
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { TDateFirestore } from '@/chat/internal/types/chat';
-import { validAudioTypes, validVideoTypes } from '@/chat/types/FileTypes';
+import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
@@ -200,12 +201,6 @@ const StyledMessageEvent = styled.div`
   justify-content: center;
   font-size: ${({ theme }) => theme.font.size.md};
   color: ${({ theme }) => theme.color.gray50};
-`;
-
-const StyledAudio = styled.audio<{ isSystemMessage: boolean }>`
-  display: block;
-  margin-left: ${({ isSystemMessage }) => (isSystemMessage ? 'auto' : '0')};
-  margin-right: ${({ isSystemMessage }) => (isSystemMessage ? '0' : 'auto')};
 `;
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
@@ -440,14 +435,14 @@ export const PaneChat = () => {
       let total = 0;
       dataSquared.forEach((data) => (total += data));
       const rms = parseFloat(Math.sqrt(total / dataSquared.length).toFixed(5));
-      setAmplitudeValues((prev) => [...prev.slice(-50), rms]);
+      setAmplitudeValues((prev) => [...prev.slice(-150), rms]);
     };
 
     const timeout = () =>
       setTimeout(() => {
         if (recorder.state === 'recording') setValues();
         if (stream.active) timeout();
-      }, 250);
+      }, 50);
     timeout();
   };
 
@@ -482,7 +477,7 @@ export const PaneChat = () => {
         setRecordingState('recording');
       };
 
-      recorder.start(500);
+      recorder.start(50);
       setMediaRecorder(recorder);
       setRecordingState('recording');
     } catch (error) {
@@ -661,11 +656,11 @@ export const PaneChat = () => {
                 return (
                   <div
                     style={{
-                      height: Math.min(60 * amplitudeValue + 1, 20),
+                      height: Math.min(60 * amplitudeValue + 3, 20),
                       width: '2px',
-                      backgroundColor: '#274238',
+                      backgroundColor: theme.background.invertedPrimary,
                       position: 'relative',
-                      borderRadius: 2,
+                      borderRadius: 3,
                     }}
                   />
                 );
@@ -775,17 +770,7 @@ export const PaneChat = () => {
                 );
                 break;
               case MessageType.AUDIO:
-                messageContent = (
-                  <StyledAudio
-                    isSystemMessage={isSystemMessage}
-                    key={index}
-                    controls
-                  >
-                    {validAudioTypes.map((type) => (
-                      <source src={message.message} type={type} />
-                    ))}
-                  </StyledAudio>
-                );
+                messageContent = <StyledAudio key={index} />;
                 break;
               case MessageType.DOCUMENT: {
                 const msg = message?.message
@@ -838,6 +823,8 @@ export const PaneChat = () => {
             const unreadIndex =
               selectedChat.messages.length - selectedChat.unreadMessages;
             const showUnreadMarker = index === unreadIndex;
+            const lastOfRow =
+              selectedChat.messages[index + 1]?.from !== message.from;
 
             return (
               <>
@@ -849,7 +836,7 @@ export const PaneChat = () => {
                   key={index}
                   isSystemMessage={isSystemMessage}
                 >
-                  <StyledAvatarMessage>
+                  <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
                     <AvatarComponent
                       message={message}
                       selectedChat={selectedChat}
@@ -866,6 +853,9 @@ export const PaneChat = () => {
                         isSystemMessage={isSystemMessage}
                         status={message.status}
                         messageText={message.message}
+                        messageType={message.type}
+                        index={index}
+                        hasTail={lastOfRow}
                       >
                         {messageContent}
                       </StyledMessageBubble>
