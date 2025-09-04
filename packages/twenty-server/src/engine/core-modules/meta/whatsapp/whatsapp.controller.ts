@@ -177,6 +177,7 @@ export class WhatsappController {
         );
       }
 
+      const fromMe = body.entry[0].changes[0].value.messages[0].fromMe;
       const lastMessage = {
         createdAt: new Date(),
         id: body.entry[0].changes[0].value.messages[0].id,
@@ -186,7 +187,7 @@ export class WhatsappController {
             ? fileUrl
             : body.entry[0].changes[0].value.messages[0].text.body,
         type: body.entry[0].changes[0].value.messages[0].type,
-        fromMe: body.entry[0].changes[0].value.messages[0].fromMe,
+        fromMe,
       };
 
       const whatsappIntegration: Omit<

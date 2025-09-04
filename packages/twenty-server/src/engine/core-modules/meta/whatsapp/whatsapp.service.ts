@@ -424,7 +424,6 @@ export class WhatsappService {
         }
       }
 
-      console.log('saved to firebase');
       return true;
     }
 
