@@ -8,6 +8,7 @@ export const TENANT_STANDARD_FIELD_IDS = {
   searchVector: '20202020-c1af-4cec-86b9-44a572e4833b',
   coreWorkspaceId: '20202020-14cd-4c9b-94f4-b0323a6f1055',
   subscriptions: '7128fb62-353d-488b-bd19-928d6eaf3256',
+  company: '269af23b-1e82-47d8-b521-489cf835222d',
 };
 
 export const OWNER_STANDARD_FIELD_IDS = {

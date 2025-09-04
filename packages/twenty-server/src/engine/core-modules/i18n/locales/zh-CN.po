@@ -961,6 +961,7 @@ msgstr "公司"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 #: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -2726,6 +2727,11 @@ msgstr "输出"
 msgid "Owner"
 msgstr ""
 
+#. js-lingui-id: lnFhGh
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Owner e-mail"
+msgstr ""
+
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group"
@@ -3643,6 +3649,11 @@ msgstr ""
 msgid "The workspace name"
 msgstr ""
 
+#. js-lingui-id: DFwxoS
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "The workspace owner primary email."
+msgstr ""
+
 #. js-lingui-id: zgBOw5
 #: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
 msgid "The workspace subscription plan"
@@ -3650,8 +3661,8 @@ msgstr ""
 
 #. js-lingui-id: SUTQ8V
 #: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-msgid "The workspace woner primary email."
-msgstr ""
+#~ msgid "The workspace woner primary email."
+#~ msgstr ""
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -4383,7 +4394,13 @@ msgstr "工作流版本工作流"
 
 #. js-lingui-id: pmUArF
 #: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Workspace"
+msgstr ""
+
+#. js-lingui-id: Rsbvk8
+#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
+msgid "Workspace company"
 msgstr ""
 
 #. js-lingui-id: CbGxon
@@ -4428,8 +4445,8 @@ msgstr ""
 
 #. js-lingui-id: wXBT2b
 #: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-msgid "Workspace owner primary e-mail"
-msgstr ""
+#~ msgid "Workspace owner primary e-mail"
+#~ msgstr ""
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
@@ -4442,6 +4459,11 @@ msgstr "工作区成员"
 #: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
 #: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Workspaces"
+msgstr ""
+
+#. js-lingui-id: tb/5rV
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Workspaces linked to the company."
 msgstr ""
 
 #. js-lingui-id: laxJ8N

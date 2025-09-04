@@ -44,8 +44,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.ownerEmail,
+            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.company,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -55,18 +54,17 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.membersCount,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.ownerEmail,
           )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
-        aggregateOperation: AggregateOperations.COUNT,
       },
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.extentionsCount,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.membersCount,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -77,9 +75,21 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.extentionsCount,
           )?.id ?? '',
         position: 5,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AggregateOperations.COUNT,
+      },
+
+      {
+        fieldMetadataId:
+          tenantObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+          )?.id ?? '',
+        position: 6,
         isVisible: true,
         size: 150,
       },

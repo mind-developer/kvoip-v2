@@ -159,6 +159,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
   emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
   notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
+  tenants: '5eca6f7c-4d68-4bb1-9945-0420d9fe72d5',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {

@@ -25,6 +25,7 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
 import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
 
@@ -60,8 +61,8 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TENANT_STANDARD_FIELD_IDS.ownerEmail,
     type: FieldMetadataType.TEXT,
-    label: msg`Workspace owner primary e-mail`,
-    description: msg`The workspace woner primary email.`,
+    label: msg`Owner e-mail`,
+    description: msg`The workspace owner primary email.`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
@@ -114,6 +115,22 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('owner')
   ownerId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.company,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Company`,
+    description: msg`Workspace company`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'tenants',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
 
   @WorkspaceRelation({
     standardId: TENANT_STANDARD_FIELD_IDS.subscriptions,
