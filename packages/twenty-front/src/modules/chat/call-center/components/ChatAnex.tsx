@@ -88,6 +88,7 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
       to: identifier,
       type,
       from,
+      fromMe: true,
     };
 
     if (isWhatsappDocument(selectedChat)) {
@@ -172,7 +173,6 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
         Document
         <StyledInput
           type="file"
-          accept=".pdf, .doc, .docx, .txt"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
