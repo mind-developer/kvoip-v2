@@ -14,7 +14,7 @@ import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { TDateFirestore } from '@/chat/internal/types/chat';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
-import { statusEnum } from '@/chat/types/WhatsappDocument';
+import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -31,6 +31,7 @@ import { v4 } from 'uuid';
 const StyledPaneChatContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 0;
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
   gap: ${({ theme }) => theme.spacing(0)};
@@ -44,8 +45,8 @@ const StyledChatContainer = styled.div`
   max-width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-inline: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledMessageContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -78,7 +79,7 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
     isSystemMessage ? '0' : theme.spacing(2)};
   margin-right: ${({ isSystemMessage, theme }) =>
     isSystemMessage ? theme.spacing(2) : '0'};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -158,10 +159,10 @@ const StyledInput = styled.textarea`
   font-size: ${({ theme }) => theme.font.size.md};
   font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
-  height: 20px;
+  height: 10px;
   max-height: 200px;
   &::placeholder {
-    line-height: 20px;
+    line-height: 10px;
   }
 `;
 
@@ -187,6 +188,15 @@ const StyledIconButton = styled(IconButton)`
   height: 24px;
   padding: '5px';
   min-width: 24px;
+  animation: swap 0.5s cubic-bezier(0, 1.06, 0.53, 0.99);
+  @keyframes swap {
+    0% {
+      transform: translateY(5px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -245,6 +255,15 @@ const StyledNewMessagesButton = styled.button`
   z-index: 1000;
 `;
 
+const StyledAmplitudeValue = styled.div<{ amplitudeValue: number }>`
+  width: 2px;
+  margin-right: 1px;
+  background-color: ${({ theme }) => theme.background.invertedPrimary};
+  height: ${({ amplitudeValue }) =>
+    Math.round(Math.min(60 * amplitudeValue + 3, 40))}px;
+  }
+`;
+
 const StyledUnreadMarker = styled.div`
   display: flex;
   align-items: center;
@@ -277,6 +296,7 @@ const StyledUnreadMarker = styled.div`
 export const PaneChat = () => {
   const {
     selectedChat,
+    setSelectedChat,
     startService,
     setStartChatNumber,
     setStartChatIntegrationId,
@@ -295,6 +315,7 @@ export const PaneChat = () => {
     null,
   );
   const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
+  const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -379,7 +400,6 @@ export const PaneChat = () => {
           `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n` +
           newMessage.trim(),
       };
-
       sendWhatsappMessage(sendMessageInput);
       setNewMessage('');
     } else if (type === MessageType.AUDIO) {
@@ -513,14 +533,61 @@ export const PaneChat = () => {
   }
 
   const handleSendMessage = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'initial';
-    }
+    // if (textareaRef.current) {
+    //   textareaRef.current.style.height = 'initial';
+    // }
+
+    // essa mensagem é temporária e só existe no state.
+    // ela será substituída pela mensagem verdadeira quando o firebase
+    // recarregar os valores desse chat.
+    // o único propósito dela é dar feedback imediato ao cliente.
 
     if (isWhatsappDocument(selectedChat)) {
       if (audioBlob) {
+        setSelectedChat((prev) => {
+          if (prev)
+            return {
+              ...prev,
+              messages: [
+                ...prev.messages,
+                {
+                  type: 'audio',
+                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                  message: '',
+                  fromMe: true,
+                  status: 'attempting',
+                  id: null,
+                  createdAt: {
+                    seconds: Date.now(),
+                    nanoseconds: Date.now() * 1000,
+                  },
+                },
+              ],
+            };
+        });
         onSendMessage(MessageType.AUDIO);
       } else {
+        setSelectedChat((prev) => {
+          if (prev)
+            return {
+              ...prev,
+              messages: [
+                ...prev.messages,
+                {
+                  type: 'text',
+                  message: newMessage,
+                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                  fromMe: true,
+                  status: 'attempting',
+                  id: null,
+                  createdAt: {
+                    seconds: Date.now(),
+                    nanoseconds: Date.now() * 1000,
+                  },
+                },
+              ],
+            };
+        });
         onSendMessage(MessageType.TEXT);
       }
     } else {
@@ -530,8 +597,8 @@ export const PaneChat = () => {
 
   const handleInputChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = ev.target;
-    textarea.style.height = '20px';
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    textarea.style.height = '10px';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 100)}px`;
 
     setNewMessage(ev.target.value);
   };
@@ -618,11 +685,12 @@ export const PaneChat = () => {
       return (
         <StyledInputContainer>
           <StyledAnexDiv>
-            <IconButton
+            <StyledIconButton
               disabled={selectedChat.lastMessage.type === 'template'}
               Icon={recordingState === 'none' ? AnexIcon : IconTrash}
               accent={recordingState === 'none' ? 'default' : 'danger'}
               variant="tertiary"
+              size="small"
               onClick={() => {
                 if (recordingState === 'none') {
                   setIsAnexOpen(!isAnexOpen);
@@ -642,26 +710,20 @@ export const PaneChat = () => {
             <div
               onClick={(e) => e.preventDefault()}
               style={{
-                maxWidth: 'inherit',
+                width: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 maxHeight: 30,
                 overflow: 'clip',
-                gap: 2,
                 pointerEvents: 'none',
               }}
             >
-              {amplitudeValues.map((amplitudeValue) => {
+              {amplitudeValues.map((amplitudeValue, i) => {
                 return (
-                  <div
-                    style={{
-                      height: Math.min(60 * amplitudeValue + 3, 20),
-                      width: '2px',
-                      backgroundColor: theme.background.invertedPrimary,
-                      position: 'relative',
-                      borderRadius: 3,
-                    }}
+                  <StyledAmplitudeValue
+                    key={i}
+                    amplitudeValue={amplitudeValue}
                   />
                 );
               })}
@@ -687,11 +749,19 @@ export const PaneChat = () => {
                     : IconPlayerPause
                 }
                 onClick={() => {
-                  if (recordingState === 'none') handleStartRecording();
-                  if (recordingState === 'recording') handlePauseRecording();
-                  if (recordingState === 'paused') handleResumeRecording();
+                  switch (recordingState) {
+                    case 'none':
+                      handleStartRecording();
+                      break;
+                    case 'recording':
+                      handlePauseRecording();
+                      break;
+                    case 'paused':
+                      handleResumeRecording();
+                      break;
+                  }
                 }}
-                size="medium"
+                size="small"
               />
             )}
             {(newMessage.length > 0 || recordingState !== 'none') && (
@@ -738,7 +808,7 @@ export const PaneChat = () => {
       <StyledPaneChatContainer>
         <PaneChatHeader />
         <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
-          {selectedChat.messages.map((message: any, index: number) => {
+          {selectedChat.messages.map((message: IMessage, index: number) => {
             const isSystemMessage = message.fromMe;
 
             const validMessageType =
@@ -770,7 +840,7 @@ export const PaneChat = () => {
                 );
                 break;
               case MessageType.AUDIO:
-                messageContent = <StyledAudio key={index} />;
+                messageContent = <StyledAudio key={index} message={message} />;
                 break;
               case MessageType.DOCUMENT: {
                 const msg = message?.message
@@ -852,17 +922,16 @@ export const PaneChat = () => {
                         time={formatDate(message.createdAt).time}
                         isSystemMessage={isSystemMessage}
                         status={message.status}
-                        messageText={message.message}
-                        messageType={message.type}
+                        message={message}
                         index={index}
-                        hasTail={lastOfRow}
+                        hasTail={lastOfRow && !isSendingMessage}
                       >
                         {messageContent}
                       </StyledMessageBubble>
                       <StyledNameAndTimeContainer
                         isSystemMessage={isSystemMessage}
                       >
-                        {isMessageOlderThan24Hours(message) ?? (
+                        {isMessageOlderThan24Hours(message.createdAt) ?? (
                           <StyledDateContainer>
                             {formatDate(message.createdAt).date}
                           </StyledDateContainer>

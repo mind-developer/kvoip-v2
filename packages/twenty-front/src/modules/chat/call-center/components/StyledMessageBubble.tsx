@@ -1,10 +1,12 @@
 import { MessageStatus } from '@/chat/call-center/types/MessageStatus';
 import { MessageType } from '@/chat/types/MessageType';
+import { IMessage } from '@/chat/types/WhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChecks, IconTrash } from '@tabler/icons-react';
+import { IconChecks, IconClock, IconTrash } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { IconCheck } from 'twenty-ui/display';
+import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
 const StyledMessageBubbleContainer = styled.div<{
   messageText: string;
@@ -12,6 +14,7 @@ const StyledMessageBubbleContainer = styled.div<{
   isSystemMessage: boolean;
   index: number;
   hasTail: boolean;
+  status: MessageStatus;
 }>`
   position: relative;
   align-self: ${({ isSystemMessage }) =>
@@ -66,8 +69,8 @@ const StyledMessageBubbleContainer = styled.div<{
     border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 5px;
   }
 `}
-  animation: popup 250ms;
-  animation-timing-function: cubic-bezier(0, -0.01, 0, 0.93);
+  ${({ status }) =>
+    status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''}
 
   @keyframes popup {
     0% {
@@ -95,7 +98,7 @@ const StyledTime = styled.p<{ messageType: MessageType }>`
   ${(props) =>
     props.messageType === 'image'
       ? `
-    position: absolute; 
+    position: absolute;
     right: 13px;
     bottom: 8px;
   `
@@ -104,8 +107,7 @@ const StyledTime = styled.p<{ messageType: MessageType }>`
 
 export const StyledMessageBubble = ({
   children,
-  messageText,
-  messageType,
+  message,
   isSystemMessage,
   time,
   status,
@@ -113,8 +115,7 @@ export const StyledMessageBubble = ({
   hasTail,
 }: {
   children: ReactNode;
-  messageText: string;
-  messageType: MessageType;
+  message: IMessage;
   isSystemMessage: boolean;
   time: string;
   status: MessageStatus;
@@ -127,6 +128,9 @@ export const StyledMessageBubble = ({
   let statusColor = theme.background.invertedPrimary;
 
   switch (status) {
+    case 'attempting':
+      StatusIcon = IconClock;
+      break;
     case 'read':
       statusColor = theme.name === 'dark' ? '#08a5e9' : '#1B8BF7';
       StatusIcon = IconChecks;
@@ -140,16 +144,19 @@ export const StyledMessageBubble = ({
 
   return (
     <StyledMessageBubbleContainer
-      messageText={messageText}
-      messageType={messageType}
+      messageText={message.message ?? ''}
+      messageType={message.type}
       isSystemMessage={isSystemMessage}
       index={index}
       hasTail={hasTail}
+      status={status}
     >
       {children}
-      <StyledTime messageType={messageType}>
+      <StyledTime messageType={message.type as MessageType}>
         {time}
-        {/* {isSystemMessage && <StatusIcon size={16} color={statusColor} />} */}
+        {isSystemMessage && status === 'attempting' && (
+          <StatusIcon size={12} color={statusColor} />
+        )}
       </StyledTime>
     </StyledMessageBubbleContainer>
   );
