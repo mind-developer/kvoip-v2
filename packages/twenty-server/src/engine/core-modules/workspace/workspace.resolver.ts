@@ -208,7 +208,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);

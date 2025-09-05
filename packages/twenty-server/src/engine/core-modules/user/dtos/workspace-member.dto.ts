@@ -4,7 +4,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { Max, Min } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import {
   WorkspaceMemberDateFormatEnum,
@@ -21,21 +20,6 @@ export class FullName {
 }
 
 @ObjectType()
-export class Phones {
-  @Field({ nullable: false })
-  primaryPhoneNumber: string;
-
-  @Field({ nullable: false })
-  primaryPhoneCountryCode: string;
-
-  @Field({ nullable: false })
-  primaryPhoneCallingCode: string;
-
-  @Field(() => RawJSONScalar, { nullable: true })
-  additionalPhones?: object;
-}
-
-@ObjectType()
 export class WorkspaceMember {
   @IDField(() => UUIDScalarType)
   id: string;
@@ -45,12 +29,6 @@ export class WorkspaceMember {
 
   @Field({ nullable: false })
   userEmail: string;
-
-  @Field({ nullable: true })
-  userDocument?: string;
-
-  @Field(() => Phones, { nullable: true })
-  userPhone?: Phones;
 
   @Field({ nullable: false })
   colorScheme: string;

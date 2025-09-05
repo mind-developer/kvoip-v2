@@ -21,6 +21,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
@@ -315,7 +316,7 @@ export class InterApiService {
 
   async issueChargeAndStoreAttachment(
     workspaceId: string,
-    attachmentRepository: Repository<AttachmentWorkspaceEntity>,
+    attachmentRepository: WorkspaceRepository<AttachmentWorkspaceEntity>,
     data: ChargeData,
   ): Promise<ChargeResponse> {
     this.logger.log(
