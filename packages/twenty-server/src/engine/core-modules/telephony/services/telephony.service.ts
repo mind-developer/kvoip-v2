@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -9,6 +9,7 @@ import { GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
 import { FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
 import { UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
 
+@Injectable()
 export class TelephonyService {
   constructor(
     private readonly dataSourceService: DataSourceService,
