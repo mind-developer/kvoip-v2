@@ -79,6 +79,8 @@ export class BillingPortalWorkspaceService {
         locale,
         interChargeData,
         chargeType,
+        plan,
+        user,
       });
 
     const checkoutSession =
@@ -113,6 +115,8 @@ export class BillingPortalWorkspaceService {
         workspace,
         billingPricesPerPlan,
         successUrlPath,
+        user,
+        plan,
       });
 
     const subscription =
@@ -140,17 +144,26 @@ export class BillingPortalWorkspaceService {
     interChargeData,
     locale,
     chargeType,
+    user,
+    plan,
   }: {
     workspace: Workspace;
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
     successUrlPath?: string;
   } & Pick<
     BillingPortalCheckoutSessionParameters,
-    'paymentProvider' | 'interChargeData' | 'locale' | 'chargeType'
+    | 'paymentProvider'
+    | 'interChargeData'
+    | 'locale'
+    | 'chargeType'
+    | 'user'
+    | 'plan'
   >) {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
+
+    const cancelUrl = frontBaseUrl.toString();
 
     if (paymentProvider === BillingPaymentProviders.Inter) {
       if (!isDefined(interChargeData))
@@ -204,10 +217,18 @@ export class BillingPortalWorkspaceService {
         planKey: plan,
       });
 
-      return `${frontBaseUrl.toString()}plan-required/payment-success`;
-    }
+      const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
+        quantity: 1,
+        billingPricesPerPlan,
+      });
 
-    const cancelUrl = frontBaseUrl.toString();
+      return {
+        successUrl: `${frontBaseUrl.toString()}plan-required/payment-success`,
+        cancelUrl,
+        quantity: 1,
+        stripeSubscriptionLineItems,
+      };
+    }
 
     if (successUrlPath) {
       frontBaseUrl.pathname = successUrlPath;
@@ -224,7 +245,7 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
-      quantity: chargeType === ChargeType.PER_SEAT ? quantity : 1,
+      quantity: 1,
       billingPricesPerPlan,
     });
 

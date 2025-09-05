@@ -3,8 +3,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { type SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import {
@@ -127,7 +126,7 @@ export class BillingResolver {
     const interSessionParams = {
       paymentProvider,
       interChargeData,
-      locale: context.req.headers['x-locale'] || SOURCE_LOCALE,
+      locale: context.req.locale || SOURCE_LOCALE,
     };
 
     // For 7-day trials (no payment method required), create subscription directly
@@ -169,8 +168,8 @@ export class BillingResolver {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      isExecutedByApiKey: isDefined(apiKey),
       workspaceActivationStatus: workspace.activationStatus,
+      apiKeyId: apiKey,
     });
 
     const currentSubscription =
@@ -190,7 +189,7 @@ export class BillingResolver {
       await this.billingSubscriptionService.updateOneTimePaymentSubscription({
         subscription: currentSubscription,
         user,
-        locale: context.req.headers['x-locale'],
+        locale: context.req.locale,
       });
 
     return {
@@ -213,7 +212,6 @@ export class BillingResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async switchPlan(
     @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { plan }: BillingSwitchPlanInput,
     @AuthApiKey() apiKey?: string,
@@ -221,8 +219,8 @@ export class BillingResolver {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      isExecutedByApiKey: isDefined(apiKey),
       workspaceActivationStatus: workspace.activationStatus,
+      apiKeyId: apiKey,
     });
 
     const billingSubscription =

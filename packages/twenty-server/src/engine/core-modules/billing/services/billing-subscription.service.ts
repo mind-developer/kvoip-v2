@@ -6,10 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
-import {
-  type APP_LOCALES,
-  type SOURCE_LOCALE,
-} from 'twenty-shared/translations';
+import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
