@@ -1,4 +1,5 @@
 import { TDateFirestore } from '@/chat/internal/types/chat';
+import { MessageStatus } from '../call-center/types/MessageStatus';
 
 export type WhatsappDocument = {
   integrationId: string;
@@ -34,8 +35,10 @@ export enum ChatStatus {
 
 export interface IMessage {
   from: string;
+  fromMe: boolean;
   message: string;
   createdAt: TDateFirestore;
+  status: MessageStatus;
   type: string;
 }
 

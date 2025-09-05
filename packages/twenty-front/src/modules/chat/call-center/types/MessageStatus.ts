@@ -1,1 +1,6 @@
-export type MessageStatus = 'sent' | 'delivered' | 'read' | 'deleted';
+export type MessageStatus =
+  | 'attempting'
+  | 'sent'
+  | 'delivered'
+  | 'read'
+  | 'deleted';
