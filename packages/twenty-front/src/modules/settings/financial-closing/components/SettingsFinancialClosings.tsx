@@ -6,6 +6,7 @@ import { useDeleteSector } from '@/settings/service-center/sectors/hooks/useDele
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { IconArchive, IconClock, IconTextSize } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -54,6 +55,14 @@ export const SettingsFinancialClosings = ({
     navigate(path);
   };
 
+  const handleFinancialClosingExecutions = (id: string) => {
+    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
+      ':financialClosingId',
+      id,
+    );
+    navigate(path);
+  }
+
   return (
     <StyledShowServiceCenterTabs isMobile={isMobile}>
       {financialClosings?.length > 0 && (
@@ -69,13 +78,18 @@ export const SettingsFinancialClosings = ({
                     subtitle: 'Tem certeza que deseja apagar este fechamento? Esta ação não pode ser desfeita.',
                   }}
                   scopeKey={financialClosing.name}
-                  onEdit={() => {
-                    handleEditFinancialClosing(financialClosing.id);
-                  }}
+                  onEdit={() => { handleEditFinancialClosing(financialClosing.id) }}
                   onDelete={async () => {
                     await deleteFinancialClosingById(financialClosing.id);
                     refetchFinancialClosings();
                   }}
+                  extraMenuItems={[
+                    {
+                      text: 'Histórico de Execuções',
+                      icon: IconClock,
+                      onClick: () => { handleFinancialClosingExecutions(financialClosing.id) },
+                    },
+                  ]}
                 />
               }
             />

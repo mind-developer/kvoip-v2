@@ -33,6 +33,10 @@ export enum SettingsPath {
   FinancialClosing = 'financial-closing',
   FinancialClosingNew = 'financial-closing/new',
   FinancialClosingEdit = 'financial-closing/:financialClosingId/edit',
+  FinancialClosingExecutions = 'financial-closing/:financialClosingId/executions',
+  FinancialClosingExecution = 'financial-closing/executions/:financialClosingExecutionId',
+  CompanyFinancialClosingExecutions = 'financial-closing/company-executions/:financialClosingExecutionId',
+  CompanyFinancialClosingExecution = 'financial-closing/company-execution/:companyFinancialClosingExecutionId',
 
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
