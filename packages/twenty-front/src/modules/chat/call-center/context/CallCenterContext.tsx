@@ -518,6 +518,7 @@ export const CallCenterProvider = ({
         setSelectedChatId,
         sortChats,
         selectedChat,
+        setSelectedChat,
         TAB_LIST_COMPONENT_ID,
         activeTabId,
         whatsappChats,
