@@ -25,7 +25,7 @@ const StyledMessageBubbleContainer = styled.div<{
       ? theme.name === 'dark'
         ? '#274238'
         : '#D9FDD3'
-      : theme.background.quaternary};
+      : theme.background.secondary};
 
   padding: ${({ theme, messageType }) =>
     `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' ? 3 : 1)}`};
@@ -56,7 +56,7 @@ const StyledMessageBubbleContainer = styled.div<{
         ? theme.name === 'dark'
           ? '#274238'
           : '#D9FDD3'
-        : theme.background.quaternary
+        : theme.background.secondary
     };
     border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 15px;
     z-index: 0;
@@ -110,24 +110,24 @@ export const StyledMessageBubble = ({
   message,
   isSystemMessage,
   time,
-  status,
   index,
   hasTail,
+  customButton,
 }: {
   children: ReactNode;
   message: IMessage;
   isSystemMessage: boolean;
   time: string;
-  status: MessageStatus;
   index: number;
   hasTail: boolean;
+  customButton?: ReactNode;
 }) => {
   const theme = useTheme();
 
   let StatusIcon = IconCheck;
   let statusColor = theme.background.invertedPrimary;
 
-  switch (status) {
+  switch (message.status) {
     case 'attempting':
       StatusIcon = IconClock;
       break;
@@ -149,12 +149,14 @@ export const StyledMessageBubble = ({
       isSystemMessage={isSystemMessage}
       index={index}
       hasTail={hasTail}
-      status={status}
+      status={message.status}
     >
-      {children}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {children} <>{customButton}</>
+      </div>
       <StyledTime messageType={message.type as MessageType}>
         {time}
-        {isSystemMessage && status === 'attempting' && (
+        {isSystemMessage && message.status === 'attempting' && (
           <StatusIcon size={12} color={statusColor} />
         )}
       </StyledTime>
