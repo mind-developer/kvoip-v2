@@ -24,7 +24,14 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
+import {
+  IconCheck,
+  IconPlayerPause,
+  IconTrash,
+  IconX,
+  Label,
+  useIcons,
+} from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
@@ -73,6 +80,7 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
     isSystemMessage ? 'flex-end' : 'flex-start'};
   justify-items: center;
   justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
   width: auto;
   max-width: 70%;
   margin-left: ${({ isSystemMessage, theme }) =>
@@ -895,6 +903,10 @@ export const PaneChat = () => {
             const showUnreadMarker = index === unreadIndex;
             const lastOfRow =
               selectedChat.messages[index + 1]?.from !== message.from;
+            const clientMessages = selectedChat.messages.filter(
+              (message) => !message.fromMe,
+            );
+            const lastFromClient = clientMessages[clientMessages.length - 1];
 
             return (
               <>
@@ -921,10 +933,47 @@ export const PaneChat = () => {
                       <StyledMessageBubble
                         time={formatDate(message.createdAt).time}
                         isSystemMessage={isSystemMessage}
-                        status={message.status}
                         message={message}
                         index={index}
                         hasTail={lastOfRow && !isSendingMessage}
+                        customButton={
+                          !isSystemMessage
+                            ? message.id === lastFromClient.id &&
+                              message.from !== selectedChat.client.name && (
+                                <>
+                                  <div
+                                    style={{
+                                      borderTop: `1px solid ${theme.border.color.strong}`,
+                                      marginTop: 15,
+                                    }}
+                                  >
+                                    <Label style={{ marginTop: 5 }}>
+                                      Novo nome de contato do WhatsApp
+                                      encontrado. Atualizar registro?
+                                    </Label>
+                                    <div style={{ display: 'flex', gap: 5 }}>
+                                      <Button
+                                        Icon={IconCheck}
+                                        title="Sim"
+                                        variant="tertiary"
+                                        accent="blue"
+                                        size="small"
+                                        // onClick={handleUpdateClientName}
+                                      />
+                                      <Button
+                                        Icon={IconX}
+                                        title="Não"
+                                        variant="tertiary"
+                                        accent="default"
+                                        size="small"
+                                        // onClick={handleUpdateClientName}
+                                      />
+                                    </div>
+                                  </div>
+                                </>
+                              )
+                            : null
+                        }
                       >
                         {messageContent}
                       </StyledMessageBubble>
