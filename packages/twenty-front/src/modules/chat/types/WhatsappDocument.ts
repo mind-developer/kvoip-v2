@@ -34,6 +34,7 @@ export enum ChatStatus {
 }
 
 export interface IMessage {
+  id?: string;
   from: string;
   fromMe: boolean;
   message: string;
