@@ -10,6 +10,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconClockPlay, useIcons } from 'twenty-ui/display';
 import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
 import { Tag } from 'twenty-ui/components';
+import { getFinancialClosingExecutionStatusColor, getFinancialClosingExecutionStatusLabel } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 
 export type SettingsFinancialClosingExecutionItemTableRowProps = {
   action: ReactNode;
@@ -88,10 +89,10 @@ export const FinancialClosingExecutionRow = ({
       </StyledNameTableCell>
       
       <TableCell>
-        <Tag
-            color={getColor(execution.status)}
-            text={execution.status}
-            weight="medium"
+        <Tag 
+          color={getFinancialClosingExecutionStatusColor(execution.status)} 
+          text={getFinancialClosingExecutionStatusLabel(execution.status)} 
+          weight="medium"
         />
       </TableCell>
 

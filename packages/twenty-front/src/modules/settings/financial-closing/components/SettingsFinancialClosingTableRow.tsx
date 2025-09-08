@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip, Status, StyledText, useIcons } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-import { useTheme } from '@emotion/react';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
-import { Tag } from 'twenty-ui/components';
 import { getBillingModelLabel } from '@/settings/financial-closing/constants/BillingModelOptions';
+import { getBillingModelTagColor } from '@/settings/financial-closing/constants/LogLevelColors';
+import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { useTheme } from '@emotion/react';
+import { Tag } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -87,7 +88,7 @@ export const SettingsFinancialClosingTableRow = ({
                   financialClosing.billingModelIds.map((billingModel) => (
                     <Tag
                       key={financialClosing.id + "_" + billingModel}
-                      color={"green"}
+                      color={getBillingModelTagColor()}
                       text={getBillingModelLabel(billingModel) ?? billingModel}
                       weight="medium"
                     />

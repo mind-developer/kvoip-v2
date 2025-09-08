@@ -30,7 +30,6 @@ import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
 import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
-import { SettingsCompanyFinancialClosingExecutions } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutions';
 import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
 
 const SettingsApiKeys = lazy(() =>
@@ -750,10 +749,6 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.FinancialClosingExecution}
         element={<SettingsFinancialClosingExecutionShow />}
-      />
-      <Route
-        path={SettingsPath.CompanyFinancialClosingExecutions}
-        element={<SettingsCompanyFinancialClosingExecutions />}
       />
       <Route
         path={SettingsPath.CompanyFinancialClosingExecution}
