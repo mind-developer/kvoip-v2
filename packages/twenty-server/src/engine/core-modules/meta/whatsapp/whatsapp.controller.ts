@@ -220,6 +220,7 @@ export class WhatsappController {
       await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
         true,
+        workspaceId,
       );
     }
   }
