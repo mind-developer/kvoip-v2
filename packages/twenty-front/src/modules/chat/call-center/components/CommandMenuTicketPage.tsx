@@ -137,31 +137,31 @@ export const CommandMenuTicketPage = () => {
       const callingCode = rawPhone.slice(0, 2);
       const phoneNumber = rawPhone.slice(2);
 
-      const newPerson = await createOnePerson({
-        id: v4(),
-        name: {
-          firstName: name,
-          lastName: '',
-        },
-        emails: { primaryEmail: email },
-        phones: {
-          primaryPhoneNumber: phoneNumber,
-          primaryPhoneCountryCode: 'BR',
-          primaryPhoneCallingCode: `+${callingCode}`,
-          additionalPhones: null,
-        },
-        position: 'first',
-      });
+      // const newPerson = await createOnePerson({
+      //   id: v4(),
+      //   name: {
+      //     firstName: name,
+      //     lastName: '',
+      //   },
+      //   emails: { primaryEmail: email },
+      //   phones: {
+      //     primaryPhoneNumber: phoneNumber,
+      //     primaryPhoneCountryCode: 'BR',
+      //     primaryPhoneCallingCode: `+${callingCode}`,
+      //     additionalPhones: null,
+      //   },
+      //   position: 'first',
+      // });
 
-      personId = newPerson?.id;
+      // personId = newPerson?.id;
     }
 
-    createOneOpportunity({
-      id: v4(),
-      name: name,
-      position: 'first',
-      pointOfContactId: personId,
-    });
+    // createOneOpportunity({
+    //   id: v4(),
+    //   name: name,
+    //   position: 'first',
+    //   pointOfContactId: personId,
+    // });
   };
 
   const handleOpenSupportTicket = async () => {

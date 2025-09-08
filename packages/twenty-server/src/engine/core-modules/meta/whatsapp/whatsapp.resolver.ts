@@ -69,6 +69,7 @@ export class WhatsappResolver {
       await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
         false,
+        workspace.id,
       );
 
       return await this.whatsappService.saveEventMessageAtFirebase({
@@ -129,6 +130,7 @@ export class WhatsappResolver {
       return await this.whatsappService.saveMessageAtFirebase(
         whatsappIntegration,
         false,
+        workspace.id,
       );
     }
 
