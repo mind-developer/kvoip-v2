@@ -10,7 +10,7 @@ const StyledImageContainer = styled.div<{ status: MessageStatus }>`
   ${({ status }) =>
     status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''}
 `;
-const StyledImage = (message: { message: IMessage }) => {
+const StyledImage = (message: IMessage) => {
   return (
     <StyledImageContainer status={message.status}>
       <img src={message.message} width="100%" height="100%" />
