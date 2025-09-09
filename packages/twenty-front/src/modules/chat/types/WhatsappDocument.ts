@@ -12,11 +12,13 @@ export type WhatsappDocument = {
   timeline: ITimeline[];
   unreadMessages: number;
   isVisible: boolean;
+  personId: string;
 };
 
 export interface IClient {
   phone?: string;
   name?: string;
+  ppUrl?: string;
 }
 
 export enum statusEnum {

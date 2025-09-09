@@ -192,7 +192,7 @@ export class WhatsappController {
 
       const whatsappIntegration: Omit<
         WhatsappDocument,
-        'timeline' | 'unreadMessages' | 'isVisible'
+        'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
       > = {
         integrationId: id,
         workspaceId: workspaceId,
@@ -202,6 +202,7 @@ export class WhatsappController {
             '',
           ),
           name: body.entry[0].changes[0].value.contacts[0].profile.name,
+          ppUrl: body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
         },
         messages: [
           {

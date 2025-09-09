@@ -54,6 +54,7 @@ export class WhatsappResolver {
           phone: sendTemplateInput.to.slice(1),
           name: sendTemplateInput.to.slice(1),
         },
+        personId: sendTemplateInput.personId,
         messages: [
           {
             ...lastMessage,
@@ -118,6 +119,7 @@ export class WhatsappResolver {
         client: {
           phone: sendMessageInput.to,
         },
+        personId: sendMessageInput.personId,
         messages: [
           {
             ...lastMessage,
@@ -174,6 +176,7 @@ export class WhatsappResolver {
       client: {
         phone: sendEventMessageInput.to,
       },
+      personId: sendEventMessageInput.personId,
       messages: [
         {
           createdAt: new Date(),

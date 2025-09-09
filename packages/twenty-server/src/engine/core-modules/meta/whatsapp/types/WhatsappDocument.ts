@@ -5,7 +5,8 @@ export type WhatsappDocument = {
   workspaceId?: string;
   agent?: string;
   sector?: string;
-  client: IClient;
+  client: IClient; //deprecate
+  personId: string;
   messages: IMessage[];
   status: statusEnum;
   lastMessage: IMessage;
@@ -17,6 +18,7 @@ export type WhatsappDocument = {
 type IClient = {
   phone: string;
   name?: string;
+  ppUrl?: string | null;
 };
 
 export type IMessage = {

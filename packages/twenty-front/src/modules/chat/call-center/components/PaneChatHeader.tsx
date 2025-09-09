@@ -3,11 +3,14 @@ import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelCh
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { Person } from '@/people/types/Person';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -52,10 +55,19 @@ export const PaneChatHeader = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { openCommandMenuTicket } = useCommandMenuTicket();
+  const [title, setTitle] = useState<string>('');
 
   const { selectedChat, finalizeService } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
+
+  const { record, loading, error } = useFindOneRecord<Person>({
+    objectNameSingular: CoreObjectNameSingular.Person,
+    objectRecordId: selectedChat?.personId,
+    onCompleted: (r: Person) => {
+      setTitle(r.name.firstName + r.name.lastName);
+    },
+  });
 
   const { toggleModal } = useModal();
 
@@ -69,12 +81,13 @@ export const PaneChatHeader = () => {
       <StyledChatHeader>
         <StyledDiv>
           <Avatar
+            avatarUrl={selectedChat.client.ppUrl}
             placeholder={selectedChat.client.name}
             size="xl"
             type={'rounded'}
             placeholderColorSeed={selectedChat.client.name}
           />
-          <StyledChatTitle>{selectedChat.client.name}</StyledChatTitle>
+          <StyledChatTitle>{title}</StyledChatTitle>
         </StyledDiv>
         <StyledActionsContainer>
           <StyledIconButton

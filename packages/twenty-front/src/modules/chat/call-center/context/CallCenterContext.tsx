@@ -349,6 +349,7 @@ export const CallCenterProvider = ({
       // : (selectedChat?.client.id ?? ''),
       type: MessageType.STARTED,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.STARTED} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat.personId,
     });
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if

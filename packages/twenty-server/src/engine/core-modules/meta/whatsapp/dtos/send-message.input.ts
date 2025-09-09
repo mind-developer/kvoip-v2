@@ -21,6 +21,10 @@ class MessageInput {
   @IsString()
   @IsOptional()
   fromMe?: boolean;
+
+  @Field()
+  @IsString()
+  personId: string;
 }
 
 @InputType()
@@ -109,4 +113,8 @@ export class SendTemplateInput {
   @Field(() => MessageAgent, { nullable: true })
   @IsOptional()
   agent?: MessageAgent;
+
+  @Field()
+  @IsString()
+  personId: string;
 }

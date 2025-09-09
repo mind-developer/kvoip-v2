@@ -7,12 +7,14 @@ export interface SendMessageInputBase {
   type: MessageType;
   fileId?: string;
   fromMe?: boolean;
+  personId: string;
 }
 
 export interface SendEventMessageInput extends SendMessageInputBase {
   eventStatus: MessageType;
   status: string;
   from: string;
+  personId: string;
   agent?: {
     name?: string;
     id?: string;

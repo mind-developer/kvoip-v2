@@ -89,6 +89,7 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
       type,
       from,
       fromMe: true,
+      personId: selectedChat.personId,
     };
 
     if (isWhatsappDocument(selectedChat)) {
