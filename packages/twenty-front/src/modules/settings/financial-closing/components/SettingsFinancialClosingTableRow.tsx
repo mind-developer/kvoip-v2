@@ -6,6 +6,7 @@ import { getBillingModelTagColor } from '@/settings/financial-closing/constants/
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { useTheme } from '@emotion/react';
 import { Tag } from 'twenty-ui/components';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -17,7 +18,7 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
   &:last-child {
     border-bottom: none;
-  }
+  }feat
 `;
 
 const StyledContent = styled.div`
@@ -60,12 +61,13 @@ export const SettingsFinancialClosingTableRow = ({
   accessory,
 }: SettingsFinancialClosingTableRowProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
 
   const getDateDayText = () => {
     if (financialClosing.lastDayMonth) {
-      return 'As ' + financialClosing.time + ' do último dia do mês';
+      return t`At ${financialClosing.time} of the last day of the month`;
     }
-    return `As ${financialClosing.time} de todo dia ${financialClosing.day}`;
+    return t`At ${financialClosing.time} of every day ${financialClosing.day}`;
   };
 
   return (

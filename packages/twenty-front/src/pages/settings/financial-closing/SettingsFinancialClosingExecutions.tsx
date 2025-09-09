@@ -72,13 +72,13 @@ export const SettingsFinancialClosingExecutions = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={'Execuções' + (activeFinancialClosing ? (' - ' + activeFinancialClosing.name) : '')}
+      title={t`Executions` + (activeFinancialClosing ? (' - ' + activeFinancialClosing.name) : '')}
       links={[
         {
-          children: 'Fechamentos',
+          children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: 'Histórico' },
+        { children: t`Executions` },
       ]}
     >
       <SettingsPageContainer>
@@ -87,10 +87,10 @@ export const SettingsFinancialClosingExecutions = () => {
           
           <Table>
             <StyledObjectTableRow>
-              <TableHeader>Data</TableHeader>
-              <TableHeader>Status</TableHeader>
-              <TableHeader align="right">Executados</TableHeader>
-              <TableHeader align="right">Erros</TableHeader>
+              <TableHeader>{t`Date`}</TableHeader>
+              <TableHeader>{t`Status`}</TableHeader>
+              <TableHeader align="right">{t`Executed`}</TableHeader>
+              <TableHeader align="right">{t`Errors`}</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectTableRow>
 

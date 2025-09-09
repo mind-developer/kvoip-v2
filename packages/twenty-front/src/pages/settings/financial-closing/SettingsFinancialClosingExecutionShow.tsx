@@ -51,7 +51,6 @@ export const SettingsFinancialClosingExecutionShow = () => {
     objectRecordId: financialClosingExecutionId,
   });
 
-  // Buscar metadata dos objetos para gerar os campos automaticamente
   const { objectMetadataItem: companyObjectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Company,
   });
@@ -100,10 +99,10 @@ export const SettingsFinancialClosingExecutionShow = () => {
   if (executionLoading) {
     return (
       <SubMenuTopBarContainer
-        title={'Detalhes da Execução'}
+        title={t`Details of Execution`}
         links={[
           {
-            children: 'Fechamentos',
+            children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
           { children: 'Detalhes' },
@@ -124,10 +123,10 @@ export const SettingsFinancialClosingExecutionShow = () => {
         title={'Detalhes da Execução'}
         links={[
           {
-            children: 'Fechamentos',
+            children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
-          { children: 'Detalhes' },
+          { children: t`Details` },
         ]}
       >
         <SettingsPageContainer>
@@ -141,13 +140,17 @@ export const SettingsFinancialClosingExecutionShow = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={`Detalhes da Execução`}
+      title={t`Details of Execution`}
       links={[
         {
-          children: 'Fechamentos',
+          children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: 'Detalhes' },
+        // { children: 'Executions',
+        //   href: getSettingsPath(SettingsPath.FinancialClosingExecutions),
+        // },
+        { children: t`Details` },
+
       ]}
     >
       <SettingsPageContainer>

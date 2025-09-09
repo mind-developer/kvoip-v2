@@ -6,6 +6,7 @@ import { useDeleteSector } from '@/settings/service-center/sectors/hooks/useDele
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconArchive, IconClock, IconTextSize } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
@@ -41,7 +42,7 @@ export const SettingsFinancialClosings = ({
   loading,
   isRightDrawer = false,
 }: FinancialClosingsProps) => {
-  // const { t } = useTranslation();
+  const { t } = useLingui();
   const navigate = useNavigate();
   const isMobile = useIsMobile() || isRightDrawer;
 
@@ -74,8 +75,8 @@ export const SettingsFinancialClosings = ({
               accessory={
                 <ServiceCenterFieldActionDropdown
                   modalMessage={{
-                    title: 'Apagar Fechamento',
-                    subtitle: 'Tem certeza que deseja apagar este fechamento? Esta ação não pode ser desfeita.',
+                    title: t`Delete Financial Closing`,
+                    subtitle: t`Are you sure you want to delete this financial closing? This action cannot be undone.`,
                   }}
                   scopeKey={financialClosing.name}
                   onEdit={() => { handleEditFinancialClosing(financialClosing.id) }}
@@ -85,7 +86,7 @@ export const SettingsFinancialClosings = ({
                   }}
                   extraMenuItems={[
                     {
-                      text: 'Histórico de Execuções',
+                      text: t`Execution History`,
                       icon: IconClock,
                       onClick: () => { handleFinancialClosingExecutions(financialClosing.id) },
                     },

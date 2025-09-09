@@ -10,9 +10,10 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsFinancialClosings } from '@/settings/financial-closing/components/SettingsFinancialClosings';
 import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsFinancialClosing = () => {
-  // const { t } = useTranslation();
+  const { t } = useLingui();
 
   const { financialClosings, refetch } = useFindAllFinancialClosings();
 
@@ -22,14 +23,14 @@ export const SettingsFinancialClosing = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={'Fechamentos'}
+      title={t`Financial Closings`}
       actionButton={
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.FinancialClosingNew)}
         >
           <Button
             Icon={IconPlus}
-            title={'Add Fechamento'}
+            title={t`Add Financial Closing`}
             accent="blue"
             size="small"
           />
@@ -37,15 +38,15 @@ export const SettingsFinancialClosing = () => {
       }
       links={[
         {
-          children: 'Kvoip',
+          children: t`Financial Closings`,
           // href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Fechamento' },
+        // { children: '' },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="" description={'Gerencie todos os fechamentos financeiros aqui.'} />
+          <H2Title title="" description={t`Manage all financial closings here.`} />
           <SettingsFinancialClosings financialClosings={financialClosings} refetchFinancialClosings={refetch} />
         </Section>
       </SettingsPageContainer>
