@@ -119,7 +119,7 @@ export const SettingsFinancialClosingExecutionShow = () => {
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title="" description={'Loading...'} />
+            <H2Title title="" description={t`Loading` + '...'} />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

@@ -66,40 +66,17 @@ export const useTypeEmissionNFTranslations = () => {
   };
 };
 
-// Funções estáticas para compatibilidade (sem tradução)
-export const TYPE_EMISSION_NF_METADATA: Record<TypeEmissionNFEnum, TypeEmissionNFMetadata> = {
-  [TypeEmissionNFEnum.NOTHING]: {
-    label: 'Do not emit invoice',
-    color: 'red',
-    position: 0,
-  },
-  [TypeEmissionNFEnum.AFTER]: {
-    label: 'Emit invoice after payment',
-    color: 'purple',
-    position: 1,
-  },
-  [TypeEmissionNFEnum.BEFORE]: {
-    label: 'Emit invoice together with the closing',
-    color: 'blue',
-    position: 1,
-  },
-};
-
-export const TYPE_EMISSION_NF_OPTIONS = Object.entries(TYPE_EMISSION_NF_METADATA).map(
-  ([value, { label, color, position }]) => ({
-    value,
-    label,
-    color,
-    position,
-  }),
-);
-
-// Utilitário: Pega o label pelo valor (sem tradução)
-export function getTypeEmissionNFLabel(value: TypeEmissionNFEnum | string): string {
-  return TYPE_EMISSION_NF_METADATA[value as TypeEmissionNFEnum]?.label ?? value;
-}
 
 // Utilitário: Pega a cor pelo valor
 export function getTypeEmissionNFColor(value: TypeEmissionNFEnum | string): 'red' | 'purple' | 'blue' | 'green' | 'orange' | 'gray' {
-  return TYPE_EMISSION_NF_METADATA[value as TypeEmissionNFEnum]?.color ?? 'gray';
+  switch (value) {
+    case TypeEmissionNFEnum.NOTHING:
+      return 'red';
+    case TypeEmissionNFEnum.AFTER:
+      return 'purple';
+    case TypeEmissionNFEnum.BEFORE:
+      return 'blue';
+    default:
+      return 'gray';
+  }
 }

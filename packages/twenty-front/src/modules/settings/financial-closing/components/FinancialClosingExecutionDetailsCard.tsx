@@ -58,7 +58,7 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow> */}
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Status:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Status`}:</StyledInfoLabel>
           <Tag 
             color={getFinancialClosingExecutionStatusColor(execution.status)} 
             text={getFinancialClosingExecutionStatusLabel(execution.status)} 
@@ -66,24 +66,24 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Execution Date:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Execution Date`}:</StyledInfoLabel>
           <StyledInfoValue>
             {new Date(execution.executedAt).toLocaleString()}
           </StyledInfoValue>
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Total of Companies:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Total of Companies`}:</StyledInfoLabel>
           <StyledInfoValue>{execution.companiesTotal}</StyledInfoValue>
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Companies with Error:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Companies with Error`}:</StyledInfoLabel>
           <StyledInfoValue>{execution.companiesWithError}</StyledInfoValue>
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Completed Company Search:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Company Search`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedCompanySearch)} 
             text={getExecutionStatusText(execution.completedCompanySearch)} 
@@ -91,7 +91,7 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Completed Cost Identification:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Cost Identification`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedCostIdentification)} 
             text={getExecutionStatusText(execution.completedCostIdentification)} 
@@ -99,7 +99,7 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Completed Boleto Issuance:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Boleto Issuance`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
             text={getExecutionStatusText(execution.completedBoletoIssuance)} 
@@ -107,7 +107,7 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Completed Invoice Issuance:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Invoice Issuance`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedInvoiceIssuance)} 
             text={getExecutionStatusText(execution.completedInvoiceIssuance)} 
@@ -115,14 +115,14 @@ export const FinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Created at:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Created at`}:</StyledInfoLabel>
           <StyledInfoValue>
             {new Date(execution.createdAt).toLocaleString()}
           </StyledInfoValue>
         </StyledInfoRow>
         
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Updated at:`}:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Updated at`}:</StyledInfoLabel>
           <StyledInfoValue>
             {new Date(execution.updatedAt).toLocaleString()}
           </StyledInfoValue>

@@ -15,6 +15,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { SERVICE_CENTER_ACTION_MODAL_ID } from '../constants/ServiceCenterActionModalId';
+import { useLingui } from '@lingui/react/macro';
 
 // type ServiceCenterFieldActionDropdownProps = {
 //   modalMessage: {
@@ -163,6 +164,7 @@ export const ServiceCenterFieldActionDropdown = ({
   const { closeModal, openModal } = useModal();
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
   const { closeDropdown } = useDropdown(dropdownId);
+  const { t } = useLingui();
 
   const [activeExtraModal, setActiveExtraModal] = useState<ExtraMenuItem | null>(null);
 
@@ -194,7 +196,7 @@ export const ServiceCenterFieldActionDropdown = ({
             <DropdownMenuItemsContainer>
               {/* --- FIXOS --- */}
               <MenuItem
-                text={'Edit'}
+                text={t`Edit`}
                 LeftIcon={IconPencil}
                 onClick={() => {
                   onEdit('Edit');
@@ -204,7 +206,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
               {!!onSetAsLabelIdentifier && (
                 <MenuItem
-                  text="Set as record text"
+                  text={t`Set as record text`}
                   LeftIcon={IconTextSize}
                   onClick={() => {
                     onSetAsLabelIdentifier?.();
@@ -215,7 +217,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
               {!!onDelete && (
                 <MenuItem
-                  text={'Delete'}
+                  text={t`Delete`}
                   LeftIcon={IconArchive}
                   onClick={() => openModal(SERVICE_CENTER_ACTION_MODAL_ID)}
                 />
@@ -223,7 +225,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
               {!!onDeactivate && (
                 <MenuItem
-                  text={isActive ? 'deactivate' : 'reactivate'}
+                  text={isActive ? t`deactivate` : t`reactivate`}
                   LeftIcon={IconArchive}
                   onClick={() => openModal(SERVICE_CENTER_ACTION_MODAL_ID)}
                 />
@@ -256,7 +258,7 @@ export const ServiceCenterFieldActionDropdown = ({
         title={modalMessage.title}
         subtitle={modalMessage.subtitle}
         onConfirmClick={onDelete ? handleDelete : handleDeactivate}
-        confirmButtonText="Continue"
+        confirmButtonText={t`Continue`}
       />
 
       {/* Modal para itens dinâmicos */}
@@ -271,7 +273,7 @@ export const ServiceCenterFieldActionDropdown = ({
             closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
             closeDropdown();
           }}
-          confirmButtonText={activeExtraModal.modalConfig?.confirmButtonText ?? 'Confirm'}
+          confirmButtonText={activeExtraModal.modalConfig?.confirmButtonText ?? t`Confirm`}
         />
       )}
     </>

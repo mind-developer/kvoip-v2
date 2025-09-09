@@ -66,9 +66,9 @@ export const SettingsFinancialClosingTableRow = ({
 
   const getDateDayText = () => {
     if (financialClosing.lastDayMonth) {
-      return t`At ${financialClosing.time} of the last day of the month`;
+      return (t`At` + ' ' + financialClosing.time + ' ' + t`of the last day of the month`);
     }
-    return t`At ${financialClosing.time} of every day ${financialClosing.day}`;
+    return (t`At` + ' ' + financialClosing.time + ' ' + t`of every day` + ' ' + financialClosing.day);
   };
 
   return (

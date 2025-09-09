@@ -72,7 +72,7 @@ export const CompanyFinancialClosingExecutionsTable = ({
     return (
       <StyledCard>
         <StyledCardContent>
-          <StyledInfoValue>Carregando execuções das companhias...</StyledInfoValue>
+          <StyledInfoValue>{t`Loading company executions`}...</StyledInfoValue>
         </StyledCardContent>
       </StyledCard>
     );
@@ -82,7 +82,7 @@ export const CompanyFinancialClosingExecutionsTable = ({
     return (
       <StyledCard>
         <StyledCardContent>
-          <StyledInfoValue>Nenhuma execução de companhia encontrada.</StyledInfoValue>
+          <StyledInfoValue>{t`No company executions found`}</StyledInfoValue>
         </StyledCardContent>
       </StyledCard>
     );

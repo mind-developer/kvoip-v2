@@ -19,23 +19,23 @@ export const useBillingModelTranslations = () => {
   const getBillingModelLabel = (value: BillingModel | string): string => {
     switch (value) {
       case BillingModel.Prepaid:
-        return t`Pré-Pago`;
+        return t`Pre-paid`;
       case BillingModel.Postpaid:
-        return t`Pós-Pago`;
+        return t`Post-paid`;
       case BillingModel.PrepaidUnlimited:
-        return t`Pré-Ilimitado`;
+        return t`Pre-unlimited`;
       case BillingModel.PostpaidUnlimited:
-        return t`Pós-Ilimitado`;
+        return t`Post-unlimited`;
       default:
         return value as string;
     }
   };
 
   const getBillingModelOptions = (): SelectOption<BillingModel>[] => [
-    { label: t`Pré-Pago`, value: BillingModel.Prepaid },
-    { label: t`Pós-Pago`, value: BillingModel.Postpaid },
-    { label: t`Pré-Ilimitado`, value: BillingModel.PrepaidUnlimited },
-    { label: t`Pós-Ilimitado`, value: BillingModel.PostpaidUnlimited },
+    { label: t`Pre-paid`, value: BillingModel.Prepaid },
+    { label: t`Post-paid`, value: BillingModel.Postpaid },
+    { label: t`Pre-unlimited`, value: BillingModel.PrepaidUnlimited },
+    { label: t`Post-unlimited`, value: BillingModel.PostpaidUnlimited },
   ];
 
   return {
