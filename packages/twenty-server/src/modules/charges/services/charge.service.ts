@@ -27,7 +27,7 @@ export class ChargeService {
   private readonly logger = new Logger(ChargeService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
