@@ -2,7 +2,6 @@ import { v4 } from 'uuid';
 
 import { KVOIP_ADMIN_ALL_VIEWS } from 'src/engine/core-modules/kvoip-admin/standard-objects/views/get-all-kvoip-admin-views';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
 import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
@@ -23,11 +22,13 @@ import { tracaebleAllView } from 'src/engine/workspace-manager/standard-objects-
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { type EntityManager } from 'typeorm';
 
 export const prefillViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
   prefillAdminViews = false,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
@@ -68,7 +69,7 @@ export const prefillViews = async (
 };
 
 const createWorkspaceViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   viewDefinitions: ViewDefinition[],
 ) => {
@@ -78,9 +79,7 @@ const createWorkspaceViews = async (
   }));
 
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.view`, [
       'id',
@@ -130,9 +129,7 @@ const createWorkspaceViews = async (
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewField`, [
           'fieldMetadataId',
@@ -157,9 +154,7 @@ const createWorkspaceViews = async (
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewFilter`, [
           'fieldMetadataId',
@@ -187,9 +182,7 @@ const createWorkspaceViews = async (
       viewDefinition.groups.length > 0
     ) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewGroup`, [
           'fieldMetadataId',
