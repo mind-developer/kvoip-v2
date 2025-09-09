@@ -24,9 +24,9 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 
 export class RoleService {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -84,6 +84,9 @@ export class RoleService {
       canUpdateAllObjectRecords: input.canUpdateAllObjectRecords,
       canSoftDeleteAllObjectRecords: input.canSoftDeleteAllObjectRecords,
       canDestroyAllObjectRecords: input.canDestroyAllObjectRecords,
+      canBeAssignedToUsers: input.canBeAssignedToUsers,
+      canBeAssignedToAgents: input.canBeAssignedToAgents,
+      canBeAssignedToApiKeys: input.canBeAssignedToApiKeys,
       isEditable: true,
       workspaceId,
     });
@@ -232,6 +235,9 @@ export class RoleService {
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: false,
+      canBeAssignedToApiKeys: false,
       isEditable: false,
       workspaceId,
     });
