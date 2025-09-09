@@ -27,7 +27,7 @@ export class BillingWorkspaceMemberListener {
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 

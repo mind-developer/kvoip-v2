@@ -1,21 +1,21 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Not, Repository, Raw } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { IsNull, Not, Raw, Repository } from 'typeorm';
 
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 
 export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CheckCustomDomainValidRecordsCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly customDomainService: CustomDomainService,
   ) {}

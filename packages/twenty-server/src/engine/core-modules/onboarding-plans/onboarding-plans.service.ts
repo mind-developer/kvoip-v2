@@ -15,7 +15,7 @@ export class OnboardingPlansService {
   private readonly stripe: Stripe;
 
   constructor(
-    @InjectRepository(OnboardingPlans, 'core')
+    @InjectRepository(OnboardingPlans)
     private readonly repo: Repository<OnboardingPlans>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {

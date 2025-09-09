@@ -11,7 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     forwardRef(() => KvoipAdminModule),
   ],
   providers: [

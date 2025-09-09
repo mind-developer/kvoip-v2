@@ -20,9 +20,9 @@ export class CheckExpiredSubscriptionsJob {
   private readonly logger = new Logger(CheckExpiredSubscriptionsJob.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 

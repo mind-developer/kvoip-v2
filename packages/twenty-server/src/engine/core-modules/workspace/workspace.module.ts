@@ -38,7 +38,7 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscription], 'core'),
+    TypeOrmModule.forFeature([BillingSubscription]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         BillingModule,
@@ -46,17 +46,14 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
         TokenModule,
         FileUploadModule,
         WorkspaceMetadataCacheModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [
-            User,
-            Workspace,
-            UserWorkspace,
-            FeatureFlag,
-            StripeIntegration,
-            BillingPlans,
-          ],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          User,
+          Workspace,
+          UserWorkspace,
+          FeatureFlag,
+          StripeIntegration,
+          BillingPlans,
+        ]),
         UserWorkspaceModule,
         WorkspaceManagerModule,
         FeatureFlagModule,

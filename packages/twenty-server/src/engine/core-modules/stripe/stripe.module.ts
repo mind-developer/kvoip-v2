@@ -16,10 +16,7 @@ import { SripeController } from './stripe.controller';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [StripeIntegration, Workspace],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([StripeIntegration, Workspace]),
         WorkspaceModule,
       ],
     }),

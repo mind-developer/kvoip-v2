@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { isDefined } from 'twenty-shared/utils';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -23,9 +23,9 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 @Injectable()
 export class EmailVerificationTokenService {
   constructor(
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}

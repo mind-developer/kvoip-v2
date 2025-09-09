@@ -17,9 +17,9 @@ import { UpdateIssuerInput } from './dtos/update-issuer.input';
 @Injectable()
 export class IssuerService {
   constructor(
-    @InjectRepository(Issuer, 'core')
+    @InjectRepository(Issuer)
     private readonly issuerRepository: Repository<Issuer>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

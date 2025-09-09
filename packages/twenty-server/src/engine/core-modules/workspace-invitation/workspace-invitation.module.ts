@@ -17,10 +17,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 @Module({
   imports: [
     DomainManagerModule,
-    NestjsQueryTypeOrmModule.forFeature(
-      [AppToken, UserWorkspace, Workspace],
-      'core',
-    ),
+    NestjsQueryTypeOrmModule.forFeature([AppToken, UserWorkspace, Workspace]),
     FileModule,
     OnboardingModule,
     PermissionsModule,

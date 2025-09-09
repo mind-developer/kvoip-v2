@@ -13,8 +13,8 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
-import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
 @Module({
   imports: [
@@ -23,10 +23,11 @@ import { TwoFactorAuthenticationMethod } from './entities/two-factor-authenticat
     MetricsModule,
     TokenModule,
     JwtModule,
-    TypeOrmModule.forFeature(
-      [User, TwoFactorAuthenticationMethod, UserWorkspace],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      User,
+      TwoFactorAuthenticationMethod,
+      UserWorkspace,
+    ]),
     UserModule,
   ],
   providers: [

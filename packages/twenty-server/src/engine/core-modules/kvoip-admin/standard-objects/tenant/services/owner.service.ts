@@ -18,7 +18,7 @@ export class OwnerService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly kvoipAdminService: KvoipAdminService,
   ) {}

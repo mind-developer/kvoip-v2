@@ -24,7 +24,7 @@ export class UserSubscriber
 
   constructor(
     private readonly moduleRef: ModuleRef,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {
     this.dataSource.subscribers.push(this);

@@ -9,12 +9,12 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AppToken, User], 'core'),
+    TypeOrmModule.forFeature([AppToken, User]),
     EmailModule,
     TwentyConfigModule,
     DomainManagerModule,

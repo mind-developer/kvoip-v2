@@ -4,7 +4,6 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
@@ -20,10 +19,12 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [WorkspaceAgent, Workspace, Sector, Inbox],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          WorkspaceAgent,
+          Workspace,
+          Sector,
+          Inbox,
+        ]),
         TypeORMModule,
         InboxModule,
       ],
@@ -32,6 +33,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     forwardRef(() => WorkspaceModule),
   ],
   exports: [AgentService],
-  providers: [AgentService, AgentResolver, TypeORMService, SectorService],
+  providers: [AgentService, AgentResolver, SectorService],
 })
 export class AgentModule {}

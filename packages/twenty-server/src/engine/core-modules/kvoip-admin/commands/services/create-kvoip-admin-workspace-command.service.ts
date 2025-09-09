@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user';
 import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user-workspaces';
@@ -34,10 +34,12 @@ export class CreateKvoipAdminWorkspaceCommandService {
   constructor(
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   public async initPermissions(workspaceId: string) {
@@ -75,17 +77,10 @@ export class CreateKvoipAdminWorkspaceCommandService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await mainDataSource.transaction(
+    await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
           const objectMetadata = objectMetadataItems.find(
@@ -115,6 +110,7 @@ export class CreateKvoipAdminWorkspaceCommandService {
           entityManager,
           schemaName,
           objectMetadataItems.filter((item) => !item.isCustom),
+          undefined,
           true,
         );
 

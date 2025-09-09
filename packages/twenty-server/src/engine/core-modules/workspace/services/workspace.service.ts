@@ -56,11 +56,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   protected readonly logger = new Logger(WorkspaceService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
@@ -74,7 +74,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly pabxService: PabxService,
     private readonly soapClientService: SoapClientService,
