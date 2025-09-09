@@ -39,9 +39,7 @@ export const SettingsFinancialClosing = () => {
       links={[
         {
           children: t`Financial Closings`,
-          // href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        // { children: '' },
       ]}
     >
       <SettingsPageContainer>

@@ -1,3 +1,5 @@
+import { useLingui } from "@lingui/react/macro";
+
 export type SelectOption<T = string> = {
   label: string;
   value: T;
@@ -10,17 +12,34 @@ export enum BillingModel {
   PostpaidUnlimited = 'POSTPAID_UNLIMITED',
 }
 
-export const BillingModelOptions: SelectOption<BillingModel>[] = [
-  { label: 'Pré-Pago', value: BillingModel.Prepaid },
-  { label: 'Pós-Pago', value: BillingModel.Postpaid },
-  { label: 'Pré-Ilimitado', value: BillingModel.PrepaidUnlimited },
-  { label: 'Pós-Ilimitado', value: BillingModel.PostpaidUnlimited },
-];
+// Hook para traduções do BillingModel
+export const useBillingModelTranslations = () => {
+  const { t } = useLingui();
 
-const billingModelLabelMap = new Map(
-  BillingModelOptions.map(option => [option.value, option.label])
-);
+  const getBillingModelLabel = (value: BillingModel | string): string => {
+    switch (value) {
+      case BillingModel.Prepaid:
+        return t`Pré-Pago`;
+      case BillingModel.Postpaid:
+        return t`Pós-Pago`;
+      case BillingModel.PrepaidUnlimited:
+        return t`Pré-Ilimitado`;
+      case BillingModel.PostpaidUnlimited:
+        return t`Pós-Ilimitado`;
+      default:
+        return value as string;
+    }
+  };
 
-export function getBillingModelLabel(value: BillingModel | string): string | undefined {
-  return billingModelLabelMap.get(value as BillingModel);
-}
+  const getBillingModelOptions = (): SelectOption<BillingModel>[] => [
+    { label: t`Pré-Pago`, value: BillingModel.Prepaid },
+    { label: t`Pós-Pago`, value: BillingModel.Postpaid },
+    { label: t`Pré-Ilimitado`, value: BillingModel.PrepaidUnlimited },
+    { label: t`Pós-Ilimitado`, value: BillingModel.PostpaidUnlimited },
+  ];
+
+  return {
+    getBillingModelLabel,
+    getBillingModelOptions,
+  };
+};

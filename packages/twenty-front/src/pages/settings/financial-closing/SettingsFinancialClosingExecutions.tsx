@@ -83,7 +83,7 @@ export const SettingsFinancialClosingExecutions = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="" description={'Histórico de execução do fechamento financeiro'} />
+          <H2Title title="" description={'Financial closing execution history'} />
           
           <Table>
             <StyledObjectTableRow>

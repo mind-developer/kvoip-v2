@@ -13,10 +13,16 @@ export interface CompanyFinancialClosingExecution {
     id: string;
     name: string;
   };
+  financialClosingExecution?: {
+    id: string;
+    name: string;
+    financialClosingId: string;
+  };
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   logs: log[] | null;
+  financialClosingExecutionId: string;
 }
 
 interface log {

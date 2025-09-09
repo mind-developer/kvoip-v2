@@ -178,6 +178,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
         },
         {
+          label: t`Financial Closing`,
+          path: SettingsPath.FinancialClosing,
+          Icon: IconCalendarEvent,
+          isHidden: !isAdminEnabled,
+        },
+        {
           label: t`Security`,
           path: SettingsPath.Security,
           Icon: IconKey,
@@ -210,17 +216,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconFunction,
           isHidden: !isFunctionSettingsEnabled,
           isAdvanced: true,
-        },
-      ],
-    },
-    {
-      label: t`KVoip`,
-      items: [
-        {
-          label: t`Fechamento`,
-          path: SettingsPath.FinancialClosing,
-          Icon: IconCalendarEvent,
-          // isHidden: !isAdminEnabled,
         },
       ],
     },

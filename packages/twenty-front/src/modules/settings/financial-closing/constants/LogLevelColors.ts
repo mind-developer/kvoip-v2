@@ -1,4 +1,5 @@
 import { Theme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
 
 export type LogLevel = 'ERROR' | 'WARN' | 'WARNING' | 'INFO' | 'DEBUG';
 
@@ -72,7 +73,9 @@ export const getExecutionStatusTagColor = (isCompleted: boolean): 'green' | 'red
 };
 
 export const getExecutionStatusText = (isCompleted: boolean): string => {
-  return isCompleted ? 'Executado' : 'Falha';
+  const { t } = useLingui();
+
+  return isCompleted ? t`Executed` : t`Failed`;
 };
 
 // Funções para cores de billing model

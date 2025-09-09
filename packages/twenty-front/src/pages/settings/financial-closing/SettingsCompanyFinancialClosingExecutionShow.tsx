@@ -43,6 +43,10 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
     objectNameSingular: CoreObjectNameSingular.Company,
   });
 
+  const { objectMetadataItem: executionObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.FinancialClosingExecution,
+  });
+
   const { objectMetadataItem: companyExecutionObjectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CompanyFinancialClosingExecution,
   });
@@ -54,28 +58,49 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
       ...generateDepthOneWithoutRelationsRecordGqlFields({
         objectMetadataItem: companyExecutionObjectMetadataItem,
       }),
+      financialClosingExecutionId: true,
       company: generateDepthOneRecordGqlFields({
         objectMetadataItem: companyObjectMetadataItem,
+      }),
+      financialClosingExecution: generateDepthOneRecordGqlFields({
+        objectMetadataItem: executionObjectMetadataItem,
       }),
     },
   });
 
+  const getFinancialClosingExecutionsViewPath = (id: string) => {
+    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
+      ':financialClosingId',
+      id,
+    );
+    return path;
+  };
+
+  const getFinancialClosingExecutionViewPath = (id: string) => {
+    const path = getSettingsPath(SettingsPath.FinancialClosingExecution).replace(
+      ':financialClosingExecutionId',
+      id,
+    );
+    return path;
+  };
 
   if (executionLoading) {
     return (
       <SubMenuTopBarContainer
-        title={'Detalhes de Execução da Companhia'}
+        title={t`Details of Company Execution`}
         links={[
           {
-            children: 'Fechamentos',
+            children: t`Financial Closings`,  
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
-          { children: 'Detalhes' },
+          { children: t`Executions` },
+          { children: t`Details` },
+          { children: t`Company Executions` },
         ]}
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title="" description={'Carregando...'} />
+            <H2Title title="" description={t`Loading...`} />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
@@ -85,18 +110,20 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
   if (!execution) {
     return (
       <SubMenuTopBarContainer
-        title={'Detalhes de Execução da Companhia'}
+        title={t`Details of Company Execution`}
         links={[
           {
-            children: 'Fechamentos',
+            children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
-          { children: 'Detalhes' },
+          { children: t`Executions` },
+          { children: t`Details` },
+          { children: t`Company Execution` },
         ]}
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title="" description={'Execução não encontrada'} />
+            <H2Title title="" description={t`Execution not found`} />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
@@ -105,21 +132,28 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={`Detalhes da Execução - ${execution.company?.name}`}
+      title={ t`Details of Execution` + ` - ${execution.company?.name}`}
       links={[
         {
-          children: 'Fechamentos',
+          children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: 'Detalhes' },
+        { children: t`Executions`,
+          href: getFinancialClosingExecutionsViewPath(execution.financialClosingExecution?.financialClosingId || ''),
+        },
+        { 
+          children: t`Details`,
+          href: getFinancialClosingExecutionViewPath(execution.financialClosingExecutionId),
+        },
+        { children: t`Company Execution` },
       ]}
     >
       <SettingsPageContainer>
         <StyledContentContainer>
           <StyledFormSection>
             <H2Title
-              title={t`Informações da Execução`}
-              description={t`Detalhes gerais da execução da companhia no fechamento financeiro`}
+              title={t`Information of Execution`}
+              description={t`Details of the execution of the company in the financial closing`}
             />
             
             <CompanyFinancialClosingExecutionDetailsCard execution={execution} />
@@ -128,8 +162,8 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
           {execution.logs && execution.logs.length > 0 && (
             <StyledFormSectionLogs>
               <H2Title
-                title={t`Logs de Execução`}
-                description={t`Histórico detalhado da execução da companhia`}
+                title={t`Logs of Execution`}
+                description={t`Detailed history of the execution of the company`}
               />
               
               <CompanyFinancialClosingExecutionLogsList logs={execution.logs} />

@@ -1,9 +1,10 @@
-import { getFinancialClosingExecutionStatusColor, getFinancialClosingExecutionStatusLabel } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
+import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionStatusTranslations } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 import { getExecutionStatusTagColor, getExecutionStatusText } from '@/settings/financial-closing/constants/LogLevelColors';
 import { getTypeEmissionNFColor, getTypeEmissionNFLabel } from '@/settings/financial-closing/constants/TypeEmissionNF';
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/components';
 import { Card, CardContent } from 'twenty-ui/layout';
 
@@ -45,6 +46,8 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
   execution 
 }: CompanyFinancialClosingExecutionDetailsCardProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
+  const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
 
   const formatCurrency = (value?: string | number | null) => {
     if (!value || value === '0') return 'R$ 0,00';
@@ -82,12 +85,12 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow> */}
 
         <StyledInfoRow>
-          <StyledInfoLabel>Companhia:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Company:`}:</StyledInfoLabel>
           <StyledInfoValue>{execution.company?.name || '-'}</StyledInfoValue>
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Status:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Status:`}:</StyledInfoLabel>
           <Tag
             color={getFinancialClosingExecutionStatusColor(execution.status)}
             text={getFinancialClosingExecutionStatusLabel(execution.status)}
@@ -96,17 +99,17 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Valor da Cobrança:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Charge Value:`}:</StyledInfoLabel>
           <StyledInfoValue>{formatCurrency(execution.chargeValue)}</StyledInfoValue>
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Data de Execução:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Execution Date:`}:</StyledInfoLabel>
           <StyledInfoValue>{formatDate(execution.executedAt)}</StyledInfoValue>
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Identificação de Custos Concluída:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Cost Identification:`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.calculatedChargeValue)} 
             text={getExecutionStatusText(execution.calculatedChargeValue)} 
@@ -114,7 +117,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Emissão do Boleto Concluída:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Boleto Issuance:`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
             text={getExecutionStatusText(execution.completedBoletoIssuance)} 
@@ -122,7 +125,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Emissão de NFs Concluída:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Completed Invoice Issuance:`}:</StyledInfoLabel>
           <Tag 
             color={getExecutionStatusTagColor(execution.completedInvoiceIssuance)} 
             text={getExecutionStatusText(execution.completedInvoiceIssuance)} 
@@ -130,7 +133,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>Tipo de Emissão de NF:</StyledInfoLabel>
+          <StyledInfoLabel>{t`Invoice Emission Type:`}:</StyledInfoLabel>
           <Tag
             color={getTypeEmissionNFColor(execution.invoiceEmissionType || 'NOTHING')}
             text={getTypeEmissionNFLabel(execution.invoiceEmissionType || 'NOTHING')}

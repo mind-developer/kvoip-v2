@@ -83,15 +83,23 @@ export const SettingsFinancialClosingExecutionShow = () => {
     TAB_LIST_COMPONENT_ID,
   );
 
+  const getFinancialClosingExecutionsViewPath = (id: string) => {
+    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
+      ':financialClosingId',
+      id,
+    );
+    return path;
+  };
+
   const tabs = [
     {
       id: 'execution-details',
-      title: t`Detalhes da Execução`,
+      title: t`Execution Details`,
       Icon: IconFileText,
     },
     {
       id: 'company-executions',
-      title: t`Execuções das Companhias`,
+      title: t`Company Executions`,
       Icon: IconBuildingSkyscraper,
     },
   ];
@@ -105,12 +113,13 @@ export const SettingsFinancialClosingExecutionShow = () => {
             children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
-          { children: 'Detalhes' },
+          { children: t`Executions` },
+          { children: t`Details` },
         ]}
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title="" description={'Carregando...'} />
+            <H2Title title="" description={'Loading...'} />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
@@ -120,18 +129,19 @@ export const SettingsFinancialClosingExecutionShow = () => {
   if (!execution) {
     return (
       <SubMenuTopBarContainer
-        title={'Detalhes da Execução'}
+        title={t`Details of Execution`}
         links={[
           {
             children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
+          { children: t`Executions` },
           { children: t`Details` },
         ]}
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title="" description={'Execução não encontrada'} />
+            <H2Title title="" description={t`Execution not found`} />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
@@ -146,9 +156,10 @@ export const SettingsFinancialClosingExecutionShow = () => {
           children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        // { children: 'Executions',
-        //   href: getSettingsPath(SettingsPath.FinancialClosingExecutions),
-        // },
+        {
+          children: t`Executions`,
+          href: getFinancialClosingExecutionsViewPath(execution.financialClosingId),
+        },
         { children: t`Details` },
 
       ]}
@@ -163,8 +174,8 @@ export const SettingsFinancialClosingExecutionShow = () => {
           {activeTabId === 'execution-details' && (
             <StyledFormSection>
               <H2Title
-                title={t`Informações da Execução`}
-                description={t`Detalhes gerais da execução do fechamento financeiro`}
+                title={t`Execution Information`}
+                description={t`General details of the financial closing execution`}
               />
               
               <FinancialClosingExecutionDetailsCard execution={execution} />
@@ -172,8 +183,8 @@ export const SettingsFinancialClosingExecutionShow = () => {
               {execution.logs && execution.logs.length > 0 && (
                 <StyledFormSectionLogs>
                   <H2Title
-                    title={t`Logs de Execução`}
-                    description={t`Histórico detalhado da execução`}
+                    title={t`Execution Logs`}
+                    description={t`Detailed history of the execution`}
                   />
                   
                   <FinancialClosingExecutionLogsList logs={execution.logs} />
@@ -185,8 +196,8 @@ export const SettingsFinancialClosingExecutionShow = () => {
           {activeTabId === 'company-executions' && (
             <StyledFormSection>
               <H2Title
-                title={t`Execuções das Companhias`}
-                description={t`Lista de execuções específicas por companhia`}
+                title={t`Company Executions`}
+                description={t`List of specific executions by company`}
               />
               
               <CompanyFinancialClosingExecutionsTable 

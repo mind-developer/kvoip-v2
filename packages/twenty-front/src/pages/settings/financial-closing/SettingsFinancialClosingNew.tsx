@@ -15,13 +15,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-// const financialClosingFormSchema = z.object({
-//   name: z.string().min(3, 'Name is required'),
-// });
+import { useLingui } from '@lingui/react/macro';
 
 const newFinancialClosingFormSchema = FinancialClosingFormSchema.extend({
   workspaceId: z.string(),
+  id: z.string(),
 });
 
 type FinancialClosingFormValues = z.infer<typeof newFinancialClosingFormSchema>;
@@ -29,8 +27,8 @@ type FinancialClosingFormValues = z.infer<typeof newFinancialClosingFormSchema>;
 export const SettingsFinancialClosingNew = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+  const { t } = useLingui();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  // const { createSector } = useCreateSector();
   const { createFinancialClosing } = useCreateFinancialClosing();
 
   const formConfig = useForm<FinancialClosingFormValues>({
@@ -74,7 +72,7 @@ export const SettingsFinancialClosingNew = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={'Fechamento'}
+      title={t`Financial Closing`}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
@@ -85,10 +83,10 @@ export const SettingsFinancialClosingNew = () => {
       }
       links={[
         {
-          children: 'Kvoip',
+          children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: 'Novo Fechamento' },
+        { children: t`New` },
       ]}
     >
       <FormProvider {...formConfig}>

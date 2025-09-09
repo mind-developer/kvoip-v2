@@ -2,12 +2,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
+import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionStatusTranslations } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Tag } from 'twenty-ui/components';
 import { IconClockPlay, useIcons } from 'twenty-ui/display';
-import { getFinancialClosingExecutionStatusColor, getFinancialClosingExecutionStatusLabel } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 
 export type SettingsCompanyFinancialClosingExecutionItemTableRowProps = {
   action: ReactNode;
@@ -70,6 +70,7 @@ export const CompanyFinancialClosingExecutionRow = ({
   link,
 }: SettingsCompanyFinancialClosingExecutionItemTableRowProps) => {
   const theme = useTheme();
+  const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
   
   const { getIcon } = useIcons();
   const Icon = getIcon('clock-play');

@@ -18,6 +18,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { FinancialClosingFormSchema, SettingsFinancialClosingForm } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
 import { useUpdateFinancialClosing } from '@/settings/financial-closing/hooks/useUpdateFinancialClosing';
+import { useLingui } from '@lingui/react/macro';
 
 const editFinancialClosingFormSchema = z
   .object({})
@@ -30,9 +31,9 @@ const editFinancialClosingFormSchema = z
 type SettingsEditFinancialClosingSchemaValues = z.infer<typeof editFinancialClosingFormSchema>;
 
 export const SettingsFinancialClosingEdit = () => {
-  // const { t } = useTranslation();
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const { financialClosings } = useFindAllFinancialClosings();
   const { editFinancialClosing } = useUpdateFinancialClosing();
@@ -78,7 +79,7 @@ export const SettingsFinancialClosingEdit = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={'Fechamento Financeiro'}
+      title={t`Financial Closing`}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
@@ -89,10 +90,11 @@ export const SettingsFinancialClosingEdit = () => {
       }
       links={[
         {
-          children: 'Editar',
-          href: `${settingsFinancialClosingsPagePath}`,
+          children: t`Financial Closings`,
+          href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: `${activeFinancialClosing?.name ?? '--'}` },
+        {
+          children: t`Edit` },
       ]}
     >
       <FormProvider {...formConfig}>

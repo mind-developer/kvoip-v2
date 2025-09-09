@@ -1,13 +1,13 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { BillingModelOptions } from '@/settings/financial-closing/constants/BillingModelOptions';
+import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 
@@ -63,6 +63,8 @@ export const SettingsFinancialClosingForm = ({
   activeFinancialClosing,
 }: SettingsFinancialClosingFormProps) => {
   const { control, reset } = useFormContext<FinancialClosingFormValues>();
+  const { t } = useLingui();
+  const { getBillingModelOptions } = useBillingModelTranslations();
 
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
@@ -87,8 +89,8 @@ export const SettingsFinancialClosingForm = ({
           control={control}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label={'Nome'}
-              placeholder={'Entre com o nome do fechamento'}
+              label={t`Name`}
+              placeholder={t`Enter the name of the closing`}
               value={value}
               onChange={onChange}
               disabled={disabled || disableNameEdit}
@@ -105,8 +107,8 @@ export const SettingsFinancialClosingForm = ({
             return (
               <FormMultiSelectFieldInput
                 key={activeFinancialClosing?.id}
-                label="Selecione os modelos de cobrança"
-                options={BillingModelOptions}
+                label={t`Select the billing models`}
+                options={getBillingModelOptions()}
                 defaultValue={activeFinancialClosing?.billingModelIds ?? []}
                 onChange={onChange}
               />
@@ -123,7 +125,7 @@ export const SettingsFinancialClosingForm = ({
             render={({ field: { onChange, value } }) => (
               <TextInput
                 type="time"
-                label="Horário"
+                label={t`Time`}
                 value={value}
                 onChange={onChange}
                 disabled={disabled}
@@ -139,9 +141,9 @@ export const SettingsFinancialClosingForm = ({
                 fullWidth
                 disabled={false}
                 dropdownId="dayClosing"
-                label={'Dia de Fechamento'}
+                label={t`Closing Day`}
                 options={[
-                  { label: 'Selecione o dia...', value: null },
+                  { label: t`Select the day...`, value: null },
                   ...Array.from({ length: 30 }, (_, i) => ({
                     label: String(i + 1),
                     value: i + 1,
@@ -156,7 +158,7 @@ export const SettingsFinancialClosingForm = ({
           />
         </StyledSectionDateInputs>
 
-        <Controller            
+        {/* <Controller            
           name="lastDayMonth"
           control={control}
           render={({ field: { onChange, value } }) => (
@@ -166,10 +168,10 @@ export const SettingsFinancialClosingForm = ({
                 onCheckedChange={onChange}
                 disabled={disabled}
               />
-              <label>Último dia do mês</label>
+              <label>{t`Last day of the month`}</label>
             </div>
           )}
-        />
+        /> */}
 
       </StyledInputsContainer>
     </Section>

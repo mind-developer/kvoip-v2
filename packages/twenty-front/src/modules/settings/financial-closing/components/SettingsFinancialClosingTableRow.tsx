@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-import { getBillingModelLabel } from '@/settings/financial-closing/constants/BillingModelOptions';
+import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';
 import { getBillingModelTagColor } from '@/settings/financial-closing/constants/LogLevelColors';
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { useTheme } from '@emotion/react';
-import { Tag } from 'twenty-ui/components';
 import { useLingui } from '@lingui/react/macro';
+import { Tag } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -62,6 +62,7 @@ export const SettingsFinancialClosingTableRow = ({
 }: SettingsFinancialClosingTableRowProps) => {
   const theme = useTheme();
   const { t } = useLingui();
+  const { getBillingModelLabel } = useBillingModelTranslations();
 
   const getDateDayText = () => {
     if (financialClosing.lastDayMonth) {
