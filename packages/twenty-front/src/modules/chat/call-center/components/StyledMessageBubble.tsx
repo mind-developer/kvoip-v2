@@ -16,6 +16,7 @@ const StyledMessageBubbleContainer = styled.div<{
   hasTail: boolean;
   status: MessageStatus;
 }>`
+  ${({ messageType }) => (messageType === 'image' ? 'max-width: 200px;' : '')}
   position: relative;
   align-self: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
@@ -25,7 +26,7 @@ const StyledMessageBubbleContainer = styled.div<{
       ? theme.name === 'dark'
         ? '#274238'
         : '#D9FDD3'
-      : theme.background.secondary};
+      : theme.background.quaternary};
 
   padding: ${({ theme, messageType }) =>
     `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' ? 3 : 1)}`};
@@ -56,7 +57,7 @@ const StyledMessageBubbleContainer = styled.div<{
         ? theme.name === 'dark'
           ? '#274238'
           : '#D9FDD3'
-        : theme.background.secondary
+        : theme.background.quaternary
     };
     border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 15px;
     z-index: 0;
@@ -65,7 +66,9 @@ const StyledMessageBubbleContainer = styled.div<{
   &:after {
     ${isSystemMessage ? 'right' : 'left'}: -21px;
     width: 21px;
-    background-color: ${theme.background.primary};
+    background-color: ${
+      theme.name === 'dark' ? 'black' : theme.background.primary
+    };
     border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 5px;
   }
 `}

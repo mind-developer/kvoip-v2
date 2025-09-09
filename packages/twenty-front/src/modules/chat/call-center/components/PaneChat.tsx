@@ -17,10 +17,14 @@ import { MessageType } from '@/chat/types/MessageType';
 import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Person } from '@/people/types/Person';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconBan, IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -28,7 +32,6 @@ import {
   IconCheck,
   IconPlayerPause,
   IconTrash,
-  IconX,
   Label,
   useIcons,
 } from 'twenty-ui/display';
@@ -43,6 +46,8 @@ const StyledPaneChatContainer = styled.div`
   padding-top: 0;
   gap: ${({ theme }) => theme.spacing(0)};
   width: 100%;
+  background-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'black' : theme.background.primary};
 `;
 
 const StyledChatContainer = styled.div`
@@ -53,7 +58,8 @@ const StyledChatContainer = styled.div`
   height: 100%;
   overflow-y: auto;
   margin-inline: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 
 const StyledMessageContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -123,11 +129,12 @@ const StyledDocument = styled.a`
 const StyledImage = styled.img`
   align-items: end;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) => theme.spacing(3)};
   display: flex;
   height: 200px;
   object-fit: cover;
   width: 200px;
+  z-index: 2;
 `;
 
 const StyledMessage = styled.div<{ isSystemMessage: boolean }>`
@@ -217,8 +224,10 @@ const StyledMessageEvent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
   color: ${({ theme }) => theme.color.gray50};
+  padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
@@ -309,6 +318,7 @@ export const PaneChat = () => {
     setStartChatNumber,
     setStartChatIntegrationId,
   } = useContext(CallCenterContext) as CallCenterContextType;
+  const [lastFromClient, setLastFromClient] = useState<IMessage | null>(null);
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
@@ -323,7 +333,6 @@ export const PaneChat = () => {
     null,
   );
   const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
-  const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -335,6 +344,10 @@ export const PaneChat = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { updateOneRecord } = useUpdateOneRecord<Person>({
+    objectNameSingular: CoreObjectNameSingular.Person,
+  });
 
   const { getIcon } = useIcons();
 
@@ -349,6 +362,12 @@ export const PaneChat = () => {
     } else if (!isAtBottom) {
       setNewMessagesIndicator(true);
     }
+    const clientMessages = selectedChat?.messages.filter(
+      (message) => !message.fromMe,
+    );
+    if (clientMessages)
+      setLastFromClient(clientMessages[clientMessages.length - 1]);
+    console.log(clientMessages);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat?.messages]);
 
@@ -367,6 +386,7 @@ export const PaneChat = () => {
       type,
       from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
       fromMe: true,
+      personId: selectedChat.personId,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -541,10 +561,6 @@ export const PaneChat = () => {
   }
 
   const handleSendMessage = () => {
-    // if (textareaRef.current) {
-    //   textareaRef.current.style.height = 'initial';
-    // }
-
     // essa mensagem é temporária e só existe no state.
     // ela será substituída pela mensagem verdadeira quando o firebase
     // recarregar os valores desse chat.
@@ -656,6 +672,20 @@ export const PaneChat = () => {
         setNewMessagesIndicator(false);
       }
     }
+  };
+
+  const handleUpdatePersonName = async () => {
+    if (!lastFromClient) return;
+    await updateOneRecord({
+      idToUpdate: selectedChat.personId,
+      updateOneRecordInput: {
+        name: { firstName: lastFromClient.from, lastName: '' },
+      },
+    });
+    setSelectedChat((prev) => ({
+      ...prev,
+      client: { ...prev.client, name: lastFromClient!.from },
+    }));
   };
 
   const scrollToBottom = () => {
@@ -828,7 +858,11 @@ export const PaneChat = () => {
             let messageContent;
 
             if (validMessageType)
-              return <StyledMessageEvent>{message.message}</StyledMessageEvent>;
+              return (
+                <StyledMessageEvent>
+                  <IconExclamationCircleFilled size={13} /> {message.message}
+                </StyledMessageEvent>
+              );
 
             switch (message.type) {
               case MessageType.IMAGE:
@@ -906,7 +940,6 @@ export const PaneChat = () => {
             const clientMessages = selectedChat.messages.filter(
               (message) => !message.fromMe,
             );
-            const lastFromClient = clientMessages[clientMessages.length - 1];
 
             return (
               <>
@@ -935,38 +968,44 @@ export const PaneChat = () => {
                         isSystemMessage={isSystemMessage}
                         message={message}
                         index={index}
-                        hasTail={lastOfRow && !isSendingMessage}
+                        hasTail={lastOfRow}
                         customButton={
-                          !isSystemMessage
-                            ? message.id === lastFromClient.id &&
-                              message.from !== selectedChat.client.name && (
+                          !isSystemMessage && message.id === lastFromClient?.id
+                            ? message.from !== selectedChat.client.name && (
                                 <>
                                   <div
                                     style={{
                                       borderTop: `1px solid ${theme.border.color.strong}`,
-                                      marginTop: 15,
+                                      marginTop: 16,
                                     }}
                                   >
-                                    <Label style={{ marginTop: 5 }}>
+                                    <Label style={{ marginTop: 4 }}>
                                       Novo nome de contato do WhatsApp
-                                      encontrado. Atualizar registro?
+                                      encontrado: {message.from}. Atualizar
+                                      registro?
                                     </Label>
-                                    <div style={{ display: 'flex', gap: 5 }}>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        gap: 4,
+                                        marginTop: 4,
+                                      }}
+                                    >
                                       <Button
                                         Icon={IconCheck}
                                         title="Sim"
                                         variant="tertiary"
                                         accent="blue"
                                         size="small"
-                                        // onClick={handleUpdateClientName}
+                                        onClick={handleUpdatePersonName}
                                       />
                                       <Button
-                                        Icon={IconX}
-                                        title="Não"
+                                        Icon={IconBan}
+                                        title="Não perguntar novamente"
                                         variant="tertiary"
                                         accent="default"
                                         size="small"
-                                        // onClick={handleUpdateClientName}
+                                        // onClick={}
                                       />
                                     </div>
                                   </div>
