@@ -19,6 +19,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -180,21 +181,6 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   workflowRunId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.chatbot,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Chatbot`,
-    description: msg`Favorite chatbot`,
-    icon: 'IconSettingsAutomation',
-    inverseSideTarget: () => ChatbotWorkspaceEntity,
-    inverseSideFieldKey: 'favorites',
-  })
-  @WorkspaceIsNullable()
-  chatbot: Relation<ChatbotWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('chatbot')
-  chatbotId: string;
-
-  @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
@@ -211,6 +197,22 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   taskId: string;
 
   @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.dashboard,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Dashboard`,
+    description: msg`Favorite dashboard`,
+    icon: 'IconLayoutDashboard',
+    inverseSideTarget: () => DashboardWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  dashboard: Relation<DashboardWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('dashboard')
+  dashboardId: string;
+
+  @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
@@ -225,6 +227,21 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('note')
   noteId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.chatbot,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Chatbot`,
+    description: msg`Favorite chatbot`,
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => ChatbotWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceIsNullable()
+  chatbot: Relation<ChatbotWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string;
 
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,

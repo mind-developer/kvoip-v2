@@ -11,6 +11,7 @@ import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/char
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
@@ -58,6 +59,7 @@ const baseStandardObjectMetadataDefinitions = [
   CalendarEventParticipantWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
+  DashboardWorkspaceEntity,
   FavoriteWorkspaceEntity,
   FavoriteFolderWorkspaceEntity,
   TimelineActivityWorkspaceEntity,

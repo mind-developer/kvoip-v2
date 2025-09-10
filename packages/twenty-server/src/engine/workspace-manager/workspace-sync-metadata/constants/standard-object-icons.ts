@@ -11,9 +11,11 @@ export const STANDARD_OBJECT_ICONS = {
   calendarChannel: 'IconCalendar',
   calendarEventParticipant: 'IconCalendar',
   calendarEvent: 'IconCalendar',
+  chatbot: 'IconSettingsAutomation',
   comment: 'IconMessageCircle',
   company: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',
+  dashboard: 'IconLayoutDashboard',
   favorite: 'IconHeart',
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
@@ -42,6 +44,5 @@ export const STANDARD_OBJECT_ICONS = {
   workflowVersion: 'IconVersions',
   workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
-  chatbot: 'IconSettingsAutomation',
   ...KVOIP_ADMIN_STANRD_BOJECT_ICONS,
 } as const;
