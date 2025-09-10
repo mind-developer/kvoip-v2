@@ -18,12 +18,12 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
@@ -41,11 +41,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -56,29 +51,24 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

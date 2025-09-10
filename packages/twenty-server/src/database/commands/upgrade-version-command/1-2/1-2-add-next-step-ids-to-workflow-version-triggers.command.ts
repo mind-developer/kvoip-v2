@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,

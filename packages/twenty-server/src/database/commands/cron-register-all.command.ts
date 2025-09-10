@@ -2,13 +2,14 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
-import { CheckExpiredSubscriptionsCronCommand } from 'src/engine/core-modules/billing/crons/commands/check-expired-subscriptions.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CleanupOrphanedFilesCronCommand } from 'src/engine/core-modules/file/crons/commands/cleanup-orphaned-files.cron.command';
+import { CronTriggerCronCommand } from 'src/engine/metadata-modules/trigger/crons/commands/cron-trigger.cron.command';
+import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
+import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
-import { ChargeEmmitRecurrentBillsCronCommand } from 'src/modules/charges/cron/command/charge-emmit-bills.cron.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
@@ -28,17 +29,19 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly messagingMessagesImportCronCommand: MessagingMessagesImportCronCommand,
     private readonly messagingMessageListFetchCronCommand: MessagingMessageListFetchCronCommand,
     private readonly messagingOngoingStaleCronCommand: MessagingOngoingStaleCronCommand,
+
     private readonly calendarEventListFetchCronCommand: CalendarEventListFetchCronCommand,
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
-    private readonly checkExpiredSubscriptionsCronCommand: CheckExpiredSubscriptionsCronCommand,
-    private readonly chargeEmmitReccurrentsBillCronCommand: ChargeEmmitRecurrentBillsCronCommand,
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
+    private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
+    private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
   ) {
     super();
   }
@@ -47,14 +50,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     this.logger.log('Registering all background sync cron jobs...');
 
     const commands = [
-      {
-        name: 'CheckExpiredSubscriptions',
-        command: this.checkExpiredSubscriptionsCronCommand,
-      },
-      {
-        name: 'ChargeEmmitRecurrentBills',
-        command: this.chargeEmmitReccurrentsBillCronCommand,
-      },
       {
         name: 'MessagingMessagesImport',
         command: this.messagingMessagesImportCronCommand,
@@ -102,6 +97,18 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowCleanWorkflowRuns',
         command: this.workflowCleanWorkflowRunsCronCommand,
+      },
+      {
+        name: 'CronTrigger',
+        command: this.cronTriggerCronCommand,
+      },
+      {
+        name: 'CleanSuspendedWorkspaces',
+        command: this.cleanSuspendedWorkspacesCronCommand,
+      },
+      {
+        name: 'CleanOnboardingWorkspaces',
+        command: this.cleanOnboardingWorkspacesCronCommand,
       },
     ];
 

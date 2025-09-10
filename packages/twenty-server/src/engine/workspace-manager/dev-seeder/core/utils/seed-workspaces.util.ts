@@ -25,7 +25,6 @@ const workspaceSeederFields = [
   'logo',
   'activationStatus',
   'version',
-  'creatorEmail',
   'isTwoFactorAuthenticationEnforced',
 ] as const satisfies (keyof Workspace)[];
 
@@ -51,7 +50,6 @@ export const seedWorkspaces = async ({
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
       version: version,
-      creatorEmail: 'tim@apple.dev',
       isTwoFactorAuthenticationEnforced: false,
     },
     [SEED_YCOMBINATOR_WORKSPACE_ID]: {
@@ -62,7 +60,6 @@ export const seedWorkspaces = async ({
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/ycombinator-logo.png',
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
       version: version,
-      creatorEmail: 'tim@apple.dev',
       isTwoFactorAuthenticationEnforced: false,
     },
   };
