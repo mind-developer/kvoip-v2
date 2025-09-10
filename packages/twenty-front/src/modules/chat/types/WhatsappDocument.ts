@@ -19,6 +19,7 @@ export interface IClient {
   phone?: string;
   name?: string;
   ppUrl?: string;
+  email?: string;
 }
 
 export enum statusEnum {

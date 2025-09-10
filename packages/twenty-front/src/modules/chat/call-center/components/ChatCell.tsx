@@ -9,11 +9,9 @@ import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContex
 import { formatDate } from '@/chat/utils/formatDate';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { Person } from '@/people/types/Person';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 const StyledItemChat = styled.div<{ isSelected?: boolean }>`
   align-items: center;
@@ -111,8 +109,6 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
     useContext(CallCenterContext) as CallCenterContextType;
 
-  const [title, setTitle] = useState<string>(chat.client.name);
-
   const { agents = [] } = useFindAllAgents();
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -133,14 +129,6 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   const formattedMessage = chat.lastMessage.fromMe
     ? chat.lastMessage.message.replace(`*#${userNameToDisplay}*`, '')
     : chat.lastMessage.message;
-
-  const { record, loading, error } = useFindOneRecord<Person>({
-    objectNameSingular: CoreObjectNameSingular.Person,
-    objectRecordId: chat?.personId,
-    onCompleted: (r: Person) => {
-      setTitle(r.name.firstName + r.name.lastName);
-    },
-  });
 
   const messageToDisplay = `${userNameToDisplay}: ${
     formattedMessage?.length > 20
@@ -206,7 +194,7 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
         </StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
-            <StyledUserName>{title}</StyledUserName>
+            <StyledUserName>{chat.client.name}</StyledUserName>
             <StyledLastMessagePreview>
               {messageToDisplay}
             </StyledLastMessagePreview>

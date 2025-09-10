@@ -278,7 +278,6 @@ const StyledAmplitudeValue = styled.div<{ amplitudeValue: number }>`
   background-color: ${({ theme }) => theme.background.invertedPrimary};
   height: ${({ amplitudeValue }) =>
     Math.round(Math.min(60 * amplitudeValue + 3, 40))}px;
-  }
 `;
 
 const StyledUnreadMarker = styled.div`
@@ -367,7 +366,6 @@ export const PaneChat = () => {
     );
     if (clientMessages)
       setLastFromClient(clientMessages[clientMessages.length - 1]);
-    console.log(clientMessages);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat?.messages]);
 
@@ -674,18 +672,17 @@ export const PaneChat = () => {
     }
   };
 
-  const handleUpdatePersonName = async () => {
+  const handleUpdatePersonName = () => {
     if (!lastFromClient) return;
-    await updateOneRecord({
+    updateOneRecord({
       idToUpdate: selectedChat.personId,
       updateOneRecordInput: {
-        name: { firstName: lastFromClient.from, lastName: '' },
+        name: {
+          firstName: lastFromClient.from.split(' ')[0],
+          lastName: lastFromClient.from.split(' ').slice(1).join(' '),
+        },
       },
     });
-    setSelectedChat((prev) => ({
-      ...prev,
-      client: { ...prev.client, name: lastFromClient!.from },
-    }));
   };
 
   const scrollToBottom = () => {
@@ -970,7 +967,7 @@ export const PaneChat = () => {
                         index={index}
                         hasTail={lastOfRow}
                         customButton={
-                          !isSystemMessage && message.id === lastFromClient?.id
+                          message.id === lastFromClient?.id
                             ? message.from !== selectedChat.client.name && (
                                 <>
                                   <div
@@ -1005,7 +1002,6 @@ export const PaneChat = () => {
                                         variant="tertiary"
                                         accent="default"
                                         size="small"
-                                        // onClick={}
                                       />
                                     </div>
                                   </div>

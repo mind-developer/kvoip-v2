@@ -86,6 +86,7 @@ export type InfoSectionProps = {
   type: 'text' | 'select';
   value: string;
   onTextChange?: (newText: string) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
 };
 
 export const InfoSection = ({
@@ -95,6 +96,7 @@ export const InfoSection = ({
   type,
   value,
   onTextChange,
+  onBlur,
 }: InfoSectionProps) => {
   const [statusOpen, setStatusOpen] = useState<boolean>(false);
   const [status, setStatus] = useState<statusEnum>(
@@ -158,7 +160,7 @@ export const InfoSection = ({
             {Icon && <Icon size={16} color="#999" />}
             {title}
           </StyledIconLabel>
-          <TextInput value={value} onChange={handleChange} />
+          <TextInput value={value} onBlur={onBlur} onChange={handleChange} />
         </StyledDataSection>
       ) : (
         <StyledDataSection>

@@ -15,10 +15,11 @@ export type WhatsappDocument = {
   isVisible: boolean;
 };
 
-type IClient = {
+export type IClient = {
   phone: string;
   name?: string;
   ppUrl?: string | null;
+  email?: string | null;
 };
 
 export type IMessage = {

@@ -18,6 +18,9 @@ import {
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
@@ -28,6 +31,7 @@ import {
   SendMessageInput,
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+import { UpdateChatDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-chat-data-input';
 import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
@@ -41,6 +45,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
@@ -64,6 +69,18 @@ export class WhatsappService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     this.firestoreDb = this.firebaseService.getFirestoreDb();
+  }
+
+  @OnDatabaseBatchEvent('person', DatabaseEventAction.UPDATED)
+  async handlePersonUpdate(
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<PersonWorkspaceEntity>
+    >,
+  ) {
+    payload.events.forEach((event) => {
+      console.log(JSON.stringify(event.properties.diff));
+      this.updateClientAtFirebase(event.properties.after);
+    });
   }
 
   async sendTemplate(
@@ -297,9 +314,9 @@ export class WhatsappService {
   }
 
   async updateMessageAtFirebase(updateMessageInput: UpdateMessageDataInput) {
-    const messagesCollection = collection(this.firestoreDb, 'whatsapp');
+    const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
     const docId = `${updateMessageInput.integrationId}_${updateMessageInput.clientPhoneNumber}`;
-    const docRef = doc(messagesCollection, docId);
+    const docRef = doc(whatsappCollection, docId);
     const docSnapshot = await getDoc(docRef);
     const data = docSnapshot.data();
 
@@ -315,6 +332,47 @@ export class WhatsappService {
       await updateDoc(docRef, { messages: updatedMessages });
       return true;
     }
+  }
+
+  async updateChatAtFirebase(updateChatDataInput: UpdateChatDataInput) {
+    const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
+    const docId = `${updateChatDataInput.integrationId}_${updateChatDataInput.clientPhoneNumber}`;
+    const docRef = doc(whatsappCollection, docId);
+    const docSnapshot = await getDoc(docRef);
+    const data = docSnapshot.data();
+
+    const { clientPhoneNumber, ...input } = updateChatDataInput;
+
+    if (data) {
+      await setDoc(docRef, { ...data, ...input });
+      return true;
+    }
+    return false;
+  }
+
+  async updateClientAtFirebase(updateClientInput: PersonWorkspaceEntity) {
+    const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
+    const q = query(
+      whatsappCollection,
+      where('personId', '==', updateClientInput.id),
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const data: Partial<WhatsappDocument> = doc.data();
+      if (!updateClientInput.name) return;
+      updateDoc(doc.ref, {
+        client: {
+          name:
+            updateClientInput.name?.firstName +
+            ' ' +
+            updateClientInput.name?.lastName,
+          phone: updateClientInput.phones?.primaryPhoneNumber,
+          ppUrl: updateClientInput.avatarUrl,
+          email: updateClientInput.emails.primaryEmail,
+        },
+      });
+    });
+    return true;
   }
 
   async saveMessageAtFirebase(
@@ -341,19 +399,19 @@ export class WhatsappService {
       phones: { primaryPhoneNumber: whatsappDoc.client.phone },
     });
     let clientName = relatedPerson?.name?.firstName
-      ? relatedPerson.name.firstName
+      ? relatedPerson.name.firstName + ' ' + relatedPerson.name.lastName
       : whatsappDoc.client.name;
-    let createdPerson: Partial<PersonWorkspaceEntity | null> = null;
 
-    if (relatedPerson) clientName === relatedPerson.name?.firstName;
-    else {
+    let createdPerson: Partial<PersonWorkspaceEntity | null> = null;
+    if (!relatedPerson)
       createdPerson = await personRepository.save({
-        position: 0,
         name: {
           firstName: whatsappDoc.client.name
-            ? whatsappDoc.client.name
+            ? whatsappDoc.client.name.split(' ')[0]
             : whatsappDoc.client.phone || '',
-          lastName: '',
+          lastName: whatsappDoc.client.name
+            ? whatsappDoc.client.name.split(' ')[1]
+            : '',
         },
         //TODO: parse number to get codes
         phones: {
@@ -364,8 +422,10 @@ export class WhatsappService {
         },
         avatarUrl: whatsappDoc.client.ppUrl || undefined,
       });
-    }
 
+    // baileys edge case
+    // client.name will be empty under these circumstances (first message, initiated by user)
+    // so we use the phone number
     if (!docSnapshot.exists() && whatsappDoc.lastMessage.fromMe)
       clientName = whatsappDoc.client.phone;
 
@@ -382,6 +442,7 @@ export class WhatsappService {
           name: clientName,
           phone: whatsappDoc.client.phone,
           ppUrl: whatsappDoc.client.ppUrl ?? null,
+          email: relatedPerson?.emails.primaryEmail ?? null,
         },
       });
       if (isReceiving) {
@@ -425,7 +486,9 @@ export class WhatsappService {
       whatsappIntegration.isVisible = true;
     }
     whatsappIntegration.personId = createdPerson?.id || relatedPerson!.id;
-    whatsappIntegration.messages.push({ ...whatsappDoc.messages[0] });
+    (whatsappIntegration.client.email =
+      relatedPerson?.emails.primaryEmail ?? null),
+      whatsappIntegration.messages.push({ ...whatsappDoc.messages[0] });
     whatsappIntegration.lastMessage = { ...whatsappDoc.lastMessage };
     whatsappIntegration.unreadMessages = isReceiving
       ? whatsappIntegration.unreadMessages + 1
@@ -495,6 +558,8 @@ export class WhatsappService {
     const whatsappIntegration = docSnapshot.data() as WhatsappDocument;
 
     // Se não houver messages, apenas atualiza status, agent, sector e timeline
+
+    //TODO: migrar essa lógica para updateChatAtFirebase
     if (
       !whatsappDoc.messages ||
       !Array.isArray(whatsappDoc.messages) ||

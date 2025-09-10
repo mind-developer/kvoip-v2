@@ -387,6 +387,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.END,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.END} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   }, [selectedChat]);
 
@@ -428,6 +429,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.TRANSFER,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.TRANSFER} ${to} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   };
 
@@ -457,6 +459,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.ONHOLD,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.ONHOLD} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   }, [selectedChat]);
 
