@@ -3,8 +3,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/display';
+import { ChatContextType } from '../../types/chat';
 import { ChatContext } from '../context/chatContext';
-import { ChatContextType } from '../types/chat';
 
 const StyledMainContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};

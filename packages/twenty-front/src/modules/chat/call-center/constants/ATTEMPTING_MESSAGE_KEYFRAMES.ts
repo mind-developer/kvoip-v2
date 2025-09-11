@@ -4,7 +4,7 @@ export const ATTEMPTING_MESSAGE_KEYFRAMES = `
   opacity: 0;
   @keyframes attempting-message {
     0% {
-      opacity: 0.6;
+      opacity: 0.8;
     }
     100% {
       opacity: 1;
