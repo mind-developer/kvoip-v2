@@ -504,7 +504,8 @@ export async function addCompanyFinancialClosingExecutionErrorLog(
   companyExecution: CompanyFinancialClosingExecutionWorkspaceEntity,
   companyExecutionRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity>,
   errorMessage: string,
-  company?: CompanyWorkspaceEntity
+  company?: CompanyWorkspaceEntity,
+  morePropsToUpdate?: any
 ): Promise<void> {
   await addCompanyFinancialClosingExecutionLog(
     companyExecution,
@@ -512,7 +513,8 @@ export async function addCompanyFinancialClosingExecutionErrorLog(
     errorMessage,
     'error',
     FinancialClosingExecutionStatusEnum.ERROR,
-    company
+    company,
+    morePropsToUpdate
   );
 }
 
@@ -525,7 +527,8 @@ export async function addCompanyFinancialClosingExecutionLog(
   message: string,
   level: 'info' | 'error' | 'warn' = 'info',
   status?: FinancialClosingExecutionStatusEnum,
-  company?: CompanyWorkspaceEntity
+  company?: CompanyWorkspaceEntity,
+  morePropsToUpdate?: any
 ): Promise<void> {
   const logEntry = {
     level,
@@ -552,7 +555,10 @@ export async function addCompanyFinancialClosingExecutionLog(
   }
 
   // Prepara dados para atualização
-  const updateData: any = { logs: companyExecution.logs };
+  const updateData: any = { 
+    logs: companyExecution.logs,
+    ...morePropsToUpdate
+  };
   if (status) {
     updateData.status = status;
     companyExecution.status = status;

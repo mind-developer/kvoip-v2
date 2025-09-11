@@ -52,7 +52,7 @@ export class RunFinancialClosingJobProcessor {
   async handle(data: RunFinancialClosingJob): Promise<void> {
     const { financialClosingId, workspaceId } = data;
 
-    this.logger.log(`11111111111111111111111111111 Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
+    this.logger.log(`22222222222222222222 Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
     
     const financialClosing = await this.financialClosingService.findById(financialClosingId);
 
@@ -97,6 +97,8 @@ export class RunFinancialClosingJobProcessor {
         completedCompanySearch: true,
       });
 
+      this.logger.log(`Empresas encontradas: ${companies.length }`);
+
       const companyFinancialClosingExecutionsRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
           workspaceId,
@@ -131,6 +133,14 @@ export class RunFinancialClosingJobProcessor {
 
       // Marco de finalização do cálculo de custo
       await financialClosingExecutionsRepository.update(newExecutionLog.id, { completedCostIdentification: true,});
+      
+      // Atualiza o numero de empresas com erro se for diferente do numero de empresas obtidas
+      if (companiesWithAmount.length !== companies.length) {
+        const numberOfCompaniesWithError = companies.length - companiesWithAmount.length;
+        await financialClosingExecutionsRepository.update(newExecutionLog.id, { companiesWithError: numberOfCompaniesWithError });
+      }
+
+      this.logger.log(`Empresas sem erros: ${companiesWithAmount.length }`);
 
       for (const company of companiesWithAmount) {
 
@@ -153,53 +163,25 @@ export class RunFinancialClosingJobProcessor {
         companyExecution.calculatedChargeValue = true;
         companyExecution.invoiceEmissionType = company.data.typeEmissionNF;
 
-        try {
-          await this.messageQueueService.add<CompanyFinancialClosingJobData>(
-            RunCompanyFinancialClosingJobProcessor.name,
-            {
-              financialClosing,
-              workspaceId,
-              company: company.data,
-              amountToBeCharged: company.amountToBeCharged,
-              billingModel: company.billingModel,
-              executionLog: newExecutionLog,
-              companyExecutionLog: companyExecution,
-            },
-            // { attempts: 3, removeOnComplete: true }
-          );
+        await this.messageQueueService.add<CompanyFinancialClosingJobData>(
+          RunCompanyFinancialClosingJobProcessor.name,
+          {
+            financialClosing,
+            workspaceId,
+            company: company.data,
+            amountToBeCharged: company.amountToBeCharged,
+            billingModel: company.billingModel,
+            executionLog: newExecutionLog,
+            companyExecutionLog: companyExecution,
+          },
+          // { attempts: 3, removeOnComplete: true }
+        );
 
-          // Marco de finalização da emissão de boletos e notas fiscais
-          await financialClosingExecutionsRepository.update(newExecutionLog.id, {
-            completedBoletoIssuance: true,
-            completedInvoiceIssuance: true,
-          });
-
-        } catch (jobError) {
-
-          this.logger.error(`Error adding job for company ${company.data.id}: ${jobError.message}`, jobError.stack);
-
-          // Log no fechamento geral
-          await addFinancialClosingExecutionLog(
-            newExecutionLog,
-            financialClosingExecutionsRepository,
-            'error',
-            `Erro ao adicionar job para a empresa ${company.data.id}: ${jobError.message}`,
-          );
-
-          // Caso erro geral, atualiza o status da execução da empresa atual do processo
-          await addCompanyFinancialClosingExecutionErrorLog(
-             companyExecution,
-             companyFinancialClosingExecutionsRepository,
-             `Erro na emissão: ${jobError.message}`,
-             company.data
-           );
-
-          await financialClosingExecutionsRepository.increment(
-            { id: newExecutionLog.id },
-            'companiesWithError',
-            1
-          );
-        }
+        // Marco de finalização da emissão de boletos e notas fiscais
+        await financialClosingExecutionsRepository.update(newExecutionLog.id, {
+          completedBoletoIssuance: true,
+          completedInvoiceIssuance: true,
+        });
       }
 
       await financialClosingExecutionsRepository.update(newExecutionLog.id, {

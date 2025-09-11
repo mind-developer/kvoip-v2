@@ -1,25 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CreateFinancialClosingInput } from './dtos/create-financial-closing.input';
-import { UpdateFinancialClosingInput } from './dtos/update-financial-closing.input';
 import { FinancialClosing } from './financial-closing.entity';
 
 import { Logger } from '@nestjs/common';
-import { RunFinancialClosingJob, RunFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { getAmountToBeChargedToCompanies, getCompaniesForFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
-import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
 import { InterCustomerType } from 'src/engine/core-modules/inter/interfaces/charge.interface';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { ChargeAction, ChargeEntityType, ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
 @Injectable()
 export class FinancialClosingChargeService {
@@ -30,6 +20,84 @@ export class FinancialClosingChargeService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
   ) {}
+
+  // Função publica generica para validação de campos obrigatórios
+  public validateRequiredFields(company: CompanyWorkspaceEntity): void {
+    
+    // Campos obrigatórios do objeto CompanyWorkspaceEntity
+    const requiredFields = [
+      'cpfCnpj', 
+      'name', 
+      'address', 
+      'address.addressNumber', 
+      'address.addressStreet1', 
+      'address.addressCity', 
+      'address.addressState', 
+      'address.addressPostcode', 
+      'emails.primaryEmail'
+    ];
+
+    const getNestedValue = (obj: any, path: string): any => {
+      return path.split('.').reduce((current, key) => current?.[key], obj);
+    };
+
+    const getFieldLabel = (fieldPath: string): string => {
+      // Para campos simples (sem ponto)
+      if (!fieldPath.includes('.')) {
+        const fieldMetadata = metadataArgsStorage
+          .filterFields(CompanyWorkspaceEntity)
+          .find(field => field.name === fieldPath);
+        const label = fieldMetadata?.label;
+        return typeof label === 'string' ? label : fieldPath;
+      }
+
+      // Para campos aninhados (com ponto)
+      const [parentField, childField] = fieldPath.split('.');
+      
+      // Busca o campo pai na entidade
+      const parentFieldMetadata = metadataArgsStorage
+        .filterFields(CompanyWorkspaceEntity)
+        .find(field => field.name === parentField);
+      
+      if (!parentFieldMetadata) {
+        return fieldPath;
+      }
+
+      // Para campos de endereço
+      if (parentField === 'address') {
+        const addressLabels: Record<string, string> = {
+          'addressNumber': 'Número',
+          'addressStreet1': 'Rua',
+          'addressStreet2': 'Complemento',
+          'addressCity': 'Cidade',
+          'addressState': 'Estado',
+          'addressPostcode': 'CEP'
+        };
+        return `${addressLabels[childField] || childField}`;
+      }
+
+      // Para campos de email
+      if (parentField === 'emails') {
+        const emailLabels: Record<string, string> = {
+          'primaryEmail': 'Email'
+        };
+        return `${emailLabels[childField] || childField}`;
+      }
+
+      return `${childField}`;
+    };
+
+    const missingFields = requiredFields.filter(field => !getNestedValue(company, field));
+
+    if (missingFields.length > 0) {
+      const missingFieldLabels = missingFields.map(field => getFieldLabel(field));
+      throw new Error(`Company is missing required fields: ${missingFieldLabels.join(', ')}`);
+    }
+  }
+
+  private removeSpecialCharacters(str: any): string {
+    return str.replace(/[.,]/g, '');
+  }
 
   async emitChargeForCompany(
     workspaceId: string,
@@ -54,23 +122,21 @@ export class FinancialClosingChargeService {
 
     const client = {
       nome: company.name || '',
-      cpfCnpj: company.cpfCnpj || '',
+      cpfCnpj: this.removeSpecialCharacters(company.cpfCnpj),
       tipoPessoa: this.getTipoPessoa(company.cpfCnpj || ''),
-      endereco: company.address?.addressStreet1 || 'Rua ...',
+      endereco: company.address?.addressStreet1,
       telefone: '',
-      cep: company.address?.addressPostcode || '00000000',
-      cidade: company.address?.addressCity || '',
+      cep: this.removeSpecialCharacters(company.address?.addressPostcode),
+      cidade: company.address?.addressCity,
       uf: company.address?.addressState || 'SP',
       ddd: '',
-      bairro: company.address?.addressStreet1 || '',
-      email: company.emails.primaryEmail || '',
-      complemento: '-',
-      numero: '-',
+      bairro: company.address?.addressStreet2,
+      email: company.emails.primaryEmail,
+      complemento: '',
+      numero: company.address?.addressNumber,
     };
 
     const numberCharge = `${company.id.replace(/\d/g, '').slice(0, 2)}${Date.now()}`.slice(0, 15);
-
-    this.logger.log(`Número da cobrança: ${numberCharge}`);
 
     const getSlipDueDay = (): string => {
       if (company.slipDueDay) {
