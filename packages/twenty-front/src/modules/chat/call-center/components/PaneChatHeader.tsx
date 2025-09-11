@@ -3,6 +3,9 @@ import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelCh
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
@@ -10,6 +13,7 @@ import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { WorkspaceMember } from '~/generated-metadata/graphql';
 
 const StyledChatHeader = styled.div`
   display: flex;
@@ -26,11 +30,14 @@ const StyledChatTitle = styled.p`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 600;
   margin: 0 ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledDiv = styled.div`
-  align-items: center;
   display: flex;
+  align-items: center;
 `;
 
 const StyledActionsContainer = styled.div`
@@ -47,6 +54,23 @@ const StyledIconButton = styled(IconButton)`
   width: 24px;
   min-width: 24px;
 `;
+const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ isSelected, theme }) =>
+    isSelected ? theme.font.color.primary : theme.font.color.secondary};
+  display: flex;
+  padding: 3px ${({ theme }) => theme.spacing(1)};
+  width: max-content;
+
+  & img {
+    height: 10px;
+    margin-right: ${({ theme }) => theme.spacing(1)};
+    width: 10px;
+  }
+  font-size: 10px;
+`;
 
 export const PaneChatHeader = () => {
   const theme = useTheme();
@@ -56,6 +80,25 @@ export const PaneChatHeader = () => {
   const { selectedChat, finalizeService } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
+
+  const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
+    useContext(CallCenterContext) as CallCenterContextType;
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
+  const integration = whatsappIntegrations.find(
+    (wi) => wi.id === selectedChat!.integrationId,
+  );
+  const { agents = [] } = useFindAllAgents();
+  const agent = agents.find((agent: any) => agent.id === selectedChat!.agent);
+
+  const isAdmin = agents.find(
+    (agent: any) => agent.id === currentMember?.agentId,
+  )?.isAdmin;
+
+  const member = workspaceMembers.find(
+    (wsMember: any) => wsMember.id === agent?.memberId,
+  );
 
   const { toggleModal } = useModal();
 
@@ -76,6 +119,14 @@ export const PaneChatHeader = () => {
             placeholderColorSeed={selectedChat.client.name}
           />
           <StyledChatTitle>{selectedChat.client.name}</StyledChatTitle>
+          <StyledIntegrationCard>
+            {integration?.name} ({integration?.tipoApi})
+          </StyledIntegrationCard>
+          {isAdmin && selectedChat.agent !== 'empty' && (
+            <StyledIntegrationCard>
+              {member?.name.firstName} {member?.name.lastName}
+            </StyledIntegrationCard>
+          )}
         </StyledDiv>
         <StyledActionsContainer>
           <StyledIconButton

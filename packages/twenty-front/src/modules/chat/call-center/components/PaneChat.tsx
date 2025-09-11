@@ -4,14 +4,16 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
-import { StyledMessageBubble } from '@/chat/call-center/components/StyledMessageBubble';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
+import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import StyledImage from '@/chat/components/StyledImage';
+import { StyledMessageBubble } from '@/chat/components/StyledMessageBubble';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
-import { TDateFirestore } from '@/chat/internal/types/chat';
+import { TDateFirestore } from '@/chat/types/chat';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
@@ -24,17 +26,11 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconBan, IconExclamationCircleFilled } from '@tabler/icons-react';
+import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconCheck,
-  IconPlayerPause,
-  IconTrash,
-  Label,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
@@ -62,10 +58,9 @@ const StyledChatContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 
-const StyledMessageContainer = styled.div<{ isSystemMessage: boolean }>`
+const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
   display: flex;
-  flex-direction: ${({ isSystemMessage }) =>
-    isSystemMessage ? 'row-reverse' : 'row'};
+  flex-direction: ${({ fromMe }) => (fromMe ? 'row-reverse' : 'row')};
   align-items: center;
   width: 100%;
   justify-content: flex-start;
@@ -124,17 +119,6 @@ const StyledDocument = styled.a`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-const StyledImage = styled.img`
-  align-items: end;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.spacing(3)};
-  display: flex;
-  height: 200px;
-  object-fit: cover;
-  width: 200px;
-  z-index: 2;
 `;
 
 const StyledMessage = styled.div<{ isSystemMessage: boolean }>`
@@ -233,7 +217,6 @@ const StyledMessageEvent = styled.div`
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledModalOverlay = styled(motion.div)`
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   height: 100%;
   justify-content: center;
@@ -243,12 +226,43 @@ const StyledModalOverlay = styled(motion.div)`
   user-select: none;
   width: 100%;
   z-index: 1000;
+  animation: blur 0.3s ease-out;
+  backdrop-filter: blur(20px);
+  @keyframes blur {
+    0% {
+      backdrop-filter: blur(0px);
+    }
+    100% {
+      backdrop-filter: blur(20px);
+    }
+  }
 `;
 
 const StyledModalImage = styled.img`
-  max-width: 90%;
-  max-height: 90dvh;
+  max-width: 40%;
+  max-height: 40dvh;
   object-fit: contain;
+  ${MODAL_IMAGE_POPUP}
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  transition: border-radius 0.3s;
+  transition: transform cubic-bezier(0, 0.42, 0, 1.03) 0.3s;
+  animation: zoom-in 800ms cubic-bezier(0, 0.42, 0, 1.03);
+  &:hover {
+    border-radius: 0;
+    transform: scale(2);
+  }
+  @keyframes zoom-in {
+    0% {
+      transform: scale(0.95);
+    }
+    8% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 `;
 
 const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -269,7 +283,7 @@ const StyledNewMessagesButton = styled.button`
   border-radius: ${({ theme }) => theme.border.radius.md};
   padding: ${({ theme }) => theme.spacing(2)};
   cursor: pointer;
-  z-index: 1000;
+  z-index: 2;
 `;
 
 const StyledAmplitudeValue = styled.div<{ amplitudeValue: number }>`
@@ -869,7 +883,7 @@ export const PaneChat = () => {
                     isSystemMessage={isSystemMessage}
                   >
                     <StyledImage
-                      src={message.message}
+                      message={message}
                       onClick={() => {
                         setModalImageSrc(message.message);
                         setIsModalOpen(true);
@@ -919,10 +933,10 @@ export const PaneChat = () => {
                 messageContent = (
                   <StyledMessage key={index} isSystemMessage={isSystemMessage}>
                     {formatMessageContent(
-                      message.message.replace(
-                        `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n`,
-                        '',
-                      ),
+                      isSystemMessage
+                        ? //first line will be member name, which is redundant since we already show it in the avatar
+                          message.message.replace(/^.*\n/, '')
+                        : message.message,
                     )}
                   </StyledMessage>
                 );
@@ -944,10 +958,7 @@ export const PaneChat = () => {
                   <StyledUnreadMarker>New Messages</StyledUnreadMarker>
                 )}
 
-                <StyledMessageContainer
-                  key={index}
-                  isSystemMessage={isSystemMessage}
-                >
+                <StyledMessageContainer key={index} fromMe={isSystemMessage}>
                   <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
                     <AvatarComponent
                       message={message}
@@ -962,53 +973,8 @@ export const PaneChat = () => {
                     >
                       <StyledMessageBubble
                         time={formatDate(message.createdAt).time}
-                        isSystemMessage={isSystemMessage}
                         message={message}
-                        index={index}
                         hasTail={lastOfRow}
-                        customButton={
-                          message.id === lastFromClient?.id
-                            ? message.from !== selectedChat.client.name && (
-                                <>
-                                  <div
-                                    style={{
-                                      borderTop: `1px solid ${theme.border.color.strong}`,
-                                      marginTop: 16,
-                                    }}
-                                  >
-                                    <Label style={{ marginTop: 4 }}>
-                                      Novo nome de contato do WhatsApp
-                                      encontrado: {message.from}. Atualizar
-                                      registro?
-                                    </Label>
-                                    <div
-                                      style={{
-                                        display: 'flex',
-                                        gap: 4,
-                                        marginTop: 4,
-                                      }}
-                                    >
-                                      <Button
-                                        Icon={IconCheck}
-                                        title="Sim"
-                                        variant="tertiary"
-                                        accent="blue"
-                                        size="small"
-                                        onClick={handleUpdatePersonName}
-                                      />
-                                      <Button
-                                        Icon={IconBan}
-                                        title="Não perguntar novamente"
-                                        variant="tertiary"
-                                        accent="default"
-                                        size="small"
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                              )
-                            : null
-                        }
                       >
                         {messageContent}
                       </StyledMessageBubble>
