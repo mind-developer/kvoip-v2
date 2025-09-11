@@ -1,4 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
@@ -8,6 +9,7 @@ import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 interface ChatAnexProps {
@@ -56,12 +58,13 @@ const StyledInput = styled.input`
 `;
 
 export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
-  const { selectedChat } = useContext(
+  const { selectedChat, setSelectedChat } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
-  // const { messengerSendMessage } = useMessengerSendMessage();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -73,6 +76,28 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
   const handleSendFile = async (file: File, type: MessageType) => {
     if (!selectedChat) return;
 
+    if (type === 'image')
+      setSelectedChat((prev) => {
+        if (prev)
+          return {
+            ...prev,
+            messages: [
+              ...prev.messages,
+              {
+                type: 'image',
+                from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                message: URL.createObjectURL(file),
+                fromMe: true,
+                status: 'attempting',
+                id: null,
+                createdAt: {
+                  seconds: Date.now(),
+                  nanoseconds: Date.now() * 1000,
+                },
+              },
+            ],
+          };
+      });
     // const identifier = isWhatsappDocument(selectedChat)
     //   ? `+${selectedChat.client.phone}`
     //   : selectedChat.client.id;

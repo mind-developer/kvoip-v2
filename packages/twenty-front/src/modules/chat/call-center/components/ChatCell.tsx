@@ -2,16 +2,8 @@ import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui/display';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { formatDate } from '@/chat/utils/formatDate';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { useContext } from 'react';
 
 const StyledItemChat = styled.div<{ isSelected?: boolean }>`
   align-items: center;
@@ -43,6 +35,9 @@ const StyledLastMessagePreview = styled.p`
   font-size: ${({ theme }) => theme.font.size.sm};
   color: ${({ theme }) => theme.color.gray50};
   margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const StyledDateAndUnreadMessagesContainer = styled.div`
@@ -67,33 +62,9 @@ const StyledUnreadMessages = styled.div`
   font-weight: 600;
 `;
 
-const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
-  align-items: center;
-  background-color: ${({ isSelected, theme }) =>
-    isSelected
-      ? theme.background.transparent.medium
-      : theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ isSelected, theme }) =>
-    isSelected ? theme.font.color.primary : theme.font.color.secondary};
-  display: flex;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: 3px ${({ theme }) => theme.spacing(1)};
-  width: max-content;
-
-  & img {
-    height: 10px;
-    margin-right: ${({ theme }) => theme.spacing(1)};
-    width: 10px;
-  }
-  font-size: 10px;
-`;
-
 const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(1)};
+  display: grid;
+  grid-template-columns: 60% 20%;
 `;
 
 const StyledDiv = styled.div`
@@ -106,14 +77,6 @@ const StyledContainerPills = styled.div`
 `;
 
 export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
-  const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
-    useContext(CallCenterContext) as CallCenterContextType;
-
-  const { agents = [] } = useFindAllAgents();
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
-
   // const integration =
   //   platform === 'whatsapp'
   //     ? whatsappIntegrations.find((wi) => wi.id === chat.integrationId)
@@ -121,32 +84,12 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   //         (fi: MessengerIntegration) => fi.id === chat.integrationId,
   //       );
 
-  const integration = whatsappIntegrations.find(
-    (wi) => wi.id === chat.integrationId,
-  );
-
   const userNameToDisplay = chat.lastMessage.from.replace('_', '');
   const formattedMessage = chat.lastMessage.fromMe
     ? chat.lastMessage.message.replace(`*#${userNameToDisplay}*`, '')
     : chat.lastMessage.message;
 
-  const messageToDisplay = `${userNameToDisplay}: ${
-    formattedMessage?.length > 20
-      ? (formattedMessage === ' '
-          ? formattedMessage.slice(0, 19)
-          : formattedMessage.slice(0, 20)) + '...'
-      : formattedMessage
-  }`;
-
-  const agent = agents.find((agent: any) => agent.id === chat.agent);
-
-  const isAdmin = agents.find(
-    (agent: any) => agent.id === currentMember?.agentId,
-  )?.isAdmin;
-
-  const member = workspaceMembers.find(
-    (wsMember: any) => wsMember.id === agent?.memberId,
-  );
+  const messageToDisplay = `${chat.lastMessage.fromMe ? userNameToDisplay + ':' : ''} ${formattedMessage}`;
 
   return (
     <StyledItemChat onClick={onSelect} isSelected={isSelected}>
@@ -158,40 +101,7 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
         size="xl"
       />
       <StyledContentContainer>
-        <StyledContainerPills>
-          <StyledIntegrationCard isSelected={isSelected}>
-            <img src={WhatsappIcon} alt={'Whatsapp'} />
-            {integration?.name}{' '}
-            {integration?.tipoApi === 'Baileys' ? (
-              <img
-                src="https://raw.githubusercontent.com/WhiskeySockets/Baileys/refs/heads/master/Media/logo.png"
-                alt="Baileys Logo"
-                style={{
-                  width: '100%',
-                  height: '14px',
-                  marginLeft: '8px',
-                  verticalAlign: 'middle',
-                }}
-              />
-            ) : (
-              <img
-                src="https://kvoip.com.br/metaapi.png"
-                alt="MetaAPI Logo"
-                style={{
-                  width: '100%',
-                  height: '14px',
-                  marginLeft: '8px',
-                  verticalAlign: 'middle',
-                }}
-              />
-            )}
-          </StyledIntegrationCard>
-          {isAdmin && chat.agent !== 'empty' && (
-            <StyledIntegrationCard isSelected={isSelected}>
-              {member?.name.firstName} {member?.name.lastName}
-            </StyledIntegrationCard>
-          )}
-        </StyledContainerPills>
+        <StyledContainerPills></StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
             <StyledUserName>{chat.client.name}</StyledUserName>
