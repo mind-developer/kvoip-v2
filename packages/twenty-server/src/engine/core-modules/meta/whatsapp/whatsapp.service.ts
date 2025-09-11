@@ -31,7 +31,6 @@ import {
   SendMessageInput,
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
-import { UpdateChatDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-chat-data-input';
 import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
@@ -78,7 +77,6 @@ export class WhatsappService {
     >,
   ) {
     payload.events.forEach((event) => {
-      console.log(JSON.stringify(event.properties.diff));
       this.updateClientAtFirebase(event.properties.after);
     });
   }
@@ -334,22 +332,6 @@ export class WhatsappService {
     }
   }
 
-  async updateChatAtFirebase(updateChatDataInput: UpdateChatDataInput) {
-    const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
-    const docId = `${updateChatDataInput.integrationId}_${updateChatDataInput.clientPhoneNumber}`;
-    const docRef = doc(whatsappCollection, docId);
-    const docSnapshot = await getDoc(docRef);
-    const data = docSnapshot.data();
-
-    const { clientPhoneNumber, ...input } = updateChatDataInput;
-
-    if (data) {
-      await setDoc(docRef, { ...data, ...input });
-      return true;
-    }
-    return false;
-  }
-
   async updateClientAtFirebase(updateClientInput: PersonWorkspaceEntity) {
     const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
     const q = query(
@@ -358,7 +340,6 @@ export class WhatsappService {
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      const data: Partial<WhatsappDocument> = doc.data();
       if (!updateClientInput.name) return;
       updateDoc(doc.ref, {
         client: {
@@ -407,10 +388,10 @@ export class WhatsappService {
       createdPerson = await personRepository.save({
         name: {
           firstName: whatsappDoc.client.name
-            ? whatsappDoc.client.name.split(' ')[0]
+            ? whatsappDoc.client.name.split(' ')[0].trim()
             : whatsappDoc.client.phone || '',
           lastName: whatsappDoc.client.name
-            ? whatsappDoc.client.name.split(' ')[1]
+            ? whatsappDoc.client.name.split(' ')[1].trim()
             : '',
         },
         //TODO: parse number to get codes
