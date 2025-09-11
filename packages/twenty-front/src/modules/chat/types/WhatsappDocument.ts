@@ -1,4 +1,4 @@
-import { TDateFirestore } from '@/chat/internal/types/chat';
+import { TDateFirestore } from '@/chat/types/chat';
 import { MessageStatus } from '../call-center/types/MessageStatus';
 
 export type WhatsappDocument = {

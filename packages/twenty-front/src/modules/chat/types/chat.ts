@@ -2,6 +2,13 @@ import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberStat
 import { CollectionReference, DocumentData } from 'firebase/firestore';
 import { Dispatch, SetStateAction } from 'react';
 
+export type MessageStatus =
+  | 'attempting'
+  | 'sent'
+  | 'delivered'
+  | 'read'
+  | 'deleted';
+
 export interface IChat {
   chatId: string;
   workspaceId: string;
@@ -9,6 +16,7 @@ export interface IChat {
   receiverId: string;
   senderName: string;
   receiverName: string;
+  receiverType: 'member' | 'person';
   senderAvatarUrl: string | null | undefined;
   receiverAvatarUrl: string | null | undefined;
   messages: Message[];

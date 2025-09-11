@@ -4,7 +4,7 @@ import { Search } from '@/chat/internal/components/Search';
 import { SelectNewChat } from '@/chat/internal/components/SelectnewChat';
 import { SelectStatus } from '@/chat/internal/components/SelectStatus';
 import { ChatContext } from '@/chat/internal/context/chatContext';
-import { ChatContextType } from '@/chat/internal/types/chat';
+import { ChatContextType } from '@/chat/types/chat';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';

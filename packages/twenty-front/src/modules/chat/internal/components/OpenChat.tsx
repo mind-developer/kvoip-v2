@@ -5,7 +5,7 @@ import { NoChats } from '@/chat/error-handler/components/NoChats';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { ChatContext } from '@/chat/internal/context/chatContext';
-import { ChatContextType } from '@/chat/internal/types/chat';
+import { ChatContextType } from '@/chat/types/chat';
 import { validAudioTypes, validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
