@@ -4,25 +4,24 @@ import { IMessage } from '@/chat/types/WhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChecks, IconClock, IconTrash } from '@tabler/icons-react';
+import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { IconCheck } from 'twenty-ui/display';
-import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../constants/ATTEMPTING_MESSAGE_KEYFRAMES';
+import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../call-center/constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
-const StyledMessageBubbleContainer = styled.div<{
+const StyledMessageBubbleContainer = styled(motion.div)<{
   messageText: string;
   messageType: string;
-  isSystemMessage: boolean;
-  index: number;
+  fromMe: boolean;
   hasTail: boolean;
   status: MessageStatus;
 }>`
   ${({ messageType }) => (messageType === 'image' ? 'max-width: 200px;' : '')}
   position: relative;
-  align-self: ${({ isSystemMessage }) =>
-    isSystemMessage ? 'flex-end' : 'flex-start'};
+  align-self: ${({ fromMe }) => (fromMe ? 'flex-end' : 'flex-start')};
 
-  background: ${({ isSystemMessage, theme }) =>
-    isSystemMessage
+  background: ${({ fromMe, theme }) =>
+    fromMe
       ? theme.name === 'dark'
         ? '#274238'
         : '#D9FDD3'
@@ -30,15 +29,15 @@ const StyledMessageBubbleContainer = styled.div<{
 
   padding: ${({ theme, messageType }) =>
     `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' ? 3 : 1)}`};
-  border-radius: ${({ messageText, messageType }) =>
-    messageText.length < 30 ? '20px' : '15px'};
+  border-radius: ${({ messageText }) =>
+    messageText.length < 30 ? '15px' : '15px'};
   word-wrap: break-word;
   display: flex;
   flex-direction: ${({ messageText, messageType }) =>
     messageText.length < 30 || messageType === 'audio' ? 'row' : 'column'};
   gap: 6px;
 
-  ${({ hasTail, isSystemMessage, theme }) =>
+  ${({ hasTail, fromMe: fromMe, theme }) =>
     !hasTail
       ? ''
       : `
@@ -50,26 +49,26 @@ const StyledMessageBubbleContainer = styled.div<{
   }
 
   &:before {
-    ${isSystemMessage ? 'right' : 'left'}: -8px;
+    ${fromMe ? 'right' : 'left'}: -8px;
     width: 20px;
     background: ${
-      isSystemMessage
+      fromMe
         ? theme.name === 'dark'
           ? '#274238'
           : '#D9FDD3'
         : theme.background.quaternary
     };
-    border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 15px;
+    border-bottom-${fromMe ? 'left' : 'right'}-radius: 15px;
     z-index: 0;
   }
 
   &:after {
-    ${isSystemMessage ? 'right' : 'left'}: -21px;
+    ${fromMe ? 'right' : 'left'}: -21px;
     width: 21px;
     background-color: ${
       theme.name === 'dark' ? 'black' : theme.background.primary
     };
-    border-bottom-${isSystemMessage ? 'left' : 'right'}-radius: 5px;
+    border-bottom-${fromMe ? 'left' : 'right'}-radius: 5px;
   }
 `}
   ${({ status }) =>
@@ -111,17 +110,13 @@ const StyledTime = styled.p<{ messageType: MessageType }>`
 export const StyledMessageBubble = ({
   children,
   message,
-  isSystemMessage,
   time,
-  index,
   hasTail,
   customButton,
 }: {
   children: ReactNode;
   message: IMessage;
-  isSystemMessage: boolean;
   time: string;
-  index: number;
   hasTail: boolean;
   customButton?: ReactNode;
 }) => {
@@ -149,17 +144,25 @@ export const StyledMessageBubble = ({
     <StyledMessageBubbleContainer
       messageText={message.message ?? ''}
       messageType={message.type}
-      isSystemMessage={isSystemMessage}
-      index={index}
+      fromMe={message.fromMe}
       hasTail={hasTail}
       status={message.status}
+      initial={{ translateY: 10 }}
+      animate={{
+        translateY: 0,
+        transition: {
+          duration: 0.5,
+          ease: [0.17, 0.67, 0, 1.01],
+          type: 'spring',
+        },
+      }}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {children} <>{customButton}</>
       </div>
       <StyledTime messageType={message.type as MessageType}>
         {time}
-        {isSystemMessage && message.status === 'attempting' && (
+        {message.fromMe && message.status === 'attempting' && (
           <StatusIcon size={12} color={statusColor} />
         )}
       </StyledTime>
