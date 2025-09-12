@@ -6,6 +6,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
+import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
@@ -30,7 +32,14 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [WhatsappIntegration, Workspace, Inbox, Sector, WorkspaceAgent],
+          [
+            WhatsappIntegration,
+            Workspace,
+            Inbox,
+            Sector,
+            WorkspaceAgent,
+            ChatbotFlow,
+          ],
           'core',
         ),
         TypeORMModule,
@@ -42,6 +51,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   exports: [WhatsappService],
   controllers: [WhatsappController],
   providers: [
+    ChatbotFlowService,
     TypeORMService,
     WhatsappIntegrationService,
     WhatsappIntegrationResolver,
