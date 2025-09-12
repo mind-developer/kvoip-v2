@@ -21,6 +21,7 @@ const StyledContentContainer = styled.div`
   flex-direction: column;
   margin-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  overflow: hidden;
 `;
 
 const StyledUserName = styled.p`
@@ -64,7 +65,7 @@ const StyledUnreadMessages = styled.div`
 
 const StyledContainer = styled.div`
   display: grid;
-  grid-template-columns: 60% 20%;
+  grid-template-columns: 3fr 1fr;
 `;
 
 const StyledDiv = styled.div`
