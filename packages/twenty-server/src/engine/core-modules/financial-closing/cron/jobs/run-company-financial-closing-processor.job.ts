@@ -32,6 +32,7 @@ export class RunCompanyFinancialClosingJobProcessor {
   async handle(data: CompanyFinancialClosingJobData): Promise<void> {
     let companyFinancialClosingExecutionsRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity> | undefined;
     let financialClosingExecutionsRepository: Repository<FinancialClosingExecutionWorkspaceEntity> | undefined;
+    let charge: any = null;
     
     try {
       companyFinancialClosingExecutionsRepository =
@@ -53,7 +54,7 @@ export class RunCompanyFinancialClosingJobProcessor {
       this.financialClosingChargeService.validateCep(data.company.address.addressPostcode || '');
 
       // Tentativa de emissão de cobrança
-      const charge = await this.financialClosingChargeService.emitChargeForCompany(
+      charge = await this.financialClosingChargeService.emitChargeForCompany(
         data.workspaceId,
         data.company,
         data.amountToBeCharged,
@@ -70,7 +71,7 @@ export class RunCompanyFinancialClosingJobProcessor {
         });
         
         // Log de sucesso
-          const successMessage = `Cobrança emitida com sucesso. Charge ID: ${charge.id}`;
+        const successMessage = `Cobrança emitida com sucesso. Charge ID: ${charge.id}`;
           await addCompanyFinancialClosingExecutionLog(
             data.companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
@@ -80,7 +81,7 @@ export class RunCompanyFinancialClosingJobProcessor {
             data.company,
             { chargeId: charge.id }
           );
-          
+
       } else {
         throw new Error('Cobrança não foi gerada - retorno nulo do serviço de emissão de cobrança');
       }
@@ -151,8 +152,24 @@ export class RunCompanyFinancialClosingJobProcessor {
           `Erro para gerar cobrança para a empresa ${data.company.name} (${data.company.id})`
         );
       }
-      
+        
       return;
+    }
+
+    { // Caso emissão esteja desabilitada ou nao configurada na company
+      data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
+
+        await this.financialClosingNFService.emitNFForCompany(
+          data.workspaceId,
+          data.company,
+          charge,
+          data.financialClosing,
+        )
+
+      ) : (
+        // Aqui deve atualizar os relatorios para nao emissao do boleto TODO
+        null
+      )
     }
 
   }

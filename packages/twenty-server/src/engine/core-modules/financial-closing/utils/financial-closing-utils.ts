@@ -1,16 +1,16 @@
-import fetch from 'node-fetch';
-import { XMLParser } from 'fast-xml-parser';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
-import { In } from 'typeorm';
 import { Logger } from '@nestjs/common';
+import { XMLParser } from 'fast-xml-parser';
+import fetch from 'node-fetch';
 import { BillingModelEnum } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
-import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { TypeDiscountEnum } from 'src/engine/core-modules/financial-closing/constants/type-discount.constants';
+import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
+import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
-import { Repository } from 'typeorm';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
+import { In, Repository } from 'typeorm';
 
 const logger = new Logger('FinancialClosingUtils');
 
@@ -574,22 +574,34 @@ export async function addCompanyFinancialClosingExecutionLog(
   }
 }
 
+function getFieldLabel(fieldName: string): string {
+  const fieldMetadata = metadataArgsStorage
+    .filterFields(CompanyWorkspaceEntity)
+    .find(field => field.name === fieldName);
+  
+  const label = fieldMetadata?.label;
+  const result = typeof label === 'string' && label.trim() !== '' ? label : fieldName;
+  return result;
+}
+
 function validateCompanyBillingModel(company: CompanyWorkspaceEntity, requiredFields: (keyof CompanyWorkspaceEntity)[]): string | null {
   for (const field of requiredFields) {
     const fieldValue = company[field];
-    
-    if (!fieldValue) {
-      return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois não possui ${field} configurado`;
-    }
-    
+    logger.log(`validateCompanyBillingModel - field: ${field}, fieldValue: ${JSON.stringify(fieldValue)}`);
+    const fieldLabel = getFieldLabel(field as string);
+    logger.log(`validateCompanyBillingModel - fieldLabel: ${fieldLabel}`);
     // Se o campo é um objeto com estrutura de moeda (amountMicros/currencyCode)
     if (typeof fieldValue === 'object' && fieldValue !== null && 'amountMicros' in fieldValue) {
       const currencyField = fieldValue as { amountMicros: string | number | null; currencyCode: string };
       
       // Verifica o valor
-      if ( !currencyField.amountMicros || currencyField.amountMicros === '0') {
-        return `Não foi possível calcular o consumo para a empresa pois o campo ${field} não possui valor`;
+      if (!currencyField.amountMicros || currencyField.amountMicros === '0') {
+        return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois não possui ${fieldLabel} configurado`;
       }
+    } else if (!fieldValue) {
+      // Para campos que não são de moeda, verifica se é nulo/undefined
+      logger.log(`validateCompanyBillingModel - fieldValue is null`);
+      return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois não possui ${fieldLabel} configurado`;
     }
   }
   return null;
