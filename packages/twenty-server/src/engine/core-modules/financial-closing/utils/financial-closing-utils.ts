@@ -588,7 +588,7 @@ function validateCompanyBillingModel(company: CompanyWorkspaceEntity, requiredFi
       
       // Verifica o valor
       if ( !currencyField.amountMicros || currencyField.amountMicros === '0') {
-        return `Não foi possível calcular o consumo para a empresa ${company.name} - ${company.id} pois o campo ${field} não possui valor`;
+        return `Não foi possível calcular o consumo para a empresa pois o campo ${field} não possui valor`;
       }
     }
   }

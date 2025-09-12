@@ -13,6 +13,7 @@ import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/com
 import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
 import { addFinancialClosingExecutionLog } from 'src/modules/financial-closing-execution/utils/financial-closing-execution-utils';
+import { Repository } from 'typeorm';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -29,8 +30,8 @@ export class RunCompanyFinancialClosingJobProcessor {
 
   @Process(RunCompanyFinancialClosingJobProcessor.name)
   async handle(data: CompanyFinancialClosingJobData): Promise<void> {
-    let companyFinancialClosingExecutionsRepository: any;
-    let financialClosingExecutionsRepository: any;
+    let companyFinancialClosingExecutionsRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity> | undefined;
+    let financialClosingExecutionsRepository: Repository<FinancialClosingExecutionWorkspaceEntity> | undefined;
     
     try {
       companyFinancialClosingExecutionsRepository =
@@ -48,6 +49,8 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
       this.financialClosingChargeService.validateRequiredFields(data.company);
+
+      this.financialClosingChargeService.validateCep(data.company.address.addressPostcode || '');
 
       // Tentativa de emissão de cobrança
       const charge = await this.financialClosingChargeService.emitChargeForCompany(
@@ -74,21 +77,59 @@ export class RunCompanyFinancialClosingJobProcessor {
             successMessage,
             'info',
             FinancialClosingExecutionStatusEnum.SUCCESS,
-            data.company
+            data.company,
+            { chargeId: charge.id }
           );
-
+          
       } else {
         throw new Error('Cobrança não foi gerada - retorno nulo do serviço de emissão de cobrança');
       }
 
-    } catch (error) {
+      } catch (error) {
+        // Tratamento específico para erros da API de cobrança
+        let errorMessage = 'Não foi possível gerar cobrança';
+        
+        // Tenta extrair o erro real do message se ele contém um JSON
+        let actualError = error;
+        if (error?.message && typeof error.message === 'string' && error.message.includes('Error: {')) {
+          try {
+            // Extrai o JSON do final da mensagem
+            const jsonMatch = error.message.match(/Error: (\{[\s\S]*\})$/);
+            if (jsonMatch) {
+              actualError = JSON.parse(jsonMatch[1]);
+            }
+          } catch (parseError) {
+            // Se não conseguir fazer parse, usa o erro original
+          }
+        }
 
+        if (actualError?.response?.data?.violacoes && Array.isArray(actualError.response.data.violacoes)) {
+          // Erro da API de cobrança com violações específicas
+          const violacoes = actualError.response.data.violacoes;
+          const violacoesText = violacoes.map((v: any) => `${v.propriedade}: ${v.razao} (valor: "${v.valor}")`).join('; ');
+          errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
+        } else if (actualError?.response?.data?.detail) {
+          // Erro da API de cobrança com detalhe genérico
+          errorMessage = `Erro na API de cobrança: ${actualError.response.data.detail}`;
+        } else if (actualError?.data?.violacoes && Array.isArray(actualError.data.violacoes)) {
+          // Erro direto com violações (sem response)
+          const violacoes = actualError.data.violacoes;
+          const violacoesText = violacoes.map((v: any) => `${v.propriedade}: ${v.razao} (valor enviado: "${v.valor}")`).join('; ');
+          errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
+        } else if (actualError?.data?.detail) {
+          // Erro direto com detalhe (sem response)
+          errorMessage = `Erro na API de cobrança: ${actualError.data.detail}`;
+        } else if (error?.message) {
+          // Erro genérico
+          errorMessage = `Erro ao gerar cobrança: ${error.message}`;
+        }
+       
       // Adicionando logs de erro e status na execução da empresa
-      if (companyFinancialClosingExecutionsRepository && data.companyExecutionLog) {
+      if (companyFinancialClosingExecutionsRepository  && data.companyExecutionLog) {
         await addCompanyFinancialClosingExecutionErrorLog(
           data.companyExecutionLog,
           companyFinancialClosingExecutionsRepository,
-          '333333333333333333333333333333333333333 Não foi possivel gerar cobrança: ' + error.message,
+          errorMessage,
           data.company,
           { status: FinancialClosingExecutionStatusEnum.ERROR }
         );
@@ -107,28 +148,12 @@ export class RunCompanyFinancialClosingJobProcessor {
           data.executionLog,
           financialClosingExecutionsRepository,
           'warn',
-          `Erro para gerar cobrança para a empresa ${data.company.name} (${data.company.id})`,
+          `Erro para gerar cobrança para a empresa ${data.company.name} (${data.company.id})`
         );
       }
       
       return;
     }
-
-    // { // Caso emissão esteja desabilitada ou nao configurada na company
-    //   data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
-
-    //     await this.financialClosingNFService.emitNFForCompany(
-    //       data.workspaceId,
-    //       data.company,
-    //       charge,
-    //       data.financialClosing,
-    //     )
-
-    //   ) : (
-    //     // Aqui deve atualizar os relatorios para nao emissao do boleto TODO
-    //     null
-    //   )
-    // }
 
   }
 }

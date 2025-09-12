@@ -10,6 +10,7 @@ export async function addFinancialClosingExecutionLog(
   repo: Repository<FinancialClosingExecutionWorkspaceEntity | CompanyFinancialClosingExecutionWorkspaceEntity>,
   level: 'error' | 'warn' | 'info',
   message: string,
+  morePropsToUpdate?: any
 ): Promise<void> {
   const entry = {
     level,
@@ -32,7 +33,7 @@ export async function addFinancialClosingExecutionLog(
   }
 
   if (execution.id) {
-    await repo.update(execution.id, { logs: execution.logs });
+    await repo.update(execution.id, { logs: execution.logs, ...morePropsToUpdate });
   } else {
     const saved = await repo.save(execution);
     execution.id = saved.id;

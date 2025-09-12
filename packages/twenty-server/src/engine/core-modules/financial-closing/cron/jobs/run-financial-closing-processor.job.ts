@@ -15,8 +15,6 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
 import { addFinancialClosingExecutionLog } from 'src/modules/financial-closing-execution/utils/financial-closing-execution-utils';
-import { addCompanyFinancialClosingExecutionErrorLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
-import { In, Repository } from 'typeorm';
 
 export type RunFinancialClosingJob = {
   financialClosingId: string;
@@ -52,7 +50,7 @@ export class RunFinancialClosingJobProcessor {
   async handle(data: RunFinancialClosingJob): Promise<void> {
     const { financialClosingId, workspaceId } = data;
 
-    this.logger.log(`22222222222222222222 Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
+    this.logger.log(`Running financial closing CRON for workspace ${workspaceId} with ID ${financialClosingId} ----------------------------|`);
     
     const financialClosing = await this.financialClosingService.findById(financialClosingId);
 
@@ -134,10 +132,24 @@ export class RunFinancialClosingJobProcessor {
       // Marco de finalização do cálculo de custo
       await financialClosingExecutionsRepository.update(newExecutionLog.id, { completedCostIdentification: true,});
       
+      // Identifica empresas que não foram obtidas os valores
+      const companiesWithAmountIds = new Set(companiesWithAmount.map(company => company.data.id));
+      const companiesWithoutAmount = companies.filter(company => !companiesWithAmountIds.has(company.id));
+      
       // Atualiza o numero de empresas com erro se for diferente do numero de empresas obtidas
       if (companiesWithAmount.length !== companies.length) {
         const numberOfCompaniesWithError = companies.length - companiesWithAmount.length;
         await financialClosingExecutionsRepository.update(newExecutionLog.id, { companiesWithError: numberOfCompaniesWithError });
+        
+        // Cria log de aviso para cada empresa que não foi obtida o valor
+        for (const company of companiesWithoutAmount) {
+          await addFinancialClosingExecutionLog(
+            newExecutionLog,
+            financialClosingExecutionsRepository,
+            'warn',
+            `Erro para gerar cobrança para a empresa ${company.name} (${company.id})`
+          );
+        }
       }
 
       this.logger.log(`Empresas sem erros: ${companiesWithAmount.length }`);
@@ -190,15 +202,14 @@ export class RunFinancialClosingJobProcessor {
 
     } catch (error) {
 
-      await financialClosingExecutionsRepository.update(newExecutionLog.id, {
-        status: FinancialClosingExecutionStatusEnum.ERROR,
-      });
-
       await addFinancialClosingExecutionLog(
         newExecutionLog,
         financialClosingExecutionsRepository,
         'error',
         `Erro fatal na execução do fechamento: ${error.message}`,
+        {
+          status: FinancialClosingExecutionStatusEnum.ERROR,
+        }
       );
     }
   }

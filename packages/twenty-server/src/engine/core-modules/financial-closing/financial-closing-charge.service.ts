@@ -95,8 +95,14 @@ export class FinancialClosingChargeService {
     }
   }
 
+  public validateCep(cep: string): void {
+    if (cep.replace(/\D/g, '').length !== 8) {
+      throw new Error('O campo CEP da empresa está incorreto, deve possuir 8 números e de preferência sem caracteres especiais');
+    }
+  }
+
   private removeSpecialCharacters(str: any): string {
-    return str.replace(/[.,]/g, '');
+    return str.replace(/\D/g, '');
   }
 
   async emitChargeForCompany(
