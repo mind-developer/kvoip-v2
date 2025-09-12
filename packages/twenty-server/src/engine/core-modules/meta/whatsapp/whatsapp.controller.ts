@@ -76,7 +76,7 @@ export class WhatsappController {
     }
 
     const isReceiving = body.entry[0].changes[0].value.messages;
-    const messages = body.entry[0].changes[0].value.messages[0];
+    const messages = body.entry[0].changes[0].value.messages;
 
     for (const msg of messages) {
       let mediaId: string | undefined;
