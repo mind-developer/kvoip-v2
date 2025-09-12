@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { WhatsappRestController, WhatsappRestController2 } from './whatsapp.controller';
-import { WhatsappIntegrationService } from './integration/whatsapp-integration.service';
-import { WhatsappService } from './whatsapp.service';
-import { WhatsappIntegration } from './integration/whatsapp-integration.entity';
-import { Workspace } from '../../workspace/workspace.entity';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { Inbox } from '../../inbox/inbox.entity';
 import { Sector } from '../../sector/sector.entity';
-import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WorkspaceAgent } from '../../workspace-agent/workspace-agent.entity';
+import { Workspace } from '../../workspace/workspace.entity';
+import { WhatsappIntegration } from './integration/whatsapp-integration.entity';
+import { WhatsappIntegrationService } from './integration/whatsapp-integration.service';
+import { WhatsappRestController } from './whatsapp-rest.controller';
+import { WhatsappService } from './whatsapp.service';
 
 @Module({
   imports: [
@@ -23,8 +23,14 @@ import { WorkspaceAgent } from '../../workspace-agent/workspace-agent.entity';
       'core',
     ),
   ],
-  controllers: [WhatsappRestController, WhatsappRestController2],
-  providers: [WhatsappIntegrationService, WhatsappService, InboxService, GoogleStorageService, FirebaseService],
+  controllers: [WhatsappRestController],
+  providers: [
+    WhatsappIntegrationService,
+    WhatsappService,
+    InboxService,
+    GoogleStorageService,
+    FirebaseService,
+  ],
   exports: [],
 })
-export class WhatsappRestModule { }
+export class WhatsappRestModule {}
