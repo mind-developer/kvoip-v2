@@ -13,7 +13,6 @@ import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
 
 const StyledChatHeader = styled.div`
   display: flex;
@@ -63,6 +62,7 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   display: flex;
   padding: 3px ${({ theme }) => theme.spacing(1)};
   width: max-content;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 
   & img {
     height: 10px;
@@ -83,7 +83,7 @@ export const PaneChatHeader = () => {
 
   const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
     useContext(CallCenterContext) as CallCenterContextType;
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+  const { records: workspaceMembers } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
   const integration = whatsappIntegrations.find(
