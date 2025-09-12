@@ -50,6 +50,10 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { SoapClientService } from 'src/modules/soap-client/soap-client.service';
+import {
+  ListRegionsResponse,
+  Regiao,
+} from 'src/modules/telephony/types/regions.type';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
@@ -537,7 +541,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       };
 
       try {
-        const soapResult = await this.soapClientService.createCompleteClient(
+        await this.soapClientService.createCompleteClient(
           clienteData,
           contaVoipData,
           ipData,
@@ -546,7 +550,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           11,
         );
 
-        this.logger.log('SOAP client setup completed:', soapResult);
+        this.logger.log('SOAP client setup completed');
 
         await this.setupPabxEnvironment(
           workspace,
@@ -607,10 +611,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       }
 
       const regionsResponse = await this.pabxService.listRegions(0);
-      const regioes = regionsResponse.data.dados;
+      const regioes: Regiao[] = (regionsResponse.data as ListRegionsResponse)
+        .dados;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tarifas = regioes.map((regiao: any) => ({
+      const tarifas = regioes.map((regiao: Regiao) => ({
         regiao_id: Number(regiao.regiao_id),
         tarifa: 0,
         fracionamento: '4/30/6',
@@ -656,8 +660,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
 
       const routingRulesData = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        regioes: regioes.map((regiao: any, index: any) => ({
+        regioes: regioes.map((regiao: Regiao, index: number) => ({
           regiao_id: Number(regiao.regiao_id),
           regiao_nome: regiao.nome,
           roteamentos: [

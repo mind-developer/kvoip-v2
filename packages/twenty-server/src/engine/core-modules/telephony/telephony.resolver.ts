@@ -358,6 +358,8 @@ export class TelephonyResolver {
       cliente_id: workspace.pabxCompanyId,
     });
 
+    console.log('extensions: ', extensions);
+
     return extensions.data.dados;
   }
 
