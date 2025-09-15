@@ -9,6 +9,7 @@ import { captchaState } from '@/client-config/states/captchaState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -41,6 +42,8 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
   const setAuthProviders = useSetRecoilState(authProvidersState);
   const setAiModels = useSetRecoilState(aiModelsState);
+
+  const setIsChatbotEnabled = useSetRecoilState(isChatbotEnabledState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -179,6 +182,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
+      setIsChatbotEnabled(clientConfig?.isChatbotEnabled ?? false);
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -199,6 +203,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setCalendarBookingPageId,
     setCanManageFeatureFlags,
     setCaptcha,
+    setIsChatbotEnabled,
     setChromeExtensionId,
     setClientConfigApiStatus,
     setDomainConfiguration,

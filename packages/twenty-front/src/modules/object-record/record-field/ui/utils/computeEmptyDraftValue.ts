@@ -48,6 +48,7 @@ export const computeEmptyDraftValue = <FieldValue>({
       addressState: '',
       addressCountry: '',
       addressPostcode: '',
+      addressNumber: '',
     } as FieldInputDraftValue<FieldValue>;
   }
 

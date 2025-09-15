@@ -244,6 +244,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
+  isBillingSwitchPlanIntervalEnabled: Scalars['Boolean'];
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
@@ -265,6 +266,12 @@ export type BillingMeteredProductUsageOutput = {
   usedCredits: Scalars['Float'];
 };
 
+/** The different billing payment providers available */
+export enum BillingPaymentProviders {
+  Inter = 'Inter',
+  Stripe = 'Stripe'
+}
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -277,6 +284,14 @@ export type BillingPlanOutput = {
   meteredProducts: Array<BillingProduct>;
   otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
+};
+
+export type BillingPlans = {
+  __typename?: 'BillingPlans';
+  id: Scalars['UUID'];
+  planId: Scalars['String'];
+  planPrice: Scalars['Float'];
+  workspace: Workspace;
 };
 
 export type BillingPriceLicensedDto = {
@@ -323,6 +338,7 @@ export type BillingProduct = {
   __typename?: 'BillingProduct';
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
+  marketingFeatures?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
   prices?: Maybe<Array<BillingPriceUnionDto>>;
@@ -331,7 +347,8 @@ export type BillingProduct = {
 /** The different billing products available */
 export enum BillingProductKey {
   BASE_PRODUCT = 'BASE_PRODUCT',
-  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION',
+  WORSPACE_MEMBERS = 'WORSPACE_MEMBERS'
 }
 
 export type BillingProductMetadata = {
@@ -349,10 +366,13 @@ export type BillingSessionOutput = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
+  chargeType?: Maybe<ChargeType>;
+  currentChargeFileLink?: Maybe<Scalars['String']>;
   currentPeriodEnd?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
   metadata: Scalars['JSON'];
+  provider: BillingPaymentProviders;
   status: SubscriptionStatus;
 };
 
@@ -365,10 +385,23 @@ export type BillingSubscriptionItem = {
   stripePriceId?: Maybe<Scalars['String']>;
 };
 
+export type BillingSwitchPlanOutput = {
+  __typename?: 'BillingSwitchPlanOutput';
+  baseProduct: BillingProduct;
+  planKey: BillingPlanKey;
+  subscription: BillingSubscription;
+};
+
 export type BillingTrialPeriodDto = {
   __typename?: 'BillingTrialPeriodDTO';
   duration: Scalars['Float'];
   isCreditCardRequired: Scalars['Boolean'];
+};
+
+export type BillingUpdateOneTimePaidSubscriptionOutput = {
+  __typename?: 'BillingUpdateOneTimePaidSubscriptionOutput';
+  /** The link for the bankslip file */
+  bankSlipFileLink: Scalars['String'];
 };
 
 export type BillingUpdateOutput = {
@@ -392,6 +425,13 @@ export enum CalendarChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
 }
 
+export type Campaign = {
+  __typename?: 'Campaign';
+  campanha_id?: Maybe<Scalars['ID']>;
+  cliente_id?: Maybe<Scalars['String']>;
+  nome?: Maybe<Scalars['String']>;
+};
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -402,6 +442,43 @@ export enum CaptchaDriverType {
   GOOGLE_RECAPTCHA = 'GOOGLE_RECAPTCHA',
   TURNSTILE = 'TURNSTILE'
 }
+
+/** The type diffent type of charge for the subscription */
+export enum ChargeType {
+  ONE_TIME = 'ONE_TIME',
+  PER_SEAT = 'PER_SEAT',
+  PRE_PAID = 'PRE_PAID'
+}
+
+export type ChatbotFlow = {
+  __typename?: 'ChatbotFlow';
+  chatbotId: Scalars['String'];
+  edges?: Maybe<Array<Scalars['JSON']>>;
+  id: Scalars['UUID'];
+  nodes?: Maybe<Array<Scalars['JSON']>>;
+  viewport?: Maybe<Scalars['JSON']>;
+  workspace: Workspace;
+};
+
+export type ChatbotFlowInput = {
+  chatbotId: Scalars['String'];
+  edges: Scalars['JSON'];
+  nodes: Scalars['JSON'];
+};
+
+/** Chatbot status options */
+export enum ChatbotStatus {
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+  DRAFT = 'DRAFT'
+}
+
+export type ChatbotWorkspaceEntity = {
+  __typename?: 'ChatbotWorkspaceEntity';
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  statuses?: Maybe<ChatbotStatus>;
+};
 
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
@@ -417,6 +494,13 @@ export type ClientAiModelConfig = {
   modelId: Scalars['String'];
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
+};
+
+export type Component = {
+  __typename?: 'Component';
+  format?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
 };
 
 export type ComputeStepOutputSchemaInput = {
@@ -641,6 +725,19 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateBillingPlansInput = {
+  planId: Scalars['String'];
+  planPrice: Scalars['Float'];
+  workspaceId: Scalars['ID'];
+};
+
+export type CreateDialingPlanInput = {
+  cliente_id: Scalars['Int'];
+  nome: Scalars['String'];
+  plano_discagem_id: Scalars['Int'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -670,9 +767,113 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateFocusNfeIntegrationInput = {
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode: Scalars['String'];
+  cnpj: Scalars['String'];
+  companyName: Scalars['String'];
+  cpf: Scalars['String'];
+  ie: Scalars['String'];
+  inscricaoMunicipal: Scalars['String'];
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
+  token: Scalars['String'];
+};
+
+export type CreateInterIntegrationInput = {
+  certificate?: InputMaybe<Scalars['String']>;
+  clientId: Scalars['String'];
+  clientSecret: Scalars['String'];
+  expirationDate?: InputMaybe<Scalars['DateTime']>;
+  integrationName: Scalars['String'];
+  privateKey?: InputMaybe<Scalars['String']>;
+  status?: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
+export type CreateIssuerInput = {
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj: Scalars['String'];
+  cpf?: InputMaybe<Scalars['String']>;
+  ie?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
+};
+
+export type CreatePabxCompanyInput = {
+  acao_limite_espaco: Scalars['Int'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']>;
+  bairro?: InputMaybe<Scalars['String']>;
+  cel?: InputMaybe<Scalars['String']>;
+  cep?: InputMaybe<Scalars['String']>;
+  cidade?: InputMaybe<Scalars['String']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  compl?: InputMaybe<Scalars['String']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  email_cliente?: InputMaybe<Scalars['String']>;
+  end?: InputMaybe<Scalars['String']>;
+  espaco_disco?: InputMaybe<Scalars['Int']>;
+  estado?: InputMaybe<Scalars['String']>;
+  faixa_max?: InputMaybe<Scalars['Int']>;
+  faixa_min?: InputMaybe<Scalars['Int']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']>;
+  login: Scalars['String'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']>;
+  modulos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  prefixo?: InputMaybe<Scalars['String']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  qtd_ramais_max_pa: Scalars['Int'];
+  qtd_ramais_max_pabx: Scalars['Int'];
+  ramal_resp?: InputMaybe<Scalars['String']>;
+  razao_social?: InputMaybe<Scalars['String']>;
+  remover_mailings?: InputMaybe<Scalars['Int']>;
+  resp?: InputMaybe<Scalars['String']>;
+  salas_conf_num_max: Scalars['Int'];
+  senha: Scalars['String'];
+  tel?: InputMaybe<Scalars['String']>;
+  tipo: Scalars['Int'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']>;
+  workspaceId: Scalars['ID'];
+};
+
+export type CreatePabxTrunkInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']>;
+  cliente_id: Scalars['Int'];
+  endereco: Scalars['String'];
+  host_dinamico?: InputMaybe<Scalars['Int']>;
+  insere_digitos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']>;
+  senha?: InputMaybe<Scalars['String']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int'];
+  usuario?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
 };
 
 export type CreatePageLayoutInput = {
@@ -703,10 +904,61 @@ export type CreateRoleInput = {
   label: Scalars['String'];
 };
 
+export type CreateSectorInput = {
+  icon: Scalars['String'];
+  name: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['JSON']>>;
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type CreateStripeIntegrationInput = {
+  accountId: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
+export type CreateTelephonyInput = {
+  SIPPassword?: InputMaybe<Scalars['String']>;
+  advancedFowarding1?: InputMaybe<Scalars['String']>;
+  advancedFowarding1Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding2?: InputMaybe<Scalars['String']>;
+  advancedFowarding2Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding3?: InputMaybe<Scalars['String']>;
+  advancedFowarding3Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding4?: InputMaybe<Scalars['String']>;
+  advancedFowarding4Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding5?: InputMaybe<Scalars['String']>;
+  advancedFowarding5Value?: InputMaybe<Scalars['String']>;
+  areaCode?: InputMaybe<Scalars['String']>;
+  blockExtension?: InputMaybe<Scalars['Boolean']>;
+  callerExternalID?: InputMaybe<Scalars['String']>;
+  destinyMailboxAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  destinyMailboxBusy?: InputMaybe<Scalars['String']>;
+  dialingPlan?: InputMaybe<Scalars['String']>;
+  emailForMailbox?: InputMaybe<Scalars['String']>;
+  enableMailbox?: InputMaybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  extensionBusy?: InputMaybe<Scalars['String']>;
+  extensionGroup?: InputMaybe<Scalars['String']>;
+  extensionName?: InputMaybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  externalNumberBusy?: InputMaybe<Scalars['String']>;
+  fowardAllCalls?: InputMaybe<Scalars['String']>;
+  fowardBusyNotAvailable?: InputMaybe<Scalars['String']>;
+  fowardOfflineWithoutService?: InputMaybe<Scalars['String']>;
+  listenToCalls?: InputMaybe<Scalars['Boolean']>;
+  memberId?: InputMaybe<Scalars['ID']>;
+  numberExtension: Scalars['ID'];
+  pullCalls?: InputMaybe<Scalars['String']>;
+  ramal_id?: InputMaybe<Scalars['String']>;
+  recordCalls?: InputMaybe<Scalars['Boolean']>;
+  type?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateViewFieldInput = {
@@ -776,6 +1028,15 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWhatsappIntegrationInput = {
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  name: Scalars['String'];
+  phoneId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
   source: Scalars['String'];
@@ -796,6 +1057,14 @@ export type CreateWorkflowVersionStepInput = {
   stepType: Scalars['String'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
+};
+
+export type CreateWorkspaceAgentInput = {
+  inboxesIds: Array<Scalars['String']>;
+  isAdmin: Scalars['Boolean'];
+  memberId: Scalars['ID'];
+  sectorIds: Array<Scalars['String']>;
+  workspaceId: Scalars['ID'];
 };
 
 export type CursorPaging = {
@@ -928,6 +1197,13 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
+export type Encaminhamento = {
+  __typename?: 'Encaminhamento';
+  encaminhamento_destino?: Maybe<Array<Scalars['String']>>;
+  encaminhamento_destinos?: Maybe<Array<Scalars['String']>>;
+  encaminhamento_tipo?: Maybe<Scalars['String']>;
+};
+
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -960,6 +1236,7 @@ export enum FeatureFlagKey {
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
+  IS_KVOIP_ADMIN = 'IS_KVOIP_ADMIN',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
@@ -1082,7 +1359,10 @@ export type File = {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  BillingSubscriptionBill = 'BillingSubscriptionBill',
+  ChargeBill = 'ChargeBill',
   File = 'File',
+  Invoice = 'Invoice',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1102,6 +1382,27 @@ export type FindAvailableSsoidpOutput = {
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
+};
+
+export type FocusNFeWorkspaceEntity = {
+  __typename?: 'FocusNFeWorkspaceEntity';
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: Maybe<Scalars['String']>;
+  cnpj?: Maybe<Scalars['String']>;
+  companyName?: Maybe<Scalars['String']>;
+  cpf?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  ie?: Maybe<Scalars['String']>;
+  inscricaoMunicipal?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  street: Scalars['String'];
+  taxRegime?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
 };
 
 export type FullName = {
@@ -1172,6 +1473,15 @@ export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type Inbox = {
+  __typename?: 'Inbox';
+  agents: Array<WorkspaceAgent>;
+  id: Scalars['UUID'];
+  integrationType: IntegrationType;
+  whatsappIntegrationId: Scalars['String'];
+  workspace: Workspace;
 };
 
 export type Index = {
@@ -1275,10 +1585,113 @@ export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   uri: Scalars['String'];
 };
 
+/** Available integration types */
+export enum IntegrationType {
+  MESSENGER = 'MESSENGER',
+  WHATSAPP = 'WHATSAPP'
+}
+
+export type InterCreateChargeDto = {
+  address: Scalars['String'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cpfCnpj: Scalars['String'];
+  legalEntity: InterCustomerType;
+  name: Scalars['String'];
+  stateUnity: InterCustomerUf;
+};
+
+/** Tipos de pessoa para o cliente Inter */
+export enum InterCustomerType {
+  FISICA = 'FISICA',
+  JURIDICA = 'JURIDICA'
+}
+
+/** Estados brasileiros para o cliente Inter */
+export enum InterCustomerUf {
+  AC = 'AC',
+  AL = 'AL',
+  AM = 'AM',
+  AP = 'AP',
+  BA = 'BA',
+  CE = 'CE',
+  DF = 'DF',
+  ES = 'ES',
+  GO = 'GO',
+  MA = 'MA',
+  MG = 'MG',
+  MS = 'MS',
+  MT = 'MT',
+  PA = 'PA',
+  PB = 'PB',
+  PE = 'PE',
+  PI = 'PI',
+  PR = 'PR',
+  RJ = 'RJ',
+  RN = 'RN',
+  RO = 'RO',
+  RR = 'RR',
+  RS = 'RS',
+  SC = 'SC',
+  SE = 'SE',
+  SP = 'SP',
+  TO = 'TO'
+}
+
+export type InterIntegration = {
+  __typename?: 'InterIntegration';
+  certificate?: Maybe<Scalars['String']>;
+  clientId: Scalars['String'];
+  clientSecret: Scalars['String'];
+  expirationDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  integrationName: Scalars['String'];
+  privateKey?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+  workspace: Workspace;
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type IssuerDto = {
+  __typename?: 'IssuerDto';
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: Maybe<Scalars['String']>;
+  cnpj: Scalars['String'];
+  cpf?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  ie?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
+export type LinkLogsWorkspaceEntity = {
+  __typename?: 'LinkLogsWorkspaceEntity';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  linkId?: Maybe<Scalars['String']>;
+  linkName?: Maybe<Scalars['String']>;
+  platform?: Maybe<Scalars['String']>;
+  product: Scalars['String'];
+  regionName?: Maybe<Scalars['String']>;
+  userAgent?: Maybe<Scalars['String']>;
+  userIp?: Maybe<Scalars['String']>;
+  utmCampaign: Scalars['String'];
+  utmMedium: Scalars['String'];
+  utmSource: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -1305,11 +1718,21 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
+export type MessageAgent = {
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
 }
+
+export type MessageSector = {
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
@@ -1328,10 +1751,12 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgent: WorkspaceAgent;
   createAgentChatThread: AgentChatThread;
   createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createBillingPlans: BillingPlans;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1339,8 +1764,12 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
+  createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFile: File;
+  createFocusNfeIntegration: FocusNFeWorkspaceEntity;
+  createInterIntegration: InterIntegration;
+  createIssuer: IssuerDto;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -1349,13 +1778,20 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createPabxCompany: PabxCompanyResponseType;
+  createPabxTrunk: PabxTrunkResponseType;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createSector: Sector;
+  createStripeIntegration: StripeIntegration;
+  createTelephony: Telephony;
   createWebhook: Webhook;
+  createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteAgent: WorkspaceAgent;
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: Scalars['Boolean'];
@@ -1366,6 +1802,8 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteFocusNfeIntegration: Scalars['Boolean'];
+  deleteIssuer: Scalars['Boolean'];
   deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -1374,6 +1812,8 @@ export type Mutation = {
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteSector: Scalars['Boolean'];
+  deleteTelephony: Scalars['Boolean'];
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
@@ -1407,7 +1847,9 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
   removeAgentHandoff: Scalars['Boolean'];
+  removeBillingPlan: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
+  removeStripeIntegration: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1415,8 +1857,15 @@ export type Mutation = {
   restorePageLayoutTab: PageLayoutTab;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
+  saveBillingPlanId: BillingPlans;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
+  saveStripeAccountId: StripeIntegration;
+  sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
+  sendMessage: Scalars['Boolean'];
+  sendTemplate: Scalars['Boolean'];
+  setupOneSignalApp: Workspace;
+  setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -1424,10 +1873,19 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
+  switchPlan: BillingSwitchPlanOutput;
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
+  syncInterData: Scalars['Boolean'];
+  toggleAgentStatus: Scalars['Boolean'];
+  toggleFocusNfeIntegrationStatus: Scalars['String'];
+  toggleInterIntegrationStatus: Scalars['String'];
+  toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   trackAnalytics: Analytics;
+  updateAgent: WorkspaceAgent;
   updateApiKey?: Maybe<ApiKey>;
+  updateBillingPlans: BillingPlans;
+  updateChatbotFlow: ChatbotFlow;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
   updateCoreViewFilter: CoreViewFilter;
@@ -1435,17 +1893,27 @@ export type Mutation = {
   updateCoreViewGroup: CoreViewGroup;
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFocusNfeIntegration: FocusNFeWorkspaceEntity;
+  updateInterIntegration: InterIntegration;
+  updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
+  updateOneTimePaidSubscription: BillingUpdateOneTimePaidSubscriptionOutput;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRoutingRules: UpdateRoutingRulesResponseType;
+  updateSector: Sector;
+  updateStripeIntegration: StripeIntegration;
   updateSubscriptionItemPrice: BillingUpdateOutput;
+  updateTelephony: Telephony;
   updateWebhook?: Maybe<Webhook>;
+  updateWhatsappIntegration: WhatsappWorkspaceEntity;
+  updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -1453,6 +1921,7 @@ export type Mutation = {
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: SignedFileDto;
+  uploadFileToBucket: Scalars['String'];
   uploadImage: SignedFileDto;
   uploadProfilePicture: SignedFileDto;
   uploadWorkspaceLogo: SignedFileDto;
@@ -1461,6 +1930,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  validateChatbotFlow: ChatbotFlow;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1495,6 +1965,8 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  interChargeData?: InputMaybe<InterCreateChargeDto>;
+  paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean'];
@@ -1504,6 +1976,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateAgentArgs = {
+  createInput: CreateWorkspaceAgentInput;
 };
 
 
@@ -1524,6 +2001,11 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
+};
+
+
+export type MutationCreateBillingPlansArgs = {
+  createBillingPlansInput: CreateBillingPlansInput;
 };
 
 
@@ -1563,6 +2045,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDialingPlanArgs = {
+  input: CreateDialingPlanInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1570,6 +2057,21 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 export type MutationCreateFileArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationCreateFocusNfeIntegrationArgs = {
+  createInput: CreateFocusNfeIntegrationInput;
+};
+
+
+export type MutationCreateInterIntegrationArgs = {
+  createInput: CreateInterIntegrationInput;
+};
+
+
+export type MutationCreateIssuerArgs = {
+  createInput: CreateIssuerInput;
 };
 
 
@@ -1606,6 +2108,16 @@ export type MutationCreateOneServerlessFunctionArgs = {
 };
 
 
+export type MutationCreatePabxCompanyArgs = {
+  input: CreatePabxCompanyInput;
+};
+
+
+export type MutationCreatePabxTrunkArgs = {
+  input: CreatePabxTrunkInput;
+};
+
+
 export type MutationCreatePageLayoutArgs = {
   input: CreatePageLayoutInput;
 };
@@ -1621,8 +2133,28 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
+export type MutationCreateSectorArgs = {
+  createInput: CreateSectorInput;
+};
+
+
+export type MutationCreateStripeIntegrationArgs = {
+  createStripeIntegrationInput: CreateStripeIntegrationInput;
+};
+
+
+export type MutationCreateTelephonyArgs = {
+  createTelephonyInput: CreateTelephonyInput;
+};
+
+
 export type MutationCreateWebhookArgs = {
   input: CreateWebhookDto;
+};
+
+
+export type MutationCreateWhatsappIntegrationArgs = {
+  createInput: CreateWhatsappIntegrationInput;
 };
 
 
@@ -1638,6 +2170,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteAgentArgs = {
+  agentId: Scalars['String'];
 };
 
 
@@ -1686,6 +2223,16 @@ export type MutationDeleteFileArgs = {
 };
 
 
+export type MutationDeleteFocusNfeIntegrationArgs = {
+  focusNfeIntegrationId: Scalars['String'];
+};
+
+
+export type MutationDeleteIssuerArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -1723,6 +2270,16 @@ export type MutationDeletePageLayoutTabArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteSectorArgs = {
+  sectorId: Scalars['String'];
+};
+
+
+export type MutationDeleteTelephonyArgs = {
+  telephonyId: Scalars['ID'];
 };
 
 
@@ -1879,8 +2436,18 @@ export type MutationRemoveAgentHandoffArgs = {
 };
 
 
+export type MutationRemoveBillingPlanArgs = {
+  planId: Scalars['String'];
+};
+
+
 export type MutationRemoveRoleFromAgentArgs = {
   agentId: Scalars['UUID'];
+};
+
+
+export type MutationRemoveStripeIntegrationArgs = {
+  accountId: Scalars['String'];
 };
 
 
@@ -1920,6 +2487,12 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
+export type MutationSaveBillingPlanIdArgs = {
+  planId: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
+
 export type MutationSaveImapSmtpCaldavAccountArgs = {
   accountOwnerId: Scalars['UUID'];
   connectionParameters: EmailAccountConnectionParameters;
@@ -1928,8 +2501,34 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
 };
 
 
+export type MutationSaveStripeAccountIdArgs = {
+  accountId: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
+
+export type MutationSendEventMessageArgs = {
+  sendEventMessageInput: SendEventMessageInput;
+};
+
+
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
+};
+
+
+export type MutationSendMessageArgs = {
+  sendMessageInput: SendMessageInput;
+};
+
+
+export type MutationSendTemplateArgs = {
+  sendTemplateInput: SendTemplateInput;
+};
+
+
+export type MutationSetupPabxEnvironmentArgs = {
+  input: SetupPabxEnvironmentInput;
 };
 
 
@@ -1968,6 +2567,36 @@ export type MutationSubmitFormStepArgs = {
 };
 
 
+export type MutationSwitchPlanArgs = {
+  plan: BillingPlanKey;
+};
+
+
+export type MutationSyncInterDataArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type MutationToggleAgentStatusArgs = {
+  agentId: Scalars['String'];
+};
+
+
+export type MutationToggleFocusNfeIntegrationStatusArgs = {
+  focusNfeIntegrationId: Scalars['String'];
+};
+
+
+export type MutationToggleInterIntegrationStatusArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type MutationToggleWhatsappIntegrationStatusArgs = {
+  integrationId: Scalars['String'];
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -1976,8 +2605,23 @@ export type MutationTrackAnalyticsArgs = {
 };
 
 
+export type MutationUpdateAgentArgs = {
+  updateInput: UpdateWorkspaceAgentInput;
+};
+
+
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyDto;
+};
+
+
+export type MutationUpdateBillingPlansArgs = {
+  updateBillingPlansInput: UpdateBillingPlansInput;
+};
+
+
+export type MutationUpdateChatbotFlowArgs = {
+  updateChatbotInput: UpdateChatbotFlowInput;
 };
 
 
@@ -2020,6 +2664,22 @@ export type MutationUpdateCoreViewSortArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFocusNfeIntegrationArgs = {
+  updateInput: UpdateFocusNfeIntegrationInput;
+};
+
+
+export type MutationUpdateInterIntegrationArgs = {
+  updateInput: UpdateInterIntegrationInput;
+};
+
+
+export type MutationUpdateIssuerArgs = {
+  id: Scalars['ID'];
+  updateInput: UpdateIssuerInput;
 };
 
 
@@ -2071,13 +2731,45 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdateRoutingRulesArgs = {
+  input: UpdateRoutingRulesInput;
+};
+
+
+export type MutationUpdateSectorArgs = {
+  updateInput: UpdateSectorInput;
+};
+
+
+export type MutationUpdateStripeIntegrationArgs = {
+  updateStripeIntegrationInput: UpdateStripeIntegrationInput;
+};
+
+
 export type MutationUpdateSubscriptionItemPriceArgs = {
   priceId: Scalars['String'];
 };
 
 
+export type MutationUpdateTelephonyArgs = {
+  id: Scalars['ID'];
+  updateTelephonyInput: UpdateTelephonyInput;
+};
+
+
 export type MutationUpdateWebhookArgs = {
   input: UpdateWebhookDto;
+};
+
+
+export type MutationUpdateWhatsappIntegrationArgs = {
+  updateInput: UpdateWhatsappIntegrationInput;
+};
+
+
+export type MutationUpdateWhatsappIntegrationServiceLevelArgs = {
+  integrationId: Scalars['String'];
+  sla: Scalars['Int'];
 };
 
 
@@ -2120,6 +2812,14 @@ export type MutationUploadFileArgs = {
 };
 
 
+export type MutationUploadFileToBucketArgs = {
+  file: Scalars['Upload'];
+  isInternal?: InputMaybe<Scalars['Boolean']>;
+  type: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
+
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -2158,6 +2858,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationValidateChatbotFlowArgs = {
+  chatbotInput: ChatbotFlowInput;
 };
 
 
@@ -2319,6 +3024,85 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean'];
 };
 
+export type PabxCompanyCreationDetailsInput = {
+  acao_limite_espaco: Scalars['Int'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']>;
+  bairro?: InputMaybe<Scalars['String']>;
+  cel?: InputMaybe<Scalars['String']>;
+  cep?: InputMaybe<Scalars['String']>;
+  cidade?: InputMaybe<Scalars['String']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  compl?: InputMaybe<Scalars['String']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  email_cliente?: InputMaybe<Scalars['String']>;
+  end?: InputMaybe<Scalars['String']>;
+  espaco_disco?: InputMaybe<Scalars['Int']>;
+  estado?: InputMaybe<Scalars['String']>;
+  faixa_max?: InputMaybe<Scalars['Int']>;
+  faixa_min?: InputMaybe<Scalars['Int']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']>;
+  login: Scalars['String'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']>;
+  modulos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  prefixo?: InputMaybe<Scalars['String']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  qtd_ramais_max_pa: Scalars['Int'];
+  qtd_ramais_max_pabx: Scalars['Int'];
+  ramal_resp?: InputMaybe<Scalars['String']>;
+  razao_social?: InputMaybe<Scalars['String']>;
+  remover_mailings?: InputMaybe<Scalars['Int']>;
+  resp?: InputMaybe<Scalars['String']>;
+  salas_conf_num_max: Scalars['Int'];
+  senha: Scalars['String'];
+  tel?: InputMaybe<Scalars['String']>;
+  tipo: Scalars['Int'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']>;
+};
+
+export type PabxCompanyResponseType = {
+  __typename?: 'PabxCompanyResponseType';
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
+export type PabxDialingPlanCreationDetailsInput = {
+  nome: Scalars['String'];
+  plano_discagem_id: Scalars['Int'];
+};
+
+export type PabxDialingPlanResponseType = {
+  __typename?: 'PabxDialingPlanResponseType';
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type PabxTrunkCreationDetailsInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']>;
+  endereco: Scalars['String'];
+  host_dinamico?: InputMaybe<Scalars['Int']>;
+  insere_digitos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']>;
+  senha?: InputMaybe<Scalars['String']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int'];
+  usuario?: InputMaybe<Scalars['String']>;
+};
+
+export type PabxTrunkResponseType = {
+  __typename?: 'PabxTrunkResponseType';
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -2390,6 +3174,14 @@ export enum PermissionsOnAllObjectRecords {
   UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
 }
 
+export type Phones = {
+  __typename?: 'Phones';
+  additionalPhones?: Maybe<Scalars['JSON']>;
+  primaryPhoneCallingCode: Scalars['String'];
+  primaryPhoneCountryCode: Scalars['String'];
+  primaryPhoneNumber: Scalars['String'];
+};
+
 export type PlaceDetailsResultDto = {
   __typename?: 'PlaceDetailsResultDto';
   city?: Maybe<Scalars['String']>;
@@ -2436,9 +3228,11 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentById: WorkspaceAgent;
   agentChatMessages: Array<AgentChatMessage>;
   agentChatThread: AgentChatThread;
   agentChatThreads: Array<AgentChatThread>;
+  agentsByWorkspace: Array<WorkspaceAgent>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
@@ -2450,6 +3244,7 @@ export type Query = {
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
+  findAllTelephony: Array<Telephony>;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -2457,9 +3252,15 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAddressDetails: PlaceDetailsResultDto;
+  getAllBillingPlans: Array<BillingPlans>;
+  getAllExtensions?: Maybe<Array<TelephonyExtension>>;
+  getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResultDto>;
   getAvailablePackages: Scalars['JSON'];
+  getBillingPlansById: BillingPlans;
+  getChatbotFlowById: ChatbotFlow;
+  getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -2474,8 +3275,14 @@ export type Query = {
   getCoreViewSort?: Maybe<CoreViewSort>;
   getCoreViewSorts: Array<CoreViewSort>;
   getCoreViews: Array<CoreView>;
+  getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
+  getFocusNfeIntegrationById: FocusNFeWorkspaceEntity;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNFeWorkspaceEntity>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getInterAccountInfo: Scalars['String'];
+  getIssuerById: IssuerDto;
+  getIssuersByWorkspace: Array<IssuerDto>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -2487,24 +3294,43 @@ export type Query = {
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getStripeIntegrationById: StripeIntegration;
   getSystemHealthStatus: SystemHealth;
+  getTelephonyCallFlows?: Maybe<Array<TelephonyCallFlow>>;
+  getTelephonyDids?: Maybe<Array<TelephonyDids>>;
+  getTelephonyPlans?: Maybe<Array<TelephonyDialingPlan>>;
+  getTelephonyURAs?: Maybe<Array<Campaign>>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  getUserSoftfone?: Maybe<TelephonyExtension>;
+  getWhatsappTemplates: WhatsappTemplatesResponse;
+  inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
+  interIntegrationById?: Maybe<InterIntegration>;
+  interIntegrationsByWorkspace: Array<InterIntegration>;
   listAvailableMeteredBillingPrices: Array<BillingPriceOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   search: SearchResultConnection;
+  sectorById: Sector;
+  sectorsByWorkspace: Array<Sector>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  whatsappIntegrationById: WhatsappWorkspaceEntity;
+  whatsappIntegrationsByWorkspace: Array<WhatsappWorkspaceEntity>;
+};
+
+
+export type QueryAgentByIdArgs = {
+  agentId: Scalars['String'];
 };
 
 
@@ -2520,6 +3346,11 @@ export type QueryAgentChatThreadArgs = {
 
 export type QueryAgentChatThreadsArgs = {
   agentId: Scalars['UUID'];
+};
+
+
+export type QueryAgentsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -2554,6 +3385,11 @@ export type QueryFindAgentHandoffsArgs = {
 };
 
 
+export type QueryFindAllTelephonyArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -2575,6 +3411,21 @@ export type QueryGetAddressDetailsArgs = {
 };
 
 
+export type QueryGetAllBillingPlansArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
+export type QueryGetAllExtensionsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetAllStripeIntegrationsArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QueryGetAutoCompleteAddressArgs = {
   address: Scalars['String'];
   country?: InputMaybe<Scalars['String']>;
@@ -2585,6 +3436,16 @@ export type QueryGetAutoCompleteAddressArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetBillingPlansByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetChatbotFlowByIdArgs = {
+  chatbotId: Scalars['String'];
 };
 
 
@@ -2658,8 +3519,23 @@ export type QueryGetDatabaseConfigVariableArgs = {
 };
 
 
+export type QueryGetFocusNfeIntegrationByIdArgs = {
+  focusNfeIntegrationId: Scalars['String'];
+};
+
+
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetInterAccountInfoArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type QueryGetIssuerByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -2696,6 +3572,31 @@ export type QueryGetQueueMetricsArgs = {
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
+};
+
+
+export type QueryGetStripeIntegrationByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetTelephonyCallFlowsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyDidsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyPlansArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyUrAsArgs = {
+  workspaceId: Scalars['ID'];
 };
 
 
@@ -2741,6 +3642,32 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
+export type QueryGetUserSoftfoneArgs = {
+  extNum?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetWhatsappTemplatesArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type QueryInboxesByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
+export type QueryInterIntegrationByIdArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type QueryInterIntegrationsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QuerySearchArgs = {
   after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
@@ -2751,6 +3678,16 @@ export type QuerySearchArgs = {
 };
 
 
+export type QuerySectorByIdArgs = {
+  sectorId: Scalars['String'];
+};
+
+
+export type QuerySectorsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
@@ -2758,6 +3695,11 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryWebhookArgs = {
   input: GetWebhookDto;
+};
+
+
+export type QueryWhatsappIntegrationByIdArgs = {
+  integrationId: Scalars['String'];
 };
 
 export type QueueMetricsData = {
@@ -2788,6 +3730,12 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type RegionInput = {
+  regiao_id: Scalars['Int'];
+  regiao_nome: Scalars['String'];
+  roteamentos: Array<RoutingRuleInput>;
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -2871,6 +3819,12 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RoutingRuleInput = {
+  prioridade: Scalars['Int'];
+  tronco_id?: InputMaybe<Scalars['Int']>;
+  tronco_nome: Scalars['String'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -2932,12 +3886,55 @@ export type SearchResultPageInfo = {
   hasNextPage: Scalars['Boolean'];
 };
 
+export type Sector = {
+  __typename?: 'Sector';
+  agents: Array<WorkspaceAgent>;
+  createdAt: Scalars['DateTime'];
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  topics?: Maybe<Array<Scalars['JSON']>>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
+export type SendEventMessageInput = {
+  agent?: InputMaybe<MessageAgent>;
+  eventStatus: Scalars['String'];
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  sector?: InputMaybe<MessageSector>;
+  status: Scalars['String'];
+  to: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type SendMessageInput = {
+  fileId?: InputMaybe<Scalars['String']>;
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  to: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SendTemplateInput = {
+  agent?: InputMaybe<MessageAgent>;
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  language: Scalars['String'];
+  message: Scalars['String'];
+  templateName: Scalars['String'];
+  to: Scalars['String'];
 };
 
 export type Sentry = {
@@ -2994,6 +3991,23 @@ export type SetupOidcSsoInput = {
   name: Scalars['String'];
 };
 
+export type SetupPabxEnvironmentInput = {
+  companyDetails: PabxCompanyCreationDetailsInput;
+  dialingPlanDetails: PabxDialingPlanCreationDetailsInput;
+  routingRulesData: UpdateRoutingRulesDataInput;
+  trunkDetails: PabxTrunkCreationDetailsInput;
+  workspaceId: Scalars['ID'];
+};
+
+export type SetupPabxEnvironmentResponseType = {
+  __typename?: 'SetupPabxEnvironmentResponseType';
+  companyId?: Maybe<Scalars['ID']>;
+  dialingPlanId?: Maybe<Scalars['ID']>;
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  trunkId?: Maybe<Scalars['ID']>;
+};
+
 export type SetupSamlSsoInput = {
   certificate: Scalars['String'];
   fingerprint?: InputMaybe<Scalars['String']>;
@@ -3032,6 +4046,13 @@ export type StandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
+export type StripeIntegration = {
+  __typename?: 'StripeIntegration';
+  accountId: Scalars['String'];
+  id: Scalars['UUID'];
+  workspace: Workspace;
+};
+
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
@@ -3061,6 +4082,7 @@ export enum SubscriptionInterval {
 export enum SubscriptionStatus {
   Active = 'Active',
   Canceled = 'Canceled',
+  Expired = 'Expired',
   Incomplete = 'Incomplete',
   IncompleteExpired = 'IncompleteExpired',
   PastDue = 'PastDue',
@@ -3090,6 +4112,130 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TarifaTroncoInput = {
+  fracionamento: Scalars['String'];
+  regiao_id: Scalars['Int'];
+  tarifa: Scalars['Int'];
+};
+
+export type Telephony = {
+  __typename?: 'Telephony';
+  SIPPassword?: Maybe<Scalars['String']>;
+  advancedFowarding1?: Maybe<Scalars['String']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']>;
+  advancedFowarding2?: Maybe<Scalars['String']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']>;
+  advancedFowarding3?: Maybe<Scalars['String']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']>;
+  advancedFowarding4?: Maybe<Scalars['String']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']>;
+  advancedFowarding5?: Maybe<Scalars['String']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']>;
+  areaCode?: Maybe<Scalars['String']>;
+  blockExtension?: Maybe<Scalars['Boolean']>;
+  callerExternalID?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']>;
+  dialingPlan?: Maybe<Scalars['String']>;
+  emailForMailbox?: Maybe<Scalars['String']>;
+  enableMailbox?: Maybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
+  extensionBusy?: Maybe<Scalars['String']>;
+  extensionGroup?: Maybe<Scalars['String']>;
+  extensionName?: Maybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
+  externalNumberBusy?: Maybe<Scalars['String']>;
+  fowardAllCalls?: Maybe<Scalars['String']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  listenToCalls?: Maybe<Scalars['Boolean']>;
+  memberId: Scalars['String'];
+  numberExtension: Scalars['String'];
+  pullCalls?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['String']>;
+  recordCalls?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
+export type TelephonyCallFlow = {
+  __typename?: 'TelephonyCallFlow';
+  fluxo_chamada_id?: Maybe<Scalars['ID']>;
+  fluxo_chamada_nome?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyDialingPlan = {
+  __typename?: 'TelephonyDialingPlan';
+  cliente_id?: Maybe<Scalars['String']>;
+  nome?: Maybe<Scalars['String']>;
+  plano_discagem_id?: Maybe<Scalars['ID']>;
+};
+
+export type TelephonyDids = {
+  __typename?: 'TelephonyDids';
+  apontar_para?: Maybe<Scalars['String']>;
+  cliente_id?: Maybe<Scalars['String']>;
+  destino?: Maybe<Scalars['String']>;
+  did_id?: Maybe<Scalars['ID']>;
+  gravar_chamadas?: Maybe<Scalars['String']>;
+  habilitar_horario_funcionamento?: Maybe<Scalars['String']>;
+  habilitar_registro?: Maybe<Scalars['String']>;
+  horario_funcionamento_dias_semana?: Maybe<Array<Scalars['String']>>;
+  horario_funcionamento_fim?: Maybe<Scalars['String']>;
+  horario_funcionamento_inicio?: Maybe<Scalars['String']>;
+  horario_funcionamento_lista_feriados?: Maybe<Array<Scalars['String']>>;
+  maximo_chamadas_simultaneas?: Maybe<Scalars['String']>;
+  numero?: Maybe<Scalars['String']>;
+  registro_dominio?: Maybe<Scalars['String']>;
+  registro_senha?: Maybe<Scalars['String']>;
+  registro_usuario?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyExtension = {
+  __typename?: 'TelephonyExtension';
+  bloquear_ramal?: Maybe<Scalars['String']>;
+  caller_id_externo?: Maybe<Scalars['String']>;
+  centro_custo?: Maybe<Scalars['String']>;
+  cliente_id?: Maybe<Scalars['String']>;
+  codigo_area?: Maybe<Scalars['String']>;
+  codigo_incorporacao?: Maybe<Scalars['String']>;
+  dupla_autenticacao_ip_permitido?: Maybe<Scalars['String']>;
+  dupla_autenticacao_mascara?: Maybe<Scalars['String']>;
+  encaminhar_ocupado_indisponivel?: Maybe<Encaminhamento>;
+  encaminhar_offline_sem_atendimento?: Maybe<Encaminhamento>;
+  encaminhar_todas_chamadas?: Maybe<Encaminhamento>;
+  escutar_chamadas?: Maybe<Scalars['String']>;
+  gravar_chamadas?: Maybe<Scalars['String']>;
+  grupo_musica_espera?: Maybe<Scalars['String']>;
+  grupo_ramais?: Maybe<Scalars['String']>;
+  habilitar_blf?: Maybe<Scalars['String']>;
+  habilitar_dupla_autenticacao?: Maybe<Scalars['String']>;
+  habilitar_timers?: Maybe<Scalars['String']>;
+  nome?: Maybe<Scalars['String']>;
+  numero?: Maybe<Scalars['String']>;
+  plano_discagem_id?: Maybe<Scalars['String']>;
+  puxar_chamadas?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['ID']>;
+  senha_sip?: Maybe<Scalars['String']>;
+  senha_web?: Maybe<Scalars['String']>;
+  tipo?: Maybe<Scalars['String']>;
+  usuario_autenticacao?: Maybe<Scalars['String']>;
+};
+
+export type Template = {
+  __typename?: 'Template';
+  category: Scalars['String'];
+  components: Array<Component>;
+  id: Scalars['String'];
+  language: Scalars['String'];
+  name: Scalars['String'];
+  parameter_format: Scalars['String'];
+  status: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -3215,6 +4361,19 @@ export type UpdateApiKeyDto = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateBillingPlansInput = {
+  id: Scalars['String'];
+  planId?: InputMaybe<Scalars['String']>;
+  planPrice?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateChatbotFlowInput = {
+  chatbotId: Scalars['String'];
+  edges: Scalars['JSON'];
+  nodes: Scalars['JSON'];
+  viewport?: InputMaybe<Scalars['JSON']>;
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -3229,6 +4388,52 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateFocusNfeIntegrationInput = {
+  cep?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  companyName?: InputMaybe<Scalars['String']>;
+  cpf?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  ie?: InputMaybe<Scalars['String']>;
+  inscricaoMunicipal?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  neighborhood?: InputMaybe<Scalars['String']>;
+  number?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
+  street?: InputMaybe<Scalars['String']>;
+  taxRegime?: InputMaybe<Scalars['String']>;
+  token?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateInterIntegrationInput = {
+  certificate?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['String']>;
+  clientSecret?: InputMaybe<Scalars['String']>;
+  expirationDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  integrationName?: InputMaybe<Scalars['String']>;
+  privateKey?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIssuerInput = {
+  cep?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  cpf?: InputMaybe<Scalars['String']>;
+  ie?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  neighborhood?: InputMaybe<Scalars['String']>;
+  number?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
+  street?: InputMaybe<Scalars['String']>;
+  taxRegime?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -3295,6 +4500,29 @@ export type UpdateRolePayload = {
   label?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateRoutingRulesDataInput = {
+  regioes: Array<RegionInput>;
+};
+
+export type UpdateRoutingRulesInput = {
+  cliente_id: Scalars['Int'];
+  dados: UpdateRoutingRulesDataInput;
+  plano_discagem_id: Scalars['Int'];
+};
+
+export type UpdateRoutingRulesResponseType = {
+  __typename?: 'UpdateRoutingRulesResponseType';
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type UpdateSectorInput = {
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Array<Scalars['JSON']>>;
+};
+
 export type UpdateServerlessFunctionInput = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
@@ -3302,6 +4530,49 @@ export type UpdateServerlessFunctionInput = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateStripeIntegrationInput = {
+  accountId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+};
+
+export type UpdateTelephonyInput = {
+  SIPPassword?: InputMaybe<Scalars['String']>;
+  advancedFowarding1?: InputMaybe<Scalars['String']>;
+  advancedFowarding1Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding2?: InputMaybe<Scalars['String']>;
+  advancedFowarding2Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding3?: InputMaybe<Scalars['String']>;
+  advancedFowarding3Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding4?: InputMaybe<Scalars['String']>;
+  advancedFowarding4Value?: InputMaybe<Scalars['String']>;
+  advancedFowarding5?: InputMaybe<Scalars['String']>;
+  advancedFowarding5Value?: InputMaybe<Scalars['String']>;
+  areaCode?: InputMaybe<Scalars['String']>;
+  blockExtension?: InputMaybe<Scalars['Boolean']>;
+  callerExternalID?: InputMaybe<Scalars['String']>;
+  destinyMailboxAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  destinyMailboxBusy?: InputMaybe<Scalars['String']>;
+  dialingPlan?: InputMaybe<Scalars['String']>;
+  emailForMailbox?: InputMaybe<Scalars['String']>;
+  enableMailbox?: InputMaybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  extensionBusy?: InputMaybe<Scalars['String']>;
+  extensionGroup?: InputMaybe<Scalars['String']>;
+  extensionName?: InputMaybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: InputMaybe<Scalars['String']>;
+  externalNumberBusy?: InputMaybe<Scalars['String']>;
+  fowardAllCalls?: InputMaybe<Scalars['String']>;
+  fowardBusyNotAvailable?: InputMaybe<Scalars['String']>;
+  fowardOfflineWithoutService?: InputMaybe<Scalars['String']>;
+  listenToCalls?: InputMaybe<Scalars['Boolean']>;
+  memberId?: InputMaybe<Scalars['ID']>;
+  numberExtension: Scalars['ID'];
+  pullCalls?: InputMaybe<Scalars['String']>;
+  ramal_id?: InputMaybe<Scalars['String']>;
+  recordCalls?: InputMaybe<Scalars['Boolean']>;
+  type?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateViewFieldInput = {
@@ -3369,6 +4640,16 @@ export type UpdateWebhookDto = {
   targetUrl?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateWhatsappIntegrationInput = {
+  accessToken?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['String']>;
+  appKey?: InputMaybe<Scalars['String']>;
+  businessAccountId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  phoneId?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -3390,6 +4671,14 @@ export type UpdateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type UpdateWorkspaceAgentInput = {
+  id: Scalars['String'];
+  inboxesIds: Array<Scalars['String']>;
+  isAdmin: Scalars['Boolean'];
+  memberId: Scalars['ID'];
+  sectorIds: Array<Scalars['String']>;
+};
+
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
@@ -3402,6 +4691,8 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
+  onesignalApiKey?: InputMaybe<Scalars['String']>;
+  onesignalAppId?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
 };
 
@@ -3574,6 +4865,26 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
+};
+
+export type WhatsappWorkspaceEntity = {
+  __typename?: 'WhatsappWorkspaceEntity';
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  chatbot?: Maybe<ChatbotWorkspaceEntity>;
+  disabled: Scalars['Boolean'];
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  phoneId: Scalars['String'];
+  sla: Scalars['Float'];
+  verifyToken: Scalars['String'];
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
@@ -3639,6 +4950,7 @@ export type Workspace = {
   allowImpersonation: Scalars['Boolean'];
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
+  creatorEmail?: Maybe<Scalars['String']>;
   currentBillingSubscription?: Maybe<BillingSubscription>;
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
@@ -3659,6 +4971,12 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  onesignalApiKey?: Maybe<Scalars['String']>;
+  onesignalAppId?: Maybe<Scalars['String']>;
+  pabxCompanyId?: Maybe<Scalars['Float']>;
+  pabxDialingPlanId?: Maybe<Scalars['Float']>;
+  pabxTrunkId?: Maybe<Scalars['Float']>;
+  stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   version?: Maybe<Scalars['String']>;
@@ -3679,6 +4997,19 @@ export enum WorkspaceActivationStatus {
   PENDING_CREATION = 'PENDING_CREATION',
   SUSPENDED = 'SUSPENDED'
 }
+
+export type WorkspaceAgent = {
+  __typename?: 'WorkspaceAgent';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  inboxes: Array<Inbox>;
+  isActive: Scalars['Boolean'];
+  isAdmin: Scalars['Boolean'];
+  memberId: Scalars['String'];
+  sectors: Array<Sector>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
 
 export type WorkspaceEdge = {
   __typename?: 'WorkspaceEdge';
@@ -3723,7 +5054,9 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
+  userDocument?: Maybe<Scalars['String']>;
   userEmail: Scalars['String'];
+  userPhone?: Maybe<Phones>;
   userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
