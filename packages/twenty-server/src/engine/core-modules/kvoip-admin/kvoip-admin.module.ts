@@ -27,17 +27,14 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        Workspace,
-        User,
-        UserWorkspace,
-        ObjectMetadataEntity,
-        FeatureFlag,
-        BillingSubscription,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      Workspace,
+      User,
+      UserWorkspace,
+      ObjectMetadataEntity,
+      FeatureFlag,
+      BillingSubscription,
+    ]),
     TypeORMModule,
     WorkspaceModule,
     UserWorkspaceModule,

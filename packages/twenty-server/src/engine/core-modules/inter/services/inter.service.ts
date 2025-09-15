@@ -50,9 +50,9 @@ export class InterService {
   private readonly interInstance: AxiosInstance;
 
   constructor(
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingCharge, 'core')
+    @InjectRepository(BillingCharge)
     private readonly billingChargeRepository: Repository<BillingCharge>,
     // TODO: Check if this breaks anything
     @Optional()

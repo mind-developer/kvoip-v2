@@ -4,7 +4,6 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -23,10 +22,7 @@ import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.lis
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [FocusNfeIntegration, Workspace],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([FocusNfeIntegration, Workspace]),
         TypeORMModule,
       ],
     }),
@@ -41,7 +37,6 @@ import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.lis
   providers: [
     FocusNFeIntegrationResolver,
     FocusNFeIntegrationService,
-    TypeORMService,
     FocusNFeService,
     FocusNFeEventListener,
     NotaFiscalEventListener,

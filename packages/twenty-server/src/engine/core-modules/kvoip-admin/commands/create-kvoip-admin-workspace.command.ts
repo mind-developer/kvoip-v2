@@ -1,14 +1,13 @@
 /* @license Enterprise */
 
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -39,18 +38,19 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
   private logger: Logger = new Logger(CreateKvoipAdminWorkspaceCommand.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly typeORMService: TypeORMService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly dataSourceService: DataSourceService,
     private readonly featureFlagService: FeatureFlagService,
@@ -75,12 +75,6 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
     options?: CreateKvoipAdminWorkspaceCommandOptions,
   ): Promise<void> {
     try {
-      const mainDataSource = this.typeORMService.getMainDataSource();
-
-      if (!mainDataSource) {
-        throw new Error('Could not connect to workspace data source');
-      }
-
       const appVersion = this.twentyConfigService.get('APP_VERSION');
 
       const kvoipAdminInviteHash = this.twentyConfigService.get(

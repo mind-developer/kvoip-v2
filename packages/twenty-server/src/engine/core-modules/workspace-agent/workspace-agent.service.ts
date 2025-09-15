@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/workspace-agent/dtos/create-agent.input';
@@ -15,15 +14,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 export class AgentService {
   constructor(
-    @InjectRepository(WorkspaceAgent, 'core')
+    @InjectRepository(WorkspaceAgent)
     private readonly agentRepository: Repository<WorkspaceAgent>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(Sector, 'core')
+    @InjectRepository(Sector)
     private readonly sectorRepository: Repository<Sector>,
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    @InjectRepository(Inbox, 'core')
+    @InjectRepository(Inbox)
     private readonly inboxRepository: Repository<Inbox>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}

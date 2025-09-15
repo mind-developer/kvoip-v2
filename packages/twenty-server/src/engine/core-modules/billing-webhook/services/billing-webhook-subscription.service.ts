@@ -61,7 +61,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingCharge, 'core')
+    @InjectRepository(BillingCharge)
     private readonly billingChargeRepository: Repository<BillingCharge>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,

@@ -12,6 +12,7 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -73,10 +74,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly pabxService: PabxService,
     private readonly soapClientService: SoapClientService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super(workspaceRepository);
   }
@@ -192,8 +194,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const chromeWebOrigin = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
-
-    this.logger.log(`🌐 chromeWebOrigin: ${chromeWebOrigin}`);
 
     try {
       this.logger.log(

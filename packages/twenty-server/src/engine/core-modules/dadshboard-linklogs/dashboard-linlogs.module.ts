@@ -7,7 +7,7 @@ import { TraceableService } from 'src/engine/core-modules/dadshboard-linklogs/se
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workspace], 'core')],
+  imports: [TypeOrmModule.forFeature([Workspace])],
   providers: [DashboardLinklogsResolver, TraceableService],
   controllers: [TraceableController],
 })

@@ -63,7 +63,7 @@ export class BillingSubscriptionService {
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly interService: InterService,
-    @InjectRepository(BillingCharge, 'core')
+    @InjectRepository(BillingCharge)
     private readonly billingChargeRepository: Repository<BillingCharge>,
   ) {}
 

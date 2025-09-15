@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
@@ -237,6 +238,25 @@ export class RoleService {
       canBeAssignedToUsers: true,
       canBeAssignedToAgents: false,
       canBeAssignedToApiKeys: false,
+      isEditable: false,
+      workspaceId,
+    });
+  }
+
+  public async createAdminRole({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
+      label: ADMIN_ROLE_LABEL,
+      description: 'Admin role',
+      icon: 'IconUserCog',
+      canUpdateAllSettings: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: false,
       workspaceId,
     });
