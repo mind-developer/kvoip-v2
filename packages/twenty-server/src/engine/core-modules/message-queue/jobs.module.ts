@@ -10,6 +10,10 @@ import { CheckExpiredSubscriptionsJob } from 'src/engine/core-modules/billing/cr
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
+import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
+import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { HandlersModule } from 'src/engine/core-modules/chatbot-flow/engine/handlers/handlers.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
@@ -19,6 +23,7 @@ import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.
 import { WhatsappEmmitResolvedChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-resolved-status.cron.job';
 import { WhatsappEmmitWaitingChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-waiting-status.cron.job';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -49,6 +54,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
   imports: [
     TypeOrmModule.forFeature(
       [
+        ChatbotFlow,
         Workspace,
         BillingSubscription,
         WhatsappIntegration,
@@ -81,6 +87,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SubscriptionsModule,
     AuditJobModule,
     MetaModule,
+    HandlersModule,
+    ChatbotFlowModule,
     MessageQueueModule,
   ],
   providers: [
@@ -96,6 +104,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     FirebaseService,
     WhatsappEmmitWaitingChatsCronJob,
     WhatsappEmmitResolvedChatsCronJob,
+    ChatbotFlowService,
+    MessageManagerService,
   ],
 })
 export class JobsModule {

@@ -1,37 +1,37 @@
+import { Injectable } from '@nestjs/common';
 import { Node } from '@xyflow/react';
 import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import { NodeHandler } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
-import { SendMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 
+@Injectable()
 export class FileInputHandler implements NodeHandler {
-  constructor(
-    private sendMessage: (
-      input: SendMessageInput,
-      workspaceId: string,
-    ) => Promise<void>,
-    private integrationId: string,
-    private sendTo: string,
-    private personId: string,
-    private chatbotName: string,
-    private workspaceId: string,
-  ) {}
+  constructor(private readonly messageManagerService: MessageManagerService) {}
 
-  async process(node: Node): Promise<string | null> {
+  async process(
+    integrationId: string,
+    workspaceId: string,
+    sendTo: string,
+    personId: string,
+    chatbotName: string,
+    sectors: { id: string; name: string }[],
+    node: Node,
+  ): Promise<string | null> {
     const file =
       typeof node.data?.fileUrl === 'string' ? node.data.fileUrl : null;
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (file) {
-      await this.sendMessage(
+      await this.messageManagerService.sendWhatsAppMessage(
         {
-          integrationId: this.integrationId,
-          to: this.sendTo,
+          integrationId: integrationId,
+          to: sendTo,
           type: MessageTypes.DOCUMENT,
           fileId: file,
-          from: this.chatbotName,
-          personId: this.personId,
+          from: chatbotName,
+          personId: personId,
         },
-        this.workspaceId,
+        workspaceId,
       );
     }
 

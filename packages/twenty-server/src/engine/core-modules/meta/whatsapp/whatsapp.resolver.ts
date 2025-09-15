@@ -8,6 +8,7 @@ import {
   SendTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
 import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
+import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
@@ -16,17 +17,21 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 
 @Resolver('Whatsapp')
 export class WhatsappResolver {
-  constructor(private readonly whatsappService: WhatsappService) {}
+  constructor(
+    private readonly messageManagerService: MessageManagerService,
+    private readonly whatsappService: WhatsappService,
+  ) {}
 
   @Mutation(() => Boolean)
   async sendTemplate(
     @Args('sendTemplateInput') sendTemplateInput: SendTemplateInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendTemplateConfirmation = await this.whatsappService.sendTemplate(
-      sendTemplateInput,
-      workspace.id,
-    );
+    const sendTemplateConfirmation =
+      await this.messageManagerService.sendWhatsAppTemplate(
+        sendTemplateInput,
+        workspace.id,
+      );
 
     if (sendTemplateConfirmation) {
       const today = new Date();
@@ -93,10 +98,11 @@ export class WhatsappResolver {
     @Args('sendMessageInput') sendMessageInput: SendMessageInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendMessageConfirmation = await this.whatsappService.sendMessage(
-      sendMessageInput,
-      workspace.id,
-    );
+    const sendMessageConfirmation =
+      await this.messageManagerService.sendWhatsAppMessage(
+        sendMessageInput,
+        workspace.id,
+      );
 
     if (sendMessageConfirmation) {
       const lastMessage = {

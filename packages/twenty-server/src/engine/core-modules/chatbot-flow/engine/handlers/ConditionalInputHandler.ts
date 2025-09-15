@@ -1,12 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import { Node } from '@xyflow/react';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-flow/types/LogicNodeDataType';
 import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import { NodeHandler } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
-import { SendMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 
+@Injectable()
 export class ConditionalInputHandler implements NodeHandler {
-  private askedNodes = new Set<string>();
-
+  askedNodes: Set<string>;
   private compare(
     actual: string,
     expected: string,
@@ -24,20 +25,17 @@ export class ConditionalInputHandler implements NodeHandler {
     }
   }
 
-  constructor(
-    private sendMessage: (
-      input: SendMessageInput,
-      workspaceId: string,
-    ) => Promise<void>,
-    private integrationId: string,
-    private sendTo: string,
-    private personId: string,
-    private chatbotName: string,
-    private sectors: { id: string; name: string }[],
-    private workspaceId: string,
-  ) {}
+  constructor(private readonly messageManagerService: MessageManagerService) {
+    this.askedNodes = new Set<string>();
+  }
 
   async process(
+    integrationId: string,
+    workspaceId: string,
+    sendTo: string,
+    personId: string,
+    chatbotName: string,
+    sectors: { id: string; name: string }[],
     node: Node,
     context: { incomingMessage: string },
   ): Promise<string | null> {
@@ -54,16 +52,16 @@ export class ConditionalInputHandler implements NodeHandler {
       this.askedNodes.add(nodeId);
 
       if (prompt) {
-        await this.sendMessage(
+        await this.messageManagerService.sendWhatsAppMessage(
           {
             type: MessageTypes.TEXT,
             message: prompt,
-            integrationId: this.integrationId,
-            to: this.sendTo,
-            from: this.chatbotName,
-            personId: this.personId,
+            integrationId: integrationId,
+            to: sendTo,
+            from: chatbotName,
+            personId: personId,
           },
-          this.workspaceId,
+          workspaceId,
         );
       }
 
@@ -74,7 +72,7 @@ export class ConditionalInputHandler implements NodeHandler {
           }
 
           if (d.recordType === 'sectors') {
-            const sector = this.sectors.find((s) => s.id === d.sectorId);
+            const sector = sectors.find((s) => s.id === d.sectorId);
             const name = sector?.name ?? '';
 
             return `${d.option} - ${name}`;
@@ -85,16 +83,16 @@ export class ConditionalInputHandler implements NodeHandler {
         .join('\n');
 
       if (optionsList) {
-        await this.sendMessage(
+        await this.messageManagerService.sendWhatsAppMessage(
           {
             type: MessageTypes.TEXT,
             message: optionsList,
-            integrationId: this.integrationId,
-            to: this.sendTo,
-            from: this.chatbotName,
-            personId: this.personId,
+            integrationId: integrationId,
+            to: sendTo,
+            from: chatbotName,
+            personId: personId,
           },
-          this.workspaceId,
+          workspaceId,
         );
       }
 
@@ -102,7 +100,7 @@ export class ConditionalInputHandler implements NodeHandler {
     }
 
     for (const d of logic.logicNodeData) {
-      const sector = this.sectors.find((s) => s.id === d.sectorId);
+      const sector = sectors.find((s) => s.id === d.sectorId);
       const sectorName = sector?.name.toLowerCase() ?? '';
 
       const option = d.option.toLowerCase();

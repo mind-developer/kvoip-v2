@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Node } from '@xyflow/react';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
@@ -11,17 +12,72 @@ import { NewConditionalState } from 'src/engine/core-modules/chatbot-flow/types/
 import { NodeHandler } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
 import { NodeTypes } from 'src/engine/core-modules/chatbot-flow/types/NodeTypes';
 import { sanitizeFlow } from 'src/engine/core-modules/chatbot-flow/utils/sanitizeChatbotFlow';
-import { SendMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { Repository } from 'typeorm';
 
+@Injectable()
 export class ChatbotFlowService {
+  executors: Record<string, ExecuteFlow>;
   constructor(
     @InjectRepository(ChatbotFlow, 'core')
     private readonly chatbotFlowRepository: Repository<ChatbotFlow>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-  ) {}
+    private readonly textInputHandler: TextInputHandler,
+    private readonly imageInputHandler: ImageInputHandler,
+    private readonly fileInputHandler: FileInputHandler,
+    private readonly conditionalInputHandler: ConditionalInputHandler,
+  ) {
+    this.executors = {};
+  }
+
+  createExecutor(
+    integrationId: string,
+    workspaceId: string,
+    chatbotName: string,
+    chatbotFlow: Omit<
+      ChatbotFlow,
+      'workspace' | 'chatbotId' | 'viewport' | 'id'
+    > & { workspace: { id: string } },
+    sendTo: string,
+    personId: string,
+    sectors: { id: string; name: string }[],
+    onFinish: (finalNode: Node, chosenInput?: string) => void,
+  ) {
+    const executor = new ExecuteFlow(
+      integrationId,
+      workspaceId,
+      chatbotName,
+      chatbotFlow,
+      sendTo,
+      personId,
+      sectors,
+      onFinish,
+      {
+        [NodeTypes.TEXT]: this.textInputHandler,
+        [NodeTypes.IMAGE]: this.imageInputHandler,
+        [NodeTypes.CONDITION]: this.conditionalInputHandler,
+        [NodeTypes.FILE]: this.fileInputHandler,
+      },
+    );
+    console.log(typeof chatbotName);
+
+    this.executors[integrationId + '_' + sendTo] = executor;
+
+    return executor;
+  }
+
+  getExecutor(key: string): ExecuteFlow | undefined {
+    try {
+      return this.executors[key];
+    } catch {
+      return undefined;
+    }
+  }
+
+  clearExecutor(key: string): void {
+    delete this.executors[key];
+  }
 
   async validateOrCreateFlow(
     flow: ChatbotFlowInput,
@@ -87,75 +143,37 @@ export class ChatbotFlowService {
   }
 }
 
-export class ExecuteFlow {
-  workspaceId: string;
-  integrationId: string;
-  chatbotName: string;
-  nodes: Node[];
-  currentNodeId: string | undefined;
-  handlers: Record<string, NodeHandler>;
-  chosenInput?: string;
-  onFinish: (finalNode: Node, chosenInput?: string) => void;
+class ExecuteFlow {
+  private nodes: Node[];
+  private currentNodeId: string | undefined;
+  private chosenInput: string | undefined;
 
   constructor(
-    integrationId: string,
-    chatbotName: string,
-    chatbotFlow: Omit<
+    private integrationId: string,
+    private workspaceId: string,
+    private chatbotName: string,
+    private chatbotFlow: Omit<
       ChatbotFlow,
       'workspace' | 'chatbotId' | 'viewport' | 'id'
     > & { workspace: { id: string } },
-    sendTo: string,
-    personId: string,
-    sectors: { id: string; name: string }[],
-    sendMessage: (input: SendMessageInput, workspaceId: string) => Promise<any>,
-    onFinish: (finalNode: Node, chosenInput?: string) => void,
+    private sendTo: string,
+    private personId: string,
+    private sectors: { id: string; name: string }[],
+    private onFinish: (finalNode: Node, chosenInput?: string) => void,
+    private handlers: { [key: string]: NodeHandler },
   ) {
     this.nodes = chatbotFlow.nodes;
     this.currentNodeId = this.nodes.find((node) => node.data?.nodeStart)?.id;
     this.chatbotName = chatbotName;
-    console.log('building flow');
-
-    this.handlers = {
-      [NodeTypes.TEXT]: new TextInputHandler(
-        sendMessage,
-        integrationId,
-        sendTo,
-        personId,
-        chatbotName,
-        chatbotFlow.workspace.id,
-      ),
-      [NodeTypes.CONDITION]: new ConditionalInputHandler(
-        sendMessage,
-        integrationId,
-        sendTo,
-        personId,
-        chatbotName,
-        sectors,
-        chatbotFlow.workspace.id,
-      ),
-      [NodeTypes.IMAGE]: new ImageInputHandler(
-        sendMessage,
-        integrationId,
-        sendTo,
-        personId,
-        chatbotName,
-        chatbotFlow.workspace.id,
-      ),
-      [NodeTypes.FILE]: new FileInputHandler(
-        sendMessage,
-        integrationId,
-        sendTo,
-        personId,
-        chatbotName,
-        chatbotFlow.workspace.id,
-      ),
-    };
-
-    this.onFinish = onFinish;
+    this.sendTo = sendTo;
+    this.personId = personId;
+    this.integrationId = integrationId;
+    this.workspaceId = chatbotFlow.workspace.id;
+    this.sectors = sectors;
+    this.chosenInput = undefined;
   }
 
-  public async runFlow(incomingMessage: string): Promise<void> {
-    console.log('running flow for message:', incomingMessage);
+  public async runFlow(incomingMessage: string) {
     while (this.currentNodeId) {
       const currentNode = this.nodes.find(
         (node) => node.id === this.currentNodeId,
@@ -167,9 +185,18 @@ export class ExecuteFlow {
 
       if (!handler) break;
 
-      const nextNodeId = await handler.process(currentNode, {
-        incomingMessage: incomingMessage,
-      });
+      const nextNodeId = await handler.process(
+        this.integrationId,
+        this.workspaceId,
+        this.sendTo,
+        this.personId,
+        this.chatbotName,
+        this.sectors,
+        currentNode,
+        {
+          incomingMessage,
+        },
+      );
 
       if (currentNode.type === NodeTypes.CONDITION) {
         const logic = currentNode.data?.logic as NewConditionalState;
@@ -185,7 +212,7 @@ export class ExecuteFlow {
         }
 
         if (!nextNodeId) {
-          return;
+          return null;
         }
       }
 

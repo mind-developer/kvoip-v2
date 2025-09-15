@@ -2,7 +2,7 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import {
   collection,
   doc,
@@ -18,10 +18,12 @@ import {
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { Node } from '@xyflow/react';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ExecuteFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -29,13 +31,9 @@ import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappEmmitResolvedchatsJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
-import {
-  SendMessageInput,
-  SendTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
 import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
-import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
+import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import {
   IMessage,
   WhatsappDocument,
@@ -58,7 +56,6 @@ export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
   private firestoreDb: Firestore;
   protected readonly logger = new Logger(WhatsappService.name);
-  private chatbotExecutors: Record<string, ExecuteFlow>;
 
   constructor(
     @InjectRepository(WhatsappIntegration, 'core')
@@ -74,10 +71,11 @@ export class WhatsappService {
     @InjectRepository(WorkspaceAgent, 'core')
     private agentRepository: Repository<WorkspaceAgent>,
     private readonly firebaseService: FirebaseService,
+    private readonly chatbotFlowService: ChatbotFlowService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly messageManagerService: MessageManagerService,
   ) {
     this.firestoreDb = this.firebaseService.getFirestoreDb();
-    this.chatbotExecutors = {};
   }
 
   @OnDatabaseBatchEvent('person', DatabaseEventAction.UPDATED)
@@ -89,144 +87,6 @@ export class WhatsappService {
     payload.events.forEach((event) => {
       this.updateClientAtFirebase(event.properties.after);
     });
-  }
-
-  async sendTemplate(
-    sendTemplateInput: SendTemplateInput,
-    workspaceId: string,
-  ) {
-    const { integrationId, to, templateName, language } = sendTemplateInput;
-
-    const whatsappRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
-        workspaceId,
-        'whatsapp',
-      );
-
-    if (!whatsappRepository) {
-      throw new Error('Whatsapp repository not found');
-    }
-
-    const integration = await whatsappRepository.findOne({
-      where: { id: integrationId },
-    });
-
-    if (!integration) {
-      throw new Error('Whatsapp integration not found');
-    }
-
-    const fields: any = {
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
-      to: to,
-      type: 'template',
-      template: {
-        name: templateName,
-        language: {
-          code: language,
-        },
-      },
-    };
-
-    const url = `${this.META_API_URL}/${integration.phoneId}/messages`;
-    const headers = {
-      Authorization: `Bearer ${integration.accessToken}`,
-      'Content-Type': 'application/json',
-    };
-
-    try {
-      await axios.post(url, fields, { headers });
-
-      return true;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to send template message',
-        error.message,
-      );
-    }
-  }
-
-  async sendMessage(
-    sendMessageInput: SendMessageInput,
-    workspaceId: string,
-  ): Promise<SendMessageResponse | null> {
-    const { integrationId, to, type, message, fileId } = sendMessageInput;
-    console.log(this.twentyORMGlobalManager);
-
-    const whatsappRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
-        workspaceId,
-        'whatsapp',
-      );
-
-    const integration = await whatsappRepository.findOne({
-      where: { id: integrationId },
-    });
-
-    const tipoApi = integration?.tipoApi || 'MetaAPI';
-
-    if (!integration) {
-      throw new InternalServerError('Whatsapp integration not found');
-    }
-
-    const fields: any = {
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
-      to: to,
-      type: type,
-    };
-
-    const commonFields = {
-      link: fileId,
-      caption: message || '',
-    };
-
-    switch (type) {
-      case 'text':
-        fields.text = {
-          preview_url: true,
-          body: message || '',
-        };
-        break;
-      case 'audio':
-        fields.audio = {
-          link: fileId,
-        };
-        break;
-      case 'document':
-        fields.document = commonFields;
-        break;
-      case 'image':
-        fields.image = commonFields;
-        break;
-      case 'video':
-        fields.video = commonFields;
-        break;
-      default:
-        throw new InternalServerError('Invalid message type');
-    }
-
-    const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
-    const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
-
-    const headers = {
-      Authorization: `Bearer ${integration.accessToken}`,
-      'Content-Type': 'application/json',
-    };
-
-    let response = {} as AxiosResponse<SendMessageResponse>;
-
-    try {
-      if (tipoApi === 'MetaAPI') {
-        response = await axios.post(metaUrl, fields, { headers });
-        return response.data;
-      }
-      response = await axios.post(baileysUrl, { fields });
-      return response.data;
-    } catch (error) {
-      console.warn('Failed to send message:', error.message);
-      return null;
-    }
   }
 
   async getWhatsappTemplates(
@@ -276,49 +136,6 @@ export class WhatsappService {
         `Failed to get Business ID ${integration?.businessAccountId} templates`,
         error.message,
       );
-    }
-  }
-
-  async sendNotification(externalIds: string[], message: string) {
-    const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
-    const ONESIGNAL_REST_API_KEY = this.environmentService.get(
-      'ONESIGNAL_REST_API_KEY',
-    );
-
-    const headers = {
-      Authorization: `Key ${ONESIGNAL_REST_API_KEY}`,
-      'Content-Type': 'application/json',
-      accept: 'application/json',
-    };
-
-    try {
-      const body = {
-        app_id: ONESIGNAL_APPID,
-        include_aliases: {
-          external_id: [externalIds],
-        },
-        target_channel: 'push',
-        isAnyWeb: true,
-        headings: { en: message },
-        contents: { en: message },
-      };
-
-      const response = await axios.post(
-        'https://onesignal.com/api/v1/notifications',
-        body,
-        {
-          headers,
-        },
-      );
-
-      return true;
-    } catch (error) {
-      this.logger.error(
-        'Notification error:',
-        error.response?.data || error.message,
-      );
-
-      return false;
     }
   }
 
@@ -374,6 +191,7 @@ export class WhatsappService {
     >,
     isReceiving: boolean,
     workspaceId: string,
+    skipChatbot: boolean,
   ) {
     try {
       const messagesCollection = collection(this.firestoreDb, 'whatsapp');
@@ -474,7 +292,7 @@ export class WhatsappService {
             return true;
           }
 
-          await this.sendNotification(
+          await this.messageManagerService.sendMessageNotification(
             sectorsFromWorkspace.flatMap((sector) =>
               sector.agents.map((agent) => agent.memberId),
             ),
@@ -516,7 +334,7 @@ export class WhatsappService {
             return true;
           }
 
-          await this.sendNotification(
+          await this.messageManagerService.sendMessageNotification(
             [agent.memberId],
             `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
           );
@@ -534,13 +352,13 @@ export class WhatsappService {
             return true;
           }
 
-          await this.sendNotification(
+          await this.messageManagerService.sendMessageNotification(
             sector.agents.map((agent) => agent.memberId),
             `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
           );
         }
 
-        if (whatsappIntegration.status === statusEnum.Waiting) {
+        if (whatsappIntegration.status === statusEnum.Waiting && !skipChatbot) {
           console.log('booting up chatbot');
           const chatbotRepository =
             await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
@@ -548,15 +366,17 @@ export class WhatsappService {
               'chatbot',
               { shouldBypassPermissionChecks: true },
             );
-          let executor =
-            this.chatbotExecutors[
-              workspaceId + '_' + whatsappIntegration.integrationId
-            ];
+          const chatbotKey =
+            whatsappIntegration.integrationId +
+            '_' +
+            whatsappIntegration.client.phone;
+          let executor = this.chatbotFlowService.getExecutor(chatbotKey);
           if (executor) {
+            console.log('got executor from service');
             executor.runFlow(whatsappDoc.lastMessage.message);
             return true;
           }
-          console.log('got existing executor');
+          console.log('creating new executor');
           if (whatsappIntegrationEntity?.chatbotId) {
             const chatbot = await chatbotRepository.findOne({
               where: {
@@ -567,8 +387,8 @@ export class WhatsappService {
             const flow = await this.chatbotFlowRepository.findOne({
               where: { chatbotId: chatbot?.id },
             });
-            if (!flow || !chatbot) return true;
-            console.log('got flow and stuff');
+            if (!flow || !chatbot || !whatsappIntegration.client.phone)
+              return true;
             const sectorsFromWorkspace = await this.sectorRepository.find({
               relations: ['workspace'],
               where: {
@@ -578,10 +398,10 @@ export class WhatsappService {
               },
             });
 
-            console.log('parsed nodes and edges:', flow.nodes, flow.edges);
-            executor = new ExecuteFlow(
+            executor = this.chatbotFlowService.createExecutor(
               whatsappIntegration.integrationId,
-              chatbot?.name ?? 'Chatbot',
+              workspaceId,
+              chatbot?.name || 'Chatbot',
               {
                 nodes: flow.nodes,
                 edges: flow.edges,
@@ -590,8 +410,25 @@ export class WhatsappService {
               whatsappIntegration.client.phone ?? '',
               relatedPerson?.id ?? createdPerson?.id ?? '',
               sectorsFromWorkspace,
-              this.sendMessage,
-              (_: any, sectorId: string) => {
+              (
+                node: Omit<Node, 'data'> & {
+                  data: { text: string; type: MessageTypes };
+                },
+                sectorId: string,
+              ) => {
+                whatsappDoc.messages.push({
+                  from: chatbot?.name ?? '',
+                  fromMe: true,
+                  message: node.data?.text,
+                  type: node.data?.type,
+                  createdAt: new Date(),
+                });
+                this.saveMessageAtFirebase(
+                  whatsappDoc,
+                  false,
+                  workspaceId,
+                  true,
+                );
                 if (sectorId) {
                   console.log('transfer to sector:', sectorId);
                   // transferBotService(
@@ -604,11 +441,10 @@ export class WhatsappService {
                   //   chatbot.name,
                   // );
                 }
+                this.chatbotFlowService.clearExecutor(chatbotKey);
+                console.log('cleared executor');
               },
             );
-            this.chatbotExecutors[
-              workspaceId + '_' + whatsappIntegration.integrationId
-            ] = executor;
             executor.runFlow(whatsappDoc.lastMessage.message);
           }
         }
