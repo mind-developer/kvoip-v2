@@ -1,16 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { FinancialClosing } from './financial-closing.entity';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
-import { getNfTypeLabel, NfType } from 'src/modules/focus-nfe/types/NfType';
-import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
-import { ProductTypeStatus, ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
+import { getNfTypeLabel, NfType } from 'src/modules/focus-nfe/types/NfType';
+import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { ProductTypeStatus, ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { Repository } from 'typeorm';
+import { FinancialClosing } from './financial-closing.entity';
+import { CompanyValidationUtils } from './utils/company-validation.utils';
+import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
+import { addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 
 @Injectable()
 export class FinancialClosingNFService {
@@ -26,9 +29,17 @@ export class FinancialClosingNFService {
     company: CompanyWorkspaceEntity, 
     charge: ChargeWorkspaceEntity,
     financialClosing: FinancialClosing, 
+    companyExecutionLog?: CompanyFinancialClosingExecutionWorkspaceEntity,
+    companyFinancialClosingExecutionsRepository?: Repository<CompanyFinancialClosingExecutionWorkspaceEntity>,
   ): Promise<any> {
 
     this.logger.log(`TESTE CAIU NA EMISSAO DA NOTA FISCAL - ${company.name}`)
+    
+    // Validar campos obrigatórios da empresa
+    CompanyValidationUtils.validateRequiredFields(company);
+    
+    // Validar percentuais de NF
+    CompanyValidationUtils.validateNfPercentages(company);
     
     const focusNFeRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
@@ -37,6 +48,7 @@ export class FinancialClosingNFService {
         { shouldBypassPermissionChecks: true },
       );
 
+    // TODO: Verificar se a empresa possui integração com a focus
     const focusNFeList = await focusNFeRepository.find({
         take: 1,
       });
@@ -46,8 +58,7 @@ export class FinancialClosingNFService {
     this.logger.log(`focusNFe: ${JSON.stringify(focusNFe, null, 2)}`);
 
     if (!focusNFe) {
-      // Tratar aqui caso nao tenha integração com a focus
-      throw new BadRequestException('Nenhuma integração Focus NFe encontrada');
+      throw new Error('Nenhuma integração Focus NFe encontrada');
     }
 
     const notaFiscalRepository =
@@ -85,33 +96,17 @@ export class FinancialClosingNFService {
         nfType: NfType.NFCOM, // Puxar da company
         nfStatus: NfStatus.DRAFT,
         dataEmissao: new Date().toISOString(),
-        // numeroRps: company.numeroRps,
         totalAmount: typeof charge.price === "number" 
           ? charge.price.toString() 
           : charge.price,
-        // percentNfe: company.percentNfe,
-        // percentNfse: company.percentNfse,
-        // percentNfce: company.percentNfce,
         percentNfcom: company.percentNfcom,
-        // ncm: company.ncm,
         cfop: cfop,
         cstIcmsCsosn: '00',
-        // origem: company.origem,
-        // aliquotaIcms: company.aliquotaIcms,
-        // aliquotaPis: company.aliquotaPis,
-        // aliquotaCofins: company.aliquotaCofins,
-        // aliquotaIpi: company.aliquotaIpi,0
-        // aliquotaIss: company.aliquotaIss,
-        // issRetido: company.issRetido,
         unitOfMeasure: '4', // 4 - 'UN'
         unidade: '1.00',
-        // itemListaServico: company.itemListaServico,
-        // discriminacao: company.discriminacao,
         classificacao: '0100101', // 	Assinatura de serviços de telefonia (Tabela cClass NFCom)
         codAssinante: company.id.substring(0, 30),
         numContratoAssinante: `${NfType.NFCOM}-${charge.id}`.substring(0, 15),
-        // position: company.position,
-        // justificativa: company.justificativa,
 
         company: company,
         companyId: company.id,
@@ -125,7 +120,7 @@ export class FinancialClosingNFService {
 
       nfCom.company = company;
 
-      this.logger.log(`NOTA FISCALL CRIADA: ${JSON.stringify(nfCom, null, 2)}`);
+      this.logger.log(`NOTA FISCAL CRIADA: ${JSON.stringify(nfCom, null, 2)}`);
 
       const fakeProductNfCom = {
         id: nfCom.id,
@@ -150,8 +145,19 @@ export class FinancialClosingNFService {
           `NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
         );
 
+        nfCom.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfCom.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
+        
         await notaFiscalRepository.save(nfCom);
+
+        if (companyExecutionLog && companyFinancialClosingExecutionsRepository) {
+          await addCompanyFinancialClosingExecutionLog(
+            companyExecutionLog,
+            companyFinancialClosingExecutionsRepository,
+            `Solicitação de emissão da nota fiscal (NFCom) emitida, aguardando processamento`,
+            'info',
+          );
+        }
 
       } else {
         if (issueResult) {
@@ -225,9 +231,20 @@ export class FinancialClosingNFService {
           `NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
         );
 
+        nfse.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfse.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
 
         await notaFiscalRepository.save(nfse);
+
+        if (companyExecutionLog && companyFinancialClosingExecutionsRepository) {
+          await addCompanyFinancialClosingExecutionLog(
+            companyExecutionLog,
+            companyFinancialClosingExecutionsRepository,
+            `Solicitação de emissão da nota fiscal (NFSe) emitida, aguardando processamento`,
+            'info',
+          );
+        }
+
       } else {
         if (issueResult) {
           this.logger.error(
@@ -243,15 +260,22 @@ export class FinancialClosingNFService {
         await notaFiscalRepository.save(nfse);
       }
     }
+
   }
 
   private getCfopForCommunication(
     emitterState: string,
     clientState: string,
   ): string {
-    if (!emitterState || !clientState) {
+    if (!emitterState) {
       throw new Error(
-        'Estados do emissor e do cliente são obrigatórios para definir o CFOP.',
+        'Estado do emissor é obrigatório para definir o CFOP. (Configure na integração com a FocusNFE)',
+      );
+    }
+
+    if (!clientState) {
+      throw new Error(
+        'Estado da empresa é obrigatório para definir o CFOP. (Configure no cadastro da empresa)',
       );
     }
 
@@ -300,4 +324,5 @@ export class FinancialClosingNFService {
 
     return '6307'; // Prestação interestadual
   }
+
 }

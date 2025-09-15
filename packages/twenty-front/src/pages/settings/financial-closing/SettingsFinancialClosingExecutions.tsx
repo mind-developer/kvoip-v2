@@ -1,28 +1,23 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useEffect, useState } from 'react';
-import { H2Title, IconChevronRight, IconPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsFinancialClosings } from '@/settings/financial-closing/components/SettingsFinancialClosings';
-import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ServiceCenterTabs } from '@/settings/service-center/agents/components/ServiceCenterTab';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
-import styled from '@emotion/styled';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
+import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { H2Title, IconChevronRight } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { FinancialClosingExecutionRow } from '~/pages/settings/financial-closing/components/FinancialClosingExecutionRow';
-import { IconError404 } from '@tabler/icons-react';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledNoResults = styled(Section)`
   display: flex;
@@ -55,7 +50,12 @@ export const SettingsFinancialClosingExecutions = () => {
             eq: financialClosingId,
           },
         }
-      : undefined,
+      : undefined, 
+    orderBy: [
+      {
+        executedAt: 'DescNullsLast',
+      },
+    ],
   });
 
   useEffect(() => {

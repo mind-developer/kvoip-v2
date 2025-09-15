@@ -67,7 +67,7 @@ export class RunCompanyFinancialClosingJobProcessor {
         await companyFinancialClosingExecutionsRepository.update(data.companyExecutionLog.id, {
           chargeId: charge.id,
           completedBoletoIssuance: true,
-          status: FinancialClosingExecutionStatusEnum.SUCCESS,
+          // status: FinancialClosingExecutionStatusEnum.SUCCESS,
         });
         
         // Log de sucesso
@@ -156,20 +156,75 @@ export class RunCompanyFinancialClosingJobProcessor {
       return;
     }
 
-    { // Caso emissão esteja desabilitada ou nao configurada na company
-      data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE ? (
+    if (data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE) {
+
+      try {
 
         await this.financialClosingNFService.emitNFForCompany(
           data.workspaceId,
           data.company,
           charge,
           data.financialClosing,
-        )
+          data.companyExecutionLog,
+          companyFinancialClosingExecutionsRepository,
+        );
 
-      ) : (
-        // Aqui deve atualizar os relatorios para nao emissao do boleto TODO
-        null
-      )
+        if (financialClosingExecutionsRepository && data.executionLog) {
+          await companyFinancialClosingExecutionsRepository.update(data.companyExecutionLog.id, {
+            completedInvoiceIssuance: true,
+          });
+        }
+
+      } catch (error) {
+
+        if (companyFinancialClosingExecutionsRepository  && data.companyExecutionLog) {
+          await addCompanyFinancialClosingExecutionErrorLog(
+            data.companyExecutionLog,
+            companyFinancialClosingExecutionsRepository,
+            `Erro para emitir nota fiscal - ${error.message}`,
+            data.company,
+            { status: FinancialClosingExecutionStatusEnum.ERROR }
+          );
+        }
+  
+        // Adicionando logs de erro e status na execução do fechamento financeiro
+        if (financialClosingExecutionsRepository && data.executionLog) {
+  
+          await financialClosingExecutionsRepository.increment(
+            { id: data.executionLog.id },
+            'companiesWithError',
+            1
+          );
+  
+          await addFinancialClosingExecutionLog(
+            data.executionLog,
+            financialClosingExecutionsRepository,
+            'warn',
+            `Erro para emitir nota fiscal para a empresa ${data.company.name} (${data.company.id})`
+          );
+        }
+
+        this.logger.error(`ERRO TRY CATCH EMISSAO DA NOTA FISCAL ${data.company.name} (${data.company.id}): ${error.message}`);
+        return;
+
+      }
+
+    } else {
+      let message = '';
+      if (data.company.typeEmissionNF == TypeEmissionNFEnum.AFTER) {
+        message = `Nota fiscal configurada para ser emitida após o pagamento, não foi emitida`;
+      } else {
+        message = `A empresa não possui emissão de nota fiscal configurada, não foi emitida`;
+      }
+
+      if (financialClosingExecutionsRepository && data.executionLog) {
+        await addCompanyFinancialClosingExecutionLog(
+          data.companyExecutionLog,
+          companyFinancialClosingExecutionsRepository,
+          message,
+          'warn',
+        );
+      }
     }
 
   }
