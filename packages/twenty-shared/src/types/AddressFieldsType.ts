@@ -7,6 +7,7 @@ export const ALLOWED_ADDRESS_SUBFIELDS = [
   'addressCountry',
   'addressLat',
   'addressLng',
+  'addressNumber',
 ] as const;
 
 export type AllowedAddressSubField = (typeof ALLOWED_ADDRESS_SUBFIELDS)[number];
