@@ -8,6 +8,7 @@ import { DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
 import { GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
 import { FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
 import { UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TelephonyService {
@@ -40,6 +41,7 @@ export class TelephonyService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
         workspaceId,
         'telephony',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!telephonyRepository) {
@@ -64,6 +66,7 @@ export class TelephonyService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
         workspaceId,
         'telephony',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!telephonyRepository) {
@@ -89,6 +92,7 @@ export class TelephonyService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
         workspaceId,
         'telephony',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!telephonyRepository) {
@@ -110,6 +114,7 @@ export class TelephonyService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
         workspaceId,
         'telephony',
+        { shouldBypassPermissionChecks: true },
       );
 
     if (!telephonyRepository) {
@@ -131,49 +136,55 @@ export class TelephonyService {
     memberId: string,
     extensionNumber: string,
   ) => {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+    if (!workspaceMemberRepository) {
+      throw new Error('Workspace member repository not found');
+    }
 
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='${extensionNumber}' WHERE "id"='${memberId}'`,
-    );
+    const member = await workspaceMemberRepository.findOne({
+      where: { id: memberId },
+    });
 
-    const updatedWorkspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
-    );
+    if (!member) {
+      throw new BadRequestException(`Workspace member ${memberId} not found`);
+    }
 
-    return updatedWorkspaceMember?.[0] || null;
+    member.extensionNumber = extensionNumber;
+
+    return await workspaceMemberRepository.save(member);
   };
 
   removeAgentIdInWorkspaceMember = async (
     workspaceId: string,
     memberId: string,
   ) => {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+    if (!workspaceMemberRepository) {
+      throw new Error('Workspace member repository not found');
+    }
 
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='' WHERE "id"='${memberId}'`,
-    );
+    const member = await workspaceMemberRepository.findOne({
+      where: { id: memberId },
+    });
 
-    const updatedWorkspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
-    );
+    if (!member) {
+      throw new BadRequestException(`Workspace member ${memberId} not found`);
+    }
 
-    return updatedWorkspaceMember?.[0] || null;
+    member.extensionNumber = '';
+
+    return await workspaceMemberRepository.save(member);
   };
 }
