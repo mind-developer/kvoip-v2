@@ -1,25 +1,25 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
 
@@ -41,21 +41,21 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
         const workflowRunRecord = getRecordFromCache<WorkflowRun>({
           objectMetadataItem,
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           recordId,
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
         });
         if (
-          !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.output))
+          !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.state))
         ) {
           return;
         }
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({
-          steps: workflowRunRecord.output.flow.steps,
-          stepsOutput: workflowRunRecord.output.stepsOutput,
-          trigger: workflowRunRecord.output.flow.trigger,
+          steps: workflowRunRecord.state.flow.steps,
+          stepInfos: workflowRunRecord.state.stepInfos,
+          trigger: workflowRunRecord.state.flow.trigger,
         });
 
         if (!isDefined(stepToOpenByDefault)) {
@@ -86,8 +86,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           }),
           {
             workflowVersionId: workflowRunRecord.workflowVersionId,
-            trigger: workflowRunRecord.output.flow.trigger,
-            steps: workflowRunRecord.output.flow.steps,
+            trigger: workflowRunRecord.state.flow.trigger,
+            steps: workflowRunRecord.state.flow.steps,
           },
         );
         set(
@@ -105,7 +105,13 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
               recordId,
             }),
           }),
-          (steps) => [...steps, stepToOpenByDefault.id],
+          (steps) => [
+            ...steps,
+            {
+              stepId: stepToOpenByDefault.id,
+              isInRightDrawer: true,
+            },
+          ],
         );
         openWorkflowRunViewStepInCommandMenu({
           workflowId: workflowRunRecord.workflowId,
@@ -117,10 +123,10 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         });
       },
     [
-      apolloClient.cache,
-      getIcon,
-      openWorkflowRunViewStepInCommandMenu,
+      apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
+      openWorkflowRunViewStepInCommandMenu,
+      getIcon,
     ],
   );
 

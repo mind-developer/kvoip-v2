@@ -1,12 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
@@ -17,10 +22,12 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const recordToUpdate = await repository.findOneOrFail({
+    // assert the record exists
+    await repository.findOneOrFail({
+      select: { id: true },
       where: { id: recordId },
     });
 
@@ -29,32 +36,40 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
-    const updatedRecord = await repository.save({
-      ...recordToUpdate,
-      ...overriddenBody,
-    });
+    let selectedColumns = undefined;
 
-    this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: [recordToUpdate],
-      records: [updatedRecord],
-      updatedFields: Object.keys(request.body),
-      authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadata.objectMetadataMapItem,
-      ),
-    });
+    if (!isEmpty(restrictedFields)) {
+      const selectableFields = getAllSelectableFields({
+        restrictedFields,
+        objectMetadata,
+      });
+
+      selectedColumns = Object.keys(selectableFields).filter(
+        (key) => selectableFields[key],
+      );
+    }
+
+    const updatedRecord = await repository.update(
+      recordId,
+      overriddenBody,
+      undefined,
+      selectedColumns,
+    );
+
+    const updatedRecordId = updatedRecord.generatedMaps[0].id;
 
     const records = await this.getRecord({
-      recordIds: [updatedRecord.id],
+      recordIds: [updatedRecordId],
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const record = records[0];
 
     if (!isDefined(record)) {
-      throw new Error('Updated record not found');
+      throw new InternalServerErrorException('Updated record not found');
     }
 
     return this.formatResult({

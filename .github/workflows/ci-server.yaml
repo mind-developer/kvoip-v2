@@ -20,6 +20,8 @@ jobs:
       files: |
         package.json
         packages/twenty-server/**
+        packages/twenty-front/src/generated/**
+        packages/twenty-front/src/generated-metadata/**
         packages/twenty-emails/**
         packages/twenty-shared/**
   server-setup:
@@ -27,8 +29,6 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -67,10 +67,10 @@ jobs:
         with:
           tag: scope:backend
           tasks: lint,typecheck
-      - name: Server / Build
-        run: npx nx build twenty-server
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
+      - name: Server / Build
+        run: npx nx build twenty-server
       - name: Server / Create DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
@@ -87,6 +87,20 @@ jobs:
             # If worker failed for other reasons, fail the build
             exit $exit_code
           fi
+      - name: Server / Start
+        run: npx nx start:ci twenty-server &
+      - name: Waiting for server starting...
+        run: |
+          for i in {1..10}; do
+            if curl -f http://localhost:3000/healthz; then
+              echo "Server ready!"
+              exit 0
+            fi
+            echo "Waiting..."
+            sleep 2
+          done
+          echo "Server did not become healthy in time" >&2
+          exit 1
       - name: Server / Check for Pending Migrations
         run: |
           CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
@@ -102,7 +116,6 @@ jobs:
             exit 1
           fi
       - name: GraphQL / Check for Pending Generation
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           # Run GraphQL generation commands
           npx nx run twenty-front:graphql:generate
@@ -111,19 +124,24 @@ jobs:
           # Check if any files were modified
           if ! git diff --quiet; then
             echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+            echo ""
+            echo "The following GraphQL schema changes were detected:"
+            echo "==================================================="
+            git diff
+            echo "==================================================="
+            echo ""
+            echo "Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+            echo ""
             exit 1
           fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
-
   server-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: server-setup
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -182,7 +200,6 @@ jobs:
           --health-timeout 5s 
           --health-retries 5
     env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"

@@ -2,12 +2,13 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
-import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
+import { SettingsRoleApplicability } from '@/settings/roles/role-settings/components/SettingsRoleApplicability';
 import { SettingsRoleSettingsDeleteRoleConfirmationModal } from '@/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal';
+import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -42,6 +43,9 @@ export const SettingsRoleSettings = ({
 
   const { openModal } = useModal();
 
+  const descriptionTextAreaId = `${roleId}-description`;
+  const nameTextInputId = `${roleId}-name`;
+
   return (
     <>
       <Section>
@@ -59,7 +63,8 @@ export const SettingsRoleSettings = ({
               disabled={!isEditable}
             />
           </StyledInputContainer>
-          <TextInput
+          <SettingsTextInput
+            instanceId={nameTextInputId}
             value={settingsDraftRole.label}
             fullWidth
             onChange={(value: string) => {
@@ -73,6 +78,7 @@ export const SettingsRoleSettings = ({
           />
         </StyledInputsContainer>
         <TextArea
+          textAreaId={descriptionTextAreaId}
           minRows={4}
           placeholder={t`Write a description`}
           value={settingsDraftRole.description || ''}
@@ -85,6 +91,21 @@ export const SettingsRoleSettings = ({
           disabled={!isEditable}
         />
       </Section>
+
+      <SettingsRoleApplicability
+        values={{
+          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+          canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+          canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+        }}
+        onApplicabilityChange={(key, value) => {
+          setSettingsDraftRole({
+            ...settingsDraftRole,
+            [key]: value,
+          });
+        }}
+        isEditable={isEditable}
+      />
 
       {!isCreateMode && (
         <>

@@ -4,12 +4,12 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -29,7 +29,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
-import { Button, IconButton, SelectOption } from 'twenty-ui/input';
+import { Button, IconButton, type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -79,7 +79,7 @@ export const SettingsDevelopersWebhookForm = ({
     handleSave,
     updateOperation,
     removeOperation,
-    deleteWebhook,
+    handleDelete,
     isCreationMode,
     error,
   } = useWebhookForm({ webhookId, mode });
@@ -115,6 +115,10 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
 
+  const descriptionTextAreaId = `${webhookId}-description`;
+  const targetUrlTextInputId = `${webhookId}-target-url`;
+  const secretTextInputId = `${webhookId}-secret`;
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
@@ -127,8 +131,8 @@ export const SettingsDevelopersWebhookForm = ({
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: t`Webhooks`,
-            href: getSettingsPath(SettingsPath.Webhooks),
+            children: t`APIs & Webhooks`,
+            href: getSettingsPath(SettingsPath.ApiWebhooks),
           },
           { children: isCreationMode ? t`New` : getTitle() },
         ]}
@@ -136,7 +140,7 @@ export const SettingsDevelopersWebhookForm = ({
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={formConfig.formState.isSubmitting}
-            onCancel={() => navigate(SettingsPath.Webhooks)}
+            onCancel={() => navigate(SettingsPath.ApiWebhooks)}
             onSave={formConfig.handleSubmit(handleSave)}
           />
         }
@@ -145,7 +149,7 @@ export const SettingsDevelopersWebhookForm = ({
           <Section>
             <H2Title
               title={t`Endpoint URL`}
-              description={t`We will send POST requests to this endpoint for every new event`}
+              description={t`We will send a POST request to this endpoint for each new event in application/json format`}
             />
             <Controller
               name="targetUrl"
@@ -155,7 +159,8 @@ export const SettingsDevelopersWebhookForm = ({
                 fieldState: { error },
               }) => {
                 return (
-                  <TextInput
+                  <SettingsTextInput
+                    instanceId={targetUrlTextInputId}
                     placeholder={t`https://example.com/webhook`}
                     value={value}
                     onChange={onChange}
@@ -170,13 +175,14 @@ export const SettingsDevelopersWebhookForm = ({
           <Section>
             <H2Title
               title={t`Description`}
-              description={t`An optional description`}
+              description={t`We will send a POST request to this endpoint for each new event in application/json format.`}
             />
             <Controller
               name="description"
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
+                  textAreaId={descriptionTextAreaId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
@@ -241,7 +247,8 @@ export const SettingsDevelopersWebhookForm = ({
               name="secret"
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
-                <TextInput
+                <SettingsTextInput
+                  instanceId={secretTextInputId}
                   placeholder={t`Secret (optional)`}
                   value={value || ''}
                   onChange={onChange}
@@ -278,7 +285,7 @@ export const SettingsDevelopersWebhookForm = ({
               Please type "yes" to confirm you want to delete this webhook.
             </Trans>
           }
-          onConfirmClick={deleteWebhook}
+          onConfirmClick={handleDelete}
           confirmButtonText={t`Delete`}
         />
       )}

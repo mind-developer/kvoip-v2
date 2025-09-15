@@ -4,10 +4,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { addDays } from 'date-fns';
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { getChargeStatusFromInterChargeStatus } from 'src/engine/core-modules/billing-webhook/utils/getChargeStatus';
@@ -39,7 +40,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CleanWorkspaceDeletionWarningUserVarsJob,
-  CleanWorkspaceDeletionWarningUserVarsJobData,
+  type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
 
 @Injectable()
@@ -52,13 +53,13 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingSubscriptionItem, 'core')
+    @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(BillingCharge, 'core')
     private readonly billingChargeRepository: Repository<BillingCharge>,

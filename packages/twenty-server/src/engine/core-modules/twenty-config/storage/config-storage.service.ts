@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { type FindOptionsWhere, IsNull, Repository } from 'typeorm';
 
 import {
   decryptText,
@@ -21,14 +21,14 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-import { ConfigStorageInterface } from './interfaces/config-storage.interface';
+import { type ConfigStorageInterface } from './interfaces/config-storage.interface';
 
 @Injectable()
 export class ConfigStorageService implements ConfigStorageInterface {
   private readonly logger = new Logger(ConfigStorageService.name);
 
   constructor(
-    @InjectRepository(KeyValuePair, 'core')
+    @InjectRepository(KeyValuePair)
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
     private readonly configValueConverter: ConfigValueConverterService,
     private readonly environmentConfigDriver: EnvironmentConfigDriver,

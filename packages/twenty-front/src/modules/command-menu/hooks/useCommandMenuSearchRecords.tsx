@@ -5,20 +5,22 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const coreClient = useApolloCoreClient();
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -27,8 +29,10 @@ export const useCommandMenuSearchRecords = () => {
   const nonReadableObjectMetadataItemsNameSingular = useMemo(() => {
     return Object.values(objectMetadataItems)
       .filter((objectMetadataItem) => {
-        const objectPermission =
-          objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+        const objectPermission = getObjectPermissionsFromMapByObjectMetadataId({
+          objectPermissionsByObjectMetadataId,
+          objectMetadataId: objectMetadataItem.id,
+        });
 
         return !objectPermission?.canReadObjectRecords;
       })
@@ -36,6 +40,7 @@ export const useCommandMenuSearchRecords = () => {
   }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
   const { data: searchData, loading } = useSearchQuery({
+    client: coreClient,
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
@@ -70,7 +75,10 @@ export const useCommandMenuSearchRecords = () => {
             />
           ),
           shouldBeRegistered: () => true,
-          description: capitalize(searchRecord.objectNameSingular),
+          description:
+            objectMetadataItems.find(
+              (item) => item.nameSingular === searchRecord.objectNameSingular,
+            )?.labelSingular ?? searchRecord.objectNameSingular,
         };
 
         if (
@@ -113,7 +121,7 @@ export const useCommandMenuSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInCommandMenu]);
+  }, [searchData, openRecordInCommandMenu, objectMetadataItems]);
 
   return {
     loading,

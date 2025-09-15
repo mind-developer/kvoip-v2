@@ -3,9 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import {
   BillingException,
@@ -22,11 +23,11 @@ const TRIAL_PERIOD_ALERT_TITLE = 'TRIAL_PERIOD_ALERT'; // to set in Stripe confi
 export class BillingWebhookAlertService {
   protected readonly logger = new Logger(BillingWebhookAlertService.name);
   constructor(
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingSubscriptionItem, 'core')
+    @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
   ) {}
 

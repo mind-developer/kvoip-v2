@@ -1,11 +1,12 @@
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -18,18 +19,23 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
+import {
+  type WorkspaceMember,
+  useGetCurrentUserQuery,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const UserProviderEffect = () => {
   const location = useLocation();
@@ -55,6 +61,20 @@ export const UserProviderEffect = () => {
               localeCatalog: localeCatalog || enUS,
             });
           });
+        }
+      },
+    [],
+  );
+
+  const setCoreViews = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (coreViews: CoreViewWithRelations[]) => {
+        const existingCoreViews = snapshot
+          .getLoadable(coreViewsState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingCoreViews, coreViews)) {
+          set(coreViewsState, coreViews);
         }
       },
     [],
@@ -91,11 +111,24 @@ export const UserProviderEffect = () => {
       setCurrentWorkspace({
         ...queryData.currentUser.currentWorkspace,
         defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
+        defaultAgent:
+          queryData.currentUser.currentWorkspace.defaultAgent ?? null,
       });
     }
 
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
-      setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
+      setCurrentUserWorkspace({
+        ...queryData.currentUser.currentUserWorkspace,
+        objectPermissions:
+          (queryData.currentUser.currentUserWorkspace
+            .objectPermissions as Array<
+            ObjectPermissions & { objectMetadataId: string }
+          >) ?? [],
+      });
+    }
+
+    if (isDefined(queryData.currentUser?.currentWorkspace?.views)) {
+      setCoreViews(queryData.currentUser.currentWorkspace.views);
     }
 
     const {
@@ -143,10 +176,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
-      setCurrentWorkspaceMembers(
-        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
-          [],
-      );
+      setCurrentWorkspaceMembers(workspaceMembers);
     }
 
     if (isDefined(deletedWorkspaceMembers)) {
@@ -169,7 +199,8 @@ export const UserProviderEffect = () => {
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
+    setCoreViews,
   ]);
 
-  return <></>;
+  return null;
 };

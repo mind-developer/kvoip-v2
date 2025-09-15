@@ -48,35 +48,20 @@ msgstr "(Sisteem) Besigtig Sorteers"
 msgid "(System) Views"
 msgstr "(Sisteem) Besigtigings"
 
-#. js-lingui-id: rMfEDH
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NF-Com"
-msgstr ""
+#. js-lingui-id: Q0ISF1
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "{fieldName} and {fieldName}Id cannot be both provided."
+msgstr "{fieldName} en {fieldName}Id kan nie albei voorsien word nie."
 
-#. js-lingui-id: 4m+uYU
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NF-e"
-msgstr ""
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr "{fieldType} velde kan nie uniek wees nie."
 
-#. js-lingui-id: UE4fAy
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NFC-e"
-msgstr ""
-
-#. js-lingui-id: ou3zj5
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NFS-e"
-msgstr ""
-
-#. js-lingui-id: 3GTImX
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "A charge"
-msgstr ""
-
-#. js-lingui-id: g1e0e9
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "A chatbot"
-msgstr ""
+#. js-lingui-id: 8haj+G
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
+msgid "{name} should be in camelCase"
+msgstr "{name} moet in kameelkas wees"
 
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -87,6 +72,11 @@ msgstr "'n Maatskappy"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "'n Gekoppelde rekening"
+
+#. js-lingui-id: cOSBjW
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "A dashboard"
+msgstr "7n Paneel"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -102,16 +92,6 @@ msgstr "'n Gids van gunstelinge"
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "'n Groep verwante boodskappe (bv. e-pos draad, klets draad)"
-
-#. js-lingui-id: vv+//q
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "A integration"
-msgstr ""
-
-#. js-lingui-id: qRZgwf
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "A integration of Focus NFe"
-msgstr ""
 
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -133,10 +113,10 @@ msgstr "'n Nota-teiken"
 msgid "A person"
 msgstr "'n Persoon"
 
-#. js-lingui-id: 5OWXGy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "A product that can be sold"
-msgstr ""
+#. js-lingui-id: Q2De+v
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "A role with this label already exists."
+msgstr "'n Rol met hierdie etiket bestaan ​​reeds."
 
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -148,21 +128,6 @@ msgstr "'n Taak"
 msgid "A task target"
 msgstr "'n Taak-teiken"
 
-#. js-lingui-id: L31GZg
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "A traceable link"
-msgstr ""
-
-#. js-lingui-id: HTSJFW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "A webhook"
-msgstr "'n Webhook"
-
-#. js-lingui-id: J2VOcy
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "A whatsapp integration"
-msgstr ""
-
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
@@ -171,12 +136,7 @@ msgstr "'n Werksvloei"
 #. js-lingui-id: YwBCp8
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "A workflow automated trigger"
-msgstr ""
-
-#. js-lingui-id: juBVjt
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "A workflow event listener"
-#~ msgstr "'n Werksvloei gebeurtenisluisteraar"
+msgstr "‘n Werkvloei-geoutomatiseerde sneller"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -194,7 +154,6 @@ msgid "A workspace member"
 msgstr "'n Werksruimte lid"
 
 #. js-lingui-id: GDKKxT
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Toegangsteken"
@@ -226,6 +185,17 @@ msgstr "Aksie nodig om die verwydering van werkruimte te voorkom"
 msgid "Action Needed to Reset Password"
 msgstr "Aksie Nodig om Wagwoord te Herstel"
 
+#. js-lingui-id: 52fA3U
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Active fields cannot be deleted"
+msgstr "Aktiewe velde kan nie uitgevee word nie"
+
+#. js-lingui-id: 0N5kF6
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr "Aktiewe voorwerpe kan nie uitgevee word nie"
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -246,11 +216,6 @@ msgstr "Adres van die maatskappy"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adres van die maatskappy - verouderd ten gunste van nuwe adresveld"
 
-#. js-lingui-id: UczvGu
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Agent Id"
-msgstr ""
-
 #. js-lingui-id: ZfVqbP
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -262,78 +227,36 @@ msgstr "Samevattingsoperasie"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Saamgevoegde / gefiltreerde gebeurtenis wat op die tydlyn vertoon moet word"
 
-#. js-lingui-id: RNKcKo
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota COFINS (%)"
-msgstr ""
-
-#. js-lingui-id: mOmfu+
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do COFINS. Placeholder: 7.60"
-msgstr ""
-
-#. js-lingui-id: zLG1Ah
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do ICMS. Placeholder: 18.00"
-msgstr ""
-
-#. js-lingui-id: RBenhP
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais."
-msgstr ""
-
-#. js-lingui-id: 0Yz+Xy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do PIS. Placeholder: 1.65"
-msgstr ""
-
-#. js-lingui-id: ATtJLL
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota ICMS (%)"
-msgstr ""
-
-#. js-lingui-id: GAnlTp
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota ISS"
-msgstr ""
-
-#. js-lingui-id: xFH3kf
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota PIS (%)"
-msgstr ""
+#. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+msgid "All {objectLabelPlural}"
+msgstr "Almal {objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Bedrag"
 
-#. js-lingui-id: qeHcQj
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "An API key"
-msgstr "'n API sleutel"
-
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
 msgstr "'n Aanhangsel"
 
-#. js-lingui-id: +bL++X
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "An audit log of actions performed in the system"
-#~ msgstr "'n Ouditlogboek van aksies wat in die stelsel uitgevoer is"
-
-#. js-lingui-id: muVHgL
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "An event related to user behavior"
-#~ msgstr "'n Gebeurtenis wat verband hou met gebruikersgedrag"
+#. js-lingui-id: XyOToQ
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "An error occurred."
+msgstr "'n Fout het voorgekom."
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -345,40 +268,22 @@ msgstr "'n Geleentheid"
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Jaarlikse Herhalende Inkomste: Die werklike of beraamde jaarlikse inkomste van die maatskappy"
 
-#. js-lingui-id: yRnk5W
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Key"
-msgstr "API Sleutel"
+#. js-lingui-id: 6wr+2Z
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Any field filter value"
+msgstr "Enige veld filterwaarde"
 
-#. js-lingui-id: FfSJ1Y
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Keys"
-msgstr "API Sleutels"
+#. js-lingui-id: DGW5iN
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain does not match email domain"
+msgstr "Goedgekeurde toegangsdomein stem nie ooreen met e-posdomein nie"
 
-#. js-lingui-id: puNs/l
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey expiration date"
-msgstr "API Sleutel Vervaldatum"
-
-#. js-lingui-id: YHiNxr
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey name"
-msgstr "API Sleutel Naam"
-
-#. js-lingui-id: xrndTt
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey revocation date"
-msgstr "API Sleutel Herroepingsdatum"
-
-#. js-lingui-id: UU5sRu
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "App ID"
-msgstr ""
-
-#. js-lingui-id: nFB1iz
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "App Key"
-msgstr ""
+#. js-lingui-id: BKvuAq
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain has already been validated"
+msgstr "Goedgekeurde toegangsdomien is reeds geverifieer"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -390,35 +295,25 @@ msgstr "ARR"
 msgid "Assigned tasks"
 msgstr "Toegewysde take"
 
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
+msgstr "Toegewys aan My"
+
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
 msgstr "Toegewysde"
-
-#. js-lingui-id: QNoHjb
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated Agent Id"
-msgstr ""
-
-#. js-lingui-id: j1ztQ8
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated extensionNumber"
-msgstr ""
-
-#. js-lingui-id: kuHzA6
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated User Document"
-msgstr ""
 
 #. js-lingui-id: Max2GU
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Geassosieerde Gebruikers-ID"
 
-#. js-lingui-id: yPq0T3
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated User Phone"
-msgstr ""
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "Ten minste een verhouding is vereis"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -430,11 +325,6 @@ msgstr "Aanhangsel"
 msgid "Attachment author"
 msgstr "Aanhangsel outeur"
 
-#. js-lingui-id: sFV+tl
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment charge"
-msgstr ""
-
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
@@ -445,20 +335,10 @@ msgstr "Aanhangsel maatskappy"
 msgid "Attachment full path"
 msgstr "Aanhangsel volle pad"
 
-#. js-lingui-id: iOQ0Hj
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment integration"
-msgstr ""
-
 #. js-lingui-id: wjocwa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
 msgstr "Aanhangsel naam"
-
-#. js-lingui-id: FAlybx
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment nota fiscal"
-msgstr ""
 
 #. js-lingui-id: FWlOXr
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -490,9 +370,7 @@ msgstr "Aanhangsel tipe"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
@@ -502,11 +380,6 @@ msgstr "Aanhangsels"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Attachments created by the workspace member"
 msgstr "Aanhangsels geskep deur die werkruimte lid"
-
-#. js-lingui-id: zGpqit
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Attachments linked to the charge"
-msgstr ""
 
 #. js-lingui-id: iVnA89
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -518,16 +391,6 @@ msgstr "Aanhangsels gekoppel aan die maatskappy"
 msgid "Attachments linked to the contact."
 msgstr "Aanhangsels gekoppel aan die kontak."
 
-#. js-lingui-id: gQGDh8
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Attachments linked to the integration"
-msgstr ""
-
-#. js-lingui-id: Pr/M5Q
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Attachments linked to the Nota Fiscal"
-msgstr ""
-
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
@@ -538,27 +401,16 @@ msgstr "Aanhangsels gekoppel aan die geleentheid"
 msgid "Attachments tied to the {label}"
 msgstr "Aanhangsels verbind tot die {label}"
 
-#. js-lingui-id: ilRCh1
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Audit Log"
-#~ msgstr "Oudit Log"
-
-#. js-lingui-id: EPEFrH
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Audit Logs"
-#~ msgstr "Oudit Logs"
-
-#. js-lingui-id: RqCC/0
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#~ msgid "Audit Logs linked to the workspace member"
-#~ msgstr "Oudit Logs gekoppel aan die werkruimte lid"
-
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Auth failed at"
 msgstr "Geloofsbriewe het misluk op"
+
+#. js-lingui-id: LB4qX/
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "Authentication is not enabled with this provider."
+msgstr "Outentikasie is nie met hierdie verskaffer geaktiveer nie."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -573,12 +425,12 @@ msgstr "Deur skrywer vervaardigde aanhangsels"
 #. js-lingui-id: cvSznK
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Automated Trigger Type"
-msgstr ""
+msgstr "Geoutomatiseerde Sneller Tipe"
 
 #. js-lingui-id: 2mtBXs
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Automated Triggers"
-msgstr ""
+msgstr "Geoutomatiseerde Snellers"
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -599,16 +451,6 @@ msgstr "Profielfoto"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "Profielfoto-URL"
-
-#. js-lingui-id: 20B9kW
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Behavioral Event"
-#~ msgstr "Gedragsgebeurtenis"
-
-#. js-lingui-id: Jeh/Q/
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Behavioral Events"
-#~ msgstr "Gedragsgebeurtenisse"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -633,21 +475,16 @@ msgstr "Bloklyste"
 msgid "Body"
 msgstr "Inhoud"
 
-#. js-lingui-id: Nl8eMw
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Body (deprecated)"
-msgstr "Liggaam (verouderd)"
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr "Deur Fase"
 
-#. js-lingui-id: 0aOQiG
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID"
-msgstr ""
-
-#. js-lingui-id: XTXVIh
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Business Account ID"
-msgstr ""
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
+msgstr "Deur Toestand"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -712,42 +549,56 @@ msgstr "Kalendergebeurtenisdeelnemers"
 msgid "Calendar events"
 msgstr "Kalendergebeure"
 
-#. js-lingui-id: sq1PHM
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Campaign associated with the traffic"
-msgstr ""
+#. js-lingui-id: eSaCR/
+#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
+msgstr "Kan nie aan {connectFieldName} koppel nie. Geen unieke rekord met die voorwaarde gevind nie: {formattedConnectCondition}"
 
-#. js-lingui-id: pZ8hvx
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Content"
-msgstr ""
+#. js-lingui-id: vxbVwc
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Cannot activate non-draft or non-last-published version"
+msgstr "Kan nie nie-dragstukkie of nie-laaste-gepubliseerde weergawe aktiveer nie"
 
-#. js-lingui-id: QieS3l
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Name"
-msgstr ""
+#. js-lingui-id: LIPsWu
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot create multiple draft versions for the same workflow"
+msgstr "Kan nie meervoudige konsepweergawe vir dieselfde werkvloeiontwikke se weergawe nie"
 
-#. js-lingui-id: NrtXDZ
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Source"
-msgstr ""
+#. js-lingui-id: RggZr4
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot create workflow version with status other than draft"
+msgstr "Kan nie werkvloeiontwikke se weergawe skep met status, anders as konsep, nie"
 
-#. js-lingui-id: V9PU36
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CEP"
-msgstr ""
+#. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Cannot delete, please update the label identifier field first"
+msgstr "Kan nie uitvee nie, asseblief werk eers die etiketidentifiseerdersveld by"
 
-#. js-lingui-id: X8ziyh
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CEST"
-msgstr ""
+#. js-lingui-id: FrNWt0
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot disable non-active workflow version"
+msgstr "Kan nie nie-aktiewe werkvloeiontwikke se weergawe deaktiveer nie"
 
-#. js-lingui-id: fsRh5D
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "CFOP"
-msgstr ""
+#. js-lingui-id: otFZos
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
+msgstr "Kan nie uniekheid inskakel nie as gevolg van bestaande duplikaatwaardes. Hersien en regstel asseblief jou data eers (insluitend sag uitgewisde rekords)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr "Kan nie meer as een aktiewe werkvloeiontwikke se weergawe hê nie"
+
+#. js-lingui-id: UcdPY5
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Cannot update standard field properties: {invalidProperties}"
+msgstr "Kan nie standaardveld eienskappe opdateer nie: {invalidProperties}"
+
+#. js-lingui-id: 4DKo3U
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "Cannot update workflow version status manually"
+msgstr "Kan nie werkvloeiontwikke se status met die hand bywerk nie"
 
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -760,155 +611,15 @@ msgstr "Kanaal-ID"
 msgid "Channel Type"
 msgstr "Kanaaltipe"
 
-#. js-lingui-id: VcWwIy
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Charge"
-msgstr ""
-
-#. js-lingui-id: +pX1ao
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge Action"
-msgstr ""
-
-#. js-lingui-id: 4aKU9p
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge discount"
-msgstr ""
-
-#. js-lingui-id: VFasyD
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge price"
-msgstr ""
-
-#. js-lingui-id: dU6fd4
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge product"
-msgstr ""
-
-#. js-lingui-id: TWox8y
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge quantity"
-msgstr ""
-
-#. js-lingui-id: ytwNBF
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge record position"
-msgstr ""
-
-#. js-lingui-id: r/9Qb2
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge recurrence"
-msgstr ""
-
-#. js-lingui-id: ciCuby
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge request code"
-msgstr ""
-
-#. js-lingui-id: Kb+0BT
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charges"
-msgstr ""
-
-#. js-lingui-id: hlvAAR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Charges using this product"
-msgstr ""
-
-#. js-lingui-id: p+8Mxh
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbot"
-msgstr ""
-
-#. js-lingui-id: h2J5/Q
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbot record position"
-msgstr ""
-
-#. js-lingui-id: 9MCO4/
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbots"
-msgstr ""
-
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "City"
 msgstr "Stad"
-
-#. js-lingui-id: xecKvk
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Classificação"
-msgstr ""
-
-#. js-lingui-id: 4M1z1+
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Classificação do produto"
-msgstr ""
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Sluitingsdatum"
-
-#. js-lingui-id: bVcWKN
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CNAE Code"
-msgstr ""
-
-#. js-lingui-id: hurL0d
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CNPJ"
-msgstr ""
-
-#. js-lingui-id: hqcPre
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código da Situação Tributária ou CSOSN. Placeholder: 102"
-msgstr ""
-
-#. js-lingui-id: W9stsD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código do assinante"
-msgstr ""
-
-#. js-lingui-id: gR0HXY
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código do Assinante"
-msgstr ""
-
-#. js-lingui-id: FIb+mG
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Código Especificador da Substituição Tributária. Placeholder: 28.038.00"
-msgstr ""
-
-#. js-lingui-id: OsS1Qp
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código Fiscal de Operações. Placeholder: 5102"
-msgstr ""
-
-#. js-lingui-id: 8fQ/81
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Código Tributário Município"
-msgstr ""
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -928,42 +639,14 @@ msgstr "Maatskappye"
 #. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
 msgstr "Maatskappy"
-
-#. js-lingui-id: TQzDDQ
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Company linked to the charge"
-msgstr ""
-
-#. js-lingui-id: SLnmTn
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Company linked to the Nota Fiscal"
-msgstr ""
-
-#. js-lingui-id: yWSIMK
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Company linked to the products"
-msgstr ""
-
-#. js-lingui-id: RA55Iu
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Company name"
-msgstr ""
-
-#. js-lingui-id: zGbOVS
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Company Name"
-msgstr ""
 
 #. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -975,6 +658,11 @@ msgstr "Maatskappyrekordposisie"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Konferensie-oplossing"
+
+#. js-lingui-id: 1fFL4B
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
+msgstr "Konnekteer is nie toegelaat vir {connectFieldName} op {objectMetadataNameSingular} nie."
 
 #. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -995,12 +683,6 @@ msgstr "Verbonde rekeninge"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "Verbonde Rekeninge"
-
-#. js-lingui-id: jfC/xh
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Contact"
-msgstr ""
 
 #. js-lingui-id: bA6O5B
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1024,9 +706,7 @@ msgid "Contact’s company"
 msgstr "Kontak se maatskappy"
 
 #. js-lingui-id: ITlFIB
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "Kontak se E-posse"
 
@@ -1051,7 +731,6 @@ msgid "Contact’s phone number"
 msgstr "Kontak se telefoonnommer"
 
 #. js-lingui-id: zsW3gg
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "Kontak se telefoonnommers"
@@ -1061,45 +740,21 @@ msgstr "Kontak se telefoonnommers"
 msgid "Contact’s X/Twitter account"
 msgstr "Kontak se X/Twitter-rekening"
 
-#. js-lingui-id: M73whl
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Konteks"
-
-#. js-lingui-id: I99Miw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Cost"
-msgstr ""
-
-#. js-lingui-id: iBn7DY
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CPF"
-msgstr ""
-
-#. js-lingui-id: UuEIJ+
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "CPF or CNPJ identifier for the charge"
-msgstr ""
-
-#. js-lingui-id: NTBmQE
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "CPF/CNPJ"
-msgstr ""
-
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Geskep deur"
+
+#. js-lingui-id: 2ZhYYy
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
+msgid "Created field metadata, parent object metadata not found"
+msgstr "Geskepte veldmetadata, ouer objekmetadata nie gevind nie"
 
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1115,55 +770,35 @@ msgstr "Skeppingsdatum"
 msgid "Creation DateTime"
 msgstr "Skeppingsdatum en -tyd"
 
-#. js-lingui-id: TsP8cw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST COFINS"
-msgstr ""
+#. js-lingui-id: umhXiy
+#: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
+msgid "Cron pattern '{pattern}' is invalid"
+msgstr "Cron patroon '{pattern}' is ongeldig"
 
-#. js-lingui-id: hzTsGr
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST do COFINS. Placeholder: 01"
-msgstr ""
+#. js-lingui-id: Mikszu
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Custom Connection Parameters"
+msgstr "Aangepaste Konneksie Parameters"
 
-#. js-lingui-id: nMSkSB
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST do PIS. Placeholder: 01"
-msgstr ""
+#. js-lingui-id: 7p5kLi
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard"
+msgstr "Paneel"
 
-#. js-lingui-id: K2hY1Z
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST ICMS/CSOSN"
-msgstr ""
+#. js-lingui-id: Lddz0a
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard page layout"
+msgstr "Paneel bladsy uitleg"
 
-#. js-lingui-id: gUSJXx
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST PIS"
-msgstr ""
+#. js-lingui-id: xGgnPh
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard title"
+msgstr "Paneelbord titel"
 
-#. js-lingui-id: JLxg3N
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "CST/CSOSN"
-msgstr ""
-
-#. js-lingui-id: 876pfE
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Customer"
-msgstr ""
-
-#. js-lingui-id: 8bcj0/
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Customer linked to the charge"
-msgstr ""
-
-#. js-lingui-id: V/hOKM
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Data de emissão"
-msgstr ""
-
-#. js-lingui-id: knQldp
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Data de emissão da Nota Fiscal"
-msgstr ""
+#. js-lingui-id: w6iIMm
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboards"
+msgstr "Paneelborde"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1174,6 +809,26 @@ msgstr "Datumformaat"
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "Datum toe die rekord verwyder is"
+
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "Standaardwaarde \"{defaultValue}\" moet een van die opsiewaardes wees"
+
+#. js-lingui-id: FdUbPo
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value must be a string"
+msgstr "Standaardwaarde moet 'n string wees"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value should be as quoted string"
+msgstr "Standaardwaarde moet as 'n aangehaalde string wees"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default values must be unique"
+msgstr "Standaardwaardes moet uniek wees"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1186,7 +841,6 @@ msgid "Describes if the view is in compact mode"
 msgstr "Beskryf of die aansig in 'n kompakte modus is"
 
 #. js-lingui-id: Nu4oKW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
@@ -1197,21 +851,6 @@ msgstr "Beskrywing"
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Rigting"
-
-#. js-lingui-id: H6Ma8Z
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Discount"
-msgstr ""
-
-#. js-lingui-id: bcqrX0
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Discriminação"
-msgstr ""
-
-#. js-lingui-id: 4owEp1
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Discriminação dos serviços prestados."
-msgstr ""
 
 #. js-lingui-id: 0gS7M5
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -1241,10 +880,35 @@ msgstr "Domein Naam"
 msgid "Due Date"
 msgstr "Sperdatum"
 
+#. js-lingui-id: BXtAxc
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Duplicated option {field}"
+msgstr "Gedupliseerde opsie {field}"
+
+#. js-lingui-id: BBXuRb
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Email already verified."
+msgstr "E-pos reeds geverifieer."
+
+#. js-lingui-id: xw6iqb
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "Email is not verified."
+msgstr "E-pos is nie geverifieer nie."
+
+#. js-lingui-id: ZsZeV2
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Email is required"
+msgstr "E-pos word benodig"
+
+#. js-lingui-id: y8LSMh
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Email verification not required."
+msgstr "E-posverifikasie nie nodig nie."
+
 #. js-lingui-id: BXEcos
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Emails"
 msgstr "E-posse"
 
@@ -1259,31 +923,15 @@ msgstr "Werknemers"
 msgid "End Date"
 msgstr "Einddatum"
 
-#. js-lingui-id: VND5UK
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Entity Type"
-msgstr ""
-
-#. js-lingui-id: VYKxBB
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event charge"
-msgstr ""
-
-#. js-lingui-id: dNnjfa
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event chatbot"
-msgstr ""
+#. js-lingui-id: hcogQc
+#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
+msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr "Omgewingveranderlike CLOUDFLARE_API_KEY moet gedefinieer wees om hierdie funksie te gebruik."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Gebeurtenis maatskappy"
-
-#. js-lingui-id: FJ7QI4
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Event context"
-#~ msgstr "Gebeurtenis konteks"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1304,32 +952,11 @@ msgstr "Eksterne ID van gebeurtenis"
 msgid "Event ID"
 msgstr "Gebeurtenis ID"
 
-#. js-lingui-id: sRHSar
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event integration"
-msgstr ""
-
-#. js-lingui-id: 81maJp
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#~ msgid "Event Listeners"
-#~ msgstr "Gebeurtenis Luisteraars"
-
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event name"
 msgstr "Gebeurtenis naam"
-
-#. js-lingui-id: evIGwh
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Event name/type"
-#~ msgstr "Gebeurtenis naam/tipe"
-
-#. js-lingui-id: 85QkF8
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event nota fiscal"
-msgstr ""
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1357,11 +984,6 @@ msgstr "Gebeurtenis persoon"
 msgid "Event task"
 msgstr "Gebeurtenis taak"
 
-#. js-lingui-id: wFwltV
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event traceable"
-msgstr ""
-
 #. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
@@ -1384,44 +1006,14 @@ msgstr "Gebeurtenis werkplek lid"
 
 #. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
 msgstr "Gebeure"
-
-#. js-lingui-id: iG4hTA
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Events linked to the charge"
-msgstr ""
-
-#. js-lingui-id: Pds2Ui
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Events linked to the integration"
-msgstr ""
-
-#. js-lingui-id: FOjMfO
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Events linked to the nota fiscal"
-msgstr ""
 
 #. js-lingui-id: fHL+iH
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "Gebeure wat aan die persoon gekoppel is"
-
-#. js-lingui-id: kZn7Yr
-#: src/modules/support/support.workspace-entity.ts
-msgid "Events linked to the support"
-msgstr ""
-
-#. js-lingui-id: iag/Jq
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Events linked to the tracable link"
-msgstr ""
 
 #. js-lingui-id: 3/O8MM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1445,25 +1037,21 @@ msgstr "Sluit nie-professionele e-posse uit"
 msgid "Executed by"
 msgstr "Uitgevoer deur"
 
-#. js-lingui-id: sZg7s1
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Expiration date"
-msgstr "Verstrykingsdatum"
+#. js-lingui-id: AiFXmG
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
+msgstr "Verwag dat dieselfde beperkingsvelde konsekwent gebruik sal word oor al die operasies vir {connectFieldName}."
 
-#. js-lingui-id: Q28Cie
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "extensionNumber"
-msgstr ""
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr "Eksterne ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "Gunsteling"
-
-#. js-lingui-id: 8BSbVD
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite chatbot"
-msgstr ""
 
 #. js-lingui-id: aKUOPp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1511,11 +1099,6 @@ msgstr "Gunsteling posisie"
 msgid "Favorite task"
 msgstr "Gunsteling taak"
 
-#. js-lingui-id: VkWV1s
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite view"
-msgstr "Gunsteling aansig"
-
 #. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
@@ -1541,7 +1124,6 @@ msgstr "Gunsteling werkspasie lid"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1549,7 +1131,6 @@ msgstr "Gunsteling werkspasie lid"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "Gunstelinge"
@@ -1558,11 +1139,6 @@ msgstr "Gunstelinge"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "Gunstelinge in hierdie lêergids"
-
-#. js-lingui-id: NlDM8j
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Favorites linked to the chatbot"
-msgstr ""
 
 #. js-lingui-id: zQponA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1589,11 +1165,6 @@ msgstr "Gunstelinge gekoppel aan die geleentheid"
 msgid "Favorites linked to the task"
 msgstr "Gunstelinge gekoppel aan die taak"
 
-#. js-lingui-id: R+1ib/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Favorites linked to the view"
-msgstr "Gunstelinge gekoppel aan die aansig"
-
 #. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
@@ -1619,6 +1190,26 @@ msgstr "Gunstelinge gekoppel aan die werkspasie lid"
 msgid "Favorites tied to the {label}"
 msgstr "Gunstelinge verbind aan die {label}"
 
+#. js-lingui-id: vngnhF
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field already exists"
+msgstr "Veld bestaan reeds"
+
+#. js-lingui-id: Hg95ys
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field cannot be used as label identifier"
+msgstr "Veld kan nie as etiketidentifiseerder gebruik word nie"
+
+#. js-lingui-id: F6OLoA
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as image identifier not found"
+msgstr "Veld wat as beeldidentifiseerder verklaar is, nie gevind nie"
+
+#. js-lingui-id: 75hHpn
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as label identifier not found"
+msgstr "Veld wat as etiketidentifiseerder verklaar is, nie gevind nie"
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1627,11 +1218,36 @@ msgstr "Gunstelinge verbind aan die {label}"
 msgid "Field Metadata Id"
 msgstr "Veld Metadata Id"
 
+#. js-lingui-id: Ljqo/T
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field metadata to update not found"
+msgstr "Veldmetadata om by te werk nie gevind nie"
+
+#. js-lingui-id: p3kNMz
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field metadata to update object metadata not found"
+msgstr "Veldmetadata om by te werk objekmetadata nie gevind nie"
+
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "Veld-metadata gebruik vir saamgestelde operasie"
+
+#. js-lingui-id: prTOhK
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field name is not synced with field label"
+msgstr "Veldnaam is nie gesinchroniseer met veldetiket nie"
+
+#. js-lingui-id: cK8ILP
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field to create related object not found"
+msgstr "Veld om verwante objek te skep nie gevind nie"
+
+#. js-lingui-id: K6qzz4
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field to update not found"
+msgstr "Veld om by te werk nie gevind nie"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1643,21 +1259,35 @@ msgstr "Veld gebruik vir volledige-teks soek"
 msgid "Field Value"
 msgstr "Veld Waarde"
 
-#. js-lingui-id: Hdl5PA
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NF-e integration status"
-msgstr ""
+#. js-lingui-id: s3HtdT
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "FieldMetadataId is vereis"
 
-#. js-lingui-id: kUK0H8
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NFe Integration"
-msgstr ""
+#. js-lingui-id: Sof2+k
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "FieldMetadataId is required to create a view field."
+msgstr "FieldMetadataId is benodig om 'n aansigveld te skep."
 
-#. js-lingui-id: 0M5zqI
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NFe Integrations"
-msgstr ""
+#. js-lingui-id: NTyTR5
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "FieldMetadataId is required to create a view filter group."
+msgstr "FieldMetadataId is benodig om 'n aansigfiltergroep te skep."
+
+#. js-lingui-id: Ya6oU7
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "FieldMetadataId is required to create a view filter."
+msgstr "FieldMetadataId is benodig om 'n aansigfilter te skep."
+
+#. js-lingui-id: DU4jcg
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "FieldMetadataId is required to create a view group."
+msgstr "FieldMetadataId is benodig om 'n aansiggroep te skep."
+
+#. js-lingui-id: snEXuU
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required to create a view sort."
+msgstr "FieldMetadataId is benodig om 'n aansigsorteer te skep."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1669,15 +1299,30 @@ msgstr "Lêergids vir Boodskap Kanaal"
 msgid "Folder name"
 msgstr "Lêergids naam"
 
+#. js-lingui-id: eWmJYU
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Forbidden updated properties for relation field metadata"
+msgstr "Verbode bygewerkte eienskappe vir relasieveldmetadata"
+
+#. js-lingui-id: kuN9I4
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action fields must have a defined label and type"
+msgstr "Vormaksie velde moet 'n omskrewe etiket en tipe hê"
+
+#. js-lingui-id: QK3OvQ
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action fields must have unique names"
+msgstr "Vormaksie velde moet unieke name hê"
+
+#. js-lingui-id: KYP1t5
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "Form action must have at least one field"
+msgstr "Vormaksie moet ten minste een veld hê"
+
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "Volledige pad"
-
-#. js-lingui-id: XM2gXm
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Generated URL"
-msgstr ""
 
 #. js-lingui-id: UzpVUy
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1736,124 +1381,108 @@ msgstr "IKP"
 msgid "Id"
 msgstr "Id"
 
-#. js-lingui-id: hYtWqG
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "ID of the traceable link associated with this log"
-msgstr ""
-
 #. js-lingui-id: Ebc83S
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideale Klanteprofiel: Dit dui aan of die maatskappy die mees toepaslike en waardevolle kliënt vir jou is"
 
-#. js-lingui-id: m+vtsd
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "IE"
-msgstr ""
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "If defined default value must contain at least one value"
+msgstr "Indien gedefinieer, moet die standaardwaarde ten minste een waarde bevat"
 
-#. js-lingui-id: NrA0WZ
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "If the event is related to a particular object"
-#~ msgstr "Indien die gebeurtenis met 'n spesifieke voorwerp verband hou"
+#. js-lingui-id: 71VJzG
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
+msgid "Input is too short: \"{name}\""
+msgstr "Insette is te kort: \"{name}\""
 
-#. js-lingui-id: RLHsle
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Indicates if the entity is an individual or a company"
-msgstr ""
+#. js-lingui-id: X7+bC6
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Invalid calling code {callingCode}"
+msgstr "Ongeldige roepkode {callingCode}"
 
-#. js-lingui-id: TzTH7/
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003."
-msgstr ""
+#. js-lingui-id: tG/2Q/
+#: src/engine/core-modules/captcha/captcha.guard.ts
+msgid "Invalid Captcha, please try another device"
+msgstr "Ongeldige Captcha, probeer asseblief 'n ander toestel"
 
-#. js-lingui-id: yK2h6g
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Informar o código tributário de acordo com a tabela de cada município (não há um padrão)."
-msgstr ""
+#. js-lingui-id: 1PtrY0
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Invalid country code {countryCode}"
+msgstr "Ongeldige land kode {countryCode}"
 
-#. js-lingui-id: B4A4Lu
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Informar true (verdadeiro) ou false (falso) se o ISS foi retido"
-msgstr ""
+#. js-lingui-id: 4EtFrA
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid day value. Should be integer greater than 1"
+msgstr "Ongeldige dag waarde. Moet 'n heelgetal wees groter as 1"
 
-#. js-lingui-id: PSIrtk
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Inscrição estadual"
-msgstr ""
+#. js-lingui-id: MBpeQ6
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid hour value. Should be integer between 0 and 23"
+msgstr "Ongeldige uur waarde. Moet 'n heelgetal wees tussen 0 en 23"
 
-#. js-lingui-id: girw5z
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição Estadual"
-msgstr ""
+#. js-lingui-id: 9xsjn9
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid hour value. Should be integer greater than 1"
+msgstr "Ongeldige uur waarde. Moet 'n heelgetal wees groter as 1"
 
-#. js-lingui-id: KFgYVS
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Inscrição municipal"
-msgstr ""
+#. js-lingui-id: FSunWx
+#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
+msgid "Invalid label: \"{label}\""
+msgstr "Ongeldige etiket: \"{label}\""
 
-#. js-lingui-id: bzGSrZ
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição Municipal"
-msgstr ""
+#. js-lingui-id: iBBCnf
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid minute value. Should be integer between 0 and 59"
+msgstr "Ongeldige minuut waarde. Moet 'n heelgetal wees tussen 0 en 59"
 
-#. js-lingui-id: RYXSrV
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição municipal do prestador de serviços"
-msgstr ""
+#. js-lingui-id: hYcFSd
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid minute value. Should be integer greater than 1"
+msgstr "Ongeldige minuut waarde. Moet 'n heelgetal wees groter as 1"
 
-#. js-lingui-id: AHWM9N
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Integration"
-msgstr ""
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "Ongeldige morfverhoudingsinvoer"
 
-#. js-lingui-id: uhnn/8
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Integration linked to the charge"
-msgstr ""
+#. js-lingui-id: AXZsy/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Invalid relation creation payload"
+msgstr "Ongeldige relasieskep-betaling"
 
-#. js-lingui-id: 5Nvgmt
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Integration linked to the Chatbot"
-msgstr ""
+#. js-lingui-id: ApP70c
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid setting type provided in cron trigger"
+msgstr "Ongeldige instelling tipe verskaf in cron sneller"
 
-#. js-lingui-id: kh85bV
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration linked to the Nota Fiscal"
-msgstr ""
+#. js-lingui-id: sHcAMD
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Invalid trigger type for enabling workflow trigger"
+msgstr "Ongeldige sneller tipe vir die moontlikheid om kragvloei in te skakel"
 
-#. js-lingui-id: u4iuBc
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration name"
-msgstr ""
+#. js-lingui-id: 1Iyic0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid uuid {id}"
+msgstr "Ongeldige uuid {id}"
 
-#. js-lingui-id: DdoWBE
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration record position"
-msgstr ""
+#. js-lingui-id: VEKoJx
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
+msgid "Invalid verification code. Please try again."
+msgstr "Ongeldige verifikasiekode. Probeer asseblief weer."
 
-#. js-lingui-id: nbfdhU
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Integrations"
-msgstr ""
+#. js-lingui-id: 8xkULN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "Ongeldige aansig sorteergegewens"
 
-#. js-lingui-id: bB1YSX
-#: src/engine/core-modules/inter/services/inter.service.ts
-msgid "Inter Bilepix Billing Charge"
-msgstr ""
-
-#. js-lingui-id: oK4zvs
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "IP address of the user who accessed the link"
-msgstr ""
+#. js-lingui-id: I0OzaR
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "Ongeldige aansig sorteergegewens vir die aansigsorteer-ID: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1881,6 +1510,12 @@ msgstr "Is Volle Dag"
 msgid "Is Organizer"
 msgstr "Is Organiseerder"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr "Is Stuur-Map"
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1889,22 +1524,11 @@ msgstr "Is Organiseerder"
 msgid "Is Sync Enabled"
 msgstr "Is Sinkronisasie Geaktiveer"
 
-#. js-lingui-id: mbGP1T
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "ISS Retido"
-msgstr ""
-
-#. js-lingui-id: gtGLOq
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Issue name"
-msgstr ""
-
-#. js-lingui-id: /tNICq
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Item Lista Serviço"
-msgstr ""
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr "Is Gesinkroniseer"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1916,16 +1540,10 @@ msgstr "Werkstitel"
 msgid "Join your team on Twenty"
 msgstr "Sluit by jou span aan op Twenty"
 
-#. js-lingui-id: shbh25
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Json object to provide context (user, device, workspace, etc.)"
-#~ msgstr "Json voorwerp om konteks te verskaf (gebruiker, toestel, werkruimte, ens.)"
-
-#. js-lingui-id: HgJ9jQ
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "Json voorwerp om resultate van die werkstroom uitvoer te verskaf"
+#. js-lingui-id: WNfJ8M
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "JSON object containing custom connection parameters"
+msgstr "JSON objek wat aangepaste konneksie parameters bevat"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1942,16 +1560,6 @@ msgstr "Json voorwerp om sneller te verskaf"
 msgid "Json value for event details"
 msgstr "Json waarde vir gebeurtenis besonderhede"
 
-#. js-lingui-id: UH0PTY
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Justificativa"
-msgstr ""
-
-#. js-lingui-id: UQ6FtA
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Justificativa de cancelamento da Nota Fiscal"
-msgstr ""
-
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
@@ -1962,10 +1570,22 @@ msgstr "kanbanveldMetadataId"
 msgid "Key"
 msgstr "Sleutel"
 
-#. js-lingui-id: nhxAdQ
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Keyword"
-msgstr ""
+#. js-lingui-id: w8Rv8T
+#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
+msgid "Label is required"
+msgstr "Etiket word vereis"
+
+#. js-lingui-id: 4EGmy6
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Label must not be empty"
+msgstr "Etiket moet nie leeg wees nie"
+
+#. js-lingui-id: k731jp
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Label must not contain a comma"
+msgstr "Etiket moet nie 'n komma bevat nie"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2007,26 +1627,11 @@ msgstr "Laaste keer dat die rekord verander is"
 msgid "Last update"
 msgstr "Laaste opdatering"
 
-#. js-lingui-id: m5K33y
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Link ID"
-msgstr ""
-
-#. js-lingui-id: yg5UPw
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Link Name"
-msgstr ""
-
 #. js-lingui-id: wR9USP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Object Metadata Id"
 msgstr "Gekoppelde Voorwerp Metadata Id"
-
-#. js-lingui-id: PV1Nm7
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Linked Opportunities"
-msgstr "Gekoppelde Geleenthede"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2044,21 +1649,6 @@ msgstr "Gekoppelde Rekord id"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Linkedin"
 msgstr "Linkedin"
-
-#. js-lingui-id: H3nIla
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklog"
-msgstr ""
-
-#. js-lingui-id: fkZGo6
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklog link Name"
-msgstr ""
-
-#. js-lingui-id: XmF8WY
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklogs"
-msgstr ""
 
 #. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2080,21 +1670,6 @@ msgstr "Logiese Operateur"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical operator for the filter group"
 msgstr "Logiese operateur vir die filter groep"
-
-#. js-lingui-id: xl8Wza
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Logs of access to traceable links"
-msgstr ""
-
-#. js-lingui-id: okbTw8
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Means of Communication"
-msgstr ""
-
-#. js-lingui-id: 9rZW6o
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Medium of the traffic (e.g., cpc, email)"
-msgstr ""
 
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2249,142 +1824,148 @@ msgstr "Boodskapverskaffer toegangstoken"
 msgid "Messaging provider refresh token"
 msgstr "Boodskapverskaffer ververstoken"
 
+#. js-lingui-id: SzCMUQ
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
+msgstr "Vereiste velde ontbreek: ten minste een unieke beperking moet volledig geïntegreer wees vir '{connectFieldName}'."
+
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "Morfverhouding-skeppingsladings moet dieselfde verhoudingtipes hê"
+
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morph-verhouding skeppayloads moet slegs verhouding tot ander voorwerp metadata bevat"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "Morfverhouding-skeppingsladings moet slegs verhouding tot dieselfde objekmetadata bevat"
+
+#. js-lingui-id: DsdcRG
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Morph relation fields are disabled for your workspace"
+msgstr "Morf relasievelde is gedeaktiveer vir u werksomgewing"
+
+#. js-lingui-id: Wu/pkS
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Multi-select field default value must be an array"
+msgstr "Multi-seleksie veld standaardwaarde moet 'n skikking wees"
+
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
 msgstr "Naam"
+
+#. js-lingui-id: aD053i
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
+msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
+msgstr "Naam \"{computedMetadataNameFromLabel}\" kan nie aan beide kante van die verhouding dieselfde wees nie"
+
+#. js-lingui-id: Ge9TXE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie"
+
+#. js-lingui-id: h8ic2G
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie aangesien dit reeds deur 'n ander veld gebruik word"
+
+#. js-lingui-id: RGz1nY
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
+msgid "Name is not available, it may be duplicating another field's name."
+msgstr "Naam is nie beskikbaar nie, dit mag dalk 'n ander veld naam dupliseer."
+
+#. js-lingui-id: Ny5wFU
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
+msgstr "Naam is nie geldig nie: dit moet met 'n kleinletter begin en slegs alfanumeriese letters bevat"
+
+#. js-lingui-id: zjh2SJ
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too long"
+msgstr "Naam is te lank"
+
+#. js-lingui-id: 0MobB1
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
+msgid "Name is too long: it exceeds the 63 characters limit."
+msgstr "Naam is te lank: dit oorskry die 63 karakters limiet."
+
+#. js-lingui-id: go/Vg1
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too short"
+msgstr "Naam is te kort"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
 msgstr "Naam van die gunsteling vouer"
 
-#. js-lingui-id: qwLr4u
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Name of the traceable access log"
-msgstr ""
-
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "Naam van die werkstroomdit"
 
-#. js-lingui-id: 1VGoRg
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "NCM"
-msgstr ""
+#. js-lingui-id: P+jdmX
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name should be in camelCase"
+msgstr "Naam moet in camelCase wees"
 
-#. js-lingui-id: jyxrtr
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Neighborhood"
-msgstr ""
+#. js-lingui-id: Dr0xtb
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Names are not synced with labels"
+msgstr "Name is nie gesynkroniseer met etikette nie"
 
-#. js-lingui-id: GsDa9d
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "NF Type"
-msgstr ""
+#. js-lingui-id: hQQZse
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No event name provided in database event trigger"
+msgstr "Geen gebeurtenis naam verskaf in databasis gebeurtenis sneller nie"
 
-#. js-lingui-id: NzG02o
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "NF-Com"
-msgstr ""
+#. js-lingui-id: 9bu19u
+#: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
+msgid "No input provided in form step"
+msgstr "Geen inset verskaf in vormstap nie"
 
-#. js-lingui-id: 6CDvDj
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "NF-e"
-msgstr ""
+#. js-lingui-id: MWAUHo
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No pattern provided in CUSTOM cron trigger"
+msgstr "Geen patroon verskaf in VERVOLGING cron sneller nie"
 
-#. js-lingui-id: vIp1C2
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "NFC-e"
-msgstr ""
+#. js-lingui-id: pOu4u/
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No schedule provided in cron trigger"
+msgstr "Geen skedule verskaf in cron sneller nie"
 
-#. js-lingui-id: Uq58U2
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "NFS-e"
-msgstr ""
+#. js-lingui-id: cLUBlS
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No setting type provided in cron trigger"
+msgstr "Geen instelling tipe verskaf in cron sneller nie"
 
-#. js-lingui-id: U8O0LR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12"
-msgstr ""
+#. js-lingui-id: QwbSxD
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No steps provided in workflow version"
+msgstr "Geen stappe verskaf in werkvloeiontwikke se weergawe nie"
 
-#. js-lingui-id: RQyWdD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota emitida"
-msgstr ""
-
-#. js-lingui-id: Ybt31x
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota fiscal"
-msgstr ""
-
-#. js-lingui-id: LJ4EO1
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Nota Fiscal"
-msgstr ""
-
-#. js-lingui-id: u9NP/V
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota Fiscal linked to the Focus NFe Integration"
-msgstr ""
-
-#. js-lingui-id: VyW1ij
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Nota Fiscal using this product"
-msgstr ""
-
-#. js-lingui-id: nPM5it
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Notas Fiscais"
-msgstr ""
-
-#. js-lingui-id: nU8wSD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Notas fiscais linked to the charges"
-msgstr ""
-
-#. js-lingui-id: d4bNPb
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Notas fiscais to the company"
-msgstr ""
-
-#. js-lingui-id: wNRuNO
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Notas fiscais using this charge"
-msgstr ""
+#. js-lingui-id: 6dP8sB
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "No trigger type provided"
+msgstr "Geen sneller tipe verskaf nie"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2401,7 +1982,6 @@ msgid "Note attachments"
 msgstr "Nota-aanhangsels"
 
 #. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "Nota liggaam"
@@ -2432,7 +2012,6 @@ msgid "Note title"
 msgstr "Nota titel"
 
 #. js-lingui-id: 1DBGsz
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2452,7 +2031,6 @@ msgid "Notes tied to the company"
 msgstr "Notas gekoppel aan die maatskappy"
 
 #. js-lingui-id: iQ5AH6
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "Notas gekoppel aan die kontak"
@@ -2482,60 +2060,79 @@ msgstr "NotaTeiken geleentheid"
 msgid "NoteTarget person"
 msgstr "NotaTeiken persoon"
 
-#. js-lingui-id: XVHCAg
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget support"
-msgstr ""
-
-#. js-lingui-id: HptUxX
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Number"
-msgstr ""
-
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "Aantal werknemers in die maatskappy"
 
-#. js-lingui-id: 91jcCE
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número do contrato do assinante"
-msgstr ""
+#. js-lingui-id: ECRKYR
+#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object already exists"
+msgstr "Objek bestaan reeds"
 
-#. js-lingui-id: HhJRga
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número do Contrato do Assinante"
-msgstr ""
+#. js-lingui-id: wLX74t
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too long"
+msgstr "Voorwerp etiket is te lank"
 
-#. js-lingui-id: ugWWBB
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número RPS"
-msgstr ""
-
-#. js-lingui-id: hhe7Ce
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Object id"
-#~ msgstr "Objek id"
-
-#. js-lingui-id: dnPgTI
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Object metadata id"
-#~ msgstr "Objek metadata id"
+#. js-lingui-id: nmhjwk
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too short"
+msgstr "Voorwerp etiket is te kort"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Objek Metadata Id"
 
-#. js-lingui-id: afsWF6
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Object name"
-#~ msgstr "Objek naam"
+#. js-lingui-id: lG0Qqm
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to field to delete not found"
+msgstr "Objek verwant aan veld om te verwyder nie gevind nie"
+
+#. js-lingui-id: E8vJ0A
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to field to update not found"
+msgstr "Objek verwant aan veld om by te werk nie gevind nie"
+
+#. js-lingui-id: MnOwTp
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to updated field does not have a label identifier"
+msgstr "Objek verwant aan bygewerkte veld het nie 'n etiketidentifiseerder nie"
+
+#. js-lingui-id: 6unt40
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Object targeted by field to create not found"
+msgstr "Voorwerp geteiken deur veld om te skep nie gevind nie"
+
+#. js-lingui-id: KHK54G
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Object targeted by the relation not found"
+msgstr "Objek geteiken deur die relasie nie gevind nie"
+
+#. js-lingui-id: bMeJkW
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to delete not found"
+msgstr "Voorwerp om te verwyder nie gevind nie"
+
+#. js-lingui-id: pQ5dZU
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to update not found"
+msgstr "Voorwerp om by te werk nie gevind nie"
+
+#. js-lingui-id: cdjRFZ
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object with same id already exists"
+msgstr "Objek met dieselfde id bestaan reeds"
+
+#. js-lingui-id: 53pIyA
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "ObjectMetadataId is required to create a view."
+msgstr "ObjectMetadataId is benodig om 'n aansig te skep."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2547,17 +2144,8 @@ msgstr "Maak Rekord Oop In"
 msgid "Operand"
 msgstr "Operant"
 
-#. js-lingui-id: FZg3wM
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operation"
-msgstr "Operasie"
-
-#. js-lingui-id: B1MDds
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operations"
-msgstr "Operasies"
-
 #. js-lingui-id: 4MyDFl
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
@@ -2609,10 +2197,77 @@ msgid "Opportunity record position"
 msgstr "Geleentheid rekordposisie"
 
 #. js-lingui-id: 5ugYS3
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "Geleentheid stadium"
+
+#. js-lingui-id: 2mFkfl
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option id is invalid"
+msgstr "Opsie id is ongeldig"
+
+#. js-lingui-id: MniXaX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option id is required"
+msgstr "Opsie id word vereis"
+
+#. js-lingui-id: //eyK1
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
+msgstr "Opsie etiket \"{sanitizedLabel}\" is onder 1 karakter"
+
+#. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label exceeds 63 characters"
+msgstr "Opsie etiket oorskry 63 karakters"
+
+#. js-lingui-id: h8lHqX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label format not supported"
+msgstr "Opsie-eenmerk-formaat word nie ondersteun nie"
+
+#. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option label is required"
+msgstr "Opsie etiket word vereis"
+
+#. js-lingui-id: dFudyC
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label must be a string of at least one character"
+msgstr "Opsie-etiket moet 'n string van ten minste een karakter wees"
+
+#. js-lingui-id: nQqNzE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
+msgstr "Opsie waarde \"{sanitizedValue}\" is onder 1 karakter"
+
+#. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value exceeds 63 characters"
+msgstr "Opsie waarde oorskry 63 karakters"
+
+#. js-lingui-id: zEGChV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value format not supported"
+msgstr "Opsie waarde formaat word nie ondersteun nie"
+
+#. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Option value is required"
+msgstr "Opsie waarde word vereis"
+
+#. js-lingui-id: Kub9t0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value must be a string of at least one character"
+msgstr "Opsie waarde moet 'n string van ten minste een karakter wees"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2620,27 +2275,15 @@ msgstr "Geleentheid stadium"
 msgid "Optional aggregate operation"
 msgstr "Opsionele aggregaat operasie"
 
-#. js-lingui-id: kdClJ/
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Opsionele geheim gebruik om die HMAC handtekening vir webhook vragte te bereken. Hierdie geheim word gedeel tussen Twenty en die webhook verbruiker om webhook versoeke te verifieer."
+#. js-lingui-id: EabrTR
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Options are required for enum fields"
+msgstr "Opsies word vereis vir keusevelde"
 
-#. js-lingui-id: 3qocCh
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Origem da Mercadoria"
-msgstr ""
-
-#. js-lingui-id: aefXyf
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Origem da mercadoria (0-8). Placeholder: 0"
-msgstr ""
-
-#. js-lingui-id: gh06VD
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Uitset"
+#. js-lingui-id: AODALE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Page Layout ID"
+msgstr "Bladsyuitleg-ID"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2652,10 +2295,10 @@ msgstr "Ouer Uitsig Filter Groep"
 msgid "Parent View Filter Group Id"
 msgstr "Ouer Uitsig Filter Groep Id"
 
-#. js-lingui-id: UreNHd
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Payment Gateway"
-msgstr ""
+#. js-lingui-id: wT0H4O
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Password too weak"
+msgstr "Wagwoord te swak"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2667,30 +2310,6 @@ msgstr "Mense"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "Mense gekoppel aan die maatskappy."
-
-#. js-lingui-id: jbDhKI
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)"
-msgstr ""
-
-#. js-lingui-id: 017kfr
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal de Comunicação (Communication Invoice)"
-msgstr ""
-
-#. js-lingui-id: +zipdG
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)"
-msgstr ""
-
-#. js-lingui-id: CWKrq3
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)"
-msgstr ""
 
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2706,18 +2325,6 @@ msgstr ""
 msgid "Person"
 msgstr "Persoon"
 
-#. js-lingui-id: XQ3nde
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Person linked to the charge"
-msgstr ""
-
-#. js-lingui-id: l9Z3mg
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Person linked to the support"
-msgstr ""
-
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
@@ -2728,13 +2335,7 @@ msgstr "Persoon rekord posisie"
 msgid "Phone"
 msgstr "Telefoon"
 
-#. js-lingui-id: 4lE45u
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Phone ID"
-msgstr ""
-
 #. js-lingui-id: m2ivgq
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "Telefone"
@@ -2752,22 +2353,13 @@ msgstr "Kontakpunt"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
@@ -2799,102 +2391,40 @@ msgstr "Verkose kleurskema"
 msgid "Preferred language"
 msgstr "Verkose taal"
 
-#. js-lingui-id: a7u1N9
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Price"
-msgstr ""
-
 #. js-lingui-id: WJIL29
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "Waarskynlikheid"
 
-#. js-lingui-id: K47k8R
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product"
-msgstr ""
+#. js-lingui-id: dtGxRz
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided and inferred calling code are conflicting"
+msgstr "Verskafde en afgeleide roepkode is in botsing"
 
-#. js-lingui-id: bt5TbG
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product charge action(issue products can be used in charges)"
-msgstr ""
+#. js-lingui-id: Vq/afT
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided and inferred country code are conflicting"
+msgstr "Verskafde en afgeleide land kode is in botsing"
 
-#. js-lingui-id: bodmtG
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product cost"
-msgstr ""
+#. js-lingui-id: HZ45ox
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided country code and calling code are conflicting"
+msgstr "Verskafde land kode en roepkode is in botsing"
 
-#. js-lingui-id: vpqv+B
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product linked to this charge"
-msgstr ""
-
-#. js-lingui-id: mZW+k8
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product name"
-msgstr ""
-
-#. js-lingui-id: Q033BY
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product Name"
-msgstr ""
-
-#. js-lingui-id: jGuXaa
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Product record position"
-msgstr ""
-
-#. js-lingui-id: rjawDw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product sale price"
-msgstr ""
-
-#. js-lingui-id: RTFwCi
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product status (active products can be used in charges)"
-msgstr ""
-
-#. js-lingui-id: C74sUy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Product unit of measure (e.g., kg, unit, liter)"
-msgstr ""
-
-#. js-lingui-id: N0qXpE
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Products"
-msgstr ""
+#. js-lingui-id: A4Ohxb
+#: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
+msgid "Provided phone number is invalid {number}"
+msgstr "Verskafde telefoonnommer is ongeldig {number}"
 
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "verskaffer"
 
-#. js-lingui-id: VbWX2u
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Quantity"
-msgstr ""
-
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Ontvang Op"
-
-#. js-lingui-id: 4Tvtbu
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Record id"
-#~ msgstr "Rekord id"
-
-#. js-lingui-id: QBQXiF
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Recurrence"
-msgstr ""
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2912,27 +2442,46 @@ msgstr "Verfris Teken"
 msgid "Related user email address"
 msgstr "Verwante gebruiker e-pos adres"
 
+#. js-lingui-id: +bFtT5
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
+msgid "Relation creation payload is required"
+msgstr "Relasieskep-betaling word vereis"
+
+#. js-lingui-id: 5y41wK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Relation field target metadata not found"
+msgstr "Doelmetadata vir relasieveld nie gevind nie"
+
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "Verhoudings"
 
-#. js-lingui-id: BrEm08
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Request Code"
-msgstr ""
+#. js-lingui-id: PWdFkY
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Remote objects are not production ready yet"
+msgstr "Afgeleë voorwerpe is nog nie gereed vir produksie nie"
+
+#. js-lingui-id: yVxtzR
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Remote objects are not supported yet"
+msgstr "Afgeleë voorwerpe word nog nie ondersteun nie"
+
+#. js-lingui-id: pCsIQQ
+#: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
+msgid "Request has expired, please try again."
+msgstr "Versoek het verval, probeer asseblief weer."
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Response Status"
 msgstr "Reaksie Status"
-
-#. js-lingui-id: MCWKAU
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Revocation date"
-msgstr "Hermaking datum"
 
 #. js-lingui-id: GDvlUT
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -2957,41 +2506,31 @@ msgstr "Omvangs"
 msgid "Search vector"
 msgstr "Soekvektor"
 
-#. js-lingui-id: 8VEDbV
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Secret"
-msgstr "Geheim"
-
-#. js-lingui-id: L5P0h3
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Service Level Agreement"
-msgstr ""
-
-#. js-lingui-id: c3j3Wn
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Service Level Agreement (SLA) in minutes"
-msgstr ""
-
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
-msgstr ""
+msgstr "Instellings"
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "Grootte"
 
-#. js-lingui-id: DxObh7
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Source of the traffic (e.g., Google, Facebook)"
-msgstr ""
-
 #. js-lingui-id: 3PRxO3
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Fase"
+
+#. js-lingui-id: dc5N0o
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Standard fields cannot be deleted"
+msgstr "Standaardvelde kan nie uitgevee word nie"
+
+#. js-lingui-id: Ptv+nG
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr "Standaard voorwerpe kan nie uitgevee word nie"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2999,79 +2538,57 @@ msgstr "Fase"
 msgid "Start Date"
 msgstr "Begindatum"
 
-#. js-lingui-id: RS0o7b
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "State"
-msgstr ""
+#. js-lingui-id: amGzX5
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Start of the week"
+msgstr "Begin van die week"
 
-#. js-lingui-id: 47Ailm
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "State Registration number for tax purposes in Brazil"
-msgstr ""
+#. js-lingui-id: RS0o7b
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State"
+msgstr "Staat"
+
+#. js-lingui-id: nY8GL/
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State of the workflow run"
+msgstr "Staat van die werkstroom-lopie"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Status"
 msgstr "Toestand"
 
-#. js-lingui-id: il/4qG
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Status da Nota Fiscal"
-msgstr ""
-
-#. js-lingui-id: sPl2pb
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Status of the integration"
-msgstr ""
-
 #. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Statuses"
 msgstr "Statusse"
 
-#. js-lingui-id: Uv4dnT
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Street"
-msgstr ""
+#. js-lingui-id: S7DRR+
+#: src/modules/workflow/common/utils/assert-workflow-statuses-not-set.ts
+msgid "Statuses cannot be set manually."
+msgstr "Statusse kan nie handmatig gestel word nie."
+
+#. js-lingui-id: u+rv4L
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+msgid "Step is not a form"
+msgstr "Stap is nie 'n vorm nie"
+
+#. js-lingui-id: YFMPch
+#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
+msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
+msgstr "String \"{name}\" is nie geldig nie: moet met kleinletter begin en slegs alfanumeriese letters bevat"
 
 #. js-lingui-id: g4jxXh
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Sub field name"
-msgstr ""
+msgstr "Subveldnaam"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Onderwerp"
-
-#. js-lingui-id: XYLcNv
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "Support"
-msgstr ""
-
-#. js-lingui-id: Uby7zw
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Support linked to the event"
-msgstr ""
-
-#. js-lingui-id: qnIA1S
-#: src/modules/support/support.workspace-entity.ts
-msgid "Supports"
-msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3109,10 +2626,10 @@ msgstr "Sinkroniseer stadium het begin op"
 msgid "Sync status"
 msgstr "Sinkroniseer status"
 
-#. js-lingui-id: 4SHJe4
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Target Url"
-msgstr "Teiken-URL"
+#. js-lingui-id: 5y3Wbw
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Target object metadata not found for {connectFieldName}"
+msgstr "Teiken objek metadata nie gevind vir {connectFieldName} nie"
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3134,7 +2651,6 @@ msgid "Task attachments"
 msgstr "Taak aanhangsels"
 
 #. js-lingui-id: X8fs74
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "Taak inhoud"
@@ -3228,21 +2744,11 @@ msgstr "TaakTeiken persoon"
 msgid "TaskTarget task"
 msgstr "TaakTeiken taak"
 
-#. js-lingui-id: m+elvG
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Tax ID"
-msgstr ""
-
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "Teks"
-
-#. js-lingui-id: kcAkbZ
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The Access Token obtained from Facebook Developer"
-msgstr ""
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3253,26 +2759,6 @@ msgstr "Die rekening hanteer (e-pos, gebruikersnaam, telefoonnommer, ens.)"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Die rekening verskaffer"
-
-#. js-lingui-id: y4NQ7b
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The App ID obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: mD7PpP
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The App Secret Key obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: zYeB/b
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The business account ID obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: ftUrkL
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "The chatbot flow name"
-msgstr ""
 
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3294,33 +2780,16 @@ msgstr "Die maatskappy se Twitter/X rekening"
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Die maatskappy webblad URL. Ons gebruik hierdie url om die maatskappy ikoon af te laai"
 
-#. js-lingui-id: YxUHjE
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The content of the traceable link (e.g., bannerSale)"
-msgstr ""
-
 #. js-lingui-id: zGBDEH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Die skepper van die rekord"
-
-#. js-lingui-id: ZVYmSG
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "The current statuses of the chatbot flow"
-msgstr ""
-
-#. js-lingui-id: /AsNLR
-#: src/modules/support/support.workspace-entity.ts
-msgid "The current statuses of the support"
-msgstr ""
 
 #. js-lingui-id: bMyVOx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3337,90 +2806,45 @@ msgstr "Die datum wat die boodskap ontvang is"
 msgid "The executor of the workflow"
 msgstr "Die uitvoerder van die werkstroom"
 
-#. js-lingui-id: ww4vYo
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The final URL with UTM parameters"
-msgstr ""
-
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
 msgstr "Die gids waaraan hierdie gunsteling behoort"
 
-#. js-lingui-id: 0XFpHq
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The keyword associated with the traceable link"
-msgstr ""
+#. js-lingui-id: EJUSll
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "The initial version of a workflow can not be deleted"
+msgstr "Die aanvanklike weergawe van 'n werkvloei kan nie uitgevee word nie"
 
-#. js-lingui-id: Wd7tXn
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The means of communication used (e.g., email, social media)"
-msgstr ""
-
-#. js-lingui-id: dwkGHj
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The name of the traceable link"
-msgstr ""
-
-#. js-lingui-id: yoBR0I
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The name of the traceable link associated with the link"
-msgstr ""
-
-#. js-lingui-id: cgODOx
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The name of the whatsapp integration"
-msgstr ""
+#. js-lingui-id: YTftFF
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "The name is not available"
+msgstr "Die naam is nie beskikbaar nie"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Die geleentheid se naam"
 
-#. js-lingui-id: bDvBRk
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The phone number ID obtained from Facebook Developer"
-msgstr ""
+#. js-lingui-id: H1tAJD
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "The singular and plural labels cannot be the same for an object"
+msgstr "Die enkelvoud en meervoud etikette kan nie dieselfde vir 'n voorwerp wees nie"
 
-#. js-lingui-id: Jiq0u3
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The source of the traceable link (e.g., Google, Facebook)"
-msgstr ""
-
-#. js-lingui-id: ftaTVP
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The URL of the website to redirect to"
-msgstr ""
-
-#. js-lingui-id: 30jEZc
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The URL used to track final url metadata."
-msgstr ""
-
-#. js-lingui-id: h74Dhq
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#~ msgid "The used to track final url metadata."
-#~ msgstr ""
-
-#. js-lingui-id: Kduucd
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The Verify Token obtained from Facebook Developer"
-msgstr ""
+#. js-lingui-id: FOEWHl
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "The singular and plural names cannot be the same for an object"
+msgstr "Die enkelvoud en meervoud name kan nie dieselfde vir 'n voorwerp wees nie"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "The workflow automated trigger settings"
-msgstr ""
+msgstr "Die werkvloei geoutomatiseerde sneller instellings"
 
 #. js-lingui-id: SpKbfT
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "The workflow automated trigger type"
-msgstr ""
-
-#. js-lingui-id: 7mPrpl
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "The workflow event listener name"
-#~ msgstr "Die werkvloei gebeurtenis luisteraar se naam"
+msgstr "Die werkvloei geoutomatiseerde snellertipe"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3441,6 +2865,17 @@ msgstr "Die werkvloei weergawe se naam"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "Die werkvloei weergawe se status"
+
+#. js-lingui-id: mAs70Y
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available as it is already used by another field."
+msgstr "Hierdie naam is nie beskikbaar nie aangesien dit reeds deur 'n ander veld gebruik word."
+
+#. js-lingui-id: yIUmAs
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available."
+msgstr "Hierdie naam is nie beskikbaar nie."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3479,15 +2914,9 @@ msgstr "Tydsone"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Tydlyn Aktiwiteite"
-
-#. js-lingui-id: xSqX1G
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Timeline activities linked to the chatbot"
-msgstr ""
 
 #. js-lingui-id: fqKMpF
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3534,71 +2963,14 @@ msgstr "Tydlyn Aktiwiteite gebind aan die {label}"
 msgid "Timeline Activity"
 msgstr "Tydlyn Aktiwiteit"
 
-#. js-lingui-id: oZPZ+V
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Tipo de nota fiscal"
-msgstr ""
-
-#. js-lingui-id: tVodDu
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Tipo de produto"
-msgstr ""
-
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Titel"
-
-#. js-lingui-id: TP9/K5
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Token"
-msgstr ""
-
-#. js-lingui-id: V6wYl1
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Total amount"
-msgstr ""
-
-#. js-lingui-id: NrYZ3H
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Total Amount"
-msgstr ""
-
-#. js-lingui-id: 2jNX/d
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Traceable"
-msgstr ""
-
-#. js-lingui-id: S+jeA7
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable Link Name"
-msgstr ""
-
-#. js-lingui-id: kLFXFH
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#~ msgid "Traceable name"
-#~ msgstr ""
-
-#. js-lingui-id: ABScWw
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable record position"
-msgstr ""
-
-#. js-lingui-id: awZm5I
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable URL"
-msgstr ""
-
-#. js-lingui-id: PdZf5t
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceables"
-msgstr ""
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3607,23 +2979,21 @@ msgstr ""
 msgid "Type"
 msgstr "Tipe"
 
-#. js-lingui-id: yS0vV0
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Unidade Comercial"
-msgstr ""
+#. js-lingui-id: RBJNRI
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Unique field cannot have a default value"
+msgstr "Unieke veld kan nie 'n standaardwaarde hê nie"
 
-#. js-lingui-id: QHdsoa
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Unidade comercial. Placeholder: UN"
-msgstr ""
+#. js-lingui-id: EBZdX5
+#: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
+msgid "Unsupported cron schedule type"
+msgstr "Nie-ondersteunde cron skedule tipe"
 
-#. js-lingui-id: aSwfbR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Unit"
-msgstr ""
+#. js-lingui-id: crxihq
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "Ongesteunde veldmetadata tipe {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3631,20 +3001,16 @@ msgstr ""
 msgid "Update DateTime"
 msgstr "Opdateringsdatum en tyd"
 
-#. js-lingui-id: qM884L
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User Agent"
-msgstr ""
+#. js-lingui-id: r5C2wB
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Updated field name is not synced with label"
+msgstr "Bygewerkte veldnaam is nie gesinchroniseer met etiket nie"
 
-#. js-lingui-id: srVp10
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User agent of the browser/device used to access the link"
-msgstr ""
-
-#. js-lingui-id: LJ3EUY
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User Document"
-msgstr ""
+#. js-lingui-id: l9dlVi
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User does not have access to this workspace"
+msgstr "Gebruiker het nie toegang tot hierdie werksruimte nie"
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3656,73 +3022,50 @@ msgstr "Gebruiker se e-pos"
 msgid "User Id"
 msgstr "Gebruiker se Id"
 
-#. js-lingui-id: pOjO8a
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User IP"
-msgstr ""
-
-#. js-lingui-id: nNRI18
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User phone"
-msgstr ""
+#. js-lingui-id: B43Kks
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User is not part of the workspace"
+msgstr "Gebruiker is nie deel van die werksruimte nie"
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Gebruiker se tydsone"
 
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr "Gebruiker is nie met e-pos/wagwoord geskep nie"
+
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "Gebruiker se voorkeur datumformaat"
+
+#. js-lingui-id: Uce+A8
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred start day of the week"
+msgstr "Gebruiker se verkose begindag van die week"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Gebruiker se voorkeur tydformaat"
 
-#. js-lingui-id: Wc3Q5/
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Campaign"
-msgstr ""
-
-#. js-lingui-id: zUH/4K
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Medium"
-msgstr ""
-
-#. js-lingui-id: XnlxVh
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Source"
-msgstr ""
-
-#. js-lingui-id: cNWodE
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#~ msgid "UV"
-#~ msgstr ""
-
-#. js-lingui-id: 9ifduX
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00"
-msgstr ""
-
-#. js-lingui-id: 1eObHA
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Valor/Alíquota IPI"
-msgstr ""
+#. js-lingui-id: ckX/Ew
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
+msgstr "Validering het misluk vir {invalidObjects} objek(te) en {invalidFields} veld(e)"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Waarde"
 
-#. js-lingui-id: BFDmoA
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Verify Token"
-msgstr ""
+#. js-lingui-id: UBPzFQ
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
+msgstr "Waarde moet in HOOFLETTERS wees en volg die slang_kasus \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3752,7 +3095,6 @@ msgstr "Weergawes"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "Beskou"
 
@@ -3760,6 +3102,11 @@ msgstr "Beskou"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Beskou Veld"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Aansigveld bestaan reeds."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3906,10 +3253,20 @@ msgstr "Bekyk posisie"
 msgid "View Sort"
 msgstr "Bekyk Sorteer"
 
+#. js-lingui-id: znNExx
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "Sorteer van aansigte (ID: {id}) nie gevind nie"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Bekyk Sorteer rigting"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "Sorteer van aansigte nie gevind nie"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3938,6 +3295,42 @@ msgstr "Bekyk teiken objek"
 msgid "View type"
 msgstr "Bekyk tipe"
 
+#. js-lingui-id: aeqysn
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "ViewId"
+msgstr "KykId"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "Aansig-ID is benodig"
+
+#. js-lingui-id: l88nXn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "ViewId is required to create a view field."
+msgstr "ViewId is benodig om 'n aansigveld te skep."
+
+#. js-lingui-id: 9XMTpT
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "ViewId is required to create a view filter group."
+msgstr "ViewId is benodig om 'n aansigfiltergroep te skep."
+
+#. js-lingui-id: pCCxli
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "ViewId is required to create a view filter."
+msgstr "ViewId is benodig om 'n aansigfilter te skep."
+
+#. js-lingui-id: 1X1RW5
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "ViewId is required to create a view group."
+msgstr "ViewId is benodig om 'n aansiggroep te skep."
+
+#. js-lingui-id: uGUFcy
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required to create a view sort."
+msgstr "ViewId is benodig om 'n aansigsorteer te skep."
+
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
@@ -3957,55 +3350,15 @@ msgstr "Sigbaarheid"
 msgid "Visible"
 msgstr "Sigbaar"
 
-#. js-lingui-id: TRDppN
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook"
-msgstr "Webhaak"
-
-#. js-lingui-id: fyB2Wp
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operation"
-msgstr "Webhaak werking"
-
-#. js-lingui-id: gONLmX
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operations"
-msgstr "Webhaak werkinge"
-
-#. js-lingui-id: cPoSTF
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook target url"
-msgstr "Webhaak-teiken-URL"
-
-#. js-lingui-id: v1kQyJ
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhooks"
-msgstr "Webhake"
-
-#. js-lingui-id: XYcw7G
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Website URL"
-msgstr ""
+#. js-lingui-id: xvV2NJ
+#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+msgid "We are experiencing a temporary issue with our database. Please try again later."
+msgstr "Ons ondervind 'n tydelike probleem met ons databasis. Probeer asseblief later weer."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Welkom by Twenty: Bevestig Asseblief Jou E-pos"
-
-#. js-lingui-id: 60h12G
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Whatsapp Integration"
-msgstr ""
-
-#. js-lingui-id: VFwGfG
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Whatsapp Integrations"
-msgstr ""
-
-#. js-lingui-id: thcy+J
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "WhatsappIntegrations"
-msgstr ""
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4022,12 +3375,7 @@ msgstr "Werksvloei"
 #. js-lingui-id: hdtWQn
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow automated triggers linked to the workflow."
-msgstr ""
-
-#. js-lingui-id: E03XpH
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#~ msgid "Workflow event listeners linked to the workflow."
-#~ msgstr "Werksvloei gebeurtenis luisteraars gekoppel aan die werksvloei."
+msgstr "Werksvloei geoutomatiseerde snellers gekoppel aan die werksvloei."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4050,6 +3398,12 @@ msgstr "Werksvloei Lopie"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "Werksvloei lopie geëindig op"
+
+#. js-lingui-id: NKQlas
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "Workflow run enqueued at"
+msgstr "Werksvloei lopie in tou geplaas op"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4093,6 +3447,22 @@ msgstr "Werksvloei weergawe"
 msgid "Workflow Version"
 msgstr "Werksvloei Weergawe"
 
+#. js-lingui-id: n4/IOE
+#: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
+msgid "Workflow version does not contain at least one step"
+msgstr "Werkvloeiontwikke se weergawe bevat nie ten minste een stap nie"
+
+#. js-lingui-id: k4DPlQ
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
+msgid "Workflow version does not contain trigger"
+msgstr "Werkvloeiontwikke se weergawe bevat nie 'n sneller nie"
+
+#. js-lingui-id: bqFL4g
+#: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
+msgid "Workflow version is not in draft status"
+msgstr "Werkvloeiontwikke se weergawe is nie in konsepstatus nie"
+
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
@@ -4116,32 +3486,17 @@ msgstr "Werksvloei weergawes gekoppel aan die werksvloei."
 #. js-lingui-id: s7p+TL
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTrigger"
-msgstr ""
+msgstr "WerksvloeiGeoutomatiseerdeSneller"
 
 #. js-lingui-id: 96bCgZ
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTrigger workflow"
-msgstr ""
+msgstr "WerksvloeiGeoutomatiseerdeSneller werksvloei"
 
 #. js-lingui-id: 5z92T9
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTriggers"
-msgstr ""
-
-#. js-lingui-id: ENOy6I
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListener"
-#~ msgstr "WerksvloeiGebeurtenisLuisteraar"
-
-#. js-lingui-id: HN90FO
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListener workflow"
-#~ msgstr "WerksvloeiGebeurtenisLuisteraar werksvloei"
-
-#. js-lingui-id: 3JA9se
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListeners"
-#~ msgstr "WerksvloeiGebeurtenisLuisteraars"
+msgstr "WerksvloeiGeoutomatiseerdeSnellers"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4157,6 +3512,11 @@ msgstr "WerksvloeiWeergawe"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
 msgstr "WerksvloeiWeergawe werksvloei"
+
+#. js-lingui-id: rklt6M
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace is not ready to welcome new members"
+msgstr "Werksruimte is nie gereed om nuwe lede te verwelkom nie"
 
 #. js-lingui-id: CbGxon
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -4193,17 +3553,68 @@ msgstr "Werkruimte lid posisie"
 msgid "Workspace Members"
 msgstr "Werkruimte Lede"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "Werksruimte-ID is benodig"
+
+#. js-lingui-id: kjLpTn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "WorkspaceId is required to create a view field."
+msgstr "WorkspaceId is benodig om 'n aansigveld te skep."
+
+#. js-lingui-id: zWj6VZ
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "WorkspaceId is required to create a view filter group."
+msgstr "WorkspaceId is benodig om 'n aansigfiltergroep te skep."
+
+#. js-lingui-id: jQMXtD
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "WorkspaceId is required to create a view filter."
+msgstr "WorkspaceId is benodig om 'n aansigfilter te skep."
+
+#. js-lingui-id: NAoJAX
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "WorkspaceId is required to create a view group."
+msgstr "WorkspaceId is benodig om 'n aansiggroep te skep."
+
+#. js-lingui-id: hU1QaN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required to create a view sort."
+msgstr "WorkspaceId is benodig om 'n aansigsorteer te skep."
+
+#. js-lingui-id: jtb/lI
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "WorkspaceId is required to create a view."
+msgstr "WorkspaceId is benodig om 'n aansig te skep."
+
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "WerkruimteLid"
 
+#. js-lingui-id: fV2Bu6
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password"
+msgstr "Verkeerde wagwoord"
+
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
-msgstr ""
+msgstr "X"
+
+#. js-lingui-id: z+7x/s
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+msgid "You must be authenticated to perform this action."
+msgstr "U moet geoutentiseer wees om hierdie aksie uit te voer."
+
+#. js-lingui-id: 8pqpv/
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your app version is out of date. Please refresh the page to continue."
+msgstr "Jou toepassingsweergawe is verouderd. Verfris asseblief die bladsy om voort te gaan."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -4214,3 +3625,8 @@ msgstr "Jou Wagwoord is Suksesvol Verander"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Jou spanlid verantwoordelik vir die bestuur van die maatskappy rekening"
+
+#. js-lingui-id: ej/tZF
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your workspace has been updated with a new data model. Please refresh the page."
+msgstr "U werksruimte is opgedateer met 'n nuwe datamodel. Ververs asseblief die bladsy."

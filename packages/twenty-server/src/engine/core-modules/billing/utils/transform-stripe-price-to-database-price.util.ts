@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
@@ -40,6 +40,7 @@ export const transformStripePriceToDatabasePrice = (data: Stripe.Price) => {
       ? getBillingPriceTiersMode(data.tiers_mode)
       : undefined,
     recurring: data.recurring === null ? undefined : data.recurring,
+    metadata: data.metadata,
   };
 };
 

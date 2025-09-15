@@ -2,17 +2,17 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { msg } from '@lingui/core/macro';
 
-import { useRecoilValue } from 'recoil';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -22,18 +22,14 @@ export const useRunWorkflowRecordActions = ({
   skip?: boolean;
 }) => {
   const { getIcon } = useIcons();
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const selectedRecordId =
+  const selectedRecordIds =
     contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
-
-  const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId ?? ''),
-  );
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
@@ -42,6 +38,31 @@ export const useRunWorkflowRecordActions = ({
     });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
+
+  const runWorkflowVersionOnSelectedRecords = useRecoilCallback(
+    ({ snapshot }) =>
+      async (
+        selectedRecordIds: string[],
+        activeWorkflowVersion: WorkflowVersion,
+      ) => {
+        for (const selectedRecordId of selectedRecordIds) {
+          const selectedRecord = snapshot
+            .getLoadable(recordStoreFamilyState(selectedRecordId))
+            .getValue();
+
+          if (!isDefined(selectedRecord)) {
+            continue;
+          }
+
+          await runWorkflowVersion({
+            workflowId: activeWorkflowVersion.workflowId,
+            workflowVersionId: activeWorkflowVersion.id,
+            payload: selectedRecord,
+          });
+        }
+      },
+    [runWorkflowVersion],
+  );
 
   return activeWorkflowVersions
     .filter((activeWorkflowVersion) =>
@@ -59,22 +80,23 @@ export const useRunWorkflowRecordActions = ({
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.RecordSelection,
-        label: msg`${name}`,
+        label: name,
+        shortLabel: name,
         position: index,
         Icon,
+        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (
           <Action
             onClick={async () => {
-              if (!isDefined(selectedRecord)) {
+              if (!isDefined(selectedRecordIds)) {
                 return;
               }
 
-              await runWorkflowVersion({
-                workflowId: activeWorkflowVersion.workflowId,
-                workflowVersionId: activeWorkflowVersion.id,
-                payload: selectedRecord,
-              });
+              await runWorkflowVersionOnSelectedRecords(
+                selectedRecordIds,
+                activeWorkflowVersion,
+              );
             }}
             closeSidePanelOnCommandMenuListActionExecution={false}
           />

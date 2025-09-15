@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType, RelationType } from '~/generated/graphql';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
@@ -15,6 +15,8 @@ import {
   variables,
 } from '../__mocks__/useFieldMetadataItem';
 
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
@@ -74,26 +76,12 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
 const mocks = [
   {
     request: {
-      query: queries.findManyViewsQuery,
-      variables: {
-        filter: {
-          objectMetadataId: { eq: '25611fce-6637-4089-b0ca-91afeec95784' },
-        },
-      },
+      query: GET_CURRENT_USER,
+      variables: {},
     },
     result: jest.fn(() => ({
       data: {
-        views: {
-          __typename: 'ViewConnection',
-          totalCount: 0,
-          pageInfo: {
-            __typename: 'PageInfo',
-            hasNextPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-          edges: [],
-        },
+        currentUser: mockedUserData,
       },
     })),
   },
@@ -128,15 +116,6 @@ const mocks = [
       data: {
         createOneField: responseData.createMetadataField,
       },
-    })),
-  },
-  {
-    request: {
-      query: queries.getCurrentUser,
-      variables: {},
-    },
-    result: jest.fn(() => ({
-      data: responseData.getCurrentUser,
     })),
   },
   {
@@ -215,7 +194,10 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deleteMetadataField(fieldMetadataItem);
+      const res = await result.current.deleteMetadataField({
+        idToDelete: fieldMetadataItem.id,
+        objectMetadataId,
+      });
 
       expect(res.data).toEqual({
         deleteOneField: responseData.default,
@@ -229,9 +211,10 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deleteMetadataField(
-        fieldRelationMetadataItem,
-      );
+      const res = await result.current.deleteMetadataField({
+        idToDelete: fieldRelationMetadataItem.id,
+        objectMetadataId,
+      });
 
       expect(res.data).toEqual({
         deleteOneField: responseData.fieldRelation,

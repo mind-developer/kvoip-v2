@@ -1,13 +1,14 @@
 /* @license Enterprise */
 
-import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
-import { BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
-import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
+import { type BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
+import { type BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
+import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+
 import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { getMarketingFeaturesList } from 'src/engine/core-modules/billing/utils/get-product-marketing-features-list.util';
 
 export const formatBillingDatabaseProductToGraphqlDTO = (

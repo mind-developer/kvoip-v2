@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
   BillingException,
@@ -30,10 +30,10 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
   private clearUsage = false;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,

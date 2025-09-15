@@ -1,27 +1,31 @@
-import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import {
+  type WorkflowAction,
+  type WorkflowRunStepStatus,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
+import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type WorkflowRunStepNodeDetailProps = {
   stepId: string;
   trigger: WorkflowTrigger | null;
   steps: Array<WorkflowAction> | null;
-  stepExecutionStatus?: WorkflowDiagramRunStatus;
+  stepExecutionStatus?: WorkflowRunStepStatus;
 };
 
 export const WorkflowRunStepNodeDetail = ({
@@ -172,7 +176,7 @@ export const WorkflowRunStepNodeDetail = ({
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
-                readonly: stepExecutionStatus !== 'running',
+                readonly: stepExecutionStatus !== 'PENDING',
               }}
             />
           );
@@ -192,6 +196,28 @@ export const WorkflowRunStepNodeDetail = ({
         case 'AI_AGENT': {
           return (
             <WorkflowEditActionAiAgent
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'FILTER': {
+          return (
+            <WorkflowEditActionFilter
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'ITERATOR': {
+          return (
+            <WorkflowEditActionIterator
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

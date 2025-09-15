@@ -1,10 +1,9 @@
-import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import {
-  CurrentWorkspace,
+  type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';

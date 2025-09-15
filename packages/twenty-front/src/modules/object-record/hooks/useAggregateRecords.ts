@@ -1,12 +1,13 @@
 import { useQuery } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,6 +32,8 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { aggregateQuery, gqlFieldToFieldMap } = useAggregateRecordsQuery({
     objectNameSingular,
     recordGqlFieldsAggregate,
@@ -49,6 +52,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
       variables: {
         filter,
       },
+      client: apolloCoreClient,
     },
   );
 

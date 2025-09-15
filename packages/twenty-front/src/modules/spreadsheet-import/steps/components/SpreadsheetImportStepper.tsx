@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
-import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
@@ -47,15 +46,15 @@ export const SpreadsheetImportStepper = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const handleError = useCallback(
     (description: string) => {
-      enqueueSnackBar(description, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: description,
       });
     },
-    [enqueueSnackBar],
+    [enqueueErrorSnackBar],
   );
 
   const handleBack = useCallback(() => {

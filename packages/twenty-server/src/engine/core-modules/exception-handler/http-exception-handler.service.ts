@@ -1,14 +1,26 @@
-import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
+import {
+  BadRequestException,
+  type HttpException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Scope,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
 import { ValidationError } from 'class-validator';
-import { Response } from 'express';
+import { type Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
-import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
-import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
+import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
 
 interface RequestAndParams {
@@ -16,6 +28,34 @@ interface RequestAndParams {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any;
 }
+
+const getErrorNameFromStatusCode = (statusCode: number) => {
+  switch (statusCode) {
+    case 400:
+      return 'BadRequestException';
+    case 401:
+      return 'UnauthorizedException';
+    case 403:
+      return 'ForbiddenException';
+    case 404:
+      return 'NotFoundException';
+    case 405:
+      return 'MethodNotAllowedException';
+    case 409:
+      return 'ConflictException';
+    case 422:
+      return 'UnprocessableEntityException';
+    case 500:
+      return 'InternalServerErrorException';
+    default: {
+      if (statusCode >= 500) {
+        return 'InternalServerErrorException';
+      }
+
+      return 'BadRequestException';
+    }
+  }
+};
 
 @Injectable({ scope: Scope.REQUEST })
 export class HttpExceptionHandlerService {
@@ -26,14 +66,12 @@ export class HttpExceptionHandlerService {
   ) {}
 
   handleError = (
-    exception: Error,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    exception: Error | HttpException,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
@@ -53,6 +91,25 @@ export class HttpExceptionHandlerService {
       statusCode = 400;
     }
 
+    if (
+      exception instanceof TwentyORMException &&
+      [
+        TwentyORMExceptionCode.INVALID_INPUT,
+        TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+        TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
+        TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+      ].includes(exception.code)
+    ) {
+      exception = new BadRequestException(exception.message);
+      statusCode = 400;
+    }
+
+    if (exception instanceof PostgresException) {
+      exception = new InternalServerErrorException(exception.message);
+      statusCode = 500;
+    }
+
     handleException({
       exception,
       exceptionHandlerService: this.exceptionHandlerService,
@@ -69,9 +126,8 @@ export class HttpExceptionHandlerService {
 
     return response.status(statusCode).send({
       statusCode,
-      error: exception.name || 'BadRequestException',
-      messages: [exception?.message ?? message],
-      ...(isClassValidatorExeption ? exception : {}),
+      error: exception.name ?? getErrorNameFromStatusCode(statusCode),
+      messages: [exception?.message],
     });
   };
 }

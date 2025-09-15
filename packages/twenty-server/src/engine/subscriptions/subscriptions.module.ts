@@ -1,13 +1,12 @@
-import { Inject, Module, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Module, type OnModuleDestroy } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
-import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
+import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.service';
 
 @Module({
-  exports: ['PUB_SUB'],
   providers: [
     {
       provide: 'PUB_SUB',
@@ -20,8 +19,9 @@ import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
         }),
     },
     SubscriptionsResolver,
-    SubscriptionsJob,
+    SubscriptionsService,
   ],
+  exports: ['PUB_SUB', SubscriptionsService],
 })
 export class SubscriptionsModule implements OnModuleDestroy {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}

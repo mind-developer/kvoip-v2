@@ -6,8 +6,7 @@ import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlag
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -21,7 +20,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { AvatarChip } from 'twenty-ui/components';
+import { Chip, AvatarChip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -33,10 +32,10 @@ import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  FeatureFlagKey,
+  type FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
@@ -57,7 +56,7 @@ export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [currentUser] = useRecoilState(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -74,9 +73,7 @@ export const SettingsAdminWorkspaceContent = ({
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
-      enqueueSnackBar(t`Please search for a user first`, {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: t`Please search for a user first` });
       return;
     }
 
@@ -98,8 +95,8 @@ export const SettingsAdminWorkspaceContent = ({
         );
       },
       onError: (error) => {
-        enqueueSnackBar(`Failed to impersonate user. ${error.message}`, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: `Failed to impersonate user. ${error.message}`,
         });
       },
     }).finally(() => {
@@ -128,8 +125,8 @@ export const SettingsAdminWorkspaceContent = ({
         if (isDefined(previousValue)) {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
-        enqueueSnackBar(`Failed to update feature flag. ${error.message}`, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: `Failed to update feature flag. ${error.message}`,
         });
       },
     });
@@ -140,15 +137,19 @@ export const SettingsAdminWorkspaceContent = ({
       Icon: IconHome,
       label: t`Name`,
       value: (
-        <AvatarChip
-          name={activeWorkspace?.name ?? ''}
-          avatarUrl={
-            getImageAbsoluteURI({
-              imageUrl: isNonEmptyString(activeWorkspace?.logo)
-                ? activeWorkspace?.logo
-                : DEFAULT_WORKSPACE_LOGO,
-              baseUrl: REACT_APP_SERVER_BASE_URL,
-            }) ?? ''
+        <Chip
+          label={activeWorkspace?.name ?? ''}
+          leftComponent={
+            <AvatarChip
+              avatarUrl={
+                getImageAbsoluteURI({
+                  imageUrl: isNonEmptyString(activeWorkspace?.logo)
+                    ? activeWorkspace?.logo
+                    : DEFAULT_WORKSPACE_LOGO,
+                  baseUrl: REACT_APP_SERVER_BASE_URL,
+                }) ?? ''
+              }
+            />
           }
         />
       ),

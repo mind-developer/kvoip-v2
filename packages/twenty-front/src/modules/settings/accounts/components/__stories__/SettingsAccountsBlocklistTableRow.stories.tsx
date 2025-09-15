@@ -1,9 +1,10 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const onRemoveJestFn = fn();
@@ -19,7 +20,7 @@ const meta: Meta<typeof SettingsAccountsBlocklistTableRow> = {
   title:
     'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistTableRow',
   component: SettingsAccountsBlocklistTableRow,
-  decorators: [ComponentDecorator, ClearMocksDecorator],
+  decorators: [ComponentDecorator, ClearMocksDecorator, I18nFrontDecorator],
   args: {
     blocklistItem: mockedBlocklist[0],
     onRemove: onRemoveJestFn,

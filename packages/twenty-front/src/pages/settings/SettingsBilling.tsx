@@ -10,7 +10,6 @@ import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscri
 import { useHandleUpdateSubscription } from '@/settings/billing/hooks/useHandleUpdateSubscription';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -28,11 +27,13 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  useBillingPortalSessionQuery,
+  useSwitchSubscriptionToYearlyIntervalMutation,
+} from '~/generated-metadata/graphql';
+import {
   BillingPaymentProviders,
   SubscriptionInterval,
   SubscriptionStatus,
-  useBillingPortalSessionQuery,
-  useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -45,7 +46,7 @@ export const SettingsBilling = () => {
 
   const { redirect } = useRedirect();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const billing = useRecoilValue(billingState);
 
@@ -113,12 +114,12 @@ export const SettingsBilling = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched to yearly.`, {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Subscription has been switched to yearly.`,
       });
     } catch (error: any) {
-      enqueueSnackBar(t`Error while switching subscription to yearly.`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error while switching subscription to yearly.`,
       });
     }
   };
@@ -135,12 +136,8 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        {/* {hasNotCanceledCurrentSubscription && (
-        {hasNotCanceledCurrentSubscription && (
-          <SettingsBillingSubscriptionInfo />
-        )}
-        {hasNotCanceledCurrentSubscription && (
-          <SettingsBillingMonthlyCreditsSection />
+        {/* {hasNotCanceledCurrentSubscription && currentWorkspace && (
+          <SettingsBillingCreditsSection currentWorkspace={currentWorkspace} />
         )} */}
         <Section>
           <H2Title
