@@ -13,13 +13,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useLingui } from '@lingui/react/macro';
 
 const newFinancialClosingFormSchema = FinancialClosingFormSchema.extend({
   workspaceId: z.string(),
-  id: z.string(),
+  id: z.string().optional(),
 });
 
 type FinancialClosingFormValues = z.infer<typeof newFinancialClosingFormSchema>;
@@ -35,16 +35,19 @@ export const SettingsFinancialClosingNew = () => {
     mode: 'onTouched',
     resolver: zodResolver(newFinancialClosingFormSchema),
     defaultValues: {
+      id: '',
       name: '',
       lastDayMonth: false,
       time: '00:00',
+      day: undefined, // Campo obrigatório - precisa ser preenchido
+      billingModelIds: [], // Campo obrigatório - precisa ser preenchido
       workspaceId: currentWorkspace?.id,
     },
   });
 
-  const { isValid, isSubmitting } = formConfig.formState;
+  const { isValid, isSubmitting, errors } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
-
+  
   const settingsFinancialClosingPagePath = getSettingsPath(
     SettingsPath.FinancialClosing,
   );

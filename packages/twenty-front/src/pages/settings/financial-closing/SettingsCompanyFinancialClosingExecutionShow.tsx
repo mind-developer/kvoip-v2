@@ -65,6 +65,14 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
       financialClosingExecution: generateDepthOneRecordGqlFields({
         objectMetadataItem: executionObjectMetadataItem,
       }),
+      charge: {
+        id: true,
+      },
+      notasFiscais: {
+        id: true,
+        nfStatus: true,
+        nfType: true,
+      },
     },
   });
 

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
@@ -10,10 +11,20 @@ import { getNfTypeLabel, NfType } from 'src/modules/focus-nfe/types/NfType';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 import { ProductTypeStatus, ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { Repository } from 'typeorm';
+import {
+  BRAZILIAN_STATES,
+  CfopCommunicationEnum,
+  CstIcmsCsosnEnum,
+  ISS_RATES,
+  NF_TEXTS,
+  NfComClassificationEnum,
+  normalizeState,
+  ServiceListItemEnum,
+  UNIT_VALUES,
+  UnitOfMeasureEnum,
+} from './constants/nf-constants';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
-import { FinancialClosingExecutionStatusEnum } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
-import { addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 
 @Injectable()
 export class FinancialClosingNFService {
@@ -101,13 +112,15 @@ export class FinancialClosingNFService {
           : charge.price,
         percentNfcom: company.percentNfcom,
         cfop: cfop,
-        cstIcmsCsosn: '00',
-        unitOfMeasure: '4', // 4 - 'UN'
-        unidade: '1.00',
-        classificacao: '0100101', // 	Assinatura de serviços de telefonia (Tabela cClass NFCom)
+        cstIcmsCsosn: CstIcmsCsosnEnum.NORMAL_REGIME,
+        unitOfMeasure: UnitOfMeasureEnum.UN,
+        unidade: UNIT_VALUES.DEFAULT,
+        classificacao: NfComClassificationEnum.TELEPHONY_SERVICE,
         codAssinante: company.id.substring(0, 30),
         numContratoAssinante: `${NfType.NFCOM}-${charge.id}`.substring(0, 15),
 
+        companyFinancialClosingExecution: companyExecutionLog ?? null,
+        companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null,
         company: company,
         companyId: company.id,
         charge: charge,
@@ -124,12 +137,12 @@ export class FinancialClosingNFService {
 
       const fakeProductNfCom = {
         id: nfCom.id,
-        name: 'Plano de telefonia',
+        name: NF_TEXTS.TELEPHONY_PLAN,
         producttype: ProductTypeStatus.COMMODITY,
-        unitOfMeasure: '4', // 4 - 'UN'
-        unidade: '1',
-        classificacao: '0100101',
-        cstIcmsCsosn: '00', // Caso Regime normal 00, caso Simples Nacional (SN) 102.
+        unitOfMeasure: UnitOfMeasureEnum.UN,
+        unidade: UNIT_VALUES.SINGLE,
+        classificacao: NfComClassificationEnum.TELEPHONY_SERVICE,
+        cstIcmsCsosn: CstIcmsCsosnEnum.NORMAL_REGIME,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       } as unknown as ProductWorkspaceEntity;
@@ -148,6 +161,10 @@ export class FinancialClosingNFService {
         nfCom.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfCom.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
         
+        await notaFiscalRepository.update(nfCom.id, {
+          companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null
+        });
+
         await notaFiscalRepository.save(nfCom);
 
         if (companyExecutionLog && companyFinancialClosingExecutionsRepository) {
@@ -189,12 +206,14 @@ export class FinancialClosingNFService {
             ? charge.price.toString()
             : charge.price,
 
-        aliquotaIss: 0.05, // Varia de acordo com o municipio, 2% a 5%
-        discriminacao: 'Serviço de telefonia',
+        aliquotaIss: ISS_RATES.DEFAULT,
+        discriminacao: NF_TEXTS.TELEPHONY_SERVICE,
         issRetido: false,
-        itemListaServico: '2919',
+        itemListaServico: ServiceListItemEnum.TELEPHONY,
         percentNfse: company.percentNfse,
 
+        companyFinancialClosingExecution: companyExecutionLog ?? null,
+        companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null,
         company: company,
         companyId: company.id,
         charge: charge,
@@ -213,7 +232,7 @@ export class FinancialClosingNFService {
 
       const fakeProductNfse = {
         id: nfse.id,
-        name: 'Plano de telefonia',
+        name: NF_TEXTS.TELEPHONY_PLAN,
         issRetido: false,
         producttype: ProductTypeStatus.SERVICE,
         createdAt: new Date().toISOString(),
@@ -230,9 +249,13 @@ export class FinancialClosingNFService {
         this.logger.log(
           `NOTA FISCAL EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
         );
-
+        
         nfse.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfse.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
+
+        await notaFiscalRepository.update(nfse.id, {
+          companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null
+        });
 
         await notaFiscalRepository.save(nfse);
 
@@ -279,50 +302,21 @@ export class FinancialClosingNFService {
       );
     }
 
-    const normalizedEmitter = emitterState.trim().toUpperCase();
-    const normalizedClient = clientState.trim().toUpperCase();
+    const normalizedEmitter = normalizeState(emitterState);
+    const normalizedClient = normalizeState(clientState);
 
     // Exterior → não tem UF válida no Brasil
-    const validUFs = [
-      'AC',
-      'AL',
-      'AP',
-      'AM',
-      'BA',
-      'CE',
-      'DF',
-      'ES',
-      'GO',
-      'MA',
-      'MT',
-      'MS',
-      'MG',
-      'PA',
-      'PB',
-      'PR',
-      'PE',
-      'PI',
-      'RJ',
-      'RN',
-      'RS',
-      'RO',
-      'RR',
-      'SC',
-      'SP',
-      'SE',
-      'TO',
-    ];
-    const isClientExterior = !validUFs.includes(normalizedClient);
+    const isClientExterior = !BRAZILIAN_STATES.includes(normalizedClient as any);
 
     if (isClientExterior) {
-      return '7307'; // Prestação para exterior
+      return CfopCommunicationEnum.EXTERIOR;
     }
 
     if (normalizedEmitter === normalizedClient) {
-      return '5307'; // Prestação dentro do estado
+      return CfopCommunicationEnum.INTRASTATE;
     }
 
-    return '6307'; // Prestação interestadual
+    return CfopCommunicationEnum.INTERSTATE;
   }
 
 }

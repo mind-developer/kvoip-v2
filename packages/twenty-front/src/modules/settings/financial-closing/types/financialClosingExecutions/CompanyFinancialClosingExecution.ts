@@ -18,6 +18,9 @@ export interface CompanyFinancialClosingExecution {
     name: string;
     financialClosingId: string;
   };
+  charge?: {
+    id: string;
+  };
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

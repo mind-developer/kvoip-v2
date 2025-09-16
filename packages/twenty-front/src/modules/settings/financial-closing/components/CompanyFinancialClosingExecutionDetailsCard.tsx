@@ -5,7 +5,10 @@ import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/t
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useNavigate } from 'react-router-dom';
 import { Tag } from 'twenty-ui/components';
+import { IconExternalLink } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 const StyledCard = styled(Card)`
@@ -38,6 +41,20 @@ const StyledInfoValue = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
+const StyledButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledViewChargeButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+`;
+
 type CompanyFinancialClosingExecutionDetailsCardProps = {
   execution: CompanyFinancialClosingExecution;
 };
@@ -47,6 +64,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
 }: CompanyFinancialClosingExecutionDetailsCardProps) => {
   const theme = useTheme();
   const { t } = useLingui();
+  const navigate = useNavigate();
   const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
   const { getTypeEmissionNFLabel } = useTypeEmissionNFTranslations();
 
@@ -75,6 +93,15 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
     const minutos = String(date.getMinutes()).padStart(2, '0');
 
     return `${horas}:${minutos} - ${dia}/${mes}/${ano}`;
+  };
+
+  const handleViewCharge = () => {
+    if (execution.charge?.id) {
+      const chargeUrl = `/objects/charges?viewId=${execution.charge.id}`;
+      // window.open(chargeUrl, '_blank');
+      // use o navigate
+      navigate(chargeUrl);
+    }
   };
 
   return (
@@ -119,10 +146,21 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
 
         <StyledInfoRow>
           <StyledInfoLabel>{t`Completed Boleto Issuance`}:</StyledInfoLabel>
-          <Tag 
-            color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
-            text={getExecutionStatusText(execution.completedBoletoIssuance)} 
-          />
+          <StyledButtonContainer>
+            {/* {execution.charge?.id && (
+              <StyledViewChargeButton
+                variant="secondary"
+                size="small"
+                onClick={handleViewCharge}
+                title={t`View`}
+                Icon={IconExternalLink}
+              />
+            )} */}
+            <Tag 
+              color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
+              text={getExecutionStatusText(execution.completedBoletoIssuance)} 
+            />
+          </StyledButtonContainer>
         </StyledInfoRow>
 
         <StyledInfoRow>

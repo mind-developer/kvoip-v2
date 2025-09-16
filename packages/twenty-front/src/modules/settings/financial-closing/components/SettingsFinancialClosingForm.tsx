@@ -8,13 +8,14 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 
 const financialClosingMetadataFormSchema = z.object({
   id: z.string(),
   name: z.string().min(3, 'Name is required'),
-  lastDayMonth: z.boolean(),
+  lastDayMonth: z.boolean().default(false),
   
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Horário inválido'), // formato HH:mm
   day: z.number(),
@@ -73,6 +74,7 @@ export const SettingsFinancialClosingForm = ({
         id: activeFinancialClosing.id ?? '',
         name: activeFinancialClosing.name ?? '',
         lastDayMonth: activeFinancialClosing.lastDayMonth ?? false,
+        // lastDayMonth: false, // Sempre false - campo desabilitado
         day: activeFinancialClosing.day,
         time: activeFinancialClosing.time ?? '00:00',
         billingModelIds: activeFinancialClosing.billingModelIds ?? [],
@@ -166,12 +168,13 @@ export const SettingsFinancialClosingForm = ({
               <Checkbox
                 checked={value}
                 onCheckedChange={onChange}
-                disabled={disabled}
+                disabled={false}
               />
               <label>{t`Last day of the month`}</label>
             </div>
           )}
         /> */}
+
 
       </StyledInputsContainer>
     </Section>
