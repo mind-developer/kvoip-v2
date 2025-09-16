@@ -91,6 +91,7 @@ export const useAddressAutocomplete = (
           placeData?.location?.lat ?? internalValue?.addressLat ?? null,
         addressLng:
           placeData?.location?.lng ?? internalValue?.addressLng ?? null,
+        addressNumber: internalValue?.addressNumber ?? null,
       };
 
       setTokenForPlaceApi(null);

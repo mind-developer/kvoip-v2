@@ -11,6 +11,7 @@ describe('joinAddressFieldValues', () => {
     addressCountry: 'United States',
     addressLat: 40.7128,
     addressLng: -74.006,
+    addressNumber: '0000',
   };
 
   it('should join specified address fields with commas', () => {
@@ -32,6 +33,7 @@ describe('joinAddressFieldValues', () => {
       addressCountry: null,
       addressLat: null,
       addressLng: null,
+      addressNumber: null,
     };
 
     const result = joinAddressFieldValues(addressWithNulls, [
@@ -41,6 +43,7 @@ describe('joinAddressFieldValues', () => {
       'addressState',
       'addressPostcode',
       'addressCountry',
+      'addressNumber',
     ]);
     expect(result).toBe('456 Oak Ave,CA,90210');
   });
@@ -77,6 +80,7 @@ describe('joinAddressFieldValues', () => {
       addressCountry: null,
       addressLat: null,
       addressLng: null,
+      addressNumber: null,
     };
 
     const result = joinAddressFieldValues(emptyAddress, [

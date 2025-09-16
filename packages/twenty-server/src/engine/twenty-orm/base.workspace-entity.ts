@@ -40,6 +40,7 @@ export abstract class BaseWorkspaceEntity {
     },
   })
   @WorkspaceIsFieldUIReadOnly()
+  @Field(() => Date, { nullable: false })
   createdAt: string;
 
   @WorkspaceField({
@@ -54,6 +55,7 @@ export abstract class BaseWorkspaceEntity {
     },
   })
   @WorkspaceIsFieldUIReadOnly()
+  @Field(() => Date, { nullable: false })
   updatedAt: string;
 
   @WorkspaceField({

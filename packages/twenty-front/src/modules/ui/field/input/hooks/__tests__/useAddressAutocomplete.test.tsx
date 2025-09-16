@@ -117,6 +117,7 @@ describe('useAddressAutocomplete', () => {
       addressPostcode: null,
       addressLat: null,
       addressLng: null,
+      addressNumber: null,
     };
 
     await act(async () => {
@@ -164,6 +165,7 @@ describe('useAddressAutocomplete', () => {
       addressPostcode: '90210',
       addressLat: 34.0522,
       addressLng: -118.2437,
+      addressNumber: '0000',
     };
 
     await act(async () => {
@@ -184,6 +186,7 @@ describe('useAddressAutocomplete', () => {
       addressPostcode: '90210',
       addressLat: 34.0522,
       addressLng: -118.2437,
+      addressNumber: '0000',
     });
   });
 

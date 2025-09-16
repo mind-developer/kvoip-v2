@@ -1,4 +1,4 @@
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberTimeFormatEnum,

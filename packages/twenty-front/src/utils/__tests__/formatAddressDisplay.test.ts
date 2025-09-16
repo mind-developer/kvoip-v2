@@ -11,6 +11,7 @@ describe('formatAddressDisplay', () => {
     addressCountry: 'United States',
     addressLat: 40.7128,
     addressLng: -74.006,
+    addressNumber: '0000',
   };
 
   it('should return empty string when fieldValue is undefined', () => {
@@ -57,6 +58,7 @@ describe('formatAddressDisplay', () => {
       addressCountry: 'United States',
       addressLat: null,
       addressLng: null,
+      addressNumber: null,
     };
 
     const result = formatAddressDisplay(partialAddress, [
@@ -84,6 +86,7 @@ describe('formatAddressDisplay', () => {
       addressCountry: null,
       addressLat: null,
       addressLng: null,
+      addressNumber: null,
     };
 
     const result = formatAddressDisplay(emptyAddress, [

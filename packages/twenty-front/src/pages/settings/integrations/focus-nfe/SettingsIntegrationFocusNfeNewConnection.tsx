@@ -6,7 +6,6 @@ import { useCreateFocusNfeIntegration } from '@/settings/integrations/focus-nfe/
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,7 +43,7 @@ export type SettingsIntegrationFocusNfeConnectionFormValues = z.infer<
 export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -99,8 +98,9 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
 
       navigate(SettingsPath.IntegrationFocusNfe);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };
