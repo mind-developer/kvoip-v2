@@ -5,6 +5,7 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { ChatbotFlowResolver } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.resolver';
 import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
@@ -13,7 +14,6 @@ import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/ha
 import { HandlersModule } from 'src/engine/core-modules/chatbot-flow/engine/handlers/handlers.module';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
-import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
@@ -33,7 +33,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   providers: [
     ChatbotFlowService,
     ChatbotFlowResolver,
-    MessageManagerService,
+    ChatMessageManagerService,
     TextInputHandler,
     ImageInputHandler,
     ConditionalInputHandler,

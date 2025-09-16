@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
-import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/mes
     FileInputHandler,
     ImageInputHandler,
     TextInputHandler,
-    MessageManagerService,
+    ChatMessageManagerService,
   ],
   exports: [
     ConditionalInputHandler,

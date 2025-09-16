@@ -18,12 +18,11 @@ import {
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { Node } from '@xyflow/react';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -31,9 +30,8 @@ import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappEmmitResolvedchatsJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
-import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
+import { UpdateWhatsAppMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-whatsapp-message-data-input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
-import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import {
   IMessage,
   WhatsappDocument,
@@ -73,7 +71,7 @@ export class WhatsappService {
     private readonly firebaseService: FirebaseService,
     private readonly chatbotFlowService: ChatbotFlowService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly messageManagerService: MessageManagerService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
   ) {
     this.firestoreDb = this.firebaseService.getFirestoreDb();
   }
@@ -139,7 +137,9 @@ export class WhatsappService {
     }
   }
 
-  async updateMessageAtFirebase(updateMessageInput: UpdateMessageDataInput) {
+  async updateMessageAtFirebase(
+    updateMessageInput: UpdateWhatsAppMessageDataInput,
+  ) {
     const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
     const docId = `${updateMessageInput.integrationId}_${updateMessageInput.clientPhoneNumber}`;
     const docRef = doc(whatsappCollection, docId);
@@ -191,269 +191,263 @@ export class WhatsappService {
     >,
     isReceiving: boolean,
     workspaceId: string,
-    skipChatbot: boolean,
   ) {
-    try {
-      const messagesCollection = collection(this.firestoreDb, 'whatsapp');
-      const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
-      const docRef = doc(messagesCollection, docId);
-      const docSnapshot = await getDoc(docRef);
+    const messagesCollection = collection(this.firestoreDb, 'whatsapp');
+    const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
+    const docRef = doc(messagesCollection, docId);
+    const docSnapshot = await getDoc(docRef);
 
-      const personRepo =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-          workspaceId,
-          'person',
-          { shouldBypassPermissionChecks: true },
-        );
+    const personRepo =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
+        'person',
+        { shouldBypassPermissionChecks: true },
+      );
 
-      const whatsappWorkspaceEntityRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
-          workspaceId,
-          'whatsapp',
-          { shouldBypassPermissionChecks: true },
-        );
-      const whatsappIntegrationEntity =
-        await whatsappWorkspaceEntityRepository.findOne({
-          relations: ['chatbot'],
-          where: { id: whatsappDoc.integrationId },
-        });
-
-      const relatedPerson = await personRepo.findOneBy({
-        phones: { primaryPhoneNumber: whatsappDoc.client.phone },
+    const whatsappWorkspaceEntityRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+        { shouldBypassPermissionChecks: true },
+      );
+    const whatsappIntegrationEntity =
+      await whatsappWorkspaceEntityRepository.findOne({
+        relations: ['chatbot'],
+        where: { id: whatsappDoc.integrationId },
       });
-      let clientName = relatedPerson?.name?.firstName
-        ? relatedPerson.name.firstName + ' ' + relatedPerson.name.lastName
-        : whatsappDoc.client.name;
 
-      let createdPerson: Partial<PersonWorkspaceEntity | null> = null;
-      if (!relatedPerson)
-        createdPerson = await personRepo.save({
-          name: {
-            firstName: whatsappDoc.client.name
-              ? whatsappDoc.client.name.split(' ')[0].trim()
-              : whatsappDoc.client.phone || '',
-            lastName: whatsappDoc.client.name
-              ? whatsappDoc.client.name.split(' ')[1].trim()
-              : '',
+    const relatedPerson = await personRepo.findOneBy({
+      phones: { primaryPhoneNumber: whatsappDoc.client.phone },
+    });
+    let clientName = relatedPerson?.name?.firstName
+      ? relatedPerson.name.firstName + ' ' + relatedPerson.name.lastName
+      : whatsappDoc.client.name;
+
+    let createdPerson: Partial<PersonWorkspaceEntity | null> = null;
+    if (!relatedPerson)
+      createdPerson = await personRepo.save({
+        name: {
+          firstName: whatsappDoc.client.name
+            ? whatsappDoc.client.name.split(' ')[0].trim()
+            : whatsappDoc.client.phone || '',
+          lastName: whatsappDoc.client.name
+            ? whatsappDoc.client.name.split(' ')[1].trim()
+            : '',
+        },
+        //TODO: parse number to get codes
+        phones: {
+          primaryPhoneNumber: whatsappDoc.client.phone,
+          primaryPhoneCallingCode: '',
+          primaryPhoneCountryCode: 'BR',
+          additionalPhones: [],
+        },
+        avatarUrl: whatsappDoc.client.ppUrl || undefined,
+      });
+
+    // baileys edge case
+    // client.name will be empty under these circumstances (first message, initiated by user)
+    // so we use the phone number
+    if (!docSnapshot.exists() && whatsappDoc.lastMessage.fromMe)
+      clientName = whatsappDoc.client.phone;
+
+    if (!docSnapshot.exists()) {
+      await setDoc(docRef, {
+        ...whatsappDoc,
+        timeline: [],
+        agent: 'empty',
+        sector: 'empty',
+        unreadMessages: isReceiving ? 1 : 0,
+        isVisible: true,
+        personId: createdPerson?.id || relatedPerson!.id,
+        client: {
+          name: clientName,
+          phone: whatsappDoc.client.phone,
+          ppUrl: whatsappDoc.client.ppUrl ?? null,
+          email: relatedPerson?.emails.primaryEmail ?? null,
+        },
+      });
+      if (isReceiving) {
+        const whatsappIntegrationWithWorkspace =
+          await this.whatsappIntegrationRepository.findOne({
+            relations: ['workspace'],
+            where: {
+              id: whatsappDoc.integrationId,
+            },
+          });
+
+        const sectorsFromWorkspace = await this.sectorRepository.find({
+          relations: ['agents'],
+          where: {
+            workspace: {
+              id: whatsappIntegrationWithWorkspace?.workspace.id,
+            },
           },
-          //TODO: parse number to get codes
-          phones: {
-            primaryPhoneNumber: whatsappDoc.client.phone,
-            primaryPhoneCallingCode: '',
-            primaryPhoneCountryCode: 'BR',
-            additionalPhones: [],
-          },
-          avatarUrl: whatsappDoc.client.ppUrl || undefined,
         });
 
-      console.log('finished repo stuff');
+        if (!sectorsFromWorkspace) {
+          return true;
+        }
 
-      // baileys edge case
-      // client.name will be empty under these circumstances (first message, initiated by user)
-      // so we use the phone number
-      if (!docSnapshot.exists() && whatsappDoc.lastMessage.fromMe)
-        clientName = whatsappDoc.client.phone;
+        await this.chatMessageManagerService.sendMessageNotification(
+          sectorsFromWorkspace.flatMap((sector) =>
+            sector.agents.map((agent) => agent.memberId),
+          ),
+          `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
+        );
+      }
+      return true;
+    }
 
-      if (!docSnapshot.exists()) {
-        await setDoc(docRef, {
-          ...whatsappDoc,
-          timeline: [],
-          agent: 'empty',
-          sector: 'empty',
-          unreadMessages: isReceiving ? 1 : 0,
-          isVisible: true,
-          personId: createdPerson?.id || relatedPerson!.id,
-          client: {
-            name: clientName,
-            phone: whatsappDoc.client.phone,
-            ppUrl: whatsappDoc.client.ppUrl ?? null,
-            email: relatedPerson?.emails.primaryEmail ?? null,
+    const whatsappIntegration = docSnapshot.data() as WhatsappDocument;
+
+    if (whatsappIntegration.status === statusEnum.Resolved) {
+      whatsappIntegration.status = statusEnum.Waiting;
+      whatsappIntegration.agent = 'empty';
+      whatsappIntegration.sector = 'empty';
+      whatsappIntegration.isVisible = true;
+    }
+    whatsappIntegration.personId = createdPerson?.id || relatedPerson!.id;
+    (whatsappIntegration.client.email =
+      relatedPerson?.emails.primaryEmail ?? null),
+      whatsappIntegration.messages.push({ ...whatsappDoc.messages[0] });
+    whatsappIntegration.lastMessage = { ...whatsappDoc.lastMessage };
+    whatsappIntegration.unreadMessages = isReceiving
+      ? whatsappIntegration.unreadMessages + 1
+      : 0;
+    whatsappIntegration.client.ppUrl =
+      (relatedPerson?.avatarUrl || whatsappDoc.client.ppUrl) ?? null;
+    whatsappIntegration.client.name = clientName;
+
+    await setDoc(docRef, whatsappIntegration);
+
+    if (isReceiving) {
+      if (whatsappIntegration.agent != 'empty') {
+        const agent = await this.agentRepository.findOne({
+          where: { id: whatsappIntegration.agent },
+        });
+
+        if (!agent) {
+          return true;
+        }
+
+        await this.chatMessageManagerService.sendMessageNotification(
+          [agent.memberId],
+          `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+        );
+      }
+
+      if (whatsappIntegration.sector != 'empty') {
+        const sector = await this.sectorRepository.findOne({
+          relations: ['workspace', 'agents'],
+          where: {
+            id: whatsappIntegration.sector,
           },
         });
-        if (isReceiving) {
-          const whatsappIntegrationWithWorkspace =
-            await this.whatsappIntegrationRepository.findOne({
-              relations: ['workspace'],
-              where: {
-                id: whatsappDoc.integrationId,
-              },
-            });
 
+        if (!sector) {
+          return true;
+        }
+
+        await this.chatMessageManagerService.sendMessageNotification(
+          sector.agents.map((agent) => agent.memberId),
+          `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+        );
+      }
+
+      if (
+        whatsappIntegration.status === statusEnum.Waiting &&
+        !whatsappDoc.lastMessage.fromMe
+      ) {
+        console.log('booting up chatbot');
+        const chatbotRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
+            workspaceId,
+            'chatbot',
+            { shouldBypassPermissionChecks: true },
+          );
+        const chatbotKey =
+          whatsappIntegration.integrationId +
+          '_' +
+          whatsappIntegration.client.phone;
+        let executor = this.chatbotFlowService.getExecutor(chatbotKey);
+        if (executor) {
+          console.log('got executor from service');
+          executor.runFlow(whatsappDoc.lastMessage.message);
+          return true;
+        }
+        console.log('creating new executor');
+        if (whatsappIntegrationEntity?.chatbotId) {
+          const chatbot = await chatbotRepository.findOne({
+            where: {
+              id: whatsappIntegrationEntity?.chatbotId,
+              statuses: ChatbotStatus.ACTIVE,
+            },
+          });
+          const flow = await this.chatbotFlowRepository.findOne({
+            where: { chatbotId: chatbot?.id },
+          });
+          if (!flow || !chatbot || !whatsappIntegration.client.phone)
+            return true;
           const sectorsFromWorkspace = await this.sectorRepository.find({
-            relations: ['agents'],
+            relations: ['workspace'],
             where: {
               workspace: {
-                id: whatsappIntegrationWithWorkspace?.workspace.id,
+                id: whatsappIntegration.workspaceId,
               },
             },
           });
 
-          if (!sectorsFromWorkspace) {
-            return true;
-          }
-
-          await this.messageManagerService.sendMessageNotification(
-            sectorsFromWorkspace.flatMap((sector) =>
-              sector.agents.map((agent) => agent.memberId),
-            ),
-            `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
-          );
-        }
-        return true;
-      }
-
-      const whatsappIntegration = docSnapshot.data() as WhatsappDocument;
-
-      if (whatsappIntegration.status === statusEnum.Resolved) {
-        whatsappIntegration.status = statusEnum.Waiting;
-        whatsappIntegration.agent = 'empty';
-        whatsappIntegration.sector = 'empty';
-        whatsappIntegration.isVisible = true;
-      }
-      whatsappIntegration.personId = createdPerson?.id || relatedPerson!.id;
-      (whatsappIntegration.client.email =
-        relatedPerson?.emails.primaryEmail ?? null),
-        whatsappIntegration.messages.push({ ...whatsappDoc.messages[0] });
-      whatsappIntegration.lastMessage = { ...whatsappDoc.lastMessage };
-      whatsappIntegration.unreadMessages = isReceiving
-        ? whatsappIntegration.unreadMessages + 1
-        : 0;
-      whatsappIntegration.client.ppUrl =
-        (relatedPerson?.avatarUrl || whatsappDoc.client.ppUrl) ?? null;
-      whatsappIntegration.client.name = clientName;
-
-      await setDoc(docRef, whatsappIntegration);
-
-      if (isReceiving) {
-        if (whatsappIntegration.agent != 'empty') {
-          const agent = await this.agentRepository.findOne({
-            where: { id: whatsappIntegration.agent },
-          });
-
-          if (!agent) {
-            return true;
-          }
-
-          await this.messageManagerService.sendMessageNotification(
-            [agent.memberId],
-            `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-          );
-        }
-
-        if (whatsappIntegration.sector != 'empty') {
-          const sector = await this.sectorRepository.findOne({
-            relations: ['workspace', 'agents'],
-            where: {
-              id: whatsappIntegration.sector,
+          executor = this.chatbotFlowService.createExecutor({
+            integrationId: whatsappIntegration.integrationId,
+            workspaceId,
+            chatbotName: chatbot?.name || 'Chatbot',
+            chatbotFlow: {
+              nodes: flow.nodes,
+              edges: flow.edges,
+              workspace: { id: workspaceId },
+            },
+            sendTo: whatsappIntegration.client.phone ?? '',
+            personId: relatedPerson?.id ?? createdPerson?.id ?? '',
+            sectors: sectorsFromWorkspace,
+            onMessage: async (response, sentMessage) => {
+              await new Promise((r) => setTimeout(r, 2000));
+              if (!sentMessage) return;
+              const parsedMessage = {
+                ...sentMessage,
+                message: sentMessage.message ?? '',
+                createdAt: new Date(),
+                id: response?.messages[0].id ?? '',
+              };
+              const newMessages = [
+                ...whatsappIntegration.messages,
+                parsedMessage,
+              ];
+              whatsappIntegration.lastMessage = parsedMessage;
+              whatsappIntegration.messages = newMessages;
+              await setDoc(docRef, whatsappIntegration);
+            },
+            onFinish: (_, sectorId: string) => {
+              if (sectorId) {
+                console.log('transfer to sector:', sectorId);
+                // transferBotService(
+                //   whatsappIntegration.integrationId,
+                //   whatsappIntegration.client.name ?? '',
+                //   statusEnum.Waiting,
+                //   sendWhatsappEventMessage,
+                //   sectorId,
+                //   sectorsFromWorkspace,
+                //   chatbot.name,
+                // );
+              }
+              this.chatbotFlowService.clearExecutor(chatbotKey);
             },
           });
-
-          if (!sector) {
-            return true;
-          }
-
-          await this.messageManagerService.sendMessageNotification(
-            sector.agents.map((agent) => agent.memberId),
-            `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-          );
-        }
-
-        if (whatsappIntegration.status === statusEnum.Waiting && !skipChatbot) {
-          console.log('booting up chatbot');
-          const chatbotRepository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
-              workspaceId,
-              'chatbot',
-              { shouldBypassPermissionChecks: true },
-            );
-          const chatbotKey =
-            whatsappIntegration.integrationId +
-            '_' +
-            whatsappIntegration.client.phone;
-          let executor = this.chatbotFlowService.getExecutor(chatbotKey);
-          if (executor) {
-            console.log('got executor from service');
-            executor.runFlow(whatsappDoc.lastMessage.message);
-            return true;
-          }
-          console.log('creating new executor');
-          if (whatsappIntegrationEntity?.chatbotId) {
-            const chatbot = await chatbotRepository.findOne({
-              where: {
-                id: whatsappIntegrationEntity?.chatbotId,
-                statuses: ChatbotStatus.ACTIVE,
-              },
-            });
-            const flow = await this.chatbotFlowRepository.findOne({
-              where: { chatbotId: chatbot?.id },
-            });
-            if (!flow || !chatbot || !whatsappIntegration.client.phone)
-              return true;
-            const sectorsFromWorkspace = await this.sectorRepository.find({
-              relations: ['workspace'],
-              where: {
-                workspace: {
-                  id: whatsappIntegration.workspaceId,
-                },
-              },
-            });
-
-            executor = this.chatbotFlowService.createExecutor(
-              whatsappIntegration.integrationId,
-              workspaceId,
-              chatbot?.name || 'Chatbot',
-              {
-                nodes: flow.nodes,
-                edges: flow.edges,
-                workspace: { id: workspaceId },
-              },
-              whatsappIntegration.client.phone ?? '',
-              relatedPerson?.id ?? createdPerson?.id ?? '',
-              sectorsFromWorkspace,
-              (
-                node: Omit<Node, 'data'> & {
-                  data: { text: string; type: MessageTypes };
-                },
-                sectorId: string,
-              ) => {
-                whatsappDoc.messages.push({
-                  from: chatbot?.name ?? '',
-                  fromMe: true,
-                  message: node.data?.text,
-                  type: node.data?.type,
-                  createdAt: new Date(),
-                });
-                this.saveMessageAtFirebase(
-                  whatsappDoc,
-                  false,
-                  workspaceId,
-                  true,
-                );
-                if (sectorId) {
-                  console.log('transfer to sector:', sectorId);
-                  // transferBotService(
-                  //   whatsappIntegration.integrationId,
-                  //   whatsappIntegration.client.name ?? '',
-                  //   statusEnum.Waiting,
-                  //   sendWhatsappEventMessage,
-                  //   sectorId,
-                  //   sectorsFromWorkspace,
-                  //   chatbot.name,
-                  // );
-                }
-                this.chatbotFlowService.clearExecutor(chatbotKey);
-                console.log('cleared executor');
-              },
-            );
-            executor.runFlow(whatsappDoc.lastMessage.message);
-          }
+          executor.runFlow(whatsappDoc.lastMessage.message);
         }
       }
-
-      return true;
-    } catch (error) {
-      throw new Error(error);
     }
+
+    return true;
   }
   async saveEventMessageAtFirebase(
     whatsappDoc: Omit<

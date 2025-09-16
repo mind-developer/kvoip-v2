@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
 import {
-  SendMessageInput,
-  SendTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+  SendWhatsAppMessageInput,
+  SendWhatsAppTemplateInput,
+} from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
 import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
 import { parseFields } from 'src/engine/core-modules/meta/whatsapp/utils/parseMessage';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -11,7 +11,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
 @Injectable()
-export class MessageManagerService {
+export class ChatMessageManagerService {
   META_API_URL: string;
 
   constructor(
@@ -22,7 +22,7 @@ export class MessageManagerService {
   }
 
   async sendWhatsAppMessage(
-    input: SendMessageInput,
+    input: SendWhatsAppMessageInput,
     workspaceId: string,
   ): Promise<SendMessageResponse | null> {
     const integration = await (
@@ -55,7 +55,10 @@ export class MessageManagerService {
     return response.data;
   }
 
-  async sendWhatsAppTemplate(input: SendTemplateInput, workspaceId: string) {
+  async sendWhatsAppTemplate(
+    input: SendWhatsAppTemplateInput,
+    workspaceId: string,
+  ) {
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
         workspaceId,

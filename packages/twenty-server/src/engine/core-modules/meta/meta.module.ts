@@ -6,6 +6,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
@@ -23,7 +24,6 @@ import { WhatsappEmmitWaitingStatusJob } from 'src/engine/core-modules/meta/what
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
-import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
 import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
@@ -68,7 +68,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     WhatsappEmmitWaitingStatusJob,
     WhatsappEmmitResolvedchatsJob,
     WhatsappCronCommand,
-    MessageManagerService,
+    ChatMessageManagerService,
     TextInputHandler,
     ImageInputHandler,
     ConditionalInputHandler,
