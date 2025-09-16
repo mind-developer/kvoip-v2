@@ -44,8 +44,8 @@ function on_exit {
 trap on_exit EXIT
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
-version=${VERSION:-$(curl -s "https://hub.docker.com/v2/repositories/mind-developer/kvoip-v2/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
-branch=${BRANCH:-$(curl -s https://api.github.com/repos/mind-developer/kvoip-v2/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
+version=${VERSION:-$(curl -s "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
+branch=${BRANCH:-$(curl -s https://api.github.com/repos/twentyhq/twenty/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
 
 echo "🚀 Using docker version $version and Github branch $branch"
 
@@ -74,11 +74,11 @@ mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access di
 
 # Copy twenty/packages/twenty-docker/docker-compose.yml in it
 echo -e "\t• Copying docker-compose.yml"
-curl -sLo docker-compose.yml https://raw.githubusercontent.com/mind-developer/kvoip-v2/$branch/packages/twenty-docker/docker-compose.yml
+curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 
 # Copy twenty/packages/twenty-docker/.env.example to .env
 echo -e "\t• Setting up .env file"
-curl -sLo .env https://raw.githubusercontent.com/mind-developer/kvoip-v2/$branch/packages/twenty-docker/.env.example
+curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
 if [[ $(uname) == "Darwin" ]]; then
