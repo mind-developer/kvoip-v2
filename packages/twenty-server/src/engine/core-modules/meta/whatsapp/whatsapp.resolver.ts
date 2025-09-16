@@ -1,14 +1,20 @@
 /* eslint-disable @nx/workspace-graphql-resolvers-should-be-guarded */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { SendMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
+import { ChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/chatMessageQueueData';
+import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
   SendEventMessageInput,
-  SendMessageInput,
-  SendTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
-import { UpdateMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-message-data-input';
-import { MessageManagerService } from 'src/engine/core-modules/meta/whatsapp/message-manager/message-manager.service';
+  SendWhatsAppMessageInput,
+  SendWhatsAppTemplateInput,
+} from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
+import { UpdateWhatsAppMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-whatsapp-message-data-input';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
@@ -18,34 +24,37 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 @Resolver('Whatsapp')
 export class WhatsappResolver {
   constructor(
-    private readonly messageManagerService: MessageManagerService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
     private readonly whatsappService: WhatsappService,
+    @InjectMessageQueue(MessageQueue.whatsappChatQueue)
+    private chatMessageManagerQueue: MessageQueueService,
   ) {}
 
   @Mutation(() => Boolean)
-  async sendTemplate(
-    @Args('sendTemplateInput') sendTemplateInput: SendTemplateInput,
+  async sendWhatsAppTemplate(
+    @Args('sendWhatsAppTemplateInput')
+    sendWhatsAppTemplateInput: SendWhatsAppTemplateInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
     const sendTemplateConfirmation =
-      await this.messageManagerService.sendWhatsAppTemplate(
-        sendTemplateInput,
+      await this.chatMessageManagerService.sendWhatsAppTemplate(
+        sendWhatsAppTemplateInput,
         workspace.id,
       );
 
     if (sendTemplateConfirmation) {
       const today = new Date();
-      const messageEvent = `${sendTemplateInput.agent?.name} started the service (${today.toISOString().split('T')[0].replace(/-/g, '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`;
+      const messageEvent = `${sendWhatsAppTemplateInput.agent?.name} started the service (${today.toISOString().split('T')[0].replace(/-/g, '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`;
 
       const lastMessage = {
         createdAt: today,
         from: 'system',
-        message: sendTemplateInput.message,
+        message: sendWhatsAppTemplateInput.message,
         type: 'template',
       };
 
       const timeline = {
-        agent: `${sendTemplateInput.agent?.name}`,
+        agent: `${sendWhatsAppTemplateInput.agent?.name}`,
         date: today,
         event: 'started',
       };
@@ -54,12 +63,12 @@ export class WhatsappResolver {
         WhatsappDocument,
         'unreadMessages' | 'isVisible'
       > = {
-        integrationId: sendTemplateInput.integrationId,
+        integrationId: sendWhatsAppTemplateInput.integrationId,
         client: {
-          phone: sendTemplateInput.to.slice(1),
-          name: sendTemplateInput.to.slice(1),
+          phone: sendWhatsAppTemplateInput.to.slice(1),
+          name: sendWhatsAppTemplateInput.to.slice(1),
         },
-        personId: sendTemplateInput.personId,
+        personId: sendWhatsAppTemplateInput.personId,
         messages: [
           {
             ...lastMessage,
@@ -67,7 +76,7 @@ export class WhatsappResolver {
         ],
         status: statusEnum.InProgress,
         timeline: [timeline],
-        agent: sendTemplateInput.agent?.id,
+        agent: sendWhatsAppTemplateInput.agent?.id,
         sector: 'empty',
         lastMessage,
       };
@@ -94,60 +103,72 @@ export class WhatsappResolver {
   }
 
   @Mutation(() => Boolean)
-  async sendMessage(
-    @Args('sendMessageInput') sendMessageInput: SendMessageInput,
+  async sendWhatsAppMessage(
+    @Args('sendWhatsAppMessageInput')
+    sendWhatsAppMessageInput: SendWhatsAppMessageInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendMessageConfirmation =
-      await this.messageManagerService.sendWhatsAppMessage(
-        sendMessageInput,
-        workspace.id,
-      );
+    // this.chatMessageManagerService.sendWhatsAppMessage(
+    //   sendMessageInput,
+    //   workspace.id,
+    // );
 
-    if (sendMessageConfirmation) {
-      const lastMessage = {
-        createdAt: new Date(),
-        from: sendMessageInput.from,
-        fromMe: sendMessageInput.fromMe,
-        message: sendMessageInput.fileId
-          ? sendMessageInput.fileId
-          : sendMessageInput.message || '',
-        type: sendMessageInput.type,
-        id: sendMessageConfirmation.messages[0].id,
-        status: 'pending',
-      };
+    this.chatMessageManagerQueue.add<ChatMessageQueueData>(
+      SendMessageJob.name,
+      {
+        chatType: ChatIntegrationProviders.WhatsApp,
+        sendMessageInput: sendWhatsAppMessageInput,
+        workspaceId: workspace.id,
+      },
+    );
 
-      const whatsappIntegration: Omit<
-        WhatsappDocument,
-        'timeline' | 'unreadMessages' | 'isVisible'
-      > = {
-        integrationId: sendMessageInput.integrationId,
-        client: {
-          phone: sendMessageInput.to,
-        },
-        personId: sendMessageInput.personId,
-        messages: [
-          {
-            ...lastMessage,
-          },
-        ],
-        status: statusEnum.Waiting,
-        lastMessage,
-      };
+    return true;
 
-      return await this.whatsappService.saveMessageAtFirebase(
-        whatsappIntegration,
-        false,
-        workspace.id,
-      );
-    }
+    // if (sendMessageConfirmation) {
+    //   const lastMessage = {
+    //     createdAt: new Date(),
+    //     from: sendMessageInput.from,
+    //     fromMe: sendMessageInput.fromMe,
+    //     message: sendMessageInput.fileId
+    //       ? sendMessageInput.fileId
+    //       : sendMessageInput.message || '',
+    //     type: sendMessageInput.type,
+    //     id: sendMessageConfirmation.messages[0].id,
+    //     status: 'pending',
+    //   };
+
+    //   const whatsappIntegration: Omit<
+    //     WhatsappDocument,
+    //     'timeline' | 'unreadMessages' | 'isVisible'
+    //   > = {
+    //     integrationId: sendMessageInput.integrationId,
+    //     client: {
+    //       phone: sendMessageInput.to,
+    //     },
+    //     personId: sendMessageInput.personId,
+    //     messages: [
+    //       {
+    //         ...lastMessage,
+    //       },
+    //     ],
+    //     status: statusEnum.Waiting,
+    //     lastMessage,
+    //   };
+
+    //   return await this.whatsappService.saveMessageAtFirebase(
+    //     whatsappIntegration,
+    //     false,
+    //     workspace.id,
+    //   );
+    // }
 
     return false;
   }
 
   @Mutation(() => Boolean)
   async updateMessageData(
-    @Args('updateMessageInput') updateMessageInput: UpdateMessageDataInput,
+    @Args('updateMessageInput')
+    updateMessageInput: UpdateWhatsAppMessageDataInput,
   ) {
     return await this.whatsappService.updateMessageAtFirebase(
       updateMessageInput,

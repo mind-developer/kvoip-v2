@@ -234,6 +234,7 @@ export const CallCenterProvider = ({
   }, [firestoreDb, integrationWhatsappIds]);
 
   useEffect(() => {
+    return;
     const process = async () => {
       for (const chat of waitingChats) {
         const msgs = chat.messages;

@@ -1,7 +1,7 @@
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SendMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-message.input';
+import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
 
-export function parseFields(input: SendMessageInput) {
+export function parseFields(input: SendWhatsAppMessageInput) {
   const fields: any = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',

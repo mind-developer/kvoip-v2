@@ -1,12 +1,12 @@
 import { SEND_EVENT_MESSAGE } from '@/chat/call-center/graphql/mutation/sendWhatsappEventMessage';
-import { SendEventMessageInput } from '@/chat/call-center/types/SendMessage';
+import { SendWhatsAppEventMessageInput } from '@/chat/call-center/types/SendWhatsAppMessage';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
 interface SendEventMessageReturn {
   sendWhatsappEventMessage: (
-    sendEventMessageInput: SendEventMessageInput,
+    sendEventMessageInput: SendWhatsAppEventMessageInput,
   ) => Promise<void>;
 }
 
@@ -22,7 +22,7 @@ export const useSendWhatsappEventMessage = (): SendEventMessageReturn => {
   });
 
   const sendEventMessage = async (
-    sendEventMessageInput: SendEventMessageInput,
+    sendEventMessageInput: SendWhatsAppEventMessageInput,
   ) => {
     await sendEventMessageMutation({
       variables: {

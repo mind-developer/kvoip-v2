@@ -1407,8 +1407,8 @@ export type Mutation = {
   saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
-  sendMessage: Scalars['Boolean'];
-  sendTemplate: Scalars['Boolean'];
+  sendWhatsAppMessage: Scalars['Boolean'];
+  sendWhatsAppTemplate: Scalars['Boolean'];
   setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
@@ -1811,13 +1811,13 @@ export type MutationSendInvitationsArgs = {
 };
 
 
-export type MutationSendMessageArgs = {
-  sendMessageInput: SendMessageInput;
+export type MutationSendWhatsAppMessageArgs = {
+  sendWhatsAppMessageInput: SendWhatsAppMessageInput;
 };
 
 
-export type MutationSendTemplateArgs = {
-  sendTemplateInput: SendTemplateInput;
+export type MutationSendWhatsAppTemplateArgs = {
+  sendWhatsAppTemplateInput: SendWhatsAppTemplateInput;
 };
 
 
@@ -1938,7 +1938,7 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 
 export type MutationUpdateMessageDataArgs = {
-  updateMessageInput: UpdateMessageDataInput;
+  updateMessageInput: UpdateWhatsAppMessageDataInput;
 };
 
 
@@ -2863,6 +2863,7 @@ export type SendEventMessageInput = {
   fromMe?: InputMaybe<Scalars['Boolean']>;
   integrationId: Scalars['String'];
   message?: InputMaybe<Scalars['String']>;
+  personId: Scalars['String'];
   sector?: InputMaybe<MessageSector>;
   status: Scalars['String'];
   to: Scalars['String'];
@@ -2877,24 +2878,27 @@ export type SendInvitationsOutput = {
   success: Scalars['Boolean'];
 };
 
-export type SendMessageInput = {
+export type SendWhatsAppMessageInput = {
   fileId?: InputMaybe<Scalars['String']>;
   from: Scalars['String'];
   fromMe?: InputMaybe<Scalars['Boolean']>;
   integrationId: Scalars['String'];
   message?: InputMaybe<Scalars['String']>;
+  personId: Scalars['String'];
   to: Scalars['String'];
   type: Scalars['String'];
 };
 
-export type SendTemplateInput = {
+export type SendWhatsAppTemplateInput = {
   agent?: InputMaybe<MessageAgent>;
   from: Scalars['String'];
   integrationId: Scalars['String'];
   language: Scalars['String'];
   message: Scalars['String'];
+  personId: Scalars['String'];
   templateName: Scalars['String'];
   to: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type Sentry = {
@@ -3401,16 +3405,6 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
-export type UpdateMessageDataInput = {
-  clientPhoneNumber: Scalars['String'];
-  deleted: Scalars['Boolean'];
-  edited: Scalars['Boolean'];
-  id: Scalars['String'];
-  integrationId: Scalars['String'];
-  message: Scalars['String'];
-  status: Scalars['String'];
-};
-
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -3528,6 +3522,16 @@ export type UpdateTelephonyInput = {
   ramal_id?: InputMaybe<Scalars['String']>;
   recordCalls?: InputMaybe<Scalars['Boolean']>;
   type?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateWhatsAppMessageDataInput = {
+  clientPhoneNumber: Scalars['String'];
+  deleted: Scalars['Boolean'];
+  edited: Scalars['Boolean'];
+  id: Scalars['String'];
+  integrationId: Scalars['String'];
+  message: Scalars['String'];
+  status: Scalars['String'];
 };
 
 export type UpdateWhatsappIntegrationInput = {
@@ -4161,19 +4165,19 @@ export type SendEventMessageMutationVariables = Exact<{
 
 export type SendEventMessageMutation = { __typename?: 'Mutation', sendEventMessage: boolean };
 
-export type SendMessageMutationVariables = Exact<{
-  sendMessageInput: SendMessageInput;
+export type SendWhatsAppMessageMutationVariables = Exact<{
+  sendWhatsAppMessageInput: SendWhatsAppMessageInput;
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: boolean };
+export type SendWhatsAppMessageMutation = { __typename?: 'Mutation', sendWhatsAppMessage: boolean };
 
-export type SendTemplateMutationVariables = Exact<{
-  sendTemplateInput: SendTemplateInput;
+export type SendWhatsAppTemplateMutationVariables = Exact<{
+  sendWhatsAppTemplateInput: SendWhatsAppTemplateInput;
 }>;
 
 
-export type SendTemplateMutation = { __typename?: 'Mutation', sendTemplate: boolean };
+export type SendWhatsAppTemplateMutation = { __typename?: 'Mutation', sendWhatsAppTemplate: boolean };
 
 export type GetWhatsappTemplatesQueryVariables = Exact<{
   integrationId: Scalars['String'];
@@ -6513,68 +6517,68 @@ export function useSendEventMessageMutation(baseOptions?: Apollo.MutationHookOpt
 export type SendEventMessageMutationHookResult = ReturnType<typeof useSendEventMessageMutation>;
 export type SendEventMessageMutationResult = Apollo.MutationResult<SendEventMessageMutation>;
 export type SendEventMessageMutationOptions = Apollo.BaseMutationOptions<SendEventMessageMutation, SendEventMessageMutationVariables>;
-export const SendMessageDocument = gql`
-    mutation SendMessage($sendMessageInput: SendMessageInput!) {
-  sendMessage(sendMessageInput: $sendMessageInput)
+export const SendWhatsAppMessageDocument = gql`
+    mutation SendWhatsAppMessage($sendWhatsAppMessageInput: SendWhatsAppMessageInput!) {
+  sendWhatsAppMessage(sendWhatsAppMessageInput: $sendWhatsAppMessageInput)
 }
     `;
-export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+export type SendWhatsAppMessageMutationFn = Apollo.MutationFunction<SendWhatsAppMessageMutation, SendWhatsAppMessageMutationVariables>;
 
 /**
- * __useSendMessageMutation__
+ * __useSendWhatsAppMessageMutation__
  *
- * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSendWhatsAppMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendWhatsAppMessageMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ * const [sendWhatsAppMessageMutation, { data, loading, error }] = useSendWhatsAppMessageMutation({
  *   variables: {
- *      sendMessageInput: // value for 'sendMessageInput'
+ *      sendWhatsAppMessageInput: // value for 'sendWhatsAppMessageInput'
  *   },
  * });
  */
-export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+export function useSendWhatsAppMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendWhatsAppMessageMutation, SendWhatsAppMessageMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+        return Apollo.useMutation<SendWhatsAppMessageMutation, SendWhatsAppMessageMutationVariables>(SendWhatsAppMessageDocument, options);
       }
-export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
-export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
-export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
-export const SendTemplateDocument = gql`
-    mutation SendTemplate($sendTemplateInput: SendTemplateInput!) {
-  sendTemplate(sendTemplateInput: $sendTemplateInput)
+export type SendWhatsAppMessageMutationHookResult = ReturnType<typeof useSendWhatsAppMessageMutation>;
+export type SendWhatsAppMessageMutationResult = Apollo.MutationResult<SendWhatsAppMessageMutation>;
+export type SendWhatsAppMessageMutationOptions = Apollo.BaseMutationOptions<SendWhatsAppMessageMutation, SendWhatsAppMessageMutationVariables>;
+export const SendWhatsAppTemplateDocument = gql`
+    mutation SendWhatsAppTemplate($sendWhatsAppTemplateInput: SendWhatsAppTemplateInput!) {
+  sendWhatsAppTemplate(sendWhatsAppTemplateInput: $sendWhatsAppTemplateInput)
 }
     `;
-export type SendTemplateMutationFn = Apollo.MutationFunction<SendTemplateMutation, SendTemplateMutationVariables>;
+export type SendWhatsAppTemplateMutationFn = Apollo.MutationFunction<SendWhatsAppTemplateMutation, SendWhatsAppTemplateMutationVariables>;
 
 /**
- * __useSendTemplateMutation__
+ * __useSendWhatsAppTemplateMutation__
  *
- * To run a mutation, you first call `useSendTemplateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendTemplateMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSendWhatsAppTemplateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendWhatsAppTemplateMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [sendTemplateMutation, { data, loading, error }] = useSendTemplateMutation({
+ * const [sendWhatsAppTemplateMutation, { data, loading, error }] = useSendWhatsAppTemplateMutation({
  *   variables: {
- *      sendTemplateInput: // value for 'sendTemplateInput'
+ *      sendWhatsAppTemplateInput: // value for 'sendWhatsAppTemplateInput'
  *   },
  * });
  */
-export function useSendTemplateMutation(baseOptions?: Apollo.MutationHookOptions<SendTemplateMutation, SendTemplateMutationVariables>) {
+export function useSendWhatsAppTemplateMutation(baseOptions?: Apollo.MutationHookOptions<SendWhatsAppTemplateMutation, SendWhatsAppTemplateMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendTemplateMutation, SendTemplateMutationVariables>(SendTemplateDocument, options);
+        return Apollo.useMutation<SendWhatsAppTemplateMutation, SendWhatsAppTemplateMutationVariables>(SendWhatsAppTemplateDocument, options);
       }
-export type SendTemplateMutationHookResult = ReturnType<typeof useSendTemplateMutation>;
-export type SendTemplateMutationResult = Apollo.MutationResult<SendTemplateMutation>;
-export type SendTemplateMutationOptions = Apollo.BaseMutationOptions<SendTemplateMutation, SendTemplateMutationVariables>;
+export type SendWhatsAppTemplateMutationHookResult = ReturnType<typeof useSendWhatsAppTemplateMutation>;
+export type SendWhatsAppTemplateMutationResult = Apollo.MutationResult<SendWhatsAppTemplateMutation>;
+export type SendWhatsAppTemplateMutationOptions = Apollo.BaseMutationOptions<SendWhatsAppTemplateMutation, SendWhatsAppTemplateMutationVariables>;
 export const GetWhatsappTemplatesDocument = gql`
     query GetWhatsappTemplates($integrationId: String!) {
   getWhatsappTemplates(integrationId: $integrationId) {

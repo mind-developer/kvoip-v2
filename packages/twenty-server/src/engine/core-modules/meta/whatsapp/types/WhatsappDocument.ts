@@ -23,7 +23,7 @@ export type IClient = {
 };
 
 export type IMessage = {
-  id?: string;
+  id?: string | null;
   from: string;
   message: string;
   createdAt: Date;

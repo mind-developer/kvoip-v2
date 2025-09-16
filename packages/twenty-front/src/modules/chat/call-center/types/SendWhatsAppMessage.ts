@@ -1,6 +1,6 @@
 import { MessageType } from '@/chat/types/MessageType';
 
-export interface SendMessageInputBase {
+export interface SendWhatsAppMessageInputBase {
   integrationId: string;
   to: string;
   message?: string;
@@ -10,7 +10,8 @@ export interface SendMessageInputBase {
   personId: string;
 }
 
-export interface SendEventMessageInput extends SendMessageInputBase {
+export interface SendWhatsAppEventMessageInput
+  extends SendWhatsAppMessageInputBase {
   eventStatus: MessageType;
   status: string;
   from: string;
@@ -25,6 +26,6 @@ export interface SendEventMessageInput extends SendMessageInputBase {
   };
 }
 
-export interface SendMessageInput extends SendMessageInputBase {
+export interface SendWhatsAppMessageInput extends SendWhatsAppMessageInputBase {
   from: string;
 }

@@ -1,4 +1,4 @@
-export interface SendTemplateInput {
+export interface SendWhatsAppTemplateInput {
   integrationId: string | null;
   to: string | null;
   from: string | null;

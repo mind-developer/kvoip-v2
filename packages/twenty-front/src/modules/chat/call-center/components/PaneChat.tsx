@@ -593,10 +593,7 @@ export const PaneChat = () => {
                   fromMe: true,
                   status: 'attempting',
                   id: null,
-                  createdAt: {
-                    seconds: Date.now(),
-                    nanoseconds: Date.now() * 1000,
-                  },
+                  createdAt: new Date(),
                 },
               ],
             };
@@ -616,10 +613,7 @@ export const PaneChat = () => {
                   fromMe: true,
                   status: 'attempting',
                   id: null,
-                  createdAt: {
-                    seconds: Date.now(),
-                    nanoseconds: Date.now() * 1000,
-                  },
+                  createdAt: new Date(),
                 },
               ],
             };

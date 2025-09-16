@@ -207,11 +207,6 @@ export class WhatsappController {
           lastMessage,
         };
 
-        this.logger.log(
-          'Payload enviado ao Firestore:',
-          JSON.stringify(whatsappIntegration, null, 2),
-        );
-
         await this.whatsappService.saveMessageAtFirebase(
           whatsappIntegration,
           true,
