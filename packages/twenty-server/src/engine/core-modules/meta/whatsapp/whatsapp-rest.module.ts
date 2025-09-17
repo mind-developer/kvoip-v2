@@ -20,7 +20,7 @@ import { Workspace } from '../../workspace/workspace.entity';
 import { WhatsappIntegration } from './integration/whatsapp-integration.entity';
 import { WhatsappIntegrationService } from './integration/whatsapp-integration.service';
 import { WhatsappRestController } from './whatsapp-rest.controller';
-import { WhatsappService } from './whatsapp.service';
+import { WhatsAppService } from './whatsapp.service';
 
 @Module({
   imports: [
@@ -42,7 +42,7 @@ import { WhatsappService } from './whatsapp.service';
   controllers: [WhatsappRestController],
   providers: [
     WhatsappIntegrationService,
-    WhatsappService,
+    WhatsAppService,
     InboxService,
     GoogleStorageService,
     FirebaseService,

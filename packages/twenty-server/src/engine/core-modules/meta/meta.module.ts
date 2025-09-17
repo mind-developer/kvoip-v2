@@ -26,7 +26,7 @@ import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsa
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
 import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
-import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -53,7 +53,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     WorkspaceModule,
     MessageQueueModule,
   ],
-  exports: [WhatsappService],
+  exports: [WhatsAppService],
   controllers: [WhatsappController],
   providers: [
     ChatbotFlowService,
@@ -61,7 +61,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     WhatsappIntegrationService,
     WhatsappIntegrationResolver,
     InboxService,
-    WhatsappService,
+    WhatsAppService,
     WhatsappResolver,
     GoogleStorageService,
     FirebaseService,

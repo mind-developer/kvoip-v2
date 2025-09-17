@@ -2,6 +2,6 @@ import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/
 import { IMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 
 //https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#response-syntax
-export type SendMessageResponse = Partial<SendWhatsAppMessageInput> & {
-  messages: IMessage[];
+export type SendWhatsAppMessageResponse = Partial<SendWhatsAppMessageInput> & {
+  messages: Partial<IMessage[]>;
 };

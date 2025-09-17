@@ -58,7 +58,7 @@ export class MessageAgent {
 export class MessageSector extends MessageAgent {}
 
 @InputType()
-export class SendEventMessageInput extends MessageInput {
+export class SendWhatsAppEventMessageInput extends MessageInput {
   @Field()
   @IsString()
   eventStatus: string;

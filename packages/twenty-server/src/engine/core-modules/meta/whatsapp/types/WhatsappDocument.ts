@@ -1,6 +1,6 @@
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 
-export type WhatsappDocument = {
+export type WhatsAppDocument = {
   integrationId: string;
   workspaceId?: string;
   agent?: string;

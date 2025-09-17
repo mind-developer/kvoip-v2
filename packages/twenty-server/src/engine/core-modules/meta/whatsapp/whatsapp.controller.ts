@@ -13,8 +13,8 @@ import {
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
-import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
-import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('whatsapp')
@@ -23,7 +23,7 @@ export class WhatsappController {
 
   constructor(
     private whatsappIntegrationService: WhatsappIntegrationService,
-    private readonly whatsappService: WhatsappService,
+    private readonly whatsappService: WhatsAppService,
   ) {}
 
   @Get('/webhook/:workspaceId/:id')
@@ -63,16 +63,16 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     if (body.entry[0].changes[0].statuses) {
-      return await this.whatsappService.updateMessageAtFirebase({
-        integrationId: id,
-        id: body.entry[0].changes[0].statuses[0].id,
-        clientPhoneNumber:
-          body.entry[0].changes[0].statuses[0].baileysRecipientId.replace(
-            '@s.whatsapp.net',
-            '',
-          ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
-        status: body.entry[0].changes[0].statuses[0].status ?? null,
-      });
+      // return await this.whatsappService.updateMessageAtFirebase({
+      //   integrationId: id,
+      //   id: body.entry[0].changes[0].statuses[0].id,
+      //   clientPhoneNumber:
+      //     body.entry[0].changes[0].statuses[0].baileysRecipientId.replace(
+      //       '@s.whatsapp.net',
+      //       '',
+      //     ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
+      //   status: body.entry[0].changes[0].statuses[0].status ?? null,
+      // });
     }
 
     const isReceiving = body.entry[0].changes[0].value.messages;
@@ -188,7 +188,7 @@ export class WhatsappController {
         };
 
         const whatsappIntegration: Omit<
-          WhatsappDocument,
+          WhatsAppDocument,
           'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
         > = {
           integrationId: id,
@@ -207,9 +207,8 @@ export class WhatsappController {
           lastMessage,
         };
 
-        await this.whatsappService.saveMessageAtFirebase(
+        await this.whatsappService.saveMessage(
           whatsappIntegration,
-          true,
           workspaceId,
         );
       }

@@ -21,5 +21,6 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   subscriptionsQueue = 'subscriptions-queue',
   chargeQueue = 'charge-queue',
-  whatsappChatQueue = 'whatsapp-chat-queue',
+  chatMessageManagerSendMessageQueue = 'chat-message-manager-send-message-queue',
+  chatMessageManagerSaveMessageQueue = 'chat-message-manager-save-message-queue',
 }
