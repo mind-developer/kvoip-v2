@@ -4,7 +4,7 @@ import {
   SendWhatsAppMessageInput,
   SendWhatsAppTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
-import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
+import { SendWhatsAppMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendWhatsAppMessageResponse';
 import { parseFields } from 'src/engine/core-modules/meta/whatsapp/utils/parseMessage';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -24,7 +24,7 @@ export class ChatMessageManagerService {
   async sendWhatsAppMessage(
     input: SendWhatsAppMessageInput,
     workspaceId: string,
-  ): Promise<SendMessageResponse | null> {
+  ): Promise<SendWhatsAppMessageResponse | null> {
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
         workspaceId,
@@ -47,12 +47,17 @@ export class ChatMessageManagerService {
 
     const fields = parseFields(input);
 
-    if (tipoApi === 'MetaAPI') {
-      const response = await axios.post(metaUrl, fields, { headers });
+    try {
+      if (tipoApi === 'MetaAPI') {
+        const response = await axios.post(metaUrl, fields, { headers });
+        return response.data;
+      }
+      const response = await axios.post(baileysUrl, { fields });
       return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
     }
-    const response = await axios.post(baileysUrl, { fields });
-    return response.data;
   }
 
   async sendWhatsAppTemplate(

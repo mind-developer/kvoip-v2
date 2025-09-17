@@ -2,6 +2,7 @@ import {
   SendWhatsAppMessageInput,
   SendWhatsAppTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
+import { SendWhatsAppMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendWhatsAppMessageResponse';
 
 export enum ChatIntegrationProviders {
   WhatsApp = 'whatsApp',
@@ -11,8 +12,12 @@ export enum ChatIntegrationProviders {
 
 export type ChatIntegrationSendMessageInput = {
   [ChatIntegrationProviders.WhatsApp]:
-    | SendWhatsAppMessageInput
-    | SendWhatsAppTemplateInput;
+    | (SendWhatsAppMessageInput & { id?: string })
+    | (SendWhatsAppTemplateInput & { id?: string });
   // [ChatIntegrationProviders.Messenger]: SendMessengerMessageInput;
   // [ChatIntegrationProviders.Telegram]: SendTelegramMessageInput;
+};
+
+export type ChatIntegrationSendMessageResponse = {
+  [ChatIntegrationProviders.WhatsApp]: SendWhatsAppMessageResponse;
 };

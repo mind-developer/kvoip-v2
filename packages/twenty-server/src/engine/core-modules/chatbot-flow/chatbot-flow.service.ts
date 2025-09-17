@@ -45,14 +45,12 @@ export class ChatbotFlowService {
     });
 
     this.executors[i.integrationId + '_' + i.sendTo] = executor;
-    console.log('cbfs: created executor');
 
     return executor;
   }
 
   getExecutor(key: string): ExecuteFlow | undefined {
     try {
-      console.log('cbfs: fetching executor', key);
       return this.executors[key];
     } catch {
       return undefined;
@@ -137,7 +135,6 @@ class ExecuteFlow {
   }
 
   public async runFlow(incomingMessage: string) {
-    console.log('cbfs: running flow for', incomingMessage);
     while (this.currentNodeId) {
       const currentNode = this.i.chatbotFlow.nodes.find(
         (node) => node.id === this.currentNodeId,
@@ -157,7 +154,6 @@ class ExecuteFlow {
         chatbotName: this.i.chatbotName,
         sectors: this.i.sectors,
         node: currentNode,
-        onMessage: this.i.onMessage,
         context: {
           incomingMessage,
         },
