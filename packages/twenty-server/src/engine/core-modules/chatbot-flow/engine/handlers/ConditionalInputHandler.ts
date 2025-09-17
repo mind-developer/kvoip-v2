@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
+import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-flow/types/LogicNodeDataType';
 import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @Injectable()
 export class ConditionalInputHandler implements NodeHandler {
@@ -28,7 +33,8 @@ export class ConditionalInputHandler implements NodeHandler {
   }
 
   constructor(
-    private readonly chatMessageManagerService: ChatMessageManagerService,
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    private sendChatMessageQueue: MessageQueueService,
   ) {
     this.askedNodes = new Set<string>();
   }
@@ -42,7 +48,6 @@ export class ConditionalInputHandler implements NodeHandler {
       personId,
       workspaceId,
       sectors,
-      onMessage,
       context,
     } = params;
     const logic = node.data?.logic as NewConditionalState | undefined;
@@ -67,12 +72,13 @@ export class ConditionalInputHandler implements NodeHandler {
           fromMe: true,
           personId,
         };
-        onMessage(
-          await this.chatMessageManagerService.sendWhatsAppMessage(
-            message,
+        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
+          SendChatMessageJob.name,
+          {
+            chatType: ChatIntegrationProviders.WhatsApp,
+            sendMessageInput: message,
             workspaceId,
-          ),
-          message,
+          },
         );
       }
 
@@ -103,12 +109,13 @@ export class ConditionalInputHandler implements NodeHandler {
           fromMe: true,
           personId,
         };
-        onMessage(
-          await this.chatMessageManagerService.sendWhatsAppMessage(
-            message,
+        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
+          SendChatMessageJob.name,
+          {
+            chatType: ChatIntegrationProviders.WhatsApp,
+            sendMessageInput: message,
             workspaceId,
-          ),
-          message,
+          },
         );
       }
 

@@ -1,7 +1,5 @@
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { NodeHandler } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
-import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
-import { SendMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendMessageResponse';
 import { FlowNode } from 'typescript';
 
 export type CreateExecutorInput = {
@@ -15,10 +13,6 @@ export type CreateExecutorInput = {
   sendTo: string;
   personId: string;
   sectors: { id: string; name: string }[];
-  onMessage: (
-    response: SendMessageResponse | null,
-    sentMessage: SendWhatsAppMessageInput,
-  ) => void;
   onFinish: (finalNode: FlowNode, chosenInput?: string) => void;
 };
 

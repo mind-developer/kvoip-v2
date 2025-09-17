@@ -1,29 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
+import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @Injectable()
 export class FileInputHandler implements NodeHandler {
   constructor(
-    private readonly chatMessageManagerService: ChatMessageManagerService,
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    private sendChatMessageQueue: MessageQueueService,
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const {
-      node,
-      integrationId,
-      sendTo,
-      chatbotName,
-      personId,
-      workspaceId,
-      sectors,
-      onMessage,
-      context,
-    } = params;
+    const { node, integrationId, sendTo, chatbotName, personId, workspaceId } =
+      params;
 
     const file =
       typeof node.data?.fileUrl === 'string' ? node.data.fileUrl : null;
@@ -39,12 +36,13 @@ export class FileInputHandler implements NodeHandler {
         fromMe: true,
         personId: personId,
       };
-      onMessage(
-        await this.chatMessageManagerService.sendWhatsAppMessage(
-          message,
+      this.sendChatMessageQueue.add<SendChatMessageQueueData>(
+        SendChatMessageJob.name,
+        {
+          chatType: ChatIntegrationProviders.WhatsApp,
+          sendMessageInput: message,
           workspaceId,
-        ),
-        message,
+        },
       );
     }
 

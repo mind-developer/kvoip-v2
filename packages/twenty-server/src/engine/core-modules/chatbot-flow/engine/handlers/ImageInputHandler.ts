@@ -1,27 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-message-manager-send.job';
 
 @Injectable()
 export class ImageInputHandler implements NodeHandler {
   constructor(
-    private readonly chatMessageManagerService: ChatMessageManagerService,
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    private sendChatMessageQueue: MessageQueueService,
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const {
-      node,
-      integrationId,
-      sendTo,
-      chatbotName,
-      personId,
-      workspaceId,
-      onMessage,
-    } = params;
+    const { node, integrationId, sendTo, chatbotName, personId, workspaceId } =
+      params;
     const image =
       typeof node.data?.imageUrl === 'string' ? node.data.imageUrl : null;
 
@@ -36,17 +35,19 @@ export class ImageInputHandler implements NodeHandler {
         fromMe: true,
         personId: personId,
       };
-      onMessage(
-        await this.chatMessageManagerService.sendWhatsAppMessage(
-          message,
+      this.sendChatMessageQueue.add<SendChatMessageQueueData>(
+        SendChatMessageJob.name,
+        {
+          chatType: ChatIntegrationProviders.WhatsApp,
+          sendMessageInput: message,
           workspaceId,
-        ),
-        message,
+        },
       );
+
+      const nextId = node.data?.outgoingNodeId;
+
+      return typeof nextId === 'string' ? nextId : null;
     }
-
-    const nextId = node.data?.outgoingNodeId;
-
-    return typeof nextId === 'string' ? nextId : null;
+    return null;
   }
 }
