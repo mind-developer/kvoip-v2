@@ -4,21 +4,21 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 
+import { compareDesc } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FocusNFeResponse } from 'src/modules/focus-nfe/types/FocusNFeResponse.type';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
 import { FiscalNote } from 'src/modules/focus-nfe/types/NotaFiscal.type';
+import { buildNFComPayload, buildNFSePayload, getCurrentFormattedDate } from 'src/modules/focus-nfe/utils/nf-builder';
 import {
   validateNFCom,
   validateNFSe,
 } from 'src/modules/focus-nfe/utils/validateNF';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
-import { IsNull, Not } from 'typeorm';
-import { compareDesc } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
-import { buildNFComPayload, buildNFSePayload, getCurrentFormattedDate } from 'src/modules/focus-nfe/utils/nf-builder';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { IsNull, Not } from 'typeorm';
 
 type NFValidator = (data: FiscalNote) => boolean;
 
@@ -118,17 +118,35 @@ export class FocusNFeService {
 
         if (!lastInvoiceIssued) return;
 
-        const codMunicipioPrestador =
-          await this.getCodigoMunicipio(
+        let codMunicipioPrestador: string;
+        let codMunicipioTomador: string;
+
+        try {
+          codMunicipioPrestador = await this.getCodigoMunicipio(
             focusNFe?.city,
             focusNFe?.token,
           );
+        } catch (error) {
+          this.logger.error(`Erro ao buscar código do município do prestador: ${error.message}`);
+          return {
+            success: false,
+            error: `Erro na cidade do prestador: ${focusNFe?.city} - ${error.message}`,
+            data: null
+          };
+        }
 
-        const codMunicipioTomador =
-          await this.getCodigoMunicipio(
+        try {
+          codMunicipioTomador = await this.getCodigoMunicipio(
             notaFiscal.company?.address.addressCity || '',
             focusNFe?.token,
           );
+        } catch (error) {
+          return {
+            success: false,
+            error: `Erro na cidade do tomador: ${notaFiscal.company?.address.addressCity} - ${error.message}`,
+            data: null
+          };
+        }
 
         const nfse = buildNFSePayload(
           notaFiscal,
@@ -166,17 +184,36 @@ export class FocusNFeService {
       }
 
       case NfType.NFCOM: {
-        const codMunicipioEmitente =
-          await this.getCodigoMunicipio(
+        let codMunicipioEmitente: string;
+        let codMunicipioTomador: string;
+
+        try {
+          codMunicipioEmitente = await this.getCodigoMunicipio(
             focusNFe?.city,
             focusNFe?.token,
           );
+        } catch (error) {
+          this.logger.error(`Erro ao buscar código do município do emitente: ${error.message}`);
+          return {
+            success: false,
+            error: `Erro na cidade do emitente: ${focusNFe?.city} - ${error.message}`,
+            data: null
+          };
+        }
 
-        const codMunicipioTomador =
-          await this.getCodigoMunicipio(
+        try {
+          codMunicipioTomador = await this.getCodigoMunicipio(
             notaFiscal.company?.address.addressCity || '',
             focusNFe?.token,
           );
+        } catch (error) {
+          this.logger.error(`Erro ao buscar código do município do tomador: ${error.message}`);
+          return {
+            success: false,
+            error: `Erro na cidade do tomador: ${notaFiscal.company?.address.addressCity} - ${error.message}`,
+            data: null
+          };
+        }
 
         const nfcom = buildNFComPayload(
           notaFiscal,
@@ -271,6 +308,18 @@ export class FocusNFeService {
     );
 
     this.logger.log(`getCodigoMunicipio: ${JSON.stringify(response, null, 2)}`);
+
+    if (!response.success) {
+      const errorMessage = response.error || 'Erro ao buscar código do município';
+      this.logger.error(`Erro na API Focus NFe: ${errorMessage}`);
+      throw new Error(`Erro ao buscar código do município "${nomeMunicipio}": ${errorMessage}`);
+    }
+
+    if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
+      const errorMessage = `Município "${nomeMunicipio}" não encontrado`;
+      this.logger.error(errorMessage);
+      throw new Error(errorMessage);
+    }
 
     return response.data[0].codigo_municipio;
   }

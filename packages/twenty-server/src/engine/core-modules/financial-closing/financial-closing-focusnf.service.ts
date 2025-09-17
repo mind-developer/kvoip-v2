@@ -168,15 +168,10 @@ export class FinancialClosingNFService {
         }
 
       } else {
-
         nfCom.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfCom);
 
-        if (issueResult) {
-          throw new Error(`(NFCom): ${issueResult.error || 'Sem retorno'}`);
-        } else {
-          throw new Error(`(NFCom): Sem retorno`);
-        }
+        throw new Error(`(NFCom): ${issueResult?.error || 'Sem retorno'}`);
       }
     }
 
@@ -257,15 +252,10 @@ export class FinancialClosingNFService {
         }
 
       } else {
-
         nfse.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfse);
           
-        if (issueResult) {
-          throw new Error(`(NFSe): ${issueResult.error || 'Sem retorno'}`);
-        } else {
-          throw new Error(`(NFSe): Sem retorno`);
-        }
+        throw new Error(`(NFSe): ${issueResult?.error || 'Sem retorno'}`);
       }
     }
 
