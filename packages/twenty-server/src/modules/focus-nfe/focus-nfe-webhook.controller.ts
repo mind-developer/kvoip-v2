@@ -6,8 +6,10 @@ import axios from 'axios';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import {
   FocusNFeWebhookBody,
   FocusNFeWebhookBodyNFCom,
@@ -16,6 +18,7 @@ import {
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { Repository } from 'typeorm';
 
 @Controller('focus-nfe')
 export class FocusNfeController {
@@ -50,6 +53,7 @@ export class FocusNfeController {
 
     const notaFiscal = await notaFiscalRepository.findOne({
       where: { id: body.ref },
+      relations: ['company', 'companyFinancialClosingExecution'],
     });
 
     if (!notaFiscal) {
@@ -62,10 +66,31 @@ export class FocusNfeController {
       return;
     }
 
+    // Buscar repositório para logs de execução da empresa
+    let companyFinancialClosingExecutionsRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity> | undefined;
+    if (notaFiscal.companyFinancialClosingExecutionId) {
+      companyFinancialClosingExecutionsRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+          workspaceId,
+          'companyFinancialClosingExecution',
+          { shouldBypassPermissionChecks: true },
+        );
+    }
+
     if (body.status === 'erro_autorizacao') {
       notaFiscal.nfStatus = NfStatus.DRAFT;
 
       this.logger.log(`NF erro_autorizacao: ${notaFiscal.nfStatus}`);
+
+      // Log de erro na execução da empresa
+      if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+        await addCompanyFinancialClosingExecutionLog(
+          notaFiscal.companyFinancialClosingExecution,
+          companyFinancialClosingExecutionsRepository,
+          `Erro na autorização da nota fiscal ${notaFiscal.nfType}: ${body.status}`,
+          'error',
+        );
+      }
 
       await notaFiscalRepository.save(notaFiscal);
 
@@ -102,7 +127,18 @@ export class FocusNfeController {
 
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
-
+        // Log de sucesso na execução da empresa
+        if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+          await addCompanyFinancialClosingExecutionLog(
+            notaFiscal.companyFinancialClosingExecution,
+            companyFinancialClosingExecutionsRepository,
+            `Nota fiscal ${notaFiscal.nfType} autorizada com sucesso`,
+            'info',
+            undefined,
+            notaFiscal.company ?? undefined,
+            { completedInvoiceIssuance: true }
+          );
+        }
         
         if (nfcom.caminho_xml) {
 
@@ -135,6 +171,18 @@ export class FocusNfeController {
             this.logger.log(
               `[${NfType.NFCOM}] Não foi possivel salvar o arquivo XML para a NF ${notaFiscal.id}`,
             );
+            
+            // Log de aviso para XML não salvo
+            if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+              await addCompanyFinancialClosingExecutionLog(
+                notaFiscal.companyFinancialClosingExecution,
+                companyFinancialClosingExecutionsRepository,
+                `Não foi possível salvar o arquivo XML da nota fiscal ${notaFiscal.nfType}`,
+                'warn',
+                undefined,
+                notaFiscal.company ?? undefined ?? undefined
+              );
+            }
           }
         }
 
@@ -168,6 +216,18 @@ export class FocusNfeController {
 
         if (attachments.length > 0) {
           await attachmentRepository.save(attachments);
+          
+          // Log de sucesso para anexos salvos
+          if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+            await addCompanyFinancialClosingExecutionLog(
+              notaFiscal.companyFinancialClosingExecution,
+              companyFinancialClosingExecutionsRepository,
+              `${attachments.length} anexo(s) da nota fiscal ${notaFiscal.nfType} salvos com sucesso`,
+              'info',
+              undefined,
+              notaFiscal.company ?? undefined
+            );
+          }
         }
 
         await notaFiscalRepository.save(notaFiscal);
@@ -184,6 +244,19 @@ export class FocusNfeController {
         const nfse = body as FocusNFeWebhookBodyNFSe;
 
         notaFiscal.nfStatus = NfStatus.ISSUED;
+
+        // Log de sucesso na execução da empresa
+        if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+          await addCompanyFinancialClosingExecutionLog(
+            notaFiscal.companyFinancialClosingExecution,
+            companyFinancialClosingExecutionsRepository,
+            `Nota fiscal ${notaFiscal.nfType} autorizada com sucesso`,
+            'info',
+            undefined,
+            notaFiscal.company ?? undefined,
+            { completedInvoiceIssuance: true }
+          );
+        }
 
         if (nfse.numero_rps && nfse.data_emissao) {
           notaFiscal.numeroRps = nfse.numero_rps;
@@ -222,6 +295,18 @@ export class FocusNfeController {
             this.logger.log(
               `[${NfType.NFSE}] Não foi possivel salvar o arquivo XML para a NF ${notaFiscal.id}`,
             );
+            
+            // Log de aviso para XML não salvo
+            if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+              await addCompanyFinancialClosingExecutionLog(
+                notaFiscal.companyFinancialClosingExecution,
+                companyFinancialClosingExecutionsRepository,
+                `Não foi possível salvar o arquivo XML da nota fiscal ${notaFiscal.nfType}`,
+                'warn',
+                undefined,
+                notaFiscal.company ?? undefined ?? undefined
+              );
+            }
           }
         }
 
@@ -255,6 +340,18 @@ export class FocusNfeController {
 
         if (attachments.length > 0) {
           await attachmentRepository.save(attachments);
+          
+          // Log de sucesso para anexos salvos
+          if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+            await addCompanyFinancialClosingExecutionLog(
+              notaFiscal.companyFinancialClosingExecution,
+              companyFinancialClosingExecutionsRepository,
+              `${attachments.length} anexo(s) da nota fiscal ${notaFiscal.nfType} salvos com sucesso`,
+              'info',
+              undefined,
+              notaFiscal.company ?? undefined
+            );
+          }
         }
 
         await notaFiscalRepository.save(notaFiscal);
