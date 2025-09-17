@@ -51,6 +51,10 @@ export class FinancialClosingNFService {
     
     // Validar percentuais de NF
     CompanyValidationUtils.validateNfPercentages(company);
+
+    // Valida se o UF esta dentro das constantes
+
+    CompanyValidationUtils.validateState(company.address.addressState);
     
     const focusNFeRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FocusNFeWorkspaceEntity>(
@@ -81,19 +85,6 @@ export class FinancialClosingNFService {
 
     const today = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
 
-    /* Campos obrigatorios, company:
-
-      company.cpfCnpj
-      company.name
-      company.address.addressStreet1
-      company.address.addressNumber
-      company.address.addressStreet2
-      company.address.addressCity
-      company.address.addressState
-      company.address.addressPostcode
-      company.emails.primaryEmail
-    */
-     
     if (company.percentNfcom && company.percentNfcom > 0) {
       this.logger.log('CAIU NFCom');
 
@@ -177,18 +168,15 @@ export class FinancialClosingNFService {
         }
 
       } else {
-        if (issueResult) {
-          this.logger.error(
-            `NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
-          );
-        } else {
-          this.logger.error(
-            `NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`,
-          );
-        }
 
         nfCom.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfCom);
+
+        if (issueResult) {
+          throw new Error(`(NFCom): ${issueResult.error || 'Sem retorno'}`);
+        } else {
+          throw new Error(`(NFCom): Sem retorno`);
+        }
       }
     }
 
@@ -269,18 +257,15 @@ export class FinancialClosingNFService {
         }
 
       } else {
-        if (issueResult) {
-          this.logger.error(
-            `NOTA FISCAL NAO EMITIDA: ${JSON.stringify(issueResult.data, null, 2)}`,
-          );
-        } else {
-          this.logger.error(
-            `NOTA FISCAL NAO EMITIDA E SEM RETORNO: ${JSON.stringify(issueResult, null, 2)}`,
-          );
-        }
 
         nfse.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfse);
+          
+        if (issueResult) {
+          throw new Error(`(NFSe): ${issueResult.error || 'Sem retorno'}`);
+        } else {
+          throw new Error(`(NFSe): Sem retorno`);
+        }
       }
     }
 
@@ -318,5 +303,4 @@ export class FinancialClosingNFService {
 
     return CfopCommunicationEnum.INTERSTATE;
   }
-
 }

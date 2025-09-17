@@ -30,6 +30,10 @@ export class FinancialClosingChargeService {
     return str.replace(/\D/g, '');
   }
 
+  public validateState(state: string): void {
+    CompanyValidationUtils.validateState(state);
+  }
+
   async emitChargeForCompany(
     workspaceId: string,
     company: CompanyWorkspaceEntity, 
@@ -98,10 +102,6 @@ export class FinancialClosingChargeService {
         name: `Fechamento Automático - ${financialClosing.name} - ${today} - ${company.name}`,
         price: amountToBeCharged,
         quantity: 1,
-        // discount: 0,
-        // requestCode: numberCharge,
-        // recurrence: null,
-        // taxId: company.cpfCnpj,
         entityType: company.cpfCnpj?.replace(/\D/g, '').length === 11 
           ? ChargeEntityType.INDIVIDUAL
           : ChargeEntityType.COMPANY,
@@ -110,8 +110,6 @@ export class FinancialClosingChargeService {
       });
 
       charge = await chargeRepository.save(charge);
-
-      // this.logger.log(`Charge criada localmente: ${JSON.stringify(charge, null, 2)}`);
 
       // 2. Emitir cobrança na API do Inter
       const response =

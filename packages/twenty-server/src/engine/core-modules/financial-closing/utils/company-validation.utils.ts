@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { isValidBrazilianState } from 'src/engine/core-modules/financial-closing/constants/nf-constants';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
@@ -91,6 +92,18 @@ export class CompanyValidationUtils {
     if (cep.replace(/\D/g, '').length !== 8) {
       throw new Error(
         `O campo CEP da empresa está incorreto, deve possuir 8 números e de preferência sem caracteres especiais`
+      );
+    }
+  }
+
+  /**
+   * Valida o estado da empresa
+   * @param state - Estado da empresa a ser validado
+   */
+  static validateState(state: string): void {
+    if (!isValidBrazilianState(state)) {
+      throw new Error(
+        `O Estado da empresa está incorreto, deve ser um estado válido do Brasil (SP, RJ, MG, etc.)`
       );
     }
   }

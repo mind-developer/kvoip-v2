@@ -95,8 +95,6 @@ export class RunFinancialClosingJobProcessor {
         completedCompanySearch: true,
       });
 
-      this.logger.log(`Empresas encontradas: ${companies.length }`);
-
       const companyFinancialClosingExecutionsRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
           workspaceId,
@@ -151,8 +149,6 @@ export class RunFinancialClosingJobProcessor {
           );
         }
       }
-
-      this.logger.log(`Empresas sem erros: ${companiesWithAmount.length }`);
 
       for (const company of companiesWithAmount) {
 

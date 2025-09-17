@@ -50,8 +50,8 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
       this.financialClosingChargeService.validateRequiredFields(data.company);
-
       this.financialClosingChargeService.validateCep(data.company.address.addressPostcode || '');
+      this.financialClosingChargeService.validateState(data.company.address.addressState);
 
       // Tentativa de emissão de cobrança
       charge = await this.financialClosingChargeService.emitChargeForCompany(
@@ -156,10 +156,11 @@ export class RunCompanyFinancialClosingJobProcessor {
       return;
     }
 
+    // Inicio da emissão de nota fiscal ----------------------------------------------------------------------|
+
     if (data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE) {
 
       try {
-
         await this.financialClosingNFService.emitNFForCompany(
           data.workspaceId,
           data.company,
@@ -206,7 +207,6 @@ export class RunCompanyFinancialClosingJobProcessor {
 
         this.logger.error(`ERRO TRY CATCH EMISSAO DA NOTA FISCAL ${data.company.name} (${data.company.id}): ${error.message}`);
         return;
-
       }
 
     } else {
