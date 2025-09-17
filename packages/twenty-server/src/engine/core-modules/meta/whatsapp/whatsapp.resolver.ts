@@ -1,225 +1,171 @@
 /* eslint-disable @nx/workspace-graphql-resolvers-should-be-guarded */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { SendMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { ChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/chatMessageQueueData';
+import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
 import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
-  SendEventMessageInput,
+  SendWhatsAppEventMessageInput,
   SendWhatsAppMessageInput,
   SendWhatsAppTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
 import { UpdateWhatsAppMessageDataInput } from 'src/engine/core-modules/meta/whatsapp/dtos/update-whatsapp-message-data-input';
-import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
+import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
-import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @Resolver('Whatsapp')
 export class WhatsappResolver {
-  constructor(
-    private readonly chatMessageManagerService: ChatMessageManagerService,
-    private readonly whatsappService: WhatsappService,
-    @InjectMessageQueue(MessageQueue.whatsappChatQueue)
-    private chatMessageManagerQueue: MessageQueueService,
-  ) {}
+  constructor(private readonly whatsappService: WhatsAppService) {}
 
   @Mutation(() => Boolean)
   async sendWhatsAppTemplate(
     @Args('sendWhatsAppTemplateInput')
-    sendWhatsAppTemplateInput: SendWhatsAppTemplateInput,
+    input: SendWhatsAppTemplateInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendTemplateConfirmation =
-      await this.chatMessageManagerService.sendWhatsAppTemplate(
-        sendWhatsAppTemplateInput,
-        workspace.id,
-      );
-
-    if (sendTemplateConfirmation) {
-      const today = new Date();
-      const messageEvent = `${sendWhatsAppTemplateInput.agent?.name} started the service (${today.toISOString().split('T')[0].replace(/-/g, '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`;
-
-      const lastMessage = {
-        createdAt: today,
-        from: 'system',
-        message: sendWhatsAppTemplateInput.message,
-        type: 'template',
-      };
-
-      const timeline = {
-        agent: `${sendWhatsAppTemplateInput.agent?.name}`,
-        date: today,
-        event: 'started',
-      };
-
-      const whatsappIntegration: Omit<
-        WhatsappDocument,
-        'unreadMessages' | 'isVisible'
-      > = {
-        integrationId: sendWhatsAppTemplateInput.integrationId,
-        client: {
-          phone: sendWhatsAppTemplateInput.to.slice(1),
-          name: sendWhatsAppTemplateInput.to.slice(1),
-        },
-        personId: sendWhatsAppTemplateInput.personId,
-        messages: [
-          {
-            ...lastMessage,
-          },
-        ],
-        status: statusEnum.InProgress,
-        timeline: [timeline],
-        agent: sendWhatsAppTemplateInput.agent?.id,
-        sector: 'empty',
-        lastMessage,
-      };
-
-      await this.whatsappService.saveMessageAtFirebase(
-        whatsappIntegration,
-        false,
-        workspace.id,
-      );
-
-      return await this.whatsappService.saveEventMessageAtFirebase({
-        ...whatsappIntegration,
-        messages: [
-          {
-            ...lastMessage,
-            message: messageEvent,
-            type: 'started',
-          },
-        ],
-      });
-    }
-
-    return false;
-  }
-
-  @Mutation(() => Boolean)
-  async sendWhatsAppMessage(
-    @Args('sendWhatsAppMessageInput')
-    sendWhatsAppMessageInput: SendWhatsAppMessageInput,
-    @AuthWorkspace() workspace: Workspace,
-  ) {
-    // this.chatMessageManagerService.sendWhatsAppMessage(
-    //   sendMessageInput,
-    //   workspace.id,
-    // );
-
-    this.chatMessageManagerQueue.add<ChatMessageQueueData>(
-      SendMessageJob.name,
-      {
-        chatType: ChatIntegrationProviders.WhatsApp,
-        sendMessageInput: sendWhatsAppMessageInput,
-        workspaceId: workspace.id,
-      },
-    );
-
+    this.whatsappService.sendMessage(SendChatMessageJob.name, {
+      chatType: ChatIntegrationProviders.WhatsApp,
+      sendMessageInput: input,
+      workspaceId: workspace.id,
+    });
     return true;
+    // const sendTemplateConfirmation =
+    //   await this.chatMessageManagerService.sendWhatsAppTemplate(
+    //     input,
+    //     workspace.id,
+    //   );
 
-    // if (sendMessageConfirmation) {
+    // if (sendTemplateConfirmation) {
+    //   const today = new Date();
+    //   const messageEvent = `${input.agent?.name} started the service (${today.toISOString().split('T')[0].replace(/-/g, '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`;
+
     //   const lastMessage = {
-    //     createdAt: new Date(),
-    //     from: sendMessageInput.from,
-    //     fromMe: sendMessageInput.fromMe,
-    //     message: sendMessageInput.fileId
-    //       ? sendMessageInput.fileId
-    //       : sendMessageInput.message || '',
-    //     type: sendMessageInput.type,
-    //     id: sendMessageConfirmation.messages[0].id,
-    //     status: 'pending',
+    //     createdAt: today,
+    //     from: 'system',
+    //     message: input.message,
+    //     type: 'template',
+    //   };
+
+    //   const timeline = {
+    //     agent: `${input.agent?.name}`,
+    //     date: today,
+    //     event: 'started',
     //   };
 
     //   const whatsappIntegration: Omit<
-    //     WhatsappDocument,
-    //     'timeline' | 'unreadMessages' | 'isVisible'
+    //     WhatsAppDocument,
+    //     'unreadMessages' | 'isVisible'
     //   > = {
-    //     integrationId: sendMessageInput.integrationId,
+    //     integrationId: input.integrationId,
     //     client: {
-    //       phone: sendMessageInput.to,
+    //       phone: input.to.slice(1),
+    //       name: input.to.slice(1),
     //     },
-    //     personId: sendMessageInput.personId,
+    //     personId: input.personId,
     //     messages: [
     //       {
     //         ...lastMessage,
     //       },
     //     ],
-    //     status: statusEnum.Waiting,
+    //     status: statusEnum.InProgress,
+    //     timeline: [timeline],
+    //     agent: input.agent?.id,
+    //     sector: 'empty',
     //     lastMessage,
     //   };
 
-    //   return await this.whatsappService.saveMessageAtFirebase(
+    //   await this.whatsappService.saveMessageAtFirebase(
     //     whatsappIntegration,
     //     false,
     //     workspace.id,
     //   );
+
+    //   return await this.whatsappService.saveEventMessageAtFirebase({
+    //     ...whatsappIntegration,
+    //     messages: [
+    //       {
+    //         ...lastMessage,
+    //         message: messageEvent,
+    //         type: 'started',
+    //       },
+    //     ],
+    //   });
     // }
 
-    return false;
+    // return false;
   }
 
   @Mutation(() => Boolean)
-  async updateMessageData(
-    @Args('updateMessageInput')
-    updateMessageInput: UpdateWhatsAppMessageDataInput,
+  async sendWhatsAppMessage(
+    @Args('sendWhatsAppMessageInput')
+    input: SendWhatsAppMessageInput,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    console.log('running resolver');
+    this.whatsappService.sendMessage(SendChatMessageJob.name, {
+      chatType: ChatIntegrationProviders.WhatsApp,
+      sendMessageInput: input,
+      workspaceId: workspace.id,
+    });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateWhatsAppMessageData(
+    @Args('updateWhatsAppMessageInput')
+    updateWhatsAppMessageInput: UpdateWhatsAppMessageDataInput,
   ) {
     return await this.whatsappService.updateMessageAtFirebase(
-      updateMessageInput,
+      updateWhatsAppMessageInput,
     );
   }
 
   @Mutation(() => Boolean)
-  async sendEventMessage(
-    @Args('sendEventMessageInput') sendEventMessageInput: SendEventMessageInput,
+  async sendWhatsAppEventMessage(
+    @Args('sendWhatsAppEventMessageInput')
+    input: SendWhatsAppEventMessageInput,
   ) {
     const timeline =
-      sendEventMessageInput.eventStatus === 'transfer'
+      input.eventStatus === 'transfer'
         ? {
-            agent: `${sendEventMessageInput.from}`,
+            agent: `${input.from}`,
             date: new Date(),
-            event: sendEventMessageInput.eventStatus,
-            transferTo: sendEventMessageInput.agent
-              ? `${sendEventMessageInput.agent.name}`
-              : sendEventMessageInput.sector?.name,
+            event: input.eventStatus,
+            transferTo: input.agent
+              ? `${input.agent.name}`
+              : input.sector?.name,
           }
         : {
-            agent: `${sendEventMessageInput.from}`,
+            agent: `${input.from}`,
             date: new Date(),
-            event: sendEventMessageInput.eventStatus,
+            event: input.eventStatus,
           };
 
     const whatsappIntegration: Omit<
-      WhatsappDocument,
+      WhatsAppDocument,
       'unreadMessages' | 'lastMessage' | 'isVisible'
     > = {
-      integrationId: sendEventMessageInput.integrationId,
+      integrationId: input.integrationId,
       client: {
-        phone: sendEventMessageInput.to,
+        phone: input.to,
       },
-      personId: sendEventMessageInput.personId,
+      personId: input.personId,
       messages: [
         {
           createdAt: new Date(),
-          from: sendEventMessageInput?.from || 'system',
-          message: sendEventMessageInput.message || '',
-          type: sendEventMessageInput.eventStatus,
+          from: input?.from || 'system',
+          message: input.message || '',
+          type: input.eventStatus,
         },
       ],
-      status: sendEventMessageInput.status as statusEnum,
+      status: input.status as statusEnum,
       timeline: [timeline],
-      agent: sendEventMessageInput.agent
-        ? sendEventMessageInput.agent.id
-        : 'empty',
-      sector: sendEventMessageInput.sector
-        ? sendEventMessageInput.sector.id
-        : 'empty',
+      agent: input.agent ? input.agent.id : 'empty',
+      sector: input.sector ? input.sector.id : 'empty',
     };
 
     return await this.whatsappService.saveEventMessageAtFirebase(
