@@ -1,8 +1,8 @@
 import { UPDATE_FOCUS_NFE_INTEGRATION } from '@/settings/integrations/focus-nfe/graphql/mutation/updateFocusNfeIntegration';
 import { UpdateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/UpdateFocusNfeIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UpdateFocusNfeIntegration {
   updateFocusNfeIntegration: (
@@ -13,19 +13,22 @@ interface UpdateFocusNfeIntegration {
 }
 
 export const useUpdateFocusNfeIntegration = (): UpdateFocusNfeIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [updateFocusNfeIntegrationMutation, { loading, error }] = useMutation(
     UPDATE_FOCUS_NFE_INTEGRATION,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Focus NFe integration updated successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Focus NFe integration updated successfully!`,
         });
       },
     },
@@ -45,8 +48,8 @@ export const useUpdateFocusNfeIntegration = (): UpdateFocusNfeIntegration => {
         },
       });
     } catch (err) {
-      enqueueSnackBar('Error updating role', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error updating role`,
       });
     }
   };

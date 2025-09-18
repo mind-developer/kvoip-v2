@@ -1,5 +1,4 @@
 import { TOGGLE_WHATSAPP_INTEGRATION_STATUS } from '@/settings/integrations/meta/whatsapp/graphql/mutation/toggleWhatsappIntegrationStatus';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -8,14 +7,15 @@ interface ToggleWhatsappIntegration {
 }
 
 export const useToggleWhatsappIntegration = (): ToggleWhatsappIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [toggleWhatsappIntegrationMutation] = useMutation(
     TOGGLE_WHATSAPP_INTEGRATION_STATUS,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
     },

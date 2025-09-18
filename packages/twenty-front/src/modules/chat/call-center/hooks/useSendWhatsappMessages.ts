@@ -1,6 +1,5 @@
 import { SEND_MESSAGE } from '@/chat/call-center/graphql/mutation/sendWhatsappMessage';
 import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -9,12 +8,13 @@ interface SendMessageReturn {
 }
 
 export const useSendWhatsappMessages = (): SendMessageReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [sendMessageMutation] = useMutation(SEND_MESSAGE, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

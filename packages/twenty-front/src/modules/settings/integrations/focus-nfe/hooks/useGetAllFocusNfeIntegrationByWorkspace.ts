@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client';
 
 import { GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/query/getFocusNfeIntegrationsByWorkspace';
 import { FindFocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FindFocusNfeIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type GetAllFocusNfeIntegrationsByWorkspace = {
@@ -13,7 +12,7 @@ type GetAllFocusNfeIntegrationsByWorkspace = {
 
 export const useGetAllFocusNfeIntegrationsByWorkspace =
   (): GetAllFocusNfeIntegrationsByWorkspace => {
-    const { enqueueSnackBar } = useSnackBar();
+    const { enqueueErrorSnackBar } = useSnackBar();
 
     const {
       data,
@@ -21,8 +20,9 @@ export const useGetAllFocusNfeIntegrationsByWorkspace =
       loading,
     } = useQuery(GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
     });

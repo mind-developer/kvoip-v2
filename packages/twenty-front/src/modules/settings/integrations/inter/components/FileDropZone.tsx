@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 // eslint-disable-next-line no-restricted-imports
 import { IconFileDownload } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -103,7 +103,9 @@ export const FileDropZone = ({
   file,
 }: FileDropZoneProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
@@ -118,9 +120,8 @@ export const FileDropZone = ({
     onDropRejected: (fileRejections) => {
       setIsLoading(false);
       fileRejections.forEach((fileRejection) => {
-        enqueueSnackBar(`${fileRejection.file.name} upload rejected`, {
-          detailedMessage: fileRejection.errors[0].message,
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: t`${fileRejection.file.name} upload rejected`,
         });
       });
     },
@@ -129,8 +130,11 @@ export const FileDropZone = ({
       try {
         onFileSelected(acceptedFile);
       } catch (error) {
-        enqueueSnackBar('Error processing file', {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: t`Error processing file`,
+          options: {
+            detailedMessage: (error as Error)?.message,
+          },
         });
       } finally {
         setIsLoading(false);

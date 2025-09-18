@@ -18,10 +18,10 @@ import { MessageType } from '@/chat/types/MessageType';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -312,7 +312,9 @@ export const PaneChat = () => {
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
   const { getIcon } = useIcons();
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -403,9 +405,10 @@ export const PaneChat = () => {
       setNewMessage('');
     } else if (type === MessageType.AUDIO) {
       if (!audioBlob) {
-        enqueueSnackBar('No audio recorded', {
-          variant: SnackBarVariant.Warning,
+        enqueueInfoSnackBar({
+          message: t`No audio recorded`,
         });
+
         return;
       }
 
@@ -455,8 +458,8 @@ export const PaneChat = () => {
       setMediaRecorder(recorder);
       setIsRecording(true);
     } catch (error) {
-      enqueueSnackBar('Failed to start recording. Check microphone access.', {
-        variant: SnackBarVariant.Warning,
+      enqueueErrorSnackBar({
+        message: t`Failed to start recording. Check microphone access.`,
       });
     }
   };

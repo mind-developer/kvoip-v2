@@ -18,7 +18,7 @@
 - Line 13, Col 6 [TS7006]: Parameter 'price' implicitly has an 'any' type.
 - Line 13, Col 6 [TS7006]: Parameter 'price' implicitly has an 'any' type.
 
-## 📂 src/modules/chat/call-center/components/PaneChat.tsx
+## 📂 src/modules/chat/call-center/components/PaneChat.tsx ✅
 
 - Line 315, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 315, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -47,17 +47,17 @@
 - Line 48, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 48, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/chat/call-center/hooks/useSendWhatsappEventMessage.ts
+## 📂 src/modules/chat/call-center/hooks/useSendWhatsappEventMessage.ts ✅
 
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chat/call-center/hooks/useSendWhatsappMessages.ts
+## 📂 src/modules/chat/call-center/hooks/useSendWhatsappMessages.ts ✅
 
 - Line 12, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 12, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chat/call-center/hooks/useWhatsappTemplateMessage.ts
+## 📂 src/modules/chat/call-center/hooks/useWhatsappTemplateMessage.ts ✅
 
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -67,14 +67,14 @@
 - Line 2, Col 40 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/utils/createComponentStateV2' or its corresponding type declarations.
 - Line 2, Col 40 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/utils/createComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/chat/hooks/useUploadFileToBucket.ts
+## 📂 src/modules/chat/hooks/useUploadFileToBucket.ts ✅
 
 - Line 21, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 21, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 21, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 21, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chat/internal/components/OpenChat.tsx
+## 📂 src/modules/chat/internal/components/OpenChat.tsx ✅
 
 - Line 346, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 346, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -86,7 +86,7 @@
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/chat/internal/context/chatContext.tsx
+## 📂 src/modules/chat/internal/context/chatContext.tsx ✅
 
 - Line 88, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 568, Col 36 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
@@ -150,14 +150,14 @@
 - Line 112, Col 31 [TS2322]: Type '""' is not assignable to type 'RecordType'.
 - Line 112, Col 31 [TS2322]: Type '""' is not assignable to type 'RecordType'.
 
-## 📂 src/modules/chatbot/hooks/useUpdateChatbotFlow.ts
+## 📂 src/modules/chatbot/hooks/useUpdateChatbotFlow.ts ✅
 
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chatbot/hooks/useValidateChatbotFlow.ts
+## 📂 src/modules/chatbot/hooks/useValidateChatbotFlow.ts ✅
 
 - Line 12, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 12, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -248,7 +248,7 @@
 - Line 15, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'GetCurrentUserQueryResult'.
 - Line 15, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'GetCurrentUserQueryResult'.
 
-## 📂 src/modules/onboarding/hooks/useSetupOneSignalApp.ts
+## 📂 src/modules/onboarding/hooks/useSetupOneSignalApp.ts ✅
 
 - Line 7, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 7, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -280,7 +280,7 @@
 - Line 23, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useBillingBaseProductPricesQuery'.
 - Line 23, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useBillingBaseProductPricesQuery'.
 
-## 📂 src/modules/settings/billing/hooks/useHandleSwichPlan.ts
+## 📂 src/modules/settings/billing/hooks/useHandleSwichPlan.ts ✅
 
 - Line 6, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useSwitchPlanMutation'.
 - Line 9, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -304,7 +304,7 @@
 - Line 13, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 19, Col 23 [TS7031]: Binding element 'updateOneTimePaidSubscription' implicitly has an 'any' type.
 
-## 📂 src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
+## 📂 src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx ✅
 
 - Line 59, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 59, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -320,37 +320,37 @@
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts ✅
 
 - Line 19, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 19, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useCreateIssuer.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useCreateIssuer.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace.ts ✅
 
 - Line 16, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus.ts ✅
 
 - Line 14, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 14, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts ✅
 
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts
+## 📂 src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts ✅
 
 - Line 9, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 9, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/inter/components/FileDropZone.tsx
+## 📂 src/modules/settings/integrations/inter/components/FileDropZone.tsx ✅
 
 - Line 106, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 106, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -362,22 +362,22 @@
 - Line 6, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 75, Col 28 [TS7006]: Parameter 'value' implicitly has an 'any' type.
 
-## 📂 src/modules/settings/integrations/inter/hooks/useCreateInterIntegration.ts
+## 📂 src/modules/settings/integrations/inter/hooks/useCreateInterIntegration.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/inter/hooks/useFindAllInterIntegrations.ts
+## 📂 src/modules/settings/integrations/inter/hooks/useFindAllInterIntegrations.ts ✅
 
 - Line 17, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 17, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/inter/hooks/useToggleInterIntegrationDisable.ts
+## 📂 src/modules/settings/integrations/inter/hooks/useToggleInterIntegrationDisable.ts ✅
 
 - Line 11, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 11, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/inter/hooks/useUpdateInterIntegration.ts
+## 📂 src/modules/settings/integrations/inter/hooks/useUpdateInterIntegration.ts ✅
 
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -392,22 +392,22 @@
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 
-## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration.ts
+## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations.ts
+## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations.ts ✅
 
 - Line 16, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 13 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useToggleWhatsappIntegrationDisable.ts
+## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useToggleWhatsappIntegrationDisable.ts ✅
 
 - Line 11, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 11, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts
+## 📂 src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts ✅
 
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -463,22 +463,22 @@
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/hooks/useCreateAgent.ts
+## 📂 src/modules/settings/service-center/agents/hooks/useCreateAgent.ts ✅
 
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 15, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/agents/hooks/useFindAllAgents.ts
+## 📂 src/modules/settings/service-center/agents/hooks/useFindAllAgents.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts
+## 📂 src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts ✅
 
 - Line 13, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 13, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts
+## 📂 src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts ✅
 
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -488,7 +488,7 @@
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/inboxes/hooks/useFindAllInboxes.ts
+## 📂 src/modules/settings/service-center/inboxes/hooks/useFindAllInboxes.ts ✅
 
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
@@ -719,7 +719,7 @@
 - Line 58, Col 43 [TS2345]: Argument of type 'LinkLogsWorkspaceEntity[]' is not assignable to parameter of type '{ createdAt?: string | number | undefined; }[]'.
 - Line 59, Col 39 [TS2345]: Argument of type '{ createdAt?: string | number | undefined; }[]' is not assignable to parameter of type 'LinkLogsWorkspaceEntity[]'.
 
-## 📂 src/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection.tsx
+## 📂 src/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection.tsx ✅
 
 - Line 50, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 50, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
