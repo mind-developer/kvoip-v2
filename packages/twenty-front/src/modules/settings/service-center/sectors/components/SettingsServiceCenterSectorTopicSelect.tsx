@@ -6,8 +6,8 @@ import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
-import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
-import { selectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema';
+import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
+import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
 import { SettingsServiceCenterSectorFieldSelectFormOptionRow } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorFieldSelectFormOptionRow';
 import { useSelectSettingsFormInitialValues } from '@/settings/service-center/sectors/hooks/useSelectSettingsFormInitialValues';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';

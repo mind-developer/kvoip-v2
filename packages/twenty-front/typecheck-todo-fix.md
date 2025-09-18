@@ -37,7 +37,7 @@
 - Line 5, Col 38 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormSelectFieldInput' or its corresponding type declarations.
 - Line 6, Col 34 [TS2307]: Cannot find module '@/object-record/record-field/types/FieldMetadata' or its corresponding type declarations.
 
-## 📂 src/modules/chat/call-center/components/TransferChatOptionsDropdownContent.tsx
+## 📂 src/modules/chat/call-center/components/TransferChatOptionsDropdownContent.tsx ✅
 
 - Line 9, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 9, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -79,7 +79,7 @@
 - Line 346, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 346, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chat/internal/components/SectorPill.tsx
+## 📂 src/modules/chat/internal/components/SectorPill.tsx ✅
 
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -178,7 +178,7 @@
 - Line 20, Col 13 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
 - Line 20, Col 13 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
 
-## 📂 src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+## 📂 src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx ✅
 
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -382,7 +382,7 @@
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/meta/components/SettingsSelectStatusPill.tsx
+## 📂 src/modules/settings/integrations/meta/components/SettingsSelectStatusPill.tsx ✅
 
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -453,12 +453,12 @@
 - Line 3, Col 43 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput' or its corresponding type declarations.
 - Line 3, Col 43 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterFieldActionDropdown.tsx
+## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterFieldActionDropdown.tsx ✅
 
 - Line 5, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 5, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterFilterDropdown.tsx
+## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterFilterDropdown.tsx ✅
 
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -483,7 +483,7 @@
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 14, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/components/SelectStatus.tsx
+## 📂 src/modules/settings/service-center/components/SelectStatus.tsx ✅
 
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
@@ -493,19 +493,19 @@
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
+## 📂 src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx ✅
 
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorFieldSelectFormOptionRow.tsx
+## 📂 src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorFieldSelectFormOptionRow.tsx ✅
 
 - Line 13, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 124, Col 9 [TS2322]: Type '{ value: string; onChange: (label: string) => void; RightIcon: ForwardRefExoticComponent<IconProps & RefAttributes<Icon>> | undefined; maxLength: number; onInputEnter: () => void; }' is not assignable to type 'IntrinsicAttributes & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "onKeyDown"> & { ...; } & RefAttributes<...> & { ...; }'.
 - Line 13, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 124, Col 9 [TS2322]: Type '{ value: string; onChange: (label: string) => void; RightIcon: ForwardRefExoticComponent<IconProps & RefAttributes<Icon>> | undefined; maxLength: number; onInputEnter: () => void; }' is not assignable to type 'IntrinsicAttributes & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "onKeyDown"> & { ...; } & RefAttributes<...> & { ...; }'.
 
-## 📂 src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorTopicSelect.tsx
+## 📂 src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorTopicSelect.tsx ✅
 
 - Line 9, Col 52 [TS2307]: Cannot find module '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema' or its corresponding type declarations.
 - Line 10, Col 47 [TS2307]: Cannot find module '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema' or its corresponding type declarations.
@@ -565,7 +565,7 @@
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/telephony/hooks/useFindAllPABX.ts
+## 📂 src/modules/settings/service-center/telephony/hooks/useFindAllPABX.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.

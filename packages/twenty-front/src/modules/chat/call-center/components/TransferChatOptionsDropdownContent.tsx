@@ -1,14 +1,13 @@
 import { useContext, useState } from 'react';
 
-import { TRANSFER_CHAT_OPTIONS_DROPDOWN_ID } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 // eslint-disable-next-line no-restricted-imports
 import { TransferChatOption } from '@/chat/call-center/components/TransferChatOption';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { IconChevronLeft, IconIdBadge2, IconUsers } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -18,7 +17,7 @@ export const TransferChatOptionsDropdownContent = () => {
   const { transferService, workspaceAgents } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
-  const { closeDropdown } = useDropdown(TRANSFER_CHAT_OPTIONS_DROPDOWN_ID);
+  const { toggleDropdown } = useToggleDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<
     TransferChatOptionsMenu | undefined
@@ -65,7 +64,7 @@ export const TransferChatOptionsDropdownContent = () => {
               agent={agent}
               onClick={() => {
                 transferService(agent, undefined);
-                closeDropdown();
+                toggleDropdown();
               }}
             />
           ))}
@@ -86,7 +85,7 @@ export const TransferChatOptionsDropdownContent = () => {
               LeftIcon={sector.icon}
               onClick={() => {
                 transferService(undefined, sector);
-                closeDropdown();
+                toggleDropdown();
               }}
             />
           ))}
