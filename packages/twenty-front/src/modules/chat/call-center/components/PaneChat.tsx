@@ -66,12 +66,12 @@ const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
   justify-content: flex-start;
   border-radius: ${({ theme }) => theme.spacing(2)};
   transition: all 0.15s;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledAvatarMessage = styled.div`
   align-self: flex-end;
-  // margin-top: 4px;
+  /* max-height: 20%; */
   z-index: 1;
 `;
 
@@ -79,15 +79,8 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
-  justify-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(2)};
   width: auto;
   max-width: 70%;
-  margin-left: ${({ isSystemMessage, theme }) =>
-    isSystemMessage ? '0' : theme.spacing(2)};
-  margin-right: ${({ isSystemMessage, theme }) =>
-    isSystemMessage ? theme.spacing(2) : '0'};
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -593,7 +586,10 @@ export const PaneChat = () => {
                   fromMe: true,
                   status: 'attempting',
                   id: null,
-                  createdAt: new Date(),
+                  createdAt: {
+                    seconds: Date.now() / 1000,
+                    nanoseconds: Date.now() * 1000,
+                  },
                 },
               ],
             };
@@ -613,7 +609,10 @@ export const PaneChat = () => {
                   fromMe: true,
                   status: 'attempting',
                   id: null,
-                  createdAt: new Date(),
+                  createdAt: {
+                    seconds: Date.now() / 1000,
+                    nanoseconds: Date.now() * 1000,
+                  },
                 },
               ],
             };
@@ -626,10 +625,6 @@ export const PaneChat = () => {
   };
 
   const handleInputChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = ev.target;
-    textarea.style.height = '10px';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 100)}px`;
-
     setNewMessage(ev.target.value);
   };
 
@@ -779,7 +774,6 @@ export const PaneChat = () => {
               placeholder="Message"
               onInput={handleInputChange}
               value={newMessage}
-              ref={textareaRef}
               onKeyDown={handleInputKeyDown}
             />
           )}
@@ -929,7 +923,9 @@ export const PaneChat = () => {
                     {formatMessageContent(
                       isSystemMessage
                         ? //first line will be member name, which is redundant since we already show it in the avatar
-                          message.message.replace(/^.*\n/, '')
+                          message.message
+                            .replace(`*#${message.from.replace('_', '')}*`, '')
+                            .trim()
                         : message.message,
                     )}
                   </StyledMessage>
@@ -942,9 +938,6 @@ export const PaneChat = () => {
             const showUnreadMarker = index === unreadIndex;
             const lastOfRow =
               selectedChat.messages[index + 1]?.from !== message.from;
-            const clientMessages = selectedChat.messages.filter(
-              (message) => !message.fromMe,
-            );
 
             return (
               <>

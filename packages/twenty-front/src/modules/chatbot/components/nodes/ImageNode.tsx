@@ -27,6 +27,7 @@ const StyledImage = styled.img`
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   object-fit: cover;
+  max-width: 270px;
   width: 100%;
 `;
 
