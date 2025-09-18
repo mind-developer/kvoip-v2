@@ -33,9 +33,10 @@ export class ConditionalInputHandler implements NodeHandler {
   }
 
   constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
     private sendChatMessageQueue: MessageQueueService,
   ) {
+    //this will probably cause issues
     this.askedNodes = new Set<string>();
   }
 
@@ -61,7 +62,6 @@ export class ConditionalInputHandler implements NodeHandler {
 
     if (!this.askedNodes.has(nodeId)) {
       this.askedNodes.add(nodeId);
-
       if (prompt) {
         const message = {
           type: MessageTypes.TEXT,
@@ -72,6 +72,7 @@ export class ConditionalInputHandler implements NodeHandler {
           fromMe: true,
           personId,
         };
+        console.log('sending', message.message);
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {

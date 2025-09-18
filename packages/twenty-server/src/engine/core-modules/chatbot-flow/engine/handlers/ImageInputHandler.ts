@@ -14,7 +14,7 @@ import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-mess
 @Injectable()
 export class ImageInputHandler implements NodeHandler {
   constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
     private sendChatMessageQueue: MessageQueueService,
   ) {}
 
@@ -35,6 +35,7 @@ export class ImageInputHandler implements NodeHandler {
         fromMe: true,
         personId: personId,
       };
+      console.log('sending', message.fileId);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {

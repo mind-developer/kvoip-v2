@@ -14,7 +14,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 @Injectable()
 export class FileInputHandler implements NodeHandler {
   constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
+    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
     private sendChatMessageQueue: MessageQueueService,
   ) {}
 
@@ -36,6 +36,7 @@ export class FileInputHandler implements NodeHandler {
         fromMe: true,
         personId: personId,
       };
+      console.log('sending', message.fileId);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {
