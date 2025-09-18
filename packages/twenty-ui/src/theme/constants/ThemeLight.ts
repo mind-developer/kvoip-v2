@@ -27,4 +27,4 @@ export const THEME_LIGHT = {
     IllustrationIcon: ILLUSTRATION_ICON_LIGHT,
     adaptiveColors: ADAPTIVE_COLORS_LIGHT,
   },
-};
+}CompanyFinancialClosingExecution;

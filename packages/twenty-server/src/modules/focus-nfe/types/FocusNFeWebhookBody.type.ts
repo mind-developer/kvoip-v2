@@ -28,6 +28,7 @@ export interface FocusNFeWebhookBodyNFSe {
   status: StatusNotaFiscal;
   numero?: string;
   codigo_verificacao?: string;
+  mensagem_sefaz?: string;
   data_emissao?: string;
   url?: string;
   caminho_xml_nota_fiscal?: string;

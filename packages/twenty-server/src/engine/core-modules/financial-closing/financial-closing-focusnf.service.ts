@@ -162,7 +162,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            `Solicitação de emissão da nota fiscal (NFCom) emitida, aguardando processamento`,
+            `Solicitação de emissão da nota fiscal (${getNfTypeLabel(NfType.NFCOM)}) emitida, aguardando processamento`,
             'info',
           );
         }
@@ -171,7 +171,7 @@ export class FinancialClosingNFService {
         nfCom.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfCom);
 
-        throw new Error(`(NFCom): ${issueResult?.error || 'Sem retorno'}`);
+        throw new Error(`(${getNfTypeLabel(NfType.NFCOM)}): ${issueResult?.error || 'Sem retorno'}`);
       }
     }
 
@@ -246,7 +246,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            `Solicitação de emissão da nota fiscal (NFSe) emitida, aguardando processamento`,
+            `Solicitação de emissão da nota fiscal (${getNfTypeLabel(NfType.NFSE)}) emitida, aguardando processamento`,
             'info',
           );
         }
@@ -255,7 +255,7 @@ export class FinancialClosingNFService {
         nfse.nfStatus = NfStatus.CANCELLED;
         await notaFiscalRepository.save(nfse);
           
-        throw new Error(`(NFSe): ${issueResult?.error || 'Sem retorno'}`);
+        throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || 'Sem retorno'}`);
       }
     }
 

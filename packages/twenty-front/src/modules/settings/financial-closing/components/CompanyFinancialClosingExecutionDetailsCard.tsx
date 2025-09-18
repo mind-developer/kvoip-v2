@@ -1,3 +1,5 @@
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionStatusTranslations } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 import { getExecutionStatusTagColor, getExecutionStatusText } from '@/settings/financial-closing/constants/LogLevelColors';
 import { getTypeEmissionNFColor, useTypeEmissionNFTranslations } from '@/settings/financial-closing/constants/TypeEmissionNF';
@@ -65,6 +67,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
   const theme = useTheme();
   const { t } = useLingui();
   const navigate = useNavigate();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
   const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
   const { getTypeEmissionNFLabel } = useTypeEmissionNFTranslations();
 
@@ -97,11 +100,22 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
 
   const handleViewCharge = () => {
     if (execution.charge?.id) {
-      const chargeUrl = `/objects/charges?viewId=${execution.charge.id}`;
-      // window.open(chargeUrl, '_blank');
-      // use o navigate
-      navigate(chargeUrl);
+      // Abrir a charge específica no Command Menu
+      openRecordInCommandMenu({
+        recordId: execution.charge.id,
+        objectNameSingular: CoreObjectNameSingular.Charge,
+        resetNavigationStack: true,
+      });
     }
+  };
+
+  const handleViewNotaFiscal = (notaFiscalId: string) => {
+    // Abrir a nota fiscal específica no Command Menu
+    openRecordInCommandMenu({
+      recordId: notaFiscalId,
+      objectNameSingular: 'notaFiscal', // Usando string literal até ser adicionado ao CoreObjectNameSingular
+      resetNavigationStack: true,
+    });
   };
 
   return (
@@ -147,7 +161,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         <StyledInfoRow>
           <StyledInfoLabel>{t`Completed Boleto Issuance`}:</StyledInfoLabel>
           <StyledButtonContainer>
-            {/* {execution.charge?.id && (
+            {execution.charge?.id && (
               <StyledViewChargeButton
                 variant="secondary"
                 size="small"
@@ -155,7 +169,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
                 title={t`View`}
                 Icon={IconExternalLink}
               />
-            )} */}
+            )}
             <Tag 
               color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
               text={getExecutionStatusText(execution.completedBoletoIssuance)} 
@@ -164,11 +178,34 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         </StyledInfoRow>
 
         <StyledInfoRow>
-          <StyledInfoLabel>{t`Completed Invoice Issuance`}:</StyledInfoLabel>
-          <Tag 
-            color={getExecutionStatusTagColor(execution.completedInvoiceIssuance)} 
-            text={getExecutionStatusText(execution.completedInvoiceIssuance)} 
-          />
+        <StyledInfoLabel>{t`Completed Invoice Issuance`}:</StyledInfoLabel>
+        <StyledButtonContainer>
+          {
+              execution.notasFiscais && execution.notasFiscais.length > 0 && (
+                <>
+                  {execution.notasFiscais.map((notaFiscal) => (
+                    <>
+                      {notaFiscal.id && (
+                        <StyledViewChargeButton
+                          key={notaFiscal.id}
+                          variant="secondary"
+                          size="small"
+                          onClick={() => handleViewNotaFiscal(notaFiscal.id)}
+                          // Deixe maiusculo
+                          title={`${notaFiscal.nfType?.toUpperCase()}`}
+                          Icon={IconExternalLink}
+                        />
+                      )}
+                    </>
+                  ))}
+                </>
+              )
+            }
+            <Tag 
+              color={getExecutionStatusTagColor(execution.completedBoletoIssuance)} 
+              text={getExecutionStatusText(execution.completedBoletoIssuance)} 
+            />
+          </StyledButtonContainer>
         </StyledInfoRow>
 
         <StyledInfoRow>

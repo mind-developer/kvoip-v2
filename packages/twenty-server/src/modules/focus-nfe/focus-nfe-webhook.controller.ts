@@ -16,7 +16,7 @@ import {
   FocusNFeWebhookBodyNFSe,
 } from 'src/modules/focus-nfe/types/FocusNFeWebhookBody.type';
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
-import { NfType } from 'src/modules/focus-nfe/types/NfType';
+import { getNfTypeLabel, NfType } from 'src/modules/focus-nfe/types/NfType';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 import { Repository } from 'typeorm';
 
@@ -37,7 +37,7 @@ export class FocusNfeController {
     @Body() body: FocusNFeWebhookBody,
   ) {
     this.logger.log(
-      `[${type}] ${integrationId} - Received incoming Focus NFe data | sdfgfdfjgnkd,fgnjkfdngkd`,
+      `[${type}] ${integrationId} - Received incoming Focus NFe data | sdfgfdfjgnkdfgnjkfdngkd`,
     );
 
     this.logger.log(
@@ -87,7 +87,7 @@ export class FocusNfeController {
         await addCompanyFinancialClosingExecutionLog(
           notaFiscal.companyFinancialClosingExecution,
           companyFinancialClosingExecutionsRepository,
-          `Erro na autorização da nota fiscal ${notaFiscal.nfType}: ${body.status}`,
+          `Erro na autorização da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}): ${body.status} ${body.mensagem_sefaz && (' - ' + body.mensagem_sefaz)}`,
           'error',
         );
       }
@@ -132,7 +132,7 @@ export class FocusNfeController {
           await addCompanyFinancialClosingExecutionLog(
             notaFiscal.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
-            `Nota fiscal ${notaFiscal.nfType} autorizada com sucesso`,
+            `Nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) autorizada com sucesso`,
             'info',
             undefined,
             notaFiscal.company ?? undefined,
@@ -222,7 +222,7 @@ export class FocusNfeController {
             await addCompanyFinancialClosingExecutionLog(
               notaFiscal.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
-              `${attachments.length} anexo(s) da nota fiscal ${notaFiscal.nfType} salvos com sucesso`,
+              `${attachments.length} anexo(s) da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) salvos com sucesso`,
               'info',
               undefined,
               notaFiscal.company ?? undefined
@@ -250,7 +250,7 @@ export class FocusNfeController {
           await addCompanyFinancialClosingExecutionLog(
             notaFiscal.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
-            `Nota fiscal ${notaFiscal.nfType} autorizada com sucesso`,
+            `Nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) autorizada com sucesso`,
             'info',
             undefined,
             notaFiscal.company ?? undefined,
@@ -346,7 +346,7 @@ export class FocusNfeController {
             await addCompanyFinancialClosingExecutionLog(
               notaFiscal.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
-              `${attachments.length} anexo(s) da nota fiscal ${notaFiscal.nfType} salvos com sucesso`,
+              `${attachments.length} anexo(s) da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) salvos com sucesso`,
               'info',
               undefined,
               notaFiscal.company ?? undefined
