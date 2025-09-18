@@ -230,7 +230,7 @@
 - Line 21, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string | null; addressCity: string | null; addressState: string | null; addressCountry: string | null; addressPostcode: string | null; addressLat: number | null; addressLng: number | null; }' but required in type 'FieldAddressDraftValue'.
 - Line 21, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string | null; addressCity: string | null; addressState: string | null; addressCountry: string | null; addressPostcode: string | null; addressLat: number | null; addressLng: number | null; }' but required in type 'FieldAddressDraftValue'.
 
-## 📂 src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+## 📂 src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx ✅
 
 - Line 12, Col 33 [TS2307]: Cannot find module '@/types/PageHotkeyScope' or its corresponding type declarations.
 - Line 14, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
@@ -310,7 +310,7 @@
 - Line 59, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 59, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm.tsx
+## 📂 src/modules/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm.tsx ✅
 
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
@@ -355,7 +355,7 @@
 - Line 106, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 106, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConnectionForm.tsx
+## 📂 src/modules/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConnectionForm.tsx ✅
 
 - Line 6, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 75, Col 28 [TS7006]: Parameter 'value' implicitly has an 'any' type.
@@ -387,7 +387,7 @@
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 10, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm.tsx
+## 📂 src/modules/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm.tsx ✅
 
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 4, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
@@ -412,7 +412,7 @@
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 16, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/profile/components/DocumentField.tsx
+## 📂 src/modules/settings/profile/components/DocumentField.tsx ✅
 
 - Line 10, Col 38 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormSelectFieldInput' or its corresponding type declarations.
 - Line 12, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
