@@ -252,7 +252,6 @@ export class WhatsAppService {
       });
 
       if (!whatsAppIntegration?.chatbotId || !chatbotFlow) return;
-      console.log('running bot');
       const chatbotKey =
         whatsAppDoc.integrationId + '_' + whatsAppDoc.client.phone;
       let executor = this.chatbotFlowService.getExecutor(chatbotKey);
