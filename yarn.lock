@@ -51956,6 +51956,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sip.js@npm:^0.21.2":
+  version: 0.21.2
+  resolution: "sip.js@npm:0.21.2"
+  checksum: 10c0/febc4faaed20ec86bbd51f551d724fabbe4b35a45185fc535e142f57fe842dcef7a316bc8b90bbe64736c030a3e31a0f3c450afd2b7f934c94178d3a31149215
+  languageName: node
+  linkType: hard
+
 "sirv@npm:^2.0.4":
   version: 2.0.4
   resolution: "sirv@npm:2.0.4"
@@ -54778,6 +54785,7 @@ __metadata:
     recoil: "npm:^0.7.7"
     remark-gfm: "npm:^4.0.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
+    sip.js: "npm:^0.21.2"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
