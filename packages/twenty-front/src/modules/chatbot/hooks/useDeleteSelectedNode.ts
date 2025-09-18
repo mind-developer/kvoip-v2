@@ -1,11 +1,11 @@
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useUpdateChatbotFlow } from './useUpdateChatbotFlow';
+import { useSetRecoilState } from 'recoil';
 
 export const useDeleteSelectedNode = () => {
-  const [chatbotFlow] = useRecoilState(chatbotFlowState);
-  const { updateFlow } = useUpdateChatbotFlow();
+  const chatbotFlow = useGetChatbotFlowState();
+  const saveChatbotFlowState = useSaveChatbotFlowState();
   const setSelectedNode = useSetRecoilState(chatbotFlowSelectedNodeState);
 
   const deleteSelectedNode = (nodeId: string) => {
@@ -26,7 +26,7 @@ export const useDeleteSelectedNode = () => {
     };
 
     setSelectedNode(undefined);
-    updateFlow(updatedChatbotFlow);
+    saveChatbotFlowState(updatedChatbotFlow);
   };
 
   return { deleteSelectedNode };

@@ -2,7 +2,6 @@ import { Edge } from '@xyflow/react';
 import { GenericNode } from '../types/GenericNode';
 import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
-
 export const initialNodes: GenericNode[] = [
   {
     id: '1',
@@ -38,7 +37,7 @@ export const initialNodes: GenericNode[] = [
   {
     id: '3',
     type: 'text',
-    data: { nodeStart: false, },
+    data: { nodeStart: false },
     position: { x: 500, y: 300 },
   },
 ];
@@ -60,4 +59,4 @@ export const initialEdges: Edge[] = [
 export const initialFlow: Partial<ChatbotFlowData> = {
   nodes: initialNodes,
   edges: initialEdges,
-}
+};

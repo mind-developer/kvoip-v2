@@ -14,11 +14,11 @@ import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/Cha
 import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
 import { GET_CHATBOT_FLOW_BY_ID } from '../graphql/query/getChatbotFlowById';
-import { chatbotFlowState } from '../state/chatbotFlowState';
 
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSetChatbotFlowState } from '@/chatbot/hooks/useSetChatbotFlowState';
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { initialEdges, initialNodes } from '../flow-templates/mockFlowTemplate';
 
 const types: NodeTypes = {
@@ -36,17 +36,18 @@ export const ChatbotFlow = ({
   const { chatbot } = useGetChatbot(targetableObjectId);
   const status = chatbot?.statuses ?? 'DEACTIVATED';
 
-  const setFlowState = useSetRecoilState(chatbotFlowState);
+  const chatbotFlow = useGetChatbotFlowState();
+  const { setChatbotFlowState } = useSetChatbotFlowState();
   const [canRender, setCanRender] = useState(false);
 
   const { refetch, loading } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
     variables: { chatbotId: targetableObjectId },
     onCompleted: (d) => {
-      setFlowState(d.getChatbotFlowById);
+      setChatbotFlowState(d.getChatbotFlowById);
       setCanRender(true);
     },
     onError: () => {
-      setFlowState({
+      setChatbotFlowState({
         nodes: initialNodes,
         edges: initialEdges,
         chatbotId: targetableObjectId,

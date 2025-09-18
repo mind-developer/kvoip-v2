@@ -2,14 +2,14 @@
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 type ChatbotFlowImageEventFormProps = {
   selectedNode: Node;
@@ -40,7 +40,7 @@ export const ChatbotFlowImageEventForm = ({
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
 
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
+  const chatbotFlow = useGetChatbotFlowState();
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );

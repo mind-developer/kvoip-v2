@@ -1,15 +1,16 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { Label } from 'twenty-ui/display';
 
 type ChatbotFlowTextEventFormProps = {
@@ -108,7 +109,8 @@ export const ChatbotFlowTextEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
   const { deleteSelectedNode } = useDeleteSelectedNode();
 
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
+  const chatbotFlow = useGetChatbotFlowState();
+  const saveChatbotFlowState = useSaveChatbotFlowState();
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -153,7 +155,7 @@ export const ChatbotFlowTextEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    updateFlow({
+    saveChatbotFlowState({
       chatbotId: chatbotFlow.chatbotId,
       edges: chatbotFlow.edges,
       nodes: updatedNodes,
