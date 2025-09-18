@@ -28,7 +28,7 @@
 - Line 5, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 5, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/chat/call-center/components/StartChat.tsx
+## 📂 src/modules/chat/call-center/components/StartChat.tsx ✅
 
 - Line 4, Col 37 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormPhoneFieldInput' or its corresponding type declarations.
 - Line 5, Col 38 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormSelectFieldInput' or its corresponding type declarations.
@@ -104,14 +104,14 @@
 - Line 6, Col 40 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
 - Line 7, Col 40 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
 
-## 📂 src/modules/chatbot/components/BotDiagramBase.tsx
+## 📂 src/modules/chatbot/components/BotDiagramBase.tsx ✅
 
 - Line 12, Col 46 [TS2307]: Cannot find module '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers' or its corresponding type declarations.
 - Line 12, Col 46 [TS2307]: Cannot find module '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers' or its corresponding type declarations.
 - Line 12, Col 46 [TS2307]: Cannot find module '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers' or its corresponding type declarations.
 - Line 12, Col 46 [TS2307]: Cannot find module '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers' or its corresponding type declarations.
 
-## 📂 src/modules/chatbot/components/actions/ChatbotFlowCondicionalEventForm.tsx
+## 📂 src/modules/chatbot/components/actions/ChatbotFlowCondicionalEventForm.tsx ✅
 
 - Line 206, Col 11 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
 - Line 251, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
@@ -122,21 +122,21 @@
 - Line 206, Col 11 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
 - Line 251, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 
-## 📂 src/modules/chatbot/components/actions/ChatbotFlowFileEventForm.tsx
+## 📂 src/modules/chatbot/components/actions/ChatbotFlowFileEventForm.tsx ✅
 
 - Line 193, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 193, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 193, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 193, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 
-## 📂 src/modules/chatbot/components/actions/ChatbotFlowImageEventForm.tsx
+## 📂 src/modules/chatbot/components/actions/ChatbotFlowImageEventForm.tsx ✅
 
 - Line 218, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 218, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 218, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 218, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 
-## 📂 src/modules/chatbot/components/actions/ChatbotFlowTextEventForm.tsx
+## 📂 src/modules/chatbot/components/actions/ChatbotFlowTextEventForm.tsx ✅
 
 - Line 175, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
 - Line 175, Col 14 [TS2741]: Property 'instanceId' is missing in type '{ sizeVariant: "md"; value: string; onChange: (newTitle: string) => void; onEscape: () => void; onClickOutside: () => void; }' but required in type 'InputProps'.
@@ -171,7 +171,7 @@
 - Line 2, Col 40 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/utils/createComponentStateV2' or its corresponding type declarations.
 - Line 2, Col 40 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/utils/createComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/chatbot/utils/createNode.ts
+## 📂 src/modules/chatbot/utils/createNode.ts ✅
 
 - Line 20, Col 13 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
 - Line 20, Col 13 [TS2741]: Property 'recordType' is missing in type '{ option: string; comparison: string; sectorId: string; conditionValue: "||"; }' but required in type 'NewLogicNodeData'.
@@ -183,17 +183,17 @@
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/dashboard-links/utils/generateSelectOptions.ts
+## 📂 src/modules/dashboard-links/utils/generateSelectOptions.ts ✅
 
 - Line 1, Col 10 [TS2459]: Module '"@/ui/input/components/Select"' declares 'SelectValue' locally, but it is not exported.
 - Line 1, Col 10 [TS2459]: Module '"@/ui/input/components/Select"' declares 'SelectValue' locally, but it is not exported.
 
-## 📂 src/modules/dashboard-links/utils/groupLinkLogsAccessOverTimeData.ts
+## 📂 src/modules/dashboard-links/utils/groupLinkLogsAccessOverTimeData.ts ✅
 
 - Line 28, Col 40 [TS2339]: Property 'createdAt' does not exist on type 'LinkLogsWorkspaceEntity'.
 - Line 28, Col 40 [TS2339]: Property 'createdAt' does not exist on type 'LinkLogsWorkspaceEntity'.
 
-## 📂 src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+## 📂 src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx ✅
 
 - Line 35, Col 70 [TS2538]: Type 'undefined' cannot be used as an index type.
 - Line 35, Col 70 [TS2538]: Type 'undefined' cannot be used as an index type.
@@ -427,7 +427,7 @@
 - Line 127, Col 20 [TS7006]: Parameter 'value' implicitly has an 'any' type.
 - Line 134, Col 20 [TS7006]: Parameter 'text' implicitly has an 'any' type.
 
-## 📂 src/modules/settings/profile/components/PhoneField.tsx
+## 📂 src/modules/settings/profile/components/PhoneField.tsx ✅
 
 - Line 10, Col 37 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormPhoneFieldInput' or its corresponding type declarations.
 - Line 11, Col 34 [TS2307]: Cannot find module '@/object-record/record-field/types/FieldMetadata' or its corresponding type declarations.

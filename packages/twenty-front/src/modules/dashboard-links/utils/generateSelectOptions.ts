@@ -1,5 +1,5 @@
-import { SelectValue } from '@/ui/input/components/Select';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { type SelectOption } from 'twenty-ui/input';
 
 const isNonEmptyString = (val: unknown): val is string =>
   typeof val === 'string' && val.trim().length > 0;

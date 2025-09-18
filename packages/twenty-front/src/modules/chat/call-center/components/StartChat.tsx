@@ -1,18 +1,21 @@
-import { START_CHAT_MODAL_ID } from '@/chat/call-center/constants/StartChatModalId';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useContext, useEffect, useMemo, useState } from 'react';
+
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+
+import { START_CHAT_MODAL_ID } from '@/chat/call-center/constants/StartChatModalId';
+import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
+import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+
+import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 type StartChatProps = {
   isStartChatOpen: boolean;
