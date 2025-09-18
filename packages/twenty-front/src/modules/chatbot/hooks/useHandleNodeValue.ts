@@ -1,11 +1,10 @@
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { XYPosition, useReactFlow } from '@xyflow/react';
-import { useRecoilState } from 'recoil';
-import { chatbotFlowState } from '../state/chatbotFlowState';
 import { GenericNode, GenericNodeData } from '../types/GenericNode';
 import { useSaveChatbotFlowState } from './useSaveChatbotFlowState';
 
 export const useHandleNodeValue = () => {
-  const flowState = useRecoilState(chatbotFlowState)[0];
+  const chatbotFlow = useGetChatbotFlowState();
   const saveChatbotFlow = useSaveChatbotFlowState();
   const { updateNodeData } = useReactFlow();
 
@@ -14,29 +13,29 @@ export const useHandleNodeValue = () => {
     value: any,
     node: GenericNode,
   ) => {
-    if (!flowState) throw new Error(`Could not find flow state to update`);
+    if (!chatbotFlow) throw new Error(`Could not find flow state to update`);
     const newFlow = {
       nodes: [
-        ...flowState.nodes.filter((filterNode) => filterNode.id !== node.id),
+        ...chatbotFlow.nodes.filter((filterNode) => filterNode.id !== node.id),
         { ...node, data: { ...node.data, [key]: value } },
       ],
-      edges: [...flowState.edges],
-      chatbotId: flowState.chatbotId,
+      edges: [...chatbotFlow.edges],
+      chatbotId: chatbotFlow.chatbotId,
     };
     updateNodeData(node.id, { ...node.data, [key]: value });
     saveChatbotFlow(newFlow);
   };
 
   const savePositionValue = (position: XYPosition, node: GenericNode) => {
-    if (!flowState)
-      throw new Error(`Could not find flow state to update: ${flowState}`);
+    if (!chatbotFlow)
+      throw new Error(`Could not find flow state to update: ${chatbotFlow}`);
     const newFlow = {
       nodes: [
-        ...flowState.nodes.filter((filterNode) => filterNode.id !== node.id),
+        ...chatbotFlow.nodes.filter((filterNode) => filterNode.id !== node.id),
         { ...node, position },
       ],
-      edges: [...flowState.edges],
-      chatbotId: flowState.chatbotId,
+      edges: [...chatbotFlow.edges],
+      chatbotId: chatbotFlow.chatbotId,
     };
     updateNodeData(node.id, { ...node.data, position });
     saveChatbotFlow(newFlow);
