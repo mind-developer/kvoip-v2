@@ -6,7 +6,7 @@
 - Line 40, Col 22 [TS7006]: Parameter 'benefit' implicitly has an 'any' type.
 - Line 40, Col 22 [TS7006]: Parameter 'benefit' implicitly has an 'any' type.
 
-## 📂 src/modules/billing/types/planQueryPlan.ts
+## 📂 src/modules/billing/types/planQueryPlan.ts ✅
 
 - Line 2, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'BillingBaseProductPricesQuery'.
 - Line 2, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'BillingBaseProductPricesQuery'.
@@ -97,7 +97,7 @@
 - Line 569, Col 36 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
 - Line 582, Col 38 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
 
-## 📂 src/modules/chat/utils/sort.ts
+## 📂 src/modules/chat/utils/sort.ts ✅
 
 - Line 6, Col 40 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
 - Line 7, Col 40 [TS2339]: Property 'toDate' does not exist on type 'TDateFirestore'.
@@ -242,7 +242,7 @@
 - Line 14, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 15, Col 34 [TS2307]: Cannot find module '@/ui/utilities/hotkey/hooks/useScopedHotkeys' or its corresponding type declarations.
 
-## 📂 src/modules/onboarding/components/OnboarindPaymentStatusCard.tsx
+## 📂 src/modules/onboarding/components/OnboarindPaymentStatusCard.tsx ✅
 
 - Line 15, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'GetCurrentUserQueryResult'.
 - Line 15, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'GetCurrentUserQueryResult'.
@@ -253,19 +253,19 @@
 - Line 7, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 7, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/admin-panel/hooks/useFeatureFlag.ts
+## 📂 src/modules/settings/admin-panel/hooks/useFeatureFlag.ts ✅
 
 - Line 7, Col 3 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useUpdateWorkspaceFeatureFlagMutation'.
 - Line 49, Col 17 [TS7006]: Parameter 'error' implicitly has an 'any' type.
 - Line 7, Col 3 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useUpdateWorkspaceFeatureFlagMutation'.
 - Line 49, Col 17 [TS7006]: Parameter 'error' implicitly has an 'any' type.
 
-## 📂 src/modules/settings/admin-panel/hooks/useImpersonate.ts
+## 📂 src/modules/settings/admin-panel/hooks/useImpersonate.ts ✅
 
 - Line 10, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useImpersonateMutation'.
 - Line 10, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useImpersonateMutation'.
 
-## 📂 src/modules/settings/admin-panel/hooks/useUserLookup.ts
+## 📂 src/modules/settings/admin-panel/hooks/useUserLookup.ts ✅
 
 - Line 6, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useUserLookupAdminPanelMutation'.
 - Line 14, Col 19 [TS7006]: Parameter 'data' implicitly has an 'any' type.
@@ -274,7 +274,7 @@
 - Line 14, Col 19 [TS7006]: Parameter 'data' implicitly has an 'any' type.
 - Line 20, Col 15 [TS7006]: Parameter 'error' implicitly has an 'any' type.
 
-## 📂 src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
+## 📂 src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx ✅
 
 - Line 23, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useBillingBaseProductPricesQuery'.
 - Line 23, Col 10 [TS2305]: Module '"~/generated/graphql"' has no exported member 'useBillingBaseProductPricesQuery'.
@@ -315,7 +315,7 @@
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 7, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 
-## 📂 src/modules/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuerForm.tsx
+## 📂 src/modules/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuerForm.tsx ✅
 
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
 - Line 3, Col 29 [TS2307]: Cannot find module '@/ui/input/components/TextInputV2' or its corresponding type declarations.
