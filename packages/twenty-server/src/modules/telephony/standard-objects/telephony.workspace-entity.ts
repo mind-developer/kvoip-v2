@@ -126,7 +126,7 @@ export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.BOOLEAN,
     label: msg`Listen to Calls`,
   })
-  @Field(() => String, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   listenToCalls: boolean | null = false;
 
   @WorkspaceField({

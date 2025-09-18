@@ -57,11 +57,13 @@
     "file-saver": "^2.0.5",
     "firebase": "^11.2.0",
     "onesignal": "^0.1.2",
+    "react-hook-form": "^7.62.0",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.4.0",
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.1.0",
     "@lingui/vite-plugin": "^5.1.2",

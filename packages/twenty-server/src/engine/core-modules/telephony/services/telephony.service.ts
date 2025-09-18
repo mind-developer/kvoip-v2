@@ -105,7 +105,7 @@ export class TelephonyService {
 
     return await telephonyRepository.save({
       ...telephony,
-      updateTelephonyData,
+      ...updateTelephonyData,
     });
   };
 
