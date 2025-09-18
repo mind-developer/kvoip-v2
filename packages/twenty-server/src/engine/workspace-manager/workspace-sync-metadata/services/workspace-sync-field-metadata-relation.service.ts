@@ -22,7 +22,7 @@ import {
 import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
 import { StandardFieldRelationFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field-relation.factory';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { getStandardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
@@ -156,7 +156,9 @@ export class WorkspaceSyncFieldMetadataRelationService {
     );
 
     // Loop over all standard objects and compare them with the objects in DB
-    for (const standardObjectMetadataDefinition of standardObjectMetadataDefinitions) {
+    for (const standardObjectMetadataDefinition of getStandardObjectMetadataDefinitions(
+      context,
+    )) {
       const workspaceEntityMetadataArgs = metadataArgsStorage.filterEntities(
         standardObjectMetadataDefinition,
       );

@@ -13,7 +13,7 @@ import { WorkspaceMigrationIndexFactory } from 'src/engine/workspace-manager/wor
 import { WorkspaceIndexComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-index.comparator';
 import { StandardIndexFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-index.factory';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { getStandardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
@@ -83,7 +83,7 @@ export class WorkspaceSyncIndexMetadataService {
 
     // Generate index metadata from models
     const standardIndexMetadataCollection = this.standardIndexFactory.create(
-      standardObjectMetadataDefinitions,
+      getStandardObjectMetadataDefinitions(context),
       context,
       originalStandardObjectMetadataMap,
       originalCustomObjectMetadataMap,

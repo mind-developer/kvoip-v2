@@ -1,3 +1,5 @@
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
+
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
@@ -62,4 +64,5 @@ export const STANDARD_OBJECT_IDS = {
   notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
   financialClosingExecution: 'e1b15f83-5757-452c-80d7-8984356e2715',
   companyFinancialClosingExecution: '2d7c471a-6fbf-4de7-98e4-92ac99e25425',
+  ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 };

@@ -1,3 +1,5 @@
+import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
@@ -305,6 +307,11 @@ export const LINKLOGS_STANDARD_FIELD_IDS = {
   linkName: '20202020-0b7b-4d0d-8b5d-4b7c3d2b3e7a',
   uv: '20202020-0b7b-4d0d-8b5d-4b7c3d2b5f8b',
   searchVector: '20202020-0b7b-4d0d-8b5d-4b7c3d2b7e3f',
+  country: 'a2804ebf-9cae-406f-8ab7-4b898e1def2d',
+  regionName: '65fd53f5-f950-4fe3-b851-62512066a267',
+  cityName: 'b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e',
+  city: '25f0cf05-3e98-4e6a-9e18-4441c3431e07',
+  platform: 'bafd9c2b-c4c9-4886-9a47-4b394369385f',
 };
 
 export const INTEGRATION_STANDARD_FIELD_IDS = {
@@ -860,4 +867,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
   chatbot: CHATBOT_STANDARD_FIELD_IDS,
+  ...KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS,
 };

@@ -37,6 +37,7 @@ export abstract class BaseWorkspaceEntity {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
+  @Field(() => String)
   createdAt: string;
 
   @WorkspaceField({

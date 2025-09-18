@@ -451,6 +451,7 @@ export class AuthService {
     const newPasswordHash = await hashPassword(newPassword);
 
     await this.userRepository.update(userId, {
+      id: userId,
       passwordHash: newPasswordHash,
     });
 

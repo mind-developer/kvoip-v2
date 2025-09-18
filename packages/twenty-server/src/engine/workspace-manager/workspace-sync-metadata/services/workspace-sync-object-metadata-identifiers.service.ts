@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager, Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { EntityManager, Repository } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { getStandardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
@@ -55,7 +55,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, any> {
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
-      standardObjectMetadataDefinitions,
+      getStandardObjectMetadataDefinitions(context),
       context,
     );
 

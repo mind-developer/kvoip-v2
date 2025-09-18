@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
@@ -28,8 +29,9 @@ export class TraceableService {
     traceableId: string;
     userAgent: string;
     userIp: string;
+    platform: string;
   }): Promise<HandleLinkAccessResult> {
-    const { workspaceId, traceableId, userAgent, userIp } = input;
+    const { workspaceId, traceableId, userAgent, userIp, platform } = input;
 
     const notFoundUrl = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
 
@@ -76,6 +78,11 @@ export class TraceableService {
       };
     }
 
+    const normalizedPlatform = this.normalizePlatform(platform);
+
+    const { country, regionName, city } =
+      await this.getGeoLocationFromIp(userIp);
+
     const linklogsRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
         workspaceId,
@@ -91,6 +98,10 @@ export class TraceableService {
       utmMedium: traceable?.meansOfCommunication,
       utmCampaign: traceable?.campaignName,
       linkName: traceable?.name,
+      platform: normalizedPlatform,
+      country,
+      regionName,
+      city,
     });
 
     await linklogsRepository.save(traceableAccessLog);
@@ -100,5 +111,64 @@ export class TraceableService {
       traceable,
       notFoundUrl,
     };
+  }
+
+  private async getGeoLocationFromIp(ip: string): Promise<{
+    country: string | null;
+    regionName: string | null;
+    city: string | null;
+  }> {
+    try {
+      const response = await axios.get(
+        `${this.twentyConfigService.get('GEOLOCATION_API_URL')}/${ip}`,
+      );
+
+      const data = response.data;
+
+      if (data?.status === 'success') {
+        return {
+          country: data.country ?? null,
+          regionName: data.regionName ?? null,
+          city: data.city ?? null,
+        };
+      } else {
+        this.logger.warn(`IP lookup failed for ${ip}: ${data?.message}`);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error fetching IP info for ${ip}: ${error?.message || error}`,
+      );
+    }
+
+    return {
+      country: null,
+      regionName: null,
+      city: null,
+    };
+  }
+
+  private normalizePlatform(rawPlatform?: string): string {
+    if (!rawPlatform) return 'Unknown';
+
+    const platform = rawPlatform.replace(/"/g, '').trim();
+
+    const mobilePlatforms = ['Android', 'iOS'];
+    const desktopPlatforms = [
+      'Chrome OS',
+      'Chromium OS',
+      'Linux',
+      'macOS',
+      'Windows',
+    ];
+
+    if (mobilePlatforms.includes(platform)) {
+      return `Mobile/${platform}`;
+    }
+
+    if (desktopPlatforms.includes(platform)) {
+      return `Desktop/${platform}`;
+    }
+
+    return 'Unknown';
   }
 }
