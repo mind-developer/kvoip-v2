@@ -18,6 +18,7 @@ import {
   Connection,
   Controls,
   Edge,
+  EdgeChange,
   NodeChange,
   NodeTypes,
   OnConnect,
@@ -27,7 +28,7 @@ import {
 } from '@xyflow/react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
@@ -35,8 +36,9 @@ import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '../state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '../state/chatbotFlowState';
+import { chatbotFlowEdges, chatbotFlowNodes } from '../state/chatbotFlowState';
 import { GenericNode } from '../types/GenericNode';
 import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
@@ -116,12 +118,10 @@ export const BotDiagramBase = ({
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
 
-  const chatbotFlowData = useRecoilState(chatbotFlowState)[0];
-
-  const [nodes, setNodes] = useState<GenericNode[]>(
-    chatbotFlowData?.nodes ?? [],
-  );
-  const [edges, setEdges] = useState<Edge[]>(chatbotFlowData?.edges ?? []);
+  const nodes = useRecoilValue(chatbotFlowNodes);
+  const edges = useRecoilValue(chatbotFlowEdges);
+  const setNodes = useSetRecoilState(chatbotFlowNodes);
+  const setEdges = useSetRecoilState(chatbotFlowEdges);
 
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<{
@@ -139,12 +139,13 @@ export const BotDiagramBase = ({
 
   const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
 
-  //what exactly does this validation do? and what's up with the naming?
   const { chatbotFlow } = useValidateChatbotFlow();
   const hasValidatedRef = useRef(false);
 
   //ideally redo this hook...
   const { updateFlow } = useUpdateChatbotFlow();
+
+  const saveChatbotFlowState = useSaveChatbotFlowState();
 
   const chatbotFlowSelectedNode = useRecoilState(chatbotFlowSelectedNodeState);
 
@@ -166,7 +167,7 @@ export const BotDiagramBase = ({
       if (!chatbotId) return;
 
       const newFlow = { ...flow, chatbotId: chatbotId };
-      updateFlow(newFlow as ChatbotFlowData);
+      saveChatbotFlowState(newFlow as ChatbotFlowData);
     }
   }, [rfInstance]);
 
@@ -178,14 +179,20 @@ export const BotDiagramBase = ({
           structuredClone(nds),
         );
         newNodesState.forEach((newNodeState: NodeChange) => {
+          if (!rfInstance) return appliedNodeChanges;
+          if (newNodeState.type !== 'position') {
+            saveChatbotFlowState({
+              ...rfInstance.toObject(),
+              nodes: appliedNodeChanges,
+              chatbotId,
+            });
+          }
           if (newNodeState.type === 'position' && !newNodeState.dragging) {
-            if (rfInstance) {
-              updateFlow({
-                ...rfInstance.toObject(),
-                nodes: appliedNodeChanges,
-                chatbotId,
-              });
-            }
+            saveChatbotFlowState({
+              ...rfInstance.toObject(),
+              nodes: appliedNodeChanges,
+              chatbotId,
+            });
           }
         });
         return appliedNodeChanges;
@@ -194,10 +201,21 @@ export const BotDiagramBase = ({
   );
 
   const onEdgesChange = useCallback(
-    (changes: any) =>
-      setEdges((eds) =>
-        applyEdgeChanges(structuredClone(changes), structuredClone(eds)),
-      ),
+    (newEdgesState: EdgeChange[]) =>
+      setEdges((eds) => {
+        const appliedEdgeChanges = applyEdgeChanges(
+          structuredClone(newEdgesState),
+          structuredClone(eds),
+        );
+        if (rfInstance) {
+          saveChatbotFlowState({
+            ...rfInstance.toObject(),
+            edges: appliedEdgeChanges,
+            chatbotId,
+          });
+        }
+        return appliedEdgeChanges;
+      }),
     [],
   );
 
@@ -213,7 +231,6 @@ export const BotDiagramBase = ({
     [edges, setEdges],
   );
 
-  //this is ok
   const isValidConnection = useCallback(
     (connection: Edge | Connection) => {
       const { source, sourceHandle, target, targetHandle } = connection;
@@ -284,7 +301,7 @@ export const BotDiagramBase = ({
       {isContextMenuOpen && (
         <div
           style={{
-            position: 'absolute',
+            position: 'relative',
             top: contextMenuPosition.y,
             left: contextMenuPosition.x,
           }}
