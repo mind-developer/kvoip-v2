@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -19,6 +20,9 @@ import {
 
 @Injectable()
 export class FocusNFeIntegrationService {
+
+  private readonly logger = new Logger(FocusNFeIntegrationService.name);
+
   constructor(
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
@@ -181,7 +185,7 @@ export class FocusNFeIntegrationService {
         updatedFocusNfeIntegration.id,
       );
       await this.subscriptionWebhook(
-        'nfcom',
+        'nfcom', 
         updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
         updatedFocusNfeIntegration.token,
         workspaceId,
@@ -213,6 +217,7 @@ export class FocusNFeIntegrationService {
           description: 'Error when removing Focus NFe Integration',
         });
       }
+
 
       return affected ? true : false;
     }
