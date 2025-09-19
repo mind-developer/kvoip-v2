@@ -200,21 +200,21 @@
 - Line 35, Col 70 [TS2538]: Type 'undefined' cannot be used as an index type.
 - Line 35, Col 70 [TS2538]: Type 'undefined' cannot be used as an index type.
 
-## 📂 src/modules/object-record/hooks/useFetchMoreRecordsWithPagination.ts
+## 📂 src/modules/object-record/hooks/useFetchMoreRecordsWithPagination.ts ✅
 
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 
-## 📂 src/modules/object-record/hooks/useLazyFetchMoreRecordsWithPagination.ts
+## 📂 src/modules/object-record/hooks/useLazyFetchMoreRecordsWithPagination.ts ✅
 
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 - Line 8, Col 31 [TS2307]: Cannot find module '@apollo/client/masking' or its corresponding type declarations.
 
-## 📂 src/modules/object-record/record-field/ui/form-types/components/**stories**/FormAddressFieldInput.stories.tsx
+## 📂 src/modules/object-record/record-field/ui/form-types/components/**stories**/FormAddressFieldInput.stories.tsx ✅
 
 - Line 23, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string; addressCity: string; addressState: string; addressCountry: string; addressPostcode: string; addressLat: number; addressLng: number; }' but required in type 'FieldAddressDraftValue'.
 - Line 46, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string; addressCity: string; addressState: string; addressCountry: string; addressPostcode: string; addressLat: number; addressLng: number; }' but required in type 'FieldAddressDraftValue'.
@@ -223,7 +223,7 @@
 - Line 46, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string; addressCity: string; addressState: string; addressCountry: string; addressPostcode: string; addressLat: number; addressLng: number; }' but required in type 'FieldAddressDraftValue'.
 - Line 82, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string; addressCity: string; addressState: string; addressCountry: string; addressPostcode: string; addressLat: number; addressLng: number; }' but required in type 'FieldAddressDraftValue'.
 
-## 📂 src/modules/object-record/record-field/ui/meta-types/input/components/AddressFieldInput.tsx
+## 📂 src/modules/object-record/record-field/ui/meta-types/input/components/AddressFieldInput.tsx ✅
 
 - Line 21, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string | null; addressCity: string | null; addressState: string | null; addressCountry: string | null; addressPostcode: string | null; addressLat: number | null; addressLng: number | null; }' but required in type 'FieldAddressDraftValue'.
 - Line 21, Col 5 [TS2741]: Property 'addressNumber' is missing in type '{ addressStreet1: string; addressStreet2: string | null; addressCity: string | null; addressState: string | null; addressCountry: string | null; addressPostcode: string | null; addressLat: number | null; addressLng: number | null; }' but required in type 'FieldAddressDraftValue'.

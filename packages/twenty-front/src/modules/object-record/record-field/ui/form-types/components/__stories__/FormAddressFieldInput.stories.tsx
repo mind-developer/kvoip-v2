@@ -29,6 +29,7 @@ export const Default: Story = {
       addressPostcode: '12345',
       addressLat: 39.781721,
       addressLng: -89.650148,
+      addressNumber: '123',
     },
   },
   play: async ({ canvasElement }) => {
@@ -52,6 +53,7 @@ export const WithVariables: Story = {
       addressPostcode: `{{${MOCKED_STEP_ID}.address.postcode}}`,
       addressLat: 39.781721,
       addressLng: -89.650148,
+      addressNumber: `{{${MOCKED_STEP_ID}.address.number}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
   },
@@ -88,6 +90,7 @@ export const Disabled: Story = {
       addressPostcode: '12345',
       addressLat: 39.781721,
       addressLng: -89.650148,
+      addressNumber: '123',
     },
     onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
