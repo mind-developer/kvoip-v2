@@ -11,6 +11,7 @@ export type PartialWorkspaceMember = Omit<
   | 'createdAt'
   | 'updatedAt'
   | 'userId'
+  | 'userPhone'
 >;
 
 export type RoleWithPartialMembers = Omit<Role, 'workspaceMembers'> & {

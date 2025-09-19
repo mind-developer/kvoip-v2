@@ -27,6 +27,7 @@ export const AddressFieldInput = () => {
       addressPostcode: newAddress?.addressPostcode ?? null,
       addressLat: newAddress?.addressLat ?? null,
       addressLng: newAddress?.addressLng ?? null,
+      addressNumber: newAddress?.addressNumber ?? null,
     };
   };
   const settings = fieldDefinition.metadata.settings;

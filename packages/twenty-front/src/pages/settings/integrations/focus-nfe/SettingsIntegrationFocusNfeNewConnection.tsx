@@ -23,7 +23,7 @@ export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   token: z.string(),
   companyName: z.string().min(1),
   cnpj: z.string().min(14),
-  cpf: z.string().optional().nullable(),
+  cpf: z.string().optional(),
   ie: z.string().min(1),
   inscricaoMunicipal: z.string(),
   cnaeCode: z.string(),
