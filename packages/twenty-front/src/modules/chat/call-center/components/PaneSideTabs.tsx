@@ -1,9 +1,5 @@
-import styled from '@emotion/styled';
-
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 type TabItemProps = {
   id: string;
@@ -18,43 +14,26 @@ type PaneSideTabsProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  user-select: none;
-`;
-
 export const PaneSideTabs = ({
   tabs,
   tabListId,
   loading,
   className,
 }: PaneSideTabsProps) => {
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
-    activeTabIdComponentState,
-    tabListId,
-  );
+  // Transform TabItemProps to SingleTabProps
+  const transformedTabs: SingleTabProps[] = tabs.map((tab) => ({
+    id: tab.id,
+    title: tab.title,
+    incomingMessages: tab.incomingMessages,
+  }));
 
   return (
-    <TabListComponentInstanceContext.Provider value={{ instanceId: tabListId }}>
-      <StyledContainer className={className}>
-        {tabs.map((tab) => (
-          <DeprecatedTab
-            id={tab.id.toString()}
-            key={tab.id}
-            title={tab.title}
-            active={tab.id.toString() === activeTabId}
-            onClick={() => setActiveTabId(tab.id)}
-            disabled={loading}
-            incomingMessages={tab.incomingMessages}
-          />
-        ))}
-      </StyledContainer>
-    </TabListComponentInstanceContext.Provider>
+    <TabList
+      tabs={transformedTabs}
+      loading={loading}
+      className={className}
+      componentInstanceId={tabListId}
+      behaveAsLinks={false}
+    />
   );
 };

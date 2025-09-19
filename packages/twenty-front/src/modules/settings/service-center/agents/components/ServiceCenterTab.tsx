@@ -13,7 +13,7 @@ import { IntegrationType } from '@/settings/service-center/types/IntegrationType
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
@@ -45,7 +45,7 @@ export const ServiceCenterTabs = ({
   loading,
   isRightDrawer = false,
 }: ServiceCenterTabsProps) => {
-  const [activeTabId] = useRecoilComponentStateV2(
+  const [activeTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     TAB_LIST_COMPONENT_ID,
   );

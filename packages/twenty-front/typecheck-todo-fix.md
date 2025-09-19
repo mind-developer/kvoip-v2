@@ -1,6 +1,6 @@
 # TypeScript Typecheck Errors (Grouped by File)
 
-## 📂 src/modules/billing/components/BillingPlansBenefitsCard.tsx
+## 📂 src/modules/billing/components/BillingPlansBenefitsCard.tsx ✅
 
 - Line 40, Col 22 [TS7006]: Parameter 'benefit' implicitly has an 'any' type.
 - Line 40, Col 22 [TS7006]: Parameter 'benefit' implicitly has an 'any' type.
@@ -23,7 +23,7 @@
 - Line 315, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 315, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/chat/call-center/components/PaneSideTabs.tsx
+## 📂 src/modules/chat/call-center/components/PaneSideTabs.tsx useRecoilComponentStateV2 ✅
 
 - Line 5, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 5, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
@@ -42,7 +42,7 @@
 - Line 9, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 - Line 9, Col 29 [TS2307]: Cannot find module '@/ui/layout/dropdown/hooks/useDropdown' or its corresponding type declarations.
 
-## 📂 src/modules/chat/call-center/context/CallCenterContext.tsx
+## 📂 src/modules/chat/call-center/context/CallCenterContext.tsx ✅
 
 - Line 48, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 48, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
@@ -436,19 +436,19 @@
 - Line 10, Col 37 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormPhoneFieldInput' or its corresponding type declarations.
 - Line 11, Col 34 [TS2307]: Cannot find module '@/object-record/record-field/types/FieldMetadata' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/components/ServiceCenterTab.tsx
+## 📂 src/modules/settings/service-center/agents/components/ServiceCenterTab.tsx ✅
 
 - Line 16, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 16, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/components/ServiceCenterTabList.tsx
+## 📂 src/modules/settings/service-center/agents/components/ServiceCenterTabList.tsx ✅
 
 - Line 6, Col 30 [TS2307]: Cannot find module '@/ui/layout/tab-list/scopes/TabListScope' or its corresponding type declarations.
 - Line 8, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 - Line 6, Col 30 [TS2307]: Cannot find module '@/ui/layout/tab-list/scopes/TabListScope' or its corresponding type declarations.
 - Line 8, Col 43 [TS2307]: Cannot find module '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2' or its corresponding type declarations.
 
-## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
+## 📂 src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx ✅
 
 - Line 3, Col 43 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput' or its corresponding type declarations.
 - Line 3, Col 43 [TS2307]: Cannot find module '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput' or its corresponding type declarations.
@@ -555,7 +555,7 @@
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 
-## 📂 src/modules/settings/service-center/telephony/hooks/useFindAllDialingPlans.ts
+## 📂 src/modules/settings/service-center/telephony/hooks/useFindAllDialingPlans.ts ✅
 
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.
 - Line 18, Col 11 [TS2339]: Property 'enqueueSnackBar' does not exist on type '{ handleSnackBarClose: (id: string) => void; enqueueSuccessSnackBar: ({ message, options, }: { message: string; options?: Omit<SnackBarOptions, "id" | "message"> | undefined; }) => void; enqueueErrorSnackBar: ({ apolloError, message, options, }: ({ ...; } | { ...; }) & { ...; }) => void; enqueueInfoSnackBar: ({ mess...'.

@@ -45,7 +45,7 @@ import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFi
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useApolloClient } from '@apollo/client';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -77,7 +77,7 @@ export const CallCenterProvider = ({
 
   const TAB_LIST_COMPONENT_ID = 'show-whats-page-side-tab-list';
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+  const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     TAB_LIST_COMPONENT_ID,
   );
