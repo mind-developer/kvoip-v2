@@ -11,4 +11,5 @@ export type GenericNodeData = {
   title?: string;
   text?: string;
   logic?: NewConditionalState;
+  imageUrl?: string;
 };
