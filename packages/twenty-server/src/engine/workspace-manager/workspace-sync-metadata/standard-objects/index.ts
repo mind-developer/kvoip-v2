@@ -99,6 +99,7 @@ const baseStandardObjectMetadataDefinitions = [
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace
+// TODO: Use @WorkspaceGate decorator with 'IS_KVOIP_ADMIN' feature flag instead
 const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
   TenantWorkspaceEntity,
   OwnerWorkspaceEntity,
