@@ -98,7 +98,7 @@ const StyledTime = styled.p<{ messageType: MessageType }>`
   user-select: none;
   z-index: 3;
   ${(props) =>
-    props.messageType === 'image'
+    props.messageType === 'image' || props.messageType === 'document'
       ? `
     position: absolute;
     right: 13px;
