@@ -47,27 +47,19 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
   const { updateInterIntegration } = useUpdateInterIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
-  const integration = integrationCategoryAll.integrations.find(
+  const integration = integrationCategoryAll?.integrations?.find(
     ({ from: { key } }) => key === 'inter',
   );
 
   const { connectionId } = useParams<{ connectionId?: string }>();
 
-  const { interIntegrations } = useFindAllInterIntegrations();
-  const activeConnection = interIntegrations.find(
+  const { interIntegrations, loading } = useFindAllInterIntegrations();
+  const activeConnection = interIntegrations?.find(
     (wa) => wa.id === connectionId,
   );
 
   const isIntegrationAvailable = !!integration;
-
-  useEffect(() => {
-    if (!isIntegrationAvailable) {
-      navigateApp(AppPath.NotFound);
-    }
-    // eslint-disable-next-line no-sparse-arrays
-  }, [integration, , navigateApp, isIntegrationAvailable]);
-
-  if (!isIntegrationAvailable) return null;
+  const isDataLoaded = !loading && interIntegrations !== undefined;
 
   const formConfig = useForm<SettingsEditIntegrationInterConnectionFormValues>({
     mode: 'onChange',
@@ -82,6 +74,15 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
       privateKey: activeConnection?.privateKey,
     },
   });
+
+  useEffect(() => {
+    if (!isIntegrationAvailable) {
+      navigateApp(AppPath.NotFound);
+    }
+    // eslint-disable-next-line no-sparse-arrays
+  }, [integration, , navigateApp, isIntegrationAvailable]);
+
+  if (!isIntegrationAvailable || !isDataLoaded) return null;
 
   const canSave = formConfig.formState.isValid;
 

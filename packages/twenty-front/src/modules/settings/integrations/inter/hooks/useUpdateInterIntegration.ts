@@ -43,11 +43,15 @@ export const useUpdateInterIntegration = (): UpdateInterIntegration => {
       });
 
     const privateKeyContent = updateInput.privateKey
-      ? await toBase64(updateInput.privateKey as File)
+      ? typeof updateInput.privateKey === 'string'
+        ? updateInput.privateKey
+        : await toBase64(updateInput.privateKey as File)
       : null;
 
     const certificateContent = updateInput.certificate
-      ? await toBase64(updateInput.certificate as File)
+      ? typeof updateInput.certificate === 'string'
+        ? updateInput.certificate
+        : await toBase64(updateInput.certificate as File)
       : null;
 
     const input = {
