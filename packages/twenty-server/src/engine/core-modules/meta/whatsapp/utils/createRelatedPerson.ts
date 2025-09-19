@@ -13,7 +13,7 @@ export function createRelatedPerson(
         ? whatsAppDoc.client.name.split(' ')[0].trim()
         : whatsAppDoc.client.phone || '',
       lastName: whatsAppDoc.client.name
-        ? whatsAppDoc.client.name.split(' ')[1].trim()
+        ? (whatsAppDoc.client.name.split(' ')[1]?.trim() ?? '')
         : '',
     },
     //TODO: parse number to get codes
