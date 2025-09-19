@@ -3,13 +3,11 @@ import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
-import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
-import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 type ChatbotFlowImageEventFormProps = {
   selectedNode: Node;
@@ -36,14 +34,11 @@ export const ChatbotFlowImageEventForm = ({
     setImage(selectedNode.data?.imageUrl as string | undefined);
   }, [selectedNode.data]);
 
-  const saveChatbotFlowState = useSaveChatbotFlowState();
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
+  const { saveDataValue } = useHandleNodeValue();
 
   const chatbotFlow = useGetChatbotFlowState();
-  const setChatbotFlowSelectedNode = useSetRecoilState(
-    chatbotFlowSelectedNodeState,
-  );
 
   const handleSendFile = async (file: File) => {
     if (!selectedNode || !chatbotFlow) return;
@@ -54,26 +49,7 @@ export const ChatbotFlowImageEventForm = ({
 
     if (url && selectedNode) {
       setImage(url);
-
-      const updatedNode = {
-        ...selectedNode,
-        data: {
-          ...selectedNode.data,
-          imageUrl: url,
-        },
-      };
-
-      const updatedNodes = chatbotFlow.nodes.map((node) =>
-        node.id === selectedNode.id ? updatedNode : node,
-      );
-
-      saveChatbotFlowState({
-        chatbotId: chatbotFlow.chatbotId,
-        nodes: updatedNodes,
-        edges: chatbotFlow.edges,
-        viewport: { x: 0, y: 0, zoom: 0 },
-      });
-      setChatbotFlowSelectedNode(updatedNode);
+      saveDataValue('imageUrl', url, selectedNode);
     }
   };
 
@@ -82,26 +58,7 @@ export const ChatbotFlowImageEventForm = ({
 
     setImage(undefined);
 
-    const updatedNode = {
-      ...selectedNode,
-      data: {
-        ...selectedNode.data,
-        imageUrl: '',
-      },
-    };
-
-    const updatedNodes = chatbotFlow.nodes.map((node) =>
-      node.id === selectedNode.id ? updatedNode : node,
-    );
-
-    saveChatbotFlowState({
-      chatbotId: chatbotFlow.chatbotId,
-      nodes: updatedNodes,
-      edges: chatbotFlow.edges,
-      viewport: { x: 0, y: 0, zoom: 0 },
-    });
-
-    setChatbotFlowSelectedNode(updatedNode);
+    saveDataValue('imageUrl', '', selectedNode);
   };
 
   return (
