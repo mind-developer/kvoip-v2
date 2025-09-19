@@ -96,6 +96,7 @@ const TextNode = ({
           type="target"
           position={Position.Left}
           isConnectable={isConnectable}
+          style={{ height: 10, width: 10 }}
         />
       )}
       <>
@@ -113,6 +114,7 @@ const TextNode = ({
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
       />
     </BaseNode>
   );

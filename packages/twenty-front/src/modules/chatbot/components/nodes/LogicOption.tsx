@@ -157,6 +157,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               type="source"
               position={Position.Right}
               isConnectable={true}
+              style={{ height: 10, width: 10 }}
             />
           </>
         )}

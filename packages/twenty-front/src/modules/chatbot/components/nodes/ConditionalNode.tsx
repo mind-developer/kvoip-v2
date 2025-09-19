@@ -114,6 +114,7 @@ function ConditionalNode({
           type="target"
           position={Position.Top}
           isConnectable={isConnectable}
+          style={{ height: 10, width: 10 }}
         />
         <StyledDiv>
           <StyledLogicNodeWrapper>

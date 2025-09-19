@@ -95,6 +95,7 @@ function FileNode({
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
       />
       {data.fileUrl && (
         <StyledOption>
@@ -109,6 +110,7 @@ function FileNode({
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
       />
     </BaseNode>
   );

@@ -2,6 +2,7 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -45,6 +46,7 @@ function ImageNode({
   const nodeId = useNodeId();
   const node = useNodes().filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { updateNodeData } = useReactFlow();
+  const { saveDataValue } = useHandleNodeValue();
 
   const targetConnections = useNodeConnections({
     id,
@@ -95,12 +97,15 @@ function ImageNode({
       title={data.title ?? 'Node title'}
       nodeTypeDescription="Image node"
       onTitleChange={handleTitleChange}
-      onTitleBlur={() => {}}
+      onTitleBlur={() => {
+        saveDataValue('title', data.title, node);
+      }}
     >
       <Handle
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
       />
       {data.imageUrl && (
         <StyledDiv>
@@ -112,6 +117,7 @@ function ImageNode({
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
       />
     </BaseNode>
   );
