@@ -24,6 +24,10 @@ type StartChatProps = {
   onIntegrationUpdate: (integrationId: string | null) => void;
 };
 
+const StyledDiv = styled.div`
+  z-index: 1;
+`;
+
 const StyledInitChatModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(6)};
@@ -123,55 +127,57 @@ export const StartChat = ({
   openModal(START_CHAT_MODAL_ID);
 
   return (
-    <AnimatePresence mode="wait">
-      <LayoutGroup>
-        {isStartChatOpen && (
-          <StyledInitChatModal
-            modalId={START_CHAT_MODAL_ID}
-            isClosable
-            onClose={handleCancel}
-          >
-            <StyledCenteredTitle>
-              <H1Title
-                title={'Start Conversation'}
-                fontColor={H1TitleFontColor.Primary}
-              />
-            </StyledCenteredTitle>
-            <StyledSection
-              alignment={SectionAlignment.Center}
-              fontColor={SectionFontColor.Primary}
+    <StyledDiv>
+      <AnimatePresence mode="wait">
+        <LayoutGroup>
+          {isStartChatOpen && (
+            <StyledInitChatModal
+              modalId={START_CHAT_MODAL_ID}
+              isClosable
+              onClose={handleCancel}
             >
-              {
-                'This will start a conversation with a template, enter the number below'
-              }
-            </StyledSection>
-            <StyledSection>
-              <FormSelectFieldInput
-                label="Inbox"
-                defaultValue={integrationId}
-                options={waIntegration}
-                onChange={handleBusinessIdChange}
+              <StyledCenteredTitle>
+                <H1Title
+                  title={'Start Conversation'}
+                  fontColor={H1TitleFontColor.Primary}
+                />
+              </StyledCenteredTitle>
+              <StyledSection
+                alignment={SectionAlignment.Center}
+                fontColor={SectionFontColor.Primary}
+              >
+                {
+                  'This will start a conversation with a template, enter the number below'
+                }
+              </StyledSection>
+              <StyledSection>
+                <FormSelectFieldInput
+                  label="Inbox"
+                  defaultValue={integrationId}
+                  options={waIntegration}
+                  onChange={handleBusinessIdChange}
+                />
+                <FormPhoneFieldInput onChange={handlePhoneChange} />
+              </StyledSection>
+              <StyledCenteredButton
+                onClick={handleConfirm}
+                variant="primary"
+                accent="blue"
+                title={'Start conversation'}
+                disabled={!isPhoneValid}
+                fullWidth
+                dataTestId="init-chat-modal-confirm-button"
               />
-              <FormPhoneFieldInput onChange={handlePhoneChange} />
-            </StyledSection>
-            <StyledCenteredButton
-              onClick={handleConfirm}
-              variant="primary"
-              accent="blue"
-              title={'Start conversation'}
-              disabled={!isPhoneValid}
-              fullWidth
-              dataTestId="init-chat-modal-confirm-button"
-            />
-            <StyledCenteredButton
-              onClick={handleCancel}
-              variant="secondary"
-              title={'Cancel'}
-              fullWidth
-            />
-          </StyledInitChatModal>
-        )}
-      </LayoutGroup>
-    </AnimatePresence>
+              <StyledCenteredButton
+                onClick={handleCancel}
+                variant="secondary"
+                title={'Cancel'}
+                fullWidth
+              />
+            </StyledInitChatModal>
+          )}
+        </LayoutGroup>
+      </AnimatePresence>
+    </StyledDiv>
   );
 };
