@@ -2,6 +2,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
+import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
@@ -340,8 +341,6 @@ export const PaneChat = () => {
   );
   const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
 
@@ -668,7 +667,6 @@ export const PaneChat = () => {
         chatContainerRef.current;
       const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
       setIsAtBottom(isBottom);
-
       if (isBottom) {
         setNewMessagesIndicator(false);
       }
@@ -892,14 +890,7 @@ export const PaneChat = () => {
                     key={index}
                     isSystemMessage={isSystemMessage}
                   >
-                    <StyledDocument href={message.message} target="_blank">
-                      {msg}
-                    </StyledDocument>
-                    <OpenOnAnotherTab
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.primary}
-                    />
+                    <DocumentPreview documentUrl={message.message} />
                   </StyledDocumentContainer>
                 );
                 break;
@@ -953,12 +944,16 @@ export const PaneChat = () => {
                       currentWorkspaceMember={currentWorkspaceMember}
                     />
                   </StyledAvatarMessage>
-                  <StyledContainer isSystemMessage={isSystemMessage}>
+                  <StyledContainer
+                    key={index}
+                    isSystemMessage={isSystemMessage}
+                  >
                     <StyledMessageItem
                       key={index}
                       isSystemMessage={isSystemMessage}
                     >
                       <StyledMessageBubble
+                        key={index}
                         time={formatDate(message.createdAt).time}
                         message={message}
                         hasTail={lastOfRow}

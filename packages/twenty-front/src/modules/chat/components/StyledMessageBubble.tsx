@@ -28,7 +28,7 @@ const StyledMessageBubbleContainer = styled(motion.div)<{
       : theme.background.quaternary};
 
   padding: ${({ theme, messageType }) =>
-    `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' ? 3 : 1)}`};
+    `${theme.spacing(1)} ${theme.spacing(messageType !== 'image' && messageType !== 'document' ? 3 : 1)}`};
   border-radius: ${({ messageText }) =>
     messageText.length < 30 ? '15px' : '15px'};
   word-wrap: break-word;
