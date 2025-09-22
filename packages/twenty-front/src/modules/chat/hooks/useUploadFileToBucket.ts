@@ -1,6 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { UPLOAD_FILE_TO_BUCKET } from '@/chat/graphql/mutation/uploadFileToBucket';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
@@ -18,12 +17,13 @@ interface UploadFileToBucketReturn {
 
 export const useUploadFileToBucket = (): UploadFileToBucketReturn => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [uploadFileToBucketMutation] = useMutation(UPLOAD_FILE_TO_BUCKET, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

@@ -10,7 +10,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class KvoipAdminService {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

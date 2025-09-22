@@ -1,11 +1,12 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
-import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
-import { BLOCK_SCHEMA } from '../constants/Schema';
+import { type BLOCK_SCHEMA } from '../constants/Schema';
 import {
+  IconBlockquote,
   IconCode,
-  IconComponent,
+  type IconComponent,
   IconFile,
   IconH1,
   IconH2,
@@ -25,6 +26,7 @@ const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,
   'Heading 2': IconH2,
   'Heading 3': IconH3,
+  Quote: IconBlockquote,
   'Numbered List': IconListNumbers,
   'Bullet List': IconList,
   'Check List': IconListCheck,

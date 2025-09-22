@@ -6,12 +6,12 @@ import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConne
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { IconChevronRight, IconTrash } from 'twenty-ui/display';
 import { IconButton, LightIconButton } from 'twenty-ui/input';
 
+import { useLingui } from '@lingui/react/macro';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import StripeAccountConnectedContainer from '~/pages/settings/integrations/stripe/components/StripeAccountConnectedContainer';
 import { useCreateCheckoutSession } from '~/pages/settings/integrations/stripe/hooks/useCreateCheckoutSession';
@@ -56,7 +56,9 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettigsIntegrationStripeConnectionsListCard = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const { createCheckoutSession } = useCreateCheckoutSession();
 
@@ -72,23 +74,19 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
     try {
       await deleteStripeIntegration(id);
 
-      enqueueSnackBar('Accont has been removed', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Accont has been removed`,
       });
       setRefresh(!refresh);
-    } catch (error) {
-      enqueueSnackBar('Failed to remove account', {
-        variant: SnackBarVariant.Error,
-      });
-    }
+    } catch (error) {}
   };
 
   const handleCheckoutSession = async () => {
     try {
       await createCheckoutSession(100, 'usd');
     } catch (error) {
-      enqueueSnackBar('Failed to create checkout session', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Failed to create checkout session`,
       });
     }
   };

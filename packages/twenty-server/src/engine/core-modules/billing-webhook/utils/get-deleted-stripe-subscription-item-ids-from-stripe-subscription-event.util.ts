@@ -1,7 +1,8 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
+
+import type Stripe from 'stripe';
 
 export const getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent = (
   event:
@@ -20,10 +21,9 @@ export const getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent = (
   const subscriptionItemIds =
     event.data.object.items.data.map((item) => item.id) ?? [];
 
-  const deletedSubscriptionItemIds =
+  return (
     event.data.previous_attributes?.items?.data
       .filter((item) => !subscriptionItemIds.includes(item.id))
-      .map((item) => item.id) ?? [];
-
-  return deletedSubscriptionItemIds;
+      .map((item) => item.id) ?? []
+  );
 };

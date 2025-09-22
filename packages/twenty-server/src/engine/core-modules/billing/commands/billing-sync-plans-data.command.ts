@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 import { JsonContains, Repository } from 'typeorm';
 
 import {
-  MigrationCommandOptions,
+  type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -33,13 +33,13 @@ import {
 export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   private readonly batchSize = 5;
   constructor(
-    @InjectRepository(BillingPrice, 'core')
+    @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingProductLimit, 'core')
+    @InjectRepository(BillingProductLimit)
     private readonly billingProductLimitRepository: Repository<BillingProductLimit>,
-    @InjectRepository(BillingMeter, 'core')
+    @InjectRepository(BillingMeter)
     private readonly billingMeterRepository: Repository<BillingMeter>,
     private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripeProductService: StripeProductService,
@@ -167,7 +167,7 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   }
 
   override async runMigrationCommand(
-    passedParams: string[],
+    _passedParams: string[],
     options: MigrationCommandOptions,
   ): Promise<void> {
     const billingMeters = await this.stripeBillingMeterService.getAllMeters();

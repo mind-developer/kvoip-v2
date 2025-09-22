@@ -1,8 +1,8 @@
-import { useMutation } from '@apollo/client';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
+import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 import { CREATE_TELEPHONY } from '../graphql/mutations/createTelephony';
+import { CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
 
 interface UserCreateTelephonyReturn {
   createTelephony: (inputTelephony: CreateTelephonyInput) => Promise<void>;
@@ -12,19 +12,22 @@ interface UserCreateTelephonyReturn {
 }
 
 export const useCreateTelephony = (): UserCreateTelephonyReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [createTelephonyMutation, { data, loading, error }] = useMutation(
     CREATE_TELEPHONY,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: (error as Error).message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Telephony extension added successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueErrorSnackBar({
+          message: t`Telephony extension added successfully!`,
         });
       },
     },
@@ -38,8 +41,9 @@ export const useCreateTelephony = (): UserCreateTelephonyReturn => {
         variables: { createTelephonyInput: createTelephonyInput },
       });
     } catch (err) {
-      enqueueSnackBar('Telephony creation error', {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: t`Telephony creation error`,
       });
     }
   };

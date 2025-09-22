@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
+import { type MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 
-export class MessageImportDriverException extends CustomException {
-  constructor(message: string, code: MessageImportDriverExceptionCode) {
-    super(message, code);
-  }
-}
+export class MessageImportDriverException extends CustomException<
+  MessageImportDriverExceptionCode | MessageNetworkExceptionCode
+> {}
 
 export enum MessageImportDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
@@ -15,4 +14,5 @@ export enum MessageImportDriverExceptionCode {
   NO_NEXT_SYNC_CURSOR = 'NO_NEXT_SYNC_CURSOR',
   SYNC_CURSOR_ERROR = 'SYNC_CURSOR_ERROR',
   PROVIDER_NOT_SUPPORTED = 'PROVIDER_NOT_SUPPORTED',
+  CLIENT_NOT_AVAILABLE = 'CLIENT_NOT_AVAILABLE',
 }

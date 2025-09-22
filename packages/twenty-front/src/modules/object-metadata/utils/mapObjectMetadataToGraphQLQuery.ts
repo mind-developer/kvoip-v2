@@ -1,23 +1,25 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<
     ObjectMetadataItem,
-    'nameSingular' | 'fields' | 'id'
+    'nameSingular' | 'fields' | 'id' | 'readableFields'
   >;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -42,24 +44,77 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
   }
 
-  const manyToOneRelationFields = objectMetadataItem?.fields
+  const manyToOneRelationFields = objectMetadataItem?.readableFields
     .filter((field) => field.isActive)
-    .filter((field) => field.type === FieldMetadataType.RELATION)
+    .filter(
+      (field) =>
+        field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION,
+    )
     .filter((field) => isDefined(field.settings?.joinColumnName));
 
   const manyToOneRelationGqlFieldWithFieldMetadata =
-    manyToOneRelationFields.map((field) => ({
-      gqlField: field.settings?.joinColumnName,
-      fieldMetadata: field,
+    manyToOneRelationFields.flatMap((field) => {
+      const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
+      if (!isMorphRelation) {
+        return {
+          gqlField: field.settings?.joinColumnName,
+          fieldMetadata: field,
+        };
+      }
+
+      if (!isDefined(field.morphRelations)) {
+        throw new Error(
+          `Field ${field.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+        );
+      }
+
+      return field.morphRelations.map((morphRelation) => ({
+        gqlField: computeMorphRelationFieldName({
+          fieldName: field.name,
+          relationDirection: morphRelation.type,
+          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+          namePlural: morphRelation.targetObjectMetadata.namePlural,
+        }),
+        fieldMetadata: field,
+      }));
+    });
+
+  const readableFields = objectMetadataItem.readableFields.filter(
+    (fieldMetadata) => fieldMetadata.isActive,
+  );
+
+  const activeReadableFields = readableFields.flatMap((fieldMetadata) => {
+    const isMorphRelation =
+      fieldMetadata.type === FieldMetadataType.MORPH_RELATION;
+    if (!isMorphRelation) {
+      return [
+        {
+          gqlField: fieldMetadata.name,
+          fieldMetadata,
+        },
+      ];
+    }
+
+    if (!isDefined(fieldMetadata.morphRelations)) {
+      throw new Error(
+        `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+      );
+    }
+
+    return fieldMetadata.morphRelations.map((morphRelation) => ({
+      gqlField: computeMorphRelationFieldName({
+        fieldName: fieldMetadata.name,
+        relationDirection: morphRelation.type,
+        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+        namePlural: morphRelation.targetObjectMetadata.namePlural,
+      }),
+      fieldMetadata,
     }));
+  });
 
   const gqlFieldWithFieldMetadataThatCouldBeQueried = [
-    ...objectMetadataItem.fields
-      .filter((fieldMetadata) => fieldMetadata.isActive)
-      .map((fieldMetadata) => ({
-        gqlField: fieldMetadata.name,
-        fieldMetadata,
-      })),
+    ...activeReadableFields,
     ...manyToOneRelationGqlFieldWithFieldMetadata,
   ].sort((gqlFieldWithFieldMetadataA, gqlFieldWithFieldMetadataB) =>
     gqlFieldWithFieldMetadataA.gqlField.localeCompare(

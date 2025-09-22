@@ -1,6 +1,6 @@
 import { FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import { Select } from '@/ui/input/components/Select';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -24,12 +24,12 @@ export const DashboardFilterDropdown = ({
   const [recordType, setRecordType] = useState<FilterType>('week');
 
   const dropdownId = `${scopeKey}-active-action-dropdown`;
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { toggleDropdown } = useToggleDropdown();
 
   const handleChange = (val: any) => {
     setRecordType(val);
     onChange(val);
-    closeDropdown();
+    toggleDropdown();
   };
 
   const recordTypeOptions: { label: string; value: FilterType }[] = [

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -12,17 +13,17 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
+import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -38,7 +39,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
+import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
@@ -56,8 +57,9 @@ const StyledButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledTable = styled(Table)`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+const StyledTable = styled(Table)<{ hasMoreRows?: boolean }>`
+  border-bottom: ${({ hasMoreRows, theme }) =>
+    hasMoreRows ? 'none' : `1px solid ${theme.border.color.light}`};
 `;
 
 const StyledIconWrapper = styled.div`
@@ -76,7 +78,7 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -94,13 +96,19 @@ const StyledNoMembers = styled(TableCell)`
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
   >();
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+  const {
+    records: workspaceMembers,
+    fetchMoreRecords,
+    hasNextPage,
+    loading,
+  } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
   const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
@@ -127,9 +135,9 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   useGetWorkspaceInvitationsQuery({
-    onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+    onError: (error: ApolloError) => {
+      enqueueErrorSnackBar({
+        apolloError: error,
       });
     },
     onCompleted: (data) => {
@@ -140,9 +148,11 @@ export const SettingsWorkspaceMembers = () => {
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error deleting invitation`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error deleting invitation`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
@@ -150,12 +160,27 @@ export const SettingsWorkspaceMembers = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error resending invitation`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error resending invitation`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
+
+  const { ref: fetchMoreRef } = useInView({
+    onChange: async (inView) => {
+      if (inView && hasNextPage && !loading && !isFetchingMore) {
+        setIsFetchingMore(true);
+        await fetchMoreRecords();
+        setIsFetchingMore(false);
+      }
+    },
+    delay: 100,
+    rootMargin: '1000px',
+    threshold: 0,
+  });
 
   const getExpiresAtText = (expiresAt: string) => {
     const expiresAtDate = new Date(expiresAt);
@@ -207,11 +232,86 @@ export const SettingsWorkspaceMembers = () => {
           )}
         <Section>
           <H2Title
+            title={t`Invite by email`}
+            description={t`Send an invite email to your team`}
+          />
+          <WorkspaceInviteTeam />
+          {isNonEmptyArray(workspaceInvitations) && (
+            <StyledTable>
+              <TableRow
+                gridAutoColumns="250px 1fr 1fr"
+                mobileGridAutoColumns="100px 1fr 1fr"
+              >
+                <TableHeader>
+                  <Trans>Email</Trans>
+                </TableHeader>
+                <TableHeader align="center">
+                  <Trans>Expires in</Trans>
+                </TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              <StyledTableRows>
+                {workspaceInvitations?.map((workspaceInvitation) => (
+                  <TableRow
+                    gridAutoColumns="250px 1fr 1fr"
+                    mobileGridAutoColumns="100px 1fr 1fr"
+                    key={workspaceInvitation.id}
+                  >
+                    <TableCell>
+                      <StyledIconWrapper>
+                        <IconMail
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledIconWrapper>
+                      <StyledTextContainerWithEllipsis>
+                        {workspaceInvitation.email}
+                      </StyledTextContainerWithEllipsis>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Status
+                        color="gray"
+                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <StyledButtonContainer>
+                        <IconButton
+                          onClick={() => {
+                            handleResendWorkspaceInvitation(
+                              workspaceInvitation.id,
+                            );
+                          }}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconReload}
+                        />
+                        <IconButton
+                          onClick={() => {
+                            handleRemoveWorkspaceInvitation(
+                              workspaceInvitation.id,
+                            );
+                          }}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconTrash}
+                        />
+                      </StyledButtonContainer>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </StyledTableRows>
+            </StyledTable>
+          )}
+        </Section>
+        <Section>
+          <H2Title
             title={t`Manage Members`}
             description={t`Manage the members of your workspace here`}
           />
           <StyledSearchContainer>
             <StyledSearchInput
+              instanceId="workspace-members-search"
               value={searchFilter}
               onChange={handleSearchChange}
               placeholder={t`Search a team member...`}
@@ -220,7 +320,7 @@ export const SettingsWorkspaceMembers = () => {
               sizeVariant="lg"
             />
           </StyledSearchContainer>
-          <StyledTable>
+          <StyledTable hasMoreRows={hasNextPage}>
             <TableRow
               gridAutoColumns="150px 1fr 1fr"
               mobileGridAutoColumns="100px 1fr 1fr"
@@ -231,7 +331,7 @@ export const SettingsWorkspaceMembers = () => {
               <TableHeader>
                 <Trans>Email</Trans>
               </TableHeader>
-              <TableHeader align={'right'}></TableHeader>
+              <TableHeader align="right"></TableHeader>
             </TableRow>
             <StyledTableRows>
               {filteredWorkspaceMembers.length > 0 ? (
@@ -272,7 +372,7 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceMember.userEmail}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell align={'right'}>
+                    <TableCell align="right">
                       {currentWorkspaceMember?.id !== workspaceMember.id && (
                         <StyledButtonContainer>
                           <IconButton
@@ -297,81 +397,19 @@ export const SettingsWorkspaceMembers = () => {
                 </StyledNoMembers>
               )}
             </StyledTableRows>
-          </StyledTable>
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Invite by email`}
-            description={t`Send an invite email to your team`}
-          />
-          <WorkspaceInviteTeam />
-          {isNonEmptyArray(workspaceInvitations) && (
-            <StyledTable>
+            {hasNextPage && (
               <TableRow
                 gridAutoColumns="250px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
-                <TableHeader>
-                  <Trans>Email</Trans>
-                </TableHeader>
-                <TableHeader align={'center'}>
-                  <Trans>Expires in</Trans>
-                </TableHeader>
-                <TableHeader></TableHeader>
+                <TableCell>
+                  <div ref={fetchMoreRef} style={{ height: '1px' }} />
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
-              <StyledTableRows>
-                {workspaceInvitations?.map((workspaceInvitation) => (
-                  <TableRow
-                    gridAutoColumns="250px 1fr 1fr"
-                    mobileGridAutoColumns="100px 1fr 1fr"
-                    key={workspaceInvitation.id}
-                  >
-                    <TableCell>
-                      <StyledIconWrapper>
-                        <IconMail
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        />
-                      </StyledIconWrapper>
-                      <StyledTextContainerWithEllipsis>
-                        {workspaceInvitation.email}
-                      </StyledTextContainerWithEllipsis>
-                    </TableCell>
-                    <TableCell align={'center'}>
-                      <Status
-                        color={'gray'}
-                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                      />
-                    </TableCell>
-                    <TableCell align={'right'}>
-                      <StyledButtonContainer>
-                        <IconButton
-                          onClick={() => {
-                            handleResendWorkspaceInvitation(
-                              workspaceInvitation.id,
-                            );
-                          }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconReload}
-                        />
-                        <IconButton
-                          onClick={() => {
-                            handleRemoveWorkspaceInvitation(
-                              workspaceInvitation.id,
-                            );
-                          }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconTrash}
-                        />
-                      </StyledButtonContainer>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </StyledTableRows>
-            </StyledTable>
-          )}
+            )}
+          </StyledTable>
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal

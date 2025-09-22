@@ -4,25 +4,25 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(RoleTargetsEntity)
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -47,16 +47,16 @@ export class UserRoleService {
       return;
     }
 
-    const newUserWorkspaceRole = await this.userWorkspaceRoleRepository.save({
+    const newRoleTarget = await this.roleTargetsRepository.save({
       roleId,
       userWorkspaceId,
       workspaceId,
     });
 
-    await this.userWorkspaceRoleRepository.delete({
+    await this.roleTargetsRepository.delete({
       userWorkspaceId,
       workspaceId,
-      id: Not(newUserWorkspaceRole.id),
+      id: Not(newRoleTarget.id),
     });
 
     await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
@@ -98,32 +98,31 @@ export class UserRoleService {
       return new Map();
     }
 
-    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
+    const allRoleTargets = await this.roleTargetsRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         workspaceId,
       },
       relations: {
         role: {
-          settingPermissions: true,
+          permissionFlags: true,
         },
       },
     });
 
-    if (!allUserWorkspaceRoles.length) {
+    if (!allRoleTargets.length) {
       return new Map();
     }
 
     const rolesMap = new Map<string, RoleEntity[]>();
 
     for (const userWorkspaceId of userWorkspaceIds) {
-      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
-        (userWorkspaceRole) =>
-          userWorkspaceRole.userWorkspaceId === userWorkspaceId,
+      const roleTargetsOfUserWorkspace = allRoleTargets.filter(
+        (roleTarget) => roleTarget.userWorkspaceId === userWorkspaceId,
       );
 
-      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
-        .map((userWorkspaceRole) => userWorkspaceRole.role)
+      const rolesOfUserWorkspace = roleTargetsOfUserWorkspace
+        .map((roleTarget) => roleTarget.role)
         .filter(isDefined);
 
       rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);
@@ -196,10 +195,17 @@ export class UserRoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage:
+            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+        },
       );
     }
 
-    if (roleOfUserWorkspace.label === ADMIN_ROLE_LABEL) {
+    if (
+      isDefined(roleOfUserWorkspace) &&
+      roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId
+    ) {
       const adminRole = roleOfUserWorkspace;
 
       await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
@@ -228,6 +234,10 @@ export class UserRoleService {
       throw new PermissionsException(
         'User workspace not found',
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'Your workspace membership could not be found. You may no longer have access to this workspace.',
+        },
       );
     }
 
@@ -241,6 +251,21 @@ export class UserRoleService {
       throw new PermissionsException(
         'Role not found',
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are trying to assign could not be found. It may have been deleted.',
+        },
+      );
+    }
+
+    if (!role.canBeAssignedToUsers) {
+      throw new PermissionsException(
+        `Role "${role.label}" cannot be assigned to users`,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        {
+          userFriendlyMessage:
+            'This role cannot be assigned to users. Please select a different role.',
+        },
       );
     }
 
@@ -257,7 +282,12 @@ export class UserRoleService {
       };
     }
 
-    if (!(currentRole?.label === ADMIN_ROLE_LABEL)) {
+    if (
+      !(
+        isDefined(currentRole) &&
+        currentRole.standardId === ADMIN_ROLE.standardId
+      )
+    ) {
       return;
     }
 
@@ -281,6 +311,10 @@ export class UserRoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
         PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
+        {
+          userFriendlyMessage:
+            'You cannot remove the admin role from the last administrator. Please assign another administrator first.',
+        },
       );
     }
   }

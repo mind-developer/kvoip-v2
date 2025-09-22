@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -61,11 +61,11 @@ export const ContextDropdownAndAvatar: Story = {
     ),
     EndComponent: (
       <Dropdown
-        dropdownId={'story-dropdown-id-context-menu'}
+        dropdownId="story-dropdown-id-context-menu"
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem LeftIcon={IconPlus} text={`Create Workspace`} />
+              <MenuItem LeftIcon={IconPlus} text="Create Workspace" />
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }

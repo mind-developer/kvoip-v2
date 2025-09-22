@@ -37,6 +37,7 @@ import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
+  isPageLayoutFeatureFlagEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -75,6 +76,7 @@ export const useCreateAppRouter = (
               <SettingsRoutes
                 isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
+                isPageLayoutFeatureFlagEnabled={isPageLayoutFeatureFlagEnabled}
               />
             }
           />

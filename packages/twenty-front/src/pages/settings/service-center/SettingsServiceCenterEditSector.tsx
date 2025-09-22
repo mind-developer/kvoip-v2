@@ -16,7 +16,6 @@ import {
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { useUpdateSector } from '@/settings/service-center/sectors/hooks/useUpdateSector';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -34,7 +33,7 @@ type SettingsEditSectorSchemaValues = z.infer<typeof editSectorFormSchema>;
 export const SettingsServiceCenterEditSector = () => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { sectors } = useFindAllSectors();
   const { editSector } = useUpdateSector();
@@ -85,8 +84,9 @@ export const SettingsServiceCenterEditSector = () => {
         navigate(settingsSectorsPagePath);
       }
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

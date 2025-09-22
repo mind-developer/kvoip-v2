@@ -1,8 +1,8 @@
-import { ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { RecordBoardColumnHeaderAggregateDropdownContextValue } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
-import { useDropdown as useDropdownUi } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { Context, useCallback, useContext } from 'react';
+import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
+import { type RecordBoardColumnHeaderAggregateDropdownContextValue } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
+import { type RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { type Context, useCallback, useContext } from 'react';
 
 /**
  *
@@ -28,12 +28,12 @@ export const useDropdownContextStateManagement = <
     );
   }
   const dropdownId = dropdownContext.dropdownId;
-  const { closeDropdown } = useDropdownUi(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleCloseDropdown = useCallback(() => {
     dropdownContext.resetContent();
-    closeDropdown();
-  }, [closeDropdown, dropdownContext]);
+    closeDropdown(dropdownId);
+  }, [closeDropdown, dropdownContext, dropdownId]);
 
   return {
     ...dropdownContext,

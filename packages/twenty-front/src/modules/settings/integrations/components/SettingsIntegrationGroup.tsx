@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
-import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -41,10 +41,7 @@ export const SettingsIntegrationGroup = ({
     <StyledIntegrationGroupHeader>
       <H2Title title={integrationGroup.title} />
       {integrationGroup.hyperlink && (
-        <StyledGroupLink
-          target="{'_blank'}"
-          to={integrationGroup.hyperlink ?? ''}
-        >
+        <StyledGroupLink target="_blank" to={integrationGroup.hyperlink ?? ''}>
           <div>{integrationGroup.hyperlinkText}</div>
           <div>→</div>
         </StyledGroupLink>

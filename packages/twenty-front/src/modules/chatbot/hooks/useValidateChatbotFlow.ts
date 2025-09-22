@@ -1,6 +1,5 @@
 import { VALIDATE_CHATBOT_FLOW } from '@/chatbot/graphql/mutation/validateChatbotFlow';
 import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -9,12 +8,13 @@ interface UseValidateChatbotFlowReturn {
 }
 
 export const useValidateChatbotFlow = (): UseValidateChatbotFlowReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [validateChatbotFlow] = useMutation(VALIDATE_CHATBOT_FLOW, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

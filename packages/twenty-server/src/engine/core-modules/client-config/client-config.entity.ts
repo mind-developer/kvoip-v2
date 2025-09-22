@@ -111,6 +111,9 @@ class PublicFeatureFlag {
 
 @ObjectType()
 export class ClientConfig {
+  @Field(() => String, { nullable: true })
+  appVersion?: string;
+
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
 
@@ -182,6 +185,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isChatbotEnabled: boolean;
+
+  @Field(() => Boolean)
+  isImapSmtpCaldavEnabled: boolean;
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;

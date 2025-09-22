@@ -8,7 +8,6 @@ import {
 } from '@/settings/service-center/service-level/components/ServiceLevelForm';
 import { useUpdateWhatsappServiceLevel } from '@/settings/service-center/service-level/hooks/useUpdateWhatsappServiceLevel';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,7 +25,7 @@ type SettingsEditSlaSchemaValues = z.infer<typeof editSlaFormSchema>;
 export const SettingsServiceCenterEditServiceLevel = () => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const slaPagePath = getSettingsPath(SettingsPath.ServiceCenterServiceLevel);
 
@@ -71,8 +70,9 @@ export const SettingsServiceCenterEditServiceLevel = () => {
 
       navigate(slaPagePath);
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

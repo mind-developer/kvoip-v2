@@ -1,16 +1,17 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
-import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
-import { FieldType } from '@/settings/data-model/types/FieldType';
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -20,7 +21,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsObjectNewFieldSelectorProps = {
@@ -56,13 +58,12 @@ const StyledCardContainer = styled.div`
   width: calc(50% - ${({ theme }) => theme.spacing(1)});
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   width: 100%;
 `;
 
 export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
-  fieldMetadataItem,
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
@@ -78,13 +79,15 @@ export const SettingsObjectNewFieldSelector = ({
   );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
-    useBooleanSettingsFormInitialValues({ fieldMetadataItem });
+    useBooleanSettingsFormInitialValues({ existingFieldMetadataId: 'new' });
 
   const { resetDefaultValueField: resetCurrencyDefaultValueField } =
-    useCurrencySettingsFormInitialValues({ fieldMetadataItem });
+    useCurrencySettingsFormInitialValues({ existingFieldMetadataId: 'new' });
 
   const { resetDefaultValueField: resetSelectDefaultValueField } =
-    useSelectSettingsFormInitialValues({ fieldMetadataItem });
+    useSelectSettingsFormInitialValues({
+      fieldMetadataId: 'new',
+    });
 
   const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
@@ -102,12 +105,15 @@ export const SettingsObjectNewFieldSelector = ({
         break;
     }
   };
-
+  const isMorphRelationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+  );
   return (
     <>
       {' '}
       <Section>
         <StyledSearchInput
+          instanceId="new-field-type-search"
           LeftIcon={IconSearch}
           placeholder={t`Search a type`}
           value={searchQuery}
@@ -130,6 +136,12 @@ export const SettingsObjectNewFieldSelector = ({
                 <StyledContainer>
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
+                    .filter(([key]) => {
+                      return (
+                        key !== FieldMetadataType.MORPH_RELATION ||
+                        isMorphRelationEnabled
+                      );
+                    })
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink

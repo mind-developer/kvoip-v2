@@ -1,5 +1,4 @@
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useCallback } from 'react';
@@ -7,11 +6,13 @@ import { RecordTableColumnHead } from './RecordTableColumnHead';
 import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
 
 type RecordTableColumnHeadWithDropdownProps = {
-  column: ColumnDefinition<FieldMetadata>;
+  recordField: RecordField;
+  objectMetadataId: string;
 };
 
 export const RecordTableColumnHeadWithDropdown = ({
-  column,
+  objectMetadataId,
+  recordField,
 }: RecordTableColumnHeadWithDropdownProps) => {
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
@@ -30,9 +31,14 @@ export const RecordTableColumnHeadWithDropdown = ({
     <Dropdown
       onOpen={handleDropdownOpen}
       onClose={handleDropdownClose}
-      dropdownId={column.fieldMetadataId + '-header'}
-      clickableComponent={<RecordTableColumnHead column={column} />}
-      dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
+      dropdownId={recordField.fieldMetadataItemId + '-header'}
+      clickableComponent={<RecordTableColumnHead recordField={recordField} />}
+      dropdownComponents={
+        <RecordTableColumnHeadDropdownMenu
+          recordField={recordField}
+          objectMetadataId={objectMetadataId}
+        />
+      }
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
     />

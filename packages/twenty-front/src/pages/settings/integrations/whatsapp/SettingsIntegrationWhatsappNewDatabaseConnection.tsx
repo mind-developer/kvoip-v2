@@ -5,7 +5,6 @@ import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/in
 import { useCreateWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,7 +34,7 @@ export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
 export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -81,8 +80,9 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
       navigate(SettingsPath.IntegrationWhatsappDatabase);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };

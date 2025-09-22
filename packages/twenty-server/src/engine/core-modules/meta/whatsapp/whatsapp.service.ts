@@ -43,15 +43,15 @@ export class WhatsappService {
   protected readonly logger = new Logger(WhatsappService.name);
 
   constructor(
-    @InjectRepository(WhatsappIntegration, 'core')
+    @InjectRepository(WhatsappIntegration)
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
     private readonly googleStorageService: GoogleStorageService,
-    @InjectRepository(Sector, 'core')
+    @InjectRepository(Sector)
     private sectorRepository: Repository<Sector>,
-    @InjectRepository(WorkspaceAgent, 'core')
+    @InjectRepository(WorkspaceAgent)
     private agentRepository: Repository<WorkspaceAgent>,
     private readonly firebaseService: FirebaseService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

@@ -1,16 +1,18 @@
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
+import { useRecoilValue } from 'recoil';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
+import { getTimelineCalendarEventsFromOpportunityId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromOpportunityId';
 import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromPersonId';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { H3Title } from 'twenty-ui/display';
 import {
@@ -22,7 +24,8 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
-import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -47,16 +50,24 @@ export const Calendar = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
+
   const [query, queryName] =
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [
           getTimelineCalendarEventsFromPersonId,
           'getTimelineCalendarEventsFromPersonId',
         ]
-      : [
-          getTimelineCalendarEventsFromCompanyId,
-          'getTimelineCalendarEventsFromCompanyId',
-        ];
+      : targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Company
+        ? [
+            getTimelineCalendarEventsFromCompanyId,
+            'getTimelineCalendarEventsFromCompanyId',
+          ]
+        : [
+            getTimelineCalendarEventsFromOpportunityId,
+            'getTimelineCalendarEventsFromOpportunityId',
+          ];
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(
@@ -124,7 +135,9 @@ export const Calendar = ({
           const year = getYear(monthTime);
           const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
           const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM');
+          const monthLabel = format(monthTime, 'MMMM', {
+            locale: localeCatalog,
+          });
 
           return (
             <Section key={monthTime}>

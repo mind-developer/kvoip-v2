@@ -1,16 +1,17 @@
-import { WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
-import { WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
-import { WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
-import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
-import { WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
-import { WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
+import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
+import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
+import { type WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
+import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
+import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
+import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
-  WorkflowCreateRecordActionSettings,
-  WorkflowDeleteRecordActionSettings,
-  WorkflowFindRecordsActionSettings,
-  WorkflowUpdateRecordActionSettings,
+  type WorkflowCreateRecordActionSettings,
+  type WorkflowDeleteRecordActionSettings,
+  type WorkflowFindRecordsActionSettings,
+  type WorkflowUpdateRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
-import { WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 
 export enum WorkflowActionType {
   CODE = 'CODE',
@@ -23,6 +24,7 @@ export enum WorkflowActionType {
   FILTER = 'FILTER',
   HTTP_REQUEST = 'HTTP_REQUEST',
   AI_AGENT = 'AI_AGENT',
+  ITERATOR = 'ITERATOR',
 }
 
 type BaseWorkflowAction = {
@@ -30,6 +32,10 @@ type BaseWorkflowAction = {
   name: string;
   type: WorkflowActionType;
   settings: WorkflowActionSettings;
+  position?: {
+    x: number;
+    y: number;
+  };
   valid: boolean;
   nextStepIds?: string[];
 };
@@ -84,6 +90,11 @@ export type WorkflowAiAgentAction = BaseWorkflowAction & {
   settings: WorkflowAiAgentActionSettings;
 };
 
+export type WorkflowIteratorAction = BaseWorkflowAction & {
+  type: WorkflowActionType.ITERATOR;
+  settings: WorkflowIteratorActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
@@ -94,4 +105,5 @@ export type WorkflowAction =
   | WorkflowFormAction
   | WorkflowFilterAction
   | WorkflowHttpRequestAction
-  | WorkflowAiAgentAction;
+  | WorkflowAiAgentAction
+  | WorkflowIteratorAction;

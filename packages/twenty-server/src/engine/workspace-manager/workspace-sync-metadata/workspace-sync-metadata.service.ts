@@ -3,20 +3,21 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource, QueryFailedError } from 'typeorm';
 
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -28,7 +29,7 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
@@ -37,7 +38,8 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
+    private readonly workspaceSyncAgentService: WorkspaceSyncAgentService,
   ) {}
 
   /**
@@ -161,6 +163,28 @@ export class WorkspaceSyncMetadataService {
         `Workspace object metadata identifiers took ${workspaceObjectMetadataIdentifiersEnd - workspaceObjectMetadataIdentifiersStart}ms`,
       );
 
+      // 6 - Sync standard roles
+      const workspaceRoleMigrationsStart = performance.now();
+
+      await this.workspaceSyncRoleService.synchronize(context, manager);
+
+      const workspaceRoleMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace role migrations took ${workspaceRoleMigrationsEnd - workspaceRoleMigrationsStart}ms`,
+      );
+
+      // 7 - Sync standard agents
+      const workspaceAgentMigrationsStart = performance.now();
+
+      await this.workspaceSyncAgentService.synchronize(context, manager);
+
+      const workspaceAgentMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace agent migrations took ${workspaceAgentMigrationsEnd - workspaceAgentMigrationsStart}ms`,
+      );
+
       const workspaceMigrationsSaveStart = performance.now();
 
       // Save workspace migrations into the database
@@ -181,7 +205,14 @@ export class WorkspaceSyncMetadataService {
       if (!options.applyChanges) {
         this.logger.log('Running in dry run mode, rolling back transaction');
 
-        await queryRunner.rollbackTransaction();
+        if (queryRunner.isTransactionActive) {
+          try {
+            await queryRunner.rollbackTransaction();
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.trace(`Failed to rollback transaction: ${error.message}`);
+          }
+        }
 
         await queryRunner.release();
 
@@ -191,15 +222,17 @@ export class WorkspaceSyncMetadataService {
         };
       }
 
-      await queryRunner.commitTransaction();
-
       // Execute migrations
       this.logger.log('Executing pending migrations');
       const executeMigrationsStart = performance.now();
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         context.workspaceId,
+        queryRunner,
       );
+
+      await queryRunner.commitTransaction();
+
       const executeMigrationsEnd = performance.now();
 
       this.logger.log(
@@ -213,7 +246,15 @@ export class WorkspaceSyncMetadataService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
+      throw error;
     } finally {
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(

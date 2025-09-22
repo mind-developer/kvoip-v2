@@ -10,7 +10,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([Workspace], 'core')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([Workspace])],
     }),
   ],
   exports: [GoogleStorageService],

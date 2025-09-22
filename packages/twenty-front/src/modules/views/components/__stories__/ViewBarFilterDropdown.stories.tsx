@@ -1,28 +1,23 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
-import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType } from '@/views/types/ViewType';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { View } from '@/views/types/View';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 import {
@@ -34,7 +29,8 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockedCoreViewsData } from '~/testing/mock-data/views';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
   title: 'Modules/Views/ViewBarFilterDropdown',
@@ -46,53 +42,46 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setTableColumns = useSetRecoilComponentStateV2(
-        tableColumnsComponentState,
+      const setCurrentRecordFields = useSetRecoilComponentState(
+        currentRecordFieldsComponentState,
         instanceId,
       );
 
-      const setPrefetchViews = useSetRecoilState(prefetchViewsState);
+      const setCoreViews = useSetRecoilState(coreViewsState);
 
-      const mockView: View = {
-        id: 'view-1',
-        name: 'Test View',
-        objectMetadataId: companyObjectMetadataItem.id,
-        viewFilters: [],
-        viewFilterGroups: [],
-        type: ViewType.Table,
-        key: null,
-        isCompact: false,
-        openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
-        viewFields: [],
-        viewGroups: [],
-        viewSorts: [],
-        kanbanFieldMetadataId: '',
-        kanbanAggregateOperation: AggregateOperations.COUNT,
-        icon: '',
-        kanbanAggregateOperationFieldMetadataId: '',
-        position: 0,
-        __typename: 'View',
-      };
+      const mockCoreView = mockedCoreViewsData[0];
 
-      setPrefetchViews([mockView]);
+      setCoreViews([mockCoreView]);
 
-      const setCurrentViewId = useSetRecoilComponentStateV2(
+      const setCurrentViewId = useSetRecoilComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId('view-1');
+      setCurrentViewId(mockCoreView.id);
 
       const columns = companyObjectMetadataItem.fields.map(
         (fieldMetadataItem, index) =>
-          formatFieldMetadataItemAsColumnDefinition({
-            field: fieldMetadataItem,
-            objectMetadataItem: companyObjectMetadataItem,
+          ({
+            id: fieldMetadataItem.id,
+            fieldMetadataItemId: fieldMetadataItem.id,
+            isVisible: true,
             position: index,
-          }),
+            size: 100,
+          }) satisfies RecordField,
       );
 
-      setTableColumns(columns);
+      setCurrentRecordFields(columns);
+
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
 
       return (
         <RecordIndexContextProvider
@@ -104,36 +93,29 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             objectNameSingular: CoreObjectNameSingular.Company,
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
           }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
-            value={{ instanceId }}
+          <RecordComponentInstanceContextsWrapper
+            componentInstanceId={instanceId}
           >
-            <RecordFiltersComponentInstanceContext.Provider
-              value={{ instanceId }}
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId }}
+              <RecordTableComponentInstanceContext.Provider
+                value={{
+                  instanceId: instanceId,
+                }}
               >
-                <ObjectFilterDropdownComponentInstanceContext.Provider
-                  value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
-                >
-                  <RecordTableComponentInstanceContext.Provider
-                    value={{
-                      instanceId: instanceId,
-                      onColumnsChange: () => {},
-                    }}
-                  >
-                    <ViewComponentInstanceContext.Provider
-                      value={{ instanceId }}
-                    >
-                      <Story />
-                    </ViewComponentInstanceContext.Provider>
-                  </RecordTableComponentInstanceContext.Provider>
-                </ObjectFilterDropdownComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <Story />
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
         </RecordIndexContextProvider>
       );
     },
@@ -144,11 +126,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
     IconsProviderDecorator,
     I18nFrontDecorator,
   ],
-  args: {
-    hotkeyScope: {
-      scope: 'view-bar-filter-dropdown',
-    },
-  },
 };
 
 export default meta;

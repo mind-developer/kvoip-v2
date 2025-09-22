@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
@@ -13,7 +12,7 @@ type FindAllStripeIntegrations = {
 };
 
 export const useFindAllStripeIntegrations = (): FindAllStripeIntegrations => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -23,8 +22,9 @@ export const useFindAllStripeIntegrations = (): FindAllStripeIntegrations => {
   } = useQuery(GET_ALL_STRIPE_INTEGRATIONS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

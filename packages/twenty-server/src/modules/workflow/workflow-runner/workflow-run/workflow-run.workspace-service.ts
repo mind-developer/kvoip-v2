@@ -1,27 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
-  StepOutput,
-  WorkflowRunOutput,
   WorkflowRunStatus,
-  WorkflowRunWorkspaceEntity,
+  type WorkflowRunState,
+  type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -33,9 +31,6 @@ export class WorkflowRunWorkspaceService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -44,9 +39,13 @@ export class WorkflowRunWorkspaceService {
     workflowVersionId,
     createdBy,
     workflowRunId,
+    status,
+    triggerPayload,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
+    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
+    triggerPayload: object;
     workflowRunId?: string;
   }) {
     const workspaceId =
@@ -92,12 +91,6 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    const workflowRunCount = await workflowRunRepository.count({
-      where: {
-        workflowId: workflow.id,
-      },
-    });
-
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
       objectMetadata: {
@@ -107,73 +100,88 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const workflowRun = workflowRunRepository.create({
+    const initState = this.getInitState(workflowVersion, triggerPayload);
+
+    const lastWorkflowRun = await workflowRunRepository.findOne({
+      where: {
+        workflowId: workflow.id,
+      },
+      order: { createdAt: 'desc' },
+    });
+
+    const workflowRunCountMatch = lastWorkflowRun?.name.match(/#(\d+)/);
+
+    const workflowRunCount = workflowRunCountMatch
+      ? parseInt(workflowRunCountMatch[1], 10)
+      : 0;
+
+    const workflowRun = {
       id: workflowRunId ?? v4(),
       name: `#${workflowRunCount + 1} - ${workflow.name}`,
       workflowVersionId,
       createdBy,
       workflowId: workflow.id,
-      status: WorkflowRunStatus.NOT_STARTED,
+      status,
       position,
-    });
+      state: initState,
+      enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
+    };
 
     await workflowRunRepository.insert(workflowRun);
 
     return workflowRun.id;
   }
 
+  @WithLock('workflowRunId')
   async startWorkflowRun({
     workflowRunId,
     workspaceId,
-    context,
-    output,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context: Record<string, any>;
-    output: WorkflowRunOutput;
   }) {
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-      id: workflowRunId,
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
     });
 
-    if (!workflowRunToUpdate) {
+    if (
+      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
+      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
+    ) {
       throw new WorkflowRunException(
-        'No workflow run to start',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+        'Cannot start a workflow run already ended',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
       );
     }
 
-    if (workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED) {
-      throw new WorkflowRunException(
-        'Workflow run already started',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
+      return;
     }
 
     const partialUpdate = {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
-      context,
-      output,
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          trigger: {
+            result: {},
+            ...workflowRunToUpdate.state?.stepInfos.trigger,
+            status: StepStatus.SUCCESS,
+          },
+        },
+      },
     };
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
-
-    await this.emitWorkflowRunUpdatedEvent({
-      workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['status', 'startedAt', 'context', 'output'],
-    });
+    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
+  @WithLock('workflowRunId')
   async endWorkflowRun({
     workflowRunId,
     workspaceId,
@@ -185,39 +193,21 @@ export class WorkflowRunWorkspaceService {
     status: WorkflowRunStatus;
     error?: string;
   }) {
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-      id: workflowRunId,
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
     });
-
-    if (!workflowRunToUpdate) {
-      throw new WorkflowRunException(
-        'No workflow run to end',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
-      );
-    }
 
     const partialUpdate = {
       status,
       endedAt: new Date().toISOString(),
-      output: {
-        ...(workflowRunToUpdate.output ?? {}),
-        error,
+      state: {
+        ...workflowRunToUpdate.state,
+        workflowRunError: error,
       },
     };
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
-
-    await this.emitWorkflowRunUpdatedEvent({
-      workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['status', 'endedAt', 'output'],
-    });
+    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
     await this.metricsService.incrementCounter({
       key:
@@ -228,58 +218,74 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async saveWorkflowRunState({
+  @WithLock('workflowRunId')
+  async updateWorkflowRunStepInfo({
+    stepId,
+    stepInfo,
     workflowRunId,
-    stepOutput,
     workspaceId,
-    context,
   }: {
+    stepId: string;
+    stepInfo: WorkflowRunStepInfo;
     workflowRunId: string;
-    stepOutput: StepOutput;
     workspaceId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context: Record<string, any>;
   }) {
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-      id: workflowRunId,
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
     });
 
-    if (!workflowRunToUpdate) {
-      throw new WorkflowRunException(
-        'No workflow run to save',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
-      );
-    }
-
     const partialUpdate = {
-      output: {
-        flow: workflowRunToUpdate.output?.flow ?? {
-          trigger: undefined,
-          steps: [],
-        },
-        stepsOutput: {
-          ...(workflowRunToUpdate.output?.stepsOutput ?? {}),
-          [stepOutput.id]: stepOutput.output,
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          [stepId]: {
+            ...(workflowRunToUpdate.state?.stepInfos[stepId] || {}),
+            result: stepInfo?.result,
+            error: stepInfo?.error,
+            status: stepInfo.status,
+          },
         },
       },
-      context,
     };
 
-    await workflowRunRepository.update(workflowRunId, partialUpdate);
+    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+  }
 
-    await this.emitWorkflowRunUpdatedEvent({
-      workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['context', 'output'],
+  @WithLock('workflowRunId')
+  async updateWorkflowRunStepInfos({
+    stepInfos,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepInfos: Record<string, WorkflowRunStepInfo>;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const partialUpdate = {
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          ...stepInfos,
+        },
+      },
+    };
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate,
     });
   }
 
+  @WithLock('workflowRunId')
   async updateWorkflowRunStep({
     workflowRunId,
     step,
@@ -289,23 +295,10 @@ export class WorkflowRunWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }) {
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-      id: workflowRunId,
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
     });
-
-    if (!workflowRunToUpdate) {
-      throw new WorkflowRunException(
-        'No workflow run to update',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
-      );
-    }
 
     if (
       workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
@@ -317,25 +310,39 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    const updatedSteps = workflowRunToUpdate.output?.flow?.steps?.map(
+    const updatedSteps = workflowRunToUpdate.state?.flow?.steps?.map(
       (existingStep) => (step.id === existingStep.id ? step : existingStep),
     );
 
     const partialUpdate = {
-      output: {
-        ...(workflowRunToUpdate.output ?? {}),
+      state: {
+        ...workflowRunToUpdate.state,
         flow: {
-          ...(workflowRunToUpdate.output?.flow ?? {}),
+          ...(workflowRunToUpdate.state?.flow ?? {}),
           steps: updatedSteps,
         },
       },
     };
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+  }
 
-    await this.emitWorkflowRunUpdatedEvent({
-      workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['output'],
+  async getWorkflowRun({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<WorkflowRunWorkspaceEntity | null> {
+    const workflowRunRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
+        'workflowRun',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    return await workflowRunRepository.findOne({
+      where: { id: workflowRunId },
     });
   }
 
@@ -346,15 +353,9 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<WorkflowRunWorkspaceEntity> {
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRun = await workflowRunRepository.findOne({
-      where: { id: workflowRunId },
+    const workflowRun = await this.getWorkflowRun({
+      workflowRunId,
+      workspaceId,
     });
 
     if (!workflowRun) {
@@ -367,73 +368,66 @@ export class WorkflowRunWorkspaceService {
     return workflowRun;
   }
 
-  private async emitWorkflowRunUpdatedEvent({
-    workflowRunBefore,
-    updatedFields,
-  }: {
-    workflowRunBefore: WorkflowRunWorkspaceEntity;
-    updatedFields: string[];
-  }) {
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      return;
+  private getInitState(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    triggerPayload: object,
+  ): WorkflowRunState | undefined {
+    if (
+      !isDefined(workflowVersion.trigger) ||
+      !isDefined(workflowVersion.steps)
+    ) {
+      return undefined;
     }
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: 'workflowRun',
-        workspaceId,
+    return {
+      flow: {
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
       },
-      relations: ['fields'],
-    });
+      stepInfos: {
+        trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
+        ...Object.fromEntries(
+          workflowVersion.steps.map((step) => [
+            step.id,
+            { status: StepStatus.NOT_STARTED },
+          ]),
+        ),
+      },
+    };
+  }
 
-    if (!objectMetadata) {
-      throw new WorkflowRunException(
-        'Object metadata not found',
-        WorkflowRunExceptionCode.FAILURE,
-      );
-    }
-
+  private async updateWorkflowRun({
+    workflowRunId,
+    workspaceId,
+    partialUpdate,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    partialUpdate: QueryDeepPartialEntity<WorkflowRunWorkspaceEntity>;
+  }) {
     const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
         workspaceId,
         'workflowRun',
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflowRunAfter = await workflowRunRepository.findOneBy({
-      id: workflowRunBefore.id,
+    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
+      id: workflowRunId,
     });
 
-    if (!workflowRunAfter) {
+    if (!workflowRunToUpdate) {
       throw new WorkflowRunException(
-        'WorkflowRun not found',
-        WorkflowRunExceptionCode.FAILURE,
+        `workflowRun ${workflowRunId} not found`,
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
       );
     }
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workflowRun',
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: workflowRunBefore.id,
-          objectMetadata,
-          properties: {
-            after: workflowRunAfter,
-            before: workflowRunBefore,
-            updatedFields,
-            diff: objectRecordChangedValues(
-              workflowRunBefore,
-              workflowRunAfter,
-              updatedFields,
-              objectMetadata,
-            ),
-          },
-        },
-      ],
-      workspaceId,
-    });
+    await workflowRunRepository.update(
+      workflowRunToUpdate.id,
+      partialUpdate,
+      undefined,
+      ['id'],
+    );
   }
 }

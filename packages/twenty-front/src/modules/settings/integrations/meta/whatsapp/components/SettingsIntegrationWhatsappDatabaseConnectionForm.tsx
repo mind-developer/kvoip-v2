@@ -1,7 +1,7 @@
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
@@ -78,8 +78,8 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
           control={control}
           render={({ field: { onChange, value } }) => {
             return (
-              <TextInputV2
-                autoComplete="new-password" // Disable autocomplete
+              <TextInput
+                autoComplete="new-password"
                 label={label}
                 value={value}
                 onChange={onChange}

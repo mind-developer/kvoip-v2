@@ -7,7 +7,7 @@ import { IconComponent } from 'twenty-ui/display';
 import { SelectStatusPillItem } from '@/settings/integrations/meta/components/SettingsStatusPillItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 
 export type SelectOption = {
   value: boolean;
@@ -84,7 +84,7 @@ export const SettingsSelectStatusPill = ({
     options.find(({ value: key }) => key === value) || options[0];
 
   const isDisabled = disabledFromProps || options.length <= 1;
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { toggleDropdown } = useToggleDropdown();
 
   const selectControl = (
     <StyledControlContainer
@@ -129,7 +129,7 @@ export const SettingsSelectStatusPill = ({
                   isSelected={option.value === value}
                   onClick={() => {
                     onChange?.(option.value);
-                    closeDropdown();
+                    toggleDropdown();
                   }}
                 />
               ))}

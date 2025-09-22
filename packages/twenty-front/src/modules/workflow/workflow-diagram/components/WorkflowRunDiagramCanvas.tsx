@@ -1,11 +1,10 @@
-import { WorkflowRunStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
-import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
-import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
-import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
-import { WorkflowRunDiagramCanvasEffect } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvasEffect';
-import { useHandleWorkflowRunDiagramCanvasInit } from '@/workflow/workflow-diagram/hooks/useHandleWorkflowRunDiagramCanvasInit';
+import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeRun';
+import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeRun';
+
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
+import { WorkflowRunDiagramStepNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowRunDiagramStepNode';
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowRunDiagramCanvas = ({
@@ -17,26 +16,20 @@ export const WorkflowRunDiagramCanvas = ({
     workflowRunStatus,
   });
 
-  const { handleWorkflowRunDiagramCanvasInit } =
-    useHandleWorkflowRunDiagramCanvasInit();
-
   return (
     <ReactFlowProvider>
       <WorkflowDiagramCanvasBase
         nodeTypes={{
-          default: WorkflowDiagramStepNodeReadonly,
+          default: WorkflowRunDiagramStepNode,
         }}
         edgeTypes={{
-          default: WorkflowDiagramDefaultEdge,
-          success: WorkflowDiagramSuccessEdge,
+          'empty-filter--run': WorkflowDiagramDefaultEdgeRun,
+          'filter--run': WorkflowDiagramFilterEdgeRun,
         }}
         tagContainerTestId="workflow-run-status"
         tagColor={tagProps.color}
         tagText={tagProps.text}
-        onInit={handleWorkflowRunDiagramCanvasInit}
       />
-
-      <WorkflowRunDiagramCanvasEffect />
     </ReactFlowProvider>
   );
 };

@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
 import { CreateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Create';
 import { DeleteTelephonyHandler } from 'src/engine/core-modules/telephony/types/Delete';
@@ -18,14 +17,11 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TelephonyService extends TypeOrmQueryService<Telephony> {
   constructor(
-    @InjectRepository(Telephony, 'core')
+    @InjectRepository(Telephony)
     private readonly telephonyRepository: Repository<Telephony>,
-
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(telephonyRepository);

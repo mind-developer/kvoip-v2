@@ -16,7 +16,6 @@ import { useCreateSector } from '@/settings/service-center/sectors/hooks/useCrea
 import { useSelectSettingsFormInitialValues } from '@/settings/service-center/sectors/hooks/useSelectSettingsFormInitialValues';
 import { CreateSectorInput } from '@/settings/service-center/sectors/types/CreateSectorInput';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
@@ -31,7 +30,7 @@ type SettingsSectorSchemaValues = z.infer<typeof newSectorFormSchema>;
 export const SettingsServiceCenterNewSector = () => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { createSector } = useCreateSector();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { DEFAULT_OPTION } = useSelectSettingsFormInitialValues();
@@ -69,8 +68,9 @@ export const SettingsServiceCenterNewSector = () => {
       await createSector(sectorData);
       navigate(settingsServiceCenterSectorsPagePath);
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper erro message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

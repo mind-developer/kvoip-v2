@@ -10,7 +10,7 @@ import { IssuerService } from './issuer.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Issuer, Workspace], 'core'),
+    TypeOrmModule.forFeature([Issuer, Workspace]),
     forwardRef(() => WorkspaceModule),
   ],
   providers: [IssuerService, IssuerResolver],

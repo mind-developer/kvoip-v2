@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useState } from 'react';
 import { SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 
@@ -77,7 +77,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             name="name"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInputV2
+              <TextInput
                 label="Integration name"
                 value={value as string}
                 onChange={onChange}
@@ -96,7 +96,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             name="token"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInputV2
+              <TextInput
                 label="Token"
                 value={showingMasked && value ? '********' : value}
                 onChange={onChange}
@@ -126,7 +126,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             name="companyName"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="Issuer name (company name)"
                 {...field}
                 disabled={disabled}
@@ -144,7 +144,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
               name="cnpj"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="CNPJ"
                   {...field}
                   disabled={disabled}
@@ -160,7 +160,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
               name="cpf"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="CPF"
                   {...field}
                   disabled={disabled}
@@ -179,7 +179,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
               name="ie"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="IE"
                   {...field}
                   disabled={disabled}
@@ -195,7 +195,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
               name="inscricaoMunicipal"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="Inscrição Municipal"
                   {...field}
                   disabled={disabled}
@@ -212,7 +212,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             name="cnaeCode"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="CNAE Code"
                 {...field}
                 disabled={disabled}
@@ -230,7 +230,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
               name="cep"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="CEP"
                   {...field}
                   disabled={disabled}
@@ -248,7 +248,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 name="street"
                 control={control}
                 render={({ field, fieldState: { error } }) => (
-                  <TextInputV2
+                  <TextInput
                     label="Street"
                     {...field}
                     disabled={disabled}
@@ -264,7 +264,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 name="number"
                 control={control}
                 render={({ field, fieldState: { error } }) => (
-                  <TextInputV2
+                  <TextInput
                     label="Number"
                     {...field}
                     disabled={disabled}
@@ -285,7 +285,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 name="neighborhood"
                 control={control}
                 render={({ field, fieldState: { error } }) => (
-                  <TextInputV2
+                  <TextInput
                     label="Neighborhood"
                     {...field}
                     disabled={disabled}
@@ -303,7 +303,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 name="city"
                 control={control}
                 render={({ field, fieldState: { error } }) => (
-                  <TextInputV2
+                  <TextInput
                     label="City"
                     {...field}
                     disabled={disabled}
@@ -321,7 +321,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 name="state"
                 control={control}
                 render={({ field, fieldState: { error } }) => (
-                  <TextInputV2
+                  <TextInput
                     label="State"
                     {...field}
                     disabled={disabled}

@@ -5,16 +5,13 @@ import {
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
+import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
+import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
-  ${ROLE_FRAGMENT}
-  ${OBJECT_PERMISSION_FRAGMENT}
-  ${WORKSPACE_URLS_FRAGMENT}
-  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
-  ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -28,16 +25,21 @@ export const USER_QUERY_FRAGMENT = gql`
       ...WorkspaceMemberQueryFragment
     }
     workspaceMembers {
-      ...WorkspaceMemberQueryFragment
+      ...PartialWorkspaceMemberQueryFragment
     }
     deletedWorkspaceMembers {
       ...DeletedWorkspaceMemberQueryFragment
     }
     currentUserWorkspace {
-      settingsPermissions
+      permissionFlags
       objectRecordsPermissions
       objectPermissions {
         ...ObjectPermissionFragment
+      }
+      twoFactorAuthenticationMethodSummary {
+        twoFactorAuthenticationMethodId
+        status
+        strategy
       }
     }
     currentWorkspace {
@@ -72,10 +74,12 @@ export const USER_QUERY_FRAGMENT = gql`
         metadata
         provider
         currentChargeFileLink
+        currentPeriodEnd
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
           quantity
+          stripePriceId
           billingProduct {
             name
             description
@@ -97,6 +101,13 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultRole {
         ...RoleFragment
       }
+      defaultAgent {
+        id
+      }
+      isTwoFactorAuthenticationEnforced
+      views {
+        ...ViewFragment
+      }
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
@@ -106,4 +117,11 @@ export const USER_QUERY_FRAGMENT = gql`
 
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${OBJECT_PERMISSION_FRAGMENT}
+  ${WORKSPACE_URLS_FRAGMENT}
+  ${ROLE_FRAGMENT}
+  ${VIEW_FRAGMENT}
+  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
+  ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
 `;

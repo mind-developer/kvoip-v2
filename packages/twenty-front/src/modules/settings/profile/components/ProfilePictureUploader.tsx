@@ -6,7 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { buildSignedPath, isDefined } from 'twenty-shared/utils';
-import { useUploadProfilePictureMutation } from '~/generated/graphql';
+import { useUploadProfilePictureMutation } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const ProfilePictureUploader = () => {
@@ -70,7 +70,7 @@ export const ProfilePictureUploader = () => {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred while uploading the picture.');
     }
   };
@@ -96,7 +96,7 @@ export const ProfilePictureUploader = () => {
       });
 
       setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred while removing the picture.');
     }
   };

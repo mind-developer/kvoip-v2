@@ -1,11 +1,11 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -19,7 +19,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { StringKeyOf } from 'type-fest';
+import { type StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelObjectAboutFormProps = {
@@ -123,6 +123,10 @@ export const SettingsDataModelObjectAboutForm = ({
     });
   };
 
+  const descriptionTextAreaId = `${objectMetadataItem?.id}-description`;
+  const labelSingularTextInputId = `${objectMetadataItem?.id}-label-singular`;
+  const labelPluralTextInputId = `${objectMetadataItem?.id}-label-plural`;
+
   return (
     <>
       <StyledInputsContainer>
@@ -145,16 +149,17 @@ export const SettingsDataModelObjectAboutForm = ({
         </StyledInputContainer>
         <Controller
           key={`object-labelSingular-text-input`}
-          name={'labelSingular'}
+          name="labelSingular"
           control={control}
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
-            <TextInput
+            <SettingsTextInput
+              instanceId={labelSingularTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelSingular?.message}
               label={t`Singular`}
-              placeholder={'Listing'}
+              placeholder={t`Listing`}
               value={value}
               onChange={(value) => {
                 onChange(capitalize(value));
@@ -176,11 +181,12 @@ export const SettingsDataModelObjectAboutForm = ({
         />
         <Controller
           key={`object-labelPlural-text-input`}
-          name={'labelPlural'}
+          name="labelPlural"
           control={control}
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
-            <TextInput
+            <SettingsTextInput
+              instanceId={labelPluralTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelPlural?.message}
@@ -210,6 +216,7 @@ export const SettingsDataModelObjectAboutForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <TextArea
+            textAreaId={descriptionTextAreaId}
             placeholder={t`Write a description`}
             minRows={4}
             value={value ?? undefined}
@@ -263,7 +270,8 @@ export const SettingsDataModelObjectAboutForm = ({
                         formState: { errors },
                       }) => (
                         <>
-                          <TextInput
+                          <SettingsTextInput
+                            instanceId={`${objectMetadataItem?.id}-${fieldName}`}
                             label={label}
                             placeholder={placeholder}
                             value={value}

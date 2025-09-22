@@ -1,8 +1,8 @@
 import { CREATE_AGENT } from '@/settings/service-center/agents/graphql/mutation/createAgent';
 import { CreateAgentInput } from '@/settings/service-center/agents/types/CreateAgentInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UserCreateAgentReturn {
   createAgent: (createInput: CreateAgentInput) => Promise<void>;
@@ -12,19 +12,21 @@ interface UserCreateAgentReturn {
 }
 
 export const useCreateAgent = (): UserCreateAgentReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [createAgentMutation, { data, loading, error }] = useMutation(
     CREATE_AGENT,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Agent created successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Agent created successfully!`,
         });
       },
     },
@@ -36,8 +38,8 @@ export const useCreateAgent = (): UserCreateAgentReturn => {
         variables: { createInput },
       });
     } catch (err) {
-      enqueueSnackBar('Agent creation error', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Agent creation error`,
       });
     }
   };

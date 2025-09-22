@@ -1,22 +1,23 @@
-import { ApolloClient, gql, useApolloClient } from '@apollo/client';
+import { type ApolloClient, gql } from '@apollo/client';
 import { isUndefined } from '@sniptt/guards';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
 
 export const usePerformCombinedFindManyRecords = () => {
-  const client = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -121,7 +122,7 @@ export const usePerformCombinedFindManyRecords = () => {
     operationSignatures: RecordGqlOperationSignature[];
     client?: ApolloClient<object>;
   }) => {
-    const apolloClient = customClient || client;
+    const apolloClient = customClient || apolloCoreClient;
 
     const findManyQuery = generateCombinedFindManyRecordsQuery(
       operationSignatures,

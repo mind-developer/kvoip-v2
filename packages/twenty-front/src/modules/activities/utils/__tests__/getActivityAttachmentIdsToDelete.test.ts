@@ -1,4 +1,4 @@
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 
 describe('getActivityAttachmentIdsToDelete', () => {
@@ -6,17 +6,37 @@ describe('getActivityAttachmentIdsToDelete', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: '/files/attachment/test.txt',
+        fullPath: 'https://example.com/files/images/test.txt',
       },
       {
         id: '2',
-        fullPath: '/files/attachment/test2.txt',
+        fullPath: 'https://example.com/files/images/test2.txt',
       },
     ] as Attachment[];
-
+    const newActivityBody = JSON.stringify([
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test.txt' },
+      },
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test2.txt' },
+      },
+    ]);
+    const oldActivityBody = JSON.stringify([
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test.txt' },
+      },
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test2.txt' },
+      },
+    ]);
     const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
-      '/files/attachment/test2.txt /files/attachment/test.txt',
+      newActivityBody,
       attachments,
+      oldActivityBody,
     );
     expect(attachmentIdsToDelete).toEqual([]);
   });
@@ -25,18 +45,34 @@ describe('getActivityAttachmentIdsToDelete', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: '/files/attachment/test.txt',
+        fullPath: 'https://example.com/files/images/test.txt',
       },
       {
         id: '2',
-        fullPath: '/files/attachment/test2.txt',
+        fullPath: 'https://example.com/files/images/test2.txt',
       },
     ] as Attachment[];
-
+    const newActivityBody = JSON.stringify([
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test.txt' },
+      },
+    ]);
+    const oldActivityBody = JSON.stringify([
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test.txt' },
+      },
+      {
+        type: 'file',
+        props: { url: 'https://example.com/files/images/test2.txt' },
+      },
+    ]);
     const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
-      '/files/attachment/test2.txt',
+      newActivityBody,
       attachments,
+      oldActivityBody,
     );
-    expect(attachmentIdsToDelete).toEqual(['1']);
+    expect(attachmentIdsToDelete).toEqual(['2']);
   });
 });

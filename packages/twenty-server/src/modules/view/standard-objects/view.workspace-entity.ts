@@ -17,7 +17,6 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
@@ -201,18 +200,6 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   viewSorts: Relation<ViewSortWorkspaceEntity[]>;
 
-  @WorkspaceRelation({
-    standardId: VIEW_STANDARD_FIELD_IDS.favorites,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Favorites`,
-    description: msg`Favorites linked to the view`,
-    icon: 'IconHeart',
-    inverseSideTarget: () => FavoriteWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperation,
     type: FieldMetadataType.SELECT,
@@ -307,4 +294,14 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   kanbanAggregateOperationFieldMetadataId?: string | null;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.anyFieldFilterValue,
+    type: FieldMetadataType.TEXT,
+    label: msg`Any field filter value`,
+    description: msg`Any field filter value`,
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  anyFieldFilterValue?: string | null;
 }
