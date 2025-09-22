@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { SaveChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
 import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
@@ -15,6 +16,7 @@ import {
 
 @Processor(MessageQueue.chatMessageManagerSendMessageQueue)
 export class SendChatMessageJob {
+  protected readonly logger = new Logger(SendChatMessageJob.name);
   constructor(
     private readonly chatMessageManagerService: ChatMessageManagerService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
@@ -45,6 +47,10 @@ export class SendChatMessageJob {
           await this.chatMessageManagerService.sendWhatsAppMessage(...d);
         if (response) {
           //message id is returned in response object
+          this.logger.log(
+            '(sendWhatsAppMessage): Sent message: ',
+            JSON.stringify(data.sendMessageInput),
+          );
           this.saveMessageQueue.add<SaveChatMessageJobData>(
             SaveChatMessageJob.name,
             {

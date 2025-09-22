@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { SaveChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { constructWhatsAppFirebasePayload } from 'src/engine/core-modules/chat-message-manager/utils/constructWhatsAppFirebasePayload';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -8,6 +9,7 @@ import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/
 
 @Processor(MessageQueue.chatMessageManagerSaveMessageQueue)
 export class SaveChatMessageJob {
+  protected readonly logger = new Logger(SaveChatMessageJob.name);
   constructor(private readonly firebaseService: FirebaseService) {}
 
   @Process(SaveChatMessageJob.name)
@@ -33,6 +35,10 @@ export class SaveChatMessageJob {
         break;
       //more cases here in the future if needed
       default:
+        this.logger.log(
+          '(whatsApp): Saving message:',
+          JSON.stringify(constructWhatsAppFirebasePayload(...payloadParams)),
+        );
         await this.firebaseService.saveWhatsAppMessage(
           constructWhatsAppFirebasePayload(...payloadParams),
           !!!(data.sendMessageInput as SendWhatsAppMessageInput)?.fromMe,

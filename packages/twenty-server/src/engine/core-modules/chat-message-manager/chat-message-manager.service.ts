@@ -30,6 +30,7 @@ export class ChatMessageManagerService {
     input: SendWhatsAppMessageInput,
     workspaceId: string,
   ): Promise<SendWhatsAppMessageResponse | null> {
+    this.logger.log('(sendWhatsAppMessage): Sending message:', input);
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
         workspaceId,
@@ -38,12 +39,17 @@ export class ChatMessageManagerService {
     ).findOne({ where: { id: input.integrationId } });
 
     if (!integration) {
+      this.logger.log(
+        '(sendWhatsAppMessage): Could not find WhatsApp integration:',
+        integration,
+      );
       throw new InternalServerErrorException('WhatsApp integration not found');
     }
     const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
     const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
 
     const tipoApi = integration?.tipoApi || 'MetaAPI';
+    this.logger.log('(sendWhatsAppMessage): API Type:', tipoApi);
 
     const headers = {
       Authorization: `Bearer ${integration.accessToken}`,
@@ -55,9 +61,11 @@ export class ChatMessageManagerService {
     try {
       if (tipoApi === 'MetaAPI') {
         const response = await axios.post(metaUrl, fields, { headers });
+        this.logger.log('(sendWhatsAppMessage): Sent:', response.data);
         return response.data;
       }
       const response = await axios.post(baileysUrl, { fields });
+      this.logger.log('(sendWhatsAppMessage): Sent:', response.data);
       return response.data;
     } catch (error) {
       console.log(error);
