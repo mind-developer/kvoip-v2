@@ -116,6 +116,26 @@ export class InterIntegrationService {
     return expirationDate > new Date() ? 'Expired' : 'Active';
   }
 
+  private handleInterApiError(error: any, operation: string): never {
+    if (error.response?.status === 429) {
+      const retryAfter = error.response.headers['retry-after'] || 60;
+      const message = `
+        Limite de requisições excedido para o Banco Inter. 
+        A operação não pode ser realizada no momento. Tente novamente em ${retryAfter} segundos. O Banco Inter permite apenas 5 requisições por minuto.`;
+      
+      this.logger.error(`Rate limit exceeded for ${operation}:`, {
+        status: error.response.status,
+        retryAfter,
+        message: error.response.data
+      });
+      
+      throw new Error(message);
+    }
+    
+    // Re-throw other errors
+    throw error;
+  }
+
 
   private async subscriptionWebhook(
     integration: InterIntegration,
@@ -194,7 +214,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('OAuth token request for read failed:', error.response?.data || error.message);
-      return null;
+      this.handleInterApiError(error, 'Obter Token OAuth para Leitura');
     }
   }
 
@@ -239,7 +259,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('OAuth token request failed:', error.response?.data || error.message);
-      return null;
+      this.handleInterApiError(error, 'Obter Token OAuth');
     }
   }
 
@@ -285,7 +305,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('Webhook configuration failed:', error.response?.data || error.message);
-      throw error;
+      this.handleInterApiError(error, 'Configurar Webhook');
     }
   }
 
@@ -322,7 +342,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('Failed to fetch existing webhooks:', error.response?.data || error.message);
-      throw error;
+      this.handleInterApiError(error, 'Buscar Webhooks Existentes');
     }
   }
 
@@ -358,7 +378,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('Failed to delete webhook:', error.response?.data || error.message);
-      throw error;
+      this.handleInterApiError(error, 'Excluir Webhook');
     }
   }
 
