@@ -97,9 +97,11 @@ export class FirebaseService {
         isVisible: true,
         personId: relatedPerson.id,
         client: {
-          name: whatsAppDoc.client.name,
+          name:
+            whatsAppDoc.client.name ??
+            relatedPerson.name?.firstName + ' ' + relatedPerson.name?.lastName,
           phone: whatsAppDoc.client.phone,
-          ppUrl: whatsAppDoc.client.ppUrl ?? null,
+          ppUrl: whatsAppDoc.client.ppUrl ?? relatedPerson.avatarUrl ?? null,
           email: relatedPerson.emails.primaryEmail ?? null,
         },
       };

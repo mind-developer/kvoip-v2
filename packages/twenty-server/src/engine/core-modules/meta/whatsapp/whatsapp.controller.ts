@@ -73,6 +73,7 @@ export class WhatsappController {
       //     ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
       //   status: body.entry[0].changes[0].statuses[0].status ?? null,
       // });
+      return true;
     }
 
     const isReceiving = body.entry[0].changes[0].value.messages;

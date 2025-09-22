@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import axios from 'axios';
 import {
   SendWhatsAppMessageInput,
@@ -13,6 +17,7 @@ import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standa
 @Injectable()
 export class ChatMessageManagerService {
   META_API_URL: string;
+  protected readonly logger = new Logger(ChatMessageManagerService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -135,7 +140,7 @@ export class ChatMessageManagerService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.logger.error(error);
     }
   }
 }
