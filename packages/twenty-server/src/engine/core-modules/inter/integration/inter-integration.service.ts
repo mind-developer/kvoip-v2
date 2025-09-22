@@ -113,7 +113,7 @@ export class InterIntegrationService {
   ): 'Active' | 'Expired' | 'Disabled' {
     if (!expirationDate) return 'Disabled';
 
-    return expirationDate > new Date() ? 'Expired' : 'Active';
+    return expirationDate < new Date() ? 'Expired' : 'Active';
   }
 
   private handleInterApiError(error: any, operation: string): never {
@@ -131,9 +131,62 @@ export class InterIntegrationService {
       
       throw new Error(message);
     }
+
+    // Verificar se é erro de validação do Banco Inter
+    if (error.response?.data && this.isInterValidationError(error.response.data)) {
+      const interError = error.response.data;
+      const message = this.formatInterValidationError(interError, operation);
+      
+      this.logger.error(`Inter validation error for ${operation}:`, {
+        status: error.response.status,
+        error: interError
+      });
+      
+      throw new Error(message);
+    }
+
+    // Erro genérico do Banco Inter
+    if (error.response?.status >= 400 && error.response?.status < 500) {
+      const message = `Erro na comunicação com o Banco Inter. Verifique os dados informados e tente novamente.`;
+      
+      this.logger.error(`Inter API error for ${operation}:`, {
+        status: error.response.status,
+        data: error.response.data
+      });
+      
+      throw new Error(message);
+    }
     
     // Re-throw other errors
     throw error;
+  }
+
+  private isInterValidationError(errorData: any): boolean {
+    return (
+      errorData &&
+      typeof errorData === 'object' &&
+      errorData.title &&
+      errorData.detail &&
+      errorData.timestamp &&
+      Array.isArray(errorData.violacoes)
+    );
+  }
+
+  private formatInterValidationError(interError: any, operation: string): string {
+    let message = `Erro de validação do Banco Inter" `;
+    
+    if (interError.violacoes && interError.violacoes.length > 0) {
+      message += ` - Detalhes dos erros:\n`;
+      interError.violacoes.forEach((violacao: any, index: number) => {
+        message += `${violacao.propriedade}: ${violacao.razao}`;
+        if (violacao.valor) {
+          message += ` (valor informado: "${violacao.valor}")`;
+        }
+        message += `\n    `;
+      });
+    }
+    
+    return message.trim();
   }
 
 
@@ -273,12 +326,9 @@ export class InterIntegrationService {
 
     const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const interWebhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
-
-    const contaCorrente = '155218140';
-    const agencia = '0001';
-
+    
     const data = {
-      webhookUrl: `${webhookUrl}/inter/webhook/${workspaceId}/${integration.id}`,
+      webhookUrl: `${webhookUrl}/inter-integration/webhook/${workspaceId}/${integration.id}`,
     };
 
     try {
@@ -288,7 +338,7 @@ export class InterIntegrationService {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
-          'x-conta-corrente': contaCorrente || '',
+          'x-conta-corrente': integration.currentAccount,
         },
         data: JSON.stringify(data),
       };
@@ -316,8 +366,6 @@ export class InterIntegrationService {
     const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
 
-    const contaCorrente = '155218140';
-
     try {
       const config: AxiosRequestConfig = {
         method: 'GET',
@@ -325,7 +373,7 @@ export class InterIntegrationService {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
-          'x-conta-corrente': contaCorrente,
+          'x-conta-corrente': integration.currentAccount,
         },
       };
 
@@ -353,8 +401,6 @@ export class InterIntegrationService {
     const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
 
-    const contaCorrente = '155218140';
-
     try {
       const config: AxiosRequestConfig = {
         method: 'DELETE',
@@ -362,7 +408,7 @@ export class InterIntegrationService {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
-          'x-conta-corrente': contaCorrente,
+          'x-conta-corrente': integration.currentAccount,
         },
       };
 

@@ -39,9 +39,9 @@ export class InterIntegration {
   @Column({ type: 'text', nullable: true })
   certificate?: string | null;
 
-  // @Field(() => String, { nullable: true })
-  // @Column({ nullable: true })
-  // contaCorrente?: string | null;
+  @Field(() => String)
+  @Column({ nullable: false })
+  currentAccount: string;
 
   @Field(() => String, { defaultValue: 'active' })
   @Column({ default: 'active' })

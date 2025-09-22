@@ -10,6 +10,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { InterIntegrationWebhookController } from 'src/engine/core-modules/inter/integration/inter-integration-webhook.controller';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationResolver } from 'src/engine/core-modules/inter/integration/inter-integration.resolver';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
@@ -40,6 +41,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     }),
     HttpModule,
   ],
+  controllers: [InterIntegrationWebhookController],
   providers: [
     InterIntegrationResolver,
     InterIntegrationService,

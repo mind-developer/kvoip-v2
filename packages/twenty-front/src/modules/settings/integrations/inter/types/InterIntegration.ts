@@ -3,6 +3,7 @@ export type InterIntegration = {
   integrationName: string;
   clientId: string;
   clientSecret: string;
+  currentAccount: string;
   privateKey?: File | string | null;
   certificate?: File | string | null;
   status?: string;

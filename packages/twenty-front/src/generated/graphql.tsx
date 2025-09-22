@@ -574,6 +574,7 @@ export type CreateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  currentAccount: Scalars['String'];
   expirationDate?: InputMaybe<Scalars['DateTime']>;
   integrationName: Scalars['String'];
   privateKey?: InputMaybe<Scalars['String']>;
@@ -1016,6 +1017,7 @@ export type FinancialClosing = {
   time: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
+  workspaceId: Scalars['UUID'];
 };
 
 export type FindAvailableSsoidpOutput = {
@@ -1262,6 +1264,7 @@ export type InterIntegration = {
   certificate?: Maybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  currentAccount: Scalars['String'];
   expirationDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   integrationName: Scalars['String'];
@@ -1454,9 +1457,9 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFinancialClosing: FinancialClosing;
   updateFocusNfeIntegration: FocusNFeWorkspaceEntity;
   updateInterIntegration: InterIntegration;
-  updateFinancialClosing: FinancialClosing;
   updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -2768,8 +2771,10 @@ export type Relation = {
 
 /** Relation type */
 export enum RelationType {
+  MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
-  ONE_TO_MANY = 'ONE_TO_MANY'
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 export type RemoteServer = {
@@ -3426,6 +3431,7 @@ export type UpdateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['String']>;
   clientSecret?: InputMaybe<Scalars['String']>;
+  currentAccount?: InputMaybe<Scalars['String']>;
   expirationDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   integrationName?: InputMaybe<Scalars['String']>;
@@ -4457,7 +4463,7 @@ export type CreateInterIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateInterIntegrationMutation = { __typename?: 'Mutation', createInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string, workspace: { __typename?: 'Workspace', id: any } } };
+export type CreateInterIntegrationMutation = { __typename?: 'Mutation', createInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, currentAccount: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string, workspace: { __typename?: 'Workspace', id: any } } };
 
 export type ToggleInterIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
@@ -4471,14 +4477,14 @@ export type UpdateInterIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInterIntegrationMutation = { __typename?: 'Mutation', updateInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string } };
+export type UpdateInterIntegrationMutation = { __typename?: 'Mutation', updateInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, currentAccount: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string } };
 
 export type InterIntegrationsByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, expirationDate?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
+export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, currentAccount: string, privateKey?: string | null, certificate?: string | null, status: string, expirationDate?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
 
 export type CreateWhatsappIntegrationMutationVariables = Exact<{
   createInput: CreateWhatsappIntegrationInput;
@@ -8029,6 +8035,7 @@ export const CreateInterIntegrationDocument = gql`
     integrationName
     clientId
     clientSecret
+    currentAccount
     privateKey
     certificate
     expirationDate
@@ -8103,6 +8110,7 @@ export const UpdateInterIntegrationDocument = gql`
     integrationName
     clientId
     clientSecret
+    currentAccount
     privateKey
     certificate
     expirationDate
@@ -8143,6 +8151,7 @@ export const InterIntegrationsByWorkspaceDocument = gql`
     integrationName
     clientId
     clientSecret
+    currentAccount
     privateKey
     certificate
     status
