@@ -123,34 +123,32 @@ export class InterIntegrationService {
     integrationId: string,
   ) {
     try {
-      // 1. Obter token OAuth
-      // const accessToken = await this.getOAuthToken(integration);
 
-      const accessToken = await this.getOAuthTokenForRead(integration);
-      
-      if (!accessToken) {
-        this.logger.error('Failed to obtain OAuth token');
-        return;
-      }
-
-      // // 2. Configurar webhook
-      // await this.configureWebhook(integration, accessToken, workspaceId, integrationId);
-
-      // 2. Verificar webhooks existentes
-      const existingWebhooks = await this.getExistingWebhooks(integration, accessToken);
-      this.logger.log('Existing webhooks:', existingWebhooks);
-
-      // 3. Obter token OAuth para escrita
       const writeAccessToken = await this.getOAuthToken(integration);
-      
+
       if (!writeAccessToken) {
         this.logger.error('Failed to obtain OAuth token for write');
         return;
       }
 
-      // 4. Configurar webhook
-      await this.configureWebhook(integration, writeAccessToken, workspaceId, integrationId);
-      
+      await this.deleteWebhook(integration, writeAccessToken);
+
+      await this.configureWebhook(integration, writeAccessToken, workspaceId);
+
+      // Buscar webhooks existentes -----------------------------------------------|
+
+      // const accessTokenForRead = await this.getOAuthTokenForRead(integration);
+
+      // if (!accessTokenForRead) {
+      //   this.logger.error('Failed to obtain OAuth token for read');
+      //   return;
+      // }
+
+      // const existingWebhooks = await this.getExistingWebhooks(integration, accessTokenForRead);
+      // this.logger.log('Existing webhooks:', existingWebhooks);
+
+      // --------------------------------------------------------------------------|
+
     } catch (error) {
       this.logger.error('Error in subscriptionWebhook:', error);
       throw error;
@@ -249,7 +247,7 @@ export class InterIntegrationService {
     integration: InterIntegration,
     accessToken: string,
     workspaceId: string,
-    integrationId: string,
+    // integrationId: string,
   ): Promise<void> {
     const webhookUrl = this.environmentService.get('WEBHOOK_URL');
 
@@ -260,7 +258,7 @@ export class InterIntegrationService {
     const agencia = '0001';
 
     const data = {
-      webhookUrl: `${webhookUrl}/inter/webhook/${workspaceId}/${integrationId}`,
+      webhookUrl: `${webhookUrl}/inter/webhook/${workspaceId}/${integration.id}`,
     };
 
     try {
@@ -324,6 +322,42 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('Failed to fetch existing webhooks:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  private async deleteWebhook(
+    integration: InterIntegration,
+    accessToken: string,
+  ): Promise<void> {
+    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+    const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
+
+    const contaCorrente = '155218140';
+
+    try {
+      const config: AxiosRequestConfig = {
+        method: 'DELETE',
+        url: webhookUrl,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'x-conta-corrente': contaCorrente,
+        },
+      };
+
+      // Adicionar certificado se disponível
+      if (integration.certificate && integration.privateKey) {
+        config.httpsAgent = await this.createHttpsAgent(integration);
+      }
+
+      this.logger.log('Deleting webhook...');
+      const response = await axios(config);
+
+      this.logger.log('Webhook deleted successfully:', response.data);
+
+    } catch (error) {
+      this.logger.error('Failed to delete webhook:', error.response?.data || error.message);
       throw error;
     }
   }
