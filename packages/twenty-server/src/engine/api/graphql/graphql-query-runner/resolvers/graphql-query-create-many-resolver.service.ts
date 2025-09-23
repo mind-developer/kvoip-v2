@@ -1,33 +1,39 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { FindOperator, In, InsertResult, ObjectLiteral } from 'typeorm';
+import {
+  In,
+  type FindOperator,
+  type InsertResult,
+  type ObjectLiteral,
+} from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+  type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
+type PartialObjectRecordWithId = Partial<ObjectRecord> & { id: string };
 @Injectable()
 export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
   CreateManyResolverArgs,
@@ -36,6 +42,16 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
+    if (executionArgs.args.data.length > QUERY_MAX_RECORDS) {
+      throw new GraphqlQueryRunnerException(
+        `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        {
+          userFriendlyMessage: t`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        },
+      );
+    }
+
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
@@ -50,16 +66,13 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
     );
 
-    const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
-
-    await this.processNestedRelationsIfNeeded(
+    await this.processNestedRelationsIfNeeded({
       executionArgs,
-      upsertedRecords,
+      records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      shouldBypassPermissionChecks,
       roleId,
-    );
+    });
 
     return this.formatRecordsForResponse(
       upsertedRecords,
@@ -72,7 +85,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     if (!executionArgs.args.upsert) {
-      return await executionArgs.repository.insert(executionArgs.args.data);
+      const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+        executionArgs.options;
+
+      const selectedColumns = buildColumnsToReturn({
+        select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      });
+
+      return await executionArgs.repository.insert(
+        executionArgs.args.data,
+        undefined,
+        selectedColumns,
+      );
     }
 
     return this.performUpsertOperation(executionArgs);
@@ -81,7 +108,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async performUpsertOperation(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
+
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
     );
@@ -102,23 +131,28 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       raw: [],
     };
 
-    await this.processRecordsToUpdate({
-      partialRecordsToUpdate: recordsToUpdate,
-      existingRecords,
-      repository: executionArgs.repository,
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: executionArgs.options.objectMetadataMaps,
-      result,
-      authContext: executionArgs.options.authContext,
+      objectMetadataMaps,
     });
+
+    if (recordsToUpdate.length > 0) {
+      await this.processRecordsToUpdate({
+        partialRecordsToUpdate: recordsToUpdate,
+        repository: executionArgs.repository,
+        objectMetadataItemWithFieldMaps,
+        result,
+        columnsToReturn,
+      });
+    }
 
     await this.processRecordsToInsert({
       recordsToInsert,
       repository: executionArgs.repository,
       result,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: executionArgs.options.objectMetadataMaps,
-      authContext: executionArgs.options.authContext,
+      columnsToReturn,
     });
 
     return result;
@@ -171,7 +205,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-  ): Promise<Partial<ObjectRecord>[]> {
+  ): Promise<PartialObjectRecordWithId[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -186,7 +220,24 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       queryBuilder.orWhere(condition);
     });
 
-    return await queryBuilder.getMany();
+    const restrictedFields =
+      executionArgs.repository.objectRecordsPermissions?.[
+        objectMetadataItemWithFieldMaps.id
+      ]?.restrictedFields;
+
+    const selectOptions = getAllSelectableFields({
+      restrictedFields: restrictedFields ?? {},
+      objectMetadata: {
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+      },
+    });
+
+    return (await queryBuilder
+      .withDeleted()
+      .setFindOptions({
+        select: selectOptions,
+      })
+      .getMany()) as PartialObjectRecordWithId[];
   }
 
   private getValueFromPath(
@@ -235,33 +286,23 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    existingRecords: Partial<ObjectRecord>[],
+    existingRecords: PartialObjectRecordWithId[],
   ): {
-    recordsToUpdate: Partial<ObjectRecord>[];
+    recordsToUpdate: PartialObjectRecordWithId[];
     recordsToInsert: Partial<ObjectRecord>[];
   } {
-    const recordsToUpdate: Partial<ObjectRecord>[] = [];
+    const recordsToUpdate: PartialObjectRecordWithId[] = [];
     const recordsToInsert: Partial<ObjectRecord>[] = [];
 
     for (const record of records) {
-      let existingRecord: Partial<ObjectRecord> | null = null;
+      const matchingRecordId = this.getMatchingRecordId(
+        record,
+        conflictingFields,
+        existingRecords,
+      );
 
-      for (const field of conflictingFields) {
-        const requestFieldValue = this.getValueFromPath(record, field.fullPath);
-
-        const existingRec = existingRecords.find(
-          (existingRecord) =>
-            existingRecord[field.column] === requestFieldValue,
-        );
-
-        if (existingRec) {
-          existingRecord = { ...record, id: existingRec.id };
-          break;
-        }
-      }
-
-      if (existingRecord) {
-        recordsToUpdate.push({ ...record, id: existingRecord.id });
+      if (isDefined(matchingRecordId)) {
+        recordsToUpdate.push({ ...record, id: matchingRecordId });
       } else {
         recordsToInsert.push(record);
       }
@@ -270,121 +311,119 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return { recordsToUpdate, recordsToInsert };
   }
 
+  private getMatchingRecordId(
+    record: Partial<ObjectRecord>,
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+    existingRecords: PartialObjectRecordWithId[],
+  ): string | undefined {
+    const matchingRecordIds = conflictingFields.reduce<string[]>(
+      (acc, field) => {
+        const requestFieldValue = this.getValueFromPath(record, field.fullPath);
+
+        const matchingRecord = existingRecords.find((existingRecord) => {
+          const existingFieldValue = this.getValueFromPath(
+            existingRecord,
+            field.fullPath,
+          );
+
+          return (
+            isDefined(existingFieldValue) &&
+            existingFieldValue === requestFieldValue
+          );
+        });
+
+        if (isDefined(matchingRecord)) {
+          acc.push(matchingRecord.id);
+        }
+
+        return acc;
+      },
+      [],
+    );
+
+    if ([...new Set(matchingRecordIds)].length > 1) {
+      const conflictingFieldsValues = conflictingFields
+        .map((field) => {
+          const value = this.getValueFromPath(record, field.fullPath);
+
+          return isDefined(value) ? `${field.fullPath}: ${value}` : undefined;
+        })
+        .filter(isDefined)
+        .join(', ');
+
+      throw new GraphqlQueryRunnerException(
+        `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
+        {
+          userFriendlyMessage: t`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        },
+      );
+    }
+
+    return matchingRecordIds[0];
+  }
+
   private async processRecordsToUpdate({
     partialRecordsToUpdate,
-    existingRecords,
     repository,
     objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
     result,
-    authContext,
+    columnsToReturn,
   }: {
-    partialRecordsToUpdate: Partial<ObjectRecord>[];
-    existingRecords: Partial<ObjectRecord>[];
+    partialRecordsToUpdate: PartialObjectRecordWithId[];
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
     result: InsertResult;
-    authContext: AuthContext;
+    columnsToReturn: string[];
   }): Promise<void> {
-    for (const partialRecordToUpdate of partialRecordsToUpdate) {
-      const recordId = partialRecordToUpdate.id as string;
-
-      // we should not update an existing record's createdBy value
-      const partialRecordToUpdateWithoutCreatedByUpdate =
-        this.getRecordWithoutCreatedBy(
-          partialRecordToUpdate,
-          objectMetadataItemWithFieldMaps,
-        );
-
-      const formattedPartialRecordToUpdate = formatData(
-        partialRecordToUpdateWithoutCreatedByUpdate,
-        objectMetadataItemWithFieldMaps,
+    const partialRecordsToUpdateWithoutCreatedByUpdate =
+      partialRecordsToUpdate.map((record) =>
+        this.getRecordWithoutCreatedBy(record, objectMetadataItemWithFieldMaps),
       );
 
-      // TODO: we should align update and insert
-      // For insert, formating is done in the server
-      // While for update, formatting is done at the resolver level
-      await repository.update(recordId, formattedPartialRecordToUpdate);
+    const savedRecords = await repository.updateMany(
+      partialRecordsToUpdateWithoutCreatedByUpdate.map((record) => ({
+        criteria: record.id,
+        partialEntity: record,
+      })),
+      undefined,
+      columnsToReturn,
+    );
 
-      result.identifiers.push({ id: recordId });
-      result.generatedMaps.push({ id: recordId });
-
-      const [updatedRecord] = await repository.find({
-        where: { id: recordId },
-      });
-
-      if (!isDefined(updatedRecord)) {
-        continue;
-      }
-
-      const record = formatResult<ObjectRecord>(
-        updatedRecord,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
-
-      const existingRecord = formatResult<ObjectRecord>(
-        existingRecords.find((record) => record.id === recordId),
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
-
-      this.apiEventEmitterService.emitUpdateEvents({
-        existingRecords: structuredClone([existingRecord]),
-        records: structuredClone([record]),
-        updatedFields: Object.keys(formattedPartialRecordToUpdate),
-        authContext,
-        objectMetadataItem:
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            objectMetadataItemWithFieldMaps,
-          ),
-      });
-    }
+    result.identifiers.push(
+      ...savedRecords.generatedMaps.map((record) => ({ id: record.id })),
+    );
+    result.generatedMaps.push(
+      ...savedRecords.generatedMaps.map((record) => ({ id: record.id })),
+    );
   }
 
   private async processRecordsToInsert({
     recordsToInsert,
     repository,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
     result,
-    authContext,
+    columnsToReturn,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
     result: InsertResult;
-    authContext: AuthContext;
+    columnsToReturn: string[];
   }): Promise<void> {
-    const formattedInsertedRecords: ObjectRecord[] = [];
-
     if (recordsToInsert.length > 0) {
-      const insertResult = await repository.insert(recordsToInsert);
+      const insertResult = await repository.insert(
+        recordsToInsert,
+        undefined,
+        columnsToReturn,
+      );
 
       result.identifiers.push(...insertResult.identifiers);
       result.generatedMaps.push(...insertResult.generatedMaps);
       result.raw.push(...insertResult.raw);
-
-      formattedInsertedRecords.push(
-        ...insertResult.raw.map((record: ObjectRecord) =>
-          formatResult<ObjectRecord>(
-            record,
-            objectMetadataItemWithFieldMaps,
-            objectMetadataMaps,
-          ),
-        ),
-      );
     }
-
-    this.apiEventEmitterService.emitCreateEvents({
-      records: structuredClone(formattedInsertedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
   }
 
   private async fetchUpsertedRecords(
@@ -397,28 +436,40 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedUpsertedRecords = await queryBuilder
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    });
+
+    const upsertedRecords = await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
       .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       })
+      .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
-    return formatResult<ObjectRecord[]>(
-      nonFormattedUpsertedRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
+    return upsertedRecords as ObjectRecord[];
   }
 
-  private async processNestedRelationsIfNeeded(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-    shouldBypassPermissionChecks: boolean,
-    roleId?: string,
-  ): Promise<void> {
+  private async processNestedRelationsIfNeeded({
+    executionArgs,
+    records,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
+    roleId,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
+    records: ObjectRecord[];
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+    roleId?: string;
+  }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
     }
@@ -426,13 +477,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     await this.processNestedRelationsHelper.processNestedRelations({
       objectMetadataMaps,
       parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: upsertedRecords,
+      parentObjectRecords: records,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
-      shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
+      selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }
 
@@ -455,9 +507,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   }
 
   private getRecordWithoutCreatedBy(
-    record: Partial<ObjectRecord>,
+    record: PartialObjectRecordWithId,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ) {
+  ): Omit<PartialObjectRecordWithId, 'createdBy'> {
     let recordWithoutCreatedByUpdate = record;
 
     const createdByFieldMetadataId =

@@ -1,7 +1,7 @@
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  type WorkspaceMemberDateFormatEnum,
+  type WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 export type ColorScheme = 'Dark' | 'Light' | 'System';
@@ -28,6 +28,7 @@ export type WorkspaceMember = {
   extensionNumber?: string;
   userDocument?: string | null;
   userPhone?: FieldPhonesValue | null;
+  calendarStartDay?: number | null;
 };
 
 export type WorkspaceInvitation = {

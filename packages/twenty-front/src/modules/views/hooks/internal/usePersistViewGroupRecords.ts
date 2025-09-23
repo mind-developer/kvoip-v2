@@ -1,55 +1,66 @@
 import { useCallback } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
-import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { CREATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/createCoreViewGroup';
+import { DESTROY_CORE_VIEW_GROUP } from '@/views/graphql/mutations/destroyCoreViewGroup';
+import { UPDATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/updateCoreViewGroup';
+import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useApolloClient } from '@apollo/client';
+import { type CoreViewGroup } from '~/generated/graphql';
 
 type CreateViewGroupRecordsArgs = {
   viewGroupsToCreate: ViewGroup[];
   viewId: string;
 };
+
 export const usePersistViewGroupRecords = () => {
   const apolloClient = useApolloClient();
 
-  const { createManyRecords } = useCreateManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-    shouldMatchRootQueryFilter: true,
-  });
+  const { triggerViewGroupOptimisticEffect } =
+    useTriggerViewGroupOptimisticEffect();
 
-  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-  });
-
-  const { destroyManyRecords } = useDestroyManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-  });
-
-  const createViewGroupRecords = useCallback(
+  const createCoreViewGroupRecords = useCallback(
     ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
       if (viewGroupsToCreate.length === 0) return;
 
-      return createManyRecords({
-        recordsToCreate: viewGroupsToCreate.map((viewGroup) => ({
-          ...viewGroup,
-          viewId,
-        })),
-      });
+      return Promise.all(
+        viewGroupsToCreate.map((viewGroup) =>
+          apolloClient.mutate({
+            mutation: CREATE_CORE_VIEW_GROUP,
+            variables: {
+              input: {
+                id: viewGroup.id,
+                viewId,
+                fieldMetadataId: viewGroup.fieldMetadataId,
+                fieldValue: viewGroup.fieldValue,
+                isVisible: viewGroup.isVisible,
+                position: viewGroup.position,
+              },
+            },
+            update: (_cache, { data }) => {
+              const record = data?.['createCoreViewGroup'];
+              if (!record) return;
+
+              triggerViewGroupOptimisticEffect({
+                createdViewGroups: [record],
+              });
+            },
+          }),
+        ),
+      );
     },
-    [createManyRecords],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
-  const updateViewGroupRecords = useCallback(
+  const updateCoreViewGroupRecords = useCallback(
     async (viewGroupsToUpdate: ViewGroup[]) => {
       if (!viewGroupsToUpdate.length) return;
 
       const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
-        apolloClient.mutate<{ updateViewGroup: ViewGroup }>({
-          mutation: updateOneRecordMutation,
+        apolloClient.mutate<{ updateCoreViewGroup: CoreViewGroup }>({
+          mutation: UPDATE_CORE_VIEW_GROUP,
           variables: {
-            idToUpdate: viewGroup.id,
+            id: viewGroup.id,
             input: {
               isVisible: viewGroup.isVisible,
               position: viewGroup.position,
@@ -57,50 +68,48 @@ export const usePersistViewGroupRecords = () => {
           },
           // Avoid cache being updated with stale data
           fetchPolicy: 'no-cache',
+          update: (_cache, { data }) => {
+            const record = data?.['updateCoreViewGroup'];
+            if (!record) return;
+
+            triggerViewGroupOptimisticEffect({
+              updatedViewGroups: [record],
+            });
+          },
         }),
       );
 
-      const mutationResults = await Promise.all(mutationPromises);
-
-      // FixMe: Using useUpdateOneRecord hook that call triggerUpdateRecordsOptimisticEffect is actaully causing multiple records to be created
-      // This is a temporary fix
-      mutationResults.forEach(({ data }) => {
-        const record = data?.['updateViewGroup'];
-
-        if (!record) return;
-
-        apolloClient.cache.modify({
-          id: apolloClient.cache.identify({
-            __typename: 'ViewGroup',
-            id: record.id,
-          }),
-          fields: {
-            isVisible: () => record.isVisible,
-            position: () => record.position,
-          },
-        });
-      });
+      return Promise.all(mutationPromises);
     },
-    [apolloClient, updateOneRecordMutation],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
-  const deleteViewGroupRecords = useCallback(
-    async (viewGroupsToDelete: ViewGroup[]) => {
+  const deleteCoreViewGroupRecords = useCallback(
+    async (viewGroupsToDelete: Pick<CoreViewGroup, 'id' | 'viewId'>[]) => {
       if (!viewGroupsToDelete.length) return;
 
-      const recordIdsToDestroy = viewGroupsToDelete.map(
-        (viewGroup) => viewGroup.id,
+      return Promise.all(
+        viewGroupsToDelete.map((viewGroup) =>
+          apolloClient.mutate({
+            mutation: DESTROY_CORE_VIEW_GROUP,
+            variables: {
+              id: viewGroup.id,
+            },
+            update: () => {
+              triggerViewGroupOptimisticEffect({
+                deletedViewGroups: [viewGroup],
+              });
+            },
+          }),
+        ),
       );
-      return destroyManyRecords({
-        recordIdsToDestroy,
-      });
     },
-    [destroyManyRecords],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   return {
-    createViewGroupRecords,
-    updateViewGroupRecords,
-    deleteViewGroupRecords,
+    createViewGroupRecords: createCoreViewGroupRecords,
+    updateViewGroupRecords: updateCoreViewGroupRecords,
+    deleteViewGroupRecords: deleteCoreViewGroupRecords,
   };
 };

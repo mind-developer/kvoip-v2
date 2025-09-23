@@ -10,9 +10,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export class SectorService {
   constructor(
-    @InjectRepository(Sector, 'core')
+    @InjectRepository(Sector)
     private readonly sectorRepository: Repository<Sector>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

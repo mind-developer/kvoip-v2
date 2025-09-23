@@ -34,8 +34,7 @@ import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integ
             Workspace,
             ChatbotFlow,
             HandlersModule,
-          ],
-          'core',
+          ]
         ),
         TypeORMModule,
       ],

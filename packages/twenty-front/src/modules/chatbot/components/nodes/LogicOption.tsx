@@ -75,6 +75,8 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   ];
 
   const recordTypeOptions: { label: string; value: RecordType }[] = [
+    // TODO: Fix incorrect type for 'value' property
+    // @ts-expect-error
     { label: 'Choose record', value: '' },
     { label: 'Sectors', value: 'sectors' },
     { label: 'Text', value: 'text' },

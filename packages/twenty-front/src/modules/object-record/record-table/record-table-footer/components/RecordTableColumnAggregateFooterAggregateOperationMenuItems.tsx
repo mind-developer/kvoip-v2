@@ -1,9 +1,10 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
-import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ReactNode, useContext } from 'react';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -15,6 +16,8 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations: ExtendedAggregateOperations[];
   children?: ReactNode;
 }) => {
+  const { t } = useLingui();
+
   const {
     updateViewFieldAggregateOperation,
     currentViewFieldAggregateOperation,
@@ -23,15 +26,16 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   const { dropdownId, resetContent } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
+
   return (
     <>
       {aggregateOperations.map((operation) => (
         <MenuItem
           key={operation}
-          onClick={() => {
-            updateViewFieldAggregateOperation(operation);
-            closeDropdown();
+          onClick={async () => {
+            await updateViewFieldAggregateOperation(operation);
+            closeDropdown(dropdownId);
           }}
           text={getAggregateOperationLabel(operation)}
           RightIcon={
@@ -44,13 +48,13 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
       ))}
       {children}
       <MenuItem
-        key={'none'}
-        onClick={() => {
-          updateViewFieldAggregateOperation(null);
+        key="none"
+        onClick={async () => {
+          await updateViewFieldAggregateOperation(null);
           resetContent();
-          closeDropdown();
+          closeDropdown(dropdownId);
         }}
-        text={'None'}
+        text={t`None`}
         RightIcon={
           !isDefined(currentViewFieldAggregateOperation) ? IconCheck : undefined
         }

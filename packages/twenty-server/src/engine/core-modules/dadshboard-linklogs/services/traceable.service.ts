@@ -18,7 +18,7 @@ export class TraceableService {
   private readonly logger = new Logger('TraceableController');
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly twentyConfigService: TwentyConfigService,

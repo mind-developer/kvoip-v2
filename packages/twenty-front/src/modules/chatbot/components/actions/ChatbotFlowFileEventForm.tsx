@@ -103,9 +103,9 @@ export const ChatbotFlowFileEventForm = ({
       updateFlow({
         chatbotId: chatbotFlow.chatbotId,
         nodes: updatedNodes,
-        edges: chatbotFlow.edges,
         viewport: { x: 0, y: 0, zoom: 0 },
-      });
+      };
+
       setChatbotFlowSelectedNode(updatedNode);
     }
   };

@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
-import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
-import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
-import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
+import { type WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
+import { type WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
+import { type WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
+import { type WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import {
-  PartialComputedFieldMetadata,
-  PartialFieldMetadata,
+  type PartialComputedFieldMetadata,
+  type PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
@@ -49,6 +49,7 @@ export class StandardFieldFactory {
           isGatedAndNotEnabled(
             workspaceEntityMetadataArgs.gate,
             context.featureFlags,
+            'database',
           )
         ) {
           return acc;
@@ -142,18 +143,25 @@ export class StandardFieldFactory {
         icon: workspaceFieldMetadataArgs.icon,
         label: workspaceFieldMetadataArgs.label,
         description: workspaceFieldMetadataArgs.description,
-        defaultValue: workspaceFieldMetadataArgs.defaultValue,
-        options: workspaceFieldMetadataArgs.options,
-        settings: workspaceFieldMetadataArgs.settings,
+        defaultValue: workspaceFieldMetadataArgs.defaultValue ?? null,
+        options: workspaceFieldMetadataArgs.options ?? null,
+        settings: workspaceFieldMetadataArgs.settings ?? null,
+        standardOverrides: null,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isUnique: workspaceFieldMetadataArgs.isUnique,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
+        isUIReadOnly: workspaceFieldMetadataArgs.isUIReadOnly ?? false,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
+        relationTargetFieldMetadata: null,
+        relationTargetFieldMetadataId: null,
+        relationTargetObjectMetadata: null,
+        relationTargetObjectMetadataId: null,
+        morphId: null,
       },
     ];
   }
@@ -189,11 +197,21 @@ export class StandardFieldFactory {
       isSystem:
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
+      isUIReadOnly: workspaceRelationMetadataArgs.isUIReadOnly,
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
       isLabelSyncedWithName:
         workspaceRelationMetadataArgs.isLabelSyncedWithName,
+      defaultValue: null,
+      options: null,
+      relationTargetFieldMetadata: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadata: null,
+      relationTargetObjectMetadataId: null,
+      settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
+      standardOverrides: null,
+      morphId: null,
     });
 
     return fieldMetadataCollection;

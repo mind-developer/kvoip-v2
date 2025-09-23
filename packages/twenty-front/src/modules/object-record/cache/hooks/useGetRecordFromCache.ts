@@ -1,14 +1,14 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useGetRecordFromCache = ({
   objectNameSingular,
@@ -27,12 +27,12 @@ export const useGetRecordFromCache = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   return useCallback(
     <T extends ObjectRecord = ObjectRecord>(
       recordId: string,
-      cache = apolloClient.cache,
+      cache = apolloCoreClient.cache,
     ) => {
       return getRecordFromCache<T>({
         cache,
@@ -44,7 +44,7 @@ export const useGetRecordFromCache = ({
       });
     },
     [
-      apolloClient.cache,
+      apolloCoreClient.cache,
       objectMetadataItems,
       objectMetadataItem,
       appliedRecordGqlFields,

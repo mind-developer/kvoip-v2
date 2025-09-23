@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
@@ -6,7 +5,6 @@ import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/in
 import { useCreateWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,7 +42,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigateApp = useNavigateApp();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const tokenPair = useRecoilValue(tokenPairState);
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -234,8 +232,9 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         navigate(SettingsPath.IntegrationWhatsappDatabase);
       }
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };

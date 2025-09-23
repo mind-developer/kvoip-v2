@@ -1,12 +1,12 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useDeleteView } from '@/views/hooks/useDeleteView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -15,18 +15,18 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
     viewPickerIsPersistingComponentState,
     viewBarInstanceId,
   );
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackStateV2(
+  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackState(
     viewPickerIsDirtyComponentState,
     viewBarInstanceId,
   );
 
   const viewPickerReferenceViewIdCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       viewPickerReferenceViewIdComponentState,
       viewBarInstanceId,
     );
@@ -34,7 +34,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useRecoilValue(
-    prefetchViewsFromObjectMetadataItemFamilySelector({
+    coreViewsFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );

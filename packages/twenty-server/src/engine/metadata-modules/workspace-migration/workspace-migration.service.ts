@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
   WorkspaceMigrationEntity,
-  WorkspaceMigrationTableAction,
+  type WorkspaceMigrationTableAction,
 } from './workspace-migration.entity';
 
 @Injectable()
 export class WorkspaceMigrationService {
   constructor(
-    @InjectRepository(WorkspaceMigrationEntity, 'core')
+    @InjectRepository(WorkspaceMigrationEntity)
     private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
   ) {}
 
@@ -23,8 +23,13 @@ export class WorkspaceMigrationService {
    */
   public async getPendingMigrations(
     workspaceId: string,
+    queryRunner?: QueryRunner,
   ): Promise<WorkspaceMigrationEntity[]> {
-    const pendingMigrations = await this.workspaceMigrationRepository.find({
+    const workspaceMigrationRepository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
+      : this.workspaceMigrationRepository;
+
+    const pendingMigrations = await workspaceMigrationRepository.find({
       order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
@@ -113,13 +118,21 @@ export class WorkspaceMigrationService {
     name: string,
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
+    queryRunner?: QueryRunner,
   ) {
-    return this.workspaceMigrationRepository.save({
+    const workspaceMigrationRepository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
+      : this.workspaceMigrationRepository;
+
+    const migration = await workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,
       isCustom: true,
+      createdAt: new Date(),
     });
+
+    return migration;
   }
 
   public async deleteAllWithinWorkspace(workspaceId: string) {

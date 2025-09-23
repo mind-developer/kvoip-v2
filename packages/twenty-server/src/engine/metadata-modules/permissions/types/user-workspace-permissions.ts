@@ -1,10 +1,14 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import {
+  type ObjectsPermissions,
+  type ObjectsPermissionsDeprecated,
+} from 'twenty-shared/types';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 export type UserWorkspacePermissions = {
-  settingsPermissions: Record<SettingPermissionType, boolean>;
+  permissionFlags: Record<PermissionFlagType, boolean>;
   objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
-  objectPermissions: ObjectRecordsPermissions;
+  objectPermissions: ObjectsPermissionsDeprecated;
+  objectsPermissions: ObjectsPermissions; // replaces ObjectsPermissionsDeprecated - deprecation ongoing
 };

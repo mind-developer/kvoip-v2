@@ -2,20 +2,22 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { ChangeEvent, ReactNode, useRef } from 'react';
+import { type ChangeEvent, type ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  Avatar,
+  type AvatarType,
+  type IconComponent,
+} from 'twenty-ui/display';
 import { v4 as uuidV4 } from 'uuid';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import {
-  AppTooltip,
-  Avatar,
-  AvatarType,
-  IconComponent,
-} from 'twenty-ui/display';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -121,8 +123,9 @@ export const ShowPageSummaryCard = ({
   loading,
   isMobile = false,
 }: ShowPageSummaryCardProps) => {
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
   const beautifiedCreatedAt =
-    date !== '' ? beautifyPastDateRelativeToNow(date) : '';
+    date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
   const inputFileRef = useRef<HTMLInputElement>(null);

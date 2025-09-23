@@ -14,6 +14,7 @@ export const STANDARD_OBJECT_ICONS = {
   comment: 'IconMessageCircle',
   company: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',
+  dashboard: 'IconLayoutDashboard',
   favorite: 'IconHeart',
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
@@ -44,4 +45,4 @@ export const STANDARD_OBJECT_ICONS = {
   workspaceMember: 'IconUserCircle',
   chatbot: 'IconSettingsAutomation',
   ...KVOIP_ADMIN_STANRD_BOJECT_ICONS,
-};
+} as const;

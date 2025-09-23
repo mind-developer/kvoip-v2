@@ -1,18 +1,19 @@
 import {
-  ImportedRow,
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
+  type ImportedRow,
+  type ImportedStructuredRow,
+  type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { spreadsheetImportParseMultiSelectOptionsOrThrow } from '@/spreadsheet-import/utils/spreadsheetImportParseMultiSelectOptionsOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 
-export const normalizeTableData = <T extends string>(
-  columns: SpreadsheetColumns<T>,
+export const normalizeTableData = (
+  columns: SpreadsheetColumns,
   data: ImportedRow[],
-  fields: SpreadsheetImportFields<T>,
+  fields: SpreadsheetImportFields,
 ) =>
   data.map((row) =>
     columns.reduce((acc, column, index) => {
@@ -60,10 +61,9 @@ export const normalizeTableData = <T extends string>(
           }
 
           if (field.fieldType.type === 'multiSelect' && isDefined(curr)) {
-            const currentOptionsSchema = z.preprocess(
-              (value) => JSON.parse(z.string().parse(value)),
-              z.array(z.unknown()),
-            );
+            const currentOptionsSchema = z.preprocess((value) => {
+              return spreadsheetImportParseMultiSelectOptionsOrThrow(value);
+            }, z.array(z.unknown()));
 
             const rawCurrentOptions = currentOptionsSchema.safeParse(curr).data;
 
@@ -101,5 +101,5 @@ export const normalizeTableData = <T extends string>(
         default:
           return acc;
       }
-    }, {} as ImportedStructuredRow<T>),
+    }, {} as ImportedStructuredRow),
   );

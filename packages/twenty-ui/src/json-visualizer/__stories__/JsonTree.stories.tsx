@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   expect,
   fn,
@@ -107,7 +107,7 @@ export const ArraySimple: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const node = await canvas.findByText('[3]');
+    const node = await canvas.findByText('3');
 
     expect(node).toBeVisible();
   },

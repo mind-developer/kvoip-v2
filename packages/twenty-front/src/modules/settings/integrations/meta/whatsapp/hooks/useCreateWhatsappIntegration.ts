@@ -2,8 +2,8 @@ import { useMutation } from '@apollo/client';
 
 import { CREATE_WHATSAPP_INTEGRATION } from '@/settings/integrations/meta/whatsapp/graphql/mutation/createWhatsappIntegration';
 import { CreateWhatsappIntegrationInput } from '@/settings/integrations/meta/whatsapp/types/CreateWhatsappIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 
 interface CreateWhatsappIntegration {
   createWhatsappIntegration: (
@@ -15,18 +15,21 @@ interface CreateWhatsappIntegration {
 }
 
 export const useCreateWhatsappIntegration = (): CreateWhatsappIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [createWhatsappIntegrationMutation, { data, loading, error }] =
     useMutation(CREATE_WHATSAPP_INTEGRATION, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
+
       onCompleted: () => {
-        enqueueSnackBar('Whatsapp integration created successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Whatsapp integration created successfully!`,
         });
       },
     });

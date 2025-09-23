@@ -1,6 +1,6 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
@@ -11,12 +11,12 @@ import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import styled from '@emotion/styled';
-import { Monaco } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import { type Monaco } from '@monaco-editor/react';
+import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -86,7 +86,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
           <CodeEditor
             height={343}
             value={formValues.code?.[INDEX_FILE_PATH]}
-            language={'typescript'}
+            language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}
             options={{

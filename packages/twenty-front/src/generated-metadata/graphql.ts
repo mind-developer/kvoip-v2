@@ -278,8 +278,7 @@ export type BillingProduct = {
 /** The different billing products available */
 export enum BillingProductKey {
   BASE_PRODUCT = 'BASE_PRODUCT',
-  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION',
-  WORSPACE_MEMBERS = 'WORSPACE_MEMBERS'
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
 }
 
 export type BillingProductMetadata = {
@@ -404,7 +403,6 @@ export enum ChatbotStatus {
 
 export type ChatbotWorkspaceEntity = {
   __typename?: 'ChatbotWorkspaceEntity';
-  createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   statuses?: Maybe<ChatbotStatus>;
@@ -773,7 +771,6 @@ export type CreateWhatsappIntegrationInput = {
   businessAccountId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phoneId: Scalars['String']['input'];
-  tipoApi?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -942,35 +939,48 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
+  IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
+  IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
+  IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
+  IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_KVOIP_ADMIN = 'IS_KVOIP_ADMIN',
+  IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
+  IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
+  IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
-  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_ITERATOR_ENABLED = 'IS_WORKFLOW_ITERATOR_ENABLED',
+  IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
 export type Field = {
   __typename?: 'Field';
-  createdAt: Scalars['DateTime']['output'];
-  defaultValue?: Maybe<Scalars['JSON']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive?: Maybe<Scalars['Boolean']['output']>;
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  isLabelSyncedWithName?: Maybe<Scalars['Boolean']['output']>;
-  isNullable?: Maybe<Scalars['Boolean']['output']>;
-  isSystem?: Maybe<Scalars['Boolean']['output']>;
-  isUnique?: Maybe<Scalars['Boolean']['output']>;
-  label: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
+  isUIReadOnly?: Maybe<Scalars['Boolean']>;
+  isUnique?: Maybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  morphRelations?: Maybe<Array<Relation>>;
+  name: Scalars['String'];
   object?: Maybe<Object>;
-  options?: Maybe<Scalars['JSON']['output']>;
+  options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
-  settings?: Maybe<Scalars['JSON']['output']>;
+  settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FieldConnection = {
@@ -984,7 +994,7 @@ export type FieldConnection = {
 export type FieldEdge = {
   __typename?: 'FieldEdge';
   /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
+  cursor: Scalars['ConnectionCursor'];
   /** The node containing the Field */
   node: Field;
 };
@@ -1061,24 +1071,25 @@ export type FindManyRemoteTablesInput = {
 
 export type FocusNFeWorkspaceEntity = {
   __typename?: 'FocusNFeWorkspaceEntity';
-  cep: Scalars['String']['output'];
-  city: Scalars['String']['output'];
-  cnaeCode?: Maybe<Scalars['String']['output']>;
-  cnpj?: Maybe<Scalars['String']['output']>;
-  companyName?: Maybe<Scalars['String']['output']>;
-  cpf?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  ie?: Maybe<Scalars['String']['output']>;
-  inscricaoMunicipal?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  neighborhood: Scalars['String']['output'];
-  number: Scalars['String']['output'];
-  state: Scalars['String']['output'];
-  status?: Maybe<Scalars['String']['output']>;
-  street: Scalars['String']['output'];
-  taxRegime?: Maybe<Scalars['String']['output']>;
-  token: Scalars['String']['output'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: Maybe<Scalars['String']>;
+  cnpj?: Maybe<Scalars['String']>;
+  companyName?: Maybe<Scalars['String']>;
+  cpf?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  ie?: Maybe<Scalars['String']>;
+  inscricaoMunicipal?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  street: Scalars['String'];
+  taxRegime?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FullName = {
@@ -1329,20 +1340,21 @@ export type IssuerDto = {
 
 export type LinkLogsWorkspaceEntity = {
   __typename?: 'LinkLogsWorkspaceEntity';
-  city?: Maybe<Scalars['String']['output']>;
-  country?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  linkId?: Maybe<Scalars['String']['output']>;
-  linkName?: Maybe<Scalars['String']['output']>;
-  platform?: Maybe<Scalars['String']['output']>;
-  product: Scalars['String']['output'];
-  regionName?: Maybe<Scalars['String']['output']>;
-  userAgent?: Maybe<Scalars['String']['output']>;
-  userIp?: Maybe<Scalars['String']['output']>;
-  utmCampaign: Scalars['String']['output'];
-  utmMedium: Scalars['String']['output'];
-  utmSource: Scalars['String']['output'];
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  linkId?: Maybe<Scalars['String']>;
+  linkName?: Maybe<Scalars['String']>;
+  platform?: Maybe<Scalars['String']>;
+  product: Scalars['String'];
+  regionName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  userAgent?: Maybe<Scalars['String']>;
+  userIp?: Maybe<Scalars['String']>;
+  utmCampaign: Scalars['String'];
+  utmMedium: Scalars['String'];
+  utmSource: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -1492,7 +1504,6 @@ export type Mutation = {
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
-  updateMessageData: Scalars['Boolean']['output'];
   updateOneAgent: Agent;
   updateOneField: Field;
   updateOneObject: Object;
@@ -2027,11 +2038,6 @@ export type MutationUpdateIssuerArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
-};
-
-
-export type MutationUpdateMessageDataArgs = {
-  updateMessageInput: UpdateMessageDataInput;
 };
 
 
@@ -3003,51 +3009,49 @@ export type SearchResultEdge = {
 
 export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export type Sector = {
   __typename?: 'Sector';
   agents: Array<WorkspaceAgent>;
-  createdAt: Scalars['DateTime']['output'];
-  icon: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  topics?: Maybe<Array<Scalars['JSON']['output']>>;
-  updatedAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime'];
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  topics?: Maybe<Array<Scalars['JSON']>>;
+  updatedAt: Scalars['DateTime'];
   workspace: Workspace;
 };
 
 export type SendEventMessageInput = {
   agent?: InputMaybe<MessageAgent>;
-  eventStatus: Scalars['String']['input'];
-  from: Scalars['String']['input'];
-  fromMe?: InputMaybe<Scalars['Boolean']['input']>;
-  integrationId: Scalars['String']['input'];
-  message?: InputMaybe<Scalars['String']['input']>;
+  eventStatus: Scalars['String'];
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
   sector?: InputMaybe<MessageSector>;
-  status: Scalars['String']['input'];
-  to: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+  status: Scalars['String'];
+  to: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
-  errors: Array<Scalars['String']['output']>;
+  errors: Array<Scalars['String']>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type SendMessageInput = {
-  fileId?: InputMaybe<Scalars['String']['input']>;
-  from: Scalars['String']['input'];
-  fromMe?: InputMaybe<Scalars['Boolean']['input']>;
-  integrationId: Scalars['String']['input'];
-  message?: InputMaybe<Scalars['String']['input']>;
-  to: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+  fileId?: InputMaybe<Scalars['String']>;
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  to: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type SendTemplateInput = {
@@ -3564,16 +3568,6 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean']['input'];
 };
 
-export type UpdateMessageDataInput = {
-  clientPhoneNumber: Scalars['String']['input'];
-  deleted: Scalars['Boolean']['input'];
-  edited: Scalars['Boolean']['input'];
-  id: Scalars['String']['input'];
-  integrationId: Scalars['String']['input'];
-  message: Scalars['String']['input'];
-  status: Scalars['String']['input'];
-};
-
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -3709,7 +3703,6 @@ export type UpdateWhatsappIntegrationInput = {
   id: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   phoneId?: InputMaybe<Scalars['String']['input']>;
-  tipoApi?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -3865,31 +3858,31 @@ export type WhatsappTemplatesResponse = {
 
 export type WhatsappWorkspaceEntity = {
   __typename?: 'WhatsappWorkspaceEntity';
-  accessToken: Scalars['String']['output'];
-  appId: Scalars['String']['output'];
-  appKey: Scalars['String']['output'];
-  businessAccountId: Scalars['String']['output'];
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
   chatbot?: Maybe<ChatbotWorkspaceEntity>;
-  createdAt: Scalars['String']['output'];
-  disabled: Scalars['Boolean']['output'];
-  id: Scalars['String']['output'];
-  name?: Maybe<Scalars['String']['output']>;
-  phoneId: Scalars['String']['output'];
-  sla: Scalars['Float']['output'];
-  tipoApi?: Maybe<Scalars['String']['output']>;
-  verifyToken: Scalars['String']['output'];
+  createdAt: Scalars['DateTime'];
+  disabled: Scalars['Boolean'];
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  phoneId: Scalars['String'];
+  sla: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  verifyToken: Scalars['String'];
 };
 
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
-  active: Scalars['Float']['output'];
-  completed: Scalars['Float']['output'];
-  completedData?: Maybe<Array<Scalars['Float']['output']>>;
-  delayed: Scalars['Float']['output'];
-  failed: Scalars['Float']['output'];
-  failedData?: Maybe<Array<Scalars['Float']['output']>>;
-  failureRate: Scalars['Float']['output'];
-  waiting: Scalars['Float']['output'];
+  active: Scalars['Float'];
+  completed: Scalars['Float'];
+  completedData?: Maybe<Array<Scalars['Float']>>;
+  delayed: Scalars['Float'];
+  failed: Scalars['Float'];
+  failedData?: Maybe<Array<Scalars['Float']>>;
+  failureRate: Scalars['Float'];
+  waiting: Scalars['Float'];
 };
 
 export type WorkflowAction = {

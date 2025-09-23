@@ -2,7 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -45,7 +45,7 @@ export const createMockActionMenuActions = ({
   {
     type: ActionType.Standard,
     scope: ActionScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT,
+    key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
     position: 4,
@@ -53,10 +53,7 @@ export const createMockActionMenuActions = ({
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
+    availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <Action onClick={exportMock} />,
   },
   {

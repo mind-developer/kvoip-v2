@@ -11,12 +11,14 @@ interface SendWhatsAppMessageReturn {
 }
 
 export const useSendWhatsappMessages = (): SendWhatsAppMessageReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
 
   const [sendWhatsAppMessageMutation] = useMutation(SEND_WHATSAPP_MESSAGE, {
     onError: (error) => {
-      enqueueSnackBar('gql: ' + error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

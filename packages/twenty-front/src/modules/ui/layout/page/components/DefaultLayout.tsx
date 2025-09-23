@@ -19,7 +19,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -68,6 +68,10 @@ const StyledWebSoftphoneContainer = styled.div`
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
+  const location = useLocation();
+  const isPageLayoutEditor =
+    location.pathname.includes('/settings/page-layout/new') ||
+    location.pathname.match(/\/settings\/page-layout\/[^/]+$/);
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
@@ -88,7 +92,10 @@ export const DefaultLayout = () => {
           <StyledPageContainer
             animate={{
               marginLeft:
-                isSettingsPage && !isMobile && !useShowFullScreen
+                isSettingsPage &&
+                !isMobile &&
+                !useShowFullScreen &&
+                !isPageLayoutEditor
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +

@@ -1,8 +1,8 @@
 import { UPDATE_WHATSAPP_INTEGRATION } from '@/settings/integrations/meta/whatsapp/graphql/mutation/updateWhatsappIntegration';
 import { UpdateWhatsappIntegrationInput } from '@/settings/integrations/meta/whatsapp/types/UpdateWhatsappIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UpdateWhatsappIntegration {
   updateWhatsappIntegration: (
@@ -13,19 +13,21 @@ interface UpdateWhatsappIntegration {
 }
 
 export const useUpdateWhatsappIntegration = (): UpdateWhatsappIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [updateWhatsappIntegrationMutation, { loading, error }] = useMutation(
     UPDATE_WHATSAPP_INTEGRATION,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Whatsapp integration updated successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Whatsapp integration updated successfully!`,
         });
       },
     },
@@ -41,8 +43,8 @@ export const useUpdateWhatsappIntegration = (): UpdateWhatsappIntegration => {
         },
       });
     } catch (err) {
-      enqueueSnackBar('Error updating role', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error updating role`,
       });
     }
   };

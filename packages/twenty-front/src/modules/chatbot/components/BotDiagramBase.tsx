@@ -1,11 +1,9 @@
-/* eslint-disable @nx/workspace-no-state-useref */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 
-import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -18,6 +16,7 @@ import {
   Connection,
   Controls,
   Edge,
+  Node,
   EdgeChange,
   NodeChange,
   NodeTypes,
@@ -172,32 +171,8 @@ export const BotDiagramBase = ({
   }, [rfInstance]);
 
   const onNodesChange = useCallback(
-    (newNodesState: NodeChange[]) =>
-      setNodes((nds) => {
-        const appliedNodeChanges = applyNodeChanges(
-          structuredClone(newNodesState),
-          structuredClone(nds),
-        );
-        newNodesState.forEach((newNodeState: NodeChange) => {
-          if (!rfInstance) return appliedNodeChanges;
-          if (newNodeState.type !== 'position') {
-            saveChatbotFlowState({
-              ...rfInstance.toObject(),
-              nodes: appliedNodeChanges,
-              chatbotId,
-            });
-          }
-          if (newNodeState.type === 'position' && !newNodeState.dragging) {
-            saveChatbotFlowState({
-              ...rfInstance.toObject(),
-              nodes: appliedNodeChanges,
-              chatbotId,
-            });
-          }
-        });
-        return appliedNodeChanges;
-      }),
-    [chatbotFlowSelectedNode],
+    (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [],
   );
 
   const onEdgesChange = useCallback(
@@ -224,6 +199,7 @@ export const BotDiagramBase = ({
       const targetAlreadyConnected = edges.some(
         (edge) => edge.target === connection.target,
       );
+
       if (!targetAlreadyConnected) {
         setEdges((eds) => addEdge(connection, eds));
       }
@@ -239,6 +215,7 @@ export const BotDiagramBase = ({
       const sameSourceHandleAlreadyUsed = edges.some(
         (edge) => edge.source === source && edge.sourceHandle === sourceHandle,
       );
+
       const sameTargetHandleAlreadyUsed = edges.some(
         (edge) => edge.target === target && edge.targetHandle === targetHandle,
       );

@@ -9,7 +9,6 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -28,29 +27,29 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
-import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
-import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
-import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
+import { type AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
+import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
+import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import { type WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
-import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrNewUser,
-  SignInUpBaseParams,
-  SignInUpNewUserPayload,
+  type AuthProviderWithPasswordType,
+  type ExistingUserOrNewUser,
+  type SignInUpBaseParams,
+  type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
+import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -79,13 +78,13 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
@@ -142,7 +141,7 @@ export class AuthService {
       where: {
         email: input.email,
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     if (!user) {
@@ -160,6 +159,9 @@ export class AuthService {
       throw new AuthException(
         'Incorrect login method',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`User was not created with email/password`,
+        },
       );
     }
 
@@ -169,21 +171,28 @@ export class AuthService {
       throw new AuthException(
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Wrong password`,
+        },
       );
     }
 
+    await this.checkIsEmailVerified(user.isEmailVerified);
+
+    return user;
+  }
+
+  async checkIsEmailVerified(isEmailVerified: boolean) {
     const isEmailVerificationRequired = this.twentyConfigService.get(
       'IS_EMAIL_VERIFICATION_REQUIRED',
     );
 
-    if (isEmailVerificationRequired && !user.isEmailVerified) {
+    if (isEmailVerificationRequired && !isEmailVerified) {
       throw new AuthException(
         'Email is not verified',
         AuthExceptionCode.EMAIL_NOT_VERIFIED,
       );
     }
-
-    return user;
   }
 
   private async validatePassword(
@@ -233,7 +242,7 @@ export class AuthService {
 
     if (params.userData.type === 'newUser') {
       const partialUserWithPicture =
-        await this.signInUpService.computeParamsForNewUser(
+        await this.signInUpService.computePartialUserFromUserPayload(
           params.userData.newUserPayload,
           params.authParams,
         );
@@ -259,7 +268,7 @@ export class AuthService {
   async verify(
     email: string,
     workspaceId: string,
-    authProvider: AuthProviderEnum,
+    authProvider?: AuthProviderEnum,
   ): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
@@ -294,7 +303,7 @@ export class AuthService {
 
     return {
       tokens: {
-        accessToken,
+        accessOrWorkspaceAgnosticToken: accessToken,
         refreshToken,
       },
     };
@@ -421,7 +430,6 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
-    locale: keyof typeof APP_LOCALES,
   ): Promise<UpdatePassword> {
     if (!userId) {
       throw new AuthException(
@@ -430,12 +438,24 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { userWorkspaces: true },
+    });
 
     if (!user) {
       throw new AuthException(
         'User not found',
         AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    const [firstUserWorkspace] = user.userWorkspaces;
+
+    if (!firstUserWorkspace) {
+      throw new AuthException(
+        'User does not have a workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 
@@ -459,15 +479,15 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
-      locale,
+      locale: firstUserWorkspace.locale,
     });
 
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
-    i18n.activate(locale);
+    i18n.activate(firstUserWorkspace.locale);
 
-    this.emailService.send({
+    await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
@@ -672,6 +692,9 @@ export class AuthService {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`User does not have access to this workspace`,
+        },
       );
     }
   }
@@ -715,6 +738,7 @@ export class AuthService {
             lastName,
             email,
             picture,
+            isEmailAlreadyVerified: true,
           },
           {
             provider: authProvider,
@@ -725,7 +749,7 @@ export class AuthService {
         pathname: '/welcome',
         searchParams: {
           tokenPair: JSON.stringify({
-            accessToken:
+            accessOrWorkspaceAgnosticToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 {
                   userId: user.id,
@@ -770,6 +794,7 @@ export class AuthService {
           email,
           picture,
           locale,
+          isEmailAlreadyVerified: true,
         },
         existingUser,
       );

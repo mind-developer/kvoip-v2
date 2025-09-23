@@ -1,15 +1,12 @@
 import styled from '@emotion/styled';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import {
-  FieldMetadataItem,
-  FieldMetadataItemOption,
-} from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
-import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
-import { selectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema';
+import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
+import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
@@ -24,11 +21,11 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { MAIN_COLORS } from 'twenty-ui/theme';
+import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -40,20 +37,14 @@ export const settingsDataModelFieldMultiSelectFormSchema = z.object({
   options: selectOptionsSchema,
 });
 
-const selectOrMultiSelectFormSchema = z.union([
-  settingsDataModelFieldSelectFormSchema,
-  settingsDataModelFieldMultiSelectFormSchema,
-]);
-
 export type SettingsDataModelFieldSelectFormValues = z.infer<
-  typeof selectOrMultiSelectFormSchema
+  | typeof settingsDataModelFieldSelectFormSchema
+  | typeof settingsDataModelFieldMultiSelectFormSchema
 >;
 
 type SettingsDataModelFieldSelectFormProps = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'defaultValue' | 'options' | 'type'
-  >;
+  fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
+  existingFieldMetadataId: string;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -116,10 +107,13 @@ const StyledButton = styled(LightButton)`
 `;
 
 export const SettingsDataModelFieldSelectForm = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
+  fieldType,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { initialDefaultValue, initialOptions } =
-    useSelectSettingsFormInitialValues({ fieldMetadataItem });
+    useSelectSettingsFormInitialValues({
+      fieldMetadataId: existingFieldMetadataId,
+    });
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const {
@@ -148,7 +142,7 @@ export const SettingsDataModelFieldSelectForm = ({
     optionValue: FieldMetadataItemOption['value'],
   ) =>
     isSelectOptionDefaultValue(optionValue, {
-      type: fieldMetadataItem.type,
+      type: fieldType,
       defaultValue: watchFormValue('defaultValue'),
     });
 
@@ -157,7 +151,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
+    if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
         shouldDirty: true,
       });
@@ -167,7 +161,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
+      fieldType === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       setFormValue(
@@ -186,7 +180,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (!isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
+    if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });
       return;
     }
@@ -194,7 +188,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
+      fieldType === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       const nextDefaultValue = previousDefaultValue?.filter(

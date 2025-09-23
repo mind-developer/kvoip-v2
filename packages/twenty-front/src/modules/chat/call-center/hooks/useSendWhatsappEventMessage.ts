@@ -12,15 +12,15 @@ interface SendWhatsAppEventMessageReturn {
 
 export const useSendWhatsappEventMessage =
   (): SendWhatsAppEventMessageReturn => {
-    const { enqueueSnackBar } = useSnackBar();
+    const { enqueueErrorSnackBar } = useSnackBar();
 
     const [sendEventMessageMutation] = useMutation(
       SEND_WHATSAPP_EVENT_MESSAGE,
       {
         onError: (error) => {
-          enqueueSnackBar(error.message, {
-            variant: SnackBarVariant.Error,
-          });
+          enqueueErrorSnackBar({
+        message: (error as Error).message,
+      });
         },
       },
     );

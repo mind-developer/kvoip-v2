@@ -16,7 +16,7 @@ import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standa
 
 export class WhatsappIntegrationService {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
     private readonly inboxService: InboxService,

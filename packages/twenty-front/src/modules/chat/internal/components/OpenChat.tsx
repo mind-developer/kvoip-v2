@@ -8,10 +8,10 @@ import { ChatContext } from '@/chat/internal/context/chatContext';
 import { ChatContextType } from '@/chat/types/chat';
 import { validAudioTypes, validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -340,10 +340,12 @@ export const OpenChat = () => {
     setGoingToMessageIndex,
   } = useContext(ChatContext) as ChatContextType;
 
+  const { t } = useLingui();
+
   const AnexIcon = getIcon('IconPaperclip');
   const OpenOnAnotherTab = getIcon('IconExternalLink');
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
   const { uploadFileToBucket } = useUploadFileToBucket();
 
   const [isRecording, setIsRecording] = useState(false);
@@ -452,8 +454,8 @@ export const OpenChat = () => {
       setMediaRecorder(recorder);
       setIsRecording(true);
     } catch (error) {
-      enqueueSnackBar('Failed to start recording. Check microphone access.', {
-        variant: SnackBarVariant.Warning,
+      enqueueErrorSnackBar({
+        message: t`Failed to start recording. Check microphone access.`,
       });
     }
   };
@@ -480,9 +482,10 @@ export const OpenChat = () => {
 
     if (audioBlob) {
       if (!audioBlob) {
-        enqueueSnackBar('No audio recorded', {
-          variant: SnackBarVariant.Warning,
-        });
+        enqueueInfoSnackBar({
+          message: t`No audio recorded`
+        })
+        
         return;
       }
 

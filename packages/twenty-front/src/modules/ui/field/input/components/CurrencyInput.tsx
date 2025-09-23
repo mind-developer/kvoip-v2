@@ -2,12 +2,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useRef, useState } from 'react';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 export const StyledIMaskInput = styled(IMaskInput)`
@@ -37,6 +37,7 @@ const StyledIcon = styled.div`
 `;
 
 export type CurrencyInputProps = {
+  instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -48,10 +49,10 @@ export type CurrencyInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   onChange?: (newText: string) => void;
   onSelect?: (newText: string) => void;
-  hotkeyScope: string;
 };
 
 export const CurrencyInput = ({
+  instanceId,
   autoFocus,
   value,
   currencyCode,
@@ -63,7 +64,6 @@ export const CurrencyInput = ({
   onClickOutside,
   onChange,
   onSelect,
-  hotkeyScope,
 }: CurrencyInputProps) => {
   const theme = useTheme();
 
@@ -81,6 +81,7 @@ export const CurrencyInput = ({
   };
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalText,
     onEnter,
@@ -88,7 +89,6 @@ export const CurrencyInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   const currency = CURRENCIES.find(({ value }) => value === currencyCode);
@@ -112,7 +112,7 @@ export const CurrencyInput = ({
       </StyledIcon>
       <StyledIMaskInput
         mask={Number}
-        thousandsSeparator={','}
+        thousandsSeparator=","
         radix="."
         onAccept={(value: string) => handleChange(value)}
         inputRef={wrapperRef}

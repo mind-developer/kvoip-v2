@@ -10,7 +10,7 @@ import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([Inbox], 'core')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([Inbox])],
     }),
   ],
   exports: [InboxService],

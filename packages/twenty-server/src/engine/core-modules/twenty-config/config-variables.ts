@@ -1,4 +1,4 @@
-import { LogLevel, Logger } from '@nestjs/common';
+import { type LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
@@ -9,12 +9,11 @@ import {
   IsString,
   IsUrl,
   ValidateIf,
-  ValidationError,
+  type ValidationError,
   validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -24,7 +23,7 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
-import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
+import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
@@ -145,6 +144,13 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable the IMAP messaging integration',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  IS_IMAP_SMTP_CALDAV_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
@@ -986,14 +992,22 @@ export class ConfigVariables {
   CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Driver for the AI chat model',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(AiDriver),
-    isEnvOnly: true,
+    group: ConfigVariablesGroup.Other,
+    description:
+      'Id to generate value for CNAME record to validate ownership and manage ssl for custom hostname with Cloudflare',
+    type: ConfigVariableType.STRING,
   })
-  @CastToUpperSnakeCase()
-  AI_DRIVER: AiDriver;
+  @IsOptional()
+  CLOUDFLARE_DCV_DELEGATION_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Default model ID for AI operations (can be any available model)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DEFAULT_MODEL_ID = 'gpt-4o';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -1001,6 +1015,7 @@ export class ConfigVariables {
     description: 'API key for OpenAI integration',
     type: ConfigVariableType.STRING,
   })
+  @IsOptional()
   OPENAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
@@ -1009,7 +1024,36 @@ export class ConfigVariables {
     description: 'API key for Anthropic integration',
     type: ConfigVariableType.STRING,
   })
+  @IsOptional()
   ANTHROPIC_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description: 'Base URL for OpenAI-compatible LLM provider (e.g., Ollama)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  OPENAI_COMPATIBLE_BASE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model names for OpenAI-compatible LLM provider (comma-separated, e.g., "llama3.1, mistral, codellama")',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  OPENAI_COMPATIBLE_MODEL_NAMES: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description:
+      'API key for OpenAI-compatible LLM provider (optional for providers like Ollama)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  OPENAI_COMPATIBLE_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
@@ -1135,6 +1179,23 @@ export class ConfigVariables {
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable google map api usage',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    isSensitive: true,
+    description: 'Google map api key for places and map',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  GOOGLE_MAP_API_KEY: string;
 
   /*-------------------------- KVOIP VARIABLES -------------------------- */
 

@@ -1,16 +1,21 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const overriddenBody = await this.recordInputTransformerService.process({
@@ -37,27 +42,38 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         this.getAuthContextFromRequest(request),
       );
 
-    const createdRecord = await repository.save(recordToCreate);
+    let selectedColumns = undefined;
 
-    this.apiEventEmitterService.emitCreateEvents({
-      records: [createdRecord],
-      authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadata.objectMetadataMapItem,
-      ),
-    });
+    if (!isEmpty(restrictedFields)) {
+      const selectableFields = getAllSelectableFields({
+        restrictedFields,
+        objectMetadata,
+      });
+
+      selectedColumns = Object.keys(selectableFields).filter(
+        (key) => selectableFields[key],
+      );
+    }
+
+    const createdRecordResult = await repository.insert(
+      recordToCreate,
+      undefined,
+      selectedColumns,
+    );
+    const createdRecord = createdRecordResult.identifiers[0];
 
     const records = await this.getRecord({
       recordIds: [createdRecord.id],
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const record = records[0];
 
     if (!isDefined(record)) {
-      throw new Error('Created record not found');
+      throw new InternalServerErrorException('Created record not found');
     }
 
     return this.formatResult({

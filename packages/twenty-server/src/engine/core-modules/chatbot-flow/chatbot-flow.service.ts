@@ -21,9 +21,9 @@ import { Repository } from 'typeorm';
 export class ChatbotFlowService {
   executors: Record<string, ExecuteFlow>;
   constructor(
-    @InjectRepository(ChatbotFlow, 'core')
+    @InjectRepository(ChatbotFlow)
     private readonly chatbotFlowRepository: Repository<ChatbotFlow>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly textInputHandler: TextInputHandler,
     private readonly imageInputHandler: ImageInputHandler,

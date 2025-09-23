@@ -5,7 +5,6 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -21,11 +20,13 @@ import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.mod
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
+import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -37,26 +38,22 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscription], 'core'),
+    TypeOrmModule.forFeature([BillingSubscription]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        DomainManagerModule,
         BillingModule,
         FileModule,
         TokenModule,
         FileUploadModule,
         WorkspaceMetadataCacheModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [
-            User,
-            Workspace,
-            UserWorkspace,
-            FeatureFlag,
-            StripeIntegration,
-            BillingPlans,
-          ],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          User,
+          Workspace,
+          UserWorkspace,
+          FeatureFlag,
+          StripeIntegration,
+          BillingPlans,
+        ]),
         UserWorkspaceModule,
         WorkspaceManagerModule,
         FeatureFlagModule,
@@ -65,10 +62,12 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
         TypeORMModule,
         PermissionsModule,
         WorkspaceCacheStorageModule,
-        AuditModule,
         RoleModule,
         TelephonyModule,
         SoapClientModule,
+        AgentModule,
+        DomainManagerModule,
+        CoreViewModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

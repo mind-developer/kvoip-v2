@@ -2,13 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -19,11 +20,11 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrPartialUserWithPicture,
-  PartialUserWithPicture,
-  SignInUpBaseParams,
-  SignInUpNewUserPayload,
+  type AuthProviderWithPasswordType,
+  type ExistingUserOrPartialUserWithPicture,
+  type PartialUserWithPicture,
+  type SignInUpBaseParams,
+  type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -42,9 +43,9 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -56,25 +57,36 @@ export class SignInUpService {
     private readonly userService: UserService,
   ) {}
 
-  async computeParamsForNewUser(
-    newUserParams: SignInUpNewUserPayload,
+  async computePartialUserFromUserPayload(
+    newUserPayload: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
-  ) {
-    if (!newUserParams.firstName) newUserParams.firstName = '';
-    if (!newUserParams.lastName) newUserParams.lastName = '';
-
-    if (!newUserParams?.email) {
+  ): Promise<PartialUserWithPicture> {
+    if (!newUserPayload?.email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 
+    const partialNewUser: PartialUserWithPicture = {
+      email: newUserPayload.email,
+      firstName: newUserPayload.firstName ?? '',
+      lastName: newUserPayload.lastName ?? '',
+      picture: newUserPayload.picture ?? '',
+      locale: newUserPayload.locale ?? 'en',
+      isEmailVerified: newUserPayload.isEmailAlreadyVerified,
+    };
+
     if (authParams.provider === AuthProviderEnum.Password) {
-      newUserParams.passwordHash = await this.generateHash(authParams.password);
+      partialNewUser.passwordHash = await this.generateHash(
+        authParams.password,
+      );
     }
 
-    return newUserParams as PartialUserWithPicture;
+    return partialNewUser;
   }
 
   async signInUp(
@@ -111,6 +123,9 @@ export class SignInUpService {
       throw new AuthException(
         'Password too weak',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Password too weak`,
+        },
       );
     }
 
@@ -130,6 +145,9 @@ export class SignInUpService {
       throw new AuthException(
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Wrong password`,
+        },
       );
     }
   }
@@ -153,6 +171,9 @@ export class SignInUpService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 
@@ -194,6 +215,9 @@ export class SignInUpService {
       throw new AuthException(
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Workspace is not ready to welcome new members`,
+        },
       );
     }
 
@@ -207,6 +231,9 @@ export class SignInUpService {
       throw new AuthException(
         'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`User is not part of the workspace`,
+        },
       );
     }
   }
@@ -340,6 +367,9 @@ export class SignInUpService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 
@@ -406,7 +436,7 @@ export class SignInUpService {
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
     return this.saveNewUser(
-      await this.computeParamsForNewUser(newUserParams, authParams),
+      await this.computePartialUserFromUserPayload(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
   }

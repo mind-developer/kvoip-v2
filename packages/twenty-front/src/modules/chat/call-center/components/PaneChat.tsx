@@ -27,6 +27,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -78,8 +79,10 @@ const StyledAvatarMessage = styled.div`
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
+  flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
+  gap: ${({ theme }) => theme.spacing(1.5)};
   width: auto;
   max-width: 70%;
   margin-top: ${({ theme }) => theme.spacing(0.5)};
@@ -160,13 +163,20 @@ const StyledInput = styled.textarea`
 `;
 
 const StyledDiv = styled.div`
+  bottom: ${({ theme }) => theme.spacing(3.5)};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  right: 0;
 `;
 
 const StyledAnexDiv = styled.div`
   bottom: ${({ theme }) => theme.spacing(3)};
   cursor: pointer;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
 `;
 
 const StyledImageContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -211,6 +221,7 @@ const StyledMessageEvent = styled.div`
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledModalOverlay = styled(motion.div)`
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   height: 100%;
   justify-content: center;
@@ -263,6 +274,8 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
   justify-items: 'flex-end';
   justify-content: ${({ isSystemMessage }) =>
+    isSystemMessage ? 'flex-end' : 'none'};
+  align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'none'};
   width: 100%;
 `;
@@ -330,8 +343,8 @@ export const PaneChat = () => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
-
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+const { t } = useLingui();
   const [recordingState, setRecordingState] = useState<
     'none' | 'recording' | 'paused'
   >('none');
@@ -432,12 +445,13 @@ export const PaneChat = () => {
           `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n` +
           newMessage.trim(),
       };
+
       sendWhatsappMessage(sendMessageInput);
       setNewMessage('');
     } else if (type === MessageType.AUDIO) {
       if (!audioBlob) {
-        enqueueSnackBar('No audio recorded', {
-          variant: SnackBarVariant.Warning,
+        enqueueInfoSnackBar({
+          message: t`No audio recorded`,
         });
         return;
       }
@@ -504,11 +518,13 @@ export const PaneChat = () => {
     visualize(stream, recorder);
 
     const chunks: Blob[] = [];
-    // setAudioBlob(null);
 
     try {
       recorder.ondataavailable = (event) => {
         chunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
         const audioBlob = new Blob(chunks, {
           type: 'audio/webm',
         });
@@ -533,8 +549,8 @@ export const PaneChat = () => {
       setMediaRecorder(recorder);
       setRecordingState('recording');
     } catch (error) {
-      enqueueSnackBar('Failed to start recording. Check microphone access.', {
-        variant: SnackBarVariant.Warning,
+      enqueueErrorSnackBar({
+        message: t`Failed to start recording. Check microphone access.`,
       });
     }
   };
@@ -565,10 +581,6 @@ export const PaneChat = () => {
   }
 
   const handleSendMessage = () => {
-    // essa mensagem é temporária e só existe no state.
-    // ela será substituída pela mensagem verdadeira quando o firebase
-    // recarregar os valores desse chat.
-    // o único propósito dela é dar feedback imediato ao cliente.
 
     if (isWhatsappDocument(selectedChat)) {
       if (audioBlob) {
@@ -667,23 +679,11 @@ export const PaneChat = () => {
         chatContainerRef.current;
       const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
       setIsAtBottom(isBottom);
+
       if (isBottom) {
         setNewMessagesIndicator(false);
       }
     }
-  };
-
-  const handleUpdatePersonName = () => {
-    if (!lastFromClient) return;
-    updateOneRecord({
-      idToUpdate: selectedChat.personId,
-      updateOneRecordInput: {
-        name: {
-          firstName: lastFromClient.from.split(' ')[0],
-          lastName: lastFromClient.from.split(' ').slice(1).join(' '),
-        },
-      },
-    });
   };
 
   const scrollToBottom = () => {
@@ -890,7 +890,7 @@ export const PaneChat = () => {
                     key={index}
                     isSystemMessage={isSystemMessage}
                   >
-                    <DocumentPreview documentUrl={message.message} />
+                    <DocumentPreview fromMe={message.fromMe} documentUrl={message.message} />
                   </StyledDocumentContainer>
                 );
                 break;

@@ -1,10 +1,12 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { FileFolder } from '~/generated-metadata/graphql';
-import { useUploadImageMutation } from '~/generated/graphql';
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FileFolder,
+  useUploadImageMutation,
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 interface UseRecordShowContainerActionsProps {

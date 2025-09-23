@@ -1,7 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconFilter, useIcons } from 'twenty-ui/display';
@@ -64,7 +64,7 @@ export const SettingsServiceCenterFilterDropdown = ({
 
   // const { t } = useTranslation();
   const { getIcon } = useIcons();
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { toggleDropdown } = useToggleDropdown();
   const [searchText, setSearchText] = useState('');
 
   return (
@@ -103,7 +103,7 @@ export const SettingsServiceCenterFilterDropdown = ({
                   onClick={() => {
                     handleCallbackFilter(option.value);
                     setSearchText('');
-                    closeDropdown();
+                    toggleDropdown();
                   }}
                 />
               ))}
@@ -113,7 +113,7 @@ export const SettingsServiceCenterFilterDropdown = ({
               onClick={() => {
                 handleCallbackFilter('');
                 setSearchText('');
-                closeDropdown();
+                toggleDropdown();
               }}
             />
           </DropdownMenuItemsContainer>
