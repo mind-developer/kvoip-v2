@@ -2,11 +2,11 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { ViewType } from '@/views/types/ViewType';
+import { type ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type UseReorderRecordGroupsParams = {
-  viewBarId: string;
+  recordIndexId: string;
   viewType: ViewType;
 };
 
@@ -24,14 +24,15 @@ type ReorderRecordGroupsParams = {
 };
 
 export const useReorderRecordGroups = ({
-  viewBarId,
+  recordIndexId,
   viewType,
 }: UseReorderRecordGroupsParams) => {
   const { setRecordGroups } = useSetRecordGroups();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
+  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
     visibleRecordGroupIdsComponentFamilySelector,
+    recordIndexId,
   );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
@@ -79,16 +80,20 @@ export const useReorderRecordGroups = ({
           ];
         }, []);
 
-        setRecordGroups(updatedRecordGroups, viewBarId, objectMetadataItem.id);
+        setRecordGroups(
+          updatedRecordGroups,
+          recordIndexId,
+          objectMetadataItem.id,
+        );
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
     [
-      objectMetadataItem,
+      objectMetadataItem.id,
+      recordIndexId,
       saveViewGroups,
       setRecordGroups,
-      viewBarId,
       viewType,
       visibleRecordGroupIdsFamilySelector,
     ],

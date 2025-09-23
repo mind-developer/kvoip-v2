@@ -3,8 +3,8 @@ import { useMutation } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CREATE_INTER_INTEGRATION } from '@/settings/integrations/inter/graphql/mutation/createInterIntegration';
 import { CreateInterIntegrationInput } from '@/settings/integrations/inter/types/CreateInterIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
 interface CreateInterIntegration {
@@ -15,19 +15,23 @@ interface CreateInterIntegration {
 }
 
 export const useCreateInterIntegration = (): CreateInterIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const [createInterIntegrationMutation, { data, loading, error }] =
     useMutation(CREATE_INTER_INTEGRATION, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Inter integration created successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Inter integration created successfully!`,
         });
       },
     });

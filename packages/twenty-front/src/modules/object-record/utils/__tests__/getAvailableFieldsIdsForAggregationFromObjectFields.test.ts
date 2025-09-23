@@ -1,10 +1,10 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const AMOUNT_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 const PRICE_FIELD_ID = '9d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0b';
@@ -67,10 +67,10 @@ jest.mock(
 
 describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
   it('should handle empty fields array', () => {
-    const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-      [],
-      COUNT_AGGREGATE_OPERATION_OPTIONS,
-    );
+    const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+      fields: [],
+      targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+    });
 
     COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
       expect(result[operation]).toEqual([]);
@@ -79,10 +79,10 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with count aggregate operations', () => {
     it('should include all fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        COUNT_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+      });
 
       expect(result.COUNT).toEqual(
         expect.arrayContaining([
@@ -107,10 +107,10 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with percentage aggregate operations', () => {
     it('should include all fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        PERCENT_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
+      });
 
       PERCENT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
         expect(result[operation]).toEqual([
@@ -132,10 +132,10 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
 
   describe('with non standard aggregate operations', () => {
     it('should exclude non-numeric fields', () => {
-      const result = getAvailableFieldsIdsForAggregationFromObjectFields(
-        FIELDS_MOCKS as FieldMetadataItem[],
-        NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-      );
+      const result = getAvailableFieldsIdsForAggregationFromObjectFields({
+        fields: FIELDS_MOCKS as FieldMetadataItem[],
+        targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
+      });
 
       COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
         expect(result[operation]).toBeUndefined();

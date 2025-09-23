@@ -1,8 +1,8 @@
 import { UPDATE_INTER_INTEGRATION } from '@/settings/integrations/inter/graphql/mutation/updateInterIntegration';
 import { UpdateInterIntegrationInput } from '@/settings/integrations/inter/types/UpdateInterIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UpdateInterIntegration {
   updateInterIntegration: (
@@ -13,19 +13,21 @@ interface UpdateInterIntegration {
 }
 
 export const useUpdateInterIntegration = (): UpdateInterIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [updateInterIntegrationMutation, { loading, error }] = useMutation(
     UPDATE_INTER_INTEGRATION,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Inter integration updated successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Inter integration updated successfully!`,
         });
       },
     },
@@ -34,6 +36,7 @@ export const useUpdateInterIntegration = (): UpdateInterIntegration => {
   const updateInterIntegration = async (
     updateInput: UpdateInterIntegrationInput,
   ) => {
+    // TODO: Remove base64 conversion and let the server handle the encryption
     const toBase64 = (file: File): Promise<string> =>
       new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -63,8 +66,8 @@ export const useUpdateInterIntegration = (): UpdateInterIntegration => {
         },
       });
     } catch (err) {
-      enqueueSnackBar('Error updating role', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error updating role`,
       });
     }
   };

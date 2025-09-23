@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import {
   IconArchiveOff,
@@ -13,7 +13,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
@@ -21,33 +21,33 @@ type SettingsObjectFieldInactiveActionDropdownProps = {
   onActivate: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  scopeKey: string;
+  fieldMetadataItemId: string;
 };
 
 export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
-  scopeKey,
+  fieldMetadataItemId,
   onDelete,
   onEdit,
   isCustomField,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
-  const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
+  const dropdownId = `${fieldMetadataItemId}-settings-field-disabled-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleActivate = () => {
     onActivate();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleDelete = () => {
     onDelete();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleEdit = () => {
     onEdit();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const isDeletable = isCustomField;

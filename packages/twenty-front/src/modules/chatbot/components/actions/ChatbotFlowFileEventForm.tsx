@@ -191,6 +191,7 @@ export const ChatbotFlowFileEventForm = ({
         <StyledHeaderInfo>
           <StyledHeaderTitle>
             <TitleInput
+              instanceId="chatbot-flow-file-event-form-title-input"
               sizeVariant="md"
               value={title as string}
               onChange={handleChange}

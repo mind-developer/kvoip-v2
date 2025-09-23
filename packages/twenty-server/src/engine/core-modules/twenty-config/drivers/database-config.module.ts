@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { type DynamicModule, Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,7 +17,7 @@ export class DatabaseConfigModule {
     return {
       module: DatabaseConfigModule,
       imports: [
-        TypeOrmModule.forFeature([KeyValuePair], 'core'),
+        TypeOrmModule.forFeature([KeyValuePair]),
         ScheduleModule.forRoot(),
       ],
       providers: [

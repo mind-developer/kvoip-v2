@@ -1,8 +1,9 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { LinksFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { CustomError } from '@/error-handler/CustomError';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type LinksFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeGqlOperationFilterForLinks = ({
@@ -83,7 +84,10 @@ export const computeGqlOperationFilterForLinks = ({
         }
       }
       default: {
-        throw new Error(`Unknown subfield name ${subFieldName}`);
+        throw new CustomError(
+          `Unknown subfield name ${subFieldName}`,
+          'UNKNOWN_SUBFIELD_NAME',
+        );
       }
     }
   }

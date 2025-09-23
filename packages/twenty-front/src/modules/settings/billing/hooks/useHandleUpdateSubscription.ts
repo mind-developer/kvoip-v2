@@ -1,8 +1,7 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { useUpdateOneTimePaidSubscriptionMutation } from '~/generated/graphql';
+import { useUpdateOneTimePaidSubscriptionMutation } from '~/generated-metadata/graphql';
 
 export const useHandleUpdateSubscription = () => {
   const [updateSubscription, { loading }] =
@@ -10,7 +9,7 @@ export const useHandleUpdateSubscription = () => {
 
   const { redirect } = useRedirect();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { t } = useLingui();
 
@@ -20,8 +19,8 @@ export const useHandleUpdateSubscription = () => {
         redirect(updateOneTimePaidSubscription.bankSlipFileLink, '_blank');
       },
       onError: () => {
-        enqueueSnackBar(t`Error while updating subscription.`, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: t`Error while updating subscription.`,
         });
       },
     });

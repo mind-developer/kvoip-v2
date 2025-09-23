@@ -1,26 +1,26 @@
 import styled from '@emotion/styled';
-import { DropResult } from '@hello-pangea/dnd';
-import { MouseEvent, useCallback } from 'react';
+import { type DropResult } from '@hello-pangea/dnd';
+import { type MouseEvent, useCallback } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
+import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -35,14 +35,14 @@ export const ViewPickerListContent = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useRecoilValue(
-    prefetchViewsFromObjectMetadataItemFamilySelector({
+    coreViewsFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+  const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
 
@@ -51,18 +51,17 @@ export const ViewPickerListContent = () => {
   const { updateView } = useUpdateView();
   const { changeView } = useChangeView();
 
-  const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
-    closeDropdown();
+    closeDropdown(VIEW_PICKER_DROPDOWN_ID);
   };
 
+  const { openCreateViewDropdown } = useOpenCreateViewDropdown();
+
   const handleAddViewButtonClick = () => {
-    if (isDefined(currentView?.id)) {
-      setViewPickerReferenceViewId(currentView.id);
-      setViewPickerMode('create-empty');
-    }
+    openCreateViewDropdown(currentView);
   };
 
   const handleEditViewButtonClick = (
@@ -86,7 +85,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await updateView({ ...view, position: index });
+            await updateView({ id: view.id, position: index });
           }
         }),
       );

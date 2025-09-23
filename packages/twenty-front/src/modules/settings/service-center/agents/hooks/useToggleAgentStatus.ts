@@ -1,7 +1,7 @@
 import { TOGGLE_AGENT_STATUS } from '@/settings/service-center/agents/graphql/mutation/toggleAgentStatus';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UseToggleAgentStatusByIdReturn {
   toggleAgentStatus: (agentId: string) => Promise<void>;
@@ -10,20 +10,20 @@ interface UseToggleAgentStatusByIdReturn {
 }
 
 export const useToggleAgentStatus = (): UseToggleAgentStatusByIdReturn => {
-  const { enqueueSnackBar } = useSnackBar();
-  // const { t } = useTranslation();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const [toggleAgentStatusMutation, { loading, error }] = useMutation(
     TOGGLE_AGENT_STATUS,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Successful agent status change', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Successful agent status change`,
         });
       },
     },
@@ -35,8 +35,8 @@ export const useToggleAgentStatus = (): UseToggleAgentStatusByIdReturn => {
         variables: { agentId },
       });
     } catch (err) {
-      enqueueSnackBar('Error toggling agent status', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error toggling agent status`,
       });
     }
   };

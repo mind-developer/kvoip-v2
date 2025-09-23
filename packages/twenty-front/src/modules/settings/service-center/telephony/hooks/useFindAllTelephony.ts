@@ -15,7 +15,7 @@ type UseFindAllTelephonyReturn = {
 };
 
 export const useFindAllTelephonys = (): UseFindAllTelephonyReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -25,8 +25,9 @@ export const useFindAllTelephonys = (): UseFindAllTelephonyReturn => {
   } = useQuery(GET_ALL_TELEPHONYS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

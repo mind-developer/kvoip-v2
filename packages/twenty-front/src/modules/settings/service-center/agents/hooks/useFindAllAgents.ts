@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_AGENTS } from '@/settings/service-center/agents/graphql/query/agentsByWorkspace';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 
@@ -15,7 +14,7 @@ type UseFindAllAgentsReturn = {
 };
 
 export const useFindAllAgents = (): UseFindAllAgentsReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -25,8 +24,9 @@ export const useFindAllAgents = (): UseFindAllAgentsReturn => {
   } = useQuery(GET_ALL_AGENTS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: error.message,
       });
     },
   });

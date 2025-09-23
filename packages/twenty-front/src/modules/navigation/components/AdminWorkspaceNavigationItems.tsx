@@ -32,7 +32,7 @@ export const AdminWorkspaceNavigationItems = () => {
     );
 
     const viewId = objectMetadata?.id;
-    const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+    const lastVisitedViewId = viewId ? lastVisitedViewPerObjectMetadataItem[viewId] : undefined;
 
     return getAppPath(
       AppPath.RecordIndexPage,

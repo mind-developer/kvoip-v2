@@ -1,12 +1,12 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
-import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
+import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useEffect, useState } from 'react';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -16,9 +16,10 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
-import { JsonValue } from 'type-fest';
+import { type SelectOption } from 'twenty-ui/input';
+import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -35,7 +36,7 @@ type WorkflowEditActionUpdateRecordProps = {
 };
 
 type UpdateRecordFormData = {
-  objectName: string;
+  objectNameSingular: string;
   objectRecordId: string;
   fieldsToUpdate: string[];
   [field: string]: unknown;
@@ -53,14 +54,21 @@ export const WorkflowEditActionUpdateRecord = ({
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
-      label: item.labelPlural,
-      value: item.nameSingular,
-    }));
+    activeNonSystemObjectMetadataItems
+      .filter((objectMetadataItem) =>
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadataItem.nameSingular,
+          isSystem: objectMetadataItem.isSystem,
+        }),
+      )
+      .map((item) => ({
+        Icon: getIcon(item.icon),
+        label: item.labelPlural,
+        value: item.nameSingular,
+      }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({
-    objectName: action.settings.input.objectName,
+    objectNameSingular: action.settings.input.objectName,
     objectRecordId: action.settings.input.objectRecordId,
     fieldsToUpdate: action.settings.input.fieldsToUpdate ?? [],
     ...action.settings.input.objectRecord,
@@ -83,7 +91,7 @@ export const WorkflowEditActionUpdateRecord = ({
   };
 
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
-    (item) => item.nameSingular === formData.objectName,
+    (item) => item.nameSingular === formData.objectNameSingular,
   );
 
   const objectNameSingular = selectedObjectMetadataItem?.nameSingular;
@@ -114,7 +122,7 @@ export const WorkflowEditActionUpdateRecord = ({
       }
 
       const {
-        objectName: updatedObjectName,
+        objectNameSingular: updatedObjectName,
         objectRecordId: updatedObjectRecordId,
         fieldsToUpdate: updatedFieldsToUpdate,
         ...updatedOtherFields
@@ -174,12 +182,12 @@ export const WorkflowEditActionUpdateRecord = ({
           label="Object"
           fullWidth
           disabled={isFormDisabled}
-          value={formData.objectName}
+          value={formData.objectNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: UpdateRecordFormData = {
-              objectName: updatedObjectName,
+              objectNameSingular: updatedObjectName,
               objectRecordId: '',
               fieldsToUpdate: [],
             };

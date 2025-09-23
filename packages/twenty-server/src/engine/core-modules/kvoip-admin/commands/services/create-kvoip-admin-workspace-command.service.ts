@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { KVOIP_ADMIN_USER } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user';
 import { KVOIP_ADMIN_USER_WORKSPACES } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-user-workspaces';
@@ -17,7 +17,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
@@ -34,9 +33,10 @@ export class CreateKvoipAdminWorkspaceCommandService {
   constructor(
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
@@ -75,17 +75,10 @@ export class CreateKvoipAdminWorkspaceCommandService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await mainDataSource.transaction(
+    await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
           const objectMetadata = objectMetadataItems.find(
@@ -115,6 +108,7 @@ export class CreateKvoipAdminWorkspaceCommandService {
           entityManager,
           schemaName,
           objectMetadataItems.filter((item) => !item.isCustom),
+          undefined,
           true,
         );
 

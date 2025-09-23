@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
@@ -11,12 +13,10 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -58,6 +58,10 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+
+import { TwoFactorAuthenticationMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -74,25 +78,25 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
-    TypeOrmModule.forFeature(
-      [
-        Workspace,
-        User,
-        AppToken,
-        FeatureFlag,
-        WorkspaceSSOIdentityProvider,
-        KeyValuePair,
-        UserWorkspace,
-      ],
-      'core',
-    ),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    TypeOrmModule.forFeature([
+      Workspace,
+      User,
+      AppToken,
+      ApiKey,
+      FeatureFlag,
+      WorkspaceSSOIdentityProvider,
+      KeyValuePair,
+      UserWorkspace,
+      TwoFactorAuthenticationMethod,
+    ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
+    MessagingFolderSyncManagerModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
@@ -101,6 +105,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MetricsModule,
     PermissionsModule,
     UserRoleModule,
+    TwoFactorAuthenticationModule,
+    ApiKeyModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -131,11 +137,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ResetMessageFolderService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
-    CreateMessageFolderService,
     CreateConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
-    ApiKeyService,
     AuthSsoService,
   ],
   exports: [AccessTokenService, LoginTokenService, RefreshTokenService],

@@ -1,134 +1,90 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 
-import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewField } from '@/views/types/ViewField';
-import { isNull } from '@sniptt/guards';
+import { CREATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/createCoreViewField';
+import { UPDATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/updateCoreViewField';
+import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewField } from '@/views/types/ViewField';
+import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
+import { type CoreViewField } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.ViewField,
-  });
-
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.ViewField,
-  });
-
-  const { createOneRecordMutation } = useCreateOneRecordMutation({
-    objectNameSingular: CoreObjectNameSingular.ViewField,
-  });
-
-  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
-    objectNameSingular: CoreObjectNameSingular.ViewField,
-  });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloClient = useApolloClient();
 
-  const createViewFieldRecords = useCallback(
-    (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
+  const { triggerViewFieldOptimisticEffect } =
+    useTriggerViewFieldOptimisticEffect();
+
+  const createCoreViewFieldRecords = useCallback(
+    (
+      viewFieldsToCreate: Omit<ViewField, 'definition'>[],
+      view: Pick<GraphQLView, 'id'>,
+    ) => {
       if (!viewFieldsToCreate.length) return;
       return Promise.all(
         viewFieldsToCreate.map((viewField) =>
           apolloClient.mutate({
-            mutation: createOneRecordMutation,
+            mutation: CREATE_CORE_VIEW_FIELD,
             variables: {
               input: {
+                id: v4(),
                 fieldMetadataId: viewField.fieldMetadataId,
                 viewId: view.id,
                 isVisible: viewField.isVisible,
                 position: viewField.position,
                 size: viewField.size,
-                id: v4(),
-              },
+              } satisfies Partial<CoreViewField>,
             },
-            update: (cache, { data }) => {
-              const record = data?.['createViewField'];
+            update: (_cache, { data }) => {
+              const record = data?.['createCoreViewField'];
               if (!record) return;
 
-              triggerCreateRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToCreate: [record],
-                objectMetadataItems,
-                objectPermissionsByObjectMetadataId,
+              triggerViewFieldOptimisticEffect({
+                createdViewFields: [record],
               });
             },
           }),
         ),
       );
     },
-    [
-      apolloClient,
-      createOneRecordMutation,
-      objectMetadataItem,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    ],
+    [apolloClient, triggerViewFieldOptimisticEffect],
   );
 
-  const updateViewFieldRecords = useCallback(
-    (viewFieldsToUpdate: ViewField[]) => {
+  const updateCoreViewFieldRecords = useCallback(
+    (viewFieldsToUpdate: Omit<ViewField, 'definition'>[]) => {
       if (!viewFieldsToUpdate.length) return;
 
       return Promise.all(
         viewFieldsToUpdate.map((viewField) =>
           apolloClient.mutate({
-            mutation: updateOneRecordMutation,
+            mutation: UPDATE_CORE_VIEW_FIELD,
             variables: {
-              idToUpdate: viewField.id,
+              id: viewField.id,
               input: {
                 isVisible: viewField.isVisible,
                 position: viewField.position,
                 size: viewField.size,
                 aggregateOperation: viewField.aggregateOperation,
-              },
+              } satisfies Partial<CoreViewField>,
             },
-            update: (cache, { data }) => {
-              const record = data?.['updateViewField'];
+            update: (_cache, { data }) => {
+              const record = data?.['updateCoreViewField'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCache<ViewField>(
-                record.id,
-                cache,
-              );
-              if (isNull(cachedRecord)) return;
-
-              triggerUpdateRecordOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                currentRecord: cachedRecord,
-                updatedRecord: record,
-                objectMetadataItems,
+              triggerViewFieldOptimisticEffect({
+                updatedViewFields: [record],
               });
             },
           }),
         ),
       );
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-      updateOneRecordMutation,
-    ],
+    [apolloClient, triggerViewFieldOptimisticEffect],
   );
 
   return {
-    createViewFieldRecords,
-    updateViewFieldRecords,
+    createViewFieldRecords: createCoreViewFieldRecords,
+    updateViewFieldRecords: updateCoreViewFieldRecords,
   };
 };

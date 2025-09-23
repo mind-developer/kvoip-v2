@@ -3,17 +3,17 @@ import { useCallback } from 'react';
 
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
-  RemoteTableInput,
-  UnsyncRemoteTableMutation,
-  UnsyncRemoteTableMutationVariables,
+  type RemoteTableInput,
+  type UnsyncRemoteTableMutation,
+  type UnsyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUnsyncRemoteTable = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
   const { refetch: refetchObjectMetadataItems } =
     useFindManyObjectMetadataItems();
 

@@ -1,26 +1,34 @@
 import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { useSwitchPlanMutation } from '~/generated/graphql';
+import { useLingui } from '@lingui/react/macro';
+import console from 'console';
+import { useSwitchPlanMutation } from '~/generated-metadata/graphql';
 
 export const useHandleSwichPlan = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const { closeModal } = useModal();
 
+  const { t } = useLingui();
+
   const [switchPlan, { loading }] = useSwitchPlanMutation({
     onCompleted: () => {
-      enqueueSnackBar('Plan changed sucessfuly', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Plan changed sucessfuly`,
       });
+
       closeModal(SWITCH_PLAN_MODAL_ID);
     },
     onError: (error) => {
-      enqueueSnackBar('Error changing plan', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error while changing plan, try againg later.`,
+        options: {
+          detailedMessage: error.message,
+        },
       });
+
       // eslint-disable-next-line no-console
       console.error('Error changing plan', error);
     },

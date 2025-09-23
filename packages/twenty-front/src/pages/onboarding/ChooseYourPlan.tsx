@@ -1,3 +1,4 @@
+import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
@@ -24,13 +25,13 @@ import {
   BillingPaymentProviders,
   BillingPlanKey,
   useBillingBaseProductPricesQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
-import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
 import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
+import { AppPath } from '@/types/AppPath';
 
 const StyledChooseProviderContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -88,13 +89,11 @@ export const ChooseYourPlan = () => {
 
   const onboardingPlanStep = useRecoilValue(onboardingPlanStepState);
 
-  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
-    verifyEmailNextPathState,
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
+    verifyEmailRedirectPathState,
   );
-
-  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-  if (isDefined(verifyEmailNextPath)) {
-    setVerifyEmailNextPath(undefined);
+  if (isDefined(verifyEmailRedirectPath)) {
+    setVerifyEmailRedirectPath(undefined);
   }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
@@ -123,6 +122,7 @@ export const ChooseYourPlan = () => {
     plan: billingCheckoutSession.plan,
     requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
     paymentProvider: billingCheckoutSession.paymentProvider,
+    successUrlPath: AppPath.PlanRequiredSuccess,
   });
 
   const handleChangePaymentProviderChange = (

@@ -2,13 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
-import { CreateTelephonyHandler } from 'src/modules/telephony/types/Create';
-import { DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
-import { GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
-import { FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
-import { UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
+import { type CreateTelephonyHandler } from 'src/modules/telephony/types/Create';
+import { type DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
+import { type GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
+import { type FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
+import { type UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TelephonyService {

@@ -1,18 +1,20 @@
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
-import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
-import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
-import { useAiModelOptions } from '../hooks/useAiModelOptions';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
 
 const StyledErrorMessage = styled.div`
@@ -36,17 +38,13 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { getIcon } = useIcons();
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
       defaultTitle: 'AI Agent',
     });
-
-  const { formValues, handleFieldChange, loading } = useAgentUpdateFormState({
-    agentId: action.settings.input.agentId,
-    readonly: actionOptions.readonly === true,
-  });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
     action.settings.outputSchema as BaseOutputSchema,
@@ -55,11 +53,48 @@ export const WorkflowEditActionAiAgent = ({
     actionOptions.readonly,
   );
 
-  const modelOptions = useAiModelOptions();
+  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
 
-  const noModelsAvailable = modelOptions.length === 0;
+  const agentOptions = (agentsData?.findManyAgents || []).reduce<
+    SelectOption<string>[]
+  >(
+    (acc, agent) => {
+      if (agent.id !== currentWorkspace?.defaultAgent?.id) {
+        acc.push({
+          label: agent.label,
+          value: agent.id,
+          Icon: agent.icon ? getIcon(agent.icon) : undefined,
+        });
+      }
+      return acc;
+    },
+    [
+      {
+        label: t`No Agent`,
+        value: '',
+      },
+    ],
+  );
 
-  return loading ? (
+  const noAgentsAvailable = agentOptions.length === 0;
+
+  const handleFieldChange = (field: 'agentId' | 'prompt', value: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+    actionOptions.onActionUpdate?.({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          [field]: value,
+        },
+      },
+    });
+  };
+
+  return agentsLoading ? (
     <RightDrawerSkeletonLoader />
   ) : (
     <>
@@ -79,34 +114,31 @@ export const WorkflowEditActionAiAgent = ({
       <WorkflowStepBody>
         <div>
           <Select
-            dropdownId="select-model"
-            label={t`AI Model`}
-            options={modelOptions}
-            value={formValues.modelId}
-            onChange={(value) => handleFieldChange('modelId', value)}
-            disabled={actionOptions.readonly || noModelsAvailable}
-            emptyOption={{
-              label: t`No AI models available`,
-              value: '',
-            }}
+            dropdownId="select-agent"
+            label={t`Select Agent`}
+            options={agentOptions}
+            value={action.settings.input.agentId || ''}
+            onChange={(value) => handleFieldChange('agentId', value)}
+            disabled={actionOptions.readonly || noAgentsAvailable}
           />
 
-          {noModelsAvailable && (
+          {noAgentsAvailable && (
             <StyledErrorMessage>
-              {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
+              {t`Please create agents in the AI settings to use in workflows.`}
             </StyledErrorMessage>
           )}
         </div>
+
         <FormTextFieldInput
-          key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
+          multiline
+          VariablePicker={WorkflowVariablePicker}
           label={t`Instructions for AI`}
           placeholder={t`Describe what you want the AI to do...`}
-          readonly={actionOptions.readonly}
-          defaultValue={formValues.prompt}
+          defaultValue={action.settings.input.prompt}
           onChange={(value) => handleFieldChange('prompt', value)}
-          VariablePicker={WorkflowVariablePicker}
-          multiline
+          readonly={actionOptions.readonly}
         />
+
         <WorkflowOutputSchemaBuilder
           fields={outputFields}
           onChange={handleOutputSchemaChange}

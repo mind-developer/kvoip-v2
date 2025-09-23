@@ -1,18 +1,21 @@
+import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 const getReservedCompositeFieldNames = (
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  fieldMetadataMapById: FieldMetadataMap,
 ) => {
   const reservedCompositeFieldsNames: string[] = [];
 
-  for (const field of Object.values(objectMetadata.fieldsById)) {
+  for (const field of Object.values(fieldMetadataMapById)) {
     if (isCompositeFieldMetadataType(field.type)) {
       const base = field.name;
       const compositeType = compositeTypeDefinitions.get(field.type);
@@ -28,21 +31,31 @@ const getReservedCompositeFieldNames = (
   return reservedCompositeFieldsNames;
 };
 
-export const validateFieldNameAvailabilityOrThrow = (
-  name: string,
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-) => {
+type ValidateFieldNameAvailabilityOrThrowArgs = {
+  name: string;
+  fieldMetadataMapById: FieldMetadataMap;
+};
+export const validateFieldNameAvailabilityOrThrow = ({
+  name,
+  fieldMetadataMapById,
+}: ValidateFieldNameAvailabilityOrThrowArgs) => {
   const reservedCompositeFieldsNames =
-    getReservedCompositeFieldNames(objectMetadata);
+    getReservedCompositeFieldNames(fieldMetadataMapById);
 
   if (
-    Object.values(objectMetadata.fieldsById).some(
-      (field) => field.name === name,
+    Object.values(fieldMetadataMapById).some(
+      (field) =>
+        field.name === name ||
+        (field.type === FieldMetadataType.RELATION &&
+          `${field.name}Id` === name),
     )
   ) {
     throw new InvalidMetadataException(
-      `Name "${name}" is not available`,
+      `Name "${name}" is not available as it is already used by another field`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
+      {
+        userFriendlyMessage: t`This name is not available as it is already used by another field.`,
+      },
     );
   }
 
@@ -50,6 +63,9 @@ export const validateFieldNameAvailabilityOrThrow = (
     throw new InvalidMetadataException(
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      {
+        userFriendlyMessage: t`This name is not available.`,
+      },
     );
   }
 };

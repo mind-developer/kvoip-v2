@@ -1,11 +1,9 @@
+import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
@@ -17,7 +15,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
@@ -27,7 +25,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
+import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
@@ -39,7 +37,7 @@ type SettingsObjectFieldItemTableRowProps = {
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px 148px 148px 36px;
+  grid-auto-columns: 180px 148px 148px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -111,16 +109,10 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  const {
-    activateMetadataField,
-    deactivateMetadataField,
-    deleteMetadataField,
-  } = useFieldMetadataItem();
+  const { activateMetadataField, deactivateMetadataField } =
+    useFieldMetadataItem();
 
-  const prefetchViews = useRecoilValue(prefetchViewsState);
-  const deleteViewFromCache = useDeleteRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
@@ -130,16 +122,8 @@ export const SettingsObjectFieldItemTableRow = ({
       objectMetadataItem.id,
     );
 
-    const deletedViewIds = prefetchViews
-      .map((view) => {
-        if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
-          deleteViewFromCache(view);
-          return view.id;
-        }
-
-        return null;
-      })
-      .filter(isDefined);
+    // TODO: Add optimistic rendering for core views
+    const deletedViewIds: string[] = [];
 
     const [baseUrl, queryParams] = navigationMemorizedUrl.includes('?')
       ? navigationMemorizedUrl.split('?')
@@ -269,7 +253,7 @@ export const SettingsObjectFieldItemTableRow = ({
           mode === 'view' ? (
             <SettingsObjectFieldActiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
-              scopeKey={fieldMetadataItem.id}
+              fieldMetadataItemId={fieldMetadataItem.id}
               onEdit={() =>
                 navigate(SettingsPath.ObjectFieldEdit, {
                   objectNamePlural: objectMetadataItem.namePlural,
@@ -299,7 +283,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
-            scopeKey={fieldMetadataItem.id}
+            fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={() =>
               navigate(SettingsPath.ObjectFieldEdit, {
                 objectNamePlural: objectMetadataItem.namePlural,
@@ -309,7 +293,12 @@ export const SettingsObjectFieldItemTableRow = ({
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }
-            onDelete={() => deleteMetadataField(fieldMetadataItem)}
+            onDelete={() =>
+              deleteOneFieldMetadataItem({
+                idToDelete: fieldMetadataItem.id,
+                objectMetadataId: objectMetadataItem.id,
+              })
+            }
           />
         ) : (
           <LightIconButton

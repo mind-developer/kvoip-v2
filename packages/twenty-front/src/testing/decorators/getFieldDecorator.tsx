@@ -1,18 +1,20 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { CustomError } from '@/error-handler/CustomError';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const RecordMockSetterEffect = ({
   companies,
@@ -93,17 +95,19 @@ export const getFieldDecorator =
       (record as any)[fieldName] = fieldValue;
     }
 
-    const objectMetadataItem = generatedMockObjectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === objectNameSingular,
-    );
+    const objectMetadataItem =
+      getMockObjectMetadataItemOrThrow(objectNameSingular);
 
-    const fieldMetadataItem = objectMetadataItem?.fields.find(
-      (field) => field.name === fieldName,
-    );
+    const fieldMetadataItem = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem,
+      fieldName,
+    });
 
     if (!isDefined(objectMetadataItem)) {
-      throw new Error(`Object ${objectNameSingular} not found`);
+      throw new CustomError(
+        `Object ${objectNameSingular} not found`,
+        'OBJECT_NOT_FOUND',
+      );
     }
 
     if (!isDefined(fieldMetadataItem)) {
@@ -125,6 +129,7 @@ export const getFieldDecorator =
       >
         <FieldContext.Provider
           value={{
+            fieldMetadataItemId: fieldMetadataItem.id,
             recordId: record.id,
             isLabelIdentifier,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
@@ -132,7 +137,7 @@ export const getFieldDecorator =
               position: 0,
               objectMetadataItem,
             }),
-            isReadOnly: false,
+            isRecordFieldReadOnly: false,
           }}
         >
           <RecordMockSetterEffect

@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { BILLING_DEFAULT_PLAN_TO_PRODUCT_LIMIT_MAP } from 'src/engine/core-modules/billing/constants/billing-plan-to-product-limit-map.constant';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';

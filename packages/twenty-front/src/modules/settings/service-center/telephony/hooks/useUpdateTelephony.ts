@@ -14,12 +14,12 @@ interface UseEditTelephonyReturn {
 }
 
 export const useUpdateTelephony = (): UseEditTelephonyReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [updateTelephony, { loading, error }] = useMutation(UPDATE_TELEPHONY, {
     onCompleted: () => {
-      enqueueSnackBar('Agent updated successfully!', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: 'Agent updated successfully!',
       });
     },
   });
@@ -36,8 +36,9 @@ export const useUpdateTelephony = (): UseEditTelephonyReturn => {
         },
       });
     } catch (err) {
-      enqueueSnackBar('Error updating agent', {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };

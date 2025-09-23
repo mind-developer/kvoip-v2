@@ -17,6 +17,8 @@ export const createNode = (type: string) => {
         },
       };
     case 'condition': {
+      // TODO: Missing 'recordType' property
+      // @ts-expect-error Incorrect type
       const initialLogicNode: NewLogicNodeData = {
         option: '1',
         comparison: '==',

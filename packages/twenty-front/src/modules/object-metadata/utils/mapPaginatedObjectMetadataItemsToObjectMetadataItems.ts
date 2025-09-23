@@ -1,14 +1,20 @@
-import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
+import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
+import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
-import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
+import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+import { type ObjectMetadataItem } from '../types/ObjectMetadataItem';
+
+type mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs = {
+  pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
+};
 
 export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
   pagedObjectMetadataItems,
-}: {
-  pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
-}) => {
-  const formattedObjects: ObjectMetadataItem[] =
+}: mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs) => {
+  const formattedObjects: Omit<
+    ObjectMetadataItem,
+    'readableFields' | 'updatableFields'
+  >[] =
     pagedObjectMetadataItems?.objects.edges.map((object) => {
       const labelIdentifierFieldMetadataId =
         objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.parse(
@@ -26,10 +32,18 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
           (index) =>
             ({
               ...index,
-              indexFieldMetadatas: [],
+              indexFieldMetadatas: index.indexFieldMetadataList.map(
+                (indexFieldMetadata) =>
+                  ({
+                    ...indexFieldMetadata,
+                  }) satisfies IndexFieldMetadataItem,
+              ),
             }) satisfies IndexMetadataItem,
         ),
-      } satisfies ObjectMetadataItem;
+      } satisfies Omit<
+        ObjectMetadataItem,
+        'readableFields' | 'updatableFields'
+      >;
     }) ?? [];
 
   return formattedObjects;

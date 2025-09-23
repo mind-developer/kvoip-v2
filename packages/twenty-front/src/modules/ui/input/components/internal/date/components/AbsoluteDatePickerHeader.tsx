@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
+import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
@@ -25,7 +29,7 @@ const StyledCustomDatePickerHeader = styled.div`
 
 const years = Array.from(
   { length: 200 },
-  (_, i) => new Date().getFullYear() + 5 - i,
+  (_, i) => new Date().getFullYear() + 50 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
 type AbsoluteDatePickerHeaderProps = {
@@ -53,6 +57,9 @@ export const AbsoluteDatePickerHeader = ({
   isDateTimeInput,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+
   const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
     day: date.getDate(),
     month: date.getMonth() + 1,
@@ -76,20 +83,32 @@ export const AbsoluteDatePickerHeader = ({
       )}
 
       <StyledCustomDatePickerHeader>
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-          options={getMonthSelectOptions()}
-          onChange={onChangeMonth}
-          value={endOfDayInLocalTimezone.getMonth()}
-          fullWidth
-        />
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-          onChange={onChangeYear}
-          value={endOfDayInLocalTimezone.getFullYear()}
-          options={years}
-          fullWidth
-        />
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+          }}
+        >
+          <Select
+            dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+            options={getMonthSelectOptions(userLocale)}
+            onChange={onChangeMonth}
+            value={endOfDayInLocalTimezone.getMonth()}
+            fullWidth
+          />
+        </ClickOutsideListenerContext.Provider>
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+          }}
+        >
+          <Select
+            dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+            onChange={onChangeYear}
+            value={endOfDayInLocalTimezone.getFullYear()}
+            options={years}
+            fullWidth
+          />
+        </ClickOutsideListenerContext.Provider>
         <LightIconButton
           Icon={IconChevronLeft}
           onClick={onSubtractMonth}

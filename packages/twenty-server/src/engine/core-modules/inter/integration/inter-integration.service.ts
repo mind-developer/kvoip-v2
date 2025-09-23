@@ -11,9 +11,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class InterIntegrationService {
   constructor(
-    @InjectRepository(InterIntegration, 'core')
+    @InjectRepository(InterIntegration)
     private interIntegrationRepository: Repository<InterIntegration>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

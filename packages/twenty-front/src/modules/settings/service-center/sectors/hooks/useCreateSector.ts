@@ -1,8 +1,8 @@
 import { CREATE_SECTOR } from '@/settings/service-center/sectors/graphql/mutation/createSector';
 import { CreateSectorInput } from '@/settings/service-center/sectors/types/CreateSectorInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UserCreateSectorReturn {
   createSector: (createInput: CreateSectorInput) => Promise<void>;
@@ -12,19 +12,22 @@ interface UserCreateSectorReturn {
 }
 
 export const useCreateSector = (): UserCreateSectorReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [createSectorMutation, { data, loading, error }] = useMutation(
     CREATE_SECTOR,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: (error as Error).message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Sector created successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Sector created successfully!`,
         });
       },
     },
@@ -36,8 +39,8 @@ export const useCreateSector = (): UserCreateSectorReturn => {
         variables: { createInput },
       });
     } catch (err) {
-      enqueueSnackBar('Sector creation error', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Sector creation error`,
       });
     }
   };

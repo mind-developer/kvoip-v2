@@ -1,9 +1,9 @@
 import { UPDATE_CHATBOT_FLOW } from '@/chatbot/graphql/mutation/updateChatbotFlow';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { UpdateChatbotFlow } from '@/chatbot/types/chatbotFlow.type';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -12,18 +12,20 @@ interface UseUpdateChatbotFlowReturn {
 }
 
 export const useUpdateChatbotFlow = (): UseUpdateChatbotFlowReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const setChatbotFlow = useSetRecoilState(chatbotFlowState);
+  const { t } = useLingui();
 
   const [updateChatbotFlow, { data }] = useMutation(UPDATE_CHATBOT_FLOW, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
     onCompleted: () => {
-      enqueueSnackBar('Flow updated successfully!', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Flow updated successfully!`,
       });
     },
   });

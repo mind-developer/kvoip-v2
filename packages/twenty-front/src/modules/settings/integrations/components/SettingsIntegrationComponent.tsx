@@ -1,19 +1,21 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
 import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Pill } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconBolt,
+  IconCopy,
   IconPlus,
   Status,
 } from 'twenty-ui/display';
-import { Pill } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/input';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
@@ -68,6 +70,7 @@ export const SettingsIntegrationComponent = ({
 }: SettingsIntegrationComponentProps) => {
   const { stripeLogin } = useStripeLogin();
 
+  const { copyToClipboard } = useCopyToClipboard();
   return (
     <StyledContainer
       to={integration.type === 'Active' ? integration.link : undefined}
@@ -105,10 +108,15 @@ export const SettingsIntegrationComponent = ({
           size="small"
         />
       ) : integration.from.key === 'stripe' ? (
+        <Button onClick={stripeLogin} target="_self" Icon={IconArrowUpRight} />
+      ) : integration.type === 'Copy' ? (
         <Button
-          onClick={stripeLogin}
-          target="_self"
-          Icon={IconArrowUpRight}
+          onClick={() => {
+            if (isDefined(integration.content)) {
+              copyToClipboard(integration.content);
+            }
+          }}
+          Icon={IconCopy}
           title={integration.linkText}
           size="small"
         />

@@ -9,15 +9,12 @@ import {
   OnboardingPlanStep,
   onboardingPlanStepState,
 } from '@/onboarding/states/onboardingPlanStepState';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { Select } from '@/ui/input/components/Select';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
@@ -91,17 +88,6 @@ export const OnboardingInterChargeDataForm = ({
   // TODO: Maybe set this outside?
   const [isEditingMode, setIsEditingMode] = useState(false);
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (isEditingMode) {
-        // TODO Validate form here
-        // onSubmit(getValues());
-      }
-    },
-    PageHotkeyScope.PlanRequired,
-  );
-
   const onSubmit = async (values: InterCharteDataForm) => {
     await handleCheckoutSession({
       ...values,
@@ -130,7 +116,7 @@ export const OnboardingInterChargeDataForm = ({
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInputV2
+              <TextInput
                 autoFocus
                 label={t`Full name`}
                 value={value}
@@ -171,7 +157,7 @@ export const OnboardingInterChargeDataForm = ({
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   label={
                     legalEntity === InterCustomerType.FISICA ? 'CPF' : 'CNPJ'
                   }
@@ -209,7 +195,7 @@ export const OnboardingInterChargeDataForm = ({
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   label={t`CEP`}
                   value={formatCEP(value)}
                   onFocus={() => setIsEditingMode(true)}
@@ -232,7 +218,7 @@ export const OnboardingInterChargeDataForm = ({
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoFocus
                   label={t`Address`}
                   value={value}
@@ -274,7 +260,7 @@ export const OnboardingInterChargeDataForm = ({
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoFocus
                   label={t`City`}
                   value={value}

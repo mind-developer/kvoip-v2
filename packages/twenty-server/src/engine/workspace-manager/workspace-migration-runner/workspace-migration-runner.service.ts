@@ -1,23 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { QueryRunner, Table, TableColumn } from 'typeorm';
+import { DataSource, type QueryRunner, Table, type TableColumn } from 'typeorm';
 
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
-  WorkspaceMigrationColumnAction,
+  IndexMetadataException,
+  IndexMetadataExceptionCode,
+} from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import {
+  type WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationForeignTable,
-  WorkspaceMigrationIndexAction,
+  type WorkspaceMigrationColumnCreate,
+  type WorkspaceMigrationForeignTable,
+  type WorkspaceMigrationIndexAction,
   WorkspaceMigrationIndexActionType,
-  WorkspaceMigrationTableAction,
+  type WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
-import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
+import { type PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
 export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';
@@ -27,73 +33,94 @@ export class WorkspaceMigrationRunnerService {
   private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);
 
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationColumnService: WorkspaceMigrationColumnService,
   ) {}
 
-  public async executeMigrationFromPendingMigrations(
+  public async executeMigrationFromPendingMigrationsWithinTransaction(
     workspaceId: string,
+    transactionQueryRunner: QueryRunner,
   ): Promise<WorkspaceMigrationTableAction[]> {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Main data source not found');
-    }
-
     const pendingMigrations =
-      await this.workspaceMigrationService.getPendingMigrations(workspaceId);
+      await this.workspaceMigrationService.getPendingMigrations(
+        workspaceId,
+        transactionQueryRunner,
+      );
 
     if (pendingMigrations.length === 0) {
       return [];
     }
 
-    const flattenedPendingMigrations: WorkspaceMigrationTableAction[] =
-      pendingMigrations.reduce((acc, pendingMigration) => {
-        return [...acc, ...pendingMigration.migrations];
-      }, []);
+    const migrationActionsWithParent = pendingMigrations.flatMap(
+      (pendingMigration) =>
+        (pendingMigration.migrations || []).map((tableAction) => ({
+          tableAction,
+          parentMigrationId: pendingMigration.id,
+        })),
+    );
 
-    const queryRunner =
-      mainDataSource.createQueryRunner() as PostgresQueryRunner;
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    await transactionQueryRunner.query(
+      `SET LOCAL search_path TO ${schemaName}`,
+    );
+
+    for (const {
+      tableAction,
+      parentMigrationId,
+    } of migrationActionsWithParent) {
+      await this.handleTableChanges(
+        transactionQueryRunner as PostgresQueryRunner,
+        schemaName,
+        tableAction,
+      );
+
+      await transactionQueryRunner.query(
+        `UPDATE "core"."workspaceMigration" SET "appliedAt" = NOW() WHERE "id" = $1 AND "workspaceId" = $2`,
+        [parentMigrationId, workspaceId],
+      );
+    }
+
+    return migrationActionsWithParent.map((item) => item.tableAction);
+  }
+
+  public async executeMigrationFromPendingMigrations(
+    workspaceId: string,
+  ): Promise<WorkspaceMigrationTableAction[]> {
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
-
     try {
-      // Loop over each migration and create or update the table
-      for (const migration of flattenedPendingMigrations) {
-        await this.handleTableChanges(queryRunner, schemaName, migration);
-      }
+      const result =
+        await this.executeMigrationFromPendingMigrationsWithinTransaction(
+          workspaceId,
+          queryRunner,
+        );
 
       await queryRunner.commitTransaction();
+
+      return result;
     } catch (error) {
       this.logger.error(
         `Error executing migration: ${error.message}`,
         error.stack,
       );
-
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
       throw error;
     } finally {
       await queryRunner.release();
     }
-
-    // Update appliedAt date for each migration
-    // TODO: Should be done after the migration is successful
-    for (const pendingMigration of pendingMigrations) {
-      await this.workspaceMigrationService.setAppliedAtForMigration(
-        workspaceId,
-        pendingMigration,
-      );
-    }
-
-    return flattenedPendingMigrations;
   }
 
   private async handleTableChanges(
@@ -224,6 +251,17 @@ export class WorkspaceMigrationRunnerService {
       if (error.code === '42P07') {
         return;
       }
+
+      if (error.code === '23505') {
+        throw new IndexMetadataException(
+          `Unique index creation failed because of unique constraint violation`,
+          IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
+          {
+            userFriendlyMessage: t`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records).`,
+          },
+        );
+      }
+
       throw error;
     }
   }

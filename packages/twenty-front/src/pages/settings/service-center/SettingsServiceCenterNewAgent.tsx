@@ -10,7 +10,6 @@ import { z } from 'zod';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -52,7 +51,7 @@ const StyledDiv = styled.div<{
 export const SettingsServiceCenterNewAgent = () => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { createAgent } = useCreateAgent();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   // const { refetch: refetchMembers } = useFindManyRecords<WorkspaceMember>({
@@ -93,8 +92,9 @@ export const SettingsServiceCenterNewAgent = () => {
       // refetchMembers();
       navigate(settingsServiceCenterAgentsPagePath);
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

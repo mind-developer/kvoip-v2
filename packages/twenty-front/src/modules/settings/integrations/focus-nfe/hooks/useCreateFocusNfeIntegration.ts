@@ -3,8 +3,8 @@ import { useMutation } from '@apollo/client';
 import { CREATE_FOCUS_NFE_INTEGRATION } from '@/settings/integrations/focus-nfe/graphql/mutation/createFocusNfeIntegration';
 
 import { CreateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/CreateFocusNfeIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 
 interface CreateFocusNfeIntegration {
   createFocusNfeIntegration: (
@@ -16,18 +16,21 @@ interface CreateFocusNfeIntegration {
 }
 
 export const useCreateFocusNfeIntegration = (): CreateFocusNfeIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [createFocusNfeIntegrationMutation, { data, loading, error }] =
     useMutation(CREATE_FOCUS_NFE_INTEGRATION, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Focus NFe integration created successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Focus NFe integration created successfully!`,
         });
       },
     });

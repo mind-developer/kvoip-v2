@@ -203,6 +203,8 @@ export const ChatbotFlowCondicionalEventForm = ({
   const addCondition = () => {
     const newIndex = nodeData.logicNodes.length;
 
+    // TODO: Missing 'recordType' property
+    // @ts-expect-error Incorrect type
     const newCondition: NewLogicNodeData = {
       option: `${newIndex + 1}`,
       comparison: '==',
@@ -249,6 +251,7 @@ export const ChatbotFlowCondicionalEventForm = ({
         <StyledHeaderInfo>
           <StyledHeaderTitle>
             <TitleInput
+              instanceId="chatbot-flow-condicional-event-form-title-input"
               sizeVariant="md"
               value={title}
               onChange={handleChange}

@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 
 import { FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/FindWhatsappIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GET_ALL_WHATSAPP_INTEGRATIONS } from '../graphql/query/whatsappIntegrationByWorkspace';
 
@@ -13,7 +12,7 @@ type FindAllWhatsappIntegrations = {
 
 export const useFindAllWhatsappIntegrations =
   (): FindAllWhatsappIntegrations => {
-    const { enqueueSnackBar } = useSnackBar();
+    const { enqueueErrorSnackBar } = useSnackBar();
 
     const {
       data,
@@ -21,8 +20,9 @@ export const useFindAllWhatsappIntegrations =
       loading,
     } = useQuery(GET_ALL_WHATSAPP_INTEGRATIONS, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
     });

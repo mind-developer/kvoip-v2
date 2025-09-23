@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -9,7 +9,7 @@ import {
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
 import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
-import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 
 export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
@@ -29,9 +29,14 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
     validateMetadataNameOrThrow(name);
   } catch (error) {
     if (error instanceof InvalidMetadataException) {
+      const errorMessage = error.message;
+
       throw new ObjectMetadataException(
-        error.message,
+        errorMessage,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          userFriendlyMessage: errorMessage,
+        },
       );
     }
 
@@ -62,6 +67,9 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
       throw new ObjectMetadataException(
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+        },
       );
     }
 

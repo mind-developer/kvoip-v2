@@ -1,20 +1,19 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 
 @Command({
@@ -23,13 +22,13 @@ import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace
 })
 export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly databaseStructureService: DatabaseStructureService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly typeORMService: TypeORMService,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -61,8 +60,7 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
       const object = field.object;
 
       const tableName = computeObjectTargetTable(object);
-      const schemaName =
-        this.workspaceDataSourceService.getSchemaName(workspaceId);
+      const schemaName = getWorkspaceSchemaName(workspaceId);
       const columns =
         await this.databaseStructureService.getWorkspaceTableColumns(
           schemaName,
@@ -84,9 +82,7 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
         `Altering column ${schemaName}.${tableName}.${columnName} to type text[] (was ${dbColumn.dataType})`,
       );
       if (!options.dryRun) {
-        const queryRunner = this.typeORMService
-          .getMainDataSource()
-          .createQueryRunner();
+        const queryRunner = this.coreDataSource.createQueryRunner();
 
         await queryRunner.connect();
         try {
