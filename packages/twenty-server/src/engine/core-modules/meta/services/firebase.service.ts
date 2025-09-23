@@ -30,12 +30,12 @@ export class FirebaseService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(WhatsappIntegration, 'core')
+    @InjectRepository(WhatsappIntegration)
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
     public readonly googleStorageService: GoogleStorageService,
-    @InjectRepository(Sector, 'core')
+    @InjectRepository(Sector)
     private sectorRepository: Repository<Sector>,
-    @InjectRepository(WorkspaceAgent, 'core')
+    @InjectRepository(WorkspaceAgent)
     private agentRepository: Repository<WorkspaceAgent>,
     private readonly chatMessageManagerService: ChatMessageManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

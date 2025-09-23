@@ -42,7 +42,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigateApp = useNavigateApp();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const tokenPair = useRecoilValue(tokenPairState);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -94,12 +94,12 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
   useEffect(() => {
     if (baileysSessionValid) {
-      enqueueSnackBar('Integração criada com sucesso!', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: 'Integração criada com sucesso!',
       });
       navigate(SettingsPath.IntegrationWhatsappDatabase);
     }
-  }, [baileysSessionValid, enqueueSnackBar, navigate]);
+  }, [baileysSessionValid, navigate]);
 
   const isIntegrationAvailable = !!integration;
 
@@ -140,7 +140,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           `http://localhost:3000/Whats-App-rest/whatsapp/qr/${sessionName}`,
           {
             headers: {
-              Authorization: `Bearer ${tokenPair?.accessToken?.token}`,
+              Authorization: `Bearer ${tokenPair?.accessOrWorkspaceAgnosticToken?.token}`,
             },
           },
         );
@@ -221,7 +221,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         setQrCodeValue(null);
         setQrCodeError(null);
         // Verificar se o token existe
-        if (!tokenPair?.accessToken?.token) {
+        if (!tokenPair?.accessOrWorkspaceAgnosticToken.token) {
           setQrCodeError('Token de autenticação não encontrado');
           return;
         }

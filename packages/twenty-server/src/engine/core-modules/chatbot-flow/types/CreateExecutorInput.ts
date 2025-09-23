@@ -1,6 +1,8 @@
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { NodeHandler } from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
-import { FlowNode } from 'typescript';
+import {
+  FlowNode,
+  NodeHandler,
+} from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
 
 export type CreateExecutorInput = {
   integrationId: string;

@@ -5,6 +5,8 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
+import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+
 // TODO: check if this can be deleted
 export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
@@ -781,7 +783,6 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
-  apiKey: API_KEY_STANDARD_FIELD_IDS,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
   behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
@@ -815,7 +816,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   viewFilter: VIEW_FILTER_STANDARD_FIELD_IDS,
   viewSort: VIEW_SORT_STANDARD_FIELD_IDS,
   view: VIEW_STANDARD_FIELD_IDS,
-  webhook: WEBHOOK_STANDARD_FIELD_IDS,
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,

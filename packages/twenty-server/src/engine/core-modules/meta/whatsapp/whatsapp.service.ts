@@ -62,11 +62,12 @@ export class WhatsAppService {
   protected readonly logger = new Logger(WhatsAppService.name);
 
   constructor(
-    @InjectRepository(ChatbotFlow, 'core')
+    @InjectRepository(ChatbotFlow)
     private chatbotFlowRepository: Repository<ChatbotFlow>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
+    public readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector)
     private sectorRepository: Repository<Sector>,
     @InjectRepository(WorkspaceAgent)
@@ -194,6 +195,113 @@ export class WhatsAppService {
     this.sendMessageQueue.add<SendChatMessageQueueData>(jobName, jobOptions);
   }
 
+  async saveMessage(
+    whatsAppDoc: Omit<
+      WhatsAppDocument,
+      'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
+    >,
+    workspaceId: string,
+  ) {
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
+        'person',
+        { shouldBypassPermissionChecks: true },
+      );
+    let person = await personRepository.findOneBy({
+      phones: { primaryPhoneNumber: whatsAppDoc.client.phone },
+    });
+    if (!person)
+      person = await personRepository.save(createRelatedPerson(whatsAppDoc));
+    if (!person.id) throw new Error('Could not create person for this chat');
+
+    this.saveMessageQueue.add<SaveChatMessageJobData>(SaveChatMessageJob.name, {
+      chatType: ChatIntegrationProviders.WhatsApp,
+      sendMessageInput: {
+        integrationId: whatsAppDoc.integrationId,
+        to: whatsAppDoc.client.phone,
+        ...whatsAppDoc.lastMessage,
+        personId: person.id,
+        id: whatsAppDoc.lastMessage.id ?? undefined,
+      },
+      workspaceId,
+    });
+    const whatsAppIntegration = await (
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+        { shouldBypassPermissionChecks: true },
+      )
+    ).findOneBy({ id: whatsAppDoc.integrationId });
+
+    if (
+      whatsAppDoc?.status === statusEnum.Waiting &&
+      !whatsAppDoc.lastMessage.fromMe
+    ) {
+      const chatbot = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
+          workspaceId,
+          'chatbot',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).findOne({
+        where: {
+          id: whatsAppIntegration?.chatbotId ?? undefined,
+          statuses: ChatbotStatus.ACTIVE,
+        },
+      });
+      const chatbotFlow = await this.chatbotFlowRepository.findOneBy({
+        chatbotId: chatbot?.id,
+      });
+
+      if (!whatsAppIntegration?.chatbotId || !chatbotFlow) return;
+      const chatbotKey =
+        whatsAppDoc.integrationId + '_' + whatsAppDoc.client.phone;
+      let executor = this.chatbotFlowService.getExecutor(chatbotKey);
+      if (executor) {
+        executor.runFlow(whatsAppDoc.lastMessage.message);
+        return true;
+      }
+      const sectorsFromWorkspace = await this.sectorRepository.find({
+        relations: ['workspace'],
+        where: {
+          workspace: {
+            id: workspaceId,
+          },
+        },
+      });
+      executor = this.chatbotFlowService.createExecutor({
+        integrationId: whatsAppDoc.integrationId,
+        workspaceId,
+        chatbotName: chatbot?.name || 'Chatbot',
+        chatbotFlow: {
+          nodes: chatbotFlow.nodes,
+          edges: chatbotFlow.edges,
+          workspace: { id: workspaceId },
+        },
+        sendTo: whatsAppDoc.client.phone ?? '',
+        personId: person.id,
+        sectors: sectorsFromWorkspace,
+        onFinish: (_, sectorId: string) => {
+          if (sectorId) {
+            console.log('transfer to sector:', sectorId);
+            // transferBotService(
+            //   whatsappIntegration.integrationId,
+            //   whatsappIntegration.client.name ?? '',
+            //   statusEnum.Waiting,
+            //   sendWhatsappEventMessage,
+            //   sectorId,
+            //   sectorsFromWorkspace,
+            //   chatbot.name,
+            // );
+          }
+          this.chatbotFlowService.clearExecutor(chatbotKey);
+        },
+      });
+      executor.runFlow(whatsAppDoc.lastMessage.message);
+    }
+  }
+
   async sendNotification(externalIds: string[], message: string) {
     const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
     const ONESIGNAL_REST_API_KEY = this.environmentService.get(
@@ -236,7 +344,6 @@ export class WhatsAppService {
       return false;
     }
   }
-
 
   async saveEventMessageAtFirebase(
     whatsappDoc: Omit<

@@ -1,4 +1,3 @@
-import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
@@ -156,7 +155,7 @@ function Header({
   return (
     <StyledHeaderContainer fromMe={fromMe}>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-        <AttachmentIcon attachmentType="Other" />
+        {/* <AttachmentIcon attachmentType="Other" /> */}
         <StyledFileName>
           {JSON.stringify(currentDocument.documents[0].fileName).replaceAll(
             '"',

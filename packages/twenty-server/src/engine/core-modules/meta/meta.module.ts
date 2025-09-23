@@ -36,13 +36,13 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([
-            WhatsappIntegration,
-            Workspace,
-            Inbox,
-            Sector,
-            WorkspaceAgent,
-            ChatbotFlow,
-          ]),
+          WhatsappIntegration,
+          Workspace,
+          Inbox,
+          Sector,
+          WorkspaceAgent,
+          ChatbotFlow,
+        ]),
         TypeORMModule,
       ],
     }),

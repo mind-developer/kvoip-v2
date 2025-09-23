@@ -26,17 +26,14 @@ import { WhatsAppService } from './whatsapp.service';
   imports: [
     TypeORMModule,
     WorkspaceModule,
-    NestjsQueryTypeOrmModule.forFeature(
-      [
-        ChatbotFlow,
-        WhatsappIntegration,
-        Workspace,
-        Inbox,
-        Sector,
-        WorkspaceAgent,
-      ],
-      'core',
-    ),
+    NestjsQueryTypeOrmModule.forFeature([
+      ChatbotFlow,
+      WhatsappIntegration,
+      Workspace,
+      Inbox,
+      Sector,
+      WorkspaceAgent,
+    ]),
     MessageQueueModule,
   ],
   controllers: [WhatsappRestController],

@@ -25,17 +25,14 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [
-            Workspace,
-            Inbox,
-            Sector,
-            WorkspaceAgent,
-            ChatbotFlow,
-            WhatsappIntegration,
-          ],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          Workspace,
+          Inbox,
+          Sector,
+          WorkspaceAgent,
+          ChatbotFlow,
+          WhatsappIntegration,
+        ]),
         TypeORMModule,
       ],
     }),

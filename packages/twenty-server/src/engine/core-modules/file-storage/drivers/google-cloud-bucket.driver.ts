@@ -175,4 +175,9 @@ export class GoogleCloudBucketDriver implements StorageDriver {
   }): Promise<boolean> {
     return !!this.bucket.file(`${params.folderPath}/${params.filename}`).get();
   }
+
+  async checkFolderExists(folderPath: string): Promise<boolean> {
+    const [files] = await this.bucket.getFiles({ prefix: folderPath });
+    return files.length > 0;
+  }
 }

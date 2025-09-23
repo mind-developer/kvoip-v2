@@ -11,7 +11,7 @@ import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/ha
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([], 'core'), TypeORMModule],
+      imports: [NestjsQueryTypeOrmModule.forFeature([]), TypeORMModule],
     }),
   ],
   providers: [

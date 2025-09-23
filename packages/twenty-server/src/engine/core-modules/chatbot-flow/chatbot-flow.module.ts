@@ -26,16 +26,14 @@ import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integ
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [
-            WhatsappIntegration,
-            Sector,
-            WorkspaceAgent,
-            Workspace,
-            ChatbotFlow,
-            HandlersModule,
-          ]
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          WhatsappIntegration,
+          Sector,
+          WorkspaceAgent,
+          Workspace,
+          ChatbotFlow,
+          HandlersModule,
+        ]),
         TypeORMModule,
       ],
     }),
