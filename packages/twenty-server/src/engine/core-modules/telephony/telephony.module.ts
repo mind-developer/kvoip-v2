@@ -16,7 +16,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([Workspace], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([Workspace]),
         TypeORMModule,
       ],
     }),

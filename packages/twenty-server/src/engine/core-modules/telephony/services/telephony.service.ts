@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
 import { type CreateTelephonyHandler } from 'src/modules/telephony/types/Create';
@@ -13,7 +12,6 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 @Injectable()
 export class TelephonyService {
   constructor(
-    private readonly dataSourceService: DataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 

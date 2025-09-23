@@ -78,3 +78,5 @@ export class IndexMetadataEntity {
   })
   indexType: IndexType;
 }
+
+export { IndexType };
