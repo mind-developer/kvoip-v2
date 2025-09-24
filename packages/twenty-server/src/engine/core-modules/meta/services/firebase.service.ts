@@ -121,7 +121,7 @@ export class FirebaseService {
         };
         this.logger.log(
           '(saveWhatsAppMessage): creating new document for chat:',
-          JSON.stringify(newDoc, (v) => (v === undefined ? null : v)),
+          JSON.stringify(newDoc, (k, v) => (v === undefined ? null : v)),
         );
         await setDoc(docRef, newDoc);
         if (isReceiving) {
