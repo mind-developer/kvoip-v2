@@ -6,15 +6,15 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import {
-  clearNotaFiscalCompanyFields,
-  fillNotaFiscalFromCompany,
-} from 'src/modules/nota-fiscal/utils/nota-fiscal-company.helpers';
+  clearInvoiceCompanyFields,
+  fillInvoiceFromCompany,
+} from 'src/modules/invoice/utils/invoice-company.helpers';
 import {
-  clearNotaFiscalProductFields,
-  fillNotaFiscalFromProduct,
-} from 'src/modules/nota-fiscal/utils/nota-fiscal-product.helpers';
+  clearInvoiceProductFields,
+  fillInvoiceFromProduct,
+} from 'src/modules/invoice/utils/invoice-product.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface UpdateProperties<T = any> {
@@ -25,14 +25,14 @@ export interface UpdateProperties<T = any> {
 }
 
 @Injectable()
-export class NotaFiscalEventListener {
-  private readonly logger = new Logger('NotaFiscalEventListener');
+export class InvoiceEventListener {
+  private readonly logger = new Logger('InvoiceEventListener');
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @OnDatabaseBatchEvent('notaFiscal', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('invoice', DatabaseEventAction.UPDATED)
   async handleChargeUpdateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
@@ -46,47 +46,47 @@ export class NotaFiscalEventListener {
       return;
     }
 
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+    const invoiceRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<InvoiceWorkspaceEntity>(
         workspaceId,
-        'notaFiscal',
+        'invoice',
         { shouldBypassPermissionChecks: true },
       );
 
     await Promise.all(
       events.map(async (event) => {
-        const notaFiscal = await notaFiscalRepository.findOne({
+        const invoice = await invoiceRepository.findOne({
           where: { id: event.recordId },
           relations: ['product', 'product.company', 'company', 'focusNFe'],
         });
 
-        if (!notaFiscal) {
+        if (!invoice) {
           this.logger.warn(`Invoice not found for recordId: ${event.recordId}`);
 
           return;
         }
 
         const props =
-          event.properties as UpdateProperties<NotaFiscalWorkspaceEntity>;
+          event.properties as UpdateProperties<InvoiceWorkspaceEntity>;
 
-        const changedFields = this.getChangedFields<NotaFiscalWorkspaceEntity>(
+        const changedFields = this.getChangedFields<InvoiceWorkspaceEntity>(
           props.updatedFields,
           props.before,
           props.after,
         );
 
         this.logger.log(
-          `Invoice ${notaFiscal.id} updated. Changed fields: ${JSON.stringify(changedFields, null, 2)}`,
+          `Invoice ${invoice.id} updated. Changed fields: ${JSON.stringify(changedFields, null, 2)}`,
         );
 
         if (props.before.companyId !== props.after.companyId) {
           const isCompanyRemoved = props.after.companyId === null;
 
           if (isCompanyRemoved) {
-            clearNotaFiscalCompanyFields(notaFiscal);
+            clearInvoiceCompanyFields(invoice);
           } else {
-            if (!notaFiscal.company) return;
-            fillNotaFiscalFromCompany(notaFiscal, notaFiscal.company);
+            if (!invoice.company) return;
+            fillInvoiceFromCompany(invoice, invoice.company);
           }
         }
 
@@ -94,29 +94,29 @@ export class NotaFiscalEventListener {
           const isProductRemoved = props.after.productId === null;
 
           if (isProductRemoved) {
-            clearNotaFiscalProductFields(notaFiscal);
+            clearInvoiceProductFields(invoice);
           } else {
-            if (!notaFiscal.product) return;
-            fillNotaFiscalFromProduct(notaFiscal, notaFiscal.product);
+            if (!invoice.product) return;
+            fillInvoiceFromProduct(invoice, invoice.product);
           }
         }
 
-        const hasProduct = !!notaFiscal.product;
-        const hasCompany = !!notaFiscal.company;
+        const hasProduct = !!invoice.product;
+        const hasCompany = !!invoice.company;
 
-        if (hasProduct && hasCompany && !notaFiscal.totalAmount) {
-          const newAmountStr = this.calculateTotalAmount(notaFiscal);
+        if (hasProduct && hasCompany && !invoice.totalAmount) {
+          const newAmountStr = this.calculateTotalAmount(invoice);
 
           if (newAmountStr) {
-            const currentAmountStr = notaFiscal.totalAmount ?? null;
+            const currentAmountStr = invoice.totalAmount ?? null;
 
             if (currentAmountStr !== newAmountStr) {
-              notaFiscal.totalAmount = newAmountStr;
+              invoice.totalAmount = newAmountStr;
             }
           }
         }
 
-        await notaFiscalRepository.save(notaFiscal);
+        await invoiceRepository.save(invoice);
       }),
     );
   }
@@ -147,9 +147,9 @@ export class NotaFiscalEventListener {
   }
 
   private calculateTotalAmount(
-    notaFiscal: NotaFiscalWorkspaceEntity,
+    invoice: InvoiceWorkspaceEntity,
   ): string | null {
-    const { nfType, product, percentNfse, percentNfcom } = notaFiscal;
+    const { nfType, product, percentNfse, percentNfcom } = invoice;
 
     if (!product) return null;
 

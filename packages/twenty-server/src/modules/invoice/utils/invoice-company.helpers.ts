@@ -2,41 +2,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @stylistic/padding-line-between-statements */
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
 const COMPANY_FIELDS: (keyof Pick<
-  NotaFiscalWorkspaceEntity,
+  InvoiceWorkspaceEntity,
   'percentNfe' | 'percentNfse' | 'percentNfce' | 'percentNfcom'
 >)[] = ['percentNfe', 'percentNfse', 'percentNfce', 'percentNfcom'];
 
-export function fillNotaFiscalFromCompany(
-  nota: NotaFiscalWorkspaceEntity,
+export function fillInvoiceFromCompany(
+  invoice: InvoiceWorkspaceEntity,
   company: CompanyWorkspaceEntity,
-): NotaFiscalWorkspaceEntity {
+): InvoiceWorkspaceEntity {
   COMPANY_FIELDS.forEach((field) => {
     // @ts-expect-error
-    nota[field] = company[field];
+    invoice[field] = company[field];
   });
 
-  return nota;
+  return invoice;
 }
 
-export function clearNotaFiscalCompanyFields(
-  nota: NotaFiscalWorkspaceEntity,
-): NotaFiscalWorkspaceEntity {
+export function clearInvoiceCompanyFields(
+  invoice: InvoiceWorkspaceEntity,
+): InvoiceWorkspaceEntity {
   COMPANY_FIELDS.forEach((field) => {
-    const original = nota[field as keyof NotaFiscalWorkspaceEntity];
+    const original = invoice[field as keyof InvoiceWorkspaceEntity];
 
     if (typeof original === 'string') {
-      (nota as any)[field] = '';
+      (invoice as any)[field] = '';
     } else if (typeof original === 'number') {
-      (nota as any)[field] = 0;
+      (invoice as any)[field] = 0;
     } else if (typeof original === 'boolean') {
-      (nota as any)[field] = false;
+      (invoice as any)[field] = false;
     } else {
-      (nota as any)[field] = undefined;
+      (invoice as any)[field] = undefined;
     }
   });
 
-  return nota;
+  return invoice;
 }

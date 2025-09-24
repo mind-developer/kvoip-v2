@@ -25,7 +25,7 @@ import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/stand
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -99,7 +99,7 @@ const baseStandardObjectMetadataDefinitions = [
   WhatsappWorkspaceEntity,
   SupportWorkspaceEntity,
   FocusNFeWorkspaceEntity,
-  NotaFiscalWorkspaceEntity,
+  InvoiceWorkspaceEntity,
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace

@@ -21,7 +21,7 @@ export interface CompanyFinancialClosingExecution {
   charge?: {
     id: string;
   };
-  notasFiscais?: {
+  invoices?: {
     id: string;
     nfStatus: string;
     nfType: string;

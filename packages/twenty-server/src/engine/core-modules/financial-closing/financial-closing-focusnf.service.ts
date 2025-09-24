@@ -8,20 +8,20 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
 import { getNfTypeLabel, NfType } from 'src/modules/focus-nfe/types/NfType';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { ProductTypeStatus, ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { Repository } from 'typeorm';
 import {
-  BRAZILIAN_STATES,
-  CfopCommunicationEnum,
-  CstIcmsCsosnEnum,
-  ISS_RATES,
-  NF_TEXTS,
-  NfComClassificationEnum,
-  normalizeState,
-  ServiceListItemEnum,
-  UNIT_VALUES,
-  UnitOfMeasureEnum,
+    BRAZILIAN_STATES,
+    CfopCommunicationEnum,
+    CstIcmsCsosnEnum,
+    ISS_RATES,
+    NF_TEXTS,
+    NfComClassificationEnum,
+    normalizeState,
+    ServiceListItemEnum,
+    UNIT_VALUES,
+    UnitOfMeasureEnum,
 } from './constants/nf-constants';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
@@ -76,10 +76,10 @@ export class FinancialClosingNFService {
       throw new Error('Nenhuma integração Focus NFe encontrada');
     }
 
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+    const invoiceRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<InvoiceWorkspaceEntity>(
         workspaceId,
-        'notaFiscal',
+        'invoice',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -93,11 +93,11 @@ export class FinancialClosingNFService {
         company.address.addressState, // estado do cliente
       );
 
-      let nfCom = notaFiscalRepository.create({
+      let nfCom = invoiceRepository.create({
         name: `${getNfTypeLabel(NfType.NFCOM)} ${financialClosing.name} - ${today} - ${company.name}`,
         nfType: NfType.NFCOM, // Puxar da company
         nfStatus: NfStatus.DRAFT,
-        dataEmissao: new Date().toISOString(),
+        issueDate: new Date().toISOString(),
         totalAmount: typeof charge.price === "number" 
           ? charge.price.toString() 
           : charge.price,
@@ -105,10 +105,10 @@ export class FinancialClosingNFService {
         cfop: cfop,
         cstIcmsCsosn: CstIcmsCsosnEnum.NORMAL_REGIME,
         unitOfMeasure: UnitOfMeasureEnum.UN,
-        unidade: UNIT_VALUES.DEFAULT,
-        classificacao: NfComClassificationEnum.TELEPHONY_SERVICE,
-        codAssinante: company.id.substring(0, 30),
-        numContratoAssinante: `${NfType.NFCOM}-${charge.id}`.substring(0, 15),
+        unit: UNIT_VALUES.DEFAULT,
+        classification: NfComClassificationEnum.TELEPHONY_SERVICE,
+        subscriberCode: company.id.substring(0, 30),
+        numSubscriberAgreement: `${NfType.NFCOM}-${charge.id}`.substring(0, 15),
 
         companyFinancialClosingExecution: companyExecutionLog ?? null,
         companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null,
@@ -120,7 +120,7 @@ export class FinancialClosingNFService {
         focusNFeId: focusNFe.id,
       });
 
-      nfCom = await notaFiscalRepository.save(nfCom);
+      nfCom = await invoiceRepository.save(nfCom);
 
       nfCom.company = company;
 
@@ -152,11 +152,11 @@ export class FinancialClosingNFService {
         nfCom.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfCom.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
         
-        await notaFiscalRepository.update(nfCom.id, {
+        await invoiceRepository.update(nfCom.id, {
           companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null
         });
 
-        await notaFiscalRepository.save(nfCom);
+        await invoiceRepository.save(nfCom);
 
         if (companyExecutionLog && companyFinancialClosingExecutionsRepository) {
           await addCompanyFinancialClosingExecutionLog(
@@ -169,7 +169,7 @@ export class FinancialClosingNFService {
 
       } else {
         nfCom.nfStatus = NfStatus.CANCELLED;
-        await notaFiscalRepository.save(nfCom);
+        await invoiceRepository.save(nfCom);
 
         throw new Error(`(${getNfTypeLabel(NfType.NFCOM)}): ${issueResult?.error || 'Sem retorno'}`);
       }
@@ -179,20 +179,20 @@ export class FinancialClosingNFService {
 
       this.logger.log('CAIU NFSE');
 
-      let nfse = notaFiscalRepository.create({
+      let nfse = invoiceRepository.create({
         name: `${getNfTypeLabel(NfType.NFSE)} ${financialClosing.name} - ${today} - ${company.name}`,
         nfType: NfType.NFSE,
         nfStatus: NfStatus.DRAFT,
-        dataEmissao: new Date().toISOString(),
+        issueDate: new Date().toISOString(),
         totalAmount:
           typeof charge.price === 'number'
             ? charge.price.toString()
             : charge.price,
 
-        aliquotaIss: ISS_RATES.DEFAULT,
-        discriminacao: NF_TEXTS.TELEPHONY_SERVICE,
-        issRetido: false,
-        itemListaServico: ServiceListItemEnum.TELEPHONY,
+        rateIss: ISS_RATES.DEFAULT,
+        discrimination: NF_TEXTS.TELEPHONY_SERVICE,
+        issRetained: false,
+        serviceListItem: ServiceListItemEnum.TELEPHONY,
         percentNfse: company.percentNfse,
 
         companyFinancialClosingExecution: companyExecutionLog ?? null,
@@ -205,7 +205,7 @@ export class FinancialClosingNFService {
         focusNFeId: focusNFe.id,
       });
 
-      nfse = await notaFiscalRepository.save(nfse);
+      nfse = await invoiceRepository.save(nfse);
 
       nfse.company = company;
 
@@ -236,11 +236,11 @@ export class FinancialClosingNFService {
         nfse.companyFinancialClosingExecutionId = companyExecutionLog?.id ?? null;
         nfse.nfStatus = NfStatus.IN_PROCESS; // Webhook atualiza para ISSUED assim que processado
 
-        await notaFiscalRepository.update(nfse.id, {
+        await invoiceRepository.update(nfse.id, {
           companyFinancialClosingExecutionId: companyExecutionLog?.id ?? null
         });
 
-        await notaFiscalRepository.save(nfse);
+        await invoiceRepository.save(nfse);
 
         if (companyExecutionLog && companyFinancialClosingExecutionsRepository) {
           await addCompanyFinancialClosingExecutionLog(
@@ -253,7 +253,7 @@ export class FinancialClosingNFService {
 
       } else {
         nfse.nfStatus = NfStatus.CANCELLED;
-        await notaFiscalRepository.save(nfse);
+        await invoiceRepository.save(nfse);
           
         throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || 'Sem retorno'}`);
       }

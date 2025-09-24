@@ -1,4 +1,4 @@
-export type StatusNotaFiscal =
+export type StatusInvoice =
   | 'processando_autorizacao'
   | 'autorizado'
   | 'cancelado'
@@ -8,7 +8,7 @@ export type StatusNotaFiscal =
 export interface FocusNFeWebhookBodyNFCom {
   cnpj_emitente: string;
   ref: string;
-  status: StatusNotaFiscal;
+  status: StatusInvoice;
   status_sefaz?: string;
   mensagem_sefaz?: string;
   chave?: string;
@@ -25,7 +25,7 @@ export interface FocusNFeWebhookBodyNFSe {
   ref: string;
   numero_rps: string;
   serie_rps: string;
-  status: StatusNotaFiscal;
+  status: StatusInvoice;
   numero?: string;
   codigo_verificacao?: string;
   mensagem_sefaz?: string;

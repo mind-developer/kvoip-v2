@@ -9,18 +9,18 @@ import { zonedTimeToUtc } from 'date-fns-tz';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FocusNFeResponse } from 'src/modules/focus-nfe/types/FocusNFeResponse.type';
+import { InvoiceFocusNFe } from 'src/modules/focus-nfe/types/InvoiceFocusNFe.type';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
-import { FiscalNote } from 'src/modules/focus-nfe/types/NotaFiscal.type';
 import { buildNFComPayload, buildNFSePayload, getCurrentFormattedDate } from 'src/modules/focus-nfe/utils/nf-builder';
 import {
   validateNFCom,
   validateNFSe,
 } from 'src/modules/focus-nfe/utils/validateNF';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { IsNull, Not } from 'typeorm';
 
-type NFValidator = (data: FiscalNote) => boolean;
+type NFValidator = (data: InvoiceFocusNFe) => boolean;
 
 @Injectable()
 export class FocusNFeService {
@@ -100,19 +100,19 @@ export class FocusNFeService {
   };
 
   async preIssueNf(
-    notaFiscal: NotaFiscalWorkspaceEntity,
+    invoice: InvoiceWorkspaceEntity,
     workspaceId: string,
     productObj?: ProductWorkspaceEntity,
   ): Promise<FocusNFeResponse | void> {
 
-    const { company, focusNFe } = notaFiscal;
+    const { company, focusNFe } = invoice;
 
-    const product = productObj ? productObj : notaFiscal.product;
+    const product = productObj ? productObj : invoice.product;
     let result: FocusNFeResponse | undefined = undefined;
 
     if (!product || !company || !focusNFe?.token) return;
 
-    switch (notaFiscal.nfType) {
+    switch (invoice.nfType) {
       case NfType.NFSE: {
         const lastInvoiceIssued = await this.getLastInvoiceIssued(workspaceId);
 
@@ -137,22 +137,22 @@ export class FocusNFeService {
 
         try {
           codMunicipioTomador = await this.getCodigoMunicipio(
-            notaFiscal.company?.address.addressCity || '',
+            invoice.company?.address.addressCity || '',
             focusNFe?.token,
           );
         } catch (error) {
           return {
             success: false,
-            error: `Erro na cidade do tomador: ${notaFiscal.company?.address.addressCity} - ${error.message}`,
+            error: `Erro na cidade do tomador: ${invoice.company?.address.addressCity} - ${error.message}`,
             data: null
           };
         }
 
         const nfse = buildNFSePayload(
-          notaFiscal,
+          invoice,
           codMunicipioPrestador,
           codMunicipioTomador,
-          lastInvoiceIssued?.numeroRps,
+          lastInvoiceIssued?.rpsNumber,
         );
 
         if (!nfse) {
@@ -168,14 +168,14 @@ export class FocusNFeService {
         result = await this.issueNF(
           'nfse',
           nfse,
-          notaFiscal.id,
+          invoice.id,
           focusNFe?.token,
         );
 
         // adiciona o rps no result
         result.data = {
           ...result.data,
-          rps: lastInvoiceIssued?.numeroRps,
+          rps: lastInvoiceIssued?.rpsNumber,
         };
 
         this.logger.log(`RESPONSE NF: ${JSON.stringify(result, null, 2)}`);
@@ -203,20 +203,20 @@ export class FocusNFeService {
 
         try {
           codMunicipioTomador = await this.getCodigoMunicipio(
-            notaFiscal.company?.address.addressCity || '',
+            invoice.company?.address.addressCity || '',
             focusNFe?.token,
           );
         } catch (error) {
           this.logger.error(`Erro ao buscar código do município do tomador: ${error.message}`);
           return {
             success: false,
-            error: `Erro na cidade do tomador: ${notaFiscal.company?.address.addressCity} - ${error.message}`,
+            error: `Erro na cidade do tomador: ${invoice.company?.address.addressCity} - ${error.message}`,
             data: null
           };
         }
 
         const nfcom = buildNFComPayload(
-          notaFiscal,
+          invoice,
           codMunicipioEmitente,
           codMunicipioTomador,
           product,
@@ -235,7 +235,7 @@ export class FocusNFeService {
         result = await this.issueNF(
           'nfcom',
           nfcom,
-          notaFiscal.id,
+          invoice.id,
           focusNFe?.token,
         );
 
@@ -250,7 +250,7 @@ export class FocusNFeService {
   
   async issueNF(
     type: keyof typeof this.nfStrategies,
-    data: FiscalNote,
+    data: InvoiceFocusNFe,
     referenceCode: string,
     token: string,
   ): Promise<FocusNFeResponse> {
@@ -329,51 +329,51 @@ export class FocusNFeService {
   ): Promise<
     | {
         id: string;
-        numeroRps: number;
-        dataEmissao: string;
+        rpsNumber: number;
+        issueDate: string;
       }
     | undefined
   > => {
     const LAST_NUMBER_RPS = this.environmentService.get('LAST_NUMBER_RPS');
 
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+    const invoiceRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<InvoiceWorkspaceEntity>(
         workspaceId,
-        'notaFiscal',
+        'invoice',
         { shouldBypassPermissionChecks: true },
       );
 
-    const invoiceIssued = await notaFiscalRepository.find({
+    const invoiceIssued = await invoiceRepository.find({
       where: {
         nfType: NfType.NFSE,
-        numeroRps: Not(IsNull()),
-        dataEmissao: Not(IsNull()),
+        rpsNumber: Not(IsNull()),
+        issueDate: Not(IsNull()),
       },
     });
 
     const latestNFSe = invoiceIssued
-      .filter((nf) => nf.dataEmissao)
+      .filter((nf) => nf.issueDate)
       .sort((a, b) =>
         compareDesc(
-          zonedTimeToUtc(new Date(a.dataEmissao || ''), 'America/Sao_Paulo'),
-          zonedTimeToUtc(new Date(b.dataEmissao || ''), 'America/Sao_Paulo'),
+          zonedTimeToUtc(new Date(a.issueDate || ''), 'America/Sao_Paulo'),
+          zonedTimeToUtc(new Date(b.issueDate || ''), 'America/Sao_Paulo'),
         ),
       )[0];
 
-    const latestNumeroRps = Number(latestNFSe?.numeroRps);
+    const latestNumeroRps = Number(latestNFSe?.rpsNumber);
 
     if (LAST_NUMBER_RPS > latestNumeroRps) {
       return {
         id: '0',
-        numeroRps: LAST_NUMBER_RPS,
-        dataEmissao: getCurrentFormattedDate(),
+        rpsNumber: LAST_NUMBER_RPS,
+        issueDate: getCurrentFormattedDate(),
       };
     }
 
     return {
       id: latestNFSe.id,
-      numeroRps: latestNumeroRps,
-      dataEmissao: latestNFSe.dataEmissao || '',
+      rpsNumber: latestNumeroRps,
+      issueDate: latestNFSe.issueDate || '',
     };
   };
 }

@@ -17,7 +17,7 @@ import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspac
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { NOTA_FISCAL_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { INVOICE_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -40,18 +40,18 @@ export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.notaFiscal,
-  namePlural: 'notasFiscais',
-  labelSingular: msg`Nota Fiscal`,
-  labelPlural: msg`Notas Fiscais`,
-  description: msg`Nota fiscal`,
+  standardId: STANDARD_OBJECT_IDS.invoice,
+  namePlural: 'invoices',
+  labelSingular: msg`Invoice`,
+  labelPlural: msg`Invoices`,
+  description: msg`All invoices issued by the company`,
   icon: 'IconClipboardList',
-  labelIdentifierStandardId: NOTA_FISCAL_FIELD_IDS.name,
+  labelIdentifierStandardId: INVOICE_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
-export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
+export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.name,
+    standardId: INVOICE_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Issue name`,
@@ -61,10 +61,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.nfType,
+    standardId: INVOICE_FIELD_IDS.nfType,
     type: FieldMetadataType.SELECT,
     label: msg`NF Type`,
-    description: msg`Tipo de nota fiscal`,
+    description: msg`Type of the Invoice`,
     icon: 'IconTag',
     options: NfTypeOptions,
     defaultValue: "'none'",
@@ -73,7 +73,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   nfType: string | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.totalAmount,
+    standardId: INVOICE_FIELD_IDS.totalAmount,
     type: FieldMetadataType.TEXT,
     label: msg`Total Amount`,
     description: msg`Total amount`,
@@ -83,50 +83,50 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   totalAmount: string | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.percentNFe,
+    standardId: INVOICE_FIELD_IDS.percentNFe,
     type: FieldMetadataType.NUMBER,
     label: msg`NF-e`,
-    description: msg`Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)`,
+    description: msg`Percentage for Electronic Invoice for Products`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
   percentNfe: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.percentNFSe,
+    standardId: INVOICE_FIELD_IDS.percentNFSe,
     type: FieldMetadataType.NUMBER,
     label: msg`NFS-e`,
-    description: msg`Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)`,
+    description: msg`Percentage for Electronic Service Invoice`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
   percentNfse: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.percentNFCe,
+    standardId: INVOICE_FIELD_IDS.percentNFCe,
     type: FieldMetadataType.NUMBER,
     label: msg`NFC-e`,
-    description: msg`Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)`,
+    description: msg`Percentage for Electronic Consumer Invoice`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
   percentNfce: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.percentNFCom,
+    standardId: INVOICE_FIELD_IDS.percentNFCom,
     type: FieldMetadataType.NUMBER,
     label: msg`NF-Com`,
-    description: msg`Percentage for Nota Fiscal de Comunicação (Communication Invoice)`,
+    description: msg`Percentage for Communication Invoice`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
   percentNfcom: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.nfStatus,
+    standardId: INVOICE_FIELD_IDS.nfStatus,
     type: FieldMetadataType.SELECT,
     label: msg`Status`,
-    description: msg`Status da Nota Fiscal`,
+    description: msg`Status of the Invoice`,
     icon: 'IconProgress',
     options: NfStatusOptions,
     defaultValue: "'draft'",
@@ -135,7 +135,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   nfStatus: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.ncm,
+    standardId: INVOICE_FIELD_IDS.ncm,
     type: FieldMetadataType.TEXT,
     label: msg`NCM`,
     description: msg`Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12`,
@@ -145,7 +145,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   ncm: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.cfop,
+    standardId: INVOICE_FIELD_IDS.cfop,
     type: FieldMetadataType.TEXT,
     label: msg`CFOP`,
     description: msg`Código Fiscal de Operações. Placeholder: 5102`,
@@ -155,7 +155,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   cfop: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.cstIcmsCsosn,
+    standardId: INVOICE_FIELD_IDS.cstIcmsCsosn,
     type: FieldMetadataType.TEXT,
     label: msg`CST/CSOSN`,
     description: msg`Código da Situação Tributária ou CSOSN. Placeholder: 102`,
@@ -165,7 +165,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   cstIcmsCsosn: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.unitOfMeasure,
+    standardId: INVOICE_FIELD_IDS.unitOfMeasure,
     type: FieldMetadataType.TEXT,
     label: msg`Unit`,
     description: msg`Product unit of measure (e.g., kg, unit, liter)`,
@@ -175,67 +175,67 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   unitOfMeasure: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.origem,
+    standardId: INVOICE_FIELD_IDS.origin,
     type: FieldMetadataType.NUMBER,
     label: msg`Origem da Mercadoria`,
     description: msg`Origem da mercadoria (0-8). Placeholder: 0`,
     icon: 'IconFlag',
   })
   @WorkspaceIsNullable()
-  origem: number;
+  origin: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.aliquotaIcms,
+    standardId: INVOICE_FIELD_IDS.icmsRate,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota ICMS (%)`,
     description: msg`Alíquota do ICMS. Placeholder: 18.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaIcms: number;
+  rateIcms: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.aliquotaPis,
+    standardId: INVOICE_FIELD_IDS.pisRate,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota PIS (%)`,
     description: msg`Alíquota do PIS. Placeholder: 1.65`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaPis: number;
+  ratePis: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.aliquotaCofins,
+    standardId: INVOICE_FIELD_IDS.cofinsRate,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota COFINS (%)`,
     description: msg`Alíquota do COFINS. Placeholder: 7.60`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaCofins: number;
+  rateCofins: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.aliquotaIpi,
+    standardId: INVOICE_FIELD_IDS.ipiRate,
     type: FieldMetadataType.NUMBER,
     label: msg`Valor/Alíquota IPI`,
     description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaIpi: number;
+  rateIpi: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.aliquotaIss,
+    standardId: INVOICE_FIELD_IDS.issRate,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota ISS`,
     description: msg`Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais.`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaIss: number;
+  rateIss: number;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.issRetido,
+    standardId: INVOICE_FIELD_IDS.issRetained,
     type: FieldMetadataType.BOOLEAN,
     label: msg`ISS Retido`,
     description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
@@ -243,20 +243,20 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: false,
   })
   @WorkspaceFieldIndex()
-  issRetido: boolean;
+  issRetained: boolean;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.itemListaServico,
+    standardId: INVOICE_FIELD_IDS.serviceListItem,
     type: FieldMetadataType.TEXT,
     label: msg`Item Lista Serviço`,
     description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  itemListaServico: string;
+  serviceListItem: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.position,
+    standardId: INVOICE_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Product record position`,
@@ -267,78 +267,78 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   position: number | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.discriminacao,
+    standardId: INVOICE_FIELD_IDS.discrimination,
     type: FieldMetadataType.TEXT,
     label: msg`Discriminação`,
     description: msg`Discriminação dos serviços prestados.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  discriminacao: string;
+  discrimination: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.codAssinante,
+    standardId: INVOICE_FIELD_IDS.subscriberCode,
     type: FieldMetadataType.TEXT,
     label: msg`Código do Assinante`,
     description: msg`Código do assinante`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  codAssinante: string;
+  subscriberCode: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.numContratoAssinante,
+    standardId: INVOICE_FIELD_IDS.numSubscriberAgreement,
     type: FieldMetadataType.TEXT,
     label: msg`Número do Contrato do Assinante`,
     description: msg`Número do contrato do assinante`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  numContratoAssinante: string;
+  numSubscriberAgreement: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.classificacao,
+    standardId: INVOICE_FIELD_IDS.classification,
     type: FieldMetadataType.TEXT,
     label: msg`Classificação`,
     description: msg`Classificação do produto`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  classificacao: string;
+  classification: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.unidade,
+    standardId: INVOICE_FIELD_IDS.unit,
     type: FieldMetadataType.TEXT,
     label: msg`Unidade Comercial`,
     description: msg`Unidade comercial. Placeholder: UN`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
-  unidade: string;
+  unit: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.justificativa,
+    standardId: INVOICE_FIELD_IDS.justification,
     type: FieldMetadataType.TEXT,
     label: msg`Justificativa`,
-    description: msg`Justificativa de cancelamento da Nota Fiscal`,
+    description: msg`Justificativa de cancelamento da Invoice`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
-  justificativa: string;
+  justification: string;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.dataEmissao,
+    standardId: INVOICE_FIELD_IDS.issueDate,
     type: FieldMetadataType.TEXT,
     label: msg`Data de emissão`,
-    description: msg`Data de emissão da Nota Fiscal`,
+    description: msg`Data de emissão da Invoice`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  dataEmissao: string | null;
+  issueDate: string | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.numeroRps,
+    standardId: INVOICE_FIELD_IDS.rpsNumber,
     type: FieldMetadataType.TEXT,
     label: msg`Número RPS`,
     description: msg`Número RPS`,
@@ -346,10 +346,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  numeroRps: string | null;
+  rpsNumber: string | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.createdBy,
+    standardId: INVOICE_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -359,13 +359,13 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.charge,
+    standardId: INVOICE_FIELD_IDS.charge,
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
-    description: msg`Notas fiscais linked to the charges`,
+    description: msg`Invoices linked to the charges`,
     icon: 'IconClipboardList',
     inverseSideTarget: () => ChargeWorkspaceEntity,
-    inverseSideFieldKey: 'notaFiscal',
+    inverseSideFieldKey: 'invoices',
   })
   @WorkspaceIsNullable()
   charge: Relation<ChargeWorkspaceEntity> | null;
@@ -374,10 +374,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   chargeId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.attachments,
+    standardId: INVOICE_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Nota emitida`,
-    description: msg`Attachments linked to the Nota Fiscal`,
+    label: msg`Invoice`,
+    description: msg`Attachments linked to the Invoice`,
     icon: 'IconFiles',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -386,13 +386,13 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.company,
+    standardId: INVOICE_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
-    description: msg`Company linked to the Nota Fiscal`,
+    description: msg`Company linked to the Invoice`,
     icon: 'IconTag',
     inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'notaFiscal',
+    inverseSideFieldKey: 'invoices',
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -401,13 +401,13 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.product,
+    standardId: INVOICE_FIELD_IDS.product,
     type: RelationType.MANY_TO_ONE,
     label: msg`Product`,
     description: msg`Company linked to the products`,
     icon: 'IconTag',
     inverseSideTarget: () => ProductWorkspaceEntity,
-    inverseSideFieldKey: 'notaFiscal',
+    inverseSideFieldKey: 'invoices',
   })
   @WorkspaceIsNullable()
   product: Relation<ProductWorkspaceEntity> | null;
@@ -417,13 +417,13 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
 
   // CHECK: The integration with Focus NFe doesn't appear in the select, but it's working by adding the id manually in the field
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.focusNFe,
+    standardId: INVOICE_FIELD_IDS.focusNFe,
     type: RelationType.MANY_TO_ONE,
     label: msg`Focus NFe Integration`,
-    description: msg`Nota Fiscal linked to the Focus NFe Integration`,
+    description: msg`Invoice linked to the Focus NFe Integration`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => FocusNFeWorkspaceEntity,
-    inverseSideFieldKey: 'notaFiscal',
+    inverseSideFieldKey: 'invoices',
   })
   @WorkspaceIsNullable()
   focusNFe: Relation<FocusNFeWorkspaceEntity> | null;
@@ -432,10 +432,10 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   focusNFeId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.timelineActivities,
+    standardId: INVOICE_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
-    description: msg`Events linked to the nota fiscal`,
+    description: msg`Events linked to the invoice`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -444,26 +444,14 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
-  // @WorkspaceRelation({
-  //   standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecutions,
-  //   type: RelationType.ONE_TO_MANY,
-  //   label: msg`Company Financial Closing Executions`,
-  //   description: msg`Reference to the company Financial Closing Executions`,
-  //   icon: 'IconBuildingSkyscraper',
-  //   inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
-  //   onDelete: RelationOnDeleteAction.CASCADE,
-  // })
-  // @WorkspaceIsNullable()
-  // companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
-
   @WorkspaceRelation({
-    standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecution,
+    standardId: INVOICE_FIELD_IDS.companyFinancialClosingExecution,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company Financial Closing Execution`,
     description: msg`Reference to the company financial closing execution`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
-    inverseSideFieldKey: 'notasFiscais',
+    inverseSideFieldKey: 'invoices',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsSystem()
@@ -474,7 +462,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   companyFinancialClosingExecutionId: string | null;
 
   @WorkspaceField({
-    standardId: NOTA_FISCAL_FIELD_IDS.searchVector,
+    standardId: INVOICE_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

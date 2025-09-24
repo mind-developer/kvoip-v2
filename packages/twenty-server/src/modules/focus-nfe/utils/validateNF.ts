@@ -1,4 +1,4 @@
-import { NFCom, NFSe } from 'src/modules/focus-nfe/types/NotaFiscal.type';
+import { NFCom, NFSe } from 'src/modules/focus-nfe/types/InvoiceFocusNFe.type';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidField(field: any): boolean {

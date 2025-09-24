@@ -109,11 +109,11 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
     }
   };
 
-  const handleViewNotaFiscal = (notaFiscalId: string) => {
+  const handleViewInvoice = (invoiceId: string) => {
     // Abrir a nota fiscal específica no Command Menu
     openRecordInCommandMenu({
-      recordId: notaFiscalId,
-      objectNameSingular: 'notaFiscal', // Usando string literal até ser adicionado ao CoreObjectNameSingular
+      recordId: invoiceId,
+      objectNameSingular: 'invoice', // Usando string literal até ser adicionado ao CoreObjectNameSingular
       resetNavigationStack: true,
     });
   };
@@ -181,18 +181,18 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
         <StyledInfoLabel>{t`Completed Invoice Issuance`}:</StyledInfoLabel>
         <StyledButtonContainer>
           {
-              execution.notasFiscais && execution.notasFiscais.length > 0 && (
+              execution.invoices && execution.invoices.length > 0 && (
                 <>
-                  {execution.notasFiscais.map((notaFiscal) => (
+                  {execution.invoices.map((invoice) => (
                     <>
-                      {notaFiscal.id && (
+                      {invoice.id && (
                         <StyledViewChargeButton
-                          key={notaFiscal.id}
+                          key={invoice.id}
                           variant="secondary"
                           size="small"
-                          onClick={() => handleViewNotaFiscal(notaFiscal.id)}
+                          onClick={() => handleViewInvoice(invoice.id)}
                           // Deixe maiusculo
-                          title={`${notaFiscal.nfType?.toUpperCase()}`}
+                          title={`${invoice.nfType?.toUpperCase()}`}
                           Icon={IconExternalLink}
                         />
                       )}

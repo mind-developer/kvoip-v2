@@ -1,20 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-
-import { compareDesc } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
-import { IsNull, Not } from 'typeorm';
-
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 import { NfStatus } from 'src/modules/focus-nfe/types/NfStatus';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
-import { UpdateProperties } from 'src/modules/nota-fiscal/nota-fiscal.listener';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { UpdateProperties } from 'src/modules/invoice/invoice.listener';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
 @Injectable()
 export class FocusNFeEventListener {
@@ -25,7 +19,7 @@ export class FocusNFeEventListener {
     private readonly focusNFeService: FocusNFeService,
   ) {}
 
-  @OnDatabaseBatchEvent('notaFiscal', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('invoice', DatabaseEventAction.UPDATED)
   async handleChargeUpdateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
@@ -41,65 +35,65 @@ export class FocusNFeEventListener {
       return;
     }
 
-    const notaFiscalRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
+    const invoiceRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<InvoiceWorkspaceEntity>(
         workspaceId,
-        'notaFiscal',
+        'invoice',
         { shouldBypassPermissionChecks: true },
       );
 
     const nfRepository = await Promise.all(
       events.map(async (event) => {
-        const notaFiscal = await notaFiscalRepository.findOne({
+        const invoice = await invoiceRepository.findOne({
           where: { id: event.recordId },
           relations: ['product', 'product.company', 'company', 'focusNFe'],
         });
 
         const props =
-          event.properties as UpdateProperties<NotaFiscalWorkspaceEntity>;
+          event.properties as UpdateProperties<InvoiceWorkspaceEntity>;
 
         const previousStatus = props.before.nfStatus;
 
         return {
-          notaFiscal,
+          invoice,
           previousStatus,
         };
       }),
     );
 
     await Promise.all(
-      nfRepository.map(async ({ notaFiscal, previousStatus }) => {
-        if (!notaFiscal) {
-          this.logger.log(`Invoice not found for recordId: ${notaFiscal}`);
+      nfRepository.map(async ({ invoice, previousStatus }) => {
+        if (!invoice) {
+          this.logger.log(`Invoice not found for recordId: ${invoice}`);
 
           return;
         }
 
-        const { company, product } = notaFiscal;
+        const { company, product } = invoice;
 
         if (!product || !company) {
-          notaFiscal.nfStatus = NfStatus.DRAFT;
-          await notaFiscalRepository.save(notaFiscal);
+          invoice.nfStatus = NfStatus.DRAFT;
+          await invoiceRepository.save(invoice);
 
           return;
         }
 
         try {
-          switch (notaFiscal.nfStatus) {
+          switch (invoice.nfStatus) {
             case NfStatus.DRAFT:
             case NfStatus.ISSUED:
             case NfStatus.CANCELLED: {
-              if (!notaFiscal.focusNFe?.token || !notaFiscal.nfType) return;
+              if (!invoice.focusNFe?.token || !invoice.nfType) return;
 
               const statusResult = await this.focusNFeService.getNoteStatus(
-                notaFiscal.nfType,
-                notaFiscal.id,
-                notaFiscal.focusNFe.token,
+                invoice.nfType,
+                invoice.id,
+                invoice.focusNFe.token,
               );
 
               if (!statusResult.success || !statusResult.data?.status) {
                 this.logger.warn(
-                  `Could not get status for invoice ${notaFiscal.id}`,
+                  `Could not get status for invoice ${invoice.id}`,
                 );
                 break;
               }
@@ -115,10 +109,10 @@ export class FocusNFeEventListener {
               const newStatus = statusMap[statusResult.data.status];
 
               if (newStatus) {
-                notaFiscal.nfStatus = newStatus;
+                invoice.nfStatus = newStatus;
               } else {
                 this.logger.warn(
-                  `Unknown NF status '${statusResult.data.status}' for invoice [${notaFiscal.name}] id: ${notaFiscal.id}`,
+                  `Unknown NF status '${statusResult.data.status}' for invoice [${invoice.name}] id: ${invoice.id}`,
                 );
               }
               break;
@@ -126,7 +120,7 @@ export class FocusNFeEventListener {
 
             case NfStatus.ISSUE: {
               const issueResult = await this.focusNFeService.preIssueNf(
-                notaFiscal,
+                invoice,
                 workspaceId,
               );
 
@@ -135,18 +129,18 @@ export class FocusNFeEventListener {
                   issueResult.data.status == 'erro_autorizacao' ||
                   issueResult.data.status == 'permissao_negada'
                 ) {
-                  notaFiscal.nfStatus = NfStatus.DRAFT;
+                  invoice.nfStatus = NfStatus.DRAFT;
                 } else {
-                  notaFiscal.nfStatus = NfStatus.IN_PROCESS;
+                  invoice.nfStatus = NfStatus.IN_PROCESS;
                 }
 
                 this.logger.log(
-                  `Invoice [${notaFiscal.nfType}] issued with id ${issueResult.data.ref}`,
+                  `Invoice [${invoice.nfType}] issued with id ${issueResult.data.ref}`,
                 );
               } else {
-                notaFiscal.nfStatus = NfStatus.DRAFT;
+                invoice.nfStatus = NfStatus.DRAFT;
                 this.logger.error(
-                  `Error issuing invoice ${notaFiscal.id}: ${issueResult?.error}`,
+                  `Error issuing invoice ${invoice.id}: ${issueResult?.error}`,
                 );
               }
               break;
@@ -155,20 +149,20 @@ export class FocusNFeEventListener {
             case NfStatus.CANCEL: {
               if (previousStatus !== NfStatus.ISSUED) return;
 
-              const result = await this.cancelNf(notaFiscal);
+              const result = await this.cancelNf(invoice);
 
               if (result?.success) {
-                notaFiscal.nfStatus = NfStatus.CANCELLED;
+                invoice.nfStatus = NfStatus.CANCELLED;
                 this.logger.log(
-                  `Invoice [${notaFiscal.nfType}] cancelled with id ${notaFiscal.id}`,
+                  `Invoice [${invoice.nfType}] cancelled with id ${invoice.id}`,
                 );
               } else {
                 this.logger.error(
-                  `Error cancelling invoice ${notaFiscal.id}: ${result?.error}`,
+                  `Error cancelling invoice ${invoice.id}: ${result?.error}`,
                 );
               }
 
-              notaFiscal.nfStatus = NfStatus.CANCELLED;
+              invoice.nfStatus = NfStatus.CANCELLED;
               break;
             }
 
@@ -177,29 +171,29 @@ export class FocusNFeEventListener {
               break;
           }
         } catch (error) {
-          notaFiscal.nfStatus = NfStatus.DRAFT;
+          invoice.nfStatus = NfStatus.DRAFT;
           this.logger.error(
-            `Error processing invoice ${notaFiscal.id}: ${error.message}`,
+            `Error processing invoice ${invoice.id}: ${error.message}`,
             error.stack,
           );
         }
 
-        await notaFiscalRepository.save(notaFiscal);
+        await invoiceRepository.save(invoice);
       }),
     );
   }
 
-  private cancelNf = async (notaFiscal: NotaFiscalWorkspaceEntity) => {
-    const { focusNFe } = notaFiscal;
+  private cancelNf = async (invoice: InvoiceWorkspaceEntity) => {
+    const { focusNFe } = invoice;
 
     if (!focusNFe?.token) return;
 
-    switch (notaFiscal.nfType) {
+    switch (invoice.nfType) {
       case NfType.NFSE: {
         const result = await this.focusNFeService.cancelNote(
-          notaFiscal.nfType,
-          notaFiscal.id,
-          notaFiscal.justificativa,
+          invoice.nfType,
+          invoice.id,
+          invoice.justification,
           focusNFe?.token,
         );
 
@@ -207,9 +201,9 @@ export class FocusNFeEventListener {
       }
       case NfType.NFCOM: {
         const result = await this.focusNFeService.cancelNote(
-          notaFiscal.nfType,
-          notaFiscal.id,
-          notaFiscal.justificativa,
+          invoice.nfType,
+          invoice.id,
+          invoice.justification,
           focusNFe?.token,
         );
 
