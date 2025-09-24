@@ -40,9 +40,13 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
+import { TYPE_DISCOUNT_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/type-discount.constants';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { TYPE_EMISSION_NF_OPTIONS, TypeEmissionNFEnum } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
@@ -415,4 +419,120 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.billingModel,
+    type: FieldMetadataType.SELECT,
+    label: msg`Modelo de Cobrança`,
+    description: msg`Defines how the company is billed: prepaid, postpaid, etc.`,
+    icon: 'IconCreditCard',
+    options: BILLING_MODEL_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  billingModel: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.typeDiscount,
+    type: FieldMetadataType.SELECT,
+    label: msg`Tipo do Desconto`,
+    description: msg`Type of discount applied to the company - Percent or Value`,
+    icon: 'IconFilePercent',
+    options: TYPE_DISCOUNT_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  typeDiscount: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.discount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Desconto`,
+    description: msg`Discount value, can be a percentage or fixed amount depending on the discount type`,
+    icon: 'IconFlagDiscount',
+  })
+  @WorkspaceIsNullable()
+  discount: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.quantitiesRemainingFinancialClosingsDiscounts,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Qtd. Fechamentos Financeiros Restantes p/ Desconto`,
+    description: msg`Number of financial closings remaining for this discount to be applied`,
+    icon: 'IconCalendarStats',
+  })
+  @WorkspaceIsNullable()
+  quantitiesRemainingFinancialClosingsDiscounts: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.totalValueCharged,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Valor Total Cobrado`,
+    description: msg`Total value charged to the company, in the selected currency`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  totalValueCharged: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.valueMinimumMonthly,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Custo Mínimo Mensal`,
+    description: msg`Minimum monthly cost for the company`,
+    icon: 'IconCalendarDollar',
+  })
+  @WorkspaceIsNullable()
+  valueMinimumMonthly: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.valueFixedMonthly,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Mensalidade Fixa`,
+    description: msg`Fixed monthly charge applied to the company`,
+    icon: 'IconCash',
+  })
+  @WorkspaceIsNullable()
+  valueFixedMonthly: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.slipDueDay,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Dia de Vencimento do Boleto`,
+    description: msg`Due day for the company's bank slip (boleto) payments`,
+    icon: 'IconCalendarDue',
+  })
+  @WorkspaceIsNullable()
+  slipDueDay: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.cdrId,
+    type: FieldMetadataType.TEXT,
+    label: msg`ID de Bilhetagem (CDR)`,
+    description: msg`Unique identifier for CDR integration`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  cdrId: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.typeEmissionNF,
+    type: FieldMetadataType.SELECT,
+    label: msg`Tipo de Emissão de NF`,
+    description: msg`Type of invoice issuance, sets the time of issuance`,
+    icon: 'IconNote',
+    options: TYPE_EMISSION_NF_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  typeEmissionNF: string | null;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Company Financial Closing Executions`,
+    description: msg`Reference to the company Financial Closing Executions`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
 }

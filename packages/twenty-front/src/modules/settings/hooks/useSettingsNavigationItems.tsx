@@ -213,6 +213,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         {
+          label: t`Financial Closing`,
+          path: SettingsPath.FinancialClosing,
+          Icon: IconCalendarEvent,
+          isHidden: !isAdminEnabled,
+        },
+
+        {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,

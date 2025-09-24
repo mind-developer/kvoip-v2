@@ -21,6 +21,11 @@ export class UpdateInterIntegrationInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  currentAccount: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   clientSecret: string;
 
   @Field({ nullable: true })

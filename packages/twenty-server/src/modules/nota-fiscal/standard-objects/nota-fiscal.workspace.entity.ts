@@ -25,6 +25,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { NfStatusOptions } from 'src/modules/focus-nfe/types/NfStatus';
@@ -442,6 +443,35 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  // @WorkspaceRelation({
+  //   standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecutions,
+  //   type: RelationType.ONE_TO_MANY,
+  //   label: msg`Company Financial Closing Executions`,
+  //   description: msg`Reference to the company Financial Closing Executions`,
+  //   icon: 'IconBuildingSkyscraper',
+  //   inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+  //   onDelete: RelationOnDeleteAction.CASCADE,
+  // })
+  // @WorkspaceIsNullable()
+  // companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: NOTA_FISCAL_FIELD_IDS.companyFinancialClosingExecution,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Company Financial Closing Execution`,
+    description: msg`Reference to the company financial closing execution`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    inverseSideFieldKey: 'notasFiscais',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  companyFinancialClosingExecution: Relation<CompanyFinancialClosingExecutionWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('companyFinancialClosingExecution')
+  companyFinancialClosingExecutionId: string | null;
 
   @WorkspaceField({
     standardId: NOTA_FISCAL_FIELD_IDS.searchVector,

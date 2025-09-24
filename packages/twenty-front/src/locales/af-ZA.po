@@ -943,6 +943,22 @@ msgstr "Toegewys aan"
 msgid "Assignment"
 msgstr "Toewysing"
 
+#. js-lingui-id: 0HA38x
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+msgid "At"
+msgstr ""
+
+#. js-lingui-id: wqWX3R
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+#~ msgid "At {0} of the last day of the month"
+#~ msgstr ""
+
+#. js-lingui-id: 9OmijL
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+#~ msgid "At {1} of every day {2}"
+#~ msgstr ""
+
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
@@ -1231,6 +1247,16 @@ msgstr "Kennisgewing geskiedenis"
 msgid "Chat"
 msgstr "Gesels"
 
+#. js-lingui-id: 86UtDt
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Charge Value"
+msgstr ""
+
+#. js-lingui-id: C+E5yG
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+#~ msgid "Charge Value:"
+#~ msgstr ""
+
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -1345,6 +1371,11 @@ msgstr "Maak toe"
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Sluit opdragkieslys"
+
+#. js-lingui-id: siYMEB
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
+msgid "Closing Day"
+msgstr ""
 
 #. js-lingui-id: EWPtMO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2309,6 +2340,12 @@ msgstr "Wys formaat"
 msgid "Display text on multiple lines"
 msgstr "Vertoon teks op meerdere reëls"
 
+#. js-lingui-id: 679Vtm
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+msgid "Do not emit invoice"
+msgstr ""
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -2404,6 +2441,7 @@ msgid "Earliest date"
 msgstr "Vroegste datum"
 
 #. js-lingui-id: ePK91l
+#: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -2554,6 +2592,18 @@ msgstr "E-posse"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
 msgstr "E-pos instellings"
+
+#. js-lingui-id: ss257c
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+msgid "Emit invoice after payment"
+msgstr ""
+
+#. js-lingui-id: 5rGoxP
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
+msgid "Emit invoice together with the closing"
+msgstr ""
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -3073,6 +3123,33 @@ msgstr "Filtreer"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "Filtreerders"
+
+#. js-lingui-id: RaGSJi
+#: src/pages/settings/financial-closing/SettingsFinancialClosingNew.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Financial Closing"
+msgstr ""
+
+#. js-lingui-id: cZKC+i
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+msgid "Financial closing execution history"
+msgstr ""
+
+#. js-lingui-id: 5/XwPj
+#: src/pages/settings/financial-closing/SettingsFinancialClosingNew.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Financial Closings"
+msgstr ""
 
 #. js-lingui-id: JmZ/+d
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3699,6 +3776,16 @@ msgstr "Nooi gebruiker"
 msgid "Invite your team"
 msgstr "Nooi jou span"
 
+#. js-lingui-id: ACC8JC
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Invoice Emission Type"
+msgstr ""
+
+#. js-lingui-id: rL/Ga2
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+#~ msgid "Invoice Emission Type:"
+#~ msgstr ""
+
 #. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
@@ -4004,6 +4091,17 @@ msgstr "Lys"
 msgid "Listings"
 msgstr "Lyste"
 
+#. js-lingui-id: yQE2r9
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Loading"
+msgstr ""
+
+#. js-lingui-id: wMRjyY
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
+msgid "Loading company executions"
+msgstr ""
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
@@ -4038,6 +4136,11 @@ msgstr "Aanmeldingsteken ontbreek. Twee Faktor Magtiging kan nie geaktiveer word
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Teken uit"
+
+#. js-lingui-id: XnNm6j
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Logs of Execution"
+msgstr ""
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -4304,6 +4407,7 @@ msgstr "moet 'n reeks van geldige e-posse wees"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -4377,6 +4481,7 @@ msgid "Never expires"
 msgstr "Verval nooit"
 
 #. js-lingui-id: isRobC
+#: src/pages/settings/financial-closing/SettingsFinancialClosingNew.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "New"
@@ -4532,6 +4637,11 @@ msgstr "Geen beskikbare velde om te kies nie"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "Geen verandering waargeneem nie"
+
+#. js-lingui-id: r8v6mL
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
+msgid "No company executions found"
+msgstr ""
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -5128,6 +5238,54 @@ msgstr "Portugees — Portugal"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "Poskode"
+
+#. js-lingui-id: Ni3D44
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#~ msgid "Pós-Ilimitado"
+#~ msgstr ""
+
+#. js-lingui-id: JtJxxb
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#~ msgid "Pós-Pago"
+#~ msgstr ""
+
+#. js-lingui-id: tGaokP
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Post-paid"
+msgstr ""
+
+#. js-lingui-id: HSN+Cu
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Post-unlimited"
+msgstr ""
+
+#. js-lingui-id: lNX1kG
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#~ msgid "Pré-Ilimitado"
+#~ msgstr ""
+
+#. js-lingui-id: 92vwpK
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#~ msgid "Pré-Pago"
+#~ msgstr ""
+
+#. js-lingui-id: EeVpQW
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Pre-paid"
+msgstr ""
+
+#. js-lingui-id: BoG5Jt
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Pre-unlimited"
+msgstr ""
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -6182,11 +6340,21 @@ msgid "State"
 msgstr "Staat"
 
 #. js-lingui-id: uAQUqI
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Toestand"
+
+#. js-lingui-id: htTcVX
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+#~ msgid "Status:"
+#~ msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts

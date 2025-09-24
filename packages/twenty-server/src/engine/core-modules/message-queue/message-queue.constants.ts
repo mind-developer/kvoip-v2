@@ -22,4 +22,5 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   chatMessageManagerSendMessageQueue = 'chat-message-manager-send-message-queue',
   chatMessageManagerSaveMessageQueue = 'chat-message-manager-save-message-queue',
+  financialClosingQueue = 'financial-closing-queue',
 }

@@ -148,11 +148,25 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+
+  billingModel: '4cc08331-5132-469f-97bf-c74d978c0ac5',
+  cdrId: '90cdde6a-eaf2-4b96-8bd9-369a2a851e64',
+  typeDiscount: '134bf698-f696-4c43-b8a8-9eb3e6a2cc41',
+  discount: '8f18333e-fd58-4a58-86e6-a1257b1f75c5',
+  quantitiesRemainingFinancialClosingsDiscounts:
+    '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
+  totalValueCharged: '7f37e462-60dc-4088-8b84-90702f58abed',
+  valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
+  valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
+  slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
+  typeEmissionNF: '2dc5ea21-1510-42fd-b3a8-cd38dab6d10d',
+
   codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
   emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
   notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
+  companyFinancialClosingExecutions: '22c5ce2b-375b-45ea-81e6-8f379098cc41',
 } as const;
 
 export const CHARGE_STANDARD_FIELD_IDS = {
@@ -178,6 +192,7 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
   notaFiscal: 'c3a90d91-f458-4331-8d55-ff86a066191d',
+  companyFinancialClosingExecutions: '8eecb7cc-889b-4192-90d9-32626d021c9e',
 } as const;
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
@@ -240,6 +255,38 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
 } as const;
+
+export const FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
+  name: 'f51db802-9330-43f0-8a18-e4816b24a9d6',
+  executedAt: 'b3ee06fe-cb77-4b1f-8df9-39c186e48ff1',
+  financialClosingId: '758004cc-af11-4adf-912d-f416c3217744',
+  status: '92df31e3-e107-4977-8f2b-d593d4c982c3',
+  companiesTotal: '32f76dca-2399-4cb3-8958-4ed9621d9324',
+  companiesWithError: 'b353e425-18de-4e75-90a6-6b1c79606a37',
+  completedCompanySearch: 'f61236c0-ad8c-47a2-bbe1-1b9a7c7d07f4',
+  completedCostIdentification: '30d59336-6225-4d19-8bb5-b52122ee8826',
+  completedBoletoIssuance: '1365faae-3a89-4382-a912-8f2eb954f7a8',
+  completedInvoiceIssuance: '5f54730e-fc86-40fe-96e0-101f86ff7df6',
+  billingModel: '83e79212-06ab-4663-81c3-5ccf51c0a839',
+  logs: '3472f9a8-39c3-41fa-9898-615d1f4613e2',
+  companyFinancialClosingExecutions: '6e47f8b7-2f7e-4fef-a0a0-e793ca9e541e',
+};
+
+export const COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
+  name: '8f3d5a71-7f25-4d84-baf0-1ecac13d5b4e',
+  executedAt: '7f41255c-5b55-4e3c-b1cf-86ddcfc1fb44',
+  financialClosingExecution: '2a0a6e41-6f3b-4c43-b726-298a61d43dbd',
+  status: 'b6e58a10-54cd-43c1-a2d3-5a62b87e96b4',
+  company: 'd0114e38-b19b-430a-a84e-24193d5b3489',
+  chargeValue: 'd12f743b-4c20-4c57-8b5e-4c83a8780a92',
+  calculatedChargeValue: 'f67a8f47-63b2-497a-8725-98f0b36a7cf9',
+  completedBoletoIssuance: 'a97ed23b-6ef5-49a2-9e9d-28c3f76e8b2c',
+  invoiceEmissionType: '2c1b2c94-6ff2-44e6-9d12-dc2d7af08420',
+  completedInvoiceIssuance: '71bfc1f2-65cd-40e4-8c6f-89453f2a5e0b',
+  charge: '4c8b620c-33db-470a-a080-61c86e23cea5',
+  notasFiscais: 'a43c42f1-79b0-40db-9e12-ab4d093c2464',
+  logs: 'ce3b3f25-dba1-46f2-9c33-bc2a94f5c10e',
+};
 
 export const LINKLOGS_STANDARD_FIELD_IDS = {
   name: '20202020-8e7f-6a5b-4c3d-2e1f0a9b8c7d',
@@ -331,6 +378,7 @@ export const NOTA_FISCAL_FIELD_IDS = {
   dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
   numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
   createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
+  companyFinancialClosingExecution: 'ca00afdd-cf6e-4189-8cc4-b814cd06d705',
 } as const;
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

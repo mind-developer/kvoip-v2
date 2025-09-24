@@ -41,18 +41,36 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
   return (
     <StyledFormContainer>
       <StyledRow>
+        <Controller
+          name="integrationName"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label="Integration name"
+              value={value as string}
+              onChange={onChange}
+              type="text"
+              disabled={disabled}
+              placeholder="Banco Inter"
+              fullWidth
+            />
+          )}
+        />
+      </StyledRow>
+
+      <StyledRow>
         <StyledHalfWidthInput>
           <Controller
-            name="integrationName"
+            name="currentAccount"
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                label="Integration name"
+                label="Current account"
                 value={value as string}
                 onChange={onChange}
                 type="text"
                 disabled={disabled}
-                placeholder="Banco Inter"
+                placeholder="********-**"
                 fullWidth
               />
             )}

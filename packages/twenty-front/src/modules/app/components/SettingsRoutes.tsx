@@ -28,6 +28,9 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
+import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
+import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
+import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -188,6 +191,24 @@ const SettingsAgentForm = lazy(() =>
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
     default: module.SettingsWorkspaceMembers,
+  })),
+);
+
+const SettingsFinancialClosing = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosing').then((module) => ({
+    default: module.SettingsFinancialClosing,
+  })),
+);
+
+const SettingsFinancialClosingExecutions = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingExecutions').then((module) => ({
+    default: module.SettingsFinancialClosingExecutions,
+  })),
+);
+
+const SettingsFinancialClosingNew = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingNew').then((module) => ({
+    default: module.SettingsFinancialClosingNew,
   })),
 );
 
@@ -807,6 +828,34 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
       </Route>
+
+
+      {/* Kvoip : TO-DO */}
+      <Route
+        path={SettingsPath.FinancialClosing}
+        element={<SettingsFinancialClosing />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingNew}
+        element={<SettingsFinancialClosingNew />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingEdit}
+        element={<SettingsFinancialClosingEdit />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingExecutions}
+        element={<SettingsFinancialClosingExecutions />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingExecution}
+        element={<SettingsFinancialClosingExecutionShow />}
+      />
+      <Route
+        path={SettingsPath.CompanyFinancialClosingExecution}
+        element={<SettingsCompanyFinancialClosingExecutionShow />}
+      />
+      
     </Routes>
   </Suspense>
 );

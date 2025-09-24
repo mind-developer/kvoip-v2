@@ -44,4 +44,6 @@ export enum CoreObjectNameSingular {
   Chatbot = 'chatbot',
   Support = 'support',
   Product = 'product',
+  FinancialClosingExecution = 'financialClosingExecution',
+  CompanyFinancialClosingExecution = 'companyFinancialClosingExecution',
 }
