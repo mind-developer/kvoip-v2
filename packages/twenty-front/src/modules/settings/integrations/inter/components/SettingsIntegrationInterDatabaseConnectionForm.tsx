@@ -45,7 +45,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           name="integrationName"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <TextInputV2
+            <TextInput
               label="Integration name"
               value={value as string}
               onChange={onChange}
@@ -65,7 +65,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                label="Integration name"
+                label="Current account"
                 value={value as string}
                 onChange={onChange}
                 type="text"

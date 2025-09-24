@@ -218,33 +218,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconCalendarEvent,
           isHidden: !isAdminEnabled,
         },
-        {
-          label: t`Security`,
-          path: SettingsPath.Security,
-          Icon: IconKey,
-          isAdvanced: true,
-          isHidden: !permissionMap[SettingPermissionType.SECURITY],
-        },
-      ],
-    },
-    {
-      label: t`Developers`,
-      isAdvanced: true,
-      items: [
-        {
-          label: t`APIs`,
-          path: SettingsPath.APIs,
-          Icon: IconApi,
-          isAdvanced: true,
-          isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
-        },
-        {
-          label: t`Webhooks`,
-          path: SettingsPath.Webhooks,
-          Icon: IconWebhook,
-          isAdvanced: true,
-          isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
-        },
+
         {
           label: t`AI`,
           path: SettingsPath.AI,

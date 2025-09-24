@@ -1425,70 +1425,6 @@ msgstr "Kompakte aansig"
 msgid "Companies"
 msgstr "Maatskappye"
 
-#. js-lingui-id: R9Ietm
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Company Execution"
-msgstr ""
-
-#. js-lingui-id: SrOxs9
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Company Executions"
-msgstr ""
-
-#. js-lingui-id: 8Jd9P3
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Company:"
-msgstr ""
-
-#. js-lingui-id: nZmECt
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Boleto Issuance"
-msgstr ""
-
-#. js-lingui-id: 8jRDRW
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Boleto Issuance:"
-#~ msgstr ""
-
-#. js-lingui-id: G6usDl
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Company Search"
-msgstr ""
-
-#. js-lingui-id: tflHD9
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Company Search:"
-#~ msgstr ""
-
-#. js-lingui-id: RB1Xcb
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Cost Identification"
-msgstr ""
-
-#. js-lingui-id: MghkHH
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Cost Identification:"
-#~ msgstr ""
-
-#. js-lingui-id: pvmZhS
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Invoice Issuance"
-msgstr ""
-
-#. js-lingui-id: cztDBc
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Invoice Issuance:"
-#~ msgstr ""
-
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
@@ -2803,12 +2739,6 @@ msgstr "Entiteit-ID na knipbord gekopieer"
 msgid "Environment variable"
 msgstr "Omgewingsveranderlike"
 
-#. js-lingui-id: SlfejT
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Error"
-msgstr ""
-
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -2873,11 +2803,6 @@ msgstr "Fout tydens die oorskakeling van subskripsie na Organisasie Plan."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to Yearly."
 msgstr "Fout tydens die oorskakeling van subskripsie na jaarliks."
-
-#. js-lingui-id: UirGxE
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-msgid "Errors"
-msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3700,11 +3625,6 @@ msgstr "Aanvanklike lus stap-ID's"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Input"
 msgstr "Invoer"
-
-#. js-lingui-id: A2PiTl
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Information of Execution"
-msgstr ""
 
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4778,12 +4698,6 @@ msgstr "Geen Lêers Nie"
 msgid "No folders found for this account"
 msgstr "Geen gidse is vir hierdie rekening gevind nie"
 
-#. js-lingui-id: emrO20
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
-msgid "No executions found"
-msgstr ""
-
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -4808,11 +4722,6 @@ msgstr "Geen oorhandigings voldoen aan jou soektog nie"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Geen jongste weergawe gevind nie"
-
-#. js-lingui-id: XZkeaI
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList.tsx
-msgid "No logs found"
-msgstr ""
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5178,12 +5087,6 @@ msgstr "Wagwoord herstel skakel is na die e-pos gestuur"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"
 msgstr "Plak die kode hieronder"
-
-#. js-lingui-id: UbRKMZ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Pending"
-msgstr ""
 
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -6105,11 +6008,6 @@ msgstr "Kies kopry"
 msgid "Select Source"
 msgstr "Kies Bron"
 
-#. js-lingui-id: 7Pxp0Y
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Select the day..."
-msgstr ""
-
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -6556,12 +6454,6 @@ msgstr "Inschrijving is verander na jaarliks."
 msgid "Successfully merged {recordCount} records"
 msgstr "Suksesvol saamgevoeg {recordCount} rekords"
 
-#. js-lingui-id: zzDlyQ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Success"
-msgstr ""
-
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -6898,11 +6790,6 @@ msgstr "Dit sal die databasiswaarde na omgewing/verstekwaarde herstel. Die datab
 msgid "Tidy up workflow"
 msgstr "Maak werkvloeie netjies"
 
-#. js-lingui-id: LhMjLm
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Time"
-msgstr ""
-
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -7117,16 +7004,6 @@ msgstr "Opdateer agentinligting"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Werk u rekeningkonfigurasie by. Stel enige kombinasie van IMAP, SMTP, en CalDAV op soos benodig."
-
-#. js-lingui-id: 4StVS4
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Updated at"
-msgstr ""
-
-#. js-lingui-id: NpoCid
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Updated at:"
-#~ msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx

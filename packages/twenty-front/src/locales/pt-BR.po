@@ -454,6 +454,7 @@ msgstr "Adicionar opção"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
 msgstr "Adicionar ou remover usuários"
+msgstr "Adicionar ou remover usuários"
 
 #. js-lingui-id: 7YdkgZ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -608,10 +609,12 @@ msgstr "IA"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "AI Agent"
 msgstr "Agente de IA"
+msgstr "Agente de IA"
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "AI Model"
+msgstr "Modelo de IA"
 msgstr "Modelo de IA"
 
 #. js-lingui-id: QwgquD
@@ -646,6 +649,7 @@ msgstr "Todos os emails e eventos ligados a esta conta ({accountHandle}) serão 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
+msgstr "Todos os campos"
 msgstr "Todos os campos"
 
 #. js-lingui-id: 623MHa
@@ -943,22 +947,6 @@ msgstr "Atribuído a"
 msgid "Assignment"
 msgstr "Atribuição"
 
-#. js-lingui-id: 0HA38x
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-msgid "At"
-msgstr "Às"
-
-#. js-lingui-id: wqWX3R
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-#~ msgid "At {0} of the last day of the month"
-#~ msgstr "Às {0} do último dia do mês"
-
-#. js-lingui-id: 9OmijL
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-#~ msgid "At {1} of every day {2}"
-#~ msgstr "Em {1} de cada dia {2}"
-
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
@@ -1247,11 +1235,6 @@ msgstr "Changelog"
 msgid "Chat"
 msgstr "Conversar"
 
-#. js-lingui-id: 86UtDt
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Charge Value"
-msgstr "Valor da Cobrança"
-
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -1424,6 +1407,7 @@ msgstr "Empresas"
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
 msgid "Conditions"
+msgstr "Condições"
 msgstr "Condições"
 
 #. js-lingui-id: Vj43Y/
@@ -1815,11 +1799,6 @@ msgstr "Criar Espaço de Trabalho"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
 msgstr "Crie seu espaço de trabalho"
-
-#. js-lingui-id: YeUQpx
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Created at"
-msgstr "Criado em"
 
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -2292,6 +2271,7 @@ msgstr "Descrição (Opcional)"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "destruir"
+msgstr "destruir"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2593,18 +2573,6 @@ msgstr "E-mails"
 msgid "Emails settings"
 msgstr "Configurações de emails"
 
-#. js-lingui-id: ss257c
-#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
-#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
-msgid "Emit invoice after payment"
-msgstr "Emitir NF após o pagamento"
-
-#. js-lingui-id: 5rGoxP
-#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
-#: src/modules/settings/financial-closing/constants/TypeEmissionNF.ts
-msgid "Emit invoice together with the closing"
-msgstr "Emitir NF junto com o fechamento"
-
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -2713,11 +2681,6 @@ msgstr "Insira as informações para configurar a conexão"
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Insira o prompt do sistema que define o comportamento e as capacidades deste agente"
 
-#. js-lingui-id: MCN1I4
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Enter the name of the closing"
-msgstr "Entre com o nome do fechamento"
-
 #. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
@@ -2773,6 +2736,7 @@ msgstr "Erro ao editar Fornecedor de Identidade SSO"
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Error loading message"
 msgstr "Erro ao carregar mensagem"
+msgstr "Erro ao carregar mensagem"
 
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2808,11 +2772,6 @@ msgstr "Erro ao mudar a subscrição para plano empresarial."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to Yearly."
 msgstr "Erro ao mudar a subscrição para anual."
-
-#. js-lingui-id: UirGxE
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-msgid "Errors"
-msgstr "Erros"
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2856,56 +2815,6 @@ msgstr "Excluir as seguintes pessoas e domínios da minha sincronização de e-m
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Existing layouts"
 msgstr "Layouts existentes"
-
-#. js-lingui-id: L4jnDP
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/modules/settings/financial-closing/constants/LogLevelColors.ts
-msgid "Executed"
-msgstr "Executado"
-
-#. js-lingui-id: 0r4e6z
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Execution Date"
-msgstr "Data de Execução"
-
-#. js-lingui-id: j0S1n8
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-msgid "Execution Details"
-msgstr "Detalhes de Execução"
-
-#. js-lingui-id: f/b1TA
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
-msgid "Execution History"
-msgstr "Histórico de Execuções"
-
-#. js-lingui-id: KBTDuI
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-msgid "Execution Information"
-msgstr "Informações de execução"
-
-#. js-lingui-id: 2A9Jmz
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-msgid "Execution Logs"
-msgstr "Logs de Execução"
-
-#. js-lingui-id: Kulopc
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Execution not found"
-msgstr "Execução não encontrada"
-
-#. js-lingui-id: um816y
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Executions"
-msgstr "Execuções"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -3686,11 +3595,6 @@ msgstr "IDs iniciais das etapas de loop"
 msgid "Input"
 msgstr "Entrada"
 
-#. js-lingui-id: A2PiTl
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Information of Execution"
-msgstr "Informações de Execução"
-
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -3804,6 +3708,7 @@ msgstr "Espaço de trabalho inválido"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "Convites"
+msgstr "Convites"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
@@ -3840,11 +3745,6 @@ msgstr "Convidar usuário"
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite your team"
 msgstr "Convide a sua equipa"
-
-#. js-lingui-id: ACC8JC
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Invoice Emission Type"
-msgstr "Tipo de emissão de NF"
 
 #. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3929,6 +3829,7 @@ msgstr "não é uma URL válida"
 #. js-lingui-id: MgIflq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid UUID"
+msgstr "não é um UUID válido"
 msgstr "não é um UUID válido"
 
 #. js-lingui-id: ldI7NO
@@ -4179,6 +4080,7 @@ msgstr "Carregando dados de métricas..."
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "Carregando..."
+msgstr "Carregando..."
 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -4197,11 +4099,6 @@ msgstr "Token de login ausente. A configuração da Autenticação em Duas Etapa
 msgid "Logout"
 msgstr "Terminar sessão"
 
-#. js-lingui-id: XnNm6j
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Logs of Execution"
-msgstr "Logs de Execução"
-
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
@@ -4217,11 +4114,6 @@ msgstr "Procure utilizadores para personificá-los."
 msgid "Mail Account"
 msgstr "Conta de Correio"
 
-#. js-lingui-id: lD1zht
-#: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
-msgid "Manage all financial closings here."
-msgstr "Gerencie todos os fechamentos financeiros aqui."
-
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
@@ -4230,6 +4122,7 @@ msgstr "Gerenciar chaves API e webhooks"
 #. js-lingui-id: nvgUPq
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Manage billing information"
+msgstr "Gerenciar informações de faturamento"
 msgstr "Gerenciar informações de faturamento"
 
 #. js-lingui-id: U8dG4j
@@ -4763,12 +4656,6 @@ msgstr "Nenhum arquivo"
 msgid "No folders found for this account"
 msgstr "Nenhuma pasta encontrada para esta conta"
 
-#. js-lingui-id: emrO20
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
-msgid "No executions found"
-msgstr "Nenhuma execução encontrada"
-
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -4793,11 +4680,6 @@ msgstr "Nenhuma transferência corresponde à sua pesquisa"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Nenhuma versão mais recente encontrada"
-
-#. js-lingui-id: XZkeaI
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList.tsx
-msgid "No logs found"
-msgstr ""
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5164,12 +5046,6 @@ msgstr "O link de reposição da palavra-passe foi enviado para o e-mail"
 msgid "Paste the code below"
 msgstr "Cole o código abaixo"
 
-#. js-lingui-id: UbRKMZ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Pending"
-msgstr ""
-
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5321,54 +5197,6 @@ msgstr "Português — Portugal"
 msgid "Postcode"
 msgstr "Código postal"
 
-#. js-lingui-id: Ni3D44
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Ilimitado"
-#~ msgstr "Pós-Ilimitado"
-
-#. js-lingui-id: JtJxxb
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Pago"
-#~ msgstr ""
-
-#. js-lingui-id: tGaokP
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-paid"
-msgstr "Pós-pago"
-
-#. js-lingui-id: HSN+Cu
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-unlimited"
-msgstr "Pós-Ilimitado"
-
-#. js-lingui-id: lNX1kG
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Ilimitado"
-#~ msgstr ""
-
-#. js-lingui-id: 92vwpK
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Pago"
-#~ msgstr ""
-
-#. js-lingui-id: EeVpQW
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-paid"
-msgstr "Pré-Pago"
-
-#. js-lingui-id: BoG5Jt
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-unlimited"
-msgstr "Pré-Ilimitado"
-
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
@@ -5414,6 +5242,7 @@ msgstr "Pro"
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Processing..."
+msgstr "Processando..."
 msgstr "Processando..."
 
 #. js-lingui-id: vERlcd
@@ -6090,11 +5919,6 @@ msgstr "Selecione a linha do cabeçalho"
 msgid "Select Source"
 msgstr "Selecionar Fonte"
 
-#. js-lingui-id: 7Pxp0Y
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Select the day..."
-msgstr "Selecione o dia..."
-
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -6385,6 +6209,7 @@ msgstr "Ordenar"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Source"
 msgstr "Fonte"
+msgstr "Fonte"
 
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -6436,12 +6261,6 @@ msgstr "Estado"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Estado"
-
-#. js-lingui-id: htTcVX
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Status:"
-#~ msgstr "Status:"
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -6505,6 +6324,7 @@ msgstr "Assunto, corpo e anexos serão partilhados com a sua equipa."
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Submit"
 msgstr "Enviar"
+msgstr "Enviar"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -6540,12 +6360,6 @@ msgstr "A subscrição foi alterada para anual."
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Successfully merged {recordCount} records"
 msgstr "{recordCount, plural, one {Registo mesclado com sucesso} other {Registos mesclados com sucesso}}"
-
-#. js-lingui-id: zzDlyQ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Success"
-msgstr "Sucesso"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7050,6 +6864,7 @@ msgstr "Único"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "Desconhecido"
+msgstr "Desconhecido"
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -7081,11 +6896,13 @@ msgstr "Workflow sem título"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "atualizar"
+msgstr "atualizar"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
+msgstr "Atualizar"
 msgstr "Atualizar"
 
 #. js-lingui-id: YT2VWW
@@ -7097,11 +6914,6 @@ msgstr "Atualizar as informações do agente"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Atualize a configuração da sua conta. Configure qualquer combinação de IMAP, SMTP e CalDAV conforme necessário."
-
-#. js-lingui-id: 4StVS4
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Updated at"
-msgstr "Atualizado em"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7121,6 +6933,7 @@ msgstr "Carregar arquivo"
 #. js-lingui-id: IQ3gAw
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Upload File"
+msgstr "Carregar arquivo"
 msgstr "Carregar arquivo"
 
 #. js-lingui-id: akDOEO
@@ -7208,6 +7021,7 @@ msgstr "Validar dados"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Value"
+msgstr "Valor"
 msgstr "Valor"
 
 #. js-lingui-id: UZHvVi

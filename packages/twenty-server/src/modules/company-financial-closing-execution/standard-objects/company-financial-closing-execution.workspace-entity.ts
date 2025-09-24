@@ -9,9 +9,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
-import {
-  COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 import { TYPE_EMISSION_NF_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -32,7 +30,8 @@ import { Relation } from 'typeorm';
   labelPlural: msg`Company Financial Closing Executions`,
   description: msg`Execution logs for financial closings by company`,
   icon: 'IconBuilding',
-  labelIdentifierStandardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId:
+    COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
@@ -47,7 +46,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   name: string;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.executedAt,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.executedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Executed At`,
     description: msg`Date and time of execution`,
@@ -56,7 +56,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   executedAt: Date;
 
   @WorkspaceRelation({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.financialClosingExecution,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.financialClosingExecution,
     type: RelationType.MANY_TO_ONE,
     label: msg`Financial Closing Execution`,
     description: msg`Reference to the financial closing execution`,
@@ -99,7 +100,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   companyId: string | null;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.chargeValue,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.chargeValue,
     type: FieldMetadataType.NUMBER,
     label: msg`Charge Value`,
     description: msg`The amount to be charged to the company`,
@@ -109,7 +111,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   chargeValue: number;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.calculatedChargeValue,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.calculatedChargeValue,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Calculated Charge Value`,
     description: msg`Whether the charge value was successfully calculated`,
@@ -119,7 +122,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   calculatedChargeValue: boolean;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedBoletoIssuance,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedBoletoIssuance,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Boleto Issuance`,
     description: msg`Whether boleto issuance step completed`,
@@ -145,7 +149,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   chargeId: string | null;
 
   @WorkspaceRelation({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notasFiscais,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notasFiscais,
     type: RelationType.ONE_TO_MANY,
     label: msg`Nota Fiscal`,
     description: msg`Reference to the nota fiscal`,
@@ -157,7 +162,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   notasFiscais: Relation<NotaFiscalWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoiceEmissionType,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoiceEmissionType,
     type: FieldMetadataType.SELECT,
     label: msg`Invoice Emission Type`,
     description: msg`The type of invoice emission`,
@@ -168,7 +174,8 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   invoiceEmissionType: string | null;
 
   @WorkspaceField({
-    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedInvoiceIssuance,
+    standardId:
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedInvoiceIssuance,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Invoice Issuance`,
     description: msg`Whether invoice issuance step completed`,

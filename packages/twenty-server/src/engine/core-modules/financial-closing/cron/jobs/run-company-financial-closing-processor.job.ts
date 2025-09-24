@@ -3,7 +3,10 @@ import { TypeEmissionNFEnum } from 'src/engine/core-modules/financial-closing/co
 import { CompanyFinancialClosingJobData } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
 import { FinancialClosingChargeService } from 'src/engine/core-modules/financial-closing/financial-closing-charge.service';
 import { FinancialClosingNFService } from 'src/engine/core-modules/financial-closing/financial-closing-focusnf.service';
-import { addCompanyFinancialClosingExecutionErrorLog, addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
+import {
+  addCompanyFinancialClosingExecutionErrorLog,
+  addCompanyFinancialClosingExecutionLog,
+} from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -20,7 +23,9 @@ import { Repository } from 'typeorm';
   scope: Scope.DEFAULT,
 })
 export class RunCompanyFinancialClosingJobProcessor {
-  private readonly logger = new Logger(RunCompanyFinancialClosingJobProcessor.name);
+  private readonly logger = new Logger(
+    RunCompanyFinancialClosingJobProcessor.name,
+  );
 
   constructor(
     private readonly financialClosingChargeService: FinancialClosingChargeService,
@@ -30,17 +35,21 @@ export class RunCompanyFinancialClosingJobProcessor {
 
   @Process(RunCompanyFinancialClosingJobProcessor.name)
   async handle(data: CompanyFinancialClosingJobData): Promise<void> {
-    let companyFinancialClosingExecutionsRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity> | undefined;
-    let financialClosingExecutionsRepository: Repository<FinancialClosingExecutionWorkspaceEntity> | undefined;
+    let companyFinancialClosingExecutionsRepository:
+      | Repository<CompanyFinancialClosingExecutionWorkspaceEntity>
+      | undefined;
+    let financialClosingExecutionsRepository:
+      | Repository<FinancialClosingExecutionWorkspaceEntity>
+      | undefined;
     let charge: any = null;
-    
+
     try {
       companyFinancialClosingExecutionsRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+        (await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
           data.workspaceId,
           'companyFinancialClosingExecution',
           { shouldBypassPermissionChecks: true },
-        );
+        )) as Repository<CompanyFinancialClosingExecutionWorkspaceEntity>;
 
       financialClosingExecutionsRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialClosingExecutionWorkspaceEntity>(
@@ -50,8 +59,12 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
       this.financialClosingChargeService.validateRequiredFields(data.company);
-      this.financialClosingChargeService.validateCep(data.company.address.addressPostcode || '');
-      this.financialClosingChargeService.validateState(data.company.address.addressState);
+      this.financialClosingChargeService.validateCep(
+        data.company.address.addressPostcode || '',
+      );
+      this.financialClosingChargeService.validateState(
+        data.company.address.addressState,
+      );
 
       // Tentativa de emissão de cobrança
       charge = await this.financialClosingChargeService.emitChargeForCompany(
@@ -63,103 +76,123 @@ export class RunCompanyFinancialClosingJobProcessor {
 
       // Atualização do log de execução se a cobrança foi bem-sucedida
       if (charge) {
-        
-        await companyFinancialClosingExecutionsRepository.update(data.companyExecutionLog.id, {
-          chargeId: charge.id,
-          completedBoletoIssuance: true,
-          // status: FinancialClosingExecutionStatusEnum.SUCCESS,
-        });
-        
+        await companyFinancialClosingExecutionsRepository.update(
+          data.companyExecutionLog.id,
+          {
+            chargeId: charge.id,
+            completedBoletoIssuance: true,
+            // status: FinancialClosingExecutionStatusEnum.SUCCESS,
+          },
+        );
+
         // Log de sucesso
         const successMessage = `Cobrança emitida com sucesso. Charge ID: ${charge.id}`;
-          await addCompanyFinancialClosingExecutionLog(
-            data.companyExecutionLog,
-            companyFinancialClosingExecutionsRepository,
-            successMessage,
-            'info',
-            FinancialClosingExecutionStatusEnum.SUCCESS,
-            data.company,
-            { chargeId: charge.id }
-          );
-
+        await addCompanyFinancialClosingExecutionLog(
+          data.companyExecutionLog,
+          companyFinancialClosingExecutionsRepository,
+          successMessage,
+          'info',
+          FinancialClosingExecutionStatusEnum.SUCCESS,
+          data.company,
+          { chargeId: charge.id },
+        );
       } else {
-        throw new Error('Cobrança não foi gerada - retorno nulo do serviço de emissão de cobrança');
+        throw new Error(
+          'Cobrança não foi gerada - retorno nulo do serviço de emissão de cobrança',
+        );
+      }
+    } catch (error) {
+      // Tratamento específico para erros da API de cobrança
+      let errorMessage = 'Não foi possível gerar cobrança';
+
+      // Tenta extrair o erro real do message se ele contém um JSON
+      let actualError = error;
+      if (
+        error?.message &&
+        typeof error.message === 'string' &&
+        error.message.includes('Error: {')
+      ) {
+        try {
+          // Extrai o JSON do final da mensagem
+          const jsonMatch = error.message.match(/Error: (\{[\s\S]*\})$/);
+          if (jsonMatch) {
+            actualError = JSON.parse(jsonMatch[1]);
+          }
+        } catch (parseError) {
+          // Se não conseguir fazer parse, usa o erro original
+        }
       }
 
-      } catch (error) {
-        // Tratamento específico para erros da API de cobrança
-        let errorMessage = 'Não foi possível gerar cobrança';
-        
-        // Tenta extrair o erro real do message se ele contém um JSON
-        let actualError = error;
-        if (error?.message && typeof error.message === 'string' && error.message.includes('Error: {')) {
-          try {
-            // Extrai o JSON do final da mensagem
-            const jsonMatch = error.message.match(/Error: (\{[\s\S]*\})$/);
-            if (jsonMatch) {
-              actualError = JSON.parse(jsonMatch[1]);
-            }
-          } catch (parseError) {
-            // Se não conseguir fazer parse, usa o erro original
-          }
-        }
+      if (
+        actualError?.response?.data?.violacoes &&
+        Array.isArray(actualError.response.data.violacoes)
+      ) {
+        // Erro da API de cobrança com violações específicas
+        const violacoes = actualError.response.data.violacoes;
+        const violacoesText = violacoes
+          .map((v: any) => `${v.propriedade}: ${v.razao} (valor: "${v.valor}")`)
+          .join('; ');
+        errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
+      } else if (actualError?.response?.data?.detail) {
+        // Erro da API de cobrança com detalhe genérico
+        errorMessage = `Erro na API de cobrança: ${actualError.response.data.detail}`;
+      } else if (
+        actualError?.data?.violacoes &&
+        Array.isArray(actualError.data.violacoes)
+      ) {
+        // Erro direto com violações (sem response)
+        const violacoes = actualError.data.violacoes;
+        const violacoesText = violacoes
+          .map(
+            (v: any) =>
+              `${v.propriedade}: ${v.razao} (valor enviado: "${v.valor}")`,
+          )
+          .join('; ');
+        errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
+      } else if (actualError?.data?.detail) {
+        // Erro direto com detalhe (sem response)
+        errorMessage = `Erro na API de cobrança: ${actualError.data.detail}`;
+      } else if (error?.message) {
+        // Erro genérico
+        errorMessage = `Erro ao gerar cobrança: ${error.message}`;
+      }
 
-        if (actualError?.response?.data?.violacoes && Array.isArray(actualError.response.data.violacoes)) {
-          // Erro da API de cobrança com violações específicas
-          const violacoes = actualError.response.data.violacoes;
-          const violacoesText = violacoes.map((v: any) => `${v.propriedade}: ${v.razao} (valor: "${v.valor}")`).join('; ');
-          errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
-        } else if (actualError?.response?.data?.detail) {
-          // Erro da API de cobrança com detalhe genérico
-          errorMessage = `Erro na API de cobrança: ${actualError.response.data.detail}`;
-        } else if (actualError?.data?.violacoes && Array.isArray(actualError.data.violacoes)) {
-          // Erro direto com violações (sem response)
-          const violacoes = actualError.data.violacoes;
-          const violacoesText = violacoes.map((v: any) => `${v.propriedade}: ${v.razao} (valor enviado: "${v.valor}")`).join('; ');
-          errorMessage = `Erro na validação dos dados da cobrança: ${violacoesText}`;
-        } else if (actualError?.data?.detail) {
-          // Erro direto com detalhe (sem response)
-          errorMessage = `Erro na API de cobrança: ${actualError.data.detail}`;
-        } else if (error?.message) {
-          // Erro genérico
-          errorMessage = `Erro ao gerar cobrança: ${error.message}`;
-        }
-       
       // Adicionando logs de erro e status na execução da empresa
-      if (companyFinancialClosingExecutionsRepository  && data.companyExecutionLog) {
+      if (
+        companyFinancialClosingExecutionsRepository &&
+        data.companyExecutionLog
+      ) {
         await addCompanyFinancialClosingExecutionErrorLog(
           data.companyExecutionLog,
           companyFinancialClosingExecutionsRepository,
           errorMessage,
           data.company,
-          { status: FinancialClosingExecutionStatusEnum.ERROR }
+          { status: FinancialClosingExecutionStatusEnum.ERROR },
         );
       }
 
       // Adicionando logs de erro e status na execução do fechamento financeiro
       if (financialClosingExecutionsRepository && data.executionLog) {
-
         await financialClosingExecutionsRepository.increment(
           { id: data.executionLog.id },
           'companiesWithError',
-          1
+          1,
         );
 
         await addFinancialClosingExecutionLog(
           data.executionLog,
           financialClosingExecutionsRepository,
           'warn',
-          `Erro para gerar cobrança para a empresa ${data.company.name} (${data.company.id})`
+          `Erro para gerar cobrança para a empresa ${data.company.name} (${data.company.id})`,
         );
       }
-        
+
       return;
     }
 
     // Inicio da emissão de nota fiscal ----------------------------------------------------------------------|
 
     if (data.company.typeEmissionNF == TypeEmissionNFEnum.BEFORE) {
-
       try {
         await this.financialClosingNFService.emitNFForCompany(
           data.workspaceId,
@@ -171,44 +204,48 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
         if (financialClosingExecutionsRepository && data.executionLog) {
-          await companyFinancialClosingExecutionsRepository.update(data.companyExecutionLog.id, {
-            completedInvoiceIssuance: true,
-          });
+          await companyFinancialClosingExecutionsRepository.update(
+            data.companyExecutionLog.id,
+            {
+              completedInvoiceIssuance: true,
+            },
+          );
         }
-
       } catch (error) {
-
-        if (companyFinancialClosingExecutionsRepository  && data.companyExecutionLog) {
+        if (
+          companyFinancialClosingExecutionsRepository &&
+          data.companyExecutionLog
+        ) {
           await addCompanyFinancialClosingExecutionErrorLog(
             data.companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
             `Erro para emitir nota fiscal - ${error.message}`,
             data.company,
-            { status: FinancialClosingExecutionStatusEnum.ERROR }
+            { status: FinancialClosingExecutionStatusEnum.ERROR },
           );
         }
-  
+
         // Adicionando logs de erro e status na execução do fechamento financeiro
         if (financialClosingExecutionsRepository && data.executionLog) {
-  
           await financialClosingExecutionsRepository.increment(
             { id: data.executionLog.id },
             'companiesWithError',
-            1
+            1,
           );
-  
+
           await addFinancialClosingExecutionLog(
             data.executionLog,
             financialClosingExecutionsRepository,
             'warn',
-            `Erro para emitir nota fiscal para a empresa ${data.company.name} (${data.company.id})`
+            `Erro para emitir nota fiscal para a empresa ${data.company.name} (${data.company.id})`,
           );
         }
 
-        this.logger.error(`ERRO TRY CATCH EMISSAO DA NOTA FISCAL ${data.company.name} (${data.company.id}): ${error.message}`);
+        this.logger.error(
+          `ERRO TRY CATCH EMISSAO DA NOTA FISCAL ${data.company.name} (${data.company.id}): ${error.message}`,
+        );
         return;
       }
-
     } else {
       let message = '';
       if (data.company.typeEmissionNF == TypeEmissionNFEnum.AFTER) {
@@ -226,7 +263,5 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
       }
     }
-
   }
 }
-

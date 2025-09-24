@@ -464,7 +464,7 @@ export class NotaFiscalWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
     inverseSideFieldKey: 'notasFiscais',
-    onDelete: RelationOnDeleteAction.SET_NULL, 
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()

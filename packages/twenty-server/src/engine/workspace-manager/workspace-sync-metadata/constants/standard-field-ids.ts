@@ -153,13 +153,14 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   cdrId: '90cdde6a-eaf2-4b96-8bd9-369a2a851e64',
   typeDiscount: '134bf698-f696-4c43-b8a8-9eb3e6a2cc41',
   discount: '8f18333e-fd58-4a58-86e6-a1257b1f75c5',
-  quantitiesRemainingFinancialClosingsDiscounts: '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
+  quantitiesRemainingFinancialClosingsDiscounts:
+    '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
   totalValueCharged: '7f37e462-60dc-4088-8b84-90702f58abed',
   valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
   valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
   slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
   typeEmissionNF: '2dc5ea21-1510-42fd-b3a8-cd38dab6d10d',
-  
+
   codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
@@ -257,7 +258,7 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
 
 export const FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
   name: 'f51db802-9330-43f0-8a18-e4816b24a9d6',
-  executedAt: 'b3ee06fe-cb77-4b1f-8df9-39c186e48ff1',  
+  executedAt: 'b3ee06fe-cb77-4b1f-8df9-39c186e48ff1',
   financialClosingId: '758004cc-af11-4adf-912d-f416c3217744',
   status: '92df31e3-e107-4977-8f2b-d593d4c982c3',
   companiesTotal: '32f76dca-2399-4cb3-8958-4ed9621d9324',

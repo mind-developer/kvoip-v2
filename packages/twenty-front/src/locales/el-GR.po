@@ -1247,16 +1247,6 @@ msgstr "Αλλαγές Καταγραφής"
 msgid "Chat"
 msgstr "Συνομιλία"
 
-#. js-lingui-id: 86UtDt
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Charge Value"
-msgstr ""
-
-#. js-lingui-id: C+E5yG
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Charge Value:"
-#~ msgstr ""
-
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -1424,70 +1414,6 @@ msgstr "Συμπαγής Προβολή"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "Εταιρείες"
-
-#. js-lingui-id: R9Ietm
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Company Execution"
-msgstr ""
-
-#. js-lingui-id: SrOxs9
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Company Executions"
-msgstr ""
-
-#. js-lingui-id: 8Jd9P3
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Company:"
-msgstr ""
-
-#. js-lingui-id: nZmECt
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Boleto Issuance"
-msgstr ""
-
-#. js-lingui-id: 8jRDRW
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Boleto Issuance:"
-#~ msgstr ""
-
-#. js-lingui-id: G6usDl
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Company Search"
-msgstr ""
-
-#. js-lingui-id: tflHD9
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Company Search:"
-#~ msgstr ""
-
-#. js-lingui-id: RB1Xcb
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Cost Identification"
-msgstr ""
-
-#. js-lingui-id: MghkHH
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Cost Identification:"
-#~ msgstr ""
-
-#. js-lingui-id: pvmZhS
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-msgid "Completed Invoice Issuance"
-msgstr ""
-
-#. js-lingui-id: cztDBc
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Completed Invoice Issuance:"
-#~ msgstr ""
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -2803,12 +2729,6 @@ msgstr "Το Αναγνωριστικό Οντότητας αντιγράφηκ�
 msgid "Environment variable"
 msgstr "Μεταβλητή Περιβάλλοντος"
 
-#. js-lingui-id: SlfejT
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Error"
-msgstr ""
-
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -2873,11 +2793,6 @@ msgstr "Σφάλμα κατά την αλλαγή συνδρομής σε οργ
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to Yearly."
 msgstr "Σφάλμα κατά την αλλαγή συνδρομής σε ετήσια."
-
-#. js-lingui-id: UirGxE
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-msgid "Errors"
-msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3700,11 +3615,6 @@ msgstr "Αρχικά αναγνωριστικά βημάτων του βρόχο
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Input"
 msgstr "Εισαγωγή"
-
-#. js-lingui-id: A2PiTl
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Information of Execution"
-msgstr ""
 
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4778,12 +4688,6 @@ msgstr "Χωρίς αρχεία"
 msgid "No folders found for this account"
 msgstr "Δεν βρέθηκαν φάκελοι για αυτόν το λογαριασμό"
 
-#. js-lingui-id: emrO20
-#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
-msgid "No executions found"
-msgstr ""
-
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -4808,11 +4712,6 @@ msgstr "Κανένα αποτέλεσμα ανάθεσης δεν ταιριάζ
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Δεν βρέθηκε καμία νεότερη έκδοση"
-
-#. js-lingui-id: XZkeaI
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList.tsx
-msgid "No logs found"
-msgstr ""
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5179,12 +5078,6 @@ msgstr "Ο σύνδεσμος για την επαναφορά του κωδικ
 msgid "Paste the code below"
 msgstr "Επικολλήστε τον παρακάτω κωδικό"
 
-#. js-lingui-id: UbRKMZ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Pending"
-msgstr ""
-
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5335,54 +5228,6 @@ msgstr "Πορτογαλικά — Πορτογαλία"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "Ταχυδρομικός Κωδικός"
-
-#. js-lingui-id: Ni3D44
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Ilimitado"
-#~ msgstr ""
-
-#. js-lingui-id: JtJxxb
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Pago"
-#~ msgstr ""
-
-#. js-lingui-id: tGaokP
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-paid"
-msgstr ""
-
-#. js-lingui-id: HSN+Cu
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-unlimited"
-msgstr ""
-
-#. js-lingui-id: lNX1kG
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Ilimitado"
-#~ msgstr ""
-
-#. js-lingui-id: 92vwpK
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Pago"
-#~ msgstr ""
-
-#. js-lingui-id: EeVpQW
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-paid"
-msgstr ""
-
-#. js-lingui-id: BoG5Jt
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-unlimited"
-msgstr ""
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -6105,11 +5950,6 @@ msgstr "Επιλέξτε γραμμή κεφαλίδας"
 msgid "Select Source"
 msgstr "Επιλέξτε Πηγή"
 
-#. js-lingui-id: 7Pxp0Y
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Select the day..."
-msgstr ""
-
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -6558,12 +6398,6 @@ msgstr "Η συνδρομή έχει αλλάξει σε ετήσια."
 msgid "Successfully merged {recordCount} records"
 msgstr "Επιτυχής συγχώνευση {recordCount} εγγραφών"
 
-#. js-lingui-id: zzDlyQ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Success"
-msgstr ""
-
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -6900,11 +6734,6 @@ msgstr "Αυτό θα επαναφέρει την τιμή της βάσης δ�
 msgid "Tidy up workflow"
 msgstr "Συμμαζέψτε τη ροή εργασίας"
 
-#. js-lingui-id: LhMjLm
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Time"
-msgstr ""
-
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -7119,16 +6948,6 @@ msgstr "Ενημέρωση πληροφοριών πράκτορα"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Ενημερώστε τη ρύθμιση του λογαριασμού σας. Ρυθμίστε οποιονδήποτε συνδυασμό IMAP, SMTP και CalDAV ανάλογα με τις ανάγκες σας."
-
-#. js-lingui-id: 4StVS4
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Updated at"
-msgstr ""
-
-#. js-lingui-id: NpoCid
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Updated at:"
-#~ msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx

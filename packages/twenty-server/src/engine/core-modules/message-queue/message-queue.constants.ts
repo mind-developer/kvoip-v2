@@ -18,9 +18,9 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   subscriptionsQueue = 'subscriptions-queue',
   chargeQueue = 'charge-queue',
-  financialClosingQueue = 'financial-closing-queue',
   serverlessFunctionQueue = 'serverless-function-queue',
   triggerQueue = 'trigger-queue',
   chatMessageManagerSendMessageQueue = 'chat-message-manager-send-message-queue',
   chatMessageManagerSaveMessageQueue = 'chat-message-manager-save-message-queue',
+  financialClosingQueue = 'financial-closing-queue',
 }

@@ -27,6 +27,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     FileUploadModule,
     FileModule,
     EmailModule,
+    FinancialClosingModule,
     TypeOrmModule.forFeature([
       InterIntegration,
       Workspace,

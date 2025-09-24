@@ -4,6 +4,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
   IconArchive,
@@ -15,7 +16,6 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { SERVICE_CENTER_ACTION_MODAL_ID } from '../constants/ServiceCenterActionModalId';
-import { useLingui } from '@lingui/react/macro';
 
 // type ServiceCenterFieldActionDropdownProps = {
 //   modalMessage: {
@@ -165,21 +165,20 @@ export const ServiceCenterFieldActionDropdown = ({
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
   const { toggleDropdown } = useToggleDropdown();
+  const { t } = useLingui();
 
-  const handleEdit = (action: ActionType) => {
-    onEdit(action);
-    toggleDropdown();
-  };
+  const [activeExtraModal, setActiveExtraModal] =
+    useState<ExtraMenuItem | null>(null);
 
   const handleDelete = () => {
     onDelete?.();
-    closeModal(SERVCE_CENTER_ACTION_MODAL_ID);
+    closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
     toggleDropdown();
   };
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    closeModal(SERVCE_CENTER_ACTION_MODAL_ID);
+    closeModal(SERVCIE_CENTER_ACTION_MODAL_ID);
     toggleDropdown();
   };
 
@@ -208,7 +207,7 @@ export const ServiceCenterFieldActionDropdown = ({
                 LeftIcon={IconPencil}
                 onClick={() => {
                   onEdit('Edit');
-                  closeDropdown();
+                  toggleDropdown();
                 }}
               />
 
@@ -218,7 +217,7 @@ export const ServiceCenterFieldActionDropdown = ({
                   LeftIcon={IconTextSize}
                   onClick={() => {
                     onSetAsLabelIdentifier?.();
-                    closeDropdown();
+                    toggleDropdown();
                   }}
                 />
               )}
@@ -251,7 +250,7 @@ export const ServiceCenterFieldActionDropdown = ({
                       openModal(SERVICE_CENTER_ACTION_MODAL_ID);
                     } else {
                       item.onClick?.();
-                      closeDropdown();
+                      toggleDropdown();
                     }
                   }}
                 />
@@ -279,9 +278,11 @@ export const ServiceCenterFieldActionDropdown = ({
             activeExtraModal.modalConfig?.onConfirm();
             setActiveExtraModal(null);
             closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
-            closeDropdown();
+            toggleDropdown();
           }}
-          confirmButtonText={activeExtraModal.modalConfig?.confirmButtonText ?? t`Confirm`}
+          confirmButtonText={
+            activeExtraModal.modalConfig?.confirmButtonText ?? t`Confirm`
+          }
         />
       )}
     </>

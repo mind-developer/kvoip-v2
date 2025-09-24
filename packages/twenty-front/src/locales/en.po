@@ -3617,11 +3617,6 @@ msgstr "Initial loop step IDs"
 msgid "Input"
 msgstr "Input"
 
-#. js-lingui-id: A2PiTl
-#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
-msgid "Information of Execution"
-msgstr "Information of Execution"
-
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -5089,12 +5084,6 @@ msgstr "Password reset link has been sent to the email"
 msgid "Paste the code below"
 msgstr "Paste the code below"
 
-#. js-lingui-id: UbRKMZ
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
-msgid "Pending"
-msgstr "Pending"
-
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5245,54 +5234,6 @@ msgstr "Portuguese — Portugal"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "Postcode"
-
-#. js-lingui-id: Ni3D44
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Ilimitado"
-#~ msgstr "Pós-Ilimitado"
-
-#. js-lingui-id: JtJxxb
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pós-Pago"
-#~ msgstr "Pós-Pago"
-
-#. js-lingui-id: tGaokP
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-paid"
-msgstr "Post-paid"
-
-#. js-lingui-id: HSN+Cu
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Post-unlimited"
-msgstr "Post-unlimited"
-
-#. js-lingui-id: lNX1kG
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Ilimitado"
-#~ msgstr "Pré-Ilimitado"
-
-#. js-lingui-id: 92vwpK
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#~ msgid "Pré-Pago"
-#~ msgstr "Pré-Pago"
-
-#. js-lingui-id: EeVpQW
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-paid"
-msgstr "Pre-paid"
-
-#. js-lingui-id: BoG5Jt
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
-msgid "Pre-unlimited"
-msgstr "Pre-unlimited"
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -6797,11 +6738,6 @@ msgstr "This will revert the database value to environment/default value. The da
 msgid "Tidy up workflow"
 msgstr "Tidy up workflow"
 
-#. js-lingui-id: LhMjLm
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
-msgid "Time"
-msgstr "Time"
-
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -7016,16 +6952,6 @@ msgstr "Update agent information"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
-
-#. js-lingui-id: 4StVS4
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-msgid "Updated at"
-msgstr "Updated at"
-
-#. js-lingui-id: NpoCid
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Updated at:"
-#~ msgstr "Updated at:"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
