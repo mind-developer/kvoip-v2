@@ -16,6 +16,7 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
 import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
@@ -68,6 +69,7 @@ export const prefillCoreViews = async ({
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),
     notaFiscalAllView(objectMetadataItems),
+    chargesAllView(objectMetadataItems),
   ];
 
   if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
