@@ -35,6 +35,7 @@ export class FinancialClosingService {
   async create(
     createInput: CreateFinancialClosingInput,
   ): Promise<FinancialClosing> {
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: createInput.workspaceId },
     });

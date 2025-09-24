@@ -20,7 +20,7 @@ import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/char
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
@@ -150,16 +150,16 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
 
   @WorkspaceRelation({
     standardId:
-      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.notasFiscais,
+      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoices,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Nota Fiscal`,
-    description: msg`Reference to the nota fiscal`,
+    label: msg`Invoices`,
+    description: msg`Reference to the invoices`,
     icon: 'IconReceipt',
-    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  notasFiscais: Relation<NotaFiscalWorkspaceEntity[]>;
+  invoices: Relation<InvoiceWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId:

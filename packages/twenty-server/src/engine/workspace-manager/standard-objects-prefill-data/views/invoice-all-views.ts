@@ -2,24 +2,24 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
-  NOTA_FISCAL_FIELD_IDS,
+  INVOICE_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const notaFiscalAllView = (
+export const invoiceAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
 ) => {
-  const notaFiscalObjectMetadata = objectMetadataItems.find(
-    (object) => object.standardId === STANDARD_OBJECT_IDS.notaFiscal,
+  const invoiceObjectMetadata = objectMetadataItems.find(
+    (object) => object.standardId === STANDARD_OBJECT_IDS.invoice,
   );
 
-  if (!notaFiscalObjectMetadata) {
-    throw new Error('Nota Fiscal object metadata not found');
+  if (!invoiceObjectMetadata) {
+    throw new Error('Invoice object metadata not found');
   }
 
   return {
     name: 'All',
-    objectMetadataId: notaFiscalObjectMetadata.id,
+    objectMetadataId: invoiceObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -29,8 +29,8 @@ export const notaFiscalAllView = (
     fields: [
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.name,
+          invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.name,
           )?.id ?? '',
         position: 0,
         isVisible: true,
@@ -38,8 +38,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.charge,
+          invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.charge,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -47,8 +47,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.company,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.company,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -56,8 +56,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.product,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.product,
           )?.id ?? '',
         position: 3,
         isVisible: true,
@@ -65,8 +65,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.nfType,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.nfType,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -74,8 +74,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.totalAmount,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.totalAmount,
           )?.id ?? '',
         position: 5,
         isVisible: true,
@@ -83,8 +83,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.percentNFSe,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.percentNFSe,
           )?.id ?? '',
         position: 6,
         isVisible: true,
@@ -92,8 +92,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.percentNFCom,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.percentNFCom,
           )?.id ?? '',
         position: 7,
         isVisible: true,
@@ -101,8 +101,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.nfStatus,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.nfStatus,
           )?.id ?? '',
         position: 8,
         isVisible: true,
@@ -110,8 +110,8 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
-            (field) => field.standardId === NOTA_FISCAL_FIELD_IDS.focusNFe,
+        invoiceObjectMetadata.fields.find(
+            (field) => field.standardId === INVOICE_FIELD_IDS.focusNFe,
           )?.id ?? '',
         position: 9,
         isVisible: true,
@@ -119,7 +119,7 @@ export const notaFiscalAllView = (
       },
       {
         fieldMetadataId:
-          notaFiscalObjectMetadata.fields.find(
+        invoiceObjectMetadata.fields.find(
             (field) =>
               field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',

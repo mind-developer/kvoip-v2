@@ -1,24 +1,24 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { NFCom, NFSe } from 'src/modules/focus-nfe/types/NotaFiscal.type';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { NFCom, NFSe } from 'src/modules/focus-nfe/types/InvoiceFocusNFe.type';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 export const buildNFSePayload = (
-  notaFiscal: NotaFiscalWorkspaceEntity,
+  invoice: InvoiceWorkspaceEntity,
   codMunicipioPrestador: string,
   codMunicipioTomador: string,
-  numeroRps: number,
+  rpsNumber: number,
 ): NFSe | undefined => {
 
-  const { company, focusNFe } = notaFiscal;
+  const { company, focusNFe } = invoice;
 
   if (!company || !focusNFe?.token) {
     // this.logger.log('Compania ou integração não encontradas.')
     return;
   }
 
-  const nextNumRps = (numeroRps + 1).toString();
+  const nextNumRps = (rpsNumber + 1).toString();
 
   const nfse: NFSe = {
     data_emissao: getCurrentFormattedDateNFSe(),
@@ -43,13 +43,13 @@ export const buildNFSePayload = (
       },
     },
     servico: {
-      aliquota: notaFiscal.aliquotaIss,
-      discriminacao: notaFiscal.discriminacao,
-      iss_retido: notaFiscal.issRetido,
-      item_lista_servico: notaFiscal.itemListaServico,
+      aliquota: invoice.rateIss,
+      discriminacao: invoice.discrimination,
+      iss_retido: invoice.issRetained,
+      item_lista_servico: invoice.serviceListItem,
       codigo_municipio: codMunicipioPrestador,
       valor_servicos:
-        (Number(notaFiscal.totalAmount) * (notaFiscal.percentNfse ?? 100)) /
+        (Number(invoice.totalAmount) * (invoice.percentNfse ?? 100)) /
         100,
     },
   };
@@ -63,21 +63,21 @@ const cleanCep = (cep: string | number) => {
 };
 
 export function buildNFComPayload(
-  notaFiscal: NotaFiscalWorkspaceEntity,
+  invoice: InvoiceWorkspaceEntity,
   codMunicipioEmitente: string,
   codMunicipioDestinatario: string,
   product: ProductWorkspaceEntity,
 ): NFCom | undefined {
-  const { company, focusNFe } = notaFiscal;
+  const { company, focusNFe } = invoice;
 
   if (!company || !focusNFe?.token) {
     this.logger.log('Compania ou integração não encontradas.')
     return;
   }
 
-  const percentNfcom = notaFiscal.percentNfcom ?? 100;
-  const valueBase = Number(notaFiscal.totalAmount) || 0;
-  const unit = Number(notaFiscal.unidade) || 1;
+  const percentNfcom = invoice.percentNfcom ?? 100;
+  const valueBase = Number(invoice.totalAmount) || 0;
+  const unit = Number(invoice.unit) || 1;
   const percentageValue = valueBase * (percentNfcom / 100);
 
   return {
@@ -105,31 +105,27 @@ export function buildNFComPayload(
     inscricao_municipal_destinatario: company.inscricaoMunicipal?.replace(/\D/g, '') || '',
     inscricao_estadual_destinatario: company.inscricaoEstadual?.replace(/\D/g, '') || '',
 
-    codigo_assinante: notaFiscal.codAssinante,
-    // codigo_assinante: "1",
+    codigo_assinante: invoice.subscriberCode,
     tipo_assinante: 1, // Comercial - 1, Pessoa Física - 3
     tipo_servico: 1, // Telefonia
-    numero_contato_assinante: notaFiscal.numContratoAssinante,
-    // numero_contato_assinante: "1234",
+    numero_contato_assinante: invoice.numSubscriberAgreement,
 
     data_inicio_contrato: getCurrentFormattedDate(),
     itens: [
       {
         numero_item: "1",
         codigo_produto: product.id,
-        // codigo_produto: "1234",
         descricao: product.name,
-        classificacao: notaFiscal.classificacao, // Assinatura de serviços de comunicação multimídia
-        // unidade_medida: Number(product.unitOfMeasure),
+        classificacao: invoice.classification, // Assinatura de serviços de comunicação multimídia
         unidade_medida: 4, // UN - Unidade
-        cfop: notaFiscal.cfop,
-        quantidade_faturada: notaFiscal.unidade,
+        cfop: invoice.cfop,
+        quantidade_faturada: invoice.unit,
         // quantidade_faturada: "1.00",
         valor_item: percentageValue,
         // valor_item:"1.00",
         valor_total_item: unit * percentageValue,
         // valor_total_item: "1.00",
-        icms_situacao_tributaria: notaFiscal.cstIcmsCsosn || '',
+        icms_situacao_tributaria: invoice.cstIcmsCsosn || '',
       },
     ],
 

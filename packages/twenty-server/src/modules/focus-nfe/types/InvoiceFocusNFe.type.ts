@@ -87,4 +87,4 @@ type ItemNFCom = {
   valor_total_item: string | number;
 };
 
-export type FiscalNote = NFSe | NFCom;
+export type InvoiceFocusNFe = NFSe | NFCom;
