@@ -5,7 +5,7 @@ import {
 } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export const ownterAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
+export const ownerAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   const ownerObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === KVOIP_ADMIN_STANDARD_OBJECT_IDS.owner,
   );
