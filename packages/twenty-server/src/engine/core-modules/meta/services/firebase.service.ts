@@ -116,7 +116,7 @@ export class FirebaseService {
                 relatedPerson.name?.lastName,
             phone: whatsAppDoc.client.phone,
             ppUrl: whatsAppDoc.client.ppUrl ?? relatedPerson.avatarUrl ?? null,
-            email: relatedPerson.emails.primaryEmail ?? null,
+            email: relatedPerson.emails?.primaryEmail ?? null,
           },
         };
         this.logger.log(
