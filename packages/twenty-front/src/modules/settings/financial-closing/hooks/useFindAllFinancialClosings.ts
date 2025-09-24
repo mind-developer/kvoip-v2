@@ -14,7 +14,7 @@ type UseFindAllFinancialClosingsReturn = {
 };
 
 export const useFindAllFinancialClosings = (): UseFindAllFinancialClosingsReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -25,8 +25,8 @@ export const useFindAllFinancialClosings = (): UseFindAllFinancialClosingsReturn
     variables: { workspaceId: currentWorkspace?.id },
     skip: !currentWorkspace?.id,
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: error.messag▫️e,
       });
     },
   });

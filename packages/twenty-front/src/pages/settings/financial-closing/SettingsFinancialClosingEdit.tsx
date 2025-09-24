@@ -3,22 +3,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
-import { useUpdateSector } from '@/settings/service-center/sectors/hooks/useUpdateSector';
-import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { FinancialClosingFormSchema, SettingsFinancialClosingForm } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
+import {
+  FinancialClosingFormSchema,
+  SettingsFinancialClosingForm,
+} from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
 import { useUpdateFinancialClosing } from '@/settings/financial-closing/hooks/useUpdateFinancialClosing';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const editFinancialClosingFormSchema = z
   .object({})
@@ -28,11 +28,13 @@ const editFinancialClosingFormSchema = z
     workspaceId: z.string(),
   });
 
-type SettingsEditFinancialClosingSchemaValues = z.infer<typeof editFinancialClosingFormSchema>;
+type SettingsEditFinancialClosingSchemaValues = z.infer<
+  typeof editFinancialClosingFormSchema
+>;
 
 export const SettingsFinancialClosingEdit = () => {
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
   const { financialClosings } = useFindAllFinancialClosings();
@@ -40,10 +42,12 @@ export const SettingsFinancialClosingEdit = () => {
 
   const { financialClosingId } = useParams<{ financialClosingId?: string }>();
 
-  const activeFinancialClosing = financialClosings.find((financialClosing) => financialClosing.id === financialClosingId);
+  const activeFinancialClosing = financialClosings.find(
+    (financialClosing) => financialClosing.id === financialClosingId,
+  );
 
   const settingsFinancialClosingsPagePath = getSettingsPath(
-    SettingsPath.FinancialClosing
+    SettingsPath.FinancialClosing,
   );
 
   const formConfig = useForm<SettingsEditFinancialClosingSchemaValues>({
@@ -71,8 +75,8 @@ export const SettingsFinancialClosingEdit = () => {
         navigate(settingsFinancialClosingsPagePath);
       }
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };
@@ -94,13 +98,16 @@ export const SettingsFinancialClosingEdit = () => {
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
         {
-          children: t`Edit` },
+          children: t`Edit`,
+        },
       ]}
     >
       <FormProvider {...formConfig}>
         <SettingsPageContainer>
           {/* <SettingsServiceCenterSectorAboutForm activeFinancialClosing={activeFinancialClosing} /> */}
-          <SettingsFinancialClosingForm activeFinancialClosing={activeFinancialClosing} />
+          <SettingsFinancialClosingForm
+            activeFinancialClosing={activeFinancialClosing}
+          />
         </SettingsPageContainer>
       </FormProvider>
     </SubMenuTopBarContainer>
