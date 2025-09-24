@@ -11,7 +11,6 @@ export const STANDARD_OBJECT_IDS = {
   // TODO: check if activity, activityTarget and comment can be deleted
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
-  apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
   attachment: '20202020-bd3d-4c60-8dca-571c71d4447a',
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
   behavioralEvent: '20202020-983d-416b-a5ee-bdd0da3d0f8f',
@@ -22,6 +21,7 @@ export const STANDARD_OBJECT_IDS = {
   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
+  dashboard: '20202020-3840-4b6d-9425-0c5188b05ca8',
   favorite: '20202020-ab56-4e05-92a3-e2414a499860',
   favoriteFolder: '20202020-7cf8-401f-8211-a9587d27fd2d',
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',
@@ -45,7 +45,6 @@ export const STANDARD_OBJECT_IDS = {
   viewFilterGroup: '20202020-b920-4b11-92aa-9b07d878e542',
   viewSort: '20202020-e46a-47a8-939a-e5d911f83531',
   view: '20202020-722e-4739-8e2c-0c372d661f49',
-  webhook: '20202020-be4d-4e08-811d-0fffcd13ffd4',
   workflow: '20202020-62be-406c-b9ca-8caa50d51392',
   workflowEventListener: '20202020-92aa-462f-965c-a785b00e9989',
   workflowRun: '20202020-4e28-4e95-a9d7-6c00874f843c',
@@ -60,9 +59,10 @@ export const STANDARD_OBJECT_IDS = {
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
+  ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
   focusNFe: 'aaadd2ab-25b5-4717-9712-7de5b7253633',
   notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
   financialClosingExecution: 'e1b15f83-5757-452c-80d7-8984356e2715',
   companyFinancialClosingExecution: '2d7c471a-6fbf-4de7-98e4-92ac99e25425',
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
-};
+} as const;

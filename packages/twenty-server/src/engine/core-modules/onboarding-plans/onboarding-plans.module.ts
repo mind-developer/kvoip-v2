@@ -10,9 +10,9 @@ import { OnboardingPlansService } from 'src/engine/core-modules/onboarding-plans
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OnboardingPlans], 'core'),
+    TypeOrmModule.forFeature([OnboardingPlans]),
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([OnboardingPlans], 'core')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([OnboardingPlans])],
     }),
   ],
   controllers: [OnboardingPlansController],

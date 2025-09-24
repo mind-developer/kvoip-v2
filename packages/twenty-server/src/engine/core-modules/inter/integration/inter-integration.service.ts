@@ -18,9 +18,9 @@ export class InterIntegrationService {
   private readonly logger = new Logger(InterIntegrationService.name);
 
   constructor(
-    @InjectRepository(InterIntegration, 'core')
+    @InjectRepository(InterIntegration)
     private interIntegrationRepository: Repository<InterIntegration>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
   ) {}

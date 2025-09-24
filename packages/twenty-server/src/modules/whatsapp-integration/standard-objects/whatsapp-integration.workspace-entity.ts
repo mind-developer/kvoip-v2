@@ -3,11 +3,11 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -156,4 +156,13 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: any;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.tipoApi,
+    type: FieldMetadataType.TEXT,
+    label: msg`Tipo API`,
+    description: msg`Tipo da API do WhatsApp`,
+  })
+  @Field(() => String, { nullable: true })
+  tipoApi?: string;
 }

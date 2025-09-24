@@ -3,24 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { CreateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/create-billing-plans.input';
 import { UpdateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/update-billing-plans.input';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingPlansService {
   constructor(
-    @InjectRepository(BillingPlans, 'core')
+    @InjectRepository(BillingPlans)
     private billingPlansRepository: Repository<BillingPlans>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyConfigService: TwentyConfigService,
     // private readonly onboardingService: OnboardingService,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 

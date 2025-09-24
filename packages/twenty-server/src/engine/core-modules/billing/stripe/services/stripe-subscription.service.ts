@@ -2,9 +2,9 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -82,5 +82,17 @@ export class StripeSubscriptionService {
     updateData: Stripe.SubscriptionUpdateParams,
   ): Promise<Stripe.Subscription> {
     return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
+  }
+
+  async setYearlyThresholds(stripeSubscriptionId: string) {
+    return this.stripe.subscriptions.update(stripeSubscriptionId, {
+      billing_thresholds: {
+        amount_gte:
+          this.twentyConfigService.get(
+            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+          ) * 12,
+        reset_billing_cycle_anchor: false,
+      },
+    });
   }
 }

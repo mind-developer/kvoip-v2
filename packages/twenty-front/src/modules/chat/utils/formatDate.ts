@@ -1,4 +1,4 @@
-import { TDateFirestore } from '@/chat/internal/types/chat';
+import { TDateFirestore } from '@/chat/types/chat';
 
 export const formatDate = (date: TDateFirestore) => {
   const parsedDate = new Date(date.seconds * 1000);

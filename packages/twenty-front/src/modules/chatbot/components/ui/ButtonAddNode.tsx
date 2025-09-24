@@ -10,7 +10,7 @@ const StyledButtonNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.background.quaternary};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: rgba(100, 100, 111, 0.15) 0px 4px 16px 0px;
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
   padding: ${({ theme }) => theme.spacing(2)};
   height: 24px;
   width: 24px;

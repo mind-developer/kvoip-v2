@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 
 export const useCombinedFindManyRecords = ({
@@ -18,6 +19,8 @@ export const useCombinedFindManyRecords = ({
     operationSignatures,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const queryVariables = generateCombinedFindManyRecordsQueryVariables({
     operationSignatures,
   });
@@ -27,6 +30,7 @@ export const useCombinedFindManyRecords = ({
     {
       skip,
       variables: queryVariables,
+      client: apolloCoreClient,
     },
   );
 

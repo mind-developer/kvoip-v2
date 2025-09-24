@@ -3,21 +3,20 @@ import {
   NODE_ACTIONS,
   OTHER_NODE_ACTIONS,
 } from '@/chatbot/constants/NodeActions';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { createNode } from '@/chatbot/utils/createNode';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
-import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSetChatbotFlowState } from '@/chatbot/hooks/useSetChatbotFlowState';
 
 export const CommandMenuChatbotFlowPage = () => {
   const { getIcon } = useIcons();
 
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
-
-  const { updateFlow } = useUpdateChatbotFlow();
+  const { setChatbotFlowState } = useSetChatbotFlowState();
+  const chatbotFlow = useGetChatbotFlowState();
 
   const handleAddNode = (action: ChatbotAction) => {
     if (!chatbotFlow) {
@@ -32,17 +31,15 @@ export const CommandMenuChatbotFlowPage = () => {
       return;
     }
 
-    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
-    // TODO: Build a type using Omit<...> instead.
-    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
-
     const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
+      chatbotId: chatbotFlow.chatbotId,
+      edges: [...chatbotFlow.edges],
       nodes: [...chatbotFlow.nodes, newNode],
       viewport: { x: 0, y: 0, zoom: 0 },
     };
 
-    updateFlow(updatedChatbotFlow);
+    // saveChatbotFlowState(updatedChatbotFlow);
+    setChatbotFlowState(updatedChatbotFlow);
   };
 
   return (

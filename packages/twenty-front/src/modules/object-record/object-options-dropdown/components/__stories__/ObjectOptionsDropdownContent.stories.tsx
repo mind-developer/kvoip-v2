@@ -1,14 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { type ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -22,9 +21,9 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const instanceId = 'entity-options-scope';
+const instanceId = 'entity-options-instance';
 
 const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   title:
@@ -42,30 +41,20 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       }, [setObjectMetadataItems]);
 
       return (
-        <RecordFilterGroupsComponentInstanceContext.Provider
-          value={{ instanceId }}
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={instanceId}
         >
-          <RecordFiltersComponentInstanceContext.Provider
-            value={{ instanceId }}
-          >
-            <RecordSortsComponentInstanceContext.Provider
-              value={{ instanceId }}
-            >
-              <RecordTableComponentInstanceContext.Provider
-                value={{ instanceId, onColumnsChange: () => {} }}
+          <RecordTableComponentInstanceContext.Provider value={{ instanceId }}>
+            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+              <MemoryRouter
+                initialEntries={['/one', '/two', { pathname: '/three' }]}
+                initialIndex={1}
               >
-                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                  <MemoryRouter
-                    initialEntries={['/one', '/two', { pathname: '/three' }]}
-                    initialIndex={1}
-                  >
-                    <Story />
-                  </MemoryRouter>
-                </ViewComponentInstanceContext.Provider>
-              </RecordTableComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
-        </RecordFilterGroupsComponentInstanceContext.Provider>
+                <Story />
+              </MemoryRouter>
+            </ViewComponentInstanceContext.Provider>
+          </RecordTableComponentInstanceContext.Provider>
+        </RecordComponentInstanceContextsWrapper>
       );
     },
     ContextStoreDecorator,
@@ -89,6 +78,16 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
         (item) => item.nameSingular === 'company',
       )!;
 
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
+
       return (
         <RecordIndexContextProvider
           value={{
@@ -99,6 +98,10 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
             objectNameSingular: 'company',
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
           }}
         >
           <ObjectOptionsDropdownContext.Provider

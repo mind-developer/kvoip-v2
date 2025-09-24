@@ -3,7 +3,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -101,12 +101,12 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
+            instanceId="workflow-step-title-input"
             disabled={disabled}
             sizeVariant="md"
             value={title}
             onChange={handleChange}
             placeholder={headerType}
-            hotkeyScope="workflow-step-title"
             onEnter={saveTitle}
             onEscape={() => {
               setTitle(initialTitle);

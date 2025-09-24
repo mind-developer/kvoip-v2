@@ -1,5 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
-import { Role, Workspace } from '~/generated/graphql';
+import { type Role, type Workspace } from '~/generated/graphql';
 
 export type CurrentWorkspace = Pick<
   Workspace,
@@ -25,8 +25,10 @@ export type CurrentWorkspace = Pick<
   | 'metadataVersion'
   | 'creatorEmail'
   | 'onesignalAppId'
+  | 'isTwoFactorAuthenticationEnforced'
 > & {
-  defaultRole?: Omit<Role, 'workspaceMembers'> | null;
+  defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
+  defaultAgent?: { id: string } | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

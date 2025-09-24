@@ -1,14 +1,11 @@
-import { OpenAPIV3_1 } from 'openapi-types';
+import { type OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 
-import {
-  FieldMetadataSettings,
-  NumberDataType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
+import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,
@@ -18,11 +15,10 @@ import {
   computeOrderByParameters,
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
-import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.utils';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -31,65 +27,6 @@ type Properties = {
 };
 
 type OpenApiExample = Record<string, FieldMetadataDefaultValue>;
-
-const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
-  if (forResponse) {
-    return true;
-  }
-  switch (field.name) {
-    case 'id':
-    case 'createdAt':
-    case 'updatedAt':
-    case 'deletedAt':
-      return false;
-    default:
-      return true;
-  }
-};
-
-const getFieldProperties = (field: FieldMetadataEntity): Property => {
-  switch (field.type) {
-    case FieldMetadataType.UUID: {
-      return { type: 'string', format: 'uuid' };
-    }
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT: {
-      return { type: 'string' };
-    }
-    case FieldMetadataType.DATE_TIME: {
-      return { type: 'string', format: 'date-time' };
-    }
-    case FieldMetadataType.DATE: {
-      return { type: 'string', format: 'date' };
-    }
-    case FieldMetadataType.NUMBER: {
-      const settings =
-        field.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>;
-
-      if (
-        settings?.dataType === NumberDataType.FLOAT ||
-        (isDefined(settings?.decimals) && settings.decimals > 0)
-      ) {
-        return { type: 'number' };
-      }
-
-      return { type: 'integer' };
-    }
-    case FieldMetadataType.NUMERIC:
-    case FieldMetadataType.POSITION: {
-      return { type: 'number' };
-    }
-    case FieldMetadataType.BOOLEAN: {
-      return { type: 'boolean' };
-    }
-    case FieldMetadataType.RAW_JSON: {
-      return { type: 'object' };
-    }
-    default: {
-      return { type: 'string' };
-    }
-  }
-};
 
 const getSchemaComponentsExample = (
   item: ObjectMetadataEntity,
@@ -130,261 +67,6 @@ const getSchemaComponentsExample = (
       }
     }
   }, {});
-};
-
-const getSchemaComponentsProperties = ({
-  item,
-  forResponse,
-}: {
-  item: ObjectMetadataEntity;
-  forResponse: boolean;
-}): Properties => {
-  return item.fields.reduce((node, field) => {
-    if (
-      !isFieldAvailable(field, forResponse) ||
-      field.type === FieldMetadataType.TS_VECTOR
-    ) {
-      return node;
-    }
-
-    if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings?.relationType === RelationType.MANY_TO_ONE
-    ) {
-      return {
-        ...node,
-        [`${field.name}Id`]: {
-          type: 'string',
-          format: 'uuid',
-        },
-      };
-    }
-
-    if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings?.relationType === RelationType.ONE_TO_MANY
-    ) {
-      return node;
-    }
-
-    let itemProperty = {} as Property;
-
-    switch (field.type) {
-      case FieldMetadataType.MULTI_SELECT:
-        itemProperty = {
-          type: 'array',
-          items: {
-            type: 'string',
-            enum: field.options.map(
-              (option: { value: string }) => option.value,
-            ),
-          },
-        };
-        break;
-      case FieldMetadataType.SELECT:
-        itemProperty = {
-          type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
-        };
-        break;
-      case FieldMetadataType.ARRAY:
-        itemProperty = {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        };
-        break;
-      case FieldMetadataType.RATING:
-        itemProperty = {
-          type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
-        };
-        break;
-      case FieldMetadataType.LINKS:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            primaryLinkLabel: {
-              type: 'string',
-            },
-            primaryLinkUrl: {
-              type: 'string',
-            },
-            secondaryLinks: {
-              type: 'array',
-              items: {
-                type: 'object',
-                description: 'A secondary link',
-                properties: {
-                  url: {
-                    type: 'string',
-                    format: 'uri',
-                  },
-                  label: {
-                    type: 'string',
-                  },
-                },
-              },
-            },
-          },
-        };
-        break;
-      case FieldMetadataType.CURRENCY:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            amountMicros: {
-              type: 'number',
-            },
-            currencyCode: {
-              type: 'string',
-            },
-          },
-        };
-        break;
-      case FieldMetadataType.FULL_NAME:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            firstName: {
-              type: 'string',
-            },
-            lastName: {
-              type: 'string',
-            },
-          },
-        };
-        break;
-      case FieldMetadataType.ADDRESS:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            addressStreet1: {
-              type: 'string',
-            },
-            addressStreet2: {
-              type: 'string',
-            },
-            addressCity: {
-              type: 'string',
-            },
-            addressPostcode: {
-              type: 'string',
-            },
-            addressState: {
-              type: 'string',
-            },
-            addressCountry: {
-              type: 'string',
-            },
-            addressLat: {
-              type: 'number',
-            },
-            addressLng: {
-              type: 'number',
-            },
-          },
-        };
-        break;
-      case FieldMetadataType.ACTOR:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            source: {
-              type: 'string',
-              enum: [
-                'EMAIL',
-                'CALENDAR',
-                'WORKFLOW',
-                'API',
-                'IMPORT',
-                'MANUAL',
-                'SYSTEM',
-                'WEBHOOK',
-              ],
-            },
-            ...(forResponse
-              ? {
-                  workspaceMemberId: {
-                    type: 'string',
-                    format: 'uuid',
-                  },
-                  name: {
-                    type: 'string',
-                  },
-                }
-              : {}),
-          },
-        };
-        break;
-      case FieldMetadataType.EMAILS:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            primaryEmail: {
-              type: 'string',
-            },
-            additionalEmails: {
-              type: 'array',
-              items: {
-                type: 'string',
-                format: 'email',
-              },
-            },
-          },
-        };
-        break;
-      case FieldMetadataType.PHONES:
-        itemProperty = {
-          properties: {
-            additionalPhones: {
-              type: 'array',
-              items: {
-                type: 'string',
-              },
-            },
-            primaryPhoneCountryCode: {
-              type: 'string',
-            },
-            primaryPhoneCallingCode: {
-              type: 'string',
-            },
-            primaryPhoneNumber: {
-              type: 'string',
-            },
-          },
-          type: 'object',
-        };
-        break;
-      case FieldMetadataType.RICH_TEXT_V2:
-        itemProperty = {
-          type: 'object',
-          properties: {
-            blocknote: {
-              type: 'string',
-            },
-            markdown: {
-              type: 'string',
-            },
-          },
-        };
-        break;
-      default:
-        itemProperty = getFieldProperties(field);
-        break;
-    }
-
-    if (field.description) {
-      itemProperty.description = field.description;
-    }
-
-    if (Object.keys(itemProperty).length) {
-      return { ...node, [field.name]: itemProperty };
-    }
-
-    return node;
-  }, {} as Properties);
 };
 
 const getSchemaComponentsRelationProperties = (
@@ -460,8 +142,11 @@ const computeSchemaComponent = ({
 
   const result: OpenAPIV3_1.SchemaObject = {
     type: 'object',
-    description: item.description,
-    properties: getSchemaComponentsProperties({ item, forResponse }),
+    description: item.description ?? undefined,
+    properties: convertObjectMetadataToSchemaProperties({
+      item,
+      forResponse,
+    }) as Properties,
     ...(!forResponse ? { example: getSchemaComponentsExample(item) } : {}),
   };
 
@@ -687,6 +372,614 @@ export const computeMetadataSchemaComponents = (
               isSystem: { type: 'boolean' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'webhook': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+                default: ['*.*'],
+              },
+              description: { type: 'string' },
+              secret: { type: 'string' },
+            },
+            required: ['targetUrl'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A webhook for update`,
+            properties: {
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+                default: [],
+              },
+              description: { type: 'string' },
+              secret: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A webhook`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              targetUrl: { type: 'string' },
+              operations: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              description: { type: 'string' },
+              secret: { type: 'string' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'apiKey': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              roleId: { type: 'string', format: 'uuid' },
+            },
+            required: ['name', 'expiresAt', 'roleId'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `An API key for update`,
+            properties: {
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: {
+                type: 'string',
+                format: 'date-time',
+                description:
+                  'Set to null to clear revocation. Defaults to null if not provided.',
+              },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `An API key`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              expiresAt: { type: 'string', format: 'date-time' },
+              revokedAt: { type: 'string', format: 'date-time' },
+              roleId: { type: 'string', format: 'uuid' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'view': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view`,
+            properties: {
+              name: { type: 'string' },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              type: {
+                type: 'string',
+                enum: ['TABLE', 'KANBAN'],
+                default: 'TABLE',
+              },
+              key: { type: 'string', default: 'INDEX' },
+              icon: { type: 'string' },
+              position: { type: 'number', default: 0 },
+              isCompact: { type: 'boolean', default: false },
+              openRecordIn: {
+                type: 'string',
+                enum: ['SIDE_PANEL', 'RECORD_PAGE'],
+                default: 'SIDE_PANEL',
+              },
+              kanbanAggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+              kanbanAggregateOperationFieldMetadataId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              anyFieldFilterValue: { type: 'string' },
+            },
+            required: ['name', 'objectMetadataId', 'icon'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view for update`,
+            properties: {
+              name: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['TABLE', 'KANBAN'],
+              },
+              key: { type: 'string' },
+              icon: { type: 'string' },
+              position: { type: 'number' },
+              isCompact: { type: 'boolean' },
+              openRecordIn: {
+                type: 'string',
+                enum: ['SIDE_PANEL', 'RECORD_PAGE'],
+              },
+              kanbanAggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+              kanbanAggregateOperationFieldMetadataId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              anyFieldFilterValue: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              type: {
+                type: 'string',
+                enum: ['TABLE', 'KANBAN'],
+              },
+              key: { type: 'string' },
+              icon: { type: 'string' },
+              position: { type: 'number' },
+              isCompact: { type: 'boolean' },
+              openRecordIn: {
+                type: 'string',
+                enum: ['SIDE_PANEL', 'RECORD_PAGE'],
+              },
+              kanbanAggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+              kanbanAggregateOperationFieldMetadataId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              anyFieldFilterValue: { type: 'string' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'viewField': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view field`,
+            properties: {
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              isVisible: { type: 'boolean', default: true },
+              size: { type: 'number', default: 0 },
+              position: { type: 'number', default: 0 },
+              aggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+            },
+            required: ['fieldMetadataId', 'viewId'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view field for update`,
+            properties: {
+              isVisible: { type: 'boolean' },
+              size: { type: 'number' },
+              position: { type: 'number' },
+              aggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view field`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              isVisible: { type: 'boolean' },
+              size: { type: 'number' },
+              position: { type: 'number' },
+              aggregateOperation: {
+                type: 'string',
+                enum: ['AVG', 'COUNT', 'MAX', 'MIN', 'SUM'],
+              },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'viewFilter': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view filter`,
+            properties: {
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              operand: {
+                type: 'string',
+                enum: [
+                  'IS',
+                  'IS_NOT_NULL',
+                  'IS_NOT',
+                  'LESS_THAN_OR_EQUAL',
+                  'GREATER_THAN_OR_EQUAL',
+                  'IS_BEFORE',
+                  'IS_AFTER',
+                  'CONTAINS',
+                  'DOES_NOT_CONTAIN',
+                  'IS_EMPTY',
+                  'IS_NOT_EMPTY',
+                  'IS_RELATIVE',
+                  'IS_IN_PAST',
+                  'IS_IN_FUTURE',
+                  'IS_TODAY',
+                  'VECTOR_SEARCH',
+                ],
+                default: 'CONTAINS',
+              },
+              value: {
+                type: 'object',
+                description: 'Filter value (JSON format)',
+              },
+              viewFilterGroupId: { type: 'string', format: 'uuid' },
+              positionInViewFilterGroup: { type: 'number' },
+              subFieldName: { type: 'string' },
+            },
+            required: ['fieldMetadataId', 'viewId', 'value'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view filter for update`,
+            properties: {
+              operand: {
+                type: 'string',
+                enum: [
+                  'IS',
+                  'IS_NOT_NULL',
+                  'IS_NOT',
+                  'LESS_THAN_OR_EQUAL',
+                  'GREATER_THAN_OR_EQUAL',
+                  'IS_BEFORE',
+                  'IS_AFTER',
+                  'CONTAINS',
+                  'DOES_NOT_CONTAIN',
+                  'IS_EMPTY',
+                  'IS_NOT_EMPTY',
+                  'IS_RELATIVE',
+                  'IS_IN_PAST',
+                  'IS_IN_FUTURE',
+                  'IS_TODAY',
+                  'VECTOR_SEARCH',
+                ],
+              },
+              value: {
+                type: 'object',
+                description: 'Filter value (JSON format)',
+              },
+              viewFilterGroupId: { type: 'string', format: 'uuid' },
+              positionInViewFilterGroup: { type: 'number' },
+              subFieldName: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view filter`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              operand: {
+                type: 'string',
+                enum: [
+                  'IS',
+                  'IS_NOT_NULL',
+                  'IS_NOT',
+                  'LESS_THAN_OR_EQUAL',
+                  'GREATER_THAN_OR_EQUAL',
+                  'IS_BEFORE',
+                  'IS_AFTER',
+                  'CONTAINS',
+                  'DOES_NOT_CONTAIN',
+                  'IS_EMPTY',
+                  'IS_NOT_EMPTY',
+                  'IS_RELATIVE',
+                  'IS_IN_PAST',
+                  'IS_IN_FUTURE',
+                  'IS_TODAY',
+                  'VECTOR_SEARCH',
+                ],
+              },
+              value: {
+                type: 'object',
+                description: 'Filter value (JSON format)',
+              },
+              viewFilterGroupId: { type: 'string', format: 'uuid' },
+              positionInViewFilterGroup: { type: 'number' },
+              subFieldName: { type: 'string' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'viewSort': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view sort`,
+            properties: {
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              direction: {
+                type: 'string',
+                enum: ['ASC', 'DESC'],
+                default: 'ASC',
+              },
+            },
+            required: ['fieldMetadataId', 'viewId'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view sort for update`,
+            properties: {
+              direction: {
+                type: 'string',
+                enum: ['ASC', 'DESC'],
+              },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view sort`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              direction: {
+                type: 'string',
+                enum: ['ASC', 'DESC'],
+              },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'viewGroup': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view group`,
+            properties: {
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              fieldValue: { type: 'string' },
+              isVisible: { type: 'boolean', default: true },
+              position: { type: 'number', default: 0 },
+            },
+            required: ['fieldMetadataId', 'viewId', 'fieldValue'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view group for update`,
+            properties: {
+              fieldValue: { type: 'string' },
+              isVisible: { type: 'boolean' },
+              position: { type: 'number' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view group`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              fieldMetadataId: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              fieldValue: { type: 'string' },
+              isVisible: { type: 'boolean' },
+              position: { type: 'number' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'viewFilterGroup': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A view filter group`,
+            properties: {
+              viewId: { type: 'string', format: 'uuid' },
+              parentViewFilterGroupId: { type: 'string', format: 'uuid' },
+              logicalOperator: {
+                type: 'string',
+                enum: ['AND', 'OR', 'NOT'],
+                default: 'AND',
+              },
+              positionInViewFilterGroup: { type: 'number' },
+            },
+            required: ['viewId'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A view filter group for update`,
+            properties: {
+              parentViewFilterGroupId: { type: 'string', format: 'uuid' },
+              logicalOperator: {
+                type: 'string',
+                enum: ['AND', 'OR', 'NOT'],
+              },
+              positionInViewFilterGroup: { type: 'number' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A view filter group`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              viewId: { type: 'string', format: 'uuid' },
+              parentViewFilterGroupId: { type: 'string', format: 'uuid' },
+              logicalOperator: {
+                type: 'string',
+                enum: ['AND', 'OR', 'NOT'],
+              },
+              positionInViewFilterGroup: { type: 'number' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
             },
           };
           schemas[`${capitalize(item.namePlural)}ForResponse`] = {

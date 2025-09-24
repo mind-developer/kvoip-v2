@@ -1,4 +1,4 @@
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -9,16 +9,15 @@ import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/ut
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 type SelectFilterParams = {
@@ -28,34 +27,34 @@ type SelectFilterParams = {
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
-  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+  const setSelectedOperandInDropdown = useSetRecoilComponentState(
     selectedOperandInDropdownComponentState,
   );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentState(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
 
-  const setSubFieldNameUsedInDropdown = useSetRecoilComponentStateV2(
+  const setSubFieldNameUsedInDropdown = useSetRecoilComponentState(
     subFieldNameUsedInDropdownComponentState,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter =
-    useSetRecoilComponentStateV2(
-      objectFilterDropdownCurrentRecordFilterComponentState,
-    );
+  const setObjectFilterDropdownCurrentRecordFilter = useSetRecoilComponentState(
+    objectFilterDropdownCurrentRecordFilterComponentState,
+  );
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
@@ -66,7 +65,8 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
-    const fieldMetadataItem = getFieldMetadataItemById(fieldMetadataItemId);
+    const { fieldMetadataItem } =
+      getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
 
     if (!isDefined(fieldMetadataItem)) {
       return;
@@ -82,10 +82,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
           type: FocusComponentType.DROPDOWN,
           instanceId: fieldMetadataItem.id,
         },
-        hotkeyScope: {
-          scope: DropdownHotkeyScope.Dropdown,
-        },
-        memoizeKey: fieldMetadataItem.id,
       });
     }
 

@@ -39,7 +39,7 @@ import { SetupPabxEnvironmentResponseType } from './types/SetupPabxEnvironmentRe
 @Resolver(() => Telephony)
 export class TelephonyResolver {
   constructor(
-    @InjectRepository(Telephony, 'core')
+    @InjectRepository(Telephony)
     private readonly telephonyRepository: Repository<Telephony>,
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,

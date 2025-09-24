@@ -1,40 +1,50 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import {
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
+  ENQUEUED = 'ENQUEUED',
 }
 
 export type StepOutput = {
   id: string;
-  output: WorkflowExecutorOutput;
+  output: WorkflowActionOutput;
 };
 
 export type WorkflowRunOutput = {
@@ -42,9 +52,24 @@ export type WorkflowRunOutput = {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
   };
-  stepsOutput?: Record<string, WorkflowExecutorOutput>;
+  stepsOutput?: Record<string, WorkflowActionOutput>;
   error?: string;
 };
+
+export type WorkflowRunState = {
+  flow: {
+    trigger: WorkflowTrigger;
+    steps: WorkflowAction[];
+  };
+  stepInfos: WorkflowRunStepInfos;
+  workflowRunError?: string;
+};
+
+const NAME_FIELD_NAME = 'name';
+
+export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
@@ -56,6 +81,7 @@ export type WorkflowRunOutput = {
   icon: STANDARD_OBJECT_ICONS.workflowRun,
 })
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsObjectUIReadOnly()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
@@ -65,6 +91,16 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
   })
   name: string;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Workflow run enqueued at`,
+    description: msg`Workflow run enqueued at`,
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  enqueuedAt: Date | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
@@ -117,6 +153,12 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         position: 3,
         color: 'red',
       },
+      {
+        value: WorkflowRunStatus.ENQUEUED,
+        label: 'Enqueued',
+        position: 4,
+        color: 'blue',
+      },
     ],
     defaultValue: "'NOT_STARTED'",
   })
@@ -132,25 +174,13 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
-    label: msg`Output`,
-    description: msg`Json object to provide output of the workflow run`,
-    icon: 'IconText',
-  })
-  @WorkspaceIsNullable()
-  output: WorkflowRunOutput | null;
-
-  @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.context,
-    type: FieldMetadataType.RAW_JSON,
-    label: msg`Context`,
-    description: msg`Context`,
+    label: msg`State`,
+    description: msg`State of the workflow run`,
     icon: 'IconHierarchy2',
   })
-  @WorkspaceIsNullable()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: Record<string, any> | null;
+  state: WorkflowRunState;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
@@ -162,6 +192,22 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   position: number;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: string;
 
   // Relations
   @WorkspaceRelation({

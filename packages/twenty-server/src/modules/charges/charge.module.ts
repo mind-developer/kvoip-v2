@@ -20,7 +20,7 @@ import { InterApiService } from './inter/services/inter-api.service';
   imports: [
     FileModule,
     FileUploadModule,
-    TypeOrmModule.forFeature([InterIntegration, Workspace], 'core'),
+    TypeOrmModule.forFeature([InterIntegration, Workspace]),
   ],
   providers: [
     InterApiService,

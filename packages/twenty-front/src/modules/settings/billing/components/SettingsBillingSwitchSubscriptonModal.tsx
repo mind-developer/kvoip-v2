@@ -19,8 +19,7 @@ import {
   SwitchPlanForm,
   useSwitchPlanForm,
 } from '@/settings/billing/hooks/useSwitchPlanForm';
-
-import { useBillingBaseProductPricesQuery } from '~/generated/graphql';
+import { useBillingBaseProductPricesQuery } from '~/generated-metadata/graphql';
 
 const StyledModalHeader = styled(Modal.Header)`
   display: flex;

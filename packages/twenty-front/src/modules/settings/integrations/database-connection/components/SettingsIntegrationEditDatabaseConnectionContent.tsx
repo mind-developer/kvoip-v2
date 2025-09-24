@@ -7,24 +7,25 @@ import {
   getEditionSchemaForForm,
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { H2Title, Info } from 'twenty-ui/display';
+import { type z } from 'zod';
 import {
-  RemoteServer,
-  RemoteTable,
+  type RemoteServer,
+  type RemoteTable,
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title, Info } from 'twenty-ui/display';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
@@ -37,7 +38,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   databaseKey: string;
   tables: RemoteTable[];
 }) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
 
   const editConnectionSchema = getEditionSchemaForForm(databaseKey);
@@ -53,6 +54,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
       connection,
     }),
   });
+  const { t } = useLingui();
 
   const { updateOneDatabaseConnection } = useUpdateOneDatabaseConnection();
 
@@ -87,8 +89,8 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         connectionId: connection?.id,
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };
@@ -104,7 +106,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
           <Breadcrumb
             links={[
               {
-                children: 'Integrations',
+                children: t`Integrations`,
                 href: settingsIntegrationsPagePath,
               },
               {
@@ -126,16 +128,14 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         </SettingsHeaderContainer>
         {hasSyncedTables && (
           <Info
-            text={
-              'You cannot edit this connection because it has tracked tables.\nIf you need to make changes, please create a new connection or unsync the tables first.'
-            }
-            accent={'blue'}
+            text={t`You cannot edit this connection because it has tracked tables.\nIf you need to make changes, please create a new connection or unsync the tables first.`}
+            accent="blue"
           />
         )}
         <Section>
           <H2Title
-            title="Edit Connection"
-            description="Edit the information to connect your database"
+            title={t`Edit Connection`}
+            description={t`Edit the information to connect your database`}
           />
 
           <SettingsIntegrationDatabaseConnectionForm

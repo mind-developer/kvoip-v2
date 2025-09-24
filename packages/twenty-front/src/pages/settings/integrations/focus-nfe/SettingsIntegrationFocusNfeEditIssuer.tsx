@@ -8,7 +8,6 @@ import { useUpdateIssuer } from '@/settings/integrations/focus-nfe/hooks/useUpda
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,7 +52,7 @@ export type SettingsEditIssuerFormValues = z.infer<
 export const SettingsIntegrationFocusNfeEditIssuer = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -81,8 +80,8 @@ export const SettingsIntegrationFocusNfeEditIssuer = () => {
     }
 
     if (issuerId && !activeIssuer && issuers.length > 0) {
-      // Check if issuerId is provided but not found after issuers load
-      enqueueSnackBar('Issuer not found.', { variant: SnackBarVariant.Error });
+      // TODO: Check if issuerId is provided but not found after issuers load
+      enqueueErrorSnackBar({ message: 'Issuer not found.' });
       navigate(SettingsPath.IntegrationFocusNfe);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,8 +163,9 @@ export const SettingsIntegrationFocusNfeEditIssuer = () => {
 
       navigate(SettingsPath.IntegrationFocusNfe);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };

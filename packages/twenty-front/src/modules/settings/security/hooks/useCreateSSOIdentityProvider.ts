@@ -3,11 +3,11 @@
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSetRecoilState } from 'recoil';
 import {
-  CreateOidcIdentityProviderMutationVariables,
-  CreateSamlIdentityProviderMutationVariables,
+  type CreateOidcIdentityProviderMutationVariables,
+  type CreateSamlIdentityProviderMutationVariables,
   useCreateOidcIdentityProviderMutation,
   useCreateSamlIdentityProviderMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreateSSOIdentityProvider = () => {
   const [createOidcIdentityProviderMutation] =

@@ -1,14 +1,17 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type ObjectPermission } from '~/generated/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
-export type RecordTableContextValue = {
+type RecordTableContextValue = {
   recordTableId: string;
   viewBarId: string;
   objectNameSingular: string;
   objectMetadataItem: ObjectMetadataItem;
-  visibleTableColumns: ColumnDefinition<FieldMetadata>[];
+  objectPermissions: ObjectPermission;
+  visibleRecordFields: RecordField[];
+  onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
+  triggerEvent: 'CLICK' | 'MOUSE_DOWN';
 };
 
 export const [RecordTableContextProvider, useRecordTableContextOrThrow] =

@@ -1,7 +1,6 @@
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -13,6 +12,7 @@ import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/cha
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
@@ -42,7 +42,6 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -54,7 +53,6 @@ import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/t
 
 // Base standard objects that are available in all workspaces
 const baseStandardObjectMetadataDefinitions = [
-  ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
   CalendarEventWorkspaceEntity,
@@ -63,6 +61,7 @@ const baseStandardObjectMetadataDefinitions = [
   CalendarEventParticipantWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
+  DashboardWorkspaceEntity,
   FavoriteWorkspaceEntity,
   FavoriteFolderWorkspaceEntity,
   TimelineActivityWorkspaceEntity,
@@ -72,7 +71,6 @@ const baseStandardObjectMetadataDefinitions = [
   ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
-  WebhookWorkspaceEntity,
   WorkflowWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,
@@ -105,6 +103,7 @@ const baseStandardObjectMetadataDefinitions = [
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace
+// TODO: Use @WorkspaceGate decorator with 'IS_KVOIP_ADMIN' feature flag instead
 const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
   TenantWorkspaceEntity,
   OwnerWorkspaceEntity,

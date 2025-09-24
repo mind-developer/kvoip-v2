@@ -1,12 +1,5 @@
-import styled from '@emotion/styled';
-import * as React from 'react';
-
-import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
-
-import { TabListScope } from '@/ui/layout/tab-list/scopes/TabListScope';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useTheme } from '@emotion/react';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIcons } from 'twenty-ui/display';
 
 type TabItemProps = {
@@ -25,57 +18,31 @@ type ServiceCenterTabListProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  user-select: none;
-`;
-
 export const ServiceCenterTabList = ({
   tabs,
   tabListId,
   loading,
   className,
 }: ServiceCenterTabListProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const theme = useTheme();
-
   const { getIcon } = useIcons();
 
-  const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || 0;
-
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
-    activeTabIdComponentState,
-    tabListId,
-  );
-
-  // const activeTabId = useRecoilValue(activeTabIdState);
-
-  React.useEffect(() => {
-    setActiveTabId(initialActiveTabId.toString());
-  }, [initialActiveTabId, setActiveTabId]);
+  // Transform TabItemProps to SingleTabProps
+  const transformedTabs: SingleTabProps[] = tabs.map((tab) => ({
+    id: tab.id.toString(),
+    title: tab.name,
+    Icon: getIcon(tab.icon),
+    hide: tab.hide,
+    disabled: tab.disabled,
+    pill: tab.pill,
+  }));
 
   return (
-    <TabListScope tabListScopeId={tabListId}>
-      {/* <ScrollWrapper hideY> */}
-      <StyledContainer className={className}>
-        {tabs.map((tab) => (
-          <DeprecatedTab
-            id={tab.id.toString()}
-            key={tab.id}
-            title={tab.name}
-            Icon={getIcon(tab.icon)}
-            active={tab.id.toString() === activeTabId}
-            onClick={() => setActiveTabId(tab.id.toString())}
-            disabled={loading}
-          />
-        ))}
-      </StyledContainer>
-      {/* </ScrollWrapper> */}
-    </TabListScope>
+    <TabList
+      tabs={transformedTabs}
+      loading={loading}
+      className={className}
+      componentInstanceId={tabListId}
+      behaveAsLinks={false}
+    />
   );
 };

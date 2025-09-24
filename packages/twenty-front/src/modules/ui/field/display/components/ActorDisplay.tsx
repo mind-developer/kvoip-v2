@@ -1,8 +1,8 @@
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarChip } from 'twenty-ui/components';
+import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
@@ -25,6 +25,7 @@ const PROVIDORS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
+    [ConnectedAccountProvider.IMAP_SMTP_CALDAV]: IconMail,
     default: IconMail,
   },
   CALENDAR: {
@@ -50,7 +51,11 @@ export const ActorDisplay = ({
       case 'EMAIL':
         return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
-        return PROVIDORS_ICON_MAPPING.CALENDAR[context?.provider ?? 'default'];
+        return (
+          PROVIDORS_ICON_MAPPING.CALENDAR[
+            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.CALENDAR
+          ] ?? PROVIDORS_ICON_MAPPING.CALENDAR.default
+        );
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':
@@ -66,13 +71,18 @@ export const ActorDisplay = ({
     source === 'API' || source === 'IMPORT' || source === 'SYSTEM';
 
   return (
-    <AvatarChip
-      placeholderColorSeed={workspaceMemberId ?? undefined}
-      name={name ?? ''}
-      avatarType={workspaceMemberId ? 'rounded' : 'squared'}
-      LeftIcon={LeftIcon}
-      avatarUrl={avatarUrl ?? undefined}
-      isIconInverted={isIconInverted}
+    <Chip
+      label={name ?? ''}
+      leftComponent={
+        <AvatarChip
+          placeholderColorSeed={workspaceMemberId ?? undefined}
+          avatarType={workspaceMemberId ? 'rounded' : 'squared'}
+          placeholder={name}
+          Icon={LeftIcon}
+          avatarUrl={avatarUrl ?? undefined}
+          isIconInverted={isIconInverted}
+        />
+      }
     />
   );
 };

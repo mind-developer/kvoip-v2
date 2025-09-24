@@ -8,19 +8,14 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
   MessageImportExceptionHandlerService,
@@ -38,7 +33,6 @@ export class MessagingMessagesImportService {
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
-    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
@@ -46,6 +40,7 @@ export class MessagingMessagesImportService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
   ) {}
 
   async processMessageBatchImport(
@@ -74,48 +69,23 @@ export class MessagingMessagesImportService {
         messageChannel.id,
       ]);
 
-      try {
-        connectedAccount.accessToken =
-          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+      const { accessToken, refreshToken } =
+        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+          {
             connectedAccount,
             workspaceId,
-          );
-      } catch (error) {
-        switch (error.code) {
-          case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
-            throw new MessageImportDriverException(
-              error.message,
-              MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-            );
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingMonitoringService.track({
-              eventName: `refresh_token.error.insufficient_permissions`,
-              workspaceId,
-              connectedAccountId: messageChannel.connectedAccountId,
-              messageChannelId: messageChannel.id,
-              message: `${error.code}: ${error.reason}`,
-            });
-            throw new MessageImportDriverException(
-              error.message,
-              MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-            );
-          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw new MessageImportDriverException(
-              error.message,
-              MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
-            );
-          default:
-            this.logger.error(
-              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
-            );
-            this.logger.log(error);
-            throw error;
-        }
-      }
+            messageChannelId: messageChannel.id,
+          },
+        );
+
+      const connectedAccountWithFreshTokens = {
+        ...connectedAccount,
+        accessToken,
+        refreshToken,
+      };
 
       await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
@@ -124,7 +94,7 @@ export class MessagingMessagesImportService {
       );
 
       if (!messageIdsToFetch?.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
         );
 
@@ -136,32 +106,34 @@ export class MessagingMessagesImportService {
 
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-        connectedAccount.accountOwnerId,
+        connectedAccountWithFreshTokens.accountOwnerId,
         workspaceId,
       );
 
       const messagesToSave = filterEmails(
         messageChannel.handle,
-        [...connectedAccount.handleAliases.split(',')],
+        [...connectedAccountWithFreshTokens.handleAliases.split(',')],
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-        messagesToSave,
-        messageChannel,
-        connectedAccount,
-        workspaceId,
-      );
+      if (messagesToSave.length > 0) {
+        await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+          messagesToSave,
+          messageChannel,
+          connectedAccountWithFreshTokens,
+          workspaceId,
+        );
+      }
 
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
         );
       } else {

@@ -1,17 +1,21 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectRecordFilterInput, useSearchQuery } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  useSearchQuery,
+} from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
-export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
+// maybe we should look at ObjectMetadataItemIdentifier to update the API even though there are many location to update
+export type UseSearchRecordsParams = {
+  objectNameSingulars: string[];
   limit?: number;
   onError?: (error?: Error) => void;
   skip?: boolean;
@@ -21,7 +25,7 @@ export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
 };
 
 export const useObjectRecordSearchRecords = ({
-  objectNameSingular,
+  objectNameSingulars,
   searchInput,
   limit,
   skip,
@@ -29,36 +33,30 @@ export const useObjectRecordSearchRecords = ({
   fetchPolicy,
 }: UseSearchRecordsParams) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const areDefined = useDoObjectMetadataItemsExist(objectNameSingulars);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { data, loading, error, previousData } = useSearchQuery({
     skip:
-      skip ||
-      !objectMetadataItem ||
-      !currentWorkspaceMember ||
-      !isDefined(searchInput),
+      skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
     variables: {
       searchInput: searchInput ?? '',
       limit: limit ?? MAX_SEARCH_RESULTS,
       filter: filter ?? {},
-      includedObjectNameSingulars: [objectNameSingular],
+      includedObjectNameSingulars: objectNameSingulars,
     },
     fetchPolicy: fetchPolicy,
+    client: apolloCoreClient,
     onError: (error) => {
       logError(
-        `useSearchRecords for "${objectMetadataItem.namePlural}" error : ` +
+        `useSearchRecords for "${objectNameSingulars.join(', ')}" error : ` +
           error,
       );
-      enqueueSnackBar(
-        `Error during useSearchRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        apolloError: error,
+      });
     },
   });
 
@@ -70,7 +68,6 @@ export const useObjectRecordSearchRecords = ({
   );
 
   return {
-    objectMetadataItem,
     searchRecords,
     loading,
     error,

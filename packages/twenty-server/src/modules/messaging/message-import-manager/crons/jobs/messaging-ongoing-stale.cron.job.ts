@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   MessagingOngoingStaleJob,
-  MessagingOngoingStaleJobData,
+  type MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 
 export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
@@ -21,7 +21,7 @@ export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class MessagingOngoingStaleCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,

@@ -1,7 +1,6 @@
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 interface StripeLoginButtonProps {
   onClick: () => void;
@@ -30,7 +29,7 @@ const CheckBox = styled.input`
 const StripeLoginButton = ({ onClick }: StripeLoginButtonProps) => {
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   return (
     <>
@@ -40,8 +39,8 @@ const StripeLoginButton = ({ onClick }: StripeLoginButtonProps) => {
       <Button
         onClick={() => {
           if (!acceptTerms) {
-            enqueueSnackBar('Accept the Terms', {
-              variant: SnackBarVariant.Error,
+            enqueueErrorSnackBar({
+              message: 'Accept the Terms',
             });
             throw new Error('Accept the Terms');
           }

@@ -1,5 +1,4 @@
 import { TOGGLE_INTER_INTEGRATION_STATUS } from '@/settings/integrations/inter/graphql/mutation/toggleInterIntegrationStatus';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -8,14 +7,15 @@ interface ToggleInterIntegration {
 }
 
 export const useToggleInterIntegration = (): ToggleInterIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [toggleInterIntegrationMutation] = useMutation(
     TOGGLE_INTER_INTEGRATION_STATUS,
     {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: error.message,
         });
       },
     },

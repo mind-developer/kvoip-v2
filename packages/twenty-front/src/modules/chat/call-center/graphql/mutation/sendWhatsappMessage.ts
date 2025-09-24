@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
 
-export const SEND_MESSAGE = gql`
-  mutation SendMessage($sendMessageInput: SendMessageInput!) {
-    sendMessage(sendMessageInput: $sendMessageInput)
+export const SEND_WHATSAPP_MESSAGE = gql`
+  mutation SendWhatsAppMessage(
+    $sendWhatsAppMessageInput: SendWhatsAppMessageInput!
+  ) {
+    sendWhatsAppMessage(sendWhatsAppMessageInput: $sendWhatsAppMessageInput)
   }
 `;

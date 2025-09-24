@@ -27,17 +27,15 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     FileUploadModule,
     FileModule,
     EmailModule,
-    FinancialClosingModule,
-    TypeOrmModule.forFeature(
-      [InterIntegration, Workspace, BillingCustomer, BillingCharge],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      InterIntegration,
+      Workspace,
+      BillingCustomer,
+      BillingCharge,
+    ]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [InterIntegration, Workspace],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([InterIntegration, Workspace]),
         WorkspaceModule,
       ],
     }),

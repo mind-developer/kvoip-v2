@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { Select } from '@/ui/input/components/Select';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IssuerFormValues } from '~/types/Issuer';
@@ -70,7 +70,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
           name="name"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextInputV2
+            <TextInput
               label="Issuer name (company name)"
               {...field}
               disabled={disabled}
@@ -88,7 +88,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
             name="cnpj"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="CNPJ"
                 {...field}
                 disabled={disabled}
@@ -104,7 +104,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
             name="cpf"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="CPF"
                 {...field}
                 disabled={disabled}
@@ -123,7 +123,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
             name="ie"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="IE"
                 {...field}
                 disabled={disabled}
@@ -139,7 +139,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
             name="cnaeCode"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="CNAE Code"
                 {...field}
                 disabled={disabled}
@@ -159,7 +159,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
             name="cep"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <TextInputV2
+              <TextInput
                 label="CEP"
                 {...field}
                 disabled={disabled}
@@ -177,7 +177,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
               name="street"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="Street"
                   {...field}
                   disabled={disabled}
@@ -193,7 +193,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
               name="number"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="Number"
                   {...field}
                   disabled={disabled}
@@ -214,7 +214,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
               name="neighborhood"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="Neighborhood"
                   {...field}
                   disabled={disabled}
@@ -232,7 +232,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
               name="city"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="City"
                   {...field}
                   disabled={disabled}
@@ -250,7 +250,7 @@ export const SettingsIntegrationFocusNfeIssuerForm = ({
               name="state"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextInputV2
+                <TextInput
                   label="State"
                   {...field}
                   disabled={disabled}

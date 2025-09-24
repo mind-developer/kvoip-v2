@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -18,7 +18,7 @@ describe('AuthSsoService', () => {
       providers: [
         AuthSsoService,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(Workspace),
           useValue: {
             findOne: jest.fn(),
           },
@@ -34,7 +34,7 @@ describe('AuthSsoService', () => {
 
     authSsoService = module.get<AuthSsoService>(AuthSsoService);
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace, 'core'),
+      getRepositoryToken(Workspace),
     );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });

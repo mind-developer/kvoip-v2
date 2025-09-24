@@ -9,12 +9,11 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
@@ -54,7 +53,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
   );
 
@@ -62,7 +61,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleSelectKanbanViewType = async () => {
     if (isDefaultView) {
@@ -70,7 +69,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     }
     if (availableFieldsForKanban.length === 0) {
       navigateToSelectSettings();
-      closeDropdown();
+      closeDropdown(dropdownId);
     }
     if (currentView?.type !== ViewType.Kanban) {
       await setAndPersistViewType(ViewType.Kanban);
@@ -87,7 +86,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
@@ -110,7 +109,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
           focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
-          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           <DropdownMenuItemsContainer scrollable={false}>
             <SelectableListItem
@@ -189,7 +187,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             {currentView?.type === ViewType.Kanban && (
               <>
                 <SelectableListItem
-                  itemId={'Group'}
+                  itemId="Group"
                   onEnter={() => {
                     isDefined(recordGroupFieldMetadata)
                       ? onContentChange('recordGroups')
@@ -211,7 +209,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
 
                 <SelectableListItem
-                  itemId={'Compact view'}
+                  itemId="Compact view"
                   onEnter={() => {
                     setAndPersistIsCompactModeActive(
                       !isCompactModeActive,

@@ -16,4 +16,4 @@ export interface NewConditionalState {
   logicNodeData: NewLogicNodeData[];
 }
 
-export type RecordType = 'sectors' | 'text';
+export type RecordType = 'sectors' | 'text' | '';

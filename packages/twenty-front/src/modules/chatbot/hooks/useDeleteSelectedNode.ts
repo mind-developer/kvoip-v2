@@ -1,12 +1,12 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { useUpdateChatbotFlow } from './useUpdateChatbotFlow';
+import { useSetRecoilState } from 'recoil';
 
 export const useDeleteSelectedNode = () => {
-  const [chatbotFlow, setChatbotFlow] = useRecoilState(chatbotFlowState);
+  const chatbotFlow = useGetChatbotFlowState();
+  const saveChatbotFlowState = useSaveChatbotFlowState();
   const setSelectedNode = useSetRecoilState(chatbotFlowSelectedNodeState);
-  const { updateFlow } = useUpdateChatbotFlow();
 
   const deleteSelectedNode = (nodeId: string) => {
     if (!chatbotFlow || !nodeId) return;
@@ -18,18 +18,15 @@ export const useDeleteSelectedNode = () => {
       (edge) => edge.source !== nodeId && edge.target !== nodeId,
     );
 
-    // @ts-expect-error remover campos que não são aceitos na mutation
-    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
-
     const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
+      chatbotId: chatbotFlow.chatbotId,
       nodes: updatedNodes,
       edges: updatedEdges,
       viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setSelectedNode(undefined);
-    updateFlow(updatedChatbotFlow);
+    saveChatbotFlowState(updatedChatbotFlow);
   };
 
   return { deleteSelectedNode };

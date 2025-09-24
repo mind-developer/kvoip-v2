@@ -10,12 +10,12 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
-import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
+import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
@@ -44,14 +44,16 @@ export const AppRouterProviders = () => {
             <ChromeExtensionSidecarProvider>
               <UserProvider>
                 <AuthProvider>
-                  <ApolloMetadataClientProvider>
+                  <ApolloCoreProvider>
                     <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
                         <UserThemeProviderEffect />
                         <SnackBarProvider>
                           <ErrorMessageEffect />
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogComponentInstanceContext.Provider
+                            value={{ instanceId: 'dialog-manager' }}
+                          >
                             <DialogManager>
                               <StrictMode>
                                 <PromiseRejectionEffect />
@@ -61,13 +63,13 @@ export const AppRouterProviders = () => {
                                 <Outlet />
                               </StrictMode>
                             </DialogManager>
-                          </DialogManagerScope>
+                          </DialogComponentInstanceContext.Provider>
                         </SnackBarProvider>
                         <MainContextStoreProvider />
                       </PrefetchDataProvider>
                       <PageChangeEffect />
                     </ObjectMetadataItemsProvider>
-                  </ApolloMetadataClientProvider>
+                  </ApolloCoreProvider>
                 </AuthProvider>
               </UserProvider>
             </ChromeExtensionSidecarProvider>

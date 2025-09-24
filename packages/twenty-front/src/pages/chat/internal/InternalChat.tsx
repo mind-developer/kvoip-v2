@@ -1,7 +1,7 @@
 import { ChatsAndActions } from '@/chat/internal/components/ChatsAndActions';
 import { OpenChat } from '@/chat/internal/components/OpenChat';
 import { ChatContext } from '@/chat/internal/context/chatContext';
-import { ChatContextType } from '@/chat/internal/types/chat';
+import { ChatContextType } from '@/chat/types/chat';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';

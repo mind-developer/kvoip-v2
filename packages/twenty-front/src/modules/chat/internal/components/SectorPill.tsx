@@ -4,7 +4,7 @@ import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
@@ -46,8 +46,8 @@ export const SectorPill = ({
 }: SectorPillProps) => {
   // const { t } = useTranslation();
   const dropdownId = `${scopeKey}-sector-dropdown`;
-  const { closeDropdown } = useDropdown(dropdownId);
 
+  const { toggleDropdown } = useToggleDropdown();
   // const { transferService } = useContext(
   //   CallCenterContext,
   // ) as CallCenterContextType;
@@ -90,7 +90,7 @@ export const SectorPill = ({
                 onClick={() => {
                   setSelectedOption(option.label);
                   handleSelect(option.value);
-                  closeDropdown();
+                  toggleDropdown();
                 }}
               />
             ))}

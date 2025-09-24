@@ -3,8 +3,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import {
   BillingException,
@@ -16,7 +17,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 export class BillingWebhookCustomerService {
   protected readonly logger = new Logger(BillingWebhookCustomerService.name);
   constructor(
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {}
 

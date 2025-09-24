@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_INTER_INTEGRATIONS } from '@/settings/integrations/inter/graphql/query/interIntegrationByWorkspace';
 import { FindInterIntegration } from '@/settings/integrations/inter/types/FindInterIntegrationInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type FindAllInterIntegrations = {
@@ -14,7 +13,7 @@ type FindAllInterIntegrations = {
 };
 
 export const useFindAllInterIntegrations = (): FindAllInterIntegrations => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -24,8 +23,9 @@ export const useFindAllInterIntegrations = (): FindAllInterIntegrations => {
   } = useQuery(GET_ALL_INTER_INTEGRATIONS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: error.message,
       });
     },
   });

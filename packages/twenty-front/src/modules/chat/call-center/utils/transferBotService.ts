@@ -1,4 +1,4 @@
-import { SendEventMessageInput } from '@/chat/call-center/types/SendMessage';
+import { SendWhatsAppEventMessageInput } from '@/chat/call-center/types/SendWhatsAppMessage';
 import { MessageEventType } from '@/chat/types/MessageEventType';
 import { MessageType } from '@/chat/types/MessageType';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
@@ -8,7 +8,7 @@ export const transferBotService = (
   integrationId: string,
   phone: string,
   currentStatus: statusEnum,
-  sendWhatsappEventMessage: (input: SendEventMessageInput) => void,
+  sendWhatsappEventMessage: (input: SendWhatsAppEventMessageInput) => void,
   sectorId: string,
   sectors: Sector[],
   chatbotName: string,

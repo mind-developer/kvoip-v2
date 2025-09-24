@@ -1,24 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
-
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { AiAgentExecutorService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/ai-agent-executor.service';
 
 import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 
 @Module({
   imports: [
-    AgentModule,
-    AiModule.forRoot({
-      useFactory: () => ({ type: AiDriver.OPENAI }),
-    }),
-    TypeOrmModule.forFeature([AgentEntity], 'core'),
+    AiModule,
+    TypeOrmModule.forFeature([AgentEntity, RoleTargetsEntity, RoleEntity]),
   ],
-  providers: [ScopedWorkspaceContextFactory, AiAgentWorkflowAction],
+  providers: [
+    ScopedWorkspaceContextFactory,
+    AiAgentWorkflowAction,
+    AiAgentExecutorService,
+  ],
   exports: [AiAgentWorkflowAction],
 })
 export class AiAgentActionModule {}

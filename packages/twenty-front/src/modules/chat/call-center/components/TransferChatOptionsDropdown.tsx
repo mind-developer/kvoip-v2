@@ -32,12 +32,12 @@ export const TransferChatOptionsDropdown = () => {
       dropdownId={TRANSFER_CHAT_OPTIONS_DROPDOWN_ID}
       clickableComponent={
         <StyledIconButton
-          variant="primary"
+          variant="secondary"
           accent="blue"
           size="medium"
           Icon={(props) => (
             // eslint-disable-next-line react/jsx-props-no-spreading
-            <IconArrowForwardUp {...props} color={theme.font.color.inverted} />
+            <IconArrowForwardUp {...props} />
           )}
         />
       }

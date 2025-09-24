@@ -16,13 +16,13 @@ import {
   ISearchResult,
   Message,
   TDateFirestore,
-} from '@/chat/internal/types/chat';
+} from '@/chat/types/chat';
 import { MessageType } from '@/chat/types/MessageType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useLingui } from '@lingui/react/macro';
 import {
   and,
   collection,
@@ -42,6 +42,7 @@ import { v4 } from 'uuid';
 export const ChatContext = createContext<ChatContextType | null>(null);
 
 const ChatProvider = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useLingui();
   const [queryResult, setQueryResult] = useState<ISearchResult | null>(null);
   const [workspaceUsers, setWorkspaceUsers] = useState<IChatUser[]>([]);
   const [otherUserStatus, setOtherUserStatus] = useState<string>('');
@@ -85,7 +86,7 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
   const { uploadFileToBucket } = useUploadFileToBucket();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   // const { sendChatNotification } = useSendChatNotification();
 
   useEffect(() => {}, [refetchMembers]);
@@ -565,7 +566,11 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const sortChats = () => {
     const orderedChats = userChat?.chats.sort((a, b) => {
       return (
+        // TODO: Does this even work?
+        // TODO: Remove ts error
+        // @ts-expect-error
         new Date(b.lastMessageDate.toDate()).getTime() -
+        // @ts-expect-error
         new Date(a.lastMessageDate.toDate()).getTime()
       );
     });
@@ -579,6 +584,8 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const formatDate = (date: TDateFirestore) => {
+    // TODO: Remove ts error
+    // @ts-expect-error
     const parsedDate = new Date(date.toDate());
 
     const hours = parsedDate.getHours().toString().padStart(2, '0');
@@ -625,8 +632,8 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
       handleSendMessage(chatId, type, url, file.name);
     } catch (error) {
-      enqueueSnackBar('Error uploading file', {
-        variant: SnackBarVariant.Warning,
+      enqueueErrorSnackBar({
+        message: t`Error uploading file`,
       });
     }
   };

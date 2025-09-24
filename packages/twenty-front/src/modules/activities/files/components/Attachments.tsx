@@ -1,14 +1,15 @@
 import styled from '@emotion/styled';
-import { ChangeEvent, useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from 'react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -48,16 +49,26 @@ export const Attachments = ({
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
+  const { t } = useLingui();
+
+  const onUploadFile = async (file: File) => {
+    await uploadAttachmentFile(file, targetableObject);
+  };
+
+  const onUploadFiles = async (files: File[]) => {
+    for (const file of files) {
+      await onUploadFile(file);
+    }
+  };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
+    if (isDefined(e.target.files)) {
+      onUploadFiles(Array.from(e.target.files));
+    }
   };
 
   const handleUploadFileClick = () => {
     inputFileRef?.current?.click?.();
-  };
-
-  const onUploadFile = async (file: File) => {
-    await uploadAttachmentFile(file, targetableObject);
   };
 
   const isAttachmentsEmpty = !attachments || attachments.length === 0;
@@ -82,7 +93,7 @@ export const Attachments = ({
         {isDraggingFile ? (
           <DropZone
             setIsDraggingFile={setIsDraggingFile}
-            onUploadFile={onUploadFile}
+            onUploadFiles={onUploadFiles}
           />
         ) : (
           <AnimatedPlaceholderEmptyContainer
@@ -92,21 +103,22 @@ export const Attachments = ({
             <AnimatedPlaceholder type="noFile" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>
-                No Files
+                <Trans>No Files</Trans>
               </AnimatedPlaceholderEmptyTitle>
               <AnimatedPlaceholderEmptySubTitle>
-                There are no associated files with this record.
+                <Trans>There are no associated files with this record.</Trans>
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
               ref={inputFileRef}
               onChange={handleFileChange}
               type="file"
+              multiple
             />
             {hasObjectUpdatePermissions && (
               <Button
                 Icon={IconPlus}
-                title="Add file"
+                title={t`Add file`}
                 variant="secondary"
                 onClick={handleUploadFileClick}
               />
@@ -123,10 +135,11 @@ export const Attachments = ({
         ref={inputFileRef}
         onChange={handleFileChange}
         type="file"
+        multiple
       />
       <AttachmentList
         targetableObject={targetableObject}
-        title="All"
+        title={t`All`}
         attachments={attachments ?? []}
         button={
           hasObjectUpdatePermissions && (
@@ -134,7 +147,7 @@ export const Attachments = ({
               Icon={IconPlus}
               size="small"
               variant="secondary"
-              title="Add file"
+              title={t`Add file`}
               onClick={handleUploadFileClick}
             ></Button>
           )

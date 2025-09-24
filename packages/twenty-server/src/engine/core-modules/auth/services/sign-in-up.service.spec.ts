@@ -1,11 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -13,16 +13,16 @@ import {
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrPartialUserWithPicture,
-  SignInUpBaseParams,
+  type AuthProviderWithPasswordType,
+  type ExistingUserOrPartialUserWithPicture,
+  type SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -52,14 +52,14 @@ describe('SignInUpService', () => {
       providers: [
         SignInUpService,
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(Workspace),
           useValue: {
             save: jest.fn(),
             create: jest.fn(),
@@ -147,8 +147,8 @@ describe('SignInUpService', () => {
     }).compile();
 
     service = module.get<SignInUpService>(SignInUpService);
-    UserRepository = module.get(getRepositoryToken(User, 'core'));
-    WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
+    UserRepository = module.get(getRepositoryToken(User));
+    WorkspaceRepository = module.get(getRepositoryToken(Workspace));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );

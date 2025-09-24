@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { type CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -17,17 +17,9 @@ export type FieldTypeAndNameMetadata = {
   type: FieldMetadataType;
 };
 
-export function computeColumnName(
-  fieldName: string,
-  options?: ComputeColumnNameOptions,
-): string;
-export function computeColumnName<T extends FieldMetadataType>(
-  fieldMetadata: FieldMetadataInterface<T>,
-  ioptions?: ComputeColumnNameOptions,
-): string;
 // TODO: If we need to implement custom name logic for columns, we can do it here
 export function computeColumnName<T extends FieldMetadataType>(
-  fieldMetadataOrFieldName: FieldMetadataInterface<T> | string,
+  fieldMetadataOrFieldName: FieldMetadataEntity<T> | string,
   options?: ComputeColumnNameOptions,
 ): string {
   const generateName = (name: string) => {
@@ -47,18 +39,10 @@ export function computeColumnName<T extends FieldMetadataType>(
 
   return generateName(fieldMetadataOrFieldName.name);
 }
-export function computeCompositeColumnName(
-  fieldName: string,
-  compositeProperty: CompositeProperty,
-): string;
-export function computeCompositeColumnName<T extends FieldMetadataType>(
-  fieldMetadata: FieldTypeAndNameMetadata | FieldMetadataInterface<T>,
-  compositeProperty: CompositeProperty,
-): string;
 export function computeCompositeColumnName<T extends FieldMetadataType>(
   fieldMetadataOrFieldName:
     | FieldTypeAndNameMetadata
-    | FieldMetadataInterface<T>
+    | FieldMetadataEntity<T>
     | string,
   compositeProperty: CompositeProperty,
 ): string {
@@ -77,7 +61,5 @@ export function computeCompositeColumnName<T extends FieldMetadataType>(
     );
   }
 
-  return `${fieldMetadataOrFieldName.name}${pascalCase(
-    compositeProperty.name,
-  )}`;
+  return generateName(fieldMetadataOrFieldName.name);
 }

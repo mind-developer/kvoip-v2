@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -11,7 +11,7 @@ const RenderWithModal = (
 ) => {
   return (
     <Modal
-      modalId={'email-verification-sent-modal'}
+      modalId="email-verification-sent-modal"
       padding="none"
       modalVariant="primary"
     >

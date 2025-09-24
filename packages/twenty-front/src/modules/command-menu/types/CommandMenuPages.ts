@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 export enum CommandMenuPages {
   Root = 'root',
   ViewRecord = 'view-record',
+  MergeRecords = 'merge-records',
   ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
@@ -17,4 +18,9 @@ export enum CommandMenuPages {
   ChatbotFlowStepEdit = 'chatbot-flow-step-edit',
   Traceable = CoreObjectNameSingular.Traceable,
   Ticket = 'ticket',
+  AskAI = 'ask-ai',
+  ViewPreviousAIChats = 'view-previous-ai-chats',
+  PageLayoutWidgetTypeSelect = 'page-layout-widget-type-select',
+  PageLayoutGraphTypeSelect = 'page-layout-graph-type-select',
+  PageLayoutIframeConfig = 'page-layout-iframe-config',
 }

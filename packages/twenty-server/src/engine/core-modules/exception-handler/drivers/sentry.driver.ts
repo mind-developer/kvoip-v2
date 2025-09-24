@@ -1,10 +1,14 @@
 import * as Sentry from '@sentry/node';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getGenericOperationName,
+  getHumanReadableNameFromCode,
+  isDefined,
+} from 'twenty-shared/utils';
 
-import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
-import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver
@@ -63,20 +67,15 @@ export class ExceptionHandlerSentryDriver
         ) {
           scope.setTag('customExceptionCode', exception.code);
           scope.setFingerprint([exception.code]);
-          exception.name = exception.code
-            .split('_')
-            .map(
-              (word) =>
-                word.charAt(0)?.toUpperCase() + word.slice(1)?.toLowerCase(),
-            )
-            .join(' ');
+          exception.name = getHumanReadableNameFromCode(exception.code);
         }
 
         if (exception instanceof PostgresException) {
           scope.setTag('postgresSqlErrorCode', exception.code);
           const fingerPrint = [exception.code];
-          const genericOperationName = // truncates to first word: FindOnePerson -> Find, AggregateCompanies -> Aggregate, ...
-            options?.operation?.name?.match(/^[A-Z][a-z]*/)?.[0];
+          const genericOperationName = getGenericOperationName(
+            options?.operation?.name,
+          );
 
           if (isDefined(genericOperationName)) {
             fingerPrint.push(genericOperationName);

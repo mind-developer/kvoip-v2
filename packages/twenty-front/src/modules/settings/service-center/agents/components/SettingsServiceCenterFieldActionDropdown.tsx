@@ -2,7 +2,7 @@ import { SERVICE_CENTER_FIELD_ACTION_MODAL_ID } from '@/settings/service-center/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
@@ -43,30 +43,30 @@ export const SettingsServiceCenterFieldActionDropdown = ({
 
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { toggleDropdown } = useToggleDropdown();
 
   const { openModal, closeModal } = useModal();
 
   const handleEdit = (action: ActionType) => {
     onEdit(action);
-    closeDropdown();
+    toggleDropdown();
   };
 
   const handleDelete = () => {
     onDelete?.();
     closeModal(SERVICE_CENTER_FIELD_ACTION_MODAL_ID);
-    closeDropdown();
+    toggleDropdown();
   };
 
   const handleDeactivate = () => {
     onDeactivate?.();
     closeModal(SERVICE_CENTER_FIELD_ACTION_MODAL_ID);
-    closeDropdown();
+    toggleDropdown();
   };
 
   const handleSetAsLabelIdentifier = () => {
     onSetAsLabelIdentifier?.();
-    closeDropdown();
+    toggleDropdown();
   };
 
   return (

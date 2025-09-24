@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-  AdminPanelWorkerQueueHealth,
+  type AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
 type WorkerQueueMetricsSectionProps = {

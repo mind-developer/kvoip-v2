@@ -11,7 +11,7 @@ import {
   WhatsappEmmitResolvedchatsJobProps,
 } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WHATSAPP_EMMIT_CRON_PATTERN } from 'src/engine/core-modules/meta/whatsapp/cron/utils/whatsapp-emmit-cron-pattern';
-import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 
 @Processor(MessageQueue.cronQueue)
 export class WhatsappEmmitResolvedChatsCronJob {
@@ -20,7 +20,7 @@ export class WhatsappEmmitResolvedChatsCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.chargeQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly whatsappService: WhatsappService,
+    private readonly whatsAppService: WhatsAppService,
   ) {}
 
   @Process(WhatsappEmmitResolvedChatsCronJob.name)
@@ -32,7 +32,7 @@ export class WhatsappEmmitResolvedChatsCronJob {
     this.logger.warn(`Checking resolved whatsapp chats to emmit`);
 
     const whatsappChatsToReassignMap =
-      (await this.whatsappService.getWorkspaceWhatsappResolvedChatsMapToReassign()) ??
+      (await this.whatsAppService.getWorkspaceWhatsappResolvedChatsMapToReassign()) ??
       {};
 
     const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);

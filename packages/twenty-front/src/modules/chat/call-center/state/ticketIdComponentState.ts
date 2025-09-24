@@ -1,9 +1,7 @@
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const ticketIdComponentState = createComponentStateV2<
-  string | undefined
->({
+export const ticketIdComponentState = createComponentState<string | undefined>({
   key: 'command-menu/ticket-id',
   defaultValue: undefined,
   componentInstanceContext: CommandMenuPageComponentInstanceContext,

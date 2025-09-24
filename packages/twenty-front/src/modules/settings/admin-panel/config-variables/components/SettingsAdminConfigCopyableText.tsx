@@ -1,10 +1,7 @@
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type SettingsAdminConfigCopyableTextProps = {
   text: string;
@@ -33,16 +30,10 @@ export const SettingsAdminConfigCopyableText = ({
   multiline = false,
   maxRows,
 }: SettingsAdminConfigCopyableTextProps) => {
-  const { enqueueSnackBar } = useSnackBar();
-  const theme = useTheme();
-  const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const copyToClipboardDebounced = useDebouncedCallback((value: string) => {
-    navigator.clipboard.writeText(value);
-    enqueueSnackBar(t`Copied to clipboard!`, {
-      variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
-    });
+    copyToClipboard(value);
   }, 200);
 
   return (

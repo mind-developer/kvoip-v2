@@ -1,6 +1,8 @@
 import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRemoteDatabases';
+import { SETTINGS_INTEGRATION_AI_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationMcp';
+import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { useSettingsIntegrationStripeCategory } from '@/settings/integrations/constants/SettingsIntegrationStripe';
-import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { getSettingsIntegrationAll } from '@/settings/integrations/utils/getSettingsIntegrationAll';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -28,6 +30,10 @@ export const useSettingsIntegrationCategories =
       ({ name }) => name === 'stripe',
     )?.isActive;
 
+    const isAiIntegrationEnabled = useIsFeatureEnabled(
+      FeatureFlagKey.IS_AI_ENABLED,
+    );
+
     const allIntegrations = getSettingsIntegrationAll({
       isAirtableIntegrationEnabled,
       isAirtableIntegrationActive,
@@ -42,10 +48,9 @@ export const useSettingsIntegrationCategories =
 
     return [
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
-      //! Check progress of feature flags from twenty.
-      // SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
-      // SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
-      // SETTINGS_INTEGRATION_REQUEST_CATEGORY,
       SETTINGS_INTEGRATION_STRIPE_CATEGORY,
+      // SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
+      ...(isAiIntegrationEnabled ? [SETTINGS_INTEGRATION_AI_CATEGORY] : []),
+      SETTINGS_INTEGRATION_REQUEST_CATEGORY,
     ];
   };

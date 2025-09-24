@@ -1,31 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { resolveInput } from 'twenty-shared/utils';
+
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
-import { applyFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/apply-filter.util';
-
-import { getPreviousStepOutput } from './utils/get-previous-step-output.util';
+import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 @Injectable()
-export class FilterWorkflowAction implements WorkflowExecutor {
-  async execute(input: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+export class FilterWorkflowAction implements WorkflowAction {
+  async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const { currentStepId, steps, context } = input;
 
-    const step = steps.find((step) => step.id === currentStepId);
-
-    if (!step) {
-      throw new WorkflowStepExecutorException(
-        'Step not found',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-      );
-    }
+    const step = findStepOrThrow({
+      stepId: currentStepId,
+      steps,
+    });
 
     if (!isWorkflowFilterAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -34,37 +31,32 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const { filter } = step.settings.input;
+    const { stepFilterGroups, stepFilters } = step.settings.input;
 
-    if (!filter) {
-      throw new WorkflowStepExecutorException(
-        'Filter is not defined',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_SETTINGS,
-      );
-    }
-
-    const previousStepOutput = getPreviousStepOutput(
-      steps,
-      currentStepId,
-      context,
-    );
-
-    const isPreviousStepOutputArray = Array.isArray(previousStepOutput);
-
-    const previousStepOutputArray = isPreviousStepOutputArray
-      ? previousStepOutput
-      : [previousStepOutput];
-
-    const filteredOutput = applyFilter(previousStepOutputArray, filter);
-
-    if (filteredOutput.length === 0) {
+    if (!stepFilterGroups || !stepFilters) {
       return {
-        result: undefined,
+        result: {
+          shouldEndWorkflowRun: false,
+        },
       };
     }
 
+    const resolvedFilters = stepFilters.map((filter) => ({
+      ...filter,
+      rightOperand: resolveInput(filter.value, context),
+      leftOperand: resolveInput(filter.stepOutputKey, context),
+    }));
+
+    const matchesFilter = evaluateFilterConditions({
+      filterGroups: stepFilterGroups,
+      filters: resolvedFilters,
+    });
+
     return {
-      result: isPreviousStepOutputArray ? filteredOutput : filteredOutput[0],
+      result: {
+        matchesFilter,
+      },
+      shouldEndWorkflowRun: !matchesFilter,
     };
   }
 }

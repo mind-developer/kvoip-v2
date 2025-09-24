@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
 const StyledFormContainer = styled.div`
@@ -64,8 +64,8 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             name="currentAccount"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInputV2
-                label="Current account"
+              <TextInput
+                label="Integration name"
                 value={value as string}
                 onChange={onChange}
                 type="text"
@@ -82,7 +82,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             name="expirationDate"
             control={control}
             render={({ field }) => (
-              <TextInputV2
+              <TextInput
                 label="Expiration Date"
                 type="date"
                 value={
@@ -107,7 +107,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             name="clientId"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInputV2
+              <TextInput
                 label="Client ID"
                 value={value as string}
                 onChange={onChange}
@@ -125,7 +125,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             name="clientSecret"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <TextInputV2
+              <TextInput
                 autoComplete="new-password"
                 label="Client Secret"
                 value={value as string}

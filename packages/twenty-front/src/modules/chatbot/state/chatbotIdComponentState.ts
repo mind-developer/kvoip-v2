@@ -1,10 +1,10 @@
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const chatbotIdComponentState = createComponentStateV2<
-  string | undefined
->({
-  key: 'command-menu/chatbot-id',
-  defaultValue: undefined,
-  componentInstanceContext: CommandMenuPageComponentInstanceContext,
-});
+export const chatbotIdComponentState = createComponentState<string | undefined>(
+  {
+    key: 'command-menu/chatbot-id',
+    defaultValue: undefined,
+    componentInstanceContext: CommandMenuPageComponentInstanceContext,
+  },
+);

@@ -6,8 +6,8 @@ import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ChatContextType } from '../../types/chat';
 import { ChatContext } from '../context/chatContext';
-import { ChatContextType } from '../types/chat';
 
 export const StyledInput = styled.input`
   border: none;
