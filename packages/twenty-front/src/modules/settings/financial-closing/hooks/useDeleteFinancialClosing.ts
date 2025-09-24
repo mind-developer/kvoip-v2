@@ -1,5 +1,4 @@
 import { DELETE_FINANCIAL_CLOSING_BY_ID } from '@/settings/financial-closing/graphql/mutations/deleteFinancialClosing';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -9,40 +8,41 @@ interface UseDeleteFinancialClosingByIdReturn {
   error: Error | undefined;
 }
 
-export const useDeleteFinancialClosing = (): UseDeleteFinancialClosingByIdReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+export const useDeleteFinancialClosing =
+  (): UseDeleteFinancialClosingByIdReturn => {
+    const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const [deleteFinancialClosingMutation, { loading, error }] = useMutation(
-    DELETE_FINANCIAL_CLOSING_BY_ID,
-    {
-      onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-        });
+    const [deleteFinancialClosingMutation, { loading, error }] = useMutation(
+      DELETE_FINANCIAL_CLOSING_BY_ID,
+      {
+        onError: (error) => {
+          enqueueErrorSnackBar({
+            message: error.message,
+          });
+        },
+        onCompleted: () => {
+          enqueueSuccessSnackBar({
+            message: 'Financial closing deleted successfully!',
+          });
+        },
       },
-      onCompleted: () => {
-        enqueueSnackBar('Financial closing deleted successfully!', {
-          variant: SnackBarVariant.Success,
+    );
+
+    const deleteFinancialClosingById = async (financialClosingId: string) => {
+      try {
+        await deleteFinancialClosingMutation({
+          variables: { financialClosingId },
         });
-      },
-    },
-  );
+      } catch (err) {
+        enqueueErrorSnackBar({
+          message: 'Error deleting financial closing',
+        });
+      }
+    };
 
-  const deleteFinancialClosingById = async (financialClosingId: string) => {
-    try {
-      await deleteFinancialClosingMutation({
-        variables: { financialClosingId },
-      });
-    } catch (err) {
-      enqueueSnackBar('Error deleting financial closing', {
-        variant: SnackBarVariant.Error,
-      });
-    }
+    return {
+      deleteFinancialClosingById,
+      loading,
+      error,
+    };
   };
-
-  return {
-    deleteFinancialClosingById,
-    loading,
-    error,
-  };
-};
