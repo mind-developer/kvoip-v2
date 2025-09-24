@@ -68,7 +68,7 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
       charge: {
         id: true,
       },
-      notasFiscais: {
+      invoices: {
         id: true,
         nfStatus: true,
         nfType: true,
