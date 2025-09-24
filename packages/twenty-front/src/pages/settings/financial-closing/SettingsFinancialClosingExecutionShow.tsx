@@ -14,12 +14,16 @@ import { FinancialClosingExecution } from '@/settings/financial-closing/types/fi
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconBuildingSkyscraper, IconFileText } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconBuildingSkyscraper,
+  IconFileText,
+} from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -39,55 +43,61 @@ const StyledFormSectionLogs = styled(Section)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-
 export const SettingsFinancialClosingExecutionShow = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { financialClosingExecutionId } = useParams<{ financialClosingExecutionId: string }>();
+  const { financialClosingExecutionId } = useParams<{
+    financialClosingExecutionId: string;
+  }>();
 
-  const { record: execution, loading: executionLoading } = useFindOneRecord<FinancialClosingExecution>({
-    objectNameSingular: CoreObjectNameSingular.FinancialClosingExecution,
-    objectRecordId: financialClosingExecutionId,
-  });
+  const { record: execution, loading: executionLoading } =
+    useFindOneRecord<FinancialClosingExecution>({
+      objectNameSingular: CoreObjectNameSingular.FinancialClosingExecution,
+      objectRecordId: financialClosingExecutionId,
+    });
 
-  const { objectMetadataItem: companyObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
+  const { objectMetadataItem: companyObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Company,
+    });
 
-  const { objectMetadataItem: companyExecutionObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.CompanyFinancialClosingExecution,
-  });
+  const { objectMetadataItem: companyExecutionObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular:
+        CoreObjectNameSingular.CompanyFinancialClosingExecution,
+    });
 
-  const { records: companyExecutions, loading: companyExecutionsLoading } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.CompanyFinancialClosingExecution,
-    filter: financialClosingExecutionId
-      ? {
-          financialClosingExecutionId: {
-            eq: financialClosingExecutionId,
-          },
-        }
-      : undefined,
-    recordGqlFields: {
-      ...generateDepthOneWithoutRelationsRecordGqlFields({
-        objectMetadataItem: companyExecutionObjectMetadataItem,
-      }),
-      company: generateDepthOneRecordGqlFields({
-        objectMetadataItem: companyObjectMetadataItem,
-      }),
-    },
-  });
+  const { records: companyExecutions, loading: companyExecutionsLoading } =
+    useFindManyRecords({
+      objectNameSingular:
+        CoreObjectNameSingular.CompanyFinancialClosingExecution,
+      filter: financialClosingExecutionId
+        ? {
+            financialClosingExecutionId: {
+              eq: financialClosingExecutionId,
+            },
+          }
+        : undefined,
+      recordGqlFields: {
+        ...generateDepthOneWithoutRelationsRecordGqlFields({
+          objectMetadataItem: companyExecutionObjectMetadataItem,
+        }),
+        company: generateDepthOneRecordGqlFields({
+          objectMetadataItem: companyObjectMetadataItem,
+        }),
+      },
+    });
 
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     TAB_LIST_COMPONENT_ID,
   );
 
   const getFinancialClosingExecutionsViewPath = (id: string) => {
-    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
-      ':financialClosingId',
-      id,
-    );
+    const path = getSettingsPath(
+      SettingsPath.FinancialClosingExecutions,
+    ).replace(':financialClosingId', id);
     return path;
   };
 
@@ -158,49 +168,47 @@ export const SettingsFinancialClosingExecutionShow = () => {
         },
         {
           children: t`Executions`,
-          href: getFinancialClosingExecutionsViewPath(execution.financialClosingId),
+          href: getFinancialClosingExecutionsViewPath(
+            execution.financialClosingId,
+          ),
         },
         { children: t`Details` },
-
       ]}
     >
       <SettingsPageContainer>
         <StyledContentContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={TAB_LIST_COMPONENT_ID}
-          />
-          
+          <TabList tabs={tabs} componentInstanceId={TAB_LIST_COMPONENT_ID} />
+
           {activeTabId === 'execution-details' && (
             <StyledFormSection>
               <H2Title
                 title={t`Execution Information`}
                 description={t`General details of the financial closing execution`}
               />
-              
+
               <FinancialClosingExecutionDetailsCard execution={execution} />
-              
+
               {execution.logs && execution.logs.length > 0 && (
                 <StyledFormSectionLogs>
                   <H2Title
                     title={t`Execution Logs`}
                     description={t`Detailed history of the execution`}
                   />
-                  
+
                   <FinancialClosingExecutionLogsList logs={execution.logs} />
                 </StyledFormSectionLogs>
               )}
             </StyledFormSection>
           )}
-          
+
           {activeTabId === 'company-executions' && (
             <StyledFormSection>
               <H2Title
                 title={t`Company Executions`}
                 description={t`List of specific executions by company`}
               />
-              
-              <CompanyFinancialClosingExecutionsTable 
+
+              <CompanyFinancialClosingExecutionsTable
                 companyExecutions={companyExecutions as any}
                 loading={companyExecutionsLoading}
               />

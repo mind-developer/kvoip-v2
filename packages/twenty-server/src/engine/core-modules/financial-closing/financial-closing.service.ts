@@ -8,23 +8,22 @@ import { UpdateFinancialClosingInput } from './dtos/update-financial-closing.inp
 import { FinancialClosing } from './financial-closing.entity';
 
 import { Logger } from '@nestjs/common';
-import { RunFinancialClosingJob, RunFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
+import {
+  RunFinancialClosingJob,
+  RunFinancialClosingJobProcessor,
+} from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { getAmountToBeChargedToCompanies, getCompaniesForFinancialClosing } from 'src/engine/core-modules/financial-closing/utils/financial-closing-utils';
-
 
 export class FinancialClosingService {
   private readonly logger = new Logger(FinancialClosingService.name);
 
   constructor(
-    @InjectRepository(FinancialClosing, 'core')
+    @InjectRepository(FinancialClosing)
     private readonly financialClosingRepository: Repository<FinancialClosing>,
 
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
 
     @InjectMessageQueue(MessageQueue.cronQueue)
@@ -33,7 +32,9 @@ export class FinancialClosingService {
     // private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async create(createInput: CreateFinancialClosingInput): Promise<FinancialClosing> {
+  async create(
+    createInput: CreateFinancialClosingInput,
+  ): Promise<FinancialClosing> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: createInput.workspaceId },
     });
@@ -71,8 +72,9 @@ export class FinancialClosingService {
     });
   }
 
-  async update(updateInput: UpdateFinancialClosingInput): Promise<FinancialClosing> {
-    
+  async update(
+    updateInput: UpdateFinancialClosingInput,
+  ): Promise<FinancialClosing> {
     const entity = await this.financialClosingRepository.findOne({
       where: { id: updateInput.id },
       relations: ['workspace'],
@@ -100,9 +102,14 @@ export class FinancialClosingService {
     });
 
     if (oldPattern !== newPattern) {
-      await this.scheduleCronJob(updated.id, updated.workspace.id, jobId, newPattern);
+      await this.scheduleCronJob(
+        updated.id,
+        updated.workspace.id,
+        jobId,
+        newPattern,
+      );
     }
-    
+
     return updated;
   }
 
@@ -145,7 +152,8 @@ export class FinancialClosingService {
 
   private parseTime(time: string): [string, string] {
     const regex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
-    if (!regex.test(time)) throw new BadRequestException(`Invalid time format: ${time}`);
+    if (!regex.test(time))
+      throw new BadRequestException(`Invalid time format: ${time}`);
     const [hours, minutes] = time.split(':');
     return [hours, minutes];
   }
@@ -154,7 +162,12 @@ export class FinancialClosingService {
     return `${RunFinancialClosingJobProcessor.name}::${id}`;
   }
 
-  private async scheduleCronJob(financialClosingId: string, workspaceId: string, jobId: string, pattern: string) {
+  private async scheduleCronJob(
+    financialClosingId: string,
+    workspaceId: string,
+    jobId: string,
+    pattern: string,
+  ) {
     await this.messageQueueService.addCron<RunFinancialClosingJob>({
       jobName: RunFinancialClosingJobProcessor.name,
       jobId,

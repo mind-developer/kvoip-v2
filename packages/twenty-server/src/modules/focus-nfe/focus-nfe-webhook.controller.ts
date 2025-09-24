@@ -40,16 +40,14 @@ export class FocusNfeController {
       `[${type}] ${integrationId} - Received incoming Focus NFe data | sdfgfdfjgnkdfgnjkfdngkd`,
     );
 
-    this.logger.log(
-      `BODY: ${JSON.stringify(body, null, 2)}`,
-    );
+    this.logger.log(`BODY: ${JSON.stringify(body, null, 2)}`);
 
     const notaFiscalRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<NotaFiscalWorkspaceEntity>(
         workspaceId,
         'notaFiscal',
         { shouldBypassPermissionChecks: true },
-    );
+      );
 
     const notaFiscal = await notaFiscalRepository.findOne({
       where: { id: body.ref },
@@ -67,14 +65,16 @@ export class FocusNfeController {
     }
 
     // Buscar repositório para logs de execução da empresa
-    let companyFinancialClosingExecutionsRepository: Repository<CompanyFinancialClosingExecutionWorkspaceEntity> | undefined;
+    let companyFinancialClosingExecutionsRepository:
+      | Repository<CompanyFinancialClosingExecutionWorkspaceEntity>
+      | undefined;
     if (notaFiscal.companyFinancialClosingExecutionId) {
       companyFinancialClosingExecutionsRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+        (await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
           workspaceId,
           'companyFinancialClosingExecution',
           { shouldBypassPermissionChecks: true },
-        );
+        )) as Repository<CompanyFinancialClosingExecutionWorkspaceEntity>;
     }
 
     if (body.status === 'erro_autorizacao') {
@@ -83,11 +83,14 @@ export class FocusNfeController {
       this.logger.log(`NF erro_autorizacao: ${notaFiscal.nfStatus}`);
 
       // Log de erro na execução da empresa
-      if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+      if (
+        notaFiscal.companyFinancialClosingExecution &&
+        companyFinancialClosingExecutionsRepository
+      ) {
         await addCompanyFinancialClosingExecutionLog(
           notaFiscal.companyFinancialClosingExecution,
           companyFinancialClosingExecutionsRepository,
-          `Erro na autorização da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}): ${body.status} ${body.mensagem_sefaz && (' - ' + body.mensagem_sefaz)}`,
+          `Erro na autorização da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}): ${body.status} ${body.mensagem_sefaz && ' - ' + body.mensagem_sefaz}`,
           'error',
         );
       }
@@ -99,13 +102,12 @@ export class FocusNfeController {
 
     if (notaFiscal.nfStatus === NfStatus.ISSUED) {
       this.logger.log(
-        `NF ${notaFiscal.id} já está emitida. Ignorando novo processamento de anexos.`
+        `NF ${notaFiscal.id} já está emitida. Ignorando novo processamento de anexos.`,
       );
       return;
     }
 
     if (body.status === 'autorizado') {
-
       const attachmentRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
           workspaceId,
@@ -118,17 +120,17 @@ export class FocusNfeController {
       this.logger.log(`type: ${type}`);
 
       if (type === NfType.NFCOM) {
-
-        this.logger.log(
-          `ENTROU NA NFCOM`,
-        );
+        this.logger.log(`ENTROU NA NFCOM`);
 
         const nfcom = body as FocusNFeWebhookBodyNFCom;
 
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
         // Log de sucesso na execução da empresa
-        if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+        if (
+          notaFiscal.companyFinancialClosingExecution &&
+          companyFinancialClosingExecutionsRepository
+        ) {
           await addCompanyFinancialClosingExecutionLog(
             notaFiscal.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
@@ -136,16 +138,17 @@ export class FocusNfeController {
             'info',
             undefined,
             notaFiscal.company ?? undefined,
-            { completedInvoiceIssuance: true }
+            { completedInvoiceIssuance: true },
           );
         }
-        
-        if (nfcom.caminho_xml) {
 
+        if (nfcom.caminho_xml) {
           const xmlUrl = this.getXmlUrl(nfcom, 'url_danfcom');
 
           if (xmlUrl) {
-            const xmlResponse = await axios.get(xmlUrl, { responseType: 'arraybuffer' });
+            const xmlResponse = await axios.get(xmlUrl, {
+              responseType: 'arraybuffer',
+            });
             const xmlBuffer = Buffer.from(xmlResponse.data);
             const xmlFilename = `nfcom-${notaFiscal.id}.xml`;
 
@@ -171,16 +174,19 @@ export class FocusNfeController {
             this.logger.log(
               `[${NfType.NFCOM}] Não foi possivel salvar o arquivo XML para a NF ${notaFiscal.id}`,
             );
-            
+
             // Log de aviso para XML não salvo
-            if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+            if (
+              notaFiscal.companyFinancialClosingExecution &&
+              companyFinancialClosingExecutionsRepository
+            ) {
               await addCompanyFinancialClosingExecutionLog(
                 notaFiscal.companyFinancialClosingExecution,
                 companyFinancialClosingExecutionsRepository,
                 `Não foi possível salvar o arquivo XML da nota fiscal ${notaFiscal.nfType}`,
                 'warn',
                 undefined,
-                notaFiscal.company ?? undefined ?? undefined
+                notaFiscal.company ?? undefined,
               );
             }
           }
@@ -216,16 +222,19 @@ export class FocusNfeController {
 
         if (attachments.length > 0) {
           await attachmentRepository.save(attachments);
-          
+
           // Log de sucesso para anexos salvos
-          if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+          if (
+            notaFiscal.companyFinancialClosingExecution &&
+            companyFinancialClosingExecutionsRepository
+          ) {
             await addCompanyFinancialClosingExecutionLog(
               notaFiscal.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
               `${attachments.length} anexo(s) da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) salvos com sucesso`,
               'info',
               undefined,
-              notaFiscal.company ?? undefined
+              notaFiscal.company ?? undefined,
             );
           }
         }
@@ -240,13 +249,15 @@ export class FocusNfeController {
       }
 
       if (type === NfType.NFSE) {
-
         const nfse = body as FocusNFeWebhookBodyNFSe;
 
         notaFiscal.nfStatus = NfStatus.ISSUED;
 
         // Log de sucesso na execução da empresa
-        if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+        if (
+          notaFiscal.companyFinancialClosingExecution &&
+          companyFinancialClosingExecutionsRepository
+        ) {
           await addCompanyFinancialClosingExecutionLog(
             notaFiscal.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
@@ -254,7 +265,7 @@ export class FocusNfeController {
             'info',
             undefined,
             notaFiscal.company ?? undefined,
-            { completedInvoiceIssuance: true }
+            { completedInvoiceIssuance: true },
           );
         }
 
@@ -264,15 +275,16 @@ export class FocusNfeController {
         }
 
         if (nfse.caminho_xml_nota_fiscal) {
-
           const xmlUrl = this.getXmlUrl(nfse, 'url_danfse');
 
           if (xmlUrl) {
-            const xmlResponse = await axios.get(xmlUrl, { responseType: 'arraybuffer' });
+            const xmlResponse = await axios.get(xmlUrl, {
+              responseType: 'arraybuffer',
+            });
 
             const xmlBuffer = Buffer.from(xmlResponse.data);
             const xmlFilename = `nfse-${notaFiscal.id}.xml`;
-  
+
             const { files } = await this.fileUploadService.uploadFile({
               file: xmlBuffer,
               fileFolder: FileFolder.Invoice,
@@ -280,9 +292,9 @@ export class FocusNfeController {
               filename: xmlFilename,
               mimeType: 'application/xml',
             });
-  
+
             const path = this.extractFullPathFromFilePath(files[0].path);
-            
+
             attachments.push(
               attachmentRepository.create({
                 name: `XML NFSe - ${notaFiscal.id}`,
@@ -295,16 +307,19 @@ export class FocusNfeController {
             this.logger.log(
               `[${NfType.NFSE}] Não foi possivel salvar o arquivo XML para a NF ${notaFiscal.id}`,
             );
-            
+
             // Log de aviso para XML não salvo
-            if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+            if (
+              notaFiscal.companyFinancialClosingExecution &&
+              companyFinancialClosingExecutionsRepository
+            ) {
               await addCompanyFinancialClosingExecutionLog(
                 notaFiscal.companyFinancialClosingExecution,
                 companyFinancialClosingExecutionsRepository,
                 `Não foi possível salvar o arquivo XML da nota fiscal ${notaFiscal.nfType}`,
                 'warn',
                 undefined,
-                notaFiscal.company ?? undefined ?? undefined
+                notaFiscal.company ?? undefined,
               );
             }
           }
@@ -340,16 +355,19 @@ export class FocusNfeController {
 
         if (attachments.length > 0) {
           await attachmentRepository.save(attachments);
-          
+
           // Log de sucesso para anexos salvos
-          if (notaFiscal.companyFinancialClosingExecution && companyFinancialClosingExecutionsRepository) {
+          if (
+            notaFiscal.companyFinancialClosingExecution &&
+            companyFinancialClosingExecutionsRepository
+          ) {
             await addCompanyFinancialClosingExecutionLog(
               notaFiscal.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
               `${attachments.length} anexo(s) da nota fiscal (${getNfTypeLabel(notaFiscal.nfType as NfType)}) salvos com sucesso`,
               'info',
               undefined,
-              notaFiscal.company ?? undefined
+              notaFiscal.company ?? undefined,
             );
           }
         }

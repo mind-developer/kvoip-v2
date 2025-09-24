@@ -4,7 +4,6 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
@@ -24,22 +23,29 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([FinancialClosing, Workspace, InterIntegration], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([
+          FinancialClosing,
+          Workspace,
+          InterIntegration,
+        ]),
         TypeORMModule,
       ],
     }),
-    forwardRef(() => WorkspaceModule),    
+    forwardRef(() => WorkspaceModule),
     FileModule,
     FileUploadModule,
   ],
-  exports: [FinancialClosingService, FinancialClosingChargeService, FinancialClosingNFService],
+  exports: [
+    FinancialClosingService,
+    FinancialClosingChargeService,
+    FinancialClosingNFService,
+  ],
   providers: [
-    FinancialClosingService, 
+    FinancialClosingService,
     FinancialClosingChargeService,
     FinancialClosingNFService,
     FocusNFeService,
-    FinancialClosingResolver, 
-    TypeORMService,
+    FinancialClosingResolver,
     RunFinancialClosingJobProcessor,
     RunCompanyFinancialClosingJobProcessor,
     InterApiService,

@@ -8,6 +8,7 @@ import { addCompanyFinancialClosingExecutionLog } from 'src/engine/core-modules/
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
+import { Repository } from 'typeorm';
 
 @Controller('inter-integration')
 export class InterIntegrationWebhookController {
@@ -32,7 +33,9 @@ export class InterIntegrationWebhookController {
     // Verifica se o body é um array e se nao for verifica se existe o campo situacao
     if (!Array.isArray(body)) {
       if (!body?.situacao) {
-        this.logger.error(`Webhook recebido não é um array e não possui o campo situacao`);
+        this.logger.error(
+          `Webhook recebido não é um array e não possui o campo situacao`,
+        );
         return;
       }
       body = [body];
@@ -41,53 +44,77 @@ export class InterIntegrationWebhookController {
     body.forEach(async (item: any) => {
       try {
         if (item?.situacao == 'RECEBIDO') {
-          this.logger.log(`[${integrationId}] Pagamento confirmado detectado - processando...`);
+          this.logger.log(
+            `[${integrationId}] Pagamento confirmado detectado - processando...`,
+          );
           await this.processPaymentConfirmed(workspaceId, item);
         } else {
-
           // TODO: Implementar situação de expirado aqui ---------|
-          
+
           const situacao = item?.situacao || 'Desconhecida';
-          this.logger.log(`[${integrationId}] Webhook ignorado - situação: ${situacao}`);
+          this.logger.log(
+            `[${integrationId}] Webhook ignorado - situação: ${situacao}`,
+          );
         }
       } catch (error) {
-        this.logger.error(`[${integrationId}] Erro ao processar webhook:`, error);
+        this.logger.error(
+          `[${integrationId}] Erro ao processar webhook:`,
+          error,
+        );
       }
     });
   }
 
-  private async processPaymentConfirmed(workspaceId: string, webhookData: any): Promise<void> {
-    const codigoSolicitacao = webhookData.codigoSolicitacao || webhookData.seuNumero;
-    
+  private async processPaymentConfirmed(
+    workspaceId: string,
+    webhookData: any,
+  ): Promise<void> {
+    const codigoSolicitacao =
+      webhookData.codigoSolicitacao || webhookData.seuNumero;
+
     if (!codigoSolicitacao) {
       this.logger.error('Código de solicitação não encontrado no webhook');
       return;
     }
 
-    this.logger.log(`Processando pagamento: ${codigoSolicitacao} - Valor: ${webhookData.valorTotalRecebido} - Origem: ${webhookData.origemRecebimento}`);
+    this.logger.log(
+      `Processando pagamento: ${codigoSolicitacao} - Valor: ${webhookData.valorTotalRecebido} - Origem: ${webhookData.origemRecebimento}`,
+    );
 
     // Buscar dados necessários
-    const { charge, companyExecution, financialClosing } = await this.findPaymentData(workspaceId, codigoSolicitacao);
-    
+    const { charge, companyExecution, financialClosing } =
+      await this.findPaymentData(workspaceId, codigoSolicitacao);
+
     if (!charge || !companyExecution || !financialClosing) {
       return; // Erros já logados na função findPaymentData
     }
 
     // Emitir nota fiscal se configurado para APÓS pagamento
     if (companyExecution.company?.typeEmissionNF === 'AFTER') {
-      await this.emitInvoiceAfterPayment(workspaceId, charge, companyExecution, financialClosing);
+      await this.emitInvoiceAfterPayment(
+        workspaceId,
+        charge,
+        companyExecution,
+        financialClosing,
+      );
     } else {
-      this.logger.log(`Empresa ${companyExecution.company?.name} não possui emissão de NF configurada para APÓS pagamento`);
+      this.logger.log(
+        `Empresa ${companyExecution.company?.name} não possui emissão de NF configurada para APÓS pagamento`,
+      );
     }
   }
 
-  private async findPaymentData(workspaceId: string, codigoSolicitacao: string) {
+  private async findPaymentData(
+    workspaceId: string,
+    codigoSolicitacao: string,
+  ) {
     // Buscar charge
-    const chargeRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
-      workspaceId,
-      'charge',
-      { shouldBypassPermissionChecks: true },
-    );
+    const chargeRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
+        workspaceId,
+        'charge',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const charge = await chargeRepository.findOne({
       where: { requestCode: codigoSolicitacao },
@@ -95,18 +122,23 @@ export class InterIntegrationWebhookController {
     });
 
     if (!charge) {
-      this.logger.error(`Charge não encontrada para código: ${codigoSolicitacao}`);
+      this.logger.error(
+        `Charge não encontrada para código: ${codigoSolicitacao}`,
+      );
       return { charge: null, companyExecution: null, financialClosing: null };
     }
 
-    this.logger.log(`Charge encontrada: ${charge.id} - Empresa: ${charge.company?.name}`);
+    this.logger.log(
+      `Charge encontrada: ${charge.id} - Empresa: ${charge.company?.name}`,
+    );
 
     // Buscar execução da empresa
-    const companyExecutionRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
-      workspaceId,
-      'companyFinancialClosingExecution',
-      { shouldBypassPermissionChecks: true },
-    );
+    const companyExecutionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+        workspaceId,
+        'companyFinancialClosingExecution',
+        { shouldBypassPermissionChecks: true },
+      );
 
     const companyExecution = await companyExecutionRepository.findOne({
       where: { chargeId: charge.id },
@@ -119,7 +151,9 @@ export class InterIntegrationWebhookController {
     }
 
     // Buscar financial closing
-    const financialClosing = await this.financialClosingService.findById(companyExecution.financialClosingExecution?.financialClosingId!);
+    const financialClosing = await this.financialClosingService.findById(
+      companyExecution.financialClosingExecution?.financialClosingId!,
+    );
 
     // const financialClosingRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialClosing>(
     //   workspaceId,
@@ -132,7 +166,9 @@ export class InterIntegrationWebhookController {
     // });
 
     if (!financialClosing) {
-      this.logger.error(`FinancialClosing não encontrado para ID: ${companyExecution.financialClosingExecution?.financialClosingId}`);
+      this.logger.error(
+        `FinancialClosing não encontrado para ID: ${companyExecution.financialClosingExecution?.financialClosingId}`,
+      );
       return { charge, companyExecution, financialClosing: null };
     }
 
@@ -151,13 +187,16 @@ export class InterIntegrationWebhookController {
     }
 
     try {
-      this.logger.log(`Emitindo nota fiscal para empresa ${companyExecution.company.name} após pagamento confirmado`);
-
-      const companyExecutionRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
-        workspaceId,
-        'companyFinancialClosingExecution',
-        { shouldBypassPermissionChecks: true },
+      this.logger.log(
+        `Emitindo nota fiscal para empresa ${companyExecution.company.name} após pagamento confirmado`,
       );
+
+      const companyExecutionRepository =
+        (await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyFinancialClosingExecutionWorkspaceEntity>(
+          workspaceId,
+          'companyFinancialClosingExecution',
+          { shouldBypassPermissionChecks: true },
+        )) as Repository<CompanyFinancialClosingExecutionWorkspaceEntity>;
 
       // Emitir nota fiscal
       await this.financialClosingNFService.emitNFForCompany(
@@ -182,9 +221,14 @@ export class InterIntegrationWebhookController {
         'info',
       );
 
-      this.logger.log(`Nota fiscal emitida com sucesso para empresa ${companyExecution.company.name}`);
+      this.logger.log(
+        `Nota fiscal emitida com sucesso para empresa ${companyExecution.company.name}`,
+      );
     } catch (error) {
-      this.logger.error(`Erro ao emitir nota fiscal para empresa ${companyExecution.company.name}:`, error);
+      this.logger.error(
+        `Erro ao emitir nota fiscal para empresa ${companyExecution.company.name}:`,
+        error,
+      );
       throw error;
     }
   }

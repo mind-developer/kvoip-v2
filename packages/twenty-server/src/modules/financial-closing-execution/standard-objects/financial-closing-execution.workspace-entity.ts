@@ -5,22 +5,18 @@ import { Relation } from 'typeorm';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS, TRACEABLE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
-import { BILLING_MODEL_OPTIONS } from 'src/engine/core-modules/financial-closing/constants/billing-model.constants';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
+import { FINANCIAL_CLOSING_EXECUTION_MODEL_OPTIONS } from 'src/modules/financial-closing-execution/constants/financial-closing-execution-status.constants';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.financialClosingExecution,
@@ -29,7 +25,8 @@ import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/com
   labelPlural: msg`Financial Closing Executions`,
   description: msg`Execution logs for financial closings`,
   icon: 'IconCalendarTime',
-  labelIdentifierStandardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId:
+    FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
@@ -53,7 +50,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   executedAt: Date;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.financialClosingId,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.financialClosingId,
     type: FieldMetadataType.TEXT,
     label: msg`Financial Closing ID`,
     description: msg`Reference to external financial closing`,
@@ -83,7 +81,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   companiesTotal: number;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companiesWithError,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companiesWithError,
     type: FieldMetadataType.NUMBER,
     label: msg`Companies with Error`,
     description: msg`Number of companies with errors during execution`,
@@ -93,7 +92,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   companiesWithError: number;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedCompanySearch, 
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedCompanySearch,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Company Search`,
     description: msg`Whether the company search step completed`,
@@ -103,7 +103,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   completedCompanySearch: boolean;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedCostIdentification,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedCostIdentification,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Cost Identification`,
     description: msg`Whether cost identification step completed`,
@@ -113,7 +114,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   completedCostIdentification: boolean;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedBoletoIssuance,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedBoletoIssuance,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Boleto Issuance`,
     description: msg`Whether boleto issuance step completed`,
@@ -123,7 +125,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   completedBoletoIssuance: boolean;
 
   @WorkspaceField({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedInvoiceIssuance,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.completedInvoiceIssuance,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Invoice Issuance`,
     description: msg`Whether invoice issuance step completed`,
@@ -134,7 +137,7 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
 
   @WorkspaceField({
     standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.billingModel,
-    type: FieldMetadataType.MULTI_SELECT, 
+    type: FieldMetadataType.MULTI_SELECT,
     label: msg`Billing Models`,
     description: msg`Billing models linked to this execution`,
     icon: 'IconCreditCard',
@@ -158,7 +161,8 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
   }[];
 
   @WorkspaceRelation({
-    standardId: FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
+    standardId:
+      FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
     type: RelationType.ONE_TO_MANY,
     label: msg`Company Financial Closing Executions`,
     description: msg`Reference to company financial closing executions`,
@@ -167,5 +171,7 @@ export class FinancialClosingExecutionWorkspaceEntity extends BaseWorkspaceEntit
     inverseSideFieldKey: 'financialClosingExecution',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
+  companyFinancialClosingExecutions: Relation<
+    CompanyFinancialClosingExecutionWorkspaceEntity[]
+  >;
 }
