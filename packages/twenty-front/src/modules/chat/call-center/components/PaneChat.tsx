@@ -23,7 +23,6 @@ import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Person } from '@/people/types/Person';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -72,9 +71,8 @@ const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
 `;
 
 const StyledAvatarMessage = styled.div`
-  align-self: flex-end;
-  /* max-height: 20%; */
   z-index: 1;
+  align-self: flex-end;
 `;
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
@@ -82,10 +80,9 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
-  gap: ${({ theme }) => theme.spacing(1.5)};
+  justify-content: baseline;
   width: auto;
   max-width: 70%;
-  margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -147,7 +144,7 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.textarea`
-  width: 100%;
+  /* width: 100%; */
   background: transparent;
   border: none;
   outline: none;
@@ -344,7 +341,7 @@ export const PaneChat = () => {
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
   const theme = useTheme();
   const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
-const { t } = useLingui();
+  const { t } = useLingui();
   const [recordingState, setRecordingState] = useState<
     'none' | 'recording' | 'paused'
   >('none');
@@ -581,7 +578,6 @@ const { t } = useLingui();
   }
 
   const handleSendMessage = () => {
-
     if (isWhatsappDocument(selectedChat)) {
       if (audioBlob) {
         setSelectedChat((prev) => {
@@ -890,7 +886,10 @@ const { t } = useLingui();
                     key={index}
                     isSystemMessage={isSystemMessage}
                   >
-                    <DocumentPreview fromMe={message.fromMe} documentUrl={message.message} />
+                    <DocumentPreview
+                      fromMe={message.fromMe}
+                      documentUrl={message.message}
+                    />
                   </StyledDocumentContainer>
                 );
                 break;
