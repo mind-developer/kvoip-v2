@@ -126,15 +126,6 @@ export class BillingResolver {
       },
     );
 
-    const checkoutSessionURL =
-      await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-        ...checkoutSessionParams,
-        billingPricesPerPlan,
-        paymentProvider,
-        interChargeData,
-        locale: context.req.locale || SOURCE_LOCALE,
-      });
-
     // For 7-day trials (no payment method required), create subscription directly
     // For 30-day trials (payment method required), use checkout session flow
     if (!requirePaymentMethod) {
@@ -142,6 +133,9 @@ export class BillingResolver {
         await this.billingPortalWorkspaceService.createDirectSubscription({
           ...checkoutSessionParams,
           billingPricesPerPlan,
+          paymentProvider,
+          interChargeData,
+          locale: context.req.locale || SOURCE_LOCALE,
         });
 
       return {
@@ -152,6 +146,9 @@ export class BillingResolver {
         await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
           ...checkoutSessionParams,
           billingPricesPerPlan,
+          paymentProvider,
+          interChargeData,
+          locale: context.req.locale || SOURCE_LOCALE,
         });
 
       return {
