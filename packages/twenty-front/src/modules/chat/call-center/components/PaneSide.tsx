@@ -15,7 +15,6 @@ const StyledPaneSideContainer = styled.div`
   flex-direction: column;
   min-height: max-content;
   padding: 0 ${({ theme }) => theme.spacing(3)};
-  width: 400px;
 `;
 
 const StyledTabListContainer = styled.div`
