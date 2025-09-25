@@ -19,14 +19,8 @@ export const useCreateTelephony = (): UserCreateTelephonyReturn => {
   const [createTelephonyMutation, { data, loading, error }] = useMutation(
     CREATE_TELEPHONY,
     {
-      onError: (error) => {
-        // TODO: Add proper error message
-        enqueueErrorSnackBar({
-          message: (error as Error).message,
-        });
-      },
       onCompleted: () => {
-        enqueueErrorSnackBar({
+        enqueueSuccessSnackBar({
           message: t`Telephony extension added successfully!`,
         });
       },

@@ -7,7 +7,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
-import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
 import { TelephonyResolver } from 'src/engine/core-modules/telephony/telephony.resolver';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -17,7 +16,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([Telephony, Workspace]),
+        NestjsQueryTypeOrmModule.forFeature([Workspace]),
         TypeORMModule,
       ],
     }),

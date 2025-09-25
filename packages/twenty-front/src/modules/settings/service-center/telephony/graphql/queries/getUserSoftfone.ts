@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_USER_SOFTFONE = gql`
-  query getUserSoftfone($extNum: String!, $workspaceId: ID!) {
+  query getUserSoftfone($extNum: String, $workspaceId: ID!) {
     getUserSoftfone(extNum: $extNum, workspaceId: $workspaceId) {
       codigo_incorporacao
       cliente_id

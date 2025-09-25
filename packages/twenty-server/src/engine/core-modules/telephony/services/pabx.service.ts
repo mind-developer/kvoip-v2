@@ -2,23 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import https from 'https';
 
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 
-import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { type PabxServiceInterface } from 'src/modules/telephony/interfaces/pabxService.interface';
 
-import {
-  CreateDialingPlanInput,
-  UpdateRoutingRulesInput,
-} from 'src/engine/core-modules/telephony/inputs';
-import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
-import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
-import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
-import {
-  ListCommonArgs,
-  ListExtentionsArgs,
-} from 'src/engine/core-modules/telephony/types/pabx.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
+import { type UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
+import { type InsereEmpresa } from 'src/modules/telephony/types/Create/InsereEmpresa.type';
+import { type InsereTronco } from 'src/modules/telephony/types/Create/InsereTronco.type';
+import { type ExtetionBody } from 'src/modules/telephony/types/Extention.type';
+import {
+  type ListCommonArgs,
+  type ListExtentionsArgs,
+} from 'src/modules/telephony/types/pabx.type';
 
 @Injectable()
 export class PabxService implements PabxServiceInterface {
@@ -149,8 +147,6 @@ export class PabxService implements PabxServiceInterface {
 
       return createCompanyResponse;
     } catch (error) {
-      console.log('error: ', error);
-
       this.logger.error(
         `Failed to create company: ${error.message}`,
         error.stack,
@@ -184,6 +180,22 @@ export class PabxService implements PabxServiceInterface {
     }
   };
 
+  listTrunk: (cliente_id: number) => Promise<AxiosResponse> = async (
+    cliente_id,
+  ) => {
+    try {
+      const listTrunkResponse = await this.pabxAxiosInstance.get(
+        '/listar_tronco',
+        { params: { cliente_id: cliente_id } },
+      );
+
+      return listTrunkResponse;
+    } catch (error) {
+      this.logger.error(`Failed to list trunk: ${error.message}`, error.stack);
+      throw error;
+    }
+  };
+
   createDialingPlan: (data: CreateDialingPlanInput) => Promise<AxiosResponse> =
     async (data) => {
       try {
@@ -206,8 +218,6 @@ export class PabxService implements PabxServiceInterface {
 
         return createDialingPlanResponse;
       } catch (error) {
-        console.log('error: ', error);
-
         this.logger.error(
           `Failed to create dialing plan: ${error.message}`,
           error.stack,
@@ -224,15 +234,9 @@ export class PabxService implements PabxServiceInterface {
         `Updating routing rules for dialing plan ID: ${data.plano_discagem_id}`,
       );
 
-      const payload = {
-        plano_discagem_id: data.plano_discagem_id,
-        cliente_id: data.cliente_id,
-        dados: data.dados,
-      };
-
-      const updateRoutingRulesResponse = await this.pabxAxiosInstance.post(
+      const updateRoutingRulesResponse = await this.pabxAxiosInstance.put(
         '/alterar_regras_roteamento',
-        payload,
+        data,
       );
 
       this.logger.log(
@@ -241,10 +245,29 @@ export class PabxService implements PabxServiceInterface {
 
       return updateRoutingRulesResponse;
     } catch (error) {
-      console.log('error: ', error);
-
       this.logger.error(
         `Failed to update routing rules: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  };
+
+  listRegions: (id: number) => Promise<AxiosResponse> = async (id: number) => {
+    try {
+      const listRegionsResponse = await this.pabxAxiosInstance.get(
+        '/listar_regioes',
+        {
+          params: {
+            regiao_id: id,
+          },
+        },
+      );
+
+      return listRegionsResponse;
+    } catch (error) {
+      this.logger.error(
+        `Failed to list regions: ${error.message}`,
         error.stack,
       );
       throw error;

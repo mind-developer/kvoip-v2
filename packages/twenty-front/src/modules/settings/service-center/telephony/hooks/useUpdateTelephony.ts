@@ -1,5 +1,6 @@
 import { UPDATE_TELEPHONY } from '@/settings/service-center/telephony/graphql/mutations/updateAgent';
 import { UpdateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -16,12 +17,6 @@ export const useUpdateTelephony = (): UseEditTelephonyReturn => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [updateTelephony, { loading, error }] = useMutation(UPDATE_TELEPHONY, {
-    onError: (error) => {
-      // TODO: Add proper error message
-      enqueueErrorSnackBar({
-        message: (error as Error).message,
-      });
-    },
     onCompleted: () => {
       enqueueSuccessSnackBar({
         message: 'Agent updated successfully!',
