@@ -19,8 +19,7 @@ export class FileInputHandler implements NodeHandler {
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const { node, integrationId, sendTo, chatbotName, personId, workspaceId } =
-      params;
+    const { node, integrationId, sendTo, chatbotName, workspaceId } = params;
 
     const file =
       typeof node.data?.fileUrl === 'string' ? node.data.fileUrl : null;
@@ -34,7 +33,6 @@ export class FileInputHandler implements NodeHandler {
         fileId: file,
         from: chatbotName,
         fromMe: true,
-        personId: personId,
       };
       console.log('sending', message.fileId);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(

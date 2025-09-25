@@ -27,7 +27,7 @@ export class ChatMessageManagerService {
   }
 
   async sendWhatsAppMessage(
-    input: SendWhatsAppMessageInput,
+    input: Omit<SendWhatsAppMessageInput, 'personId'>,
     workspaceId: string,
   ): Promise<SendWhatsAppMessageResponse | null> {
     this.logger.log('(sendWhatsAppMessage): Sending message:', input);

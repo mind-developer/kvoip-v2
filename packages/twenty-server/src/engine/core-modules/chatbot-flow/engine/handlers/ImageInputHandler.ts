@@ -19,8 +19,7 @@ export class ImageInputHandler implements NodeHandler {
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const { node, integrationId, sendTo, chatbotName, personId, workspaceId } =
-      params;
+    const { node, integrationId, sendTo, chatbotName, workspaceId } = params;
     const image =
       typeof node.data?.imageUrl === 'string' ? node.data.imageUrl : null;
 
@@ -33,7 +32,6 @@ export class ImageInputHandler implements NodeHandler {
         fileId: image,
         from: chatbotName,
         fromMe: true,
-        personId: personId,
       };
       console.log('sending', message.fileId);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(

@@ -9,7 +9,6 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
 import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-message-manager-send.job';
 
 @Injectable()
@@ -20,21 +19,19 @@ export class TextInputHandler implements NodeHandler {
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const { node, integrationId, sendTo, chatbotName, personId, workspaceId } =
-      params;
+    const { node, integrationId, sendTo, chatbotName, workspaceId } = params;
     const text = typeof node.data?.text === 'string' ? node.data.text : null;
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (text) {
       const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
-      const message: SendWhatsAppMessageInput = {
+      const message = {
         integrationId: integrationId,
         to: sendTo,
         type: MessageTypes.TEXT,
         message: formattedText,
         from: chatbotName,
         fromMe: true,
-        personId: personId,
       };
       console.log('sending', message.message);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
