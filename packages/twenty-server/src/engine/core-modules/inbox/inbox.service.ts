@@ -7,7 +7,7 @@ import {
   Inbox,
   IntegrationType,
 } from 'src/engine/core-modules/inbox/inbox.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class InboxService {

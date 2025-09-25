@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { SectorTopic } from 'src/engine/core-modules/sector/types/SectorTopic';
+import { type SectorTopic } from 'src/engine/core-modules/sector/types/SectorTopic';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 

@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { CreateSectorInput } from 'src/engine/core-modules/sector/dtos/create-sector.input';
-import { UpdateSectorInput } from 'src/engine/core-modules/sector/dtos/update-sector.input';
+import { type CreateSectorInput } from 'src/engine/core-modules/sector/dtos/create-sector.input';
+import { type UpdateSectorInput } from 'src/engine/core-modules/sector/dtos/update-sector.input';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 

@@ -2,20 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import https from 'https';
 
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-import { PabxServiceInterface } from 'src/modules/telephony/interfaces/pabxService.interface';
+import { type PabxServiceInterface } from 'src/modules/telephony/interfaces/pabxService.interface';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
-import { UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
-import { InsereEmpresa } from 'src/modules/telephony/types/Create/InsereEmpresa.type';
-import { InsereTronco } from 'src/modules/telephony/types/Create/InsereTronco.type';
-import { ExtetionBody } from 'src/modules/telephony/types/Extention.type';
+import { type CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
+import { type UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
+import { type InsereEmpresa } from 'src/modules/telephony/types/Create/InsereEmpresa.type';
+import { type InsereTronco } from 'src/modules/telephony/types/Create/InsereTronco.type';
+import { type ExtetionBody } from 'src/modules/telephony/types/Extention.type';
 import {
-  ListCommonArgs,
-  ListExtentionsArgs,
+  type ListCommonArgs,
+  type ListExtentionsArgs,
 } from 'src/modules/telephony/types/pabx.type';
 
 @Injectable()
