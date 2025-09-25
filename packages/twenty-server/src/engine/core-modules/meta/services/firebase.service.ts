@@ -116,12 +116,12 @@ export class FirebaseService {
                 relatedPerson.name?.lastName,
             phone: whatsAppDoc.client.phone,
             ppUrl: whatsAppDoc.client.ppUrl ?? relatedPerson.avatarUrl ?? null,
-            email: relatedPerson.emails.primaryEmail ?? null,
+            email: relatedPerson.emails?.primaryEmail ?? null,
           },
         };
         this.logger.log(
-          '(saveWhatsAppMessage): creating new document for chat',
-          JSON.stringify(newDoc),
+          '(saveWhatsAppMessage): creating new document for chat:',
+          JSON.stringify(newDoc, (k, v) => (v === undefined ? null : v)),
         );
         await setDoc(docRef, newDoc);
         if (isReceiving) {

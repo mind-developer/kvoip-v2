@@ -173,7 +173,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
     description: msg`Event charge`,
-    icon: 'IconTargetArrow',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
@@ -329,7 +329,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Invoice`,
     description: msg`Event invoice`,
-    icon: 'IconTargetArrow',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })

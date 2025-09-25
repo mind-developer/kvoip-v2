@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useIsWorkspaceKvoipAdmin } from '@/kvoip-admin/hooks/useIsWorkspaceKvoipAdmin';
 import { AdminWorkspaceNavigationItems } from '@/navigation/components/AdminWorkspaceNavigationItems';
 import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavigationDrawerFixedItems';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
@@ -11,6 +12,7 @@ import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-dr
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const isAdminWorkspace = useIsWorkspaceKvoipAdmin();
 
   return (
     <NavigationDrawer
@@ -25,9 +27,11 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
         <MainNavigationDrawerScrollableItems />
       </NavigationDrawerScrollableContent>
 
-      <NavigationDrawerScrollableContent>
-        <AdminWorkspaceNavigationItems />
-      </NavigationDrawerScrollableContent>
+      {isAdminWorkspace && (
+        <NavigationDrawerScrollableContent>
+          <AdminWorkspaceNavigationItems />
+        </NavigationDrawerScrollableContent>
+      )}
 
       <NavigationDrawerFixedContent>
         <SupportDropdown />

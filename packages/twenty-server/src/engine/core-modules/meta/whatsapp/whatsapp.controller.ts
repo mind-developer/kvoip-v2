@@ -185,7 +185,7 @@ export class WhatsappController {
           from: body.entry[0].changes[0].value.contacts[0].profile.name,
           message: mediaId || isBase64Media ? fileUrl : msg.text.body,
           type: msg.type,
-          fromMe: msg.fromMe,
+          fromMe: !!msg.fromMe,
         };
 
         const whatsappIntegration: Omit<

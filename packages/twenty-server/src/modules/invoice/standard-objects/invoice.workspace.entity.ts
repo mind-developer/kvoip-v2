@@ -45,7 +45,7 @@ export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   labelSingular: msg`Invoice`,
   labelPlural: msg`Invoices`,
   description: msg`All invoices issued by the company`,
-  icon: 'IconClipboardList',
+  icon: 'IconFileDollar',
   labelIdentifierStandardId: INVOICE_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
@@ -363,7 +363,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
     description: msg`Invoices linked to the charges`,
-    icon: 'IconClipboardList',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'invoices',
   })
@@ -405,7 +405,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Product`,
     description: msg`Company linked to the products`,
-    icon: 'IconTag',
+    icon: 'IconClipboardList',
     inverseSideTarget: () => ProductWorkspaceEntity,
     inverseSideFieldKey: 'invoices',
   })

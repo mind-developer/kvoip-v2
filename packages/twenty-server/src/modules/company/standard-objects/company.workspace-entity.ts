@@ -32,8 +32,8 @@ import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspa
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    type FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
@@ -273,7 +273,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Company linked to the charge`,
-    icon: 'IconPhone',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
@@ -284,7 +284,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.product,
     type: RelationType.ONE_TO_MANY,
     label: msg`Products`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconClipboardList',
     inverseSideTarget: () => ProductWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
@@ -387,7 +387,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Invoices`,
     description: msg`Invoices to the company`,
-    icon: 'IconNotes',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

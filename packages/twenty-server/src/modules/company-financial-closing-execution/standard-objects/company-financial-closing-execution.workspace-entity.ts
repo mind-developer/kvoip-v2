@@ -137,7 +137,7 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
     description: msg`Reference to the charge`,
-    icon: 'IconCurrencyDollar',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'companyFinancialClosingExecutions',
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -154,7 +154,7 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
     type: RelationType.ONE_TO_MANY,
     label: msg`Invoices`,
     description: msg`Reference to the invoices`,
-    icon: 'IconReceipt',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

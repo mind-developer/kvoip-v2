@@ -150,7 +150,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
     description: msg`Attachment charge`,
-    icon: 'IconPhone',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
   })
@@ -196,7 +196,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Invoice`,
     description: msg`Attachment invoice`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
