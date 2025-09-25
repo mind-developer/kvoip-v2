@@ -37,7 +37,7 @@ export class FocusNfeController {
     @Body() body: FocusNFeWebhookBody,
   ) {
     this.logger.log(
-      `[${type}] ${integrationId} - Received incoming Focus NFe data | sdfgfdfjgnkdfgnjkfdngkd`,
+      `[${type}] ${integrationId} - Received incoming Focus NFe data`,
     );
 
     this.logger.log(`BODY: ${JSON.stringify(body, null, 2)}`);

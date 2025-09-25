@@ -4,6 +4,7 @@ import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionSt
 import { getExecutionStatusTagColor, getExecutionStatusText } from '@/settings/financial-closing/constants/LogLevelColors';
 import { getTypeEmissionNFColor, useTypeEmissionNFTranslations } from '@/settings/financial-closing/constants/TypeEmissionNF';
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
+import { AppPath } from '@/types/AppPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -12,6 +13,7 @@ import { Tag } from 'twenty-ui/components';
 import { IconExternalLink } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledCard = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -67,6 +69,7 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
   const theme = useTheme();
   const { t } = useLingui();
   const navigate = useNavigate();
+  const navigateApp = useNavigateApp();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
   const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
   const { getTypeEmissionNFLabel } = useTypeEmissionNFTranslations();
@@ -100,21 +103,52 @@ export const CompanyFinancialClosingExecutionDetailsCard = ({
 
   const handleViewCharge = () => {
     if (execution.charge?.id) {
-      // Abrir a charge específica no Command Menu
-      openRecordInCommandMenu({
-        recordId: execution.charge.id,
-        objectNameSingular: CoreObjectNameSingular.Charge,
-        resetNavigationStack: true,
-      });
+    //   try {
+    //     console.log('Abrindo charge no command menu:', {
+    //       recordId: execution.charge.id,
+    //       objectNameSingular: CoreObjectNameSingular.Charge,
+    //     });
+        
+    //     // Tentar abrir no command menu primeiro
+    //     openRecordInCommandMenu({
+    //       recordId: execution.charge.id,
+    //       objectNameSingular: CoreObjectNameSingular.Charge,
+    //       resetNavigationStack: false, // Mudança: usar false para manter o contexto
+    //     });
+    //   } catch (error) {
+        navigateApp(AppPath.RecordShowPage, {
+          objectNameSingular: CoreObjectNameSingular.Charge,
+          objectRecordId: execution.charge?.id!,
+        });
+    //   }
     }
   };
 
   const handleViewInvoice = (invoiceId: string) => {
-    // Abrir a nota fiscal específica no Command Menu
-    openRecordInCommandMenu({
-      recordId: invoiceId,
-      objectNameSingular: 'invoice', // Usando string literal até ser adicionado ao CoreObjectNameSingular
-      resetNavigationStack: true,
+    // try {
+    //   console.log('Abrindo invoice no command menu:', {
+    //     recordId: invoiceId,
+    //     objectNameSingular: 'invoice',
+    //   });
+      
+    //   // Tentar abrir no command menu primeiro
+    //   openRecordInCommandMenu({
+    //     recordId: invoiceId,
+    //     objectNameSingular: 'invoice', // Usando string literal até ser adicionado ao CoreObjectNameSingular
+    //     resetNavigationStack: false, // Mudança: usar false para manter o contexto
+    //   });
+    // } catch (error) {
+    //   console.error('Erro ao abrir invoice no command menu, tentando navegação direta:', error);
+    //     // Fallback: navegação direta para a página do registro
+    //     navigateApp(AppPath.RecordShowPage, {
+    //       objectNameSingular: 'invoice',
+    //       objectRecordId: invoiceId,
+    //     });
+    // }
+
+    navigateApp(AppPath.RecordShowPage, {
+      objectNameSingular: 'invoice',
+      objectRecordId: invoiceId,
     });
   };
 
