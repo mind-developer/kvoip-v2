@@ -47,6 +47,10 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { SoapClientService } from 'src/modules/soap-client/soap-client.service';
+import {
+  ListRegionsResponse,
+  Regiao,
+} from 'src/modules/telephony/types/regions.type';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
@@ -532,7 +536,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       };
 
       try {
-        const soapResult = await this.soapClientService.createCompleteClient(
+        await this.soapClientService.createCompleteClient(
           clienteData,
           contaVoipData,
           ipData,
@@ -541,7 +545,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           11,
         );
 
-        this.logger.log('SOAP client setup completed:', soapResult);
+        this.logger.log('SOAP client setup completed');
 
         await this.setupPabxEnvironment(
           workspace,
@@ -601,32 +605,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new Error('Failed to create PABX company or retrieve ID.');
       }
 
+      const regionsResponse = await this.pabxService.listRegions(0);
+      const regioes: Regiao[] = (regionsResponse.data as ListRegionsResponse)
+        .dados;
+
+      const tarifas = regioes.map((regiao: Regiao) => ({
+        regiao_id: Number(regiao.regiao_id),
+        tarifa: 0,
+        fracionamento: '4/30/6',
+      }));
+
       const trunkInput = {
         cliente_id: companyId,
         tronco_id: 0,
-        nome: 'TroncoPadrao',
+        nome: 'Tronco Padrao',
         endereco: 'log.kvoip.com.br',
         qtd_digitos_cortados: 0,
         insere_digitos: techPrefix,
         autentica_user_pass: 0,
         host_dinamico: 0,
-        tarifas: [
-          {
-            regiao_id: 1,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-          {
-            regiao_id: 2,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-          {
-            regiao_id: 3,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-        ],
+        tarifas,
       };
 
       const trunkResult = await this.pabxService.createTrunk(trunkInput);
@@ -637,47 +635,41 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new Error('Failed to create PABX trunk or retrieve ID.');
       }
 
-      const dialingPlanInput = {
-        plano_discagem_id: 0,
-        nome: 'PlanoPadrao',
+      const dialingPlansResponse = await this.pabxService.listDialingPlans({
         cliente_id: companyId,
-        workspaceId: workspace.id,
-      };
+      });
 
-      const dialingPlanResult =
-        await this.pabxService.createDialingPlan(dialingPlanInput);
+      const dialingPlan = dialingPlansResponse.data.dados[0];
 
-      const dialingPlanAPIId = dialingPlanResult.data.id;
-
-      if (!dialingPlanAPIId) {
+      if (!dialingPlan) {
         throw new Error('Failed to create PABX dialing plan or retrieve ID.');
       }
+
+      const dialingPlanId = dialingPlan.plano_discagem_id;
 
       await this.workspaceRepository.update(workspace.id, {
         id: workspace.id,
         pabxCompanyId: companyId,
         pabxTrunkId: trunkAPIId,
-        pabxDialingPlanId: dialingPlanAPIId,
+        pabxDialingPlanId: dialingPlanId,
       });
 
       const routingRulesData = {
-        regioes: [
-          {
-            regiao_id: 1,
-            regiao_nome: 'RegiaoPadrao',
-            roteamentos: [
-              {
-                prioridade: 1,
-                tronco_id: trunkAPIId,
-                tronco_nome: 'TroncoPadrao',
-              },
-            ],
-          },
-        ],
+        regioes: regioes.map((regiao: Regiao, index: number) => ({
+          regiao_id: Number(regiao.regiao_id),
+          regiao_nome: regiao.nome,
+          roteamentos: [
+            {
+              prioridade: index + 1,
+              tronco_id: trunkAPIId,
+              tronco_nome: trunkResult.data.nome,
+            },
+          ],
+        })),
       };
 
       const routingRulesInput = {
-        plano_discagem_id: dialingPlanAPIId,
+        plano_discagem_id: dialingPlanId,
         cliente_id: companyId,
         dados: routingRulesData,
       };
@@ -691,7 +683,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         message: 'PABX environment set up successfully.',
         companyId,
         trunkId: trunkAPIId,
-        dialingPlanId: dialingPlanAPIId,
+        dialingPlanId: dialingPlanId,
       };
     } catch (error) {
       return {

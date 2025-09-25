@@ -50,6 +50,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
 import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
+import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
 
 // Base standard objects that are available in all workspaces
 const baseStandardObjectMetadataDefinitions = [
@@ -100,6 +101,7 @@ const baseStandardObjectMetadataDefinitions = [
   SupportWorkspaceEntity,
   FocusNFeWorkspaceEntity,
   InvoiceWorkspaceEntity,
+  TelephonyWorkspaceEntity,
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace

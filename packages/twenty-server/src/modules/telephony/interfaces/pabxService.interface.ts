@@ -1,16 +1,14 @@
 import { AxiosResponse } from 'axios';
 
-import {
-  CreateDialingPlanInput,
-  UpdateRoutingRulesInput,
-} from 'src/engine/core-modules/telephony/inputs';
-import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
-import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
-import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
+import { CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
+import { UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
+import { InsereEmpresa } from 'src/modules/telephony/types/Create/InsereEmpresa.type';
+import { InsereTronco } from 'src/modules/telephony/types/Create/InsereTronco.type';
+import { ExtetionBody } from 'src/modules/telephony/types/Extention.type';
 import {
   ListCommonArgs,
   ListExtentionsArgs,
-} from 'src/engine/core-modules/telephony/types/pabx.type';
+} from 'src/modules/telephony/types/pabx.type';
 
 export interface PabxServiceInterface {
   createExtention: (data: ExtetionBody) => Promise<AxiosResponse>;

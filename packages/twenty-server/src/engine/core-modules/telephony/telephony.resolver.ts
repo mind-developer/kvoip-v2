@@ -1,46 +1,37 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import {
-  CreateDialingPlanInput,
-  CreatePabxCompanyInput,
-  CreatePabxTrunkInput,
-  CreateTelephonyInput,
-  SetupPabxEnvironmentInput,
-  UpdateRoutingRulesInput,
-  UpdateTelephonyInput,
-} from 'src/engine/core-modules/telephony/inputs';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CreateDialingPlanInput } from 'src/modules/telephony/dtos/create-dialing-plan.input';
+import { CreatePabxCompanyInput } from 'src/modules/telephony/dtos/create-pabx-company.input';
+import { CreatePabxTrunkInput } from 'src/modules/telephony/dtos/create-pabx-trunk.input';
+import { CreateTelephonyInput } from 'src/modules/telephony/dtos/create-telephony.input';
+import { SetupPabxEnvironmentInput } from 'src/modules/telephony/dtos/setup-pabx-environment.input';
+import { UpdateRoutingRulesInput } from 'src/modules/telephony/dtos/update-routing-rules.input';
+import { UpdateTelephonyInput } from 'src/modules/telephony/dtos/update-telephony.input';
+import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
+import { Campaign } from 'src/modules/telephony/types/Campaign.type';
+import { PabxCompanyResponseType } from 'src/modules/telephony/types/Create/PabxCompanyResponse.type';
+import { PabxDialingPlanResponseType } from 'src/modules/telephony/types/Create/PabxDialingPlanResponse.type';
+import { PabxTrunkResponseType } from 'src/modules/telephony/types/Create/PabxTrunkResponse.type';
+import { UpdateRoutingRulesResponseType } from 'src/modules/telephony/types/Create/UpdateRoutingRulesResponse.type';
+import { SetupPabxEnvironmentResponseType } from 'src/modules/telephony/types/SetupPabxEnvironmentResponse.type';
+import { TelephonyCallFlow } from 'src/modules/telephony/types/TelephonyCallFlow';
+import { TelephonyDialingPlan } from 'src/modules/telephony/types/TelephonyDialingPlan.type';
+import { TelephonyDids } from 'src/modules/telephony/types/TelephonyDids.type';
+import { TelephonyExtension } from 'src/modules/telephony/types/TelephonyExtension.type';
 
-import {
-  Campaign,
-  Telephony,
-  TelephonyCallFlow,
-  TelephonyDialingPlan,
-  TelephonyDids,
-  TelephonyExtension,
-} from './telephony.entity';
-
-import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
-import { PabxDialingPlanResponseType } from './types/Create/PabxDialingPlanResponse.type';
-import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
-import { UpdateRoutingRulesResponseType } from './types/Create/UpdateRoutingRulesResponse.type';
-import { SetupPabxEnvironmentResponseType } from './types/SetupPabxEnvironmentResponse.type';
-
-@Resolver(() => Telephony)
+@Resolver(() => TelephonyWorkspaceEntity)
 export class TelephonyResolver {
   constructor(
-    @InjectRepository(Telephony)
-    private readonly telephonyRepository: Repository<Telephony>,
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
     private readonly workspaceService: WorkspaceService,
@@ -165,37 +156,40 @@ export class TelephonyResolver {
     }
   }
 
-  @Mutation(() => Telephony)
+  @Mutation(() => TelephonyWorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  @UseGuards()
-  async createTelephony(
+  async createTelephonyIntegration(
     @AuthUser() { id: userId }: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args('createTelephonyInput') createTelephonyInput: CreateTelephonyInput,
-  ): Promise<Telephony | undefined> {
+  ): Promise<TelephonyWorkspaceEntity | undefined> {
     if (!userId) {
       throw new Error('User id not found');
     }
 
-    if (!createTelephonyInput.workspaceId) {
+    if (!workspace.id) {
       throw new Error('Workspace id not found');
     }
 
     const ramalBody = await this.getRamalBody(
       createTelephonyInput,
-      createTelephonyInput.workspaceId,
+      workspace.id,
     );
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
 
       if (createdRamal) {
-        const result = await this.telephonyService.createTelehony({
-          ...createTelephonyInput,
-          ramal_id: createdRamal.data.id,
-        });
+        const result = await this.telephonyService.createTelephony(
+          {
+            ...createTelephonyInput,
+            ramal_id: createdRamal.data.id,
+          },
+          workspace.id,
+        );
 
         await this.telephonyService.setExtensionNumberInWorkspaceMember(
-          createTelephonyInput.workspaceId,
+          workspace.id,
           createTelephonyInput.memberId,
           createTelephonyInput.numberExtension,
         );
@@ -207,12 +201,12 @@ export class TelephonyResolver {
     }
   }
 
-  @Query(() => [Telephony])
+  @Query(() => [TelephonyWorkspaceEntity])
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async findAllTelephony(
+  async findAllTelephonyIntegration(
     @AuthUser() { id: userId }: User,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
-  ): Promise<Telephony[]> {
+  ): Promise<TelephonyWorkspaceEntity[]> {
     if (!userId) {
       throw new Error('User id not found');
     }
@@ -220,19 +214,21 @@ export class TelephonyResolver {
     return await this.telephonyService.findAll({ workspaceId });
   }
 
-  @Mutation(() => Telephony)
+  @Mutation(() => TelephonyWorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async updateTelephony(
+  async updateTelephonyIntegration(
     @AuthUser() { id: userId }: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args('id', { type: () => ID }) id: string,
     @Args('updateTelephonyInput') updateTelephonyInput: UpdateTelephonyInput,
-  ): Promise<Telephony> {
+  ): Promise<TelephonyWorkspaceEntity> {
     if (!userId) {
       throw new Error('User id not found');
     }
 
     const telephony = await this.telephonyService.findOne({
       id,
+      workspaceId: workspace.id,
     });
 
     if (!telephony) {
@@ -242,12 +238,8 @@ export class TelephonyResolver {
     try {
       const ramalBody = {
         dados: {
-          ...(
-            await this.getRamalBody(
-              updateTelephonyInput,
-              telephony.workspace.id,
-            )
-          ).dados,
+          ...(await this.getRamalBody(updateTelephonyInput, workspace.id))
+            .dados,
           ramal_id: telephony.ramal_id,
         },
       };
@@ -259,14 +251,18 @@ export class TelephonyResolver {
       }
 
       await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        telephony.workspace.id,
+        workspace.id,
         telephony.memberId,
         updateTelephonyInput.numberExtension || telephony.numberExtension,
       );
 
       const result = await this.telephonyService.updateTelephony({
         id,
-        data: { ...updateTelephonyInput, ramal_id: telephony.ramal_id },
+        workspaceId: workspace.id,
+        data: {
+          ...updateTelephonyInput,
+          ramal_id: telephony.ramal_id ?? undefined,
+        },
       });
 
       return result;
@@ -423,8 +419,9 @@ export class TelephonyResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async deleteTelephony(
+  async deleteTelephonyIntegration(
     @AuthUser() { id: userId }: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args('telephonyId', { type: () => ID }) telephonyId: string,
   ): Promise<boolean> {
     if (!userId) {
@@ -437,6 +434,7 @@ export class TelephonyResolver {
 
     const telephonyToDelete = await this.telephonyService.findOne({
       id: telephonyId,
+      workspaceId: workspace.id,
     });
 
     if (!telephonyToDelete) {
@@ -444,11 +442,14 @@ export class TelephonyResolver {
     }
 
     await this.telephonyService.removeAgentIdInWorkspaceMember(
-      telephonyToDelete.workspace.id,
+      workspace.id,
       telephonyToDelete.memberId,
     );
 
-    const result = await this.telephonyService.delete({ id: telephonyId });
+    const result = await this.telephonyService.delete({
+      id: telephonyId,
+      workspaceId: workspace.id,
+    });
 
     return result;
   }
