@@ -180,12 +180,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Roles`,
-          path: SettingsPath.Roles,
-          Icon: IconLock,
-          isHidden: !permissionMap[PermissionFlagType.ROLES],
-        },
-        {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
