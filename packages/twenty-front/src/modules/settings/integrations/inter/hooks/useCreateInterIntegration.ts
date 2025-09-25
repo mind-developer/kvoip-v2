@@ -46,11 +46,15 @@ export const useCreateInterIntegration = (): CreateInterIntegration => {
       });
 
     const privateKeyContent = input.privateKey
-      ? await toBase64(input.privateKey as File)
+      ? typeof input.privateKey === 'string'
+        ? input.privateKey
+        : await toBase64(input.privateKey as File)
       : null;
 
     const certificateContent = input.certificate
-      ? await toBase64(input.certificate as File)
+      ? typeof input.certificate === 'string'
+        ? input.certificate
+        : await toBase64(input.certificate as File)
       : null;
 
     const createInput = {

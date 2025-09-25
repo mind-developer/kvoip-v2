@@ -22,6 +22,7 @@ import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/char
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -32,7 +33,6 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
@@ -173,7 +173,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Charge`,
     description: msg`Event charge`,
-    icon: 'IconTargetArrow',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
@@ -325,19 +325,19 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   chatbotId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.notaFiscal,
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.invoice,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Nota Fiscal`,
-    description: msg`Event nota fiscal`,
-    icon: 'IconTargetArrow',
-    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    label: msg`Invoice`,
+    description: msg`Event invoice`,
+    icon: 'IconFileDollar',
+    inverseSideTarget: () => InvoiceWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  notaFiscal: Relation<NotaFiscalWorkspaceEntity> | null;
+  invoice: Relation<InvoiceWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('notaFiscal')
-  notaFiscalId: string | null;
+  @WorkspaceJoinColumn('invoice')
+  invoiceId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

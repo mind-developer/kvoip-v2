@@ -106,12 +106,6 @@ export const useRealTimeChats = ({
         (doc: any) => doc.data() as WhatsappDocument,
       );
 
-      // const chats = snapshot.docs.map((doc) =>
-      //   platform === 'whatsapp'
-      //     ? (doc.data() as WhatsappDocument)
-      //     : (doc.data() as FacebookDocument),
-      // );
-
       setChats(chats);
     });
 

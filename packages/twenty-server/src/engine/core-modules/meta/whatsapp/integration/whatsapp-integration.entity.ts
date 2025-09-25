@@ -55,6 +55,10 @@ export class WhatsappIntegration {
   @Column({ default: 30 })
   sla: number;
 
+  @Field({ nullable: false })
+  @Column({ nullable: false })
+  tipoApi: string;
+
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   workspace: Relation<Workspace>;

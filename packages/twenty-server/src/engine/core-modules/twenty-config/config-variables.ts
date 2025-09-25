@@ -1399,7 +1399,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CHATBOT_ENABLED = false;
+  IS_CHATBOT_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,

@@ -1,5 +1,6 @@
 export const PROCESSOR_METADATA = Symbol('message-queue:processor_metadata');
 export const PROCESS_METADATA = Symbol('message-queue:process_metadata');
+export const WORKER_METADATA = Symbol('bullmq:worker_metadata');
 export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 
 export enum MessageQueue {
@@ -19,4 +20,7 @@ export enum MessageQueue {
   chargeQueue = 'charge-queue',
   serverlessFunctionQueue = 'serverless-function-queue',
   triggerQueue = 'trigger-queue',
+  chatMessageManagerSendMessageQueue = 'chat-message-manager-send-message-queue',
+  chatMessageManagerSaveMessageQueue = 'chat-message-manager-save-message-queue',
+  financialClosingQueue = 'financial-closing-queue',
 }

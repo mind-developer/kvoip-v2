@@ -5,6 +5,7 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
+import { GoogleCloudBucketDriver } from 'src/engine/core-modules/file-storage/drivers/google-cloud-bucket.driver';
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -33,6 +34,14 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
       );
 
       return `s3|${storageConfigHash}`;
+    }
+
+    if (storageType === StorageDriverType.GOOGLE_CLOUD_BUCKET) {
+      const storageConfigHash = this.getConfigGroupHash(
+        ConfigVariablesGroup.StorageConfig,
+      );
+
+      return `gcsbucket|${storageConfigHash}`;
     }
 
     throw new Error(`Unsupported storage type: ${storageType}`);
@@ -71,6 +80,13 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
           region: region ?? '',
         });
       }
+
+      case StorageDriverType.GOOGLE_CLOUD_BUCKET:
+        return new GoogleCloudBucketDriver(
+          this.twentyConfigService.get('BUCKET_PROJECT_ID'),
+          process.cwd() + this.twentyConfigService.get('BUCKET_KEYFILENAME'),
+          this.twentyConfigService.get('BUCKET_NAME'),
+        );
 
       default:
         throw new Error(`Invalid storage driver type: ${storageType}`);

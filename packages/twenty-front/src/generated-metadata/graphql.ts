@@ -1073,6 +1073,7 @@ export type CreateWhatsappIntegrationInput = {
   businessAccountId: Scalars['String'];
   name: Scalars['String'];
   phoneId: Scalars['String'];
+  tipoApi?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateWorkflowVersionEdgeInput = {
@@ -1911,10 +1912,10 @@ export type Mutation = {
   saveBillingPlanId: BillingPlans;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   saveStripeAccountId: StripeIntegration;
-  sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
-  sendMessage: Scalars['Boolean'];
-  sendTemplate: Scalars['Boolean'];
+  sendWhatsAppEventMessage: Scalars['Boolean'];
+  sendWhatsAppMessage: Scalars['Boolean'];
+  sendWhatsAppTemplate: Scalars['Boolean'];
   setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
@@ -1967,6 +1968,7 @@ export type Mutation = {
   updateTelephony: TelephonyWorkspaceEntity;
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
+  updateWhatsAppMessageData: Scalars['Boolean'];
   updateWhatsappIntegration: WhatsappWorkspaceEntity;
   updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
@@ -2582,23 +2584,23 @@ export type MutationSaveStripeAccountIdArgs = {
 };
 
 
-export type MutationSendEventMessageArgs = {
-  sendEventMessageInput: SendEventMessageInput;
-};
-
-
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
 };
 
 
-export type MutationSendMessageArgs = {
-  sendMessageInput: SendMessageInput;
+export type MutationSendWhatsAppEventMessageArgs = {
+  sendWhatsAppEventMessageInput: SendWhatsAppEventMessageInput;
 };
 
 
-export type MutationSendTemplateArgs = {
-  sendTemplateInput: SendTemplateInput;
+export type MutationSendWhatsAppMessageArgs = {
+  sendWhatsAppMessageInput: SendWhatsAppMessageInput;
+};
+
+
+export type MutationSendWhatsAppTemplateArgs = {
+  sendWhatsAppTemplateInput: SendWhatsAppTemplateInput;
 };
 
 
@@ -2854,6 +2856,11 @@ export type MutationUpdateTelephonyArgs = {
 
 export type MutationUpdateWebhookArgs = {
   input: UpdateWebhookDto;
+};
+
+
+export type MutationUpdateWhatsAppMessageDataArgs = {
+  updateWhatsAppMessageInput: UpdateWhatsAppMessageDataInput;
 };
 
 
@@ -4058,18 +4065,6 @@ export type Sector = {
   workspace: Workspace;
 };
 
-export type SendEventMessageInput = {
-  agent?: InputMaybe<MessageAgent>;
-  eventStatus: Scalars['String'];
-  from: Scalars['String'];
-  integrationId: Scalars['String'];
-  message?: InputMaybe<Scalars['String']>;
-  sector?: InputMaybe<MessageSector>;
-  status: Scalars['String'];
-  to: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
@@ -4078,23 +4073,41 @@ export type SendInvitationsOutput = {
   success: Scalars['Boolean'];
 };
 
-export type SendMessageInput = {
-  fileId?: InputMaybe<Scalars['String']>;
+export type SendWhatsAppEventMessageInput = {
+  agent?: InputMaybe<MessageAgent>;
+  eventStatus: Scalars['String'];
   from: Scalars['String'];
+  fromMe?: InputMaybe<Scalars['Boolean']>;
   integrationId: Scalars['String'];
   message?: InputMaybe<Scalars['String']>;
+  personId: Scalars['String'];
+  sector?: InputMaybe<MessageSector>;
+  status: Scalars['String'];
   to: Scalars['String'];
   type: Scalars['String'];
 };
 
-export type SendTemplateInput = {
+export type SendWhatsAppMessageInput = {
+  fileId?: InputMaybe<Scalars['String']>;
+  from: Scalars['String'];
+  fromMe?: InputMaybe<Scalars['Boolean']>;
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  personId: Scalars['String'];
+  to: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SendWhatsAppTemplateInput = {
   agent?: InputMaybe<MessageAgent>;
   from: Scalars['String'];
   integrationId: Scalars['String'];
   language: Scalars['String'];
   message: Scalars['String'];
+  personId: Scalars['String'];
   templateName: Scalars['String'];
   to: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type Sentry = {
@@ -4850,6 +4863,16 @@ export type UpdateWebhookDto = {
   targetUrl?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateWhatsAppMessageDataInput = {
+  clientPhoneNumber: Scalars['String'];
+  deleted: Scalars['Boolean'];
+  edited: Scalars['Boolean'];
+  id: Scalars['String'];
+  integrationId: Scalars['String'];
+  message: Scalars['String'];
+  status: Scalars['String'];
+};
+
 export type UpdateWhatsappIntegrationInput = {
   accessToken?: InputMaybe<Scalars['String']>;
   appId?: InputMaybe<Scalars['String']>;
@@ -4858,6 +4881,7 @@ export type UpdateWhatsappIntegrationInput = {
   id: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   phoneId?: InputMaybe<Scalars['String']>;
+  tipoApi?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -5103,6 +5127,7 @@ export type WhatsappWorkspaceEntity = {
   name?: Maybe<Scalars['String']>;
   phoneId: Scalars['String'];
   sla: Scalars['Float'];
+  tipoApi?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   verifyToken: Scalars['String'];
 };
@@ -6104,7 +6129,7 @@ export type CreateWhatsappIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string } };
+export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string, tipoApi?: string | null } };
 
 export type ToggleWhatsappIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
@@ -6123,7 +6148,7 @@ export type UpdateWhatsappIntegrationMutation = { __typename?: 'Mutation', updat
 export type WhatsappIntegrationsByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number, chatbot?: { __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null } | null }> };
+export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number, tipoApi?: string | null, chatbot?: { __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null } | null }> };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -11585,12 +11610,14 @@ export type InterIntegrationsByWorkspaceQueryResult = Apollo.QueryResult<InterIn
 export const CreateWhatsappIntegrationDocument = gql`
     mutation CreateWhatsappIntegration($createInput: CreateWhatsappIntegrationInput!) {
   createWhatsappIntegration(createInput: $createInput) {
+    id
     name
     phoneId
     businessAccountId
     accessToken
     appId
     appKey
+    tipoApi
   }
 }
     `;
@@ -11701,6 +11728,7 @@ export const WhatsappIntegrationsByWorkspaceDocument = gql`
     appKey
     disabled
     sla
+    tipoApi
     chatbot {
       id
       name

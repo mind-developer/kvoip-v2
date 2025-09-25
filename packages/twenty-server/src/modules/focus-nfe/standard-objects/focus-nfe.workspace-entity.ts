@@ -21,10 +21,10 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { FOCUS_NFE_STANDARD_FIELD_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -282,16 +282,16 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: FOCUS_NFE_STANDARD_FIELD_ID.notaFiscal,
+    standardId: FOCUS_NFE_STANDARD_FIELD_ID.invoices,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Nota Fiscal`,
-    description: msg`Integration linked to the Nota Fiscal`,
-    icon: 'IconClipboardList',
-    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    label: msg`Invoices`,
+    description: msg`Integration linked to the Invoices`,
+    icon: 'IconFileDollar',
+    inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]> | null;
+  invoices: Relation<InvoiceWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: FOCUS_NFE_STANDARD_FIELD_ID.searchVector,

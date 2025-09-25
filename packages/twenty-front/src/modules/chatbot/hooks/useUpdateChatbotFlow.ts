@@ -1,6 +1,6 @@
 import { UPDATE_CHATBOT_FLOW } from '@/chatbot/graphql/mutation/updateChatbotFlow';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
-import { UpdateChatbotFlow } from '@/chatbot/types/chatbotFlow.type';
+import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
@@ -8,12 +8,11 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 interface UseUpdateChatbotFlowReturn {
-  updateFlow: (updateChatbotInput: UpdateChatbotFlow) => Promise<any>;
+  updateFlow: (updateChatbotInput: ChatbotFlowData) => Promise<any>;
 }
 
 export const useUpdateChatbotFlow = (): UseUpdateChatbotFlowReturn => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const { t } = useLingui();
 
   const [updateChatbotFlow, { data }] = useMutation(UPDATE_CHATBOT_FLOW, {
@@ -34,11 +33,9 @@ export const useUpdateChatbotFlow = (): UseUpdateChatbotFlowReturn => {
     if (!data) {
       return;
     }
-
-    setChatbotFlow(data?.updateChatbotFlow);
   }, [data]);
 
-  const updateFlow = async (updateChatbotInput: UpdateChatbotFlow) => {
+  const updateFlow = async (updateChatbotInput: ChatbotFlowData) => {
     await updateChatbotFlow({
       variables: { updateChatbotInput },
     });

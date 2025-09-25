@@ -7,6 +7,7 @@ export const GET_ALL_INTER_INTEGRATIONS = gql`
       integrationName
       clientId
       clientSecret
+      currentAccount
       privateKey
       certificate
       status

@@ -77,10 +77,15 @@ export class InterApiService {
     const cert = this.formatCertificate(integration.certificate);
     const key = this.formatCertificate(integration.privateKey);
 
+    this.logger.log(
+      `Using certificate for integration ${integration.id} in workspace ${integration.workspace.id}`,
+    );
+
     return new https.Agent({
       cert,
       key,
-      rejectUnauthorized: true,
+      rejectUnauthorized: false,
+      // minVersion: 'TLSv1.2',
     });
   }
 
@@ -296,6 +301,7 @@ export class InterApiService {
       );
 
       return response?.data?.pdf;
+
     } catch (error) {
       this.logger.error(
         `Failed to retrieve charge PDF for seuNumero=${seuNumero}: ${error.response?.data || error.message}`,
@@ -318,7 +324,7 @@ export class InterApiService {
     workspaceId: string,
     attachmentRepository: WorkspaceRepository<AttachmentWorkspaceEntity>,
     data: ChargeData,
-  ): Promise<ChargeResponse> {
+  ): Promise<ChargeResponse | any> {
     this.logger.log(
       `Iniciando emissão de charge para workspace ${workspaceId}`,
     );
@@ -337,7 +343,7 @@ export class InterApiService {
       dataVencimento: data.dataVencimento,
       numDiasAgenda: data.numDiasAgenda,
       pagador: data.pagador,
-      // mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
+      mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
     };
 
     try {
@@ -353,13 +359,24 @@ export class InterApiService {
         },
       );
 
+      this.logger.log(`RESPONSE da charge: ${JSON.stringify(response.data, null, 2)}`);
+
       const requestCode = response?.data?.codigoSolicitacao || '';
+
+
+      this.logger.log(`requestCode: ${requestCode}`)
+
+      // Aguarda 5 segundos - SOLUÇÃO TEMPORARIA, TODO: INSERIR NUMA FILA A PARTE
+      await new Promise(resolve => setTimeout(resolve, 9000));
+
+      this.logger.log(`Tempo passou`)
+
       const pdfBuffer = await this.getChargePdf({
         workspaceId,
         integration,
         seuNumero: requestCode,
       });
-
+      
       const filename = `${randomUUID()}_boleto.pdf`;
       const folder = 'attachment';
 
@@ -390,12 +407,43 @@ export class InterApiService {
       this.logger.log(`Attachment salvo com sucesso: ${folder}/${filename}`);
 
       return response.data;
+
+
+
+    // } catch (error) {
+    //   const isInterApiError = isAxiosError(error);
+
+    //   const message = isInterApiError
+    //     ? error.response?.data
+    //     : error.message || 'Unknown error';
+
+    //   if (isInterApiError) {
+    //     throw new Error(
+    //       `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
+    //     );
+    //   }
+
+    //   throw new InternalServerErrorException(message, {
+    //     cause: error,
+    //     description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
+    //   });
+    // }
+
+
     } catch (error) {
       const isInterApiError = isAxiosError(error);
 
-      const message = isInterApiError
-        ? error.response?.data
-        : error.message || 'Unknown error';
+      let message: any;
+
+      if (isInterApiError) {
+        message = {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        };
+      } else {
+        message = error.message || 'Unknown error';
+      }
 
       if (isInterApiError) {
         throw new Error(

@@ -50,6 +50,8 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
       return indexA - indexB;
     });
 
+  console.log(objectMetadataItems);
+
   const sortedCustomObjectMetadataItems = [...objectMetadataItems]
     .filter((item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
     .sort((objectMetadataItemA, objectMetadataItemB) => {

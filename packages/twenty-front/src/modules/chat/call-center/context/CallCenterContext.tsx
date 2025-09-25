@@ -234,6 +234,7 @@ export const CallCenterProvider = ({
   }, [firestoreDb, integrationWhatsappIds]);
 
   useEffect(() => {
+    return;
     const process = async () => {
       for (const chat of waitingChats) {
         const msgs = chat.messages;
@@ -349,6 +350,7 @@ export const CallCenterProvider = ({
       // : (selectedChat?.client.id ?? ''),
       type: MessageType.STARTED,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.STARTED} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat.personId,
     });
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
@@ -386,6 +388,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.END,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.END} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   }, [selectedChat]);
 
@@ -427,6 +430,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.TRANSFER,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.TRANSFER} ${to} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   };
 
@@ -456,6 +460,7 @@ export const CallCenterProvider = ({
         : 'Name not available',
       type: MessageType.ONHOLD,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.ONHOLD} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+      personId: selectedChat?.personId,
     });
   }, [selectedChat]);
 
@@ -518,6 +523,7 @@ export const CallCenterProvider = ({
         setSelectedChatId,
         sortChats,
         selectedChat,
+        setSelectedChat,
         TAB_LIST_COMPONENT_ID,
         activeTabId,
         whatsappChats,

@@ -1,5 +1,4 @@
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
-import { useIsWorkspaceKvoipAdmin } from '@/kvoip-admin/hooks/useIsWorkspaceKvoipAdmin';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -24,15 +23,15 @@ export const AdminWorkspaceNavigationItems = () => {
   const lastVisitedViewPerObjectMetadataItem =
     useRecoilValue(lastVisitedViewPerObjectMetadataItemState) ?? {};
 
-  const isAdminWorkspace = useIsWorkspaceKvoipAdmin();
-
   const getNavigationPath = (objectName: string) => {
     const objectMetadata = workspaceFavoritesObjectMetadataItems?.find(
       (item: any) => item.nameSingular === objectName,
     );
 
     const viewId = objectMetadata?.id;
-    const lastVisitedViewId = viewId ? lastVisitedViewPerObjectMetadataItem[viewId] : undefined;
+    const lastVisitedViewId = viewId
+      ? lastVisitedViewPerObjectMetadataItem[viewId]
+      : undefined;
 
     return getAppPath(
       AppPath.RecordIndexPage,
@@ -42,46 +41,44 @@ export const AdminWorkspaceNavigationItems = () => {
   };
 
   return (
-    isAdminWorkspace && (
-      <>
-        <NavigationDrawerSectionTitle label={t`Admin`} />
-        <NavigationDrawerItem
-          label={t`Workspaces`}
-          to={getNavigationPath('tenants')}
-          // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
-          onClick={() => {
-            navigate(getNavigationPath('tenants'));
-          }}
-          Icon={IconBuildingSkyscraper}
-        />
-        <NavigationDrawerItem
-          label={t`Subscriptions`}
-          to={getNavigationPath('subscriptions')}
-          // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
-          onClick={() => {
-            navigate(getNavigationPath('subscriptions'));
-          }}
-          Icon={IconMoneybag}
-        />
-        <NavigationDrawerItem
-          label={t`Tax Invocies`}
-          to={getNavigationPath('tax-invoices')}
-          // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
-          onClick={() => {
-            navigate(getNavigationPath('tax-invoices'));
-          }}
-          Icon={IconList}
-        />
-        <NavigationDrawerItem
-          label={t`Telephony`}
-          to={getNavigationPath('telephony')}
-          // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
-          onClick={() => {
-            navigate(getNavigationPath('telephony'));
-          }}
-          Icon={IconPhone}
-        />
-      </>
-    )
+    <>
+      <NavigationDrawerSectionTitle label={t`Admin`} />
+      <NavigationDrawerItem
+        label={t`Workspaces`}
+        to={getNavigationPath('tenants')}
+        // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+        onClick={() => {
+          navigate(getNavigationPath('tenants'));
+        }}
+        Icon={IconBuildingSkyscraper}
+      />
+      <NavigationDrawerItem
+        label={t`Subscriptions`}
+        to={getNavigationPath('subscriptions')}
+        // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+        onClick={() => {
+          navigate(getNavigationPath('subscriptions'));
+        }}
+        Icon={IconMoneybag}
+      />
+      <NavigationDrawerItem
+        label={t`Tax Invocies`}
+        to={getNavigationPath('tax-invoices')}
+        // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+        onClick={() => {
+          navigate(getNavigationPath('tax-invoices'));
+        }}
+        Icon={IconList}
+      />
+      <NavigationDrawerItem
+        label={t`Telephony`}
+        to={getNavigationPath('telephony')}
+        // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+        onClick={() => {
+          navigate(getNavigationPath('telephony'));
+        }}
+        Icon={IconPhone}
+      />
+    </>
   );
 };

@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 interface CreateWhatsappIntegration {
   createWhatsappIntegration: (
     input: CreateWhatsappIntegrationInput,
-  ) => Promise<void>;
+  ) => Promise<any>;
   data: any;
   loading: boolean;
   error: Error | undefined;
@@ -37,11 +37,12 @@ export const useCreateWhatsappIntegration = (): CreateWhatsappIntegration => {
   const createWhatsappIntegration = async (
     createInput: CreateWhatsappIntegrationInput,
   ) => {
-    await createWhatsappIntegrationMutation({
+    const result = await createWhatsappIntegrationMutation({
       variables: {
         createInput,
       },
     });
+    return result;
   };
 
   return {

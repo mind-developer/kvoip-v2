@@ -60,7 +60,9 @@ export const STANDARD_OBJECT_IDS = {
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
   support: '7bd330f2-29fa-4191-ae86-10554ca66048',
   focusNFe: 'aaadd2ab-25b5-4717-9712-7de5b7253633',
-  notaFiscal: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
+  invoice: 'd774d1d7-2cba-464c-badc-2a7d9293e61c',
+  financialClosingExecution: 'e1b15f83-5757-452c-80d7-8984356e2715',
+  companyFinancialClosingExecution: '2d7c471a-6fbf-4de7-98e4-92ac99e25425',
   telephony: 'f950c724-e39e-435a-a044-33c658c501e3',
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 } as const;

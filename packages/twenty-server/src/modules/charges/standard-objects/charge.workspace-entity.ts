@@ -26,9 +26,10 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -74,7 +75,7 @@ registerEnumType(ChargeEntityType, {
   labelSingular: msg`Charge`,
   labelPlural: msg`Charges`,
   description: msg`A charge`,
-  icon: 'IconSettings',
+  icon: 'IconReportMoney',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
@@ -85,7 +86,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Charge product`,
-    icon: 'IconSettings',
+    icon: 'IconReportMoney',
   })
   @WorkspaceIsNullable()
   name: string;
@@ -95,7 +96,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.NUMBER,
     label: msg`Price`,
     description: msg`Charge price`,
-    icon: 'IconSettings',
+    icon: 'IconReportMoney',
   })
   @WorkspaceIsNullable()
   price: number;
@@ -293,16 +294,16 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   personId: string;
 
   @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.notaFiscal,
+    standardId: CHARGE_STANDARD_FIELD_IDS.invoices,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Notas Fiscais`,
-    description: msg`Notas fiscais using this charge`,
-    icon: 'IconSettings',
-    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    label: msg`Invoices`,
+    description: msg`Invoices using this charge`,
+    icon: 'IconFileDollar',
+    inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]> | null;
+  invoices: Relation<InvoiceWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
@@ -328,6 +329,21 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Company Financial Closing Executions`,
+    description: msg`Company Financial Closing Executions linked to the charge`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyFinancialClosingExecutionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  companyFinancialClosingExecutions: Relation<
+    CompanyFinancialClosingExecutionWorkspaceEntity[]
+  > | null;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.searchVector,

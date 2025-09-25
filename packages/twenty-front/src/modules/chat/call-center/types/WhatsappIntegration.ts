@@ -8,6 +8,7 @@ type IWhatsappIntegration = {
   appKey: string;
   disabled: boolean;
   sla: number;
+  tipoApi: string;
 };
 
 export type CreateWhatsappIntegrationInput = Omit<

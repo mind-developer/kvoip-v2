@@ -71,6 +71,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 import { IssuerModule } from './issuer/issuer.module';
 import { StripeModule } from './stripe/stripe.module';
+import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { StripeModule } from './stripe/stripe.module';
     RedisClientModule,
     MetaModule,
     SectorModule,
+    FinancialClosingModule,
     AgentModule,
     InboxModule,
     GoogleStorageModule,

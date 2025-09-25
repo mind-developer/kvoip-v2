@@ -180,12 +180,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Roles`,
-          path: SettingsPath.Roles,
-          Icon: IconLock,
-          isHidden: !permissionMap[PermissionFlagType.ROLES],
-        },
-        {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
@@ -212,6 +206,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconApps,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
+        {
+          label: t`Financial Closing`,
+          path: SettingsPath.FinancialClosing,
+          Icon: IconCalendarEvent,
+          isHidden: !isAdminEnabled,
+        },
+
         {
           label: t`AI`,
           path: SettingsPath.AI,

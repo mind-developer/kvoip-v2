@@ -16,7 +16,7 @@ import { FocusNFeIntegrationService } from 'src/modules/focus-nfe/focus-nfe-inte
 import { FocusNfeController } from 'src/modules/focus-nfe/focus-nfe-webhook.controller';
 import { FocusNFeEventListener } from 'src/modules/focus-nfe/focus-nfe.listener';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
-import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.listener';
+import { InvoiceEventListener } from 'src/modules/invoice/invoice.listener';
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { NotaFiscalEventListener } from 'src/modules/nota-fiscal/nota-fiscal.lis
     FocusNFeIntegrationService,
     FocusNFeService,
     FocusNFeEventListener,
-    NotaFiscalEventListener,
+    InvoiceEventListener,
   ],
 })
 export class FocusNfeModule {}

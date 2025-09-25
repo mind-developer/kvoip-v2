@@ -16,7 +16,7 @@ import {
   ISearchResult,
   Message,
   TDateFirestore,
-} from '@/chat/internal/types/chat';
+} from '@/chat/types/chat';
 import { MessageType } from '@/chat/types/MessageType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

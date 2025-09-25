@@ -14,6 +14,7 @@ export const createNode = (type: string) => {
         ...baseNode,
         data: {
           nodeStart: false,
+          title: 'Send text',
         },
       };
     case 'condition': {
@@ -24,11 +25,13 @@ export const createNode = (type: string) => {
         comparison: '==',
         sectorId: '',
         conditionValue: '||',
+        recordType: 'text',
       };
 
       return {
         ...baseNode,
         data: {
+          title: 'Conditional node',
           logic: {
             logicNodes: [0],
             logicNodeData: [initialLogicNode],
@@ -40,6 +43,7 @@ export const createNode = (type: string) => {
       return {
         ...baseNode,
         data: {
+          title: 'Send image',
           imageUrl: '',
         },
       };
@@ -47,6 +51,7 @@ export const createNode = (type: string) => {
       return {
         ...baseNode,
         data: {
+          title: 'Send file',
           fileUrl: '',
         },
       };

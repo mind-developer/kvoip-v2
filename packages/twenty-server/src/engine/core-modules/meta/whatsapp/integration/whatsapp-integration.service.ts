@@ -62,7 +62,12 @@ export class WhatsappIntegrationService {
       workspace,
     );
 
-    await this.subscribeWebhook(savedIntegration, workspaceId);
+    if (savedIntegration.tipoApi === 'MetaAPI') {
+      await this.subscribeWebhook(savedIntegration, workspaceId);
+    }
+    if (savedIntegration.tipoApi === 'Baileys') {
+      await this.sendBaileysWebhook(savedIntegration, workspaceId);
+    }
 
     return savedIntegration;
   }
@@ -229,6 +234,90 @@ export class WhatsappIntegrationService {
       // eslint-disable-next-line no-console
       console.error('Failed to call subscriptions API', err);
       throw new Error('Failed to call subscriptions API');
+    }
+  }
+
+  private async sendBaileysWebhook(
+    integration: WhatsappWorkspaceEntity,
+    workspaceId: string,
+  ) {
+    const { id, name } = integration;
+    const payload = {
+      webhook: `https://seuservidor.com/webhook/${name}`,
+      workspaceID: workspaceId,
+      canalID: id,
+    };
+
+    try {
+      console.log('Enviando POST para Baileys:', payload);
+      const response = await axios.post(
+        `http://localhost:3002/api/session/${name}`,
+        payload,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+
+      console.log(
+        'Resposta do POST Baileys:',
+        response.status,
+        response.statusText,
+      );
+    } catch (err) {
+      console.error('Erro ao enviar webhook para Baileys:', err);
+      // Não falhar a criação da integração se o webhook falhar
+    }
+  }
+
+  async startBaileysSession(sessionId: string, payload: any) {
+    try {
+      const response = await axios.post(
+        `http://localhost:3002/api/session/${sessionId}`,
+        payload,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+
+      return { success: true, data: response.data };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  }
+
+  async stopBaileysSession(sessionId: string) {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3002/api/session/${sessionId}`,
+      );
+
+      return { success: true, data: response.data };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  }
+
+  async getBaileysStatus(sessionId: string) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3002/api/session/status/${sessionId}`,
+      );
+
+      return response.data;
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
+
+  async getBaileysQr(sessionId: string) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3002/api/session/${sessionId}/qr`,
+      );
+
+      return response.data;
+    } catch (err) {
+      return { error: err.message };
     }
   }
 }

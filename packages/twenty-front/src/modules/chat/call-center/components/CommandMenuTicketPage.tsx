@@ -2,14 +2,14 @@ import { Timeline } from '@/chat/call-center/components/Timeline';
 import { InfoSection } from '@/chat/internal/components/InfoSection';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Person } from '@/people/types/Person';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import styled from '@emotion/styled';
 // eslint-disable-next-line no-restricted-imports
 import { selectedChatState } from '@/chat/call-center/state/selectedChatState';
 import { ITimeline, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Person } from '@/people/types/Person';
 import { format, parse } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -81,15 +81,11 @@ const StyledTimelineDivider = styled.div`
 `;
 
 export const CommandMenuTicketPage = () => {
-  const EMAIL_EXAMPLE = 'email@example.com';
-
   const selectedChat = useRecoilValue(selectedChatState);
 
   const [name, setName] = useState<string>(selectedChat?.client.name ?? '');
-  const [email, setEmail] = useState<string>(EMAIL_EXAMPLE);
-  const [phone, setPhone] = useState<string>(
-    selectedChat?.client.phone ?? '5500912345678',
-  );
+  const [email, setEmail] = useState<string>(selectedChat?.client.email ?? '');
+  const [phone, setPhone] = useState<string>(selectedChat?.client.phone ?? '');
   const [status, setStatus] = useState<statusEnum>(
     selectedChat?.status ?? statusEnum.Pending,
   );
@@ -101,66 +97,19 @@ export const CommandMenuTicketPage = () => {
     objectNameSingular: CoreObjectNameSingular.Opportunity,
   });
 
-  const { createOneRecord: createOnePerson } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Person,
-  });
-
   const { createOneRecord: createOneSupport } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Support,
   });
 
-  const { records } = useFindManyRecords<Person>({
+  const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Person,
-    filter: {
-      or: [
-        {
-          additionalEmails: {
-            eq: email,
-          },
-        },
-        {
-          phones: {
-            eq: phone,
-          },
-        },
-      ],
-    },
   });
 
   const handleAddButtonClick = async () => {
-    let personId: string | undefined;
-
-    if (records.length > 0) {
-      personId = records[0].id;
-    } else {
-      const rawPhone = phone || '';
-      const callingCode = rawPhone.slice(0, 2);
-      const phoneNumber = rawPhone.slice(2);
-
-      const newPerson = await createOnePerson({
-        id: v4(),
-        name: {
-          firstName: name,
-          lastName: '',
-        },
-        emails: { primaryEmail: email },
-        phones: {
-          primaryPhoneNumber: phoneNumber,
-          primaryPhoneCountryCode: 'BR',
-          primaryPhoneCallingCode: `+${callingCode}`,
-          additionalPhones: null,
-        },
-        position: 'first',
-      });
-
-      personId = newPerson?.id;
-    }
-
+    if (!selectedChat) return;
     createOneOpportunity({
-      id: v4(),
       name: name,
-      position: 'first',
-      pointOfContactId: personId,
+      pointOfContactId: selectedChat.personId,
     });
   };
 
@@ -189,11 +138,21 @@ export const CommandMenuTicketPage = () => {
     return uniqueDate;
   };
 
+  const updatePersonInfo = async (info: keyof Person, value: any) => {
+    //todo: add error
+    if (!selectedChat?.client.phone || !selectedChat.client.ppUrl) return;
+    await updateOneRecord({
+      idToUpdate: selectedChat.personId,
+      updateOneRecordInput: {
+        [info]: value,
+      },
+    });
+  };
+
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (selectedChat) {
       setName(selectedChat.client.name || '');
-      setEmail(EMAIL_EXAMPLE);
       setPhone(selectedChat.client.phone || '');
       setStatus(selectedChat.status || '');
       setSector(selectedChat.sector || '');
@@ -228,6 +187,12 @@ export const CommandMenuTicketPage = () => {
           type={'text'}
           value={name}
           onTextChange={(newText) => setName(newText)}
+          onBlur={(e) => {
+            updatePersonInfo('name', {
+              firstName: name.split(' ')[0],
+              lastName: name.split(' ').slice(1).join(' '),
+            });
+          }}
         />
         <InfoSection
           Icon={IconMail}
@@ -235,6 +200,10 @@ export const CommandMenuTicketPage = () => {
           type={'text'}
           value={email}
           onTextChange={(newText) => setEmail(newText)}
+          onBlur={() => {
+            //@ts-ignore
+            updatePersonInfo('emails', { primaryEmail: email });
+          }}
         />
         <InfoSection
           Icon={IconPhone}
@@ -242,6 +211,17 @@ export const CommandMenuTicketPage = () => {
           type={'text'}
           value={phone}
           onTextChange={(newText) => setPhone(newText)}
+          onBlur={() => {
+            //@ts-ignore
+            //this will cause issues because chats are linked to numbers.
+            //they shouldn't.
+            updatePersonInfo('phones', {
+              primaryPhoneNumber: phone,
+              //this should be dynamic
+              primaryPhoneCountryCode: 'BR',
+              primaryPhoneCallingCode: '55',
+            });
+          }}
         />
         <InfoSection
           Icon={IconProgressCheck}
