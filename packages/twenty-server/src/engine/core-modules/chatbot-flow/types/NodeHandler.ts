@@ -9,7 +9,6 @@ export type ProcessParams = {
   integrationId: string;
   workspaceId: string;
   sendTo: string;
-  personId: string;
   chatbotName: string;
   sectors: { id: string; name: string }[];
   node: FlowNode;

@@ -1,9 +1,9 @@
-import { ChatIntegrationSendMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { ChatIntegrationSaveMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 
 export type SaveChatMessageJobData = {
-  [K in keyof ChatIntegrationSendMessageInput]: {
+  [K in keyof ChatIntegrationSaveMessageInput]: {
     chatType: K;
-    sendMessageInput: ChatIntegrationSendMessageInput[K];
+    saveMessageInput: ChatIntegrationSaveMessageInput[K];
     workspaceId: string;
   };
-}[keyof ChatIntegrationSendMessageInput];
+}[keyof ChatIntegrationSaveMessageInput];

@@ -9,7 +9,6 @@ import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { integrationsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/integrations-all-views';
-import { invoiceAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/invoice-all-views';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';

@@ -42,7 +42,6 @@ import {
   WhatsAppDocument,
 } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
-import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
@@ -202,27 +201,15 @@ export class WhatsAppService {
     >,
     workspaceId: string,
   ) {
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-        workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
-    let person = await personRepository.findOneBy({
-      phones: { primaryPhoneNumber: whatsAppDoc.client.phone },
-    });
-    if (!person)
-      person = await personRepository.save(createRelatedPerson(whatsAppDoc));
-    if (!person.id) throw new Error('Could not create person for this chat');
-
     this.saveMessageQueue.add<SaveChatMessageJobData>(SaveChatMessageJob.name, {
       chatType: ChatIntegrationProviders.WhatsApp,
-      sendMessageInput: {
+      saveMessageInput: {
         integrationId: whatsAppDoc.integrationId,
         to: whatsAppDoc.client.phone,
         ...whatsAppDoc.lastMessage,
-        personId: person.id,
-        id: whatsAppDoc.lastMessage.id ?? undefined,
+        id: whatsAppDoc.lastMessage.id ?? null,
+        fromMe: !!whatsAppDoc.lastMessage.fromMe,
+        recipientPpUrl: whatsAppDoc.client.ppUrl ?? null,
       },
       workspaceId,
     });
@@ -280,7 +267,6 @@ export class WhatsAppService {
           workspace: { id: workspaceId },
         },
         sendTo: whatsAppDoc.client.phone ?? '',
-        personId: person.id,
         sectors: sectorsFromWorkspace,
         onFinish: (_, sectorId: string) => {
           if (sectorId) {
