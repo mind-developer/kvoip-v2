@@ -30,10 +30,10 @@ export class SendChatMessageJob {
 
   async whatsApp(data: SendChatMessageQueueData) {
     console.log('sending', data.sendMessageInput.message);
-    const d: [SendWhatsAppMessageInput | SendWhatsAppTemplateInput, string] = [
-      data.sendMessageInput,
-      data.workspaceId,
-    ];
+    const d: [
+      Omit<SendWhatsAppMessageInput | SendWhatsAppTemplateInput, 'personId'>,
+      string,
+    ] = [data.sendMessageInput, data.workspaceId];
     switch (data.sendMessageInput.type) {
       case 'template':
         const template =
@@ -55,9 +55,11 @@ export class SendChatMessageJob {
             SaveChatMessageJob.name,
             {
               chatType: ChatIntegrationProviders.WhatsApp,
-              sendMessageInput: {
+              saveMessageInput: {
                 ...data.sendMessageInput,
-                id: response.messages[0]?.id ?? undefined,
+                id: response.messages[0]?.id ?? null,
+                fromMe: !!data.sendMessageInput.fromMe,
+                recipientPpUrl: null,
               },
               workspaceId: data.workspaceId,
             },

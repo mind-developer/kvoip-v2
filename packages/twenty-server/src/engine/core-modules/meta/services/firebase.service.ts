@@ -14,13 +14,10 @@ import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/googl
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
-import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -38,7 +35,6 @@ export class FirebaseService {
     @InjectRepository(WorkspaceAgent)
     private agentRepository: Repository<WorkspaceAgent>,
     private readonly chatMessageManagerService: ChatMessageManagerService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     this.app = initializeApp({
       apiKey: this.twentyConfigService.get('FIREBASE_API_KEY'),
@@ -59,10 +55,8 @@ export class FirebaseService {
   async saveWhatsAppMessage(
     whatsAppDoc: Omit<
       WhatsAppDocument,
-      'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
-    >,
-    isReceiving: boolean,
-    workspaceId: string,
+      'timeline' | 'unreadMessages' | 'isVisible' | 'personId'
+    > & { personId: string },
   ) {
     try {
       this.logger.log(
@@ -73,24 +67,6 @@ export class FirebaseService {
       const docId = `${whatsAppDoc.integrationId}_${whatsAppDoc.client.phone}`;
       const docRef = doc(messagesCollection, docId);
       const docSnapshot = await getDoc(docRef);
-      const personRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-          workspaceId,
-          'person',
-          { shouldBypassPermissionChecks: true },
-        );
-      let relatedPerson = await personRepository.findOneBy({
-        phones: { primaryPhoneNumber: whatsAppDoc.client.phone },
-      });
-      if (!relatedPerson)
-        this.logger.log('(saveWhatsAppMessage): did not find related person');
-      relatedPerson = await personRepository.save(
-        createRelatedPerson(whatsAppDoc),
-      );
-      this.logger.log(
-        '(saveWhatsAppMessage): related person: ',
-        relatedPerson.id,
-      );
 
       // baileys edge case
       // client.name will be empty under these circumstances (first message, initiated by user)
@@ -100,23 +76,19 @@ export class FirebaseService {
       }
 
       if (!docSnapshot.exists()) {
-        const newDoc = {
+        const newDoc: WhatsAppDocument = {
           ...whatsAppDoc,
           timeline: [],
           agent: 'empty',
           sector: 'empty',
-          unreadMessages: isReceiving ? 1 : 0,
+          unreadMessages: whatsAppDoc.lastMessage.fromMe ? 1 : 0,
           isVisible: true,
-          personId: relatedPerson.id,
+          personId: whatsAppDoc.personId,
           client: {
-            name:
-              whatsAppDoc.client.name ??
-              relatedPerson.name?.firstName +
-                ' ' +
-                relatedPerson.name?.lastName,
-            phone: whatsAppDoc.client.phone,
-            ppUrl: whatsAppDoc.client.ppUrl ?? relatedPerson.avatarUrl ?? null,
-            email: relatedPerson.emails?.primaryEmail ?? null,
+            name: (whatsAppDoc.client.name ?? null) as string | undefined,
+            ppUrl: (whatsAppDoc.client.ppUrl ?? null) as string | undefined,
+            phone: (whatsAppDoc.client.phone ?? null) as string,
+            email: (whatsAppDoc.client.email ?? null) as string | undefined,
           },
         };
         this.logger.log(
@@ -124,7 +96,7 @@ export class FirebaseService {
           JSON.stringify(newDoc, (k, v) => (v === undefined ? null : v)),
         );
         await setDoc(docRef, newDoc);
-        if (isReceiving) {
+        if (whatsAppDoc.lastMessage.fromMe) {
           const whatsappIntegrationWithWorkspace =
             await this.whatsappIntegrationRepository.findOne({
               relations: ['workspace'],
@@ -164,22 +136,16 @@ export class FirebaseService {
         whatsAppIntegration.sector = 'empty';
         whatsAppIntegration.isVisible = true;
       }
-      whatsAppIntegration.personId = relatedPerson.id;
-      whatsAppIntegration.client.email =
-        relatedPerson.emails.primaryEmail ?? null;
       whatsAppIntegration.messages.push({ ...whatsAppDoc.messages[0] });
       whatsAppIntegration.lastMessage = { ...whatsAppDoc.lastMessage };
-      whatsAppIntegration.unreadMessages = isReceiving
+      whatsAppIntegration.unreadMessages = whatsAppDoc.lastMessage.fromMe
         ? whatsAppIntegration.unreadMessages + 1
         : 0;
-      whatsAppIntegration.client.ppUrl =
-        (relatedPerson?.avatarUrl || whatsAppDoc.client.ppUrl) ?? null;
-      whatsAppIntegration.client.name =
-        relatedPerson.name?.firstName + ' ' + relatedPerson.name?.lastName;
+      whatsAppIntegration.personId = whatsAppDoc.personId;
 
       await setDoc(docRef, whatsAppIntegration);
 
-      if (isReceiving) {
+      if (whatsAppDoc.lastMessage.fromMe) {
         if (whatsAppIntegration.agent != 'empty') {
           const agent = await this.agentRepository.findOne({
             where: { id: whatsAppIntegration.agent },

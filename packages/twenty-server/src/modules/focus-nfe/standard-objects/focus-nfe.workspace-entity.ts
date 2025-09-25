@@ -286,7 +286,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Invoices`,
     description: msg`Integration linked to the Invoices`,
-    icon: 'IconClipboardList',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })

@@ -150,7 +150,6 @@ class ExecuteFlow {
         integrationId: this.i.integrationId,
         workspaceId: this.i.workspaceId,
         sendTo: this.i.sendTo,
-        personId: this.i.personId,
         chatbotName: this.i.chatbotName,
         sectors: this.i.sectors,
         node: currentNode,

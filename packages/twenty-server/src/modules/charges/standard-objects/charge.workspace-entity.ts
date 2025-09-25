@@ -22,17 +22,17 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CHARGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -75,7 +75,7 @@ registerEnumType(ChargeEntityType, {
   labelSingular: msg`Charge`,
   labelPlural: msg`Charges`,
   description: msg`A charge`,
-  icon: 'IconSettings',
+  icon: 'IconReportMoney',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
@@ -86,7 +86,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Charge product`,
-    icon: 'IconSettings',
+    icon: 'IconReportMoney',
   })
   @WorkspaceIsNullable()
   name: string;
@@ -96,7 +96,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.NUMBER,
     label: msg`Price`,
     description: msg`Charge price`,
-    icon: 'IconSettings',
+    icon: 'IconReportMoney',
   })
   @WorkspaceIsNullable()
   price: number;
@@ -298,7 +298,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Invoices`,
     description: msg`Invoices using this charge`,
-    icon: 'IconSettings',
+    icon: 'IconFileDollar',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })

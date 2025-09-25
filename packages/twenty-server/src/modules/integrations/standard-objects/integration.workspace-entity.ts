@@ -69,7 +69,7 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Integration linked to the charge`,
-    icon: 'IconPhone',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })

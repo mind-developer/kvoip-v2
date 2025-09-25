@@ -415,7 +415,6 @@ const WebSoftphone: React.FC = () => {
         throw new Error('Missing required configuration');
       }
 
-      console.log('Initializing SIP connection...', { updatedConfig });
       setCallState((prev) => ({ ...prev, isRegistering: true }));
 
       const uri = UserAgent.makeURI(
@@ -491,14 +490,12 @@ const WebSoftphone: React.FC = () => {
       window.addEventListener('beforeunload', () => {
         if (userAgentRef.current) {
           userAgentRef.current.stop(); // Encerra a conexão SIP
-          console.log('Conexão SIP encerrada.');
+          console.warn('Conexão SIP encerrada.');
         }
       });
 
       userAgent.delegate = {
         onInvite: (invitation) => {
-          console.log('Incoming call received');
-
           // Don't clean up the session for incoming calls - this prevents race conditions
           // We'll only clean up if there's already an active call
           if (sessionRef.current || invitationRef.current) {
@@ -516,7 +513,6 @@ const WebSoftphone: React.FC = () => {
           }));
 
           invitation.stateChange.addListener((state: SessionState) => {
-            console.log('Incoming call state changed:', state);
             if (state === SessionState.Establishing) {
               setCallState((prev) => ({
                 ...prev,
@@ -534,9 +530,7 @@ const WebSoftphone: React.FC = () => {
                 callStartTime: Date.now(),
                 ringingStartTime: null,
               }));
-              console.log('Incoming call accepted:', invitationRef.current);
             } else if (state === SessionState.Terminated) {
-              console.log('Call terminated with reason:');
               cleanupSession();
             }
           });
@@ -544,7 +538,6 @@ const WebSoftphone: React.FC = () => {
       };
 
       userAgent.transport.onConnect = async () => {
-        console.log('Transport connected');
         try {
           const registerer = new Registerer(userAgent, {
             expires: 10, //tempo de registro
@@ -555,7 +548,6 @@ const WebSoftphone: React.FC = () => {
           registererRef.current = registerer;
 
           registerer.stateChange.addListener((newState: RegistererState) => {
-            console.log('Registerer state changed:', newState);
             switch (newState) {
               case RegistererState.Registered:
                 setCallState((prev) => ({
@@ -578,7 +570,6 @@ const WebSoftphone: React.FC = () => {
           });
 
           await registerer.register();
-          console.log('Registration request sent');
 
           // Set interval to renew registration
           registerIntervalRef.current = window.setInterval(() => {
@@ -599,7 +590,6 @@ const WebSoftphone: React.FC = () => {
       };
 
       userAgent.transport.onDisconnect = (error?: Error) => {
-        console.log('Transport disconnected', error);
         setCallState((prev) => ({
           ...prev,
           isRegistered: false,
@@ -609,7 +599,6 @@ const WebSoftphone: React.FC = () => {
       };
 
       await userAgent.start();
-      console.log('UserAgent started');
     } catch (error) {
       console.error('SIP initialization error:', error);
       setCallState((prev) => ({
@@ -625,7 +614,6 @@ const WebSoftphone: React.FC = () => {
       !sessionRef.current ||
       sessionRef.current.state !== SessionState.Established
     ) {
-      console.log('Não é possível enviar DTMF: chamada não está ativa');
       return;
     }
 
@@ -654,14 +642,12 @@ const WebSoftphone: React.FC = () => {
       return;
     }
 
-    console.log('Enviando DTMF:', tone);
     dtmfSender.insertDTMF(tone, 100);
   };
 
   const requestMediaPermissions = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('Media permissions granted');
     } catch (error) {
       console.error('Media permissions error:', error);
     }
@@ -700,10 +686,7 @@ const WebSoftphone: React.FC = () => {
 
       sessionRef.current = inviter;
 
-      console.log('Inviting:', inviter);
-
       inviter.stateChange.addListener(async (state: SessionState) => {
-        console.log('Call state changed:', state);
         if (state === SessionState.Establishing) {
           setCallState((prev) => ({
             ...prev,
@@ -720,7 +703,6 @@ const WebSoftphone: React.FC = () => {
             callStartTime: Date.now(),
             ringingStartTime: null,
           }));
-          console.log('Active call established:', inviter);
         } else if (state === SessionState.Terminated) {
           await cleanupSession();
         }
@@ -735,7 +717,6 @@ const WebSoftphone: React.FC = () => {
 
   const handleAcceptCall = async () => {
     if (!invitationRef.current) {
-      console.log('entrou aqui');
       return;
     }
 
@@ -757,7 +738,6 @@ const WebSoftphone: React.FC = () => {
       });
 
       setupRemoteMedia(invitationRef.current);
-      console.log('Incoming call accepted:', invitationRef.current);
     } catch (error) {
       console.error('Error accepting call:', error);
       await cleanupSession();
@@ -832,7 +812,6 @@ const WebSoftphone: React.FC = () => {
     if (sessionRef.current?.state === SessionState.Established) {
       const keyTrimmedLastChar = key.trim()[key.length - 1];
 
-      console.log('Sending DTMF tone from app:', keyTrimmedLastChar);
       setDtmf(dtmf + keyTrimmedLastChar);
       sendDTMF(keyTrimmedLastChar);
     }

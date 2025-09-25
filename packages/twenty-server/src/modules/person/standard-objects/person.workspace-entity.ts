@@ -40,9 +40,9 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -202,7 +202,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Person linked to the charge`,
-    icon: 'IconPhone',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })

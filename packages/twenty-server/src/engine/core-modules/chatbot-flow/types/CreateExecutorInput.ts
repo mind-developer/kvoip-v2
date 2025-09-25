@@ -13,7 +13,6 @@ export type CreateExecutorInput = {
     'workspace' | 'chatbotId' | 'viewport' | 'id'
   > & { workspace: { id: string } };
   sendTo: string;
-  personId: string;
   sectors: { id: string; name: string }[];
   onFinish: (finalNode: FlowNode, chosenInput?: string) => void;
 };

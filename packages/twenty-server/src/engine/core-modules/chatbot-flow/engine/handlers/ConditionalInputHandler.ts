@@ -46,7 +46,6 @@ export class ConditionalInputHandler implements NodeHandler {
       integrationId,
       sendTo,
       chatbotName,
-      personId,
       workspaceId,
       sectors,
       context,
@@ -70,7 +69,6 @@ export class ConditionalInputHandler implements NodeHandler {
           to: sendTo,
           from: chatbotName,
           fromMe: true,
-          personId,
         };
         console.log('sending', message.message);
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
@@ -108,7 +106,6 @@ export class ConditionalInputHandler implements NodeHandler {
           to: sendTo,
           from: chatbotName,
           fromMe: true,
-          personId,
         };
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
