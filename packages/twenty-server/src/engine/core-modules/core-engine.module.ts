@@ -17,7 +17,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
-import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
+import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
 import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
@@ -66,12 +66,12 @@ import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.modu
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { FocusNfeModule } from 'src/modules/focus-nfe/focus-nfe-integration.module';
 
+import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 import { IssuerModule } from './issuer/issuer.module';
 import { StripeModule } from './stripe/stripe.module';
-import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
 
 @Module({
   imports: [
@@ -117,8 +117,8 @@ import { FinancialClosingModule } from 'src/engine/core-modules/financial-closin
     GoogleStorageModule,
     TelephonyModule,
     DashboardLinklogsModule,
-    ChatbotFlowModule,
     WorkspaceQueryRunnerModule,
+    ChatbotRunnerModule,
     GeoMapModule,
     SubscriptionsModule,
     FocusNfeModule,

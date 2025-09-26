@@ -13,9 +13,11 @@ export const SettingsServiceCenter = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Service Center' },
+        {
+          children: 'Service Center',
+        },
       ]}
     >
       <SettingsPageContainer>
