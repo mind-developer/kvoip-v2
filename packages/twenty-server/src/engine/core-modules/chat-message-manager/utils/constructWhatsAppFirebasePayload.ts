@@ -1,9 +1,9 @@
-import { ChatIntegrationSaveMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
   IMessage,
   WhatsAppDocument,
 } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
+import { ChatIntegrationSaveMessageInput } from 'twenty-shared/types';
 
 export function constructWhatsAppFirebasePayload(
   input: ChatIntegrationSaveMessageInput['whatsApp'],

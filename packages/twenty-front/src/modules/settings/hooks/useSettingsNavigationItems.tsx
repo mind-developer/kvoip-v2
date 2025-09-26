@@ -35,7 +35,11 @@ import {
 import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2, IconMessageCircleCog } from '@tabler/icons-react';
+import {
+  IconIdBadge2,
+  IconMessageCircleCog,
+  IconRobot,
+} from '@tabler/icons-react';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -144,6 +148,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               label: 'Sectors',
               path: SettingsPath.ServiceCenterSectors,
               Icon: IconIdBadge2,
+              indentationLevel: 2,
+            },
+            {
+              label: 'Chatbots',
+              path: SettingsPath.Chatbots,
+              Icon: IconRobot,
               indentationLevel: 2,
             },
             {
