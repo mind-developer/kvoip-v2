@@ -145,7 +145,8 @@ export class StripeCheckoutService {
     withTrialPeriod: boolean,
     requirePaymentMethod: boolean,
   ) {
-    return withTrialPeriod
+    return withTrialPeriod &&
+      this.twentyConfigService.get('BILLING_IS_FREE_TRIAL_ENABLED')
       ? {
           trial_period_days: this.twentyConfigService.get(
             requirePaymentMethod

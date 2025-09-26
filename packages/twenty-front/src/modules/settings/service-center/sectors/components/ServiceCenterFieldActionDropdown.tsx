@@ -178,7 +178,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    closeModal(SERVCIE_CENTER_ACTION_MODAL_ID);
+    closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
     toggleDropdown();
   };
 
