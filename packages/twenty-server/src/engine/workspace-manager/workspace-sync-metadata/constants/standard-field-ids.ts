@@ -244,7 +244,7 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   unit: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
   issRetained: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
   serviceListItem: 'c4606156-e1b0-477d-972f-1373be7099f4',
-  municipalTaxCode: '731eda3a-f8a3-418d-b84d-c2bc675e4507', 
+  municipalTaxCode: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
   classification: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
 
   createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
@@ -785,12 +785,15 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 
 export const CHATBOT_STANDARD_FIELD_IDS = {
   name: '92a00578-f689-43c6-9d79-5171e9d9ab74',
-  statuses: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
+  status: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
+  nodes: 'e7b4ca7b-120a-4859-82ed-1349410e98f8',
+  edges: 'f7546bda-a746-4406-ab8c-369fc6746909',
+  viewport: '3ef4132c-8fbd-48e6-b14c-c95b6b86aeac',
   position: '41f9c916-7914-44a9-9302-2ee9897d6db7',
   favorites: '045ca203-42d5-4cd9-a320-624e0c76ba25',
   timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
-  whatsappIntegration: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
+  integrationId: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
 };
 

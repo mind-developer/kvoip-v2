@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -26,8 +26,6 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
 export enum ChatbotStatus {
@@ -84,23 +82,22 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
-    description: msg`The chatbot flow name`,
-    icon: 'IconSettingsAutomation',
+    description: msg`The chatbot's name`,
+    icon: 'IconRobot',
   })
-  @Field(() => String, { nullable: true })
+  @WorkspaceIsNullable()
   name: string | null;
 
   @WorkspaceField({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.statuses,
+    standardId: CHATBOT_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
-    label: msg`Statuses`,
-    description: msg`The current statuses of the chatbot flow`,
+    label: msg`Status`,
+    description: msg`The current status of the chatbot flow`,
     icon: 'IconStatusChange',
     options: ChatbotStatusOptions,
   })
   @WorkspaceIsNullable()
-  @Field(() => ChatbotStatus, { nullable: true })
-  statuses: ChatbotStatus | null;
+  status: ChatbotStatus | null;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.position,
@@ -113,29 +110,6 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   position: number;
 
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.favorites,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Favorites`,
-    description: msg`Favorites linked to the chatbot`,
-    icon: 'IconHeart',
-    inverseSideTarget: () => FavoriteWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline activities linked to the chatbot`,
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
@@ -146,16 +120,47 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.whatsappIntegration,
+    standardId: CHATBOT_STANDARD_FIELD_IDS.integrationId,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Whatsapp Integrations`,
+    label: msg`Integrations`,
     description: msg`Integration linked to the charge`,
-    icon: 'IconPhone',
+    icon: 'IconBrandStackshare',
+    //TODO: this should be platform-agnostic
     inverseSideTarget: () => WhatsappWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  whatsappIntegrations: Relation<WhatsappWorkspaceEntity[]>;
+  //TODO: this should be platform-agnostic
+  integrationId: Relation<WhatsappWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.nodes,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Nodes`,
+    icon: 'IconBrandStackshare',
+    description: msg`Flow nodes`,
+  })
+  @WorkspaceIsNullable()
+  nodes: any[];
+
+  @WorkspaceField({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.edges,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Edges`,
+    icon: 'IconGizmo',
+    description: msg`Flow edges`,
+  })
+  @WorkspaceIsNullable()
+  edges: any[];
+
+  @WorkspaceField({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.viewport,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Viewport Position`,
+    icon: 'IconMathXy',
+    description: msg`Last saved viewport position`,
+  })
+  viewport: { [key: string]: any };
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.searchVector,
