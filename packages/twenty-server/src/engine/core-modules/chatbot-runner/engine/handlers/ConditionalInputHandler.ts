@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
-import { NewConditionalState } from 'src/engine/core-modules/chatbot-flow/types/LogicNodeDataType';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
+import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
+import { MessageTypes } from 'src/engine/core-modules/chatbot-runner/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
-} from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+} from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ChatIntegrationProviders } from 'twenty-shared/types';
 
 @Injectable()
 export class ConditionalInputHandler implements NodeHandler {
@@ -74,7 +74,7 @@ export class ConditionalInputHandler implements NodeHandler {
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProviders.WhatsApp,
+            chatType: ChatIntegrationProviders.WHATSAPP,
             sendMessageInput: message,
             workspaceId,
           },
@@ -110,7 +110,7 @@ export class ConditionalInputHandler implements NodeHandler {
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProviders.WhatsApp,
+            chatType: ChatIntegrationProviders.WHATSAPP,
             sendMessageInput: message,
             workspaceId,
           },

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-flow/types/MessageTypes';
+import { MessageTypes } from 'src/engine/core-modules/chatbot-runner/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
-} from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+} from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ChatIntegrationProviders } from 'twenty-shared/types';
 import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-message-manager-send.job';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class ImageInputHandler implements NodeHandler {
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {
-          chatType: ChatIntegrationProviders.WhatsApp,
+          chatType: ChatIntegrationProviders.WHATSAPP,
           sendMessageInput: message,
           workspaceId,
         },

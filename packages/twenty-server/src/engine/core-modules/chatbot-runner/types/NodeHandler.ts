@@ -1,5 +1,5 @@
 import { Node, NodeTypes } from '@xyflow/react';
-import { NewConditionalState } from 'src/engine/core-modules/chatbot-flow/types/LogicNodeDataType';
+import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 
 export type NodeHandler = {
   process(params: ProcessParams): Promise<string | null>;

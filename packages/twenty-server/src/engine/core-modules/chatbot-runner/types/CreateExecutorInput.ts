@@ -1,15 +1,15 @@
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import {
   FlowNode,
   NodeHandler,
-} from 'src/engine/core-modules/chatbot-flow/types/NodeHandler';
+} from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 
 export type CreateExecutorInput = {
   integrationId: string;
   workspaceId: string;
   chatbotName: string;
-  chatbotFlow: Omit<
-    ChatbotFlow,
+  chatbot: Omit<
+    ChatbotWorkspaceEntity,
     'workspace' | 'chatbotId' | 'viewport' | 'id'
   > & { workspace: { id: string } };
   sendTo: string;

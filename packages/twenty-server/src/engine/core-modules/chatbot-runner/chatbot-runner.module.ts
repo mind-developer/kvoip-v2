@@ -6,14 +6,12 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowResolver } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.resolver';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
-import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
-import { HandlersModule } from 'src/engine/core-modules/chatbot-flow/engine/handlers/handlers.module';
-import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
-import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
+import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
+import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
+import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
+import { HandlersModule } from 'src/engine/core-modules/chatbot-runner/engine/handlers/handlers.module';
+import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
+import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
@@ -31,7 +29,6 @@ import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integ
           Sector,
           WorkspaceAgent,
           Workspace,
-          ChatbotFlow,
           HandlersModule,
         ]),
         TypeORMModule,
@@ -40,8 +37,7 @@ import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integ
     WorkspaceModule,
   ],
   providers: [
-    ChatbotFlowService,
-    ChatbotFlowResolver,
+    ChatbotRunnerService,
     ChatMessageManagerService,
     TextInputHandler,
     ImageInputHandler,
@@ -50,6 +46,6 @@ import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integ
     GoogleStorageService,
     FirebaseService,
   ],
-  exports: [ChatbotFlowService],
+  exports: [ChatbotRunnerService],
 })
-export class ChatbotFlowModule {}
+export class ChatbotRunnerModule {}

@@ -1,6 +1,6 @@
-import { ChatbotFlowInput } from 'src/engine/core-modules/chatbot-flow/dtos/chatbot-flow.input';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 
-export const sanitizeFlow = (flow: ChatbotFlowInput) => {
+export const sanitizeFlow = (flow: ChatbotWorkspaceEntity) => {
   return {
     ...flow,
     nodes: flow.nodes.map((item) => ({
