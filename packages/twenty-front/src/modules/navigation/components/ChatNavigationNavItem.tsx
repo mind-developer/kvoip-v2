@@ -1,9 +1,7 @@
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { Theme, useTheme } from '@emotion/react';
 // eslint-disable-next-line no-restricted-imports
-import { IconBrandWechat } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { IconMessageCircle } from '@tabler/icons-react';
 import { useLocation } from 'react-router-dom';
 import { IconBriefcase, IconHeadphones } from 'twenty-ui/display';
 
@@ -48,11 +46,11 @@ export const ChatNavigationNavItem = () => {
     <>
       <NavigationDrawerItem
         label="Chat"
-        to={`${navigationPath}/internal`}
+        to={`${navigationPath}/call-center`}
         active={pathname.startsWith(navigationPath)}
-        Icon={IconBrandWechat}
+        Icon={IconMessageCircle}
       />
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {shouldSubItemsBeDisplayed && (
           <motion.div
             initial="hidden"
@@ -75,7 +73,7 @@ export const ChatNavigationNavItem = () => {
             })}
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };

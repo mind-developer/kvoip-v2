@@ -18,8 +18,6 @@ const StyledMessageBubbleContainer = styled(motion.div)<{
 }>`
   ${({ messageType }) => (messageType === 'image' ? 'max-width: 200px;' : '')}
   position: relative;
-  align-self: ${({ fromMe }) => (fromMe ? 'flex-end' : 'flex-start')};
-  justify-self: baseline;
 
   background: ${({ fromMe, theme }) =>
     fromMe

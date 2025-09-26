@@ -3,6 +3,7 @@ import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelCh
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
@@ -101,6 +102,7 @@ export const PaneChatHeader = () => {
   );
 
   const { toggleModal } = useModal();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   if (!selectedChat) return;
 
@@ -142,7 +144,10 @@ export const PaneChatHeader = () => {
           <TransferChatOptionsDropdown />
           <StyledIconButton
             onClick={() => {
-              openCommandMenuTicket(selectedChat);
+              openRecordInCommandMenu({
+                recordId: selectedChat.personId,
+                objectNameSingular: 'person',
+              });
             }}
             variant="secondary"
             accent="default"

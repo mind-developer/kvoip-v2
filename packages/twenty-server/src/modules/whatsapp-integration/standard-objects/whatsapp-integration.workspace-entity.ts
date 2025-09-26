@@ -132,7 +132,7 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Integration linked to the Chatbot`,
     icon: 'IconPhone',
     inverseSideTarget: () => ChatbotWorkspaceEntity,
-    inverseSideFieldKey: 'whatsappIntegrations',
+    inverseSideFieldKey: 'integrationId',
   })
   @WorkspaceIsNullable()
   @Field(() => ChatbotWorkspaceEntity, { nullable: true })

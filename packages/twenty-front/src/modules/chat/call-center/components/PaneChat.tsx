@@ -20,9 +20,6 @@ import { MessageType } from '@/chat/types/MessageType';
 import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { Person } from '@/people/types/Person';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -57,6 +54,7 @@ const StyledChatContainer = styled.div`
   margin-inline: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
+  padding-right: ${({ theme }) => theme.spacing(1.5)};
 `;
 
 const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
@@ -359,10 +357,6 @@ export const PaneChat = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { updateOneRecord } = useUpdateOneRecord<Person>({
-    objectNameSingular: CoreObjectNameSingular.Person,
-  });
 
   const { getIcon } = useIcons();
 
