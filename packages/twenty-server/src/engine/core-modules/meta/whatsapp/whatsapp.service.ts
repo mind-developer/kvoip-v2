@@ -21,12 +21,11 @@ import { v4 } from 'uuid';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { SaveChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
-import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { SaveChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -44,7 +43,6 @@ import {
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
@@ -54,6 +52,7 @@ import {
 } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { ChatIntegrationProviders } from 'twenty-shared/types';
 
 export class WhatsAppService {
   private META_API_URL = this.environmentService.get('META_API_URL');
@@ -61,19 +60,17 @@ export class WhatsAppService {
   protected readonly logger = new Logger(WhatsAppService.name);
 
   constructor(
-    @InjectRepository(ChatbotFlow)
-    private chatbotFlowRepository: Repository<ChatbotFlow>,
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
     public readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector)
     private sectorRepository: Repository<Sector>,
-    @InjectRepository(WorkspaceAgent)
-    private agentRepository: Repository<WorkspaceAgent>,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly firebaseService: FirebaseService,
-    private readonly chatbotFlowService: ChatbotFlowService,
+    private readonly ChatbotRunnerService: ChatbotRunnerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly fileService: FileService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
     private sendMessageQueue: MessageQueueService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
@@ -89,7 +86,10 @@ export class WhatsAppService {
     >,
   ) {
     payload.events.forEach((event) => {
-      this.updateClientAtFirebase(event.properties.after);
+      this.updateClientAtFirebase(
+        event.properties.after,
+        event.objectMetadata.workspaceId,
+      );
     });
   }
 
@@ -166,13 +166,23 @@ export class WhatsAppService {
     }
   }
 
-  async updateClientAtFirebase(updateClientInput: PersonWorkspaceEntity) {
+  async updateClientAtFirebase(
+    updateClientInput: PersonWorkspaceEntity,
+    workspaceId: string,
+  ) {
     const whatsappCollection = collection(this.firestoreDb, 'whatsapp');
     const q = query(
       whatsappCollection,
       where('personId', '==', updateClientInput.id),
     );
     const querySnapshot = await getDocs(q);
+    const avatarUrl =
+      this.twentyConfigService.get('SERVER_URL') +
+      '/files/' +
+      this.fileService.signFileUrl({
+        url: updateClientInput.avatarUrl,
+        workspaceId,
+      });
     querySnapshot.forEach((doc) => {
       if (!updateClientInput.name) return;
       updateDoc(doc.ref, {
@@ -182,7 +192,7 @@ export class WhatsAppService {
             ' ' +
             updateClientInput.name?.lastName,
           phone: updateClientInput.phones?.primaryPhoneNumber,
-          ppUrl: updateClientInput.avatarUrl,
+          ppUrl: avatarUrl,
           email: updateClientInput.emails.primaryEmail,
         },
       });
@@ -202,7 +212,7 @@ export class WhatsAppService {
     workspaceId: string,
   ) {
     this.saveMessageQueue.add<SaveChatMessageJobData>(SaveChatMessageJob.name, {
-      chatType: ChatIntegrationProviders.WhatsApp,
+      chatType: ChatIntegrationProviders.WHATSAPP,
       saveMessageInput: {
         integrationId: whatsAppDoc.integrationId,
         to: whatsAppDoc.client.phone,
@@ -234,17 +244,14 @@ export class WhatsAppService {
       ).findOne({
         where: {
           id: whatsAppIntegration?.chatbotId ?? undefined,
-          statuses: ChatbotStatus.ACTIVE,
+          status: ChatbotStatus.ACTIVE,
         },
       });
-      const chatbotFlow = await this.chatbotFlowRepository.findOneBy({
-        chatbotId: chatbot?.id,
-      });
 
-      if (!whatsAppIntegration?.chatbotId || !chatbotFlow) return;
+      if (!whatsAppIntegration?.chatbotId || !chatbot) return;
       const chatbotKey =
         whatsAppDoc.integrationId + '_' + whatsAppDoc.client.phone;
-      let executor = this.chatbotFlowService.getExecutor(chatbotKey);
+      let executor = this.ChatbotRunnerService.getExecutor(chatbotKey);
       if (executor) {
         executor.runFlow(whatsAppDoc.lastMessage.message);
         return true;
@@ -257,13 +264,12 @@ export class WhatsAppService {
           },
         },
       });
-      executor = this.chatbotFlowService.createExecutor({
+      executor = this.ChatbotRunnerService.createExecutor({
         integrationId: whatsAppDoc.integrationId,
         workspaceId,
         chatbotName: chatbot?.name || 'Chatbot',
-        chatbotFlow: {
-          nodes: chatbotFlow.nodes,
-          edges: chatbotFlow.edges,
+        chatbot: {
+          ...chatbot,
           workspace: { id: workspaceId },
         },
         sendTo: whatsAppDoc.client.phone ?? '',
@@ -281,7 +287,7 @@ export class WhatsAppService {
             //   chatbot.name,
             // );
           }
-          this.chatbotFlowService.clearExecutor(chatbotKey);
+          this.ChatbotRunnerService.clearExecutor(chatbotKey);
         },
       });
       executor.runFlow(whatsAppDoc.lastMessage.message);

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -12,13 +13,14 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { HandlersModule } from 'src/engine/core-modules/chatbot-flow/engine/handlers/handlers.module';
+import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
+import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
+import { HandlersModule } from 'src/engine/core-modules/chatbot-runner/engine/handlers/handlers.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
@@ -56,13 +58,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-	ChatbotFlow,
-        Workspace,
-        BillingSubscription,
-        WhatsappIntegration,
-        Sector,
-        WorkspaceAgent,
-      ]),
+      Workspace,
+      BillingSubscription,
+      WhatsappIntegration,
+      Sector,
+      WorkspaceAgent,
+    ]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -88,7 +89,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AuditJobModule,
     MetaModule,
     HandlersModule,
-    ChatbotFlowModule,
+    ChatbotRunnerModule,
     ChatMessageManagerModule,
     MessageQueueModule,
     TriggerModule,
@@ -107,8 +108,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     FirebaseService,
     WhatsappEmmitWaitingChatsCronJob,
     WhatsappEmmitResolvedChatsCronJob,
-    ChatbotFlowService,
+    ChatbotRunnerService,
     ChatMessageManagerService,
+    FileService,
+    JwtService,
+    JwtWrapperService,
   ],
 })
 export class JobsModule {

@@ -2,7 +2,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
   SendWhatsAppEventMessageInput,
@@ -15,6 +14,7 @@ import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { ChatIntegrationProviders } from 'twenty-shared/types';
 
 @Resolver('Whatsapp')
 export class WhatsappResolver {
@@ -27,7 +27,7 @@ export class WhatsappResolver {
     @AuthWorkspace() workspace: Workspace,
   ) {
     this.whatsappService.sendMessage(SendChatMessageJob.name, {
-      chatType: ChatIntegrationProviders.WhatsApp,
+      chatType: ChatIntegrationProviders.WHATSAPP,
       sendMessageInput: input,
       workspaceId: workspace.id,
     });
@@ -106,7 +106,7 @@ export class WhatsappResolver {
   ) {
     console.log('running resolver');
     this.whatsappService.sendMessage(SendChatMessageJob.name, {
-      chatType: ChatIntegrationProviders.WhatsApp,
+      chatType: ChatIntegrationProviders.WHATSAPP,
       sendMessageInput: input,
       workspaceId: workspace.id,
     });

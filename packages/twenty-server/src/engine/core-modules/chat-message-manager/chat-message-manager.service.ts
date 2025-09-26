@@ -4,15 +4,15 @@ import {
   Logger,
 } from '@nestjs/common';
 import axios from 'axios';
-import {
-  SendWhatsAppMessageInput,
-  SendWhatsAppTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
 import { SendWhatsAppMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendWhatsAppMessageResponse';
 import { parseFields } from 'src/engine/core-modules/meta/whatsapp/utils/parseMessage';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import {
+  SendWhatsAppMessageInput,
+  SendWhatsAppTemplateInput,
+} from 'twenty-shared/types';
 
 @Injectable()
 export class ChatMessageManagerService {

@@ -1,4 +1,4 @@
-import { ChatIntegrationSaveMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { ChatIntegrationSaveMessageInput } from 'twenty-shared/src/types/ChatIntegrationProviders';
 
 export type SaveChatMessageJobData = {
   [K in keyof ChatIntegrationSaveMessageInput]: {

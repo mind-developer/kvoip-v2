@@ -94,4 +94,7 @@ export enum SettingsPath {
   PageLayout = 'page-layout',
   PageLayoutNew = 'page-layout/new',
   PageLayoutEdit = 'page-layout/:id',
+  Chatbots = 'chatbots/',
+  ChatbotsCreate = 'chatbots/create',
+  ChatbotFlow = 'chatbots/flow/:id',
 }

@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { ChatIntegrationSaveMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
 import { SaveChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { constructWhatsAppFirebasePayload } from 'src/engine/core-modules/chat-message-manager/utils/constructWhatsAppFirebasePayload';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -9,6 +8,10 @@ import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.
 import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import {
+  ChatIntegrationProviders,
+  ChatIntegrationSaveMessageInput,
+} from 'twenty-shared/types';
 
 @Processor(MessageQueue.chatMessageManagerSaveMessageQueue)
 export class SaveChatMessageJob {
@@ -50,6 +53,8 @@ export class SaveChatMessageJob {
           },
           data.saveMessageInput.to,
           data.saveMessageInput.recipientPpUrl,
+          ChatIntegrationProviders.WHATSAPP,
+          'Via WhatsApp',
         ),
       );
     if (!person.id)

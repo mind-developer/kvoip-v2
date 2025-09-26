@@ -1,4 +1,4 @@
-import { ChatIntegrationSendMessageInput } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
+import { ChatIntegrationSendMessageInput } from 'twenty-shared/src/types/ChatIntegrationProviders';
 
 export type SendChatMessageQueueData = {
   [K in keyof ChatIntegrationSendMessageInput]: {
