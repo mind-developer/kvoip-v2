@@ -85,8 +85,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.productType,
     type: FieldMetadataType.SELECT,
-    label: msg`Tipo de produto`,
-    description: msg`Tipo de produto`,
+    label: msg`Product Type`,
+    description: msg`Product type`,
     icon: 'IconTag',
     options: ProductTypeStatusOptions,
   })
@@ -153,7 +153,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.ncm,
     type: FieldMetadataType.TEXT,
     label: msg`NCM`,
-    description: msg`Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12`,
+    description: msg`Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12`,
     icon: 'IconBarcode',
   })
   @WorkspaceIsNullable()
@@ -163,7 +163,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.cfop,
     type: FieldMetadataType.TEXT,
     label: msg`CFOP`,
-    description: msg`Código Fiscal de Operações. Placeholder: 5102`,
+    description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
   })
   @WorkspaceIsNullable()
@@ -173,7 +173,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.cest,
     type: FieldMetadataType.TEXT,
     label: msg`CEST`,
-    description: msg`Código Especificador da Substituição Tributária. Placeholder: 28.038.00`,
+    description: msg`Tributary Substitution Code. Example: 28.038.00`,
     icon: 'IconFileCode',
   })
   @WorkspaceIsNullable()
@@ -182,8 +182,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.unit,
     type: FieldMetadataType.TEXT,
-    label: msg`Unidade Comercial`,
-    description: msg`Unidade comercial. Placeholder: UN`,
+    label: msg`Commercial Unit`,
+    description: msg`Commercial unit. Example: UN`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
@@ -192,8 +192,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.origin,
     type: FieldMetadataType.NUMBER,
-    label: msg`Origem da Mercadoria`,
-    description: msg`Origem da mercadoria (0-8). Placeholder: 0`,
+    label: msg`Product Origin`,
+    description: msg`Product origin (0-8). Example: 0`,
     icon: 'IconFlag',
   })
   @WorkspaceIsNullable()
@@ -203,7 +203,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.cstIcmsCsosn,
     type: FieldMetadataType.TEXT,
     label: msg`CST ICMS/CSOSN`,
-    description: msg`Código da Situação Tributária ou CSOSN. Placeholder: 102`,
+    description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
   })
   @WorkspaceIsNullable()
@@ -213,7 +213,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.cstPis,
     type: FieldMetadataType.TEXT,
     label: msg`CST PIS`,
-    description: msg`CST do PIS. Placeholder: 01`,
+    description: msg`CST of PIS. Example: 01`,
     icon: 'IconReceiptTax',
   })
   @WorkspaceIsNullable()
@@ -223,7 +223,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PRODUCT_STANDARD_FIELD_IDS.cstCofins,
     type: FieldMetadataType.TEXT,
     label: msg`CST COFINS`,
-    description: msg`CST do COFINS. Placeholder: 01`,
+    description: msg`CST of COFINS. Example: 01`,
     icon: 'IconReceiptTax',
   })
   @WorkspaceIsNullable()
@@ -232,8 +232,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.rateIcms,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ICMS (%)`,
-    description: msg`Alíquota do ICMS. Placeholder: 18.00`,
+    label: msg`ICMS rate (%)`,
+    description: msg`ICMS rate. Example: 18.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -242,8 +242,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.ratePis,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota PIS (%)`,
-    description: msg`Alíquota do PIS. Placeholder: 1.65`,
+    label: msg`PIS rate (%)`,
+    description: msg`PIS rate. Example: 1.65`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -252,8 +252,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.rateCofins,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota COFINS (%)`,
-    description: msg`Alíquota do COFINS. Placeholder: 7.60`,
+    label: msg`COFINS rate (%)`,
+    description: msg`COFINS rate. Example: 7.60`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -262,8 +262,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.rateIss,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ISS`,
-    description: msg`Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais.`,
+    label: msg`ISS rate (%)`,
+    description: msg`ISS rate. Some cities allow using 4 decimal places.`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -272,8 +272,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.ipiValue,
     type: FieldMetadataType.NUMBER,
-    label: msg`Valor/Alíquota IPI`,
-    description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
+    label: msg`Value/IPI rate`,
+    description: msg`Value or IPI rate. Example: 0.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -282,8 +282,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.issRetained,
     type: FieldMetadataType.BOOLEAN,
-    label: msg`ISS Retido`,
-    description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
+    label: msg`ISS Retained`,
+    description: msg`Inform true or false if the ISS was retained`,
     icon: 'IconTag',
     defaultValue: false,
   })
@@ -293,8 +293,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.serviceListItem,
     type: FieldMetadataType.TEXT,
-    label: msg`Item Lista Serviço`,
-    description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
+    label: msg`Service List Item`,
+    description: msg`Inform the service list code, usually according to Law Complement 116/2003.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -303,8 +303,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.municipalTaxCode,
     type: FieldMetadataType.TEXT,
-    label: msg`Código Tributário Município`,
-    description: msg`Informar o código tributário de acordo com a tabela de cada município (não há um padrão).`,
+    label: msg`Municipal Tax Code`,
+    description: msg`Inform the municipal tax code according to the table of each city (there is no standard).`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -313,8 +313,8 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.classification,
     type: FieldMetadataType.TEXT,
-    label: msg`Classificação`,
-    description: msg`Classificação do produto`,
+    label: msg`Classification`,
+    description: msg`Product classification`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()

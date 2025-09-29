@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Logger, Scope } from '@nestjs/common';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
 import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
@@ -77,7 +78,7 @@ export class RunFinancialClosingJobProcessor {
       );
 
     let newExecutionLog = financialClosingExecutionsRepository.create({
-      name: `Execução do fechamento ${financialClosing.id}`,
+      name: msg`Execution of financial closing` + ' ' + financialClosing.id,
       executedAt: new Date(),
       billingModelIds: financialClosing.billingModelIds,
       financialClosingId: financialClosing.id,
@@ -94,7 +95,7 @@ export class RunFinancialClosingJobProcessor {
       newExecutionLog,
       financialClosingExecutionsRepository,
       'info',
-      `Iniciando execução do fechamento ${financialClosing.id}`,
+      msg`Starting closing execution` + ' ' + financialClosing.id,
     );
 
     try {
@@ -126,7 +127,7 @@ export class RunFinancialClosingJobProcessor {
       for (const company of companies) {
         let newCompanyExecution =
           companyFinancialClosingExecutionsRepository.create({
-            name: `Execução do fechamento ${financialClosing.id} - ${company.name}`,
+            name: msg`Closing execution` + ' ' + financialClosing.id + ' - ' + company.name,
             executedAt: new Date(),
             financialClosingExecutionId: newExecutionLog.id,
             companyId: company.id,
@@ -176,7 +177,7 @@ export class RunFinancialClosingJobProcessor {
             newExecutionLog,
             financialClosingExecutionsRepository,
             'warn',
-            `Erro para gerar cobrança para a empresa ${company.name} (${company.id})`,
+            msg`Error to generate charge for the company` + ' ' + company.name + ' (' + company.id + ')',
           );
         }
       }
@@ -235,7 +236,7 @@ export class RunFinancialClosingJobProcessor {
         newExecutionLog,
         financialClosingExecutionsRepository,
         'error',
-        `Erro fatal na execução do fechamento: ${error.message}`,
+        msg`Fatal error in closing execution` + ': ' + error.message,
         {
           status: FinancialClosingExecutionStatusEnum.ERROR,
         },

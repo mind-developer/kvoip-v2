@@ -35,7 +35,7 @@ export const SEARCH_FIELDS_FOR_WHATSAPP: FieldTypeAndNameMetadata[] = [
   standardId: STANDARD_OBJECT_IDS.whatsappIntegration,
   namePlural: 'whatsappIntegrations',
   labelSingular: msg`Whatsapp Integration`,
-  labelPlural: msg`WhatsappIntegrations`,
+  labelPlural: msg`Whatsapp Integrations`,
   description: msg`A whatsapp integration`,
   icon: 'IconBrandWhatsapp',
   labelIdentifierStandardId: WHATSAPP_STANDARD_FIELD_IDS.name,
@@ -160,8 +160,8 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.tipoApi,
     type: FieldMetadataType.TEXT,
-    label: msg`Tipo API`,
-    description: msg`Tipo da API do WhatsApp`,
+    label: msg`API Type`,
+    description: msg`Type of API for WhatsApp`,
   })
   @Field(() => String, { nullable: true })
   tipoApi?: string;

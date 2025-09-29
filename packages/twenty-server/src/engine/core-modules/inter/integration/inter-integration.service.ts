@@ -11,6 +11,7 @@ import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integ
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { msg } from '@lingui/core/macro';
 
 @Injectable()
 export class InterIntegrationService {
@@ -119,9 +120,9 @@ export class InterIntegrationService {
   private handleInterApiError(error: any, operation: string): never {
     if (error.response?.status === 429) {
       const retryAfter = error.response.headers['retry-after'] || 60;
-      const message = `
-        Limite de requisições excedido para o Banco Inter. 
-        A operação não pode ser realizada no momento. Tente novamente em ${retryAfter} segundos. O Banco Inter permite apenas 5 requisições por minuto.`;
+      const message = msg`Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in`
+        + retryAfter + 
+        msg`seconds. The Banco Inter allows only 5 requests per minute.`.toString();
       
       this.logger.error(`Rate limit exceeded for ${operation}:`, {
         status: error.response.status,
@@ -147,7 +148,7 @@ export class InterIntegrationService {
 
     // Erro genérico do Banco Inter
     if (error.response?.status >= 400 && error.response?.status < 500) {
-      const message = `Erro na comunicação com o Banco Inter. Verifique os dados informados e tente novamente.`;
+      const message = msg`Error in the communication with the Banco Inter. Verify the data provided and try again.`.toString();
       
       this.logger.error(`Inter API error for ${operation}:`, {
         status: error.response.status,
@@ -173,14 +174,14 @@ export class InterIntegrationService {
   }
 
   private formatInterValidationError(interError: any, operation: string): string {
-    let message = `Erro de validação do Banco Inter" `;
+    let message = msg`Inter validation error`.toString();
     
     if (interError.violacoes && interError.violacoes.length > 0) {
-      message += ` - Detalhes dos erros:\n`;
+      message += (' -' + msg`Details of the errors:\n`.toString());
       interError.violacoes.forEach((violacao: any, index: number) => {
         message += `${violacao.propriedade}: ${violacao.razao}`;
         if (violacao.valor) {
-          message += ` (valor informado: "${violacao.valor}")`;
+          message += ' (' + msg`Value informed` + ': "' + violacao.valor + '")';
         }
         message += `\n    `;
       });
@@ -267,7 +268,7 @@ export class InterIntegrationService {
 
     } catch (error) {
       this.logger.error('OAuth token request for read failed:', error.response?.data || error.message);
-      this.handleInterApiError(error, 'Obter Token OAuth para Leitura');
+      this.handleInterApiError(error, 'Get OAuth Token for Read');
     }
   }
 

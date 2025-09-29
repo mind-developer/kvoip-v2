@@ -127,7 +127,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
-    label: msg`ARR`,
+    label: msg`Annual Recurring Revenue`,
     description: msg`Annual Recurring Revenue: The actual or estimated annual revenue of the company`,
     icon: 'IconMoneybag',
   })
@@ -178,8 +178,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.inscricaoMunicipal,
     type: FieldMetadataType.TEXT,
-    label: msg`Inscrição Municipal`,
-    description: msg`Inscrição municipal do prestador de serviços`,
+    label: msg`Municipal Registration`,
+    description: msg`Municipal registration of the service provider`,
     icon: 'IconFileText',
   })
   @WorkspaceIsNullable()
@@ -188,7 +188,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.INSCRICAO_ESTADUAL,
     type: FieldMetadataType.TEXT,
-    label: msg`Inscrição Estadual`,
+    label: msg`State Registration`,
     description: msg`State Registration number for tax purposes in Brazil`,
     icon: 'IconFileText',
   })
@@ -423,7 +423,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.billingModel,
     type: FieldMetadataType.SELECT,
-    label: msg`Modelo de Cobrança`,
+    label: msg`Billing Model`,
     description: msg`Defines how the company is billed: prepaid, postpaid, etc.`,
     icon: 'IconCreditCard',
     options: BILLING_MODEL_OPTIONS,
@@ -434,7 +434,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.typeDiscount,
     type: FieldMetadataType.SELECT,
-    label: msg`Tipo do Desconto`,
+    label: msg`Type of Discount`,
     description: msg`Type of discount applied to the company - Percent or Value`,
     icon: 'IconFilePercent',
     options: TYPE_DISCOUNT_OPTIONS,
@@ -445,7 +445,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.discount,
     type: FieldMetadataType.NUMBER,
-    label: msg`Desconto`,
+    label: msg`Discount`,
     description: msg`Discount value, can be a percentage or fixed amount depending on the discount type`,
     icon: 'IconFlagDiscount',
   })
@@ -455,7 +455,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.quantitiesRemainingFinancialClosingsDiscounts,
     type: FieldMetadataType.NUMBER,
-    label: msg`Qtd. Fechamentos Financeiros Restantes p/ Desconto`,
+    label: msg`Quantity of Financial Closings Remaining for Discount`,
     description: msg`Number of financial closings remaining for this discount to be applied`,
     icon: 'IconCalendarStats',
   })
@@ -465,7 +465,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.totalValueCharged,
     type: FieldMetadataType.CURRENCY,
-    label: msg`Valor Total Cobrado`,
+    label: msg`Total Value Charged`,
     description: msg`Total value charged to the company, in the selected currency`,
     icon: 'IconCurrencyDollar',
   })
@@ -475,7 +475,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.valueMinimumMonthly,
     type: FieldMetadataType.CURRENCY,
-    label: msg`Custo Mínimo Mensal`,
+    label: msg`Minimum Monthly Cost`,
     description: msg`Minimum monthly cost for the company`,
     icon: 'IconCalendarDollar',
   })
@@ -485,7 +485,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.valueFixedMonthly,
     type: FieldMetadataType.CURRENCY,
-    label: msg`Mensalidade Fixa`,
+    label: msg`Fixed Monthly Charge`,
     description: msg`Fixed monthly charge applied to the company`,
     icon: 'IconCash',
   })
@@ -495,7 +495,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.slipDueDay,
     type: FieldMetadataType.NUMBER,
-    label: msg`Dia de Vencimento do Boleto`,
+    label: msg`Due Day for Bank Slip`,
     description: msg`Due day for the company's bank slip (boleto) payments`,
     icon: 'IconCalendarDue',
   })
@@ -505,7 +505,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.cdrId,
     type: FieldMetadataType.TEXT,
-    label: msg`ID de Bilhetagem (CDR)`,
+    label: msg`CDR Integration ID`,
     description: msg`Unique identifier for CDR integration`,
     icon: 'IconFileText',
   })
@@ -515,7 +515,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.typeEmissionNF,
     type: FieldMetadataType.SELECT,
-    label: msg`Tipo de Emissão de NF`,
+    label: msg`Type of Invoice Emission`,
     description: msg`Type of invoice issuance, sets the time of issuance`,
     icon: 'IconNote',
     options: TYPE_EMISSION_NF_OPTIONS,

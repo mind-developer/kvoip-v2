@@ -13,6 +13,17 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-id: 6vxiIt
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid ""
+"\n"
+"        Rate limit exceeded for the Banco Inter. \n"
+"        The operation cannot be performed at the moment. Try again in"
+msgstr ""
+"\n"
+"        Rate limit exceeded for the Banco Inter. \n"
+"        The operation cannot be performed at the moment. Try again in"
+
 #. js-lingui-id: Qyrd7v
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
@@ -168,6 +179,11 @@ msgstr "A task"
 msgid "A task target"
 msgstr "A task target"
 
+#. js-lingui-id: j8ME+y
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "A telephony integration"
+msgstr "A telephony integration"
+
 #. js-lingui-id: L31GZg
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "A traceable link"
@@ -267,6 +283,56 @@ msgstr "Address of the company"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Address of the company - deprecated in favor of new address field"
 
+#. js-lingui-id: mzLRn0
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 1"
+msgstr "Advanced Fowarding 1"
+
+#. js-lingui-id: uHnmpf
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 1 Value"
+msgstr "Advanced Fowarding 1 Value"
+
+#. js-lingui-id: 1Thico
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 2"
+msgstr "Advanced Fowarding 2"
+
+#. js-lingui-id: AETrVw
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 2 Value"
+msgstr "Advanced Fowarding 2 Value"
+
+#. js-lingui-id: pdA/L1
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 3"
+msgstr "Advanced Fowarding 3"
+
+#. js-lingui-id: z1lq0z
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 3 Value"
+msgstr "Advanced Fowarding 3 Value"
+
+#. js-lingui-id: wKpBcc
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 4"
+msgstr "Advanced Fowarding 4"
+
+#. js-lingui-id: J+dbsk
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 4 Value"
+msgstr "Advanced Fowarding 4 Value"
+
+#. js-lingui-id: LjH/vW
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 5"
+msgstr "Advanced Fowarding 5"
+
+#. js-lingui-id: VTeoWz
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Advanced Fowarding 5 Value"
+msgstr "Advanced Fowarding 5 Value"
+
 #. js-lingui-id: UczvGu
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Agent Id"
@@ -283,54 +349,6 @@ msgstr "Aggregate operation"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregated / filtered event to be displayed on the timeline"
 
-#. js-lingui-id: RNKcKo
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota COFINS (%)"
-msgstr "Alíquota COFINS (%)"
-
-#. js-lingui-id: mOmfu+
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do COFINS. Placeholder: 7.60"
-msgstr "Alíquota do COFINS. Placeholder: 7.60"
-
-#. js-lingui-id: zLG1Ah
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do ICMS. Placeholder: 18.00"
-msgstr "Alíquota do ICMS. Placeholder: 18.00"
-
-#. js-lingui-id: RBenhP
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais."
-msgstr "Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais."
-
-#. js-lingui-id: 0Yz+Xy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota do PIS. Placeholder: 1.65"
-msgstr "Alíquota do PIS. Placeholder: 1.65"
-
-#. js-lingui-id: ATtJLL
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota ICMS (%)"
-msgstr "Alíquota ICMS (%)"
-
-#. js-lingui-id: GAnlTp
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota ISS"
-msgstr "Alíquota ISS"
-
-#. js-lingui-id: xFH3kf
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Alíquota PIS (%)"
-msgstr "Alíquota PIS (%)"
-
 #. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
@@ -345,10 +363,20 @@ msgstr "Alíquota PIS (%)"
 msgid "All {objectLabelPlural}"
 msgstr "All {objectLabelPlural}"
 
+#. js-lingui-id: SuCnCO
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "All invoices issued by the company"
+msgstr "All invoices issued by the company"
+
 #. js-lingui-id: UwV99B
 #: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
 msgid "All Workspaces"
 msgstr "All Workspaces"
+
+#. js-lingui-id: 1YIepZ
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "already issued. Ignoring new attachment processing."
+msgstr "already issued. Ignoring new attachment processing."
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -404,6 +432,11 @@ msgstr "Approved access domain does not match email domain"
 msgid "Approved access domain has already been validated"
 msgstr "Approved access domain has already been validated"
 
+#. js-lingui-id: KnfX8Z
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Area Code"
+msgstr "Area Code"
+
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
@@ -450,6 +483,11 @@ msgstr "Associated User Id"
 msgid "Associated User Phone"
 msgstr "Associated User Phone"
 
+#. js-lingui-id: 6Umg7s
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "At least one NF percentage must be filled for the company (percentNfcom or percentNfse)"
+msgstr "At least one NF percentage must be filled for the company (percentNfcom or percentNfse)"
+
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
@@ -485,20 +523,26 @@ msgstr "Attachment full path"
 msgid "Attachment integration"
 msgstr "Attachment integration"
 
+#. js-lingui-id: /PBN5G
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment invoice"
+msgstr "Attachment invoice"
+
 #. js-lingui-id: wjocwa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
 msgstr "Attachment name"
 
-#. js-lingui-id: FAlybx
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment nota fiscal"
-msgstr "Attachment nota fiscal"
-
 #. js-lingui-id: FWlOXr
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
 msgstr "Attachment note"
+
+#. js-lingui-id: ImUOau
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "Attachment of the invoice"
+msgstr "Attachment of the invoice"
 
 #. js-lingui-id: YASWpH
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -558,10 +602,10 @@ msgstr "Attachments linked to the contact."
 msgid "Attachments linked to the integration"
 msgstr "Attachments linked to the integration"
 
-#. js-lingui-id: Pr/M5Q
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Attachments linked to the Nota Fiscal"
-msgstr "Attachments linked to the Nota Fiscal"
+#. js-lingui-id: YeiQsd
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Attachments linked to the Invoice"
+msgstr "Attachments linked to the Invoice"
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -593,6 +637,12 @@ msgstr "Author"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Authored attachments"
+
+#. js-lingui-id: r5qX8j
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "authorized successfully"
+msgstr "authorized successfully"
 
 #. js-lingui-id: cvSznK
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -634,6 +684,11 @@ msgstr "Billing Models"
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Billing models linked to this execution"
 msgstr "Billing models linked to this execution"
+
+#. js-lingui-id: Wm7HxJ
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Block Extension"
+msgstr "Block Extension"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -747,6 +802,11 @@ msgstr "Calendar Event Participants"
 msgid "Calendar events"
 msgstr "Calendar events"
 
+#. js-lingui-id: ZFHtt6
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Caller External ID"
+msgstr "Caller External ID"
+
 #. js-lingui-id: sq1PHM
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "Campaign associated with the traffic"
@@ -821,6 +881,7 @@ msgstr "Cannot update workflow version status manually"
 #. js-lingui-id: V9PU36
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
 msgid "CEP"
 msgstr "CEP"
 
@@ -831,7 +892,7 @@ msgstr "CEST"
 
 #. js-lingui-id: fsRh5D
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "CFOP"
 msgstr "CFOP"
 
@@ -849,7 +910,7 @@ msgstr "Channel Type"
 #. js-lingui-id: VcWwIy
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -867,6 +928,21 @@ msgstr "Charge Action"
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charge discount"
 msgstr "Charge discount"
+
+#. js-lingui-id: q2c50r
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Charge ID"
+msgstr "Charge ID"
+
+#. js-lingui-id: al746C
+#: src/engine/core-modules/financial-closing/financial-closing-charge.service.ts
+msgid "Charge issued for company"
+msgstr "Charge issued for company"
+
+#. js-lingui-id: etIadK
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Charge issued successfully"
+msgstr "Charge issued successfully"
 
 #. js-lingui-id: VFasyD
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -905,6 +981,11 @@ msgstr "Charge request code"
 msgid "Charge Value"
 msgstr "Charge Value"
 
+#. js-lingui-id: adaGCo
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Charge was not generated - null return from charge issuance service"
+msgstr "Charge was not generated - null return from charge issuance service"
+
 #. js-lingui-id: Kb+0BT
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -934,32 +1015,37 @@ msgstr "Chatbot record position"
 msgid "Chatbots"
 msgstr "Chatbots"
 
+#. js-lingui-id: W+HvlL
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "Cidade"
+msgstr "Cidade"
+
 #. js-lingui-id: 3wV73y
 #: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/focus-nfe/focus-nfe.service.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "City"
 msgstr "City"
 
-#. js-lingui-id: xecKvk
+#. js-lingui-id: 65dAD6
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Classificação"
-msgstr "Classificação"
-
-#. js-lingui-id: 4M1z1+
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Classificação do produto"
-msgstr "Classificação do produto"
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Classification"
+msgstr "Classification"
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Close date"
+
+#. js-lingui-id: oF5MXh
+#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
+msgid "Closing execution"
+msgstr "Closing execution"
 
 #. js-lingui-id: bVcWKN
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
@@ -973,42 +1059,34 @@ msgstr "CNAE Code"
 msgid "CNPJ"
 msgstr "CNPJ"
 
-#. js-lingui-id: hqcPre
+#. js-lingui-id: /VVu5J
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código da Situação Tributária ou CSOSN. Placeholder: 102"
-msgstr "Código da Situação Tributária ou CSOSN. Placeholder: 102"
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "COFINS rate (%)"
+msgstr "COFINS rate (%)"
 
-#. js-lingui-id: W9stsD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código do assinante"
-msgstr "Código do assinante"
-
-#. js-lingui-id: gR0HXY
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código do Assinante"
-msgstr "Código do Assinante"
-
-#. js-lingui-id: FIb+mG
+#. js-lingui-id: y++qct
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Código Especificador da Substituição Tributária. Placeholder: 28.038.00"
-msgstr "Código Especificador da Substituição Tributária. Placeholder: 28.038.00"
-
-#. js-lingui-id: OsS1Qp
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Código Fiscal de Operações. Placeholder: 5102"
-msgstr "Código Fiscal de Operações. Placeholder: 5102"
-
-#. js-lingui-id: 8fQ/81
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Código Tributário Município"
-msgstr "Código Tributário Município"
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "COFINS rate. Example: 7.60"
+msgstr "COFINS rate. Example: 7.60"
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "Color Scheme"
+
+#. js-lingui-id: tkkkyR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Commercial Unit"
+msgstr "Commercial Unit"
+
+#. js-lingui-id: 5AkY7d
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Commercial unit. Example: UN"
+msgstr "Commercial unit. Example: UN"
 
 #. js-lingui-id: 07OSD1
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1037,7 +1115,7 @@ msgstr "Companies with Error"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1046,7 +1124,7 @@ msgid "Company"
 msgstr "Company"
 
 #. js-lingui-id: PJjJsM
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 msgid "Company Financial Closing Execution"
 msgstr "Company Financial Closing Execution"
@@ -1064,19 +1142,24 @@ msgstr "Company Financial Closing Executions"
 msgid "Company Financial Closing Executions linked to the charge"
 msgstr "Company Financial Closing Executions linked to the charge"
 
+#. js-lingui-id: /GRpVD
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "Company is missing required fields"
+msgstr "Company is missing required fields"
+
 #. js-lingui-id: TQzDDQ
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company linked to the charge"
 msgstr "Company linked to the charge"
 
-#. js-lingui-id: SLnmTn
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Company linked to the Nota Fiscal"
-msgstr "Company linked to the Nota Fiscal"
+#. js-lingui-id: ZwV4n3
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Company linked to the Invoice"
+msgstr "Company linked to the Invoice"
 
 #. js-lingui-id: yWSIMK
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Company linked to the products"
 msgstr "Company linked to the products"
 
@@ -1094,6 +1177,16 @@ msgstr "Company Name"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "Company record position"
+
+#. js-lingui-id: zg1M9W
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "Company state is required to define the CFOP. (Configure in the company registration)"
+msgstr "Company state is required to define the CFOP. (Configure in the company registration)"
+
+#. js-lingui-id: +g3vD1
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "Complemento"
+msgstr "Complemento"
 
 #. js-lingui-id: nZmECt
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
@@ -1257,7 +1350,7 @@ msgstr "CPF/CNPJ"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -1293,20 +1386,20 @@ msgstr "Cron pattern '{pattern}' is invalid"
 msgid "CST COFINS"
 msgstr "CST COFINS"
 
-#. js-lingui-id: hzTsGr
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST do COFINS. Placeholder: 01"
-msgstr "CST do COFINS. Placeholder: 01"
-
-#. js-lingui-id: nMSkSB
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST do PIS. Placeholder: 01"
-msgstr "CST do PIS. Placeholder: 01"
-
 #. js-lingui-id: K2hY1Z
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "CST ICMS/CSOSN"
 msgstr "CST ICMS/CSOSN"
+
+#. js-lingui-id: EE2l25
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST of COFINS. Example: 01"
+msgstr "CST of COFINS. Example: 01"
+
+#. js-lingui-id: Qq1RhF
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST of PIS. Example: 01"
+msgstr "CST of PIS. Example: 01"
 
 #. js-lingui-id: gUSJXx
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -1314,7 +1407,7 @@ msgid "CST PIS"
 msgstr "CST PIS"
 
 #. js-lingui-id: JLxg3N
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "CST/CSOSN"
 msgstr "CST/CSOSN"
 
@@ -1358,15 +1451,10 @@ msgstr "Dashboard title"
 msgid "Dashboards"
 msgstr "Dashboards"
 
-#. js-lingui-id: V/hOKM
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Data de emissão"
-msgstr "Data de emissão"
-
-#. js-lingui-id: knQldp
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Data de emissão da Nota Fiscal"
-msgstr "Data de emissão da Nota Fiscal"
+#. js-lingui-id: njkQRL
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "data. Please check all required fields."
+msgstr "data. Please check all required fields."
 
 #. js-lingui-id: c7DCdF
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
@@ -1430,10 +1518,34 @@ msgstr "Describes if the view is in compact mode"
 msgid "Description"
 msgstr "Description"
 
+#. js-lingui-id: UTxCV4
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Destiny Mailbox All Calls or Offline"
+msgstr "Destiny Mailbox All Calls or Offline"
+
+#. js-lingui-id: c/Wm8S
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Destiny Mailbox Busy"
+msgstr "Destiny Mailbox Busy"
+
+#. js-lingui-id: TY69sj
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid ""
+"Details of the errors:\n"
+""
+msgstr ""
+"Details of the errors:\n"
+""
+
 #. js-lingui-id: 8goIvx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Dia de Vencimento do Boleto"
 msgstr "Dia de Vencimento do Boleto"
+
+#. js-lingui-id: ZWOD86
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Dialing Plan"
+msgstr "Dialing Plan"
 
 #. js-lingui-id: MRB7nI
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1451,15 +1563,15 @@ msgstr "Discount"
 msgid "Discount value, can be a percentage or fixed amount depending on the discount type"
 msgstr "Discount value, can be a percentage or fixed amount depending on the discount type"
 
-#. js-lingui-id: bcqrX0
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Discriminação"
-msgstr "Discriminação"
+#. js-lingui-id: TJoAEg
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Discrimination"
+msgstr "Discrimination"
 
-#. js-lingui-id: 4owEp1
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Discriminação dos serviços prestados."
-msgstr "Discriminação dos serviços prestados."
+#. js-lingui-id: Remmc1
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Discrimination of the services provided."
+msgstr "Discrimination of the services provided."
 
 #. js-lingui-id: 0gS7M5
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -1499,10 +1611,20 @@ msgstr "Due day for the company's bank slip (boleto) payments"
 msgid "Duplicated option {field}"
 msgstr "Duplicated option {field}"
 
+#. js-lingui-id: O3oNi5
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "Email"
+msgstr "Email"
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
 msgstr "Email already verified."
+
+#. js-lingui-id: qmZkEO
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Email for Mailbox"
+msgstr "Email for Mailbox"
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1529,10 +1651,20 @@ msgstr "Email verification not required."
 msgid "Emails"
 msgstr "Emails"
 
+#. js-lingui-id: 7yPBS5
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "Emitter state is required to define the CFOP. (Configure in the FocusNFE integration)"
+msgstr "Emitter state is required to define the CFOP. (Configure in the FocusNFE integration)"
+
 #. js-lingui-id: gqv5ZL
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Employees"
 msgstr "Employees"
+
+#. js-lingui-id: NAuCKq
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Enable Mailbox"
+msgstr "Enable Mailbox"
 
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1550,10 +1682,85 @@ msgstr "Entity Type"
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
 
+#. js-lingui-id: e17foi
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error in charge API"
+msgstr "Error in charge API"
+
+#. js-lingui-id: 6F1IjS
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error in charge data validation"
+msgstr "Error in charge data validation"
+
+#. js-lingui-id: YXim9c
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "Error in the authorization of the invoice"
+msgstr "Error in the authorization of the invoice"
+
+#. js-lingui-id: kg5JSp
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "Error in the city of the emitter"
+msgstr "Error in the city of the emitter"
+
+#. js-lingui-id: GyuW9t
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "Error in the city of the provider"
+msgstr "Error in the city of the provider"
+
+#. js-lingui-id: AViLL6
+#: src/modules/focus-nfe/focus-nfe.service.ts
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "Error in the city of the recipient"
+msgstr "Error in the city of the recipient"
+
+#. js-lingui-id: uZzk+H
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "Error in the communication with the Banco Inter. Verify the data provided and try again."
+msgstr "Error in the communication with the Banco Inter. Verify the data provided and try again."
+
+#. js-lingui-id: ognm/F
+#: src/engine/core-modules/financial-closing/financial-closing-charge.service.ts
+msgid "Error to emit charge for company"
+msgstr "Error to emit charge for company"
+
+#. js-lingui-id: 0nD/IO
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error to emit invoice"
+msgstr "Error to emit invoice"
+
+#. js-lingui-id: G7zxex
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error to emit invoice for the company"
+msgstr "Error to emit invoice for the company"
+
+#. js-lingui-id: qAFX2I
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error to generate charge"
+msgstr "Error to generate charge"
+
+#. js-lingui-id: Qobc89
+#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Error to generate charge for the company"
+msgstr "Error to generate charge for the company"
+
+#. js-lingui-id: 6U5IgU
+#: src/modules/focus-nfe/focus-nfe.service.ts
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "Error to search the city code"
+msgstr "Error to search the city code"
+
 #. js-lingui-id: tyWdb0
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Error, warning or info logs during execution"
 msgstr "Error, warning or info logs during execution"
+
+#. js-lingui-id: hG0LEj
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "Estado"
+msgstr "Estado"
 
 #. js-lingui-id: VYKxBB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1594,16 +1801,16 @@ msgstr "Event ID"
 msgid "Event integration"
 msgstr "Event integration"
 
+#. js-lingui-id: C0+dX6
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event invoice"
+msgstr "Event invoice"
+
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event name"
 msgstr "Event name"
-
-#. js-lingui-id: 85QkF8
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event nota fiscal"
-msgstr "Event nota fiscal"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1661,7 +1868,7 @@ msgstr "Event workspace member"
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
@@ -1677,10 +1884,10 @@ msgstr "Events linked to the charge"
 msgid "Events linked to the integration"
 msgstr "Events linked to the integration"
 
-#. js-lingui-id: FOjMfO
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Events linked to the nota fiscal"
-msgstr "Events linked to the nota fiscal"
+#. js-lingui-id: mU9ciB
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Events linked to the invoice"
+msgstr "Events linked to the invoice"
 
 #. js-lingui-id: fHL+iH
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1746,6 +1953,11 @@ msgstr "Execution logs for financial closings by company"
 msgid "Execution Name"
 msgstr "Execution Name"
 
+#. js-lingui-id: HOxkeI
+#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
+msgid "Execution of financial closing"
+msgstr "Execution of financial closing"
+
 #. js-lingui-id: PWXmrM
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
@@ -1757,6 +1969,26 @@ msgstr "Execution status (pending, running, success, failed)"
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 
+#. js-lingui-id: ZyqVzo
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Extension All Calls or Offline"
+msgstr "Extension All Calls or Offline"
+
+#. js-lingui-id: rvly2G
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Extension Busy"
+msgstr "Extension Busy"
+
+#. js-lingui-id: ohtVGN
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Extension Group"
+msgstr "Extension Group"
+
+#. js-lingui-id: FLkqsn
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Extension name"
+msgstr "Extension name"
+
 #. js-lingui-id: Q28Cie
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "extensionNumber"
@@ -1767,6 +1999,21 @@ msgstr "extensionNumber"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "External ID"
+
+#. js-lingui-id: D2WRx8
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "External Number All Calls or Offline"
+msgstr "External Number All Calls or Offline"
+
+#. js-lingui-id: /MptsP
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "External Number Busy"
+msgstr "External Number Busy"
+
+#. js-lingui-id: ENjI/o
+#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
+msgid "Fatal error in closing execution"
+msgstr "Fatal error in closing execution"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2041,6 +2288,12 @@ msgstr "Financial Closing Executions"
 msgid "Financial Closing ID"
 msgstr "Financial Closing ID"
 
+#. js-lingui-id: 21dx7B
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Fiscal Operation Code. Example: 5102"
+msgstr "Fiscal Operation Code. Example: 5102"
+
 #. js-lingui-id: jVg9c4
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Fixed monthly charge applied to the company"
@@ -2052,7 +2305,7 @@ msgid "Focus NF-e integration status"
 msgstr "Focus NF-e integration status"
 
 #. js-lingui-id: kUK0H8
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Focus NFe Integration"
 msgstr "Focus NFe Integration"
@@ -2091,6 +2344,21 @@ msgstr "Form action fields must have unique names"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Form action must have at least one field"
+
+#. js-lingui-id: +YaNB2
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Foward All Calls"
+msgstr "Foward All Calls"
+
+#. js-lingui-id: E1YUZ2
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Foward Busy not Available"
+msgstr "Foward Busy not Available"
+
+#. js-lingui-id: 4uAgEj
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Foward Offline without Service"
+msgstr "Foward Offline without Service"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -2143,6 +2411,18 @@ msgstr "Header message Id"
 msgid "iCal UID"
 msgstr "iCal UID"
 
+#. js-lingui-id: zz+BX8
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "ICMS rate (%)"
+msgstr "ICMS rate (%)"
+
+#. js-lingui-id: gDFIc7
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "ICMS rate. Example: 18.00"
+msgstr "ICMS rate. Example: 18.00"
+
 #. js-lingui-id: wwu18a
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Icon"
@@ -2189,22 +2469,22 @@ msgstr "If defined default value must contain at least one value"
 msgid "Indicates if the entity is an individual or a company"
 msgstr "Indicates if the entity is an individual or a company"
 
-#. js-lingui-id: TzTH7/
+#. js-lingui-id: rSMcif
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003."
-msgstr "Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003."
+msgid "Inform the municipal tax code according to the table of each city (there is no standard)."
+msgstr "Inform the municipal tax code according to the table of each city (there is no standard)."
 
-#. js-lingui-id: yK2h6g
+#. js-lingui-id: Lb4LfK
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Informar o código tributário de acordo com a tabela de cada município (não há um padrão)."
-msgstr "Informar o código tributário de acordo com a tabela de cada município (não há um padrão)."
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Inform the service list code, usually according to Law Complement 116/2003."
+msgstr "Inform the service list code, usually according to Law Complement 116/2003."
 
-#. js-lingui-id: B4A4Lu
+#. js-lingui-id: 6s1jaL
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Informar true (verdadeiro) ou false (falso) se o ISS foi retido"
-msgstr "Informar true (verdadeiro) ou false (falso) se o ISS foi retido"
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Inform true or false if the ISS was retained"
+msgstr "Inform true or false if the ISS was retained"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -2256,10 +2536,10 @@ msgstr "Integration linked to the charge"
 msgid "Integration linked to the Chatbot"
 msgstr "Integration linked to the Chatbot"
 
-#. js-lingui-id: kh85bV
+#. js-lingui-id: nkhlp8
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration linked to the Nota Fiscal"
-msgstr "Integration linked to the Nota Fiscal"
+msgid "Integration linked to the Invoices"
+msgstr "Integration linked to the Invoices"
 
 #. js-lingui-id: u4iuBc
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
@@ -2282,6 +2562,16 @@ msgstr "Integrations"
 #: src/engine/core-modules/inter/services/inter.service.ts
 msgid "Inter Bilepix Billing Charge"
 msgstr "Inter Bilepix Billing Charge"
+
+#. js-lingui-id: dkinOS
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "Inter validation error"
+msgstr "Inter validation error"
+
+#. js-lingui-id: JHB/Ky
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "Invalid"
+msgstr "Invalid"
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2371,10 +2661,76 @@ msgstr "Invalid view sort data"
 msgid "Invalid view sort data for view sort id: {id}"
 msgstr "Invalid view sort data for view sort id: {id}"
 
+#. js-lingui-id: IuMGvq
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Invoice"
+msgstr "Invoice"
+
+#. js-lingui-id: WAGjVi
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "Invoice configured to be issued after payment, not issued"
+msgstr "Invoice configured to be issued after payment, not issued"
+
+#. js-lingui-id: 9O28QB
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "Invoice emission request"
+msgstr "Invoice emission request"
+
 #. js-lingui-id: ACC8JC
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 msgid "Invoice Emission Type"
 msgstr "Invoice Emission Type"
+
+#. js-lingui-id: lw3ibE
+#: src/engine/core-modules/inter/integration/inter-integration-webhook.controller.ts
+msgid "Invoice issued successfully after payment confirmation via webhook inter"
+msgstr "Invoice issued successfully after payment confirmation via webhook inter"
+
+#. js-lingui-id: 0F343+
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Invoice linked to the Focus NFe Integration"
+msgstr "Invoice linked to the Focus NFe Integration"
+
+#. js-lingui-id: mWiR7l
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "Invoice with id (ref)"
+msgstr "Invoice with id (ref)"
+
+#. js-lingui-id: F7nA5/
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Invoices"
+msgstr "Invoices"
+
+#. js-lingui-id: z23lqB
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Invoices linked to the charges"
+msgstr "Invoices linked to the charges"
+
+#. js-lingui-id: MgdpWN
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Invoices to the company"
+msgstr "Invoices to the company"
+
+#. js-lingui-id: C0Fmtx
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Invoices using this charge"
+msgstr "Invoices using this charge"
+
+#. js-lingui-id: lYITjr
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Invoices using this product"
+msgstr "Invoices using this product"
 
 #. js-lingui-id: oK4zvs
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
@@ -2427,22 +2783,55 @@ msgstr "Is Sync Enabled"
 msgid "Is Synced"
 msgstr "Is Synced"
 
-#. js-lingui-id: mbGP1T
+#. js-lingui-id: 3Mn8yv
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "ISS Retido"
-msgstr "ISS Retido"
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "ISS rate (%)"
+msgstr "ISS rate (%)"
+
+#. js-lingui-id: UJjJdD
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "ISS rate. Some cities allow using 4 decimal places."
+msgstr "ISS rate. Some cities allow using 4 decimal places."
+
+#. js-lingui-id: sSYppr
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "ISS Retained"
+msgstr "ISS Retained"
+
+#. js-lingui-id: M1cChr
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Issue Date"
+msgstr "Issue Date"
+
+#. js-lingui-id: sSwbg7
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Issue date of the invoice"
+msgstr "Issue date of the invoice"
 
 #. js-lingui-id: gtGLOq
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Issue name"
 msgstr "Issue name"
 
-#. js-lingui-id: /tNICq
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Item Lista Serviço"
-msgstr "Item Lista Serviço"
+#. js-lingui-id: lCa1OX
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "issued, waiting for processing"
+msgstr "issued, waiting for processing"
+
+#. js-lingui-id: zDw3HD
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "It was not possible to generate the charge"
+msgstr "It was not possible to generate the charge"
+
+#. js-lingui-id: IHbxPI
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "It was not possible to save the XML file of the invoice"
+msgstr "It was not possible to save the XML file of the invoice"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2474,15 +2863,15 @@ msgstr "Json object to provide trigger"
 msgid "Json value for event details"
 msgstr "Json value for event details"
 
-#. js-lingui-id: UH0PTY
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Justificativa"
-msgstr "Justificativa"
+#. js-lingui-id: HDiCy+
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Justification"
+msgstr "Justification"
 
-#. js-lingui-id: UQ6FtA
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Justificativa de cancelamento da Nota Fiscal"
-msgstr "Justificativa de cancelamento da Nota Fiscal"
+#. js-lingui-id: cLDhRd
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Justification of the invoice cancellation"
+msgstr "Justification of the invoice cancellation"
 
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2609,6 +2998,11 @@ msgstr "Linklogs"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "List of opportunities for which that person is the point of contact"
 
+#. js-lingui-id: yJT8EH
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Listen to Calls"
+msgstr "Listen to Calls"
+
 #. js-lingui-id: wJijgU
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2656,10 +3050,21 @@ msgstr "Medium of the traffic (e.g., cpc, email)"
 msgid "Meet Link"
 msgstr "Meet Link"
 
+#. js-lingui-id: NRVSdy
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Member ID"
+msgstr "Member ID"
+
 #. js-lingui-id: 1Re5O0
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Mensalidade Fixa"
 msgstr "Mensalidade Fixa"
+
+#. js-lingui-id: gDBA/G
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12"
+msgstr "Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12"
 
 #. js-lingui-id: xDAtGP
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2853,6 +3258,11 @@ msgstr "Multi-select field default value must be an array"
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 
+#. js-lingui-id: FMxbdG
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Municipal Tax Code"
+msgstr "Municipal Tax Code"
+
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
 #: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
@@ -2865,9 +3275,9 @@ msgstr "Multiple records found with the same unique field values for {conflictin
 #: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2948,7 +3358,7 @@ msgstr "Names are not synced with labels"
 
 #. js-lingui-id: 1VGoRg
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "NCM"
 msgstr "NCM"
 
@@ -2958,30 +3368,35 @@ msgstr "NCM"
 msgid "Neighborhood"
 msgstr "Neighborhood"
 
+#. js-lingui-id: 6c2ffO
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "NF"
+msgstr "NF"
+
 #. js-lingui-id: GsDa9d
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "NF Type"
 msgstr "NF Type"
 
 #. js-lingui-id: NzG02o
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "NF-Com"
 msgstr "NF-Com"
 
 #. js-lingui-id: 6CDvDj
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "NF-e"
 msgstr "NF-e"
 
 #. js-lingui-id: vIp1C2
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "NFC-e"
 msgstr "NFC-e"
 
 #. js-lingui-id: Uq58U2
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "NFS-e"
 msgstr "NFS-e"
 
@@ -2994,6 +3409,11 @@ msgstr "No event name provided in database event trigger"
 #: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
 msgid "Nº Extentions"
 msgstr "Nº Extentions"
+
+#. js-lingui-id: 9OpOf2
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "No Focus NFe integration found"
+msgstr "No Focus NFe integration found"
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3009,6 +3429,11 @@ msgstr "Nº Members"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
 msgstr "No pattern provided in CUSTOM cron trigger"
+
+#. js-lingui-id: ukda5t
+#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
+msgid "No return"
+msgstr "No return"
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3030,63 +3455,15 @@ msgstr "No steps provided in workflow version"
 msgid "No trigger type provided"
 msgstr "No trigger type provided"
 
-#. js-lingui-id: U8O0LR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12"
-msgstr "Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12"
+#. js-lingui-id: PxQS6h
+#: src/modules/focus-nfe/focus-nfe.service.ts
+msgid "not found"
+msgstr "not found"
 
-#. js-lingui-id: RQyWdD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota emitida"
-msgstr "Nota emitida"
-
-#. js-lingui-id: Ybt31x
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota fiscal"
-msgstr "Nota fiscal"
-
-#. js-lingui-id: LJ4EO1
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Nota Fiscal"
-msgstr "Nota Fiscal"
-
-#. js-lingui-id: u9NP/V
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Nota Fiscal linked to the Focus NFe Integration"
-msgstr "Nota Fiscal linked to the Focus NFe Integration"
-
-#. js-lingui-id: VyW1ij
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Nota Fiscal using this product"
-msgstr "Nota Fiscal using this product"
-
-#. js-lingui-id: nPM5it
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Notas Fiscais"
-msgstr "Notas Fiscais"
-
-#. js-lingui-id: nU8wSD
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Notas fiscais linked to the charges"
-msgstr "Notas fiscais linked to the charges"
-
-#. js-lingui-id: d4bNPb
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Notas fiscais to the company"
-msgstr "Notas fiscais to the company"
-
-#. js-lingui-id: wNRuNO
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Notas fiscais using this charge"
-msgstr "Notas fiscais using this charge"
+#. js-lingui-id: bUT28z
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "not found in workspace"
+msgstr "not found in workspace"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3191,8 +3568,14 @@ msgstr "NoteTarget support"
 #. js-lingui-id: HptUxX
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
 msgid "Number"
 msgstr "Number"
+
+#. js-lingui-id: boq6uP
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Number Extension"
+msgstr "Number Extension"
 
 #. js-lingui-id: fqL1og
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
@@ -3218,22 +3601,6 @@ msgstr "Number of financial closings remaining for this discount to be applied"
 #: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
 msgid "Number of members in the workspace"
 msgstr "Number of members in the workspace"
-
-#. js-lingui-id: 91jcCE
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número do contrato do assinante"
-msgstr "Número do contrato do assinante"
-
-#. js-lingui-id: HhJRga
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número do Contrato do Assinante"
-msgstr "Número do Contrato do Assinante"
-
-#. js-lingui-id: ugWWBB
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Número RPS"
-msgstr "Número RPS"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
@@ -3451,18 +3818,6 @@ msgstr "Optional aggregate operation"
 msgid "Options are required for enum fields"
 msgstr "Options are required for enum fields"
 
-#. js-lingui-id: 3qocCh
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Origem da Mercadoria"
-msgstr "Origem da Mercadoria"
-
-#. js-lingui-id: aefXyf
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Origem da mercadoria (0-8). Placeholder: 0"
-msgstr "Origem da mercadoria (0-8). Placeholder: 0"
-
 #. js-lingui-id: LtI9AS
 #: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
 #: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
@@ -3506,29 +3861,45 @@ msgstr "People"
 msgid "People linked to the company."
 msgstr "People linked to the company."
 
-#. js-lingui-id: jbDhKI
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)"
-msgstr "Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)"
+#. js-lingui-id: hfygpx
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Percentage for Communication Invoice"
+msgstr "Percentage for Communication Invoice"
 
-#. js-lingui-id: 017kfr
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#. js-lingui-id: Q+MzAR
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal de Comunicação (Communication Invoice)"
-msgstr "Percentage for Nota Fiscal de Comunicação (Communication Invoice)"
+msgid "Percentage for Communication Invoice (Communication Invoice)"
+msgstr "Percentage for Communication Invoice (Communication Invoice)"
 
-#. js-lingui-id: +zipdG
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)"
-msgstr "Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)"
+#. js-lingui-id: V7bnuV
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Percentage for Electronic Consumer Invoice"
+msgstr "Percentage for Electronic Consumer Invoice"
 
-#. js-lingui-id: CWKrq3
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#. js-lingui-id: iGNjrm
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)"
-msgstr "Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)"
+msgid "Percentage for Electronic Consumer Invoice (Electronic Consumer Invoice)"
+msgstr "Percentage for Electronic Consumer Invoice (Electronic Consumer Invoice)"
+
+#. js-lingui-id: N3JvJ7
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Percentage for Electronic Invoice for Products"
+msgstr "Percentage for Electronic Invoice for Products"
+
+#. js-lingui-id: AoETMo
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Percentage for Electronic Service Invoice"
+msgstr "Percentage for Electronic Service Invoice"
+
+#. js-lingui-id: AXlO8+
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Electronic Service Invoice (Electronic Service Invoice)"
+msgstr "Percentage for Electronic Service Invoice (Electronic Service Invoice)"
+
+#. js-lingui-id: kH7uI1
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Eletronic Invoice (Electronic Invoice for Products)"
+msgstr "Percentage for Eletronic Invoice (Electronic Invoice for Products)"
 
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3581,6 +3952,18 @@ msgstr "Phone ID"
 msgid "Phones"
 msgstr "Phones"
 
+#. js-lingui-id: UJPDU7
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "PIS rate (%)"
+msgstr "PIS rate (%)"
+
+#. js-lingui-id: qNkfF2
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "PIS rate. Example: 1.65"
+msgstr "PIS rate. Example: 1.65"
+
 #. js-lingui-id: F3bW6y
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
@@ -3609,8 +3992,8 @@ msgstr "Point of Contact"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -3662,7 +4045,7 @@ msgstr "Probability"
 
 #. js-lingui-id: K47k8R
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product"
 msgstr "Product"
@@ -3671,6 +4054,12 @@ msgstr "Product"
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product charge action(issue products can be used in charges)"
 msgstr "Product charge action(issue products can be used in charges)"
+
+#. js-lingui-id: M651Mh
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Product classification"
+msgstr "Product classification"
 
 #. js-lingui-id: bodmtG
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -3692,9 +4081,25 @@ msgstr "Product name"
 msgid "Product Name"
 msgstr "Product Name"
 
+#. js-lingui-id: BjrEHq
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Product origin"
+msgstr "Product origin"
+
+#. js-lingui-id: 2GlMyA
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product Origin"
+msgstr "Product Origin"
+
+#. js-lingui-id: jw/QtW
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Product origin (0-8). Example: 0"
+msgstr "Product origin (0-8). Example: 0"
+
 #. js-lingui-id: jGuXaa
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Product record position"
 msgstr "Product record position"
 
@@ -3708,9 +4113,19 @@ msgstr "Product sale price"
 msgid "Product status (active products can be used in charges)"
 msgstr "Product status (active products can be used in charges)"
 
+#. js-lingui-id: D4Ru/J
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product type"
+msgstr "Product type"
+
+#. js-lingui-id: sJsr1h
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product Type"
+msgstr "Product Type"
+
 #. js-lingui-id: C74sUy
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Product unit of measure (e.g., kg, unit, liter)"
 msgstr "Product unit of measure (e.g., kg, unit, liter)"
 
@@ -3745,6 +4160,11 @@ msgstr "Provided phone number is invalid {number}"
 msgid "provider"
 msgstr "provider"
 
+#. js-lingui-id: K7iawJ
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Pull Calls"
+msgstr "Pull Calls"
+
 #. js-lingui-id: 3YhGcA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Qtd. Fechamentos Financeiros Restantes p/ Desconto"
@@ -3755,10 +4175,20 @@ msgstr "Qtd. Fechamentos Financeiros Restantes p/ Desconto"
 msgid "Quantity"
 msgstr "Quantity"
 
+#. js-lingui-id: YpQauo
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Ramal ID"
+msgstr "Ramal ID"
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Received At"
+
+#. js-lingui-id: 9Sj4Hv
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Record Calls"
+msgstr "Record Calls"
 
 #. js-lingui-id: QBQXiF
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -3792,7 +4222,7 @@ msgid "Reference to the company"
 msgstr "Reference to the company"
 
 #. js-lingui-id: 7DqzRe
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Reference to the company financial closing execution"
 msgstr "Reference to the company financial closing execution"
 
@@ -3806,10 +4236,10 @@ msgstr "Reference to the company Financial Closing Executions"
 msgid "Reference to the financial closing execution"
 msgstr "Reference to the financial closing execution"
 
-#. js-lingui-id: wDpREI
+#. js-lingui-id: sg8lgw
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Reference to the nota fiscal"
-msgstr "Reference to the nota fiscal"
+msgid "Reference to the invoices"
+msgstr "Reference to the invoices"
 
 #. js-lingui-id: 2rvMKg
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3879,11 +4309,27 @@ msgstr "Response Status"
 msgid "Role"
 msgstr "Role"
 
+#. js-lingui-id: LWoSmV
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "RPS number"
+msgstr "RPS number"
+
+#. js-lingui-id: joiGUi
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "RPS Number"
+msgstr "RPS Number"
+
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "Runs"
+
+#. js-lingui-id: lDBGnk
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
+msgid "saved successfully"
+msgstr "saved successfully"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3896,6 +4342,11 @@ msgstr "Scopes"
 msgid "Search vector"
 msgstr "Search vector"
 
+#. js-lingui-id: 0++7Gq
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "seconds. The Banco Inter allows only 5 requests per minute."
+msgstr "seconds. The Banco Inter allows only 5 requests per minute."
+
 #. js-lingui-id: L5P0h3
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 msgid "Service Level Agreement"
@@ -3906,10 +4357,21 @@ msgstr "Service Level Agreement"
 msgid "Service Level Agreement (SLA) in minutes"
 msgstr "Service Level Agreement (SLA) in minutes"
 
+#. js-lingui-id: qr+rqC
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Service List Item"
+msgstr "Service List Item"
+
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "Settings"
+
+#. js-lingui-id: QiWoq+
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "SIP Password"
+msgstr "SIP Password"
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3949,6 +4411,11 @@ msgstr "Start Date"
 msgid "Start of the week"
 msgstr "Start of the week"
 
+#. js-lingui-id: w0RUMe
+#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
+msgid "Starting closing execution"
+msgstr "Starting closing execution"
+
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
@@ -3970,22 +4437,22 @@ msgstr "State Registration number for tax purposes in Brazil"
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 msgid "Status"
 msgstr "Status"
 
-#. js-lingui-id: il/4qG
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Status da Nota Fiscal"
-msgstr "Status da Nota Fiscal"
-
 #. js-lingui-id: sPl2pb
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 msgid "Status of the integration"
 msgstr "Status of the integration"
+
+#. js-lingui-id: Nd3/C6
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Status of the Invoice"
+msgstr "Status of the Invoice"
 
 #. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4007,6 +4474,7 @@ msgstr "Step is not a form"
 #. js-lingui-id: Uv4dnT
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
 msgid "Street"
 msgstr "Street"
 
@@ -4026,6 +4494,26 @@ msgstr "Sub field name"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Subject"
+
+#. js-lingui-id: aJPagg
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Subscriber agreement number"
+msgstr "Subscriber agreement number"
+
+#. js-lingui-id: FWABGt
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Subscriber Agreement Number"
+msgstr "Subscriber Agreement Number"
+
+#. js-lingui-id: EIzxyO
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Subscriber code"
+msgstr "Subscriber code"
+
+#. js-lingui-id: btcoaK
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Subscriber Code"
+msgstr "Subscriber Code"
 
 #. js-lingui-id: XYLcNv
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -4205,6 +4693,16 @@ msgstr "TaskTarget task"
 msgid "Tax ID"
 msgstr "Tax ID"
 
+#. js-lingui-id: be/H0B
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Telephonies"
+msgstr "Telephonies"
+
+#. js-lingui-id: yEt5zR
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
+msgid "Telephony"
+msgstr "Telephony"
+
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -4251,6 +4749,11 @@ msgstr "The business account ID obtained from Facebook Developer"
 msgid "The chatbot flow name"
 msgstr "The chatbot flow name"
 
+#. js-lingui-id: AzijcN
+#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
+msgid "The company does not have invoice emission configured, not issued"
+msgstr "The company does not have invoice emission configured, not issued"
+
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
@@ -4271,6 +4774,26 @@ msgstr "The company Twitter/X account"
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "The company website URL. We use this url to fetch the company icon"
 
+#. js-lingui-id: S7s5tm
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters"
+msgstr "The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters"
+
+#. js-lingui-id: SFB2rf
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "The company's NF percentages must be between 0 and 100"
+msgstr "The company's NF percentages must be between 0 and 100"
+
+#. js-lingui-id: 9DYH0D
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "The company's NF percentages must be valid numbers"
+msgstr "The company's NF percentages must be valid numbers"
+
+#. js-lingui-id: TwFgEM
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)"
+msgstr "The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)"
+
 #. js-lingui-id: YxUHjE
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "The content of the traceable link (e.g., bannerSale)"
@@ -4282,7 +4805,7 @@ msgstr "The content of the traceable link (e.g., bannerSale)"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -4398,6 +4921,11 @@ msgstr "The singular and plural names cannot be the same for an object"
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "The source of the traceable link (e.g., Google, Facebook)"
 msgstr "The source of the traceable link (e.g., Google, Facebook)"
+
+#. js-lingui-id: tZaiKE
+#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
+msgid "The sum of the company's NF percentages cannot exceed 100%. Current: "
+msgstr "The sum of the company's NF percentages cannot exceed 100%. Current: "
 
 #. js-lingui-id: wGSI5K
 #: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
@@ -4582,17 +5110,6 @@ msgstr "Tipo da API do WhatsApp"
 msgid "Tipo de Emissão de NF"
 msgstr "Tipo de Emissão de NF"
 
-#. js-lingui-id: oZPZ+V
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Tipo de nota fiscal"
-msgstr "Tipo de nota fiscal"
-
-#. js-lingui-id: tVodDu
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Tipo de produto"
-msgstr "Tipo de produto"
-
 #. js-lingui-id: TTqoX2
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Tipo do Desconto"
@@ -4614,12 +5131,12 @@ msgid "Token"
 msgstr "Token"
 
 #. js-lingui-id: V6wYl1
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Total amount"
 msgstr "Total amount"
 
 #. js-lingui-id: NrYZ3H
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Total Amount"
 msgstr "Total Amount"
 
@@ -4659,8 +5176,20 @@ msgstr "Traceable URL"
 msgid "Traceables"
 msgstr "Traceables"
 
+#. js-lingui-id: 9W4Z/E
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Tributary Situation Code or CSOSN. Example: 102"
+msgstr "Tributary Situation Code or CSOSN. Example: 102"
+
+#. js-lingui-id: zFDMn9
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Tributary Substitution Code. Example: 28.038.00"
+msgstr "Tributary Substitution Code. Example: 28.038.00"
+
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
@@ -4676,17 +5205,10 @@ msgstr "Type of discount applied to the company - Percent or Value"
 msgid "Type of invoice issuance, sets the time of issuance"
 msgstr "Type of invoice issuance, sets the time of issuance"
 
-#. js-lingui-id: yS0vV0
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Unidade Comercial"
-msgstr "Unidade Comercial"
-
-#. js-lingui-id: QHdsoa
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Unidade comercial. Placeholder: UN"
-msgstr "Unidade comercial. Placeholder: UN"
+#. js-lingui-id: xXbTBX
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Type of the Invoice"
+msgstr "Type of the Invoice"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
@@ -4701,7 +5223,7 @@ msgstr "Unique identifier for CDR integration"
 
 #. js-lingui-id: aSwfbR
 #: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
 msgid "Unit"
 msgstr "Unit"
 
@@ -4818,32 +5340,37 @@ msgstr "UTM Source"
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
 msgstr "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
 
-#. js-lingui-id: 9ifduX
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00"
-msgstr "Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00"
-
 #. js-lingui-id: VI1R4E
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Valor Total Cobrado"
 msgstr "Valor Total Cobrado"
-
-#. js-lingui-id: 1eObHA
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-msgid "Valor/Alíquota IPI"
-msgstr "Valor/Alíquota IPI"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Value"
 
+#. js-lingui-id: WOUOnw
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "Value informed"
+msgstr "Value informed"
+
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
+
+#. js-lingui-id: qX8MVY
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Value or IPI rate. Example: 0.00"
+msgstr "Value or IPI rate. Example: 0.00"
+
+#. js-lingui-id: 1FvbLZ
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+msgid "Value/IPI rate"
+msgstr "Value/IPI rate"
 
 #. js-lingui-id: BFDmoA
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts

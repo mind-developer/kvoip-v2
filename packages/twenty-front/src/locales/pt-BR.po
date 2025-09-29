@@ -564,7 +564,7 @@ msgstr "Ajustar as configurações relacionadas ao papel"
 #. js-lingui-id: U3pytU
 #: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -763,12 +763,12 @@ msgstr "Permitir acesso da equipe de suporte"
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
-msgstr "Permitir o convite de novos utilizadores através da partilha de uma ligação de convite."
+msgstr "Permitir o convite de novos usuários através da partilha de uma ligação de convite."
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
-msgstr "Permitir que os utilizadores iniciem sessão com um e-mail e uma palavra-passe."
+msgstr "Permitir que os usuários iniciem sessão com um e-mail e uma palavra-passe."
 
 #. js-lingui-id: wgwm72
 #: src/pages/settings/SettingsBilling.tsx
@@ -1130,7 +1130,7 @@ msgstr "Lista de bloqueio"
 #. js-lingui-id: HssMtJ
 #: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
 msgid "Boleto"
-msgstr ""
+msgstr "Boleto"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1159,8 +1159,8 @@ msgstr "Breve explicação deste campo de saída"
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Ao utilizar o Twenty, concorda com a"
+msgid "By using Woulz, you agree to the"
+msgstr "Ao utilizar o Woulz, concorda com a"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1272,7 +1272,7 @@ msgstr "Catal\\u00e3o"
 #. js-lingui-id: V9PU36
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "CEP"
-msgstr ""
+msgstr "CEP"
 
 #. js-lingui-id: o+XJ9D
 #: src/pages/settings/SettingsBilling.tsx
@@ -1349,8 +1349,8 @@ msgstr "Verifique seus emails"
 
 #. js-lingui-id: SxwQE8
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Erro na sessão de checkout. Por favor, tente novamente ou entre em contato com a equipe da Twenty"
+msgid "Checkout session error. Please retry or contact Woulz team"
+msgstr "Erro na sessão de checkout. Por favor, tente novamente ou entre em contato com a equipe da Woulz"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2269,7 +2269,7 @@ msgstr "Definir papéis de usuário e níveis de acesso"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
-msgstr "Defina o que será visível para outros utilizadores no seu espaço de trabalho"
+msgstr "Defina o que será visível para outros usuários no seu espaço de trabalho"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -3073,8 +3073,8 @@ msgstr "Erro ao alterar o plano, tente agear mais tarde."
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr "Erro ao encerrar o período de avaliação. Por favor, entre em contato com a equipe Twenty."
+msgid "Error while ending trial period. Please contact Woulz team."
+msgstr "Erro ao encerrar o período de avaliação. Por favor, entre em contato com a equipe Woulz."
 
 #. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -4017,7 +4017,7 @@ msgstr "Índices"
 #. js-lingui-id: fByw/g
 #: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
 msgid "Individual"
-msgstr ""
+msgstr "Individual"
 
 #. js-lingui-id: A2PiTl
 #: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
@@ -4573,12 +4573,12 @@ msgstr "Toras de execução"
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr "Procure utilizadores e gerencie suas flags de recurso do espaço de trabalho ou personifique-os."
+msgstr "Procure usuários e gerencie suas flags de recurso do espaço de trabalho ou personifique-os."
 
 #. js-lingui-id: GPSwzy
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
-msgstr "Procure utilizadores para personificá-los."
+msgstr "Procure usuários para personificá-los."
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5736,7 +5736,7 @@ msgstr "Pós-pago"
 #: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
 #: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
 msgid "Post-unlimited"
-msgstr "Pós-imbecil"
+msgstr "Pós-ilimitado"
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5753,7 +5753,7 @@ msgstr "Pré-pago"
 #: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
 #: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
 msgid "Pre-unlimited"
-msgstr "Pré-inimentado"
+msgstr "Pré-ilimitado"
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -6670,7 +6670,7 @@ msgstr "Sétimo"
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
-msgstr "Partilhe este link para convidar utilizadores a juntarem-se ao seu espaço de trabalho"
+msgstr "Partilhe este link para convidar usuários a juntarem-se ao seu espaço de trabalho"
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -7297,7 +7297,7 @@ msgstr "Terceiro"
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente este utilizador e removê-lo-á de todas as suas atribuições."
+msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente este usuário e removê-lo-á de todas as suas atribuições."
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -7528,7 +7528,7 @@ msgstr "Digite qualquer coisa"
 #. js-lingui-id: VKRQFd
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "UF"
-msgstr "Uf"
+msgstr "UF"
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -7666,23 +7666,23 @@ msgstr "Use o link 'URL rastreável' em quaisquer canais promocionais que você 
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "User"
-msgstr "Utilizador"
+msgstr "Usuário"
 
 #. js-lingui-id: RNv3YS
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
-msgstr "Personificação do Utilizador"
+msgstr "Personificação do Usuário"
 
 #. js-lingui-id: tNT8wT
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
-msgstr "Informações do Utilizador"
+msgstr "Informações do Usuário"
 
 #. js-lingui-id: IjyOjp
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
-msgstr "O utilizador não está autenticado"
+msgstr "O usuário não está autenticado"
 
 #. js-lingui-id: LVecP9
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -7692,7 +7692,7 @@ msgstr "Funções do Usuário"
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Users"
-msgstr "Utilizadores"
+msgstr "Usuários"
 
 #. js-lingui-id: vUr1/5
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -8078,17 +8078,17 @@ msgstr ""
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You will be charged ${enterprisePrice} per user per month billed annually."
-msgstr "Ser-lhe-á cobrado ${enterprisePrice} por utilizador por mês faturado anualmente."
+msgstr "Ser-lhe-á cobrado ${enterprisePrice} por usuário por mês faturado anualmente."
 
 #. js-lingui-id: HM4D8s
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You will be charged ${enterprisePrice} per user per month."
-msgstr "Ser-lhe-á cobrado ${enterprisePrice} por utilizador por mês."
+msgstr "Ser-lhe-á cobrado ${enterprisePrice} por usuário por mês."
 
 #. js-lingui-id: o4xIH4
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
-msgstr "Ser-lhe-á cobrado ${yearlyPrice} por utilizador por mês faturado anualmente. Um prorrata com a sua subscrição atual será aplicado."
+msgstr "Ser-lhe-á cobrado ${yearlyPrice} por usuário por mês faturado anualmente. Um prorrata com a sua subscrição atual será aplicado."
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
