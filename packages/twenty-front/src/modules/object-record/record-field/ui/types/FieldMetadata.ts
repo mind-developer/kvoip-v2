@@ -3,7 +3,7 @@ import { type RATING_VALUES } from '@/object-record/record-field/ui/meta-types/c
 import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
-  ChatIntegrationProviders,
+  ChatIntegrationProvider,
   ConnectedAccountProvider,
   type AllowedAddressSubField,
 } from 'twenty-shared/types';
@@ -294,7 +294,7 @@ export const FieldActorValueSchema = z.object({
   context: z
     .object({
       provider: z.nativeEnum(ConnectedAccountProvider).optional(),
-      chatProvider: z.nativeEnum(ChatIntegrationProviders).optional(),
+      chatProvider: z.nativeEnum(ChatIntegrationProvider).optional(),
     })
     .nullable(),
 });

@@ -39,11 +39,11 @@ import { ExecuteFlow } from '@/chatbot/engine/executeFlow';
 import { GET_CHATBOT_FLOW_BY_ID } from '@/chatbot/graphql/query/getChatbotFlowById';
 import { GET_CHATBOTS } from '@/chatbot/graphql/query/getChatbots';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -71,7 +71,9 @@ export const CallCenterProvider = ({
     string | null
   >(null);
 
-  const { whatsappIntegrations, loading } = useFindAllWhatsappIntegrations();
+  const whatsappIntegrations = useFindManyRecords<
+    WhatsappIntegration & { __typename: string }
+  >({ objectNameSingular: 'whatsappIntegration' }).records;
   // const { messengerIntegrations, loading: loadingMessenger } =
   //   useGetAllMessengerIntegrations();
 
@@ -104,8 +106,8 @@ export const CallCenterProvider = ({
   );
 
   const integrationWhatsappIds = useMemo(
-    () => (loading ? [] : whatsappIntegrations.map((wa) => wa.id)),
-    [whatsappIntegrations, loading],
+    () => whatsappIntegrations.map((wa) => wa.id),
+    [whatsappIntegrations],
   );
 
   // const integrationMessengerIds = useMemo(
@@ -117,8 +119,8 @@ export const CallCenterProvider = ({
   // );
 
   const activeWhatsappIntegrations = useMemo(
-    () => (loading ? [] : whatsappIntegrations.filter((wa) => !wa.disabled)),
-    [whatsappIntegrations, loading],
+    () => whatsappIntegrations.filter((wa) => !wa.disabled),
+    [whatsappIntegrations],
   );
 
   const currentAgent = useMemo(() => {
@@ -253,7 +255,7 @@ export const CallCenterProvider = ({
           (w) => w.id === chat.integrationId,
         );
 
-        const chatbotId = integration?.chatbot?.id;
+        const chatbotId = integration?.chatbotId;
         if (!chatbotId) continue;
 
         const { data: chatbotData } = await apolloClient.query({

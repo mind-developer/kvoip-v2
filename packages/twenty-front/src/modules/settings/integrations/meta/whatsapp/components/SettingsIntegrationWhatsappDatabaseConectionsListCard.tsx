@@ -6,12 +6,12 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
-import { useToggleWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useToggleWhatsappIntegrationDisable';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -108,13 +108,17 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const [selectedIntegrationId, setSelectedIntegrationId] =
     useState<string>('');
 
-  const { whatsappIntegrations = [], refetchWhatsapp } =
-    useFindAllWhatsappIntegrations();
-  const { toggleWhatsappIntegrationDisable } = useToggleWhatsappIntegration();
+  const whatsappIntegrations = useFindManyRecords<
+    WhatsappIntegration & { __typename: string }
+  >({ objectNameSingular: 'whatsappIntegration' }).records;
 
-  useEffect(() => {
-    refetchWhatsapp();
-  }, [refetchWhatsapp]);
+  // const { whatsappIntegrations = [], refetchWhatsapp } =
+  //   useFindAllWhatsappIntegrations();
+  // const { toggleWhatsappIntegrationDisable } = useToggleWhatsappIntegration();
+
+  // useEffect(() => {
+  //   refetchWhatsapp();
+  // }, [refetchWhatsapp]);
 
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);
@@ -125,8 +129,8 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const handleConfirmChange = () => {
     switch (changeType) {
       case ChangeType.DisableWhatsapp:
-        toggleWhatsappIntegrationDisable(selectedIntegrationId);
-        refetchWhatsapp();
+        // toggleWhatsappIntegrationDisable(selectedIntegrationId);
+        // refetchWhatsapp();
         return;
       default:
         return;

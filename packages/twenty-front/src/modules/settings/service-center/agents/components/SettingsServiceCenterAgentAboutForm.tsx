@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { useFindAllInboxes } from '@/settings/service-center/inboxes/hooks/useFindAllInboxes';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
@@ -65,7 +64,9 @@ export const SettingsServiceCenterAgentAboutForm = ({
 
   const { sectors, refetch: refetchSectors } = useFindAllSectors();
   const { inboxes, refetch: refecthInboxes } = useFindAllInboxes();
-  const { whatsappIntegrations = [] } = useFindAllWhatsappIntegrations();
+  const whatsappIntegrations = useFindManyRecords({
+    objectNameSingular: 'whatsappIntegration',
+  }).records;
 
   const Icon = getIcon('IconIdBadge2');
 

@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ChatIntegrationProviders } from 'twenty-shared/types';
+import { ChatIntegrationProvider } from 'twenty-shared/types';
 
 export enum FieldActorSource {
   EMAIL = 'EMAIL',
@@ -67,6 +67,6 @@ export type ActorMetadata = {
   name: string;
   context: {
     provider?: ConnectedAccountProvider;
-    chatProvider?: ChatIntegrationProviders;
+    chatProvider?: ChatIntegrationProvider;
   };
 };

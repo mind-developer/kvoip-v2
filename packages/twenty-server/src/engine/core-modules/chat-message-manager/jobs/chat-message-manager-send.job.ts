@@ -12,7 +12,7 @@ import {
   SendWhatsAppMessageInput,
   SendWhatsAppTemplateInput,
 } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
-import { ChatIntegrationProviders } from 'twenty-shared/types';
+import { ChatIntegrationProvider } from 'twenty-shared/types';
 
 @Processor(MessageQueue.chatMessageManagerSendMessageQueue)
 export class SendChatMessageJob {
@@ -54,7 +54,7 @@ export class SendChatMessageJob {
           this.saveMessageQueue.add<SaveChatMessageJobData>(
             SaveChatMessageJob.name,
             {
-              chatType: ChatIntegrationProviders.WHATSAPP,
+              chatType: ChatIntegrationProvider.WHATSAPP,
               saveMessageInput: {
                 ...data.sendMessageInput,
                 id: response.messages[0]?.id ?? null,

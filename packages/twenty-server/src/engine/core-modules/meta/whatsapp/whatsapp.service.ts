@@ -41,7 +41,6 @@ import {
   WhatsAppDocument,
 } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
-import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -51,8 +50,9 @@ import {
   ChatbotWorkspaceEntity,
 } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
-import { ChatIntegrationProviders } from 'twenty-shared/types';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { ChatIntegrationProvider } from 'twenty-shared/types';
 
 export class WhatsAppService {
   private META_API_URL = this.environmentService.get('META_API_URL');
@@ -64,8 +64,6 @@ export class WhatsAppService {
     private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
     public readonly googleStorageService: GoogleStorageService,
-    @InjectRepository(Sector)
-    private sectorRepository: Repository<Sector>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly firebaseService: FirebaseService,
     private readonly ChatbotRunnerService: ChatbotRunnerService,
@@ -102,13 +100,13 @@ export class WhatsAppService {
       return { templates: [] };
     }
 
-    const whatsappRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+    const whatsappIntegrationRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsapp',
       );
 
-    const integration = await whatsappRepository.findOne({
+    const integration = await whatsappIntegrationRepository.findOne({
       where: { id: integrationId },
     });
 
@@ -212,7 +210,7 @@ export class WhatsAppService {
     workspaceId: string,
   ) {
     this.saveMessageQueue.add<SaveChatMessageJobData>(SaveChatMessageJob.name, {
-      chatType: ChatIntegrationProviders.WHATSAPP,
+      chatType: ChatIntegrationProvider.WHATSAPP,
       saveMessageInput: {
         integrationId: whatsAppDoc.integrationId,
         to: whatsAppDoc.client.phone,
@@ -224,7 +222,7 @@ export class WhatsAppService {
       workspaceId,
     });
     const whatsAppIntegration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsapp',
         { shouldBypassPermissionChecks: true },
@@ -256,14 +254,13 @@ export class WhatsAppService {
         executor.runFlow(whatsAppDoc.lastMessage.message);
         return true;
       }
-      const sectorsFromWorkspace = await this.sectorRepository.find({
-        relations: ['workspace'],
-        where: {
-          workspace: {
-            id: workspaceId,
-          },
-        },
-      });
+      const sectorsFromWorkspace = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+          workspaceId,
+          'sector',
+        )
+      ).find();
+
       executor = this.ChatbotRunnerService.createExecutor({
         integrationId: whatsAppDoc.integrationId,
         workspaceId,
@@ -403,7 +400,7 @@ export class WhatsAppService {
     workspaceId: string,
   ) {
     const whatsappRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsapp',
       );
@@ -506,13 +503,13 @@ export class WhatsAppService {
 
         if (!waDoc.workspaceId) return;
 
-        const whatsappRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        const whatsappIntegrationRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
             waDoc.workspaceId,
             'whatsapp',
           );
 
-        const integration = await whatsappRepository.findOne({
+        const integration = await whatsappIntegrationRepository.findOne({
           where: { id: waDoc.integrationId },
         });
 

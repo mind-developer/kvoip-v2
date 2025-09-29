@@ -9,7 +9,7 @@ export const GET_ALL_INBOXES = gql`
         id
         displayName
       }
-      whatsappIntegrationId
+      integrationId
       # messengerIntegration {
       #   id
       #   label

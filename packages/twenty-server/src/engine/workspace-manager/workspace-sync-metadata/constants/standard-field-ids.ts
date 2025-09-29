@@ -355,6 +355,34 @@ export const FOCUS_NFE_STANDARD_FIELD_ID = {
   invoices: 'df67718b-deba-4f31-b947-e9a8b4967976',
 } as const;
 
+export const SECTOR_FIELD_IDS = {
+  name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
+  agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
+};
+
+export const INBOX_FIELD_IDS = {
+  name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
+  agent: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
+  chatIntegrations: '72b41a26-af1f-4a79-8640-d71a41731487',
+};
+
+export const CHAT_INTEGRATION_FIELD_IDS = {
+  name: '62cb9cac-f3f1-4d85-976c-402a5354d7bb',
+  type: '3d416dae-11c6-46f1-8202-61c589bfafdc',
+  status: '6b44f418-4b54-4b17-b878-92c6f3ad620a',
+  inbox: '1a647b59-80fc-4ad9-bd02-1c8304db636b',
+  whatsappIntegrationId: '285db00d-5d36-446f-b07f-2faea4d5ea6d',
+};
+
+export const AGENT_FIELD_IDS = {
+  name: 'f544fe98-05dc-4929-b3be-ac096676c9dd',
+  isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
+  isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
+  sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
+  inboxes: '4be771fa-a3b4-4947-8ebd-50b73000f3bd',
+  workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
+};
+
 export const INVOICE_FIELD_IDS = {
   name: '1881e61b-4bd7-4aa7-ad37-6e507a99e9c6',
   nfType: '2548531e-456f-4ca8-b85b-a7260326e696',
@@ -809,7 +837,7 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
-  tipoApi: 'c0a80101-0000-0000-0000-000000000001',
+  apiType: 'c0a80101-0000-0000-0000-000000000001',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
@@ -838,7 +866,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
-  agentId: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
+  agent: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
   extensionNumber: '0271a0fa-20de-45e1-9908-b198bd1e7b99',

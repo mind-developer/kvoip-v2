@@ -9,7 +9,7 @@ import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import {
-  ChatIntegrationProviders,
+  ChatIntegrationProvider,
   ChatIntegrationSaveMessageInput,
 } from 'twenty-shared/types';
 
@@ -53,7 +53,7 @@ export class SaveChatMessageJob {
           },
           data.saveMessageInput.to,
           data.saveMessageInput.recipientPpUrl,
-          ChatIntegrationProviders.WHATSAPP,
+          ChatIntegrationProvider.WHATSAPP,
           'Via WhatsApp',
         ),
       );

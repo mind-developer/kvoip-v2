@@ -8,7 +8,7 @@ import { SendWhatsAppMessageResponse } from 'src/engine/core-modules/meta/whatsa
 import { parseFields } from 'src/engine/core-modules/meta/whatsapp/utils/parseMessage';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import {
   SendWhatsAppMessageInput,
   SendWhatsAppTemplateInput,
@@ -32,7 +32,7 @@ export class ChatMessageManagerService {
   ): Promise<SendWhatsAppMessageResponse | null> {
     this.logger.log('(sendWhatsAppMessage): Sending message:', input);
     const integration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsapp',
       )
@@ -48,8 +48,8 @@ export class ChatMessageManagerService {
     const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
     const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
 
-    const tipoApi = integration?.tipoApi || 'MetaAPI';
-    this.logger.log('(sendWhatsAppMessage): API Type:', tipoApi);
+    const apiType = integration?.apiType || 'MetaAPI';
+    this.logger.log('(sendWhatsAppMessage): API Type:', apiType);
 
     const headers = {
       Authorization: `Bearer ${integration.accessToken}`,
@@ -59,7 +59,7 @@ export class ChatMessageManagerService {
     const fields = parseFields(input);
 
     try {
-      if (tipoApi === 'MetaAPI') {
+      if (apiType === 'MetaAPI') {
         const response = await axios.post(metaUrl, fields, { headers });
         this.logger.log('(sendWhatsAppMessage): Sent:', response.data);
         return response.data;
@@ -78,7 +78,7 @@ export class ChatMessageManagerService {
     workspaceId: string,
   ) {
     const integration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsapp',
       )

@@ -7,18 +7,18 @@
  *                              |___/
  */
 
-export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export type { AllowedAddressSubField } from './AddressFieldsType';
+export { ChatIntegrationProvider } from './ChatIntegrationProvider';
 export type {
-  ChatIntegrationSendMessageInput,
   ChatIntegrationSaveMessageInput,
+  ChatIntegrationSendMessageInput,
   ChatIntegrationSendMessageResponse,
-} from './ChatIntegrationProviders';
-export { ChatIntegrationProviders } from './ChatIntegrationProviders';
+} from './ChatIntegrationProvider';
 export type {
   IMessage,
-  MessageInput,
   MessageAgent,
+  MessageInput,
   MessageSector,
 } from './ChatMessageBase';
 export type { ConfigVariableValue } from './ConfigVariableValue';
@@ -38,21 +38,21 @@ export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecate
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationType } from './RelationType';
+export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type {
+  VariableDateViewFilterValue,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
-  VariableDateViewFilterValue,
 } from './RelativeDateValue';
-export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
-export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type { StepFilter, StepFilterGroup } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export type {
-  SendWhatsAppMessageInput,
   SendWhatsAppEventMessageInput,
-  SendWhatsAppTemplateInput,
+  SendWhatsAppMessageInput,
   SendWhatsAppMessageResponse,
+  SendWhatsAppTemplateInput,
 } from './WhatsAppTypes';

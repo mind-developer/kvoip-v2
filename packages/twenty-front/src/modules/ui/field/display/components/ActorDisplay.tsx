@@ -1,6 +1,6 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { IconBrandWhatsapp, IconMessageCircle } from '@tabler/icons-react';
-import { ChatIntegrationProviders } from 'twenty-shared/types';
+import { ChatIntegrationProvider } from 'twenty-shared/types';
 
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -36,7 +36,7 @@ const PROVIDORS_ICON_MAPPING = {
     default: IconCalendar,
   },
   CHAT: {
-    [ChatIntegrationProviders.WHATSAPP]: IconBrandWhatsapp,
+    [ChatIntegrationProvider.WHATSAPP]: IconBrandWhatsapp,
     default: IconMessageCircle,
   },
 };

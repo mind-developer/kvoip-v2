@@ -2,10 +2,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
-import { SelectOption } from 'twenty-ui/input';
-import { useEffect } from 'react';
 import { Select } from '@/ui/input/components/Select';
+import { useEffect } from 'react';
+import { SelectOption } from 'twenty-ui/input';
+import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ type SettingsIntegrationWhatsappDatabaseConnectionFormProps = {
   disabled?: boolean;
 };
 
-const tipoApiOptions: SelectOption<string>[] = [
+const apiTypeOptions: SelectOption<string>[] = [
   {
     label: 'Baileys',
     value: 'Baileys',
@@ -40,11 +40,11 @@ const getFormFields = (): {
 }[] => {
   return [
     {
-      name: 'tipoApi',
+      name: 'apiType',
       label: 'API Type',
       placeholder: 'Select API Type',
       isSelect: true,
-      options: tipoApiOptions,
+      options: apiTypeOptions,
       showForBaileys: true,
       showForMetaAPI: true,
     },
@@ -54,7 +54,7 @@ const getFormFields = (): {
       placeholder: 'Integration name',
       type: 'text',
       showForBaileys: true,
-      showForMetaAPI: true
+      showForMetaAPI: true,
     },
     {
       name: 'phoneId',
@@ -105,66 +105,67 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
   const { control, watch, setValue } =
     useFormContext<SettingsIntegrationWhatsappConnectionFormValues>();
   const formFields = getFormFields();
-  const selectedTipoApi = watch('tipoApi');
+  const selectedApiType = watch('apiType');
   const inboxName = watch('name');
   //
   // Auto-preenchimento dos campos ocultos para Baileys
   useEffect(() => {
-    if (selectedTipoApi === 'Baileys' && inboxName) {
+    if (selectedApiType === 'Baileys' && inboxName) {
       setValue('phoneId', inboxName);
       setValue('businessAccountId', inboxName);
       setValue('accessToken', inboxName);
       setValue('appId', inboxName);
       setValue('appKey', inboxName);
     }
-
-  }, [selectedTipoApi, inboxName, setValue]);
+  }, [selectedApiType, inboxName, setValue]);
 
   if (!formFields) return null;
 
-  const visibleFields = formFields.filter(field => {
-    if (!selectedTipoApi) return true; // Mostrar todos se nenhum tipo selecionado
-    if (selectedTipoApi === 'Baileys') return field.showForBaileys;
-    if (selectedTipoApi === 'MetaAPI') return field.showForMetaAPI;
+  const visibleFields = formFields.filter((field) => {
+    if (!selectedApiType) return true; // Mostrar todos se nenhum tipo selecionado
+    if (selectedApiType === 'Baileys') return field.showForBaileys;
+    if (selectedApiType === 'MetaAPI') return field.showForMetaAPI;
     return true;
   });
 
   return (
     <StyledInputsContainer>
-      {visibleFields.map(({ name, label, type, placeholder, isSelect, options }) => (
-        <Controller
-          key={name}
-          name={name}
-          control={control}
-          render={({ field: { onChange, value } }) => {
-            if (isSelect && options) {
+      {visibleFields.map(
+        ({ name, label, type, placeholder, isSelect, options }) => (
+          <Controller
+            key={name}
+            name={name}
+            control={control}
+            render={({ field: { onChange, value } }) => {
+              if (isSelect && options) {
+                return (
+                  <Select
+                    label={label}
+                    value={value}
+                    onChange={onChange}
+                    options={options}
+                    dropdownId={`tipo-api-select-${name}`}
+                    fullWidth
+                    disabled={disabled}
+                  />
+                );
+              }
               return (
-                <Select
+                <TextInput
+                  autoComplete="new-password"
                   label={label}
                   value={value}
                   onChange={onChange}
-                  options={options}
-                  dropdownId={`tipo-api-select-${name}`}
                   fullWidth
+                  type={type}
                   disabled={disabled}
+                  placeholder={placeholder}
                 />
               );
-            }
-            return (
-              <TextInput
-                autoComplete="new-password"
-                label={label}
-                value={value}
-                onChange={onChange}
-                fullWidth
-                type={type}
-                disabled={disabled}
-                placeholder={placeholder}
-              />
-            );
-          }}
-        />
-      ))}
+            }}
+          />
+        ),
+      )}
     </StyledInputsContainer>
   );
 };

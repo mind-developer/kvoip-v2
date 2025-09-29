@@ -1,0 +1,97 @@
+import { msg } from '@lingui/core/macro';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { AGENT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
+
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.agent,
+  namePlural: 'agents',
+  labelSingular: msg`Agent`,
+  labelPlural: msg`Agents`,
+  description: msg`Agents on this Workspace`,
+  icon: 'IconUsers',
+  labelIdentifierStandardId: AGENT_FIELD_IDS.name,
+})
+@WorkspaceIsSearchable()
+export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: AGENT_FIELD_IDS.name,
+    type: FieldMetadataType.TEXT,
+    label: msg`Name`,
+    description: msg`Agent's name`,
+    icon: 'IconPencil',
+  })
+  name: string;
+
+  @WorkspaceField({
+    standardId: AGENT_FIELD_IDS.isAdmin,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Is Administrator`,
+    description: msg`Whether this agent has administrator privileges`,
+    icon: 'IconBriefcase',
+  })
+  isAdmin: string;
+
+  @WorkspaceField({
+    standardId: AGENT_FIELD_IDS.isActive,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Active`,
+    description: msg`Whether this agent is active`,
+    icon: 'IconPlayerRecord',
+  })
+  isActive: string;
+
+  @WorkspaceRelation({
+    standardId: AGENT_FIELD_IDS.sector,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Sector`,
+    description: msg`Invoices linked to the charges`,
+    icon: 'IconIdBadge2',
+    inverseSideTarget: () => SectorWorkspaceEntity,
+    inverseSideFieldKey: 'agents',
+  })
+  @WorkspaceIsNullable()
+  sector: Relation<SectorWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('sector')
+  sectorId: string;
+
+  @WorkspaceRelation({
+    standardId: AGENT_FIELD_IDS.inboxes,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Inboxes`,
+    description: msg`Inboxes assigned to this agent`,
+    icon: 'IconInbox',
+    inverseSideTarget: () => InboxWorkspaceEntity,
+    inverseSideFieldKey: 'agents',
+  })
+  @WorkspaceIsNullable()
+  inboxes: Relation<InboxWorkspaceEntity[]> | null;
+
+  @WorkspaceJoinColumn('inboxes')
+  inboxId: string | null;
+
+  @WorkspaceRelation({
+    standardId: AGENT_FIELD_IDS.workspaceMember,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Workspace Member`,
+    description: msg`Workspace member assigned to this sector`,
+    icon: 'IconUsers',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+}

@@ -122,7 +122,7 @@ export const PaneChatHeader = () => {
           />
           <StyledChatTitle>{selectedChat.client.name}</StyledChatTitle>
           <StyledIntegrationCard>
-            {integration?.name} ({integration?.tipoApi})
+            {integration?.name} ({integration?.apiType})
           </StyledIntegrationCard>
           {isAdmin && selectedChat.agent !== 'empty' && (
             <StyledIntegrationCard>

@@ -12,17 +12,17 @@ import {
 } from '@nestjs/common';
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
-import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Controller('whatsapp')
 export class WhatsappController {
   protected readonly logger = new Logger(WhatsappController.name);
 
   constructor(
-    private whatsappIntegrationService: WhatsappIntegrationService,
+    private twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly whatsappService: WhatsAppService,
   ) {}
 
@@ -35,10 +35,13 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    const integration = await this.whatsappIntegrationService.findById(
-      id,
-      workspaceId,
-    );
+    const integration = await (
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'whatsappIntegration',
+        { shouldBypassPermissionChecks: true },
+      )
+    ).findOneBy({ id });
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {

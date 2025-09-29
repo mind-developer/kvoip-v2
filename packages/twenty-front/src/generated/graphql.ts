@@ -450,38 +450,6 @@ export enum ChargeType {
   PRE_PAID = 'PRE_PAID'
 }
 
-export type ChatbotFlow = {
-  __typename?: 'ChatbotFlow';
-  chatbotId: Scalars['String'];
-  edges?: Maybe<Array<Scalars['JSON']>>;
-  id: Scalars['UUID'];
-  nodes?: Maybe<Array<Scalars['JSON']>>;
-  viewport?: Maybe<Scalars['JSON']>;
-  workspace: Workspace;
-};
-
-export type ChatbotFlowInput = {
-  chatbotId: Scalars['String'];
-  edges: Scalars['JSON'];
-  nodes: Scalars['JSON'];
-};
-
-/** Chatbot status options */
-export enum ChatbotStatus {
-  ACTIVE = 'ACTIVE',
-  DEACTIVATED = 'DEACTIVATED',
-  DRAFT = 'DRAFT'
-}
-
-export type ChatbotWorkspaceEntity = {
-  __typename?: 'ChatbotWorkspaceEntity';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
-  statuses?: Maybe<ChatbotStatus>;
-  updatedAt: Scalars['DateTime'];
-};
-
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
   availableWorkspacesCount: Scalars['Float'];
@@ -769,6 +737,15 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateFinancialClosingInput = {
+  billingModelIds: Array<Scalars['ID']>;
+  day: Scalars['Int'];
+  lastDayMonth: Scalars['Boolean'];
+  name: Scalars['String'];
+  time: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateFocusNfeIntegrationInput = {
   cep: Scalars['String'];
   city: Scalars['String'];
@@ -791,6 +768,7 @@ export type CreateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  currentAccount: Scalars['String'];
   expirationDate?: InputMaybe<Scalars['DateTime']>;
   integrationName: Scalars['String'];
   privateKey?: InputMaybe<Scalars['String']>;
@@ -960,7 +938,6 @@ export type CreateTelephonyInput = {
   ramal_id?: InputMaybe<Scalars['String']>;
   recordCalls?: InputMaybe<Scalars['Boolean']>;
   type?: InputMaybe<Scalars['String']>;
-  workspaceId: Scalars['ID'];
 };
 
 export type CreateViewFieldInput = {
@@ -1028,16 +1005,6 @@ export type CreateWebhookDto = {
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl: Scalars['String'];
-};
-
-export type CreateWhatsappIntegrationInput = {
-  accessToken: Scalars['String'];
-  appId: Scalars['String'];
-  appKey: Scalars['String'];
-  businessAccountId: Scalars['String'];
-  name: Scalars['String'];
-  phoneId: Scalars['String'];
-  tipoApi?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateWorkflowVersionEdgeInput = {
@@ -1377,6 +1344,20 @@ export enum FilterIs {
   Null = 'Null'
 }
 
+export type FinancialClosing = {
+  __typename?: 'FinancialClosing';
+  billingModelIds: Array<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  day: Scalars['Float'];
+  id: Scalars['UUID'];
+  lastDayMonth: Scalars['Boolean'];
+  name: Scalars['String'];
+  time: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+  workspaceId: Scalars['UUID'];
+};
+
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['UUID'];
@@ -1484,8 +1465,8 @@ export type Inbox = {
   __typename?: 'Inbox';
   agents: Array<WorkspaceAgent>;
   id: Scalars['UUID'];
+  integrationId: Scalars['String'];
   integrationType: IntegrationType;
-  whatsappIntegrationId: Scalars['String'];
   workspace: Workspace;
 };
 
@@ -1648,6 +1629,7 @@ export type InterIntegration = {
   certificate?: Maybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  currentAccount: Scalars['String'];
   expirationDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   integrationName: Scalars['String'];
@@ -1774,6 +1756,7 @@ export type Mutation = {
   createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFile: File;
+  createFinancialClosing: FinancialClosing;
   createFocusNfeIntegration: FocusNFeWorkspaceEntity;
   createInterIntegration: InterIntegration;
   createIssuer: IssuerDto;
@@ -1792,9 +1775,8 @@ export type Mutation = {
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
-  createTelephony: Telephony;
+  createTelephonyIntegration: TelephonyWorkspaceEntity;
   createWebhook: Webhook;
-  createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
@@ -1809,6 +1791,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteFinancialClosing: Scalars['Boolean'];
   deleteFocusNfeIntegration: Scalars['Boolean'];
   deleteIssuer: Scalars['Boolean'];
   deleteOneAgent: Agent;
@@ -1820,7 +1803,7 @@ export type Mutation = {
   deletePageLayoutTab: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteSector: Scalars['Boolean'];
-  deleteTelephony: Scalars['Boolean'];
+  deleteTelephonyIntegration: Scalars['Boolean'];
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
@@ -1887,12 +1870,10 @@ export type Mutation = {
   toggleAgentStatus: Scalars['Boolean'];
   toggleFocusNfeIntegrationStatus: Scalars['String'];
   toggleInterIntegrationStatus: Scalars['String'];
-  toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   trackAnalytics: Analytics;
   updateAgent: WorkspaceAgent;
   updateApiKey?: Maybe<ApiKey>;
   updateBillingPlans: BillingPlans;
-  updateChatbotFlow: ChatbotFlow;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
   updateCoreViewFilter: CoreViewFilter;
@@ -1900,6 +1881,7 @@ export type Mutation = {
   updateCoreViewGroup: CoreViewGroup;
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFinancialClosing: FinancialClosing;
   updateFocusNfeIntegration: FocusNFeWorkspaceEntity;
   updateInterIntegration: InterIntegration;
   updateIssuer: IssuerDto;
@@ -1917,11 +1899,9 @@ export type Mutation = {
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateSubscriptionItemPrice: BillingUpdateOutput;
-  updateTelephony: Telephony;
+  updateTelephonyIntegration: TelephonyWorkspaceEntity;
   updateWebhook?: Maybe<Webhook>;
   updateWhatsAppMessageData: Scalars['Boolean'];
-  updateWhatsappIntegration: WhatsappWorkspaceEntity;
-  updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -1938,7 +1918,6 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
-  validateChatbotFlow: ChatbotFlow;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -2068,6 +2047,11 @@ export type MutationCreateFileArgs = {
 };
 
 
+export type MutationCreateFinancialClosingArgs = {
+  createInput: CreateFinancialClosingInput;
+};
+
+
 export type MutationCreateFocusNfeIntegrationArgs = {
   createInput: CreateFocusNfeIntegrationInput;
 };
@@ -2151,18 +2135,13 @@ export type MutationCreateStripeIntegrationArgs = {
 };
 
 
-export type MutationCreateTelephonyArgs = {
+export type MutationCreateTelephonyIntegrationArgs = {
   createTelephonyInput: CreateTelephonyInput;
 };
 
 
 export type MutationCreateWebhookArgs = {
   input: CreateWebhookDto;
-};
-
-
-export type MutationCreateWhatsappIntegrationArgs = {
-  createInput: CreateWhatsappIntegrationInput;
 };
 
 
@@ -2231,6 +2210,11 @@ export type MutationDeleteFileArgs = {
 };
 
 
+export type MutationDeleteFinancialClosingArgs = {
+  financialClosingId: Scalars['String'];
+};
+
+
 export type MutationDeleteFocusNfeIntegrationArgs = {
   focusNfeIntegrationId: Scalars['String'];
 };
@@ -2286,7 +2270,7 @@ export type MutationDeleteSectorArgs = {
 };
 
 
-export type MutationDeleteTelephonyArgs = {
+export type MutationDeleteTelephonyIntegrationArgs = {
   telephonyId: Scalars['ID'];
 };
 
@@ -2600,11 +2584,6 @@ export type MutationToggleInterIntegrationStatusArgs = {
 };
 
 
-export type MutationToggleWhatsappIntegrationStatusArgs = {
-  integrationId: Scalars['String'];
-};
-
-
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2625,11 +2604,6 @@ export type MutationUpdateApiKeyArgs = {
 
 export type MutationUpdateBillingPlansArgs = {
   updateBillingPlansInput: UpdateBillingPlansInput;
-};
-
-
-export type MutationUpdateChatbotFlowArgs = {
-  updateChatbotInput: UpdateChatbotFlowInput;
 };
 
 
@@ -2672,6 +2646,11 @@ export type MutationUpdateCoreViewSortArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFinancialClosingArgs = {
+  updateInput: UpdateFinancialClosingInput;
 };
 
 
@@ -2759,7 +2738,7 @@ export type MutationUpdateSubscriptionItemPriceArgs = {
 };
 
 
-export type MutationUpdateTelephonyArgs = {
+export type MutationUpdateTelephonyIntegrationArgs = {
   id: Scalars['ID'];
   updateTelephonyInput: UpdateTelephonyInput;
 };
@@ -2772,17 +2751,6 @@ export type MutationUpdateWebhookArgs = {
 
 export type MutationUpdateWhatsAppMessageDataArgs = {
   updateWhatsAppMessageInput: UpdateWhatsAppMessageDataInput;
-};
-
-
-export type MutationUpdateWhatsappIntegrationArgs = {
-  updateInput: UpdateWhatsappIntegrationInput;
-};
-
-
-export type MutationUpdateWhatsappIntegrationServiceLevelArgs = {
-  integrationId: Scalars['String'];
-  sla: Scalars['Int'];
 };
 
 
@@ -2871,11 +2839,6 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
-};
-
-
-export type MutationValidateChatbotFlowArgs = {
-  chatbotInput: ChatbotFlowInput;
 };
 
 
@@ -3255,9 +3218,11 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  financialClosingById: FinancialClosing;
+  financialClosingsByWorkspace: Array<FinancialClosing>;
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
-  findAllTelephony: Array<Telephony>;
+  findAllTelephonyIntegration: Array<TelephonyWorkspaceEntity>;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -3272,8 +3237,6 @@ export type Query = {
   getAutoCompleteAddress: Array<AutocompleteResultDto>;
   getAvailablePackages: Scalars['JSON'];
   getBillingPlansById: BillingPlans;
-  getChatbotFlowById: ChatbotFlow;
-  getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -3337,8 +3300,6 @@ export type Query = {
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
-  whatsappIntegrationById: WhatsappWorkspaceEntity;
-  whatsappIntegrationsByWorkspace: Array<WhatsappWorkspaceEntity>;
 };
 
 
@@ -3388,6 +3349,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryFinancialClosingByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryFinancialClosingsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QueryFindAgentHandoffTargetsArgs = {
   input: AgentIdInput;
 };
@@ -3398,7 +3369,7 @@ export type QueryFindAgentHandoffsArgs = {
 };
 
 
-export type QueryFindAllTelephonyArgs = {
+export type QueryFindAllTelephonyIntegrationArgs = {
   workspaceId: Scalars['ID'];
 };
 
@@ -3454,11 +3425,6 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetBillingPlansByIdArgs = {
   id: Scalars['String'];
-};
-
-
-export type QueryGetChatbotFlowByIdArgs = {
-  chatbotId: Scalars['String'];
 };
 
 
@@ -3710,11 +3676,6 @@ export type QueryWebhookArgs = {
   input: GetWebhookDto;
 };
 
-
-export type QueryWhatsappIntegrationByIdArgs = {
-  integrationId: Scalars['String'];
-};
-
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
@@ -3761,8 +3722,10 @@ export type Relation = {
 
 /** Relation type */
 export enum RelationType {
+  MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
-  ONE_TO_MANY = 'ONE_TO_MANY'
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 export type RemoteServer = {
@@ -4139,49 +4102,6 @@ export type TarifaTroncoInput = {
   tarifa: Scalars['Int'];
 };
 
-export type Telephony = {
-  __typename?: 'Telephony';
-  SIPPassword?: Maybe<Scalars['String']>;
-  advancedFowarding1?: Maybe<Scalars['String']>;
-  advancedFowarding1Value?: Maybe<Scalars['String']>;
-  advancedFowarding2?: Maybe<Scalars['String']>;
-  advancedFowarding2Value?: Maybe<Scalars['String']>;
-  advancedFowarding3?: Maybe<Scalars['String']>;
-  advancedFowarding3Value?: Maybe<Scalars['String']>;
-  advancedFowarding4?: Maybe<Scalars['String']>;
-  advancedFowarding4Value?: Maybe<Scalars['String']>;
-  advancedFowarding5?: Maybe<Scalars['String']>;
-  advancedFowarding5Value?: Maybe<Scalars['String']>;
-  areaCode?: Maybe<Scalars['String']>;
-  blockExtension?: Maybe<Scalars['Boolean']>;
-  callerExternalID?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
-  destinyMailboxBusy?: Maybe<Scalars['String']>;
-  dialingPlan?: Maybe<Scalars['String']>;
-  emailForMailbox?: Maybe<Scalars['String']>;
-  enableMailbox?: Maybe<Scalars['Boolean']>;
-  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
-  extensionBusy?: Maybe<Scalars['String']>;
-  extensionGroup?: Maybe<Scalars['String']>;
-  extensionName?: Maybe<Scalars['String']>;
-  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
-  externalNumberBusy?: Maybe<Scalars['String']>;
-  fowardAllCalls?: Maybe<Scalars['String']>;
-  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
-  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  listenToCalls?: Maybe<Scalars['Boolean']>;
-  memberId: Scalars['String'];
-  numberExtension: Scalars['String'];
-  pullCalls?: Maybe<Scalars['String']>;
-  ramal_id?: Maybe<Scalars['String']>;
-  recordCalls?: Maybe<Scalars['Boolean']>;
-  type?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-};
-
 export type TelephonyCallFlow = {
   __typename?: 'TelephonyCallFlow';
   fluxo_chamada_id?: Maybe<Scalars['ID']>;
@@ -4244,6 +4164,48 @@ export type TelephonyExtension = {
   senha_web?: Maybe<Scalars['String']>;
   tipo?: Maybe<Scalars['String']>;
   usuario_autenticacao?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyWorkspaceEntity = {
+  __typename?: 'TelephonyWorkspaceEntity';
+  SIPPassword?: Maybe<Scalars['String']>;
+  advancedFowarding1?: Maybe<Scalars['String']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']>;
+  advancedFowarding2?: Maybe<Scalars['String']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']>;
+  advancedFowarding3?: Maybe<Scalars['String']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']>;
+  advancedFowarding4?: Maybe<Scalars['String']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']>;
+  advancedFowarding5?: Maybe<Scalars['String']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']>;
+  areaCode?: Maybe<Scalars['String']>;
+  blockExtension?: Maybe<Scalars['Boolean']>;
+  callerExternalID?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']>;
+  dialingPlan?: Maybe<Scalars['String']>;
+  emailForMailbox?: Maybe<Scalars['String']>;
+  enableMailbox?: Maybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
+  extensionBusy?: Maybe<Scalars['String']>;
+  extensionGroup?: Maybe<Scalars['String']>;
+  extensionName?: Maybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
+  externalNumberBusy?: Maybe<Scalars['String']>;
+  fowardAllCalls?: Maybe<Scalars['String']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  listenToCalls?: Maybe<Scalars['Boolean']>;
+  memberId: Scalars['String'];
+  numberExtension: Scalars['String'];
+  pullCalls?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['String']>;
+  recordCalls?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Template = {
@@ -4386,13 +4348,6 @@ export type UpdateBillingPlansInput = {
   planPrice?: InputMaybe<Scalars['Float']>;
 };
 
-export type UpdateChatbotFlowInput = {
-  chatbotId: Scalars['String'];
-  edges: Scalars['JSON'];
-  nodes: Scalars['JSON'];
-  viewport?: InputMaybe<Scalars['JSON']>;
-};
-
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -4407,6 +4362,16 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateFinancialClosingInput = {
+  billingModelIds?: InputMaybe<Array<Scalars['ID']>>;
+  day?: InputMaybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  lastDayMonth?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  time?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpdateFocusNfeIntegrationInput = {
@@ -4432,6 +4397,7 @@ export type UpdateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['String']>;
   clientSecret?: InputMaybe<Scalars['String']>;
+  currentAccount?: InputMaybe<Scalars['String']>;
   expirationDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   integrationName?: InputMaybe<Scalars['String']>;
@@ -4669,17 +4635,6 @@ export type UpdateWhatsAppMessageDataInput = {
   status: Scalars['String'];
 };
 
-export type UpdateWhatsappIntegrationInput = {
-  accessToken?: InputMaybe<Scalars['String']>;
-  appId?: InputMaybe<Scalars['String']>;
-  appKey?: InputMaybe<Scalars['String']>;
-  businessAccountId?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  name?: InputMaybe<Scalars['String']>;
-  phoneId?: InputMaybe<Scalars['String']>;
-  tipoApi?: InputMaybe<Scalars['String']>;
-};
-
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -4898,24 +4853,6 @@ export type Webhook = {
 export type WhatsappTemplatesResponse = {
   __typename?: 'WhatsappTemplatesResponse';
   templates: Array<Template>;
-};
-
-export type WhatsappWorkspaceEntity = {
-  __typename?: 'WhatsappWorkspaceEntity';
-  accessToken: Scalars['String'];
-  appId: Scalars['String'];
-  appKey: Scalars['String'];
-  businessAccountId: Scalars['String'];
-  chatbot?: Maybe<ChatbotWorkspaceEntity>;
-  createdAt: Scalars['DateTime'];
-  disabled: Scalars['Boolean'];
-  id: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
-  phoneId: Scalars['String'];
-  sla: Scalars['Float'];
-  tipoApi?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  verifyToken: Scalars['String'];
 };
 
 export type WorkerQueueMetrics = {

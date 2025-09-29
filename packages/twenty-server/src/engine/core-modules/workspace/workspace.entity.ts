@@ -38,7 +38,6 @@ import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-grou
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
@@ -151,10 +150,6 @@ export class Workspace {
   })
   agents: Relation<AgentEntity[]>;
 
-  @OneToMany(() => WorkspaceAgent, (agent) => agent.workspace, {
-    onDelete: 'CASCADE',
-  })
-  workspaceAgents: Relation<WorkspaceAgent[]>;
   @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.workspace, {
     onDelete: 'CASCADE',
   })

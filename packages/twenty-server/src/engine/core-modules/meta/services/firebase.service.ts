@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
@@ -12,13 +11,12 @@ import {
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
-import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
-import { Repository } from 'typeorm';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 
 @Injectable()
 export class FirebaseService {
@@ -27,13 +25,8 @@ export class FirebaseService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(WhatsappIntegration)
-    private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     public readonly googleStorageService: GoogleStorageService,
-    @InjectRepository(Sector)
-    private sectorRepository: Repository<Sector>,
-    @InjectRepository(WorkspaceAgent)
-    private agentRepository: Repository<WorkspaceAgent>,
     private readonly chatMessageManagerService: ChatMessageManagerService,
   ) {
     this.app = initializeApp({
@@ -68,6 +61,19 @@ export class FirebaseService {
       const docRef = doc(messagesCollection, docId);
       const docSnapshot = await getDoc(docRef);
 
+      const agentRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<AgentWorkspaceEntity>(
+          whatsAppDoc.workspaceId ?? '',
+          'agent',
+          { shouldBypassPermissionChecks: true },
+        );
+      const sectorRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+          whatsAppDoc.workspaceId ?? '',
+          'sector',
+          { shouldBypassPermissionChecks: true },
+        );
+
       // baileys edge case
       // client.name will be empty under these circumstances (first message, initiated by user)
       // so we use the phone number
@@ -98,29 +104,24 @@ export class FirebaseService {
         await setDoc(docRef, newDoc);
         if (whatsAppDoc.lastMessage.fromMe) {
           const whatsappIntegrationWithWorkspace =
-            await this.whatsappIntegrationRepository.findOne({
-              relations: ['workspace'],
-              where: {
-                id: whatsAppDoc.integrationId,
-              },
-            });
+            this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              whatsAppDoc.workspaceId ?? '',
+              'whatsappIntegration',
+              { shouldBypassPermissionChecks: true },
+            );
 
-          const sectorsFromWorkspace = await this.sectorRepository.find({
-            relations: ['agents'],
-            where: {
-              workspace: {
-                id: whatsappIntegrationWithWorkspace?.workspace.id,
-              },
-            },
-          });
+          if (!whatsappIntegrationWithWorkspace)
+            throw new Error('Could not find WhatsApp Integration');
 
-          if (!sectorsFromWorkspace) {
+          if (!sectorRepository) {
             return newDoc;
           }
 
+          const sectors = await sectorRepository.find();
+
           await this.chatMessageManagerService.sendMessageNotification(
-            sectorsFromWorkspace.flatMap((sector) =>
-              sector.agents.map((agent) => agent.memberId),
+            sectors.flatMap((sector) =>
+              sector.agents.map((agent) => agent.workspaceMember.id),
             ),
             `${whatsAppDoc.client.name}: ${whatsAppDoc.messages[0].message}`,
           );
@@ -147,8 +148,8 @@ export class FirebaseService {
 
       if (whatsAppDoc.lastMessage.fromMe) {
         if (whatsAppIntegration.agent != 'empty') {
-          const agent = await this.agentRepository.findOne({
-            where: { id: whatsAppIntegration.agent },
+          const agent = await agentRepository.findOneBy({
+            id: whatsAppIntegration.agent,
           });
 
           if (!agent) {
@@ -156,17 +157,14 @@ export class FirebaseService {
           }
 
           await this.chatMessageManagerService.sendMessageNotification(
-            [agent.memberId],
+            [agent.workspaceMember.id],
             `${whatsAppIntegration.client.name}: ${whatsAppDoc.messages[0].message}`,
           );
         }
 
         if (whatsAppIntegration.sector != 'empty') {
-          const sector = await this.sectorRepository.findOne({
-            relations: ['workspace', 'agents'],
-            where: {
-              id: whatsAppIntegration.sector,
-            },
+          const sector = await sectorRepository.findOneBy({
+            id: whatsAppDoc.sector,
           });
 
           if (!sector) {
@@ -174,7 +172,7 @@ export class FirebaseService {
           }
 
           await this.chatMessageManagerService.sendMessageNotification(
-            sector.agents.map((agent) => agent.memberId),
+            sector.agents.map((agent) => agent.workspaceMember.id),
             `${whatsAppIntegration.client.name}: ${whatsAppDoc.messages[0].message}`,
           );
         }

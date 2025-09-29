@@ -29,7 +29,6 @@ import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
-import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { KvoipAdminModule } from 'src/engine/core-modules/kvoip-admin/kvoip-admin.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
@@ -46,7 +45,6 @@ import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-cred
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -58,7 +56,6 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { WebhookModule } from 'src/engine/core-modules/webhook/webhook.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
-import { AgentModule } from 'src/engine/core-modules/workspace-agent/workspace-agent.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -110,10 +107,7 @@ import { StripeModule } from './stripe/stripe.module';
     TwentyConfigModule,
     RedisClientModule,
     MetaModule,
-    SectorModule,
     FinancialClosingModule,
-    AgentModule,
-    InboxModule,
     GoogleStorageModule,
     TelephonyModule,
     DashboardLinklogsModule,

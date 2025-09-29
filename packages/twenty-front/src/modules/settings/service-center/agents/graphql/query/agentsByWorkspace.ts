@@ -18,7 +18,7 @@ export const GET_ALL_AGENTS = gql`
       inboxes {
         id
         integrationType
-        whatsappIntegrationId
+        integrationId
       }
     }
   }

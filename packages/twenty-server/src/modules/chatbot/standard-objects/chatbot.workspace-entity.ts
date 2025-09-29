@@ -1,5 +1,3 @@
-import { ObjectType, registerEnumType } from '@nestjs/graphql';
-
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -7,13 +5,10 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -22,11 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
 export enum ChatbotStatus {
   DRAFT = 'DRAFT',
@@ -55,17 +46,6 @@ const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
   },
 ];
 
-registerEnumType(ChatbotStatus, {
-  name: 'ChatbotStatus',
-  description: 'Chatbot status options',
-});
-
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_CHATBOT: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chatbot,
   namePlural: 'chatbots',
@@ -76,7 +56,6 @@ export const SEARCH_FIELDS_FOR_CHATBOT: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: CHATBOT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
-@ObjectType()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,
@@ -85,8 +64,7 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The chatbot's name`,
     icon: 'IconRobot',
   })
-  @WorkspaceIsNullable()
-  name: string | null;
+  name: string;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.status,
@@ -126,12 +104,13 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Integration linked to the charge`,
     icon: 'IconBrandStackshare',
     //TODO: this should be platform-agnostic
-    inverseSideTarget: () => WhatsappWorkspaceEntity,
+    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
+    inverseSideFieldKey: 'chatbot',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @WorkspaceIsNullable()
+  // @WorkspaceIsNullable()
   //TODO: this should be platform-agnostic
-  integrationId: Relation<WhatsappWorkspaceEntity[]>;
+  integrationId: Relation<WhatsappIntegrationWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.nodes,
@@ -161,20 +140,4 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last saved viewport position`,
   })
   viewport: { [key: string]: any };
-
-  @WorkspaceField({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.searchVector,
-    type: FieldMetadataType.TS_VECTOR,
-    label: SEARCH_VECTOR_FIELD.label,
-    description: SEARCH_VECTOR_FIELD.description,
-    icon: 'IconUser',
-    generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_CHATBOT,
-    ),
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: string;
 }

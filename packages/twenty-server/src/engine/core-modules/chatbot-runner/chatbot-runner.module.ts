@@ -14,23 +14,14 @@ import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
-import { Sector } from 'src/engine/core-modules/sector/sector.entity';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { WhatsappIntegration } from '../meta/whatsapp/integration/whatsapp-integration.entity';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([
-          WhatsappIntegration,
-          Sector,
-          WorkspaceAgent,
-          Workspace,
-          HandlersModule,
-        ]),
+        NestjsQueryTypeOrmModule.forFeature([Workspace, HandlersModule]),
         TypeORMModule,
       ],
     }),

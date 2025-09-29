@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import {
   ServiceLevelForm,
   SettingsServiceCenterSLAFormSchema,
 } from '@/settings/service-center/service-level/components/ServiceLevelForm';
-import { useUpdateWhatsappServiceLevel } from '@/settings/service-center/service-level/hooks/useUpdateWhatsappServiceLevel';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -29,10 +29,13 @@ export const SettingsServiceCenterEditServiceLevel = () => {
 
   const slaPagePath = getSettingsPath(SettingsPath.ServiceCenterServiceLevel);
 
-  const { whatsappIntegrations } = useFindAllWhatsappIntegrations();
+  const whatsappIntegrations = useFindManyRecords<
+    WhatsappIntegration & { __typename: string }
+  >({
+    objectNameSingular: 'whatsappIntegration',
+  }).records;
   // const { messengerIntegrations } = useGetAllMessengerIntegrations();
 
-  const { updateSla } = useUpdateWhatsappServiceLevel();
   // const { updateMessengerSla } = useUpdateMessengerServiceLevel();
 
   const { slaSlug } = useParams<{ slaSlug?: string }>();
@@ -66,7 +69,7 @@ export const SettingsServiceCenterEditServiceLevel = () => {
         return;
       }
 
-      await updateSla(activeSla.id, formValues.sla);
+      // await updateSla(activeSla.id, formValues.sla);
 
       navigate(slaPagePath);
     } catch (err) {

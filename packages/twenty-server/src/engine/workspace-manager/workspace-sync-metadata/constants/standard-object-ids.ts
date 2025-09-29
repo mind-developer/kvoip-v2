@@ -64,5 +64,8 @@ export const STANDARD_OBJECT_IDS = {
   financialClosingExecution: 'e1b15f83-5757-452c-80d7-8984356e2715',
   companyFinancialClosingExecution: '2d7c471a-6fbf-4de7-98e4-92ac99e25425',
   telephony: 'f950c724-e39e-435a-a044-33c658c501e3',
+  sector: 'a7cc30e4-6496-4939-ab62-306cca0f5ae5',
+  agent: 'bcc67fab-78b3-4602-b06e-39fb4eb11c35',
+  inbox: '3719ad4d-12dd-45fa-9625-10492b4098c2',
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 } as const;

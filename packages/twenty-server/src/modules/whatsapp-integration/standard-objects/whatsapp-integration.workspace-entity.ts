@@ -1,5 +1,3 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -19,39 +17,27 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WHATSAPP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
-
-const NAME_FIELD_NAME = 'name';
-
-export const SEARCH_FIELDS_FOR_WHATSAPP: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.whatsappIntegration,
-  namePlural: 'whatsappIntegrations',
-  labelSingular: msg`Whatsapp Integration`,
-  labelPlural: msg`WhatsappIntegrations`,
-  description: msg`A whatsapp integration`,
+  namePlural: 'whatsAppIntegrations',
+  labelSingular: msg`WhatsApp Integration`,
+  labelPlural: msg`Whatsapp Integrations`,
+  description: msg`A Whatsapp integration`,
   icon: 'IconBrandWhatsapp',
   labelIdentifierStandardId: WHATSAPP_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
 @WorkspaceIsSystem()
-@ObjectType()
-export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
+export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The name of the whatsapp integration`,
   })
-  @Field(() => String, { nullable: true })
-  name: string | null;
+  name: string;
 
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.phoneId,
@@ -59,7 +45,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Phone ID`,
     description: msg`The phone number ID obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   phoneId: string;
 
   @WorkspaceField({
@@ -68,7 +53,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Business Account ID`,
     description: msg`The business account ID obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   businessAccountId: string;
 
   @WorkspaceField({
@@ -77,7 +61,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`App ID`,
     description: msg`The App ID obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   appId: string;
 
   @WorkspaceField({
@@ -86,7 +69,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`App Key`,
     description: msg`The App Secret Key obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   appKey: string;
 
   @WorkspaceField({
@@ -95,7 +77,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Access Token`,
     description: msg`The Access Token obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   accessToken: string;
 
   @WorkspaceField({
@@ -104,7 +85,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Verify Token`,
     description: msg`The Verify Token obtained from Facebook Developer`,
   })
-  @Field(() => String, { nullable: false })
   verifyToken: string;
 
   @WorkspaceField({
@@ -113,7 +93,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Service Level Agreement`,
     description: msg`Service Level Agreement (SLA) in minutes`,
   })
-  @Field(() => Number, { nullable: false, defaultValue: 30 })
   sla: number;
 
   @WorkspaceField({
@@ -122,7 +101,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Status`,
     description: msg`Status of the integration`,
   })
-  @Field(() => Boolean, { nullable: false, defaultValue: false })
   disabled: boolean;
 
   @WorkspaceRelation({
@@ -135,7 +113,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'integrationId',
   })
   @WorkspaceIsNullable()
-  @Field(() => ChatbotWorkspaceEntity, { nullable: true })
   chatbot: Relation<ChatbotWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('chatbot')
@@ -148,9 +125,6 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_WHATSAPP,
-    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
@@ -158,11 +132,10 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
   searchVector: any;
 
   @WorkspaceField({
-    standardId: WHATSAPP_STANDARD_FIELD_IDS.tipoApi,
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.apiType,
     type: FieldMetadataType.TEXT,
-    label: msg`Tipo API`,
-    description: msg`Tipo da API do WhatsApp`,
+    label: msg`API Type`,
+    description: msg`WhatsApp API Type`,
   })
-  @Field(() => String, { nullable: true })
-  tipoApi?: string;
+  apiType?: string;
 }

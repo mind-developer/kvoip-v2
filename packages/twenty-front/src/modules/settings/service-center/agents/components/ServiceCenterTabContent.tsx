@@ -10,7 +10,6 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {
   agents: Agent[];
-  refetchAgents: () => void;
 };
 
 const StyledSection = styled(Section)`
@@ -22,7 +21,6 @@ const StyledSection = styled(Section)`
 
 export const ServiceCenterTabContent = ({
   agents,
-  refetchAgents,
 }: ServiceCenterTabContentProps) => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
@@ -59,7 +57,6 @@ export const ServiceCenterTabContent = ({
                   }}
                   onDeactivate={async () => {
                     await toggleAgentStatus(agent.id);
-                    refetchAgents();
                   }}
                   isActive={agent.isActive}
                 />

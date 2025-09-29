@@ -7,15 +7,9 @@ export interface Agent {
   isAdmin: boolean;
   isActive?: boolean;
   memberId: string;
-  inboxesIds?: string[];
-  sectorIds: string[];
+  inboxes: Inbox[];
   sectors?: Sector[];
-  inboxes?: Inbox[];
   createdAt: string;
   updatedAt: string;
-  workspace: {
-    id: string;
-    displayName: string;
-  };
   workspaceMember?: WorkspaceMember;
 }

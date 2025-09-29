@@ -10,7 +10,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ChatIntegrationProviders } from 'twenty-shared/types';
+import { ChatIntegrationProvider } from 'twenty-shared/types';
 
 @Injectable()
 export class ConditionalInputHandler implements NodeHandler {
@@ -74,7 +74,7 @@ export class ConditionalInputHandler implements NodeHandler {
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProviders.WHATSAPP,
+            chatType: ChatIntegrationProvider.WHATSAPP,
             sendMessageInput: message,
             workspaceId,
           },
@@ -110,7 +110,7 @@ export class ConditionalInputHandler implements NodeHandler {
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProviders.WHATSAPP,
+            chatType: ChatIntegrationProvider.WHATSAPP,
             sendMessageInput: message,
             workspaceId,
           },
