@@ -25,6 +25,7 @@ import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/inv
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
@@ -181,6 +182,21 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('charge')
   chargeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.sector,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Sector`,
+    description: msg`Event sector`,
+    icon: 'IconBadge',
+    inverseSideTarget: () => SectorWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  sector: Relation<SectorWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('sector')
+  sectorId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.support,

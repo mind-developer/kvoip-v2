@@ -358,6 +358,7 @@ export const FOCUS_NFE_STANDARD_FIELD_ID = {
 export const SECTOR_FIELD_IDS = {
   name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
   agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
+  timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
 };
 
 export const INBOX_FIELD_IDS = {
@@ -372,7 +373,6 @@ export const INBOX_TARGET_FIELD_IDS = {
 };
 
 export const AGENT_FIELD_IDS = {
-  name: 'f544fe98-05dc-4929-b3be-ac096676c9dd',
   isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
   isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
   sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
@@ -505,6 +505,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+  sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

@@ -22,19 +22,9 @@ import { Relation } from 'typeorm';
   labelPlural: msg`Agents`,
   description: msg`Agents on this Workspace`,
   icon: 'IconUsers',
-  labelIdentifierStandardId: AGENT_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
 export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
-  @WorkspaceField({
-    standardId: AGENT_FIELD_IDS.name,
-    type: FieldMetadataType.TEXT,
-    label: msg`Name`,
-    description: msg`Agent's name`,
-    icon: 'IconPencil',
-  })
-  name: string;
-
   @WorkspaceField({
     standardId: AGENT_FIELD_IDS.isAdmin,
     type: FieldMetadataType.BOOLEAN,
