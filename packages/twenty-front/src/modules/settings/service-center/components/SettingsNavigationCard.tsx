@@ -25,6 +25,7 @@ const StyledCardContent = styled(CardContent)`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(4, 3)};
+  min-height: 80px;
 `;
 
 const StyledHeader = styled.div`
