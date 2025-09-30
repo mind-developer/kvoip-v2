@@ -9,7 +9,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { AGENT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
+import { InboxTargetWorkspaceEntity } from 'src/modules/inbox-target/standard-objects/inbox-target.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -57,7 +57,7 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AGENT_FIELD_IDS.sector,
     type: RelationType.MANY_TO_ONE,
     label: msg`Sector`,
-    description: msg`Invoices linked to the charges`,
+    description: msg`Sector assigned to this agent`,
     icon: 'IconIdBadge2',
     inverseSideTarget: () => SectorWorkspaceEntity,
     inverseSideFieldKey: 'agents',
@@ -69,19 +69,15 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
   sectorId: string;
 
   @WorkspaceRelation({
-    standardId: AGENT_FIELD_IDS.inboxes,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Inboxes`,
-    description: msg`Inboxes assigned to this agent`,
+    standardId: AGENT_FIELD_IDS.inboxTargets,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Inbox Targets`,
+    description: msg`Inbox targets assigned to this agent`,
     icon: 'IconInbox',
-    inverseSideTarget: () => InboxWorkspaceEntity,
-    inverseSideFieldKey: 'agents',
+    inverseSideTarget: () => InboxTargetWorkspaceEntity,
   })
   @WorkspaceIsNullable()
-  inboxes: Relation<InboxWorkspaceEntity[]> | null;
-
-  @WorkspaceJoinColumn('inboxes')
-  inboxId: string | null;
+  inboxTargets: Relation<InboxTargetWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: AGENT_FIELD_IDS.workspaceMember,

@@ -66,6 +66,8 @@ export const STANDARD_OBJECT_IDS = {
   telephony: 'f950c724-e39e-435a-a044-33c658c501e3',
   sector: 'a7cc30e4-6496-4939-ab62-306cca0f5ae5',
   agent: 'bcc67fab-78b3-4602-b06e-39fb4eb11c35',
-  inbox: '3719ad4d-12dd-45fa-9625-10492b4098c2',
+  inbox: '41c5482c-7269-4a34-9ce8-7daab1100e34',
+  inboxTarget: '3719ad4d-12dd-45fa-9625-10492b4098c2',
+  chatIntegration: '4e23d497-60cb-4020-80b8-9820cba92650',
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 } as const;

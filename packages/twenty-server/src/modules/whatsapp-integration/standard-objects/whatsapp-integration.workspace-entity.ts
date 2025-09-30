@@ -18,10 +18,11 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WHATSAPP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.whatsappIntegration,
-  namePlural: 'whatsAppIntegrations',
+  namePlural: 'whatsappIntegrations',
   labelSingular: msg`WhatsApp Integration`,
   labelPlural: msg`Whatsapp Integrations`,
   description: msg`A Whatsapp integration`,
@@ -118,6 +119,21 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('chatbot')
   chatbotId: string | null;
 
+  @WorkspaceRelation({
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.inbox,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Inbox`,
+    description: msg`Inbox linked to the Chatbot`,
+    icon: 'IconPhone',
+    inverseSideTarget: () => InboxWorkspaceEntity,
+    inverseSideFieldKey: 'whatsappIntegration',
+  })
+  @WorkspaceIsNullable()
+  inbox: Relation<InboxWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('inbox')
+  inboxId: string | null;
+
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
@@ -137,5 +153,5 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`API Type`,
     description: msg`WhatsApp API Type`,
   })
-  apiType?: string;
+  apiType?: 'MetaAPI' | 'Baileys';
 }

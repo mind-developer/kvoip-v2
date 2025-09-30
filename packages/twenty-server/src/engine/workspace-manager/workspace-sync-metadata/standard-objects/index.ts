@@ -18,6 +18,7 @@ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/stand
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
+import { InboxTargetWorkspaceEntity } from 'src/modules/inbox-target/standard-objects/inbox-target.workspace-entity';
 import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
@@ -78,7 +79,6 @@ const baseStandardObjectMetadataDefinitions = [
   WorkflowWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,
-  WhatsappIntegrationWorkspaceEntity,
   ChatbotWorkspaceEntity,
   WorkflowAutomatedTriggerWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
@@ -104,10 +104,12 @@ const baseStandardObjectMetadataDefinitions = [
   SupportWorkspaceEntity,
   FocusNFeWorkspaceEntity,
   InvoiceWorkspaceEntity,
+  InboxWorkspaceEntity,
+  InboxTargetWorkspaceEntity,
+  WhatsappIntegrationWorkspaceEntity,
   TelephonyWorkspaceEntity,
   SectorWorkspaceEntity,
   AgentWorkspaceEntity,
-  InboxWorkspaceEntity,
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace
