@@ -2,12 +2,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
-import { useFindAllInboxes } from '@/settings/service-center/inboxes/hooks/useFindAllInboxes';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
-import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
 import { Select } from '@/ui/input/components/Select';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
+import { IconBadge, IconUsers } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, useIcons } from 'twenty-ui/display';
@@ -15,24 +13,13 @@ import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 import { z } from 'zod';
+import { Inbox, Sector } from '~/generated/graphql';
 
 const agentMetadataFormSchema = z.object({
-  id: z.string(),
   isAdmin: z.boolean(),
-  memberId: z.string().min(1, 'Member ID is required'),
-  sectorIds: z.array(z.string()).nonempty('At least one sector ID is required'),
-  inboxesIds: z.array(z.string()).nonempty('At least one inbox ID is required'),
-  workspaceId: z.string().min(1, 'Workspace ID is required'),
+  isActive: z.boolean(),
+  sectorId: z.string(),
 });
-
-export const SettingsServiceCenterAgentFormSchema =
-  agentMetadataFormSchema.pick({
-    isAdmin: true,
-    memberId: true,
-    sectorIds: true,
-    inboxesIds: true,
-    workspaceId: true,
-  });
 
 export type SettingsServiceCenterAgentFormSchemaValues = z.infer<
   typeof agentMetadataFormSchema
@@ -58,78 +45,63 @@ export const SettingsServiceCenterAgentAboutForm = ({
   // const { t } = useTranslation();
   const { getIcon } = useIcons();
 
+  const { records: agents } = useFindManyRecords<Agent>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+  const { records: sectors } = useFindManyRecords<Sector>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
+  const { records: inboxes } = useFindManyRecords<Inbox>({
+    objectNameSingular: CoreObjectNameSingular.Inbox,
+  });
 
-  const { sectors, refetch: refetchSectors } = useFindAllSectors();
-  const { inboxes, refetch: refecthInboxes } = useFindAllInboxes();
   const whatsappIntegrations = useFindManyRecords({
     objectNameSingular: 'whatsappIntegration',
   }).records;
 
   const Icon = getIcon('IconIdBadge2');
 
-  const memberOptions = workspaceMembers
-    ?.filter(
-      (member) => member.agentId === '' || member.agentId === activeAgent?.id,
-    )
-    .map((workspaceMember) => {
-      const label =
-        workspaceMember.name.firstName.trim() !== '' ||
-        workspaceMember.name.lastName.trim() !== ''
-          ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`
-          : 'Name not provided';
-
-      return {
-        label: label,
-        value: workspaceMember.id,
-        avatarUrl: workspaceMember.avatarUrl,
-      };
-    });
+  const membersWithAgent =
+    agents.length > 0 ? agents.map((agent) => agent.workspaceMember?.id) : [];
+  const assignableAgents = workspaceMembers.filter(
+    (workspaceMember) => !membersWithAgent.includes(workspaceMember.id),
+  );
+  const membersOptions = workspaceMembers?.map((member) => ({
+    Icon: IconUsers,
+    label: member.name.firstName + ' ' + member.name.lastName,
+    value: member.id,
+  }));
 
   const sectorsOptions =
     sectors?.map((sector) => ({
-      Icon: getIcon(sector.icon),
+      Icon: IconBadge,
       label: sector.name,
       value: sector.id,
     })) ?? [];
 
   const inboxesOptions =
     inboxes?.map((inbox) => {
-      const isWhatsapp =
-        inbox.integrationType.toLowerCase() === IntegrationType.WHATSAPP;
+      const isWhatsapp = inbox.whatsappIntegration;
       const IconName = isWhatsapp ? 'IconBrandWhatsapp' : 'IconBrandMessenger';
-      const integration = isWhatsapp
-        ? whatsappIntegrations.find((w) => w.id === inbox.whatsappIntegrationId)
-        : null;
 
       return {
         Icon: getIcon(IconName),
-        label: integration?.name ?? `${inbox.integrationType} (${inbox.id})`,
+        label: 'New integration',
         value: inbox.id,
       };
     }) ?? [];
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (activeAgent) {
       reset({
-        id: activeAgent.id,
         isAdmin: activeAgent.isAdmin ?? false,
-        memberId: activeAgent.memberId,
-        sectorIds: activeAgent.sectors?.map((sector) => sector.id) ?? [],
-        inboxesIds: activeAgent.inboxes?.map((inbox) => inbox.id) ?? [],
-        workspaceId: activeAgent.workspace.id ?? '',
+        sectorId: activeAgent.sectors?.map((sector) => sector.id) ?? [],
       });
     }
   }, [activeAgent, reset]);
-
-  useEffect(() => {
-    refetchSectors();
-    refecthInboxes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const selectedSectors =
     activeAgent?.sectors?.map((sector) => sector.id) ?? [];
@@ -169,7 +141,7 @@ export const SettingsServiceCenterAgentAboutForm = ({
                   label: 'Choose a member',
                   value: '',
                 },
-                ...memberOptions,
+                ...membersOptions,
               ]}
               value={field.value}
               onChange={(value) => {
