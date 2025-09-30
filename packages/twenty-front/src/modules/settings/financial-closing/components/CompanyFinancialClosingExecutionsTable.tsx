@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';

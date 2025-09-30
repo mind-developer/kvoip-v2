@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { SettingsFinancialClosingTableRow } from '@/settings/financial-closing/components/SettingsFinancialClosingTableRow';
 import { useDeleteFinancialClosing } from '@/settings/financial-closing/hooks/useDeleteFinancialClosing';
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';

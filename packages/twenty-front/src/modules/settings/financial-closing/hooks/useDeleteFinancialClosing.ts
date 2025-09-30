@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { DELETE_FINANCIAL_CLOSING_BY_ID } from '@/settings/financial-closing/graphql/mutations/deleteFinancialClosing';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
