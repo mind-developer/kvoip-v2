@@ -24,11 +24,11 @@ export type WorkspaceMember = {
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
-  agentId: string;
   extensionNumber?: string;
   userDocument?: string | null;
   userPhone?: FieldPhonesValue | null;
   calendarStartDay?: number | null;
+  agentId: string | null;
 };
 
 export type WorkspaceInvitation = {

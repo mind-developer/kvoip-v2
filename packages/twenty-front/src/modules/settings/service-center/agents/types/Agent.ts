@@ -1,15 +1,15 @@
-import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-
-export interface Agent {
-  id: string;
+export type Agent = {
+  __typename?: 'Agent';
   isAdmin: boolean;
   isActive?: boolean;
-  memberId: string;
-  inboxes: Inbox[];
-  sectors?: Sector[];
-  createdAt: string;
-  updatedAt: string;
-  workspaceMember?: WorkspaceMember;
-}
+  sectorId?: string;
+};
+
+export type CreateAgent = {
+  __typename?: 'Agent';
+  isAdmin: boolean;
+  isActive: boolean;
+  sectorId: string | null;
+  workspaceMemberId: string | null;
+  inboxId: string | null;
+};
