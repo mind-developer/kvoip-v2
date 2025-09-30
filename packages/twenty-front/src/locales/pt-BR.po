@@ -1157,10 +1157,10 @@ msgstr "Booleano"
 msgid "Brief explanation of this output field"
 msgstr "Breve explicação deste campo de saída"
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: s5hKZS
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Woulz, you agree to the"
-msgstr "Ao utilizar o Woulz, concorda com a"
+msgstr ""
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1347,10 +1347,10 @@ msgstr "Conversar"
 msgid "Check your Emails"
 msgstr "Verifique seus emails"
 
-#. js-lingui-id: SxwQE8
+#. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Woulz team"
-msgstr "Erro na sessão de checkout. Por favor, tente novamente ou entre em contato com a equipe da Woulz"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3071,10 +3071,10 @@ msgstr "Erro ao validar o domínio de acesso aprovado"
 msgid "Error while changing plan, try againg later."
 msgstr "Erro ao alterar o plano, tente agear mais tarde."
 
-#. js-lingui-id: QmR+2U
+#. js-lingui-id: hh9+iQ
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Woulz team."
-msgstr "Erro ao encerrar o período de avaliação. Por favor, entre em contato com a equipe Woulz."
+msgstr ""
 
 #. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

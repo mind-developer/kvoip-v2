@@ -1157,10 +1157,10 @@ msgstr "Booleovská hodnota"
 msgid "Brief explanation of this output field"
 msgstr "Stručné vysvětlení tohoto výstupního pole"
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: s5hKZS
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Použitím Twenty souhlasíte s"
+msgid "By using Woulz, you agree to the"
+msgstr ""
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1347,10 +1347,10 @@ msgstr "Chat"
 msgid "Check your Emails"
 msgstr "Zkontrolujte vaše emaily"
 
-#. js-lingui-id: SxwQE8
+#. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Chyba při relaci platby. Prosím zkuste to znovu nebo kontaktujte tým Twenty"
+msgid "Checkout session error. Please retry or contact Woulz team"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3071,10 +3071,10 @@ msgstr "Chyba při ověřování schválené přístupové domény"
 msgid "Error while changing plan, try againg later."
 msgstr ""
 
-#. js-lingui-id: QmR+2U
+#. js-lingui-id: hh9+iQ
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr "Chyba při ukončování zkušební doby. Kontaktujte tým Twenty."
+msgid "Error while ending trial period. Please contact Woulz team."
+msgstr ""
 
 #. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

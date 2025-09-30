@@ -13,17 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. js-lingui-id: 6vxiIt
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid ""
-"\n"
-"        Rate limit exceeded for the Banco Inter. \n"
-"        The operation cannot be performed at the moment. Try again in"
-msgstr ""
-"\n"
-"        Rate limit exceeded for the Banco Inter. \n"
-"        The operation cannot be performed at the moment. Try again in"
-
 #. js-lingui-id: Qyrd7v
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
@@ -400,6 +389,11 @@ msgstr "An error occurred."
 msgid "An opportunity"
 msgstr "An opportunity"
 
+#. js-lingui-id: NwudZq
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Annual Recurring Revenue"
+msgstr "Annual Recurring Revenue"
+
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
@@ -410,6 +404,11 @@ msgstr "Annual Recurring Revenue: The actual or estimated annual revenue of the 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Any field filter value"
 msgstr "Any field filter value"
+
+#. js-lingui-id: KHn76P
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "API Type"
+msgstr "API Type"
 
 #. js-lingui-id: UU5sRu
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -436,11 +435,6 @@ msgstr "Approved access domain has already been validated"
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Area Code"
 msgstr "Area Code"
-
-#. js-lingui-id: 3EiOLz
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "ARR"
-msgstr "ARR"
 
 #. js-lingui-id: Ek7xGj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -675,6 +669,11 @@ msgstr "Avatar"
 msgid "Avatar Url"
 msgstr "Avatar Url"
 
+#. js-lingui-id: +JxRA6
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Billing Model"
+msgstr "Billing Model"
+
 #. js-lingui-id: FxWwYi
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Billing Models"
@@ -877,6 +876,11 @@ msgstr "Cannot update standard field properties: {invalidProperties}"
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
 msgstr "Cannot update workflow version status manually"
+
+#. js-lingui-id: OVDhwb
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "CDR Integration ID"
+msgstr "CDR Integration ID"
 
 #. js-lingui-id: V9PU36
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
@@ -1411,11 +1415,6 @@ msgstr "CST PIS"
 msgid "CST/CSOSN"
 msgstr "CST/CSOSN"
 
-#. js-lingui-id: VYpCZh
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Custo Mínimo Mensal"
-msgstr "Custo Mínimo Mensal"
-
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
@@ -1502,11 +1501,6 @@ msgstr "Defines how the company is billed: prepaid, postpaid, etc."
 msgid "Deleted at"
 msgstr "Deleted at"
 
-#. js-lingui-id: QJCFgN
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Desconto"
-msgstr "Desconto"
-
 #. js-lingui-id: U1bSSI
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Describes if the view is in compact mode"
@@ -1537,11 +1531,6 @@ msgstr ""
 "Details of the errors:\n"
 ""
 
-#. js-lingui-id: 8goIvx
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Dia de Vencimento do Boleto"
-msgstr "Dia de Vencimento do Boleto"
-
 #. js-lingui-id: ZWOD86
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Dialing Plan"
@@ -1554,6 +1543,7 @@ msgid "Direction"
 msgstr "Direction"
 
 #. js-lingui-id: H6Ma8Z
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Discount"
 msgstr "Discount"
@@ -1600,6 +1590,11 @@ msgstr "Domain Name"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Due Date"
 msgstr "Due Date"
+
+#. js-lingui-id: l6/poq
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Due Day for Bank Slip"
+msgstr "Due Day for Bank Slip"
 
 #. js-lingui-id: dNFJ+f
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2294,6 +2289,11 @@ msgstr "Financial Closing ID"
 msgid "Fiscal Operation Code. Example: 5102"
 msgstr "Fiscal Operation Code. Example: 5102"
 
+#. js-lingui-id: TkUy5L
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Fixed Monthly Charge"
+msgstr "Fixed Monthly Charge"
+
 #. js-lingui-id: jVg9c4
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Fixed monthly charge applied to the company"
@@ -2439,11 +2439,6 @@ msgstr "ICP"
 msgid "Id"
 msgstr "Id"
 
-#. js-lingui-id: 1ilON4
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "ID de Bilhetagem (CDR)"
-msgstr "ID de Bilhetagem (CDR)"
-
 #. js-lingui-id: hYtWqG
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "ID of the traceable link associated with this log"
@@ -2496,11 +2491,6 @@ msgstr "Input is too short: \"{name}\""
 msgid "Inscrição estadual"
 msgstr "Inscrição estadual"
 
-#. js-lingui-id: girw5z
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição Estadual"
-msgstr "Inscrição Estadual"
-
 #. js-lingui-id: KFgYVS
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Inscrição municipal"
@@ -2508,14 +2498,8 @@ msgstr "Inscrição municipal"
 
 #. js-lingui-id: bzGSrZ
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Inscrição Municipal"
 msgstr "Inscrição Municipal"
-
-#. js-lingui-id: RYXSrV
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição municipal do prestador de serviços"
-msgstr "Inscrição municipal do prestador de serviços"
 
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2838,10 +2822,10 @@ msgstr "It was not possible to save the XML file of the invoice"
 msgid "Job Title"
 msgstr "Job Title"
 
-#. js-lingui-id: PviVyk
+#. js-lingui-id: Xy6cxh
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "Join your team on Twenty"
+msgid "Join your team on Woulz"
+msgstr "Join your team on Woulz"
 
 #. js-lingui-id: WNfJ8M
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3055,11 +3039,6 @@ msgstr "Meet Link"
 msgid "Member ID"
 msgstr "Member ID"
 
-#. js-lingui-id: 1Re5O0
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Mensalidade Fixa"
-msgstr "Mensalidade Fixa"
-
 #. js-lingui-id: gDBA/G
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
@@ -3213,6 +3192,11 @@ msgstr "Messaging provider access token"
 msgid "Messaging provider refresh token"
 msgstr "Messaging provider refresh token"
 
+#. js-lingui-id: 8h0iEo
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Minimum Monthly Cost"
+msgstr "Minimum Monthly Cost"
+
 #. js-lingui-id: H8d5hS
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Minimum monthly cost for the company"
@@ -3222,11 +3206,6 @@ msgstr "Minimum monthly cost for the company"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
-
-#. js-lingui-id: /kWUyB
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Modelo de Cobrança"
-msgstr "Modelo de Cobrança"
 
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -3257,6 +3236,16 @@ msgstr "Multi-select field default value must be an array"
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+
+#. js-lingui-id: VYgCB6
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Municipal Registration"
+msgstr "Municipal Registration"
+
+#. js-lingui-id: efdlgF
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Municipal registration of the service provider"
+msgstr "Municipal registration of the service provider"
 
 #. js-lingui-id: FMxbdG
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -4165,20 +4154,25 @@ msgstr "provider"
 msgid "Pull Calls"
 msgstr "Pull Calls"
 
-#. js-lingui-id: 3YhGcA
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Qtd. Fechamentos Financeiros Restantes p/ Desconto"
-msgstr "Qtd. Fechamentos Financeiros Restantes p/ Desconto"
-
 #. js-lingui-id: VbWX2u
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Quantity"
 msgstr "Quantity"
 
+#. js-lingui-id: 59rSLU
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Quantity of Financial Closings Remaining for Discount"
+msgstr "Quantity of Financial Closings Remaining for Discount"
+
 #. js-lingui-id: YpQauo
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Ramal ID"
 msgstr "Ramal ID"
+
+#. js-lingui-id: vfIP8c
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in"
+msgstr "Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in"
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -4427,6 +4421,11 @@ msgstr "State"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State of the workflow run"
 msgstr "State of the workflow run"
+
+#. js-lingui-id: 2S9yWS
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "State Registration"
+msgstr "State Registration"
 
 #. js-lingui-id: 47Ailm
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -5095,26 +5094,6 @@ msgstr "Timeline Activities tied to the {label}"
 msgid "Timeline Activity"
 msgstr "Timeline Activity"
 
-#. js-lingui-id: Vx8SIG
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Tipo API"
-msgstr "Tipo API"
-
-#. js-lingui-id: sBRRyd
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Tipo da API do WhatsApp"
-msgstr "Tipo da API do WhatsApp"
-
-#. js-lingui-id: xS6VHc
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Tipo de Emissão de NF"
-msgstr "Tipo de Emissão de NF"
-
-#. js-lingui-id: TTqoX2
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Tipo do Desconto"
-msgstr "Tipo do Desconto"
-
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -5144,6 +5123,11 @@ msgstr "Total Amount"
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Total number of companies processed"
 msgstr "Total number of companies processed"
+
+#. js-lingui-id: Vska3y
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Total Value Charged"
+msgstr "Total Value Charged"
 
 #. js-lingui-id: Cptwd9
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -5195,10 +5179,25 @@ msgstr "Tributary Substitution Code. Example: 28.038.00"
 msgid "Type"
 msgstr "Type"
 
+#. js-lingui-id: 0Pdhdk
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Type of API for WhatsApp"
+msgstr "Type of API for WhatsApp"
+
+#. js-lingui-id: Sf/AZ8
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Type of Discount"
+msgstr "Type of Discount"
+
 #. js-lingui-id: 2uWPO3
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Type of discount applied to the company - Percent or Value"
 msgstr "Type of discount applied to the company - Percent or Value"
+
+#. js-lingui-id: jgS4XC
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Type of Invoice Emission"
+msgstr "Type of Invoice Emission"
 
 #. js-lingui-id: Y+KoG1
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -5339,11 +5338,6 @@ msgstr "UTM Source"
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
 msgstr "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-
-#. js-lingui-id: VI1R4E
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Valor Total Cobrado"
-msgstr "Valor Total Cobrado"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -5670,10 +5664,10 @@ msgstr "We are experiencing a temporary issue with our database. Please try agai
 msgid "Website URL"
 msgstr "Website URL"
 
-#. js-lingui-id: TVkCrJ
+#. js-lingui-id: s0g27u
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Welcome to Twenty: Please Confirm Your Email"
+msgid "Welcome to Woulz: Please Confirm Your Email"
+msgstr "Welcome to Woulz: Please Confirm Your Email"
 
 #. js-lingui-id: 60h12G
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -5681,14 +5675,10 @@ msgid "Whatsapp Integration"
 msgstr "Whatsapp Integration"
 
 #. js-lingui-id: VFwGfG
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Whatsapp Integrations"
 msgstr "Whatsapp Integrations"
-
-#. js-lingui-id: thcy+J
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "WhatsappIntegrations"
-msgstr "WhatsappIntegrations"
 
 #. js-lingui-id: l4lzEZ
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts

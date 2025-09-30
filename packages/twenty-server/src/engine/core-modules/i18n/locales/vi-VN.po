@@ -18,14 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
-#. js-lingui-id: 6vxiIt
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid ""
-"\n"
-"        Rate limit exceeded for the Banco Inter. \n"
-"        The operation cannot be performed at the moment. Try again in"
-msgstr ""
-
 #. js-lingui-id: Qyrd7v
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
@@ -402,6 +394,11 @@ msgstr "Đã xảy ra lỗi."
 msgid "An opportunity"
 msgstr "Một cơ hội"
 
+#. js-lingui-id: NwudZq
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Annual Recurring Revenue"
+msgstr ""
+
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
@@ -412,6 +409,11 @@ msgstr "Doanh Thu Định Kỳ Hàng Năm: Doanh thu thực tế hoặc ước t
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Any field filter value"
 msgstr "Giá trị của bất kỳ bộ lọc trường nào"
+
+#. js-lingui-id: KHn76P
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "API Type"
+msgstr ""
 
 #. js-lingui-id: UU5sRu
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -438,11 +440,6 @@ msgstr "Miền truy cập đã được phê duyệt đã được xác thực"
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Area Code"
 msgstr ""
-
-#. js-lingui-id: 3EiOLz
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "ARR"
-msgstr "ARR"
 
 #. js-lingui-id: Ek7xGj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -677,6 +674,11 @@ msgstr "Hình đại diện"
 msgid "Avatar Url"
 msgstr "URL Hình Đại Diện"
 
+#. js-lingui-id: +JxRA6
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Billing Model"
+msgstr ""
+
 #. js-lingui-id: FxWwYi
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Billing Models"
@@ -879,6 +881,11 @@ msgstr "Không thể cập nhật thuộc tính trường tiêu chuẩn: {invali
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
 msgstr "'Không thể cập nhật trạng thái phiên bản quy trình làm việc theo cách thủ công'"
+
+#. js-lingui-id: OVDhwb
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "CDR Integration ID"
+msgstr ""
 
 #. js-lingui-id: V9PU36
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
@@ -1413,11 +1420,6 @@ msgstr ""
 msgid "CST/CSOSN"
 msgstr ""
 
-#. js-lingui-id: VYpCZh
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Custo Mínimo Mensal"
-msgstr ""
-
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
@@ -1504,11 +1506,6 @@ msgstr ""
 msgid "Deleted at"
 msgstr "Ngày xóa"
 
-#. js-lingui-id: QJCFgN
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Desconto"
-msgstr ""
-
 #. js-lingui-id: U1bSSI
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Describes if the view is in compact mode"
@@ -1537,11 +1534,6 @@ msgid ""
 ""
 msgstr ""
 
-#. js-lingui-id: 8goIvx
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Dia de Vencimento do Boleto"
-msgstr ""
-
 #. js-lingui-id: ZWOD86
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Dialing Plan"
@@ -1554,6 +1546,7 @@ msgid "Direction"
 msgstr "Hướng"
 
 #. js-lingui-id: H6Ma8Z
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Discount"
 msgstr ""
@@ -1600,6 +1593,11 @@ msgstr "Tên miền"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Due Date"
 msgstr "Ngày đến hạn"
+
+#. js-lingui-id: l6/poq
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Due Day for Bank Slip"
+msgstr ""
 
 #. js-lingui-id: dNFJ+f
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2294,6 +2292,11 @@ msgstr ""
 msgid "Fiscal Operation Code. Example: 5102"
 msgstr ""
 
+#. js-lingui-id: TkUy5L
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Fixed Monthly Charge"
+msgstr ""
+
 #. js-lingui-id: jVg9c4
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Fixed monthly charge applied to the company"
@@ -2439,11 +2442,6 @@ msgstr "ICP"
 msgid "Id"
 msgstr "ID"
 
-#. js-lingui-id: 1ilON4
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "ID de Bilhetagem (CDR)"
-msgstr ""
-
 #. js-lingui-id: hYtWqG
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "ID of the traceable link associated with this log"
@@ -2496,11 +2494,6 @@ msgstr "Đầu vào quá ngắn: \"{name}\""
 msgid "Inscrição estadual"
 msgstr ""
 
-#. js-lingui-id: girw5z
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição Estadual"
-msgstr ""
-
 #. js-lingui-id: KFgYVS
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "Inscrição municipal"
@@ -2508,13 +2501,7 @@ msgstr ""
 
 #. js-lingui-id: bzGSrZ
 #: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Inscrição Municipal"
-msgstr ""
-
-#. js-lingui-id: RYXSrV
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Inscrição municipal do prestador de serviços"
 msgstr ""
 
 #. js-lingui-id: AHWM9N
@@ -2838,10 +2825,10 @@ msgstr ""
 msgid "Job Title"
 msgstr "Chức danh công việc"
 
-#. js-lingui-id: PviVyk
+#. js-lingui-id: Xy6cxh
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
+msgid "Join your team on Woulz"
+msgstr ""
 
 #. js-lingui-id: WNfJ8M
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3055,11 +3042,6 @@ msgstr "Liên kết Họp"
 msgid "Member ID"
 msgstr ""
 
-#. js-lingui-id: 1Re5O0
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Mensalidade Fixa"
-msgstr ""
-
 #. js-lingui-id: gDBA/G
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
@@ -3213,6 +3195,11 @@ msgstr "Token truy cập nhà cung cấp dịch vụ nhắn tin"
 msgid "Messaging provider refresh token"
 msgstr "Token làm mới của nhà cung cấp dịch vụ nhắn tin"
 
+#. js-lingui-id: 8h0iEo
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Minimum Monthly Cost"
+msgstr ""
+
 #. js-lingui-id: H8d5hS
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Minimum monthly cost for the company"
@@ -3222,11 +3209,6 @@ msgstr ""
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Thiếu các trường bắt buộc: ít nhất một ràng buộc duy nhất phải được hoàn thành đủ cho '{connectFieldName}'."
-
-#. js-lingui-id: /kWUyB
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Modelo de Cobrança"
-msgstr ""
 
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -3256,6 +3238,16 @@ msgstr "Giá trị mặc định của trường chọn nhiều phải là một
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr ""
+
+#. js-lingui-id: VYgCB6
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Municipal Registration"
+msgstr ""
+
+#. js-lingui-id: efdlgF
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Municipal registration of the service provider"
 msgstr ""
 
 #. js-lingui-id: FMxbdG
@@ -4165,19 +4157,24 @@ msgstr "nhà cung cấp"
 msgid "Pull Calls"
 msgstr ""
 
-#. js-lingui-id: 3YhGcA
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Qtd. Fechamentos Financeiros Restantes p/ Desconto"
-msgstr ""
-
 #. js-lingui-id: VbWX2u
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Quantity"
 msgstr ""
 
+#. js-lingui-id: 59rSLU
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Quantity of Financial Closings Remaining for Discount"
+msgstr ""
+
 #. js-lingui-id: YpQauo
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 msgid "Ramal ID"
+msgstr ""
+
+#. js-lingui-id: vfIP8c
+#: src/engine/core-modules/inter/integration/inter-integration.service.ts
+msgid "Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in"
 msgstr ""
 
 #. js-lingui-id: YfbwOB
@@ -4427,6 +4424,11 @@ msgstr "Trạng thái"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "State of the workflow run"
 msgstr "Trạng thái của lần chạy Quy trình làm việc"
+
+#. js-lingui-id: 2S9yWS
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "State Registration"
+msgstr ""
 
 #. js-lingui-id: 47Ailm
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -5095,26 +5097,6 @@ msgstr "Hoạt động trong dòng thời gian gắn liền với {label}"
 msgid "Timeline Activity"
 msgstr "Hoạt động dòng thời gian"
 
-#. js-lingui-id: Vx8SIG
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Tipo API"
-msgstr ""
-
-#. js-lingui-id: sBRRyd
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Tipo da API do WhatsApp"
-msgstr ""
-
-#. js-lingui-id: xS6VHc
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Tipo de Emissão de NF"
-msgstr ""
-
-#. js-lingui-id: TTqoX2
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Tipo do Desconto"
-msgstr ""
-
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -5143,6 +5125,11 @@ msgstr ""
 #. js-lingui-id: phLNBe
 #: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
 msgid "Total number of companies processed"
+msgstr ""
+
+#. js-lingui-id: Vska3y
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Total Value Charged"
 msgstr ""
 
 #. js-lingui-id: Cptwd9
@@ -5195,9 +5182,24 @@ msgstr ""
 msgid "Type"
 msgstr "Loại"
 
+#. js-lingui-id: 0Pdhdk
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Type of API for WhatsApp"
+msgstr ""
+
+#. js-lingui-id: Sf/AZ8
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Type of Discount"
+msgstr ""
+
 #. js-lingui-id: 2uWPO3
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Type of discount applied to the company - Percent or Value"
+msgstr ""
+
+#. js-lingui-id: jgS4XC
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Type of Invoice Emission"
 msgstr ""
 
 #. js-lingui-id: Y+KoG1
@@ -5339,11 +5341,6 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
 msgstr "Thất bại xác thực cho {invalidObjects} đối tượng và {invalidFields} trường"
-
-#. js-lingui-id: VI1R4E
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Valor Total Cobrado"
-msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -5670,10 +5667,10 @@ msgstr "Chúng tôi đang gặp sự cố tạm thời với cơ sở dữ liệ
 msgid "Website URL"
 msgstr ""
 
-#. js-lingui-id: TVkCrJ
+#. js-lingui-id: s0g27u
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Chào mừng đến với Twenty: Vui lòng xác nhận email của bạn"
+msgid "Welcome to Woulz: Please Confirm Your Email"
+msgstr ""
 
 #. js-lingui-id: 60h12G
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -5681,13 +5678,9 @@ msgid "Whatsapp Integration"
 msgstr ""
 
 #. js-lingui-id: VFwGfG
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Whatsapp Integrations"
-msgstr ""
-
-#. js-lingui-id: thcy+J
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "WhatsappIntegrations"
 msgstr ""
 
 #. js-lingui-id: l4lzEZ

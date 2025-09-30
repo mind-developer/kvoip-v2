@@ -1152,9 +1152,9 @@ msgstr ""
 msgid "Brief explanation of this output field"
 msgstr ""
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: s5hKZS
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
+msgid "By using Woulz, you agree to the"
 msgstr ""
 
 #. js-lingui-id: PmmvzS
@@ -1342,9 +1342,9 @@ msgstr ""
 msgid "Check your Emails"
 msgstr ""
 
-#. js-lingui-id: SxwQE8
+#. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
+msgid "Checkout session error. Please retry or contact Woulz team"
 msgstr ""
 
 #. js-lingui-id: SviKkE
@@ -3066,9 +3066,9 @@ msgstr ""
 msgid "Error while changing plan, try againg later."
 msgstr ""
 
-#. js-lingui-id: QmR+2U
+#. js-lingui-id: hh9+iQ
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
+msgid "Error while ending trial period. Please contact Woulz team."
 msgstr ""
 
 #. js-lingui-id: JKNROf
