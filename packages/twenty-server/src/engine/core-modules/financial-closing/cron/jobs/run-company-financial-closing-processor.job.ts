@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { Logger, Scope } from '@nestjs/common';
 import { TypeEmissionNFEnum } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
 import { CompanyFinancialClosingJobData } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
@@ -87,7 +87,7 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
         // Log de sucesso
-        const successMessage = msg`Charge issued successfully` + '. ' + msg`Charge ID` + ': ' + charge.id;
+        const successMessage = t`Charge issued successfully` + '. ' + t`Charge ID` + ': ' + charge.id;
         await addCompanyFinancialClosingExecutionLog(
           data.companyExecutionLog,
           companyFinancialClosingExecutionsRepository,
@@ -99,12 +99,12 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
       } else {
         throw new Error(
-          msg`Charge was not generated - null return from charge issuance service`.toString(),
+          t`Charge was not generated - null return from charge issuance service`,
         );
       }
     } catch (error) {
       // Tratamento específico para erros da API de cobrança
-      let errorMessage = msg`It was not possible to generate the charge`.toString();
+      let errorMessage = t`It was not possible to generate the charge`;
 
       // Tenta extrair o erro real do message se ele contém um JSON
       let actualError = error;
@@ -133,10 +133,10 @@ export class RunCompanyFinancialClosingJobProcessor {
         const violacoesText = violacoes
           .map((v: any) => `${v.propriedade}: ${v.razao} (valor: "${v.valor}")`)
           .join('; ');
-        errorMessage = msg`Error in charge data validation` + ': ' + violacoesText;
+        errorMessage = t`Error in charge data validation` + ': ' + violacoesText;
       } else if (actualError?.response?.data?.detail) {
         // Erro da API de cobrança com detalhe genérico
-        errorMessage = msg`Error in charge API` + ': ' + actualError.response.data.detail;
+        errorMessage = t`Error in charge API` + ': ' + actualError.response.data.detail;
       } else if (
         actualError?.data?.violacoes &&
         Array.isArray(actualError.data.violacoes)
@@ -149,13 +149,13 @@ export class RunCompanyFinancialClosingJobProcessor {
               `${v.propriedade}: ${v.razao} (valor enviado: "${v.valor}")`,
           )
           .join('; ');
-        errorMessage = msg`Error in charge data validation` + ': ' + violacoesText;
+        errorMessage = t`Error in charge data validation` + ': ' + violacoesText;
       } else if (actualError?.data?.detail) {
         // Erro direto com detalhe (sem response)
-        errorMessage = msg`Error in charge API` + ': ' + actualError.data.detail;
+        errorMessage = t`Error in charge API` + ': ' + actualError.data.detail;
       } else if (error?.message) {
         // Erro genérico
-        errorMessage = msg`Error to generate charge` + ': ' + error.message;
+        errorMessage = t`Error to generate charge` + ': ' + error.message;
       }
 
       // Adicionando logs de erro e status na execução da empresa
@@ -184,7 +184,7 @@ export class RunCompanyFinancialClosingJobProcessor {
           data.executionLog,
           financialClosingExecutionsRepository,
           'warn',
-          msg`Error to generate charge for the company` + ' ' + data.company.name + ' (' + data.company.id + ')',
+          t`Error to generate charge for the company` + ' ' + data.company.name + ' (' + data.company.id + ')',
         );
       }
 
@@ -250,9 +250,9 @@ export class RunCompanyFinancialClosingJobProcessor {
     } else {
       let message = '';
       if (data.company.typeEmissionNF == TypeEmissionNFEnum.AFTER) {
-        message = msg`Invoice configured to be issued after payment, not issued`.toString();
+        message = t`Invoice configured to be issued after payment, not issued`;
       } else {
-        message = msg`The company does not have invoice emission configured, not issued`.toString();
+        message = t`The company does not have invoice emission configured, not issued`;
       }
 
       if (financialClosingExecutionsRepository && data.executionLog) {

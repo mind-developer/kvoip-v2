@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { BadRequestException } from '@nestjs/common';
 import { isValidBrazilianState } from 'src/engine/core-modules/financial-closing/constants/nf-constants';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
@@ -54,12 +54,12 @@ export class CompanyValidationUtils {
       // Para campos de endereço
       if (parentField === 'address') {
         const addressLabels: Record<string, string> = {
-          'addressNumber': msg`Number`.toString(),
-          'addressStreet1': msg`Street`.toString(),
-          'addressStreet2': msg`Complemento`.toString(),
-          'addressCity': msg`Cidade`.toString(),
-          'addressState': msg`Estado`.toString(),
-          'addressPostcode': msg`CEP`.toString()
+          'addressNumber': t`Number`,
+          'addressStreet1': t`Street`,
+          'addressStreet2': t`Complemento`,
+          'addressCity': t`Cidade`,
+          'addressState': t`Estado`,
+          'addressPostcode': t`CEP`
         };
         return `${addressLabels[childField] || childField}`;
       }
@@ -67,7 +67,7 @@ export class CompanyValidationUtils {
       // Para campos de email
       if (parentField === 'emails') {
         const emailLabels: Record<string, string> = {
-          'primaryEmail': msg`Email`.toString()
+          'primaryEmail': t`Email`
         };
         return `${emailLabels[childField] || childField}`;
       }
@@ -80,7 +80,7 @@ export class CompanyValidationUtils {
     if (missingFields.length > 0) {
       const missingFieldLabels = missingFields.map(field => getFieldLabel(field));
       throw new Error(
-        msg`Company is missing required fields` + ': ' + missingFieldLabels.join(', ')
+        t`Company is missing required fields` + ': ' + missingFieldLabels.join(', ')
       );
     }
   }
@@ -92,7 +92,7 @@ export class CompanyValidationUtils {
   static validateCep(cep: string): void {
     if (cep.replace(/\D/g, '').length !== 8) {
       throw new Error(
-        msg`The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters`.toString()
+        t`The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters`
       );
     }
   }
@@ -104,7 +104,7 @@ export class CompanyValidationUtils {
   static validateState(state: string): void {
     if (!isValidBrazilianState(state)) {
       throw new Error(
-        msg`The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)`.toString()
+        t`The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)`
       );
     }
   }
@@ -124,28 +124,28 @@ export class CompanyValidationUtils {
     // Verificar se pelo menos um percentual está preenchido
     if (percentNfcom <= 0 && percentNfse <= 0) {
       throw new Error(
-        msg`At least one NF percentage must be filled for the company (percentNfcom or percentNfse)`.toString()
+        t`At least one NF percentage must be filled for the company (percentNfcom or percentNfse)`
       );
     }
 
     // Verificar se os percentuais são números válidos
     if (isNaN(percentNfcom) || isNaN(percentNfse)) {
       throw new Error(
-        msg`The company's NF percentages must be valid numbers`.toString()
+        t`The company's NF percentages must be valid numbers`
       );
     }
 
     // Verificar se os percentuais estão no range válido (0-100)
     if (percentNfcom < 0 || percentNfcom > 100 || percentNfse < 0 || percentNfse > 100) {
       throw new Error(
-        msg`The company's NF percentages must be between 0 and 100`.toString()
+        t`The company's NF percentages must be between 0 and 100`
       );
     }
 
     // Verificar se a soma não excede 100%
     if (totalPercent > 100) {
       throw new Error(
-        msg`The sum of the company's NF percentages cannot exceed 100%. Current: ` + `${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`.toString()
+        t`The sum of the company's NF percentages cannot exceed 100%. Current: ` + `${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`
       );
     }
   }

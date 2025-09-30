@@ -1014,7 +1014,7 @@ msgstr "Atribuição"
 #: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
 #: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
 msgid "At"
-msgstr "No"
+msgstr "As"
 
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
@@ -2483,12 +2483,12 @@ msgstr "Destruir registros em todos os objetos"
 #. js-lingui-id: reaKlT
 #: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
 msgid "Detailed history of the execution"
-msgstr "História detalhada da execução"
+msgstr "Histórico detalhada da execução"
 
 #. js-lingui-id: Iu4pPb
 #: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
 msgid "Detailed history of the execution of the company"
-msgstr "História detalhada da execução da empresa"
+msgstr "Histórico detalhada da execução da empresa"
 
 #. js-lingui-id: URmyfc
 #: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
@@ -3353,7 +3353,7 @@ msgstr "Créditos Extras Utilizados"
 #. js-lingui-id: 7Bj3x9
 #: src/modules/settings/financial-closing/constants/LogLevelColors.ts
 msgid "Failed"
-msgstr "Fracassado"
+msgstr "Falho"
 
 #. js-lingui-id: MmQOlJ
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
@@ -4568,7 +4568,7 @@ msgstr "Terminar sessão"
 #. js-lingui-id: XnNm6j
 #: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
 msgid "Logs of Execution"
-msgstr "Toras de execução"
+msgstr "Logs de execução"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
