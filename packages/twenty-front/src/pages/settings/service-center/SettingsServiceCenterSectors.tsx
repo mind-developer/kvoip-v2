@@ -1,24 +1,24 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { ServiceCenterSectors } from '@/settings/service-center/sectors/components/ServiceCenterSectors';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useEffect } from 'react';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { v4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServiceCenterSectors = () => {
   // const { t } = useTranslation();
 
-  const { sectors, refetch } = useFindAllSectors();
-
-  useEffect(() => {
-    refetch();
-  }, []);
+  const { records: sectors } = useFindManyRecords<Sector>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
 
   return (
     <SubMenuTopBarContainer
@@ -44,10 +44,19 @@ export const SettingsServiceCenterSectors = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title="" description={'Manage all sectors here.'} />
-          <ServiceCenterSectors sectors={sectors} refetchSectors={refetch} />
-        </Section>
+        {sectors.map((sector) => {
+          return (
+            <SelectableList
+              selectableItemIdArray={sectors.map((sector) => sector.id)}
+              focusId={v4()}
+              selectableListInstanceId={v4()}
+            >
+              <SelectableListItem itemId={sector.id}>
+                {sector.name}
+              </SelectableListItem>
+            </SelectableList>
+          );
+        })}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

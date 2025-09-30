@@ -1,113 +1,71 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
-
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  SettingsServiceCenterAgentAboutForm,
-  SettingsServiceCenterAgentFormSchema,
-} from '@/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm';
-import { useCreateAgent } from '@/settings/service-center/agents/hooks/useCreateAgent';
-import { CreateAgentInput } from '@/settings/service-center/agents/types/CreateAgentInput';
+  Agent,
+  CreateAgent,
+} from '@/settings/service-center/agents/types/Agent';
+import SettingsServiceCenterAgentAboutForm from '@/settings/workspace_service-center/SettingsServiceCenterAgentAboutForm';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { t } from '@lingui/core/macro';
+import { useState } from 'react';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-type SettingsNewAgentSchemaValues = z.infer<
-  typeof SettingsServiceCenterAgentFormSchema
->;
-
-const StyledDiv = styled.div<{
-  width?: number;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  width: ${({ width }) => {
-    if (isDefined(width)) {
-      return width + 'px';
-    }
-    if (useIsMobile()) {
-      return 'unset';
-    }
-    return OBJECT_SETTINGS_WIDTH + 'px';
-  }};
-  padding-bottom: ${({ theme }) => theme.spacing(20)};
-`;
-
 export const SettingsServiceCenterNewAgent = () => {
-  // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const { createAgent } = useCreateAgent();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  // const { refetch: refetchMembers } = useFindManyRecords<WorkspaceMember>({
-  //   objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  // });
 
-  const formConfig = useForm<SettingsNewAgentSchemaValues>({
-    mode: 'onTouched',
-    resolver: zodResolver(SettingsServiceCenterAgentFormSchema),
-    defaultValues: {
-      isAdmin: false,
-      memberId: '',
-      sectorIds: [],
-      inboxesIds: [],
-      workspaceId: currentWorkspace?.id,
-    },
+  const [agent, setAgent] = useState<CreateAgent>({
+    isAdmin: false,
+    isActive: false,
+    sectorId: null,
+    workspaceMemberId: null,
+    inboxId: null,
   });
 
-  const { isValid, isSubmitting } = formConfig.formState;
+  const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
+  const { createOneRecord } = useCreateOneRecord<
+    Agent & { id: string; __typename: string }
+  >({ objectNameSingular: CoreObjectNameSingular.Agent });
+  const onSave = async () => {
+    if (!agent.workspaceMemberId || !agent.workspaceMemberId || !agent.sectorId)
+      throw new Error('Could not save agent');
+    const createdAgent = await createOneRecord({
+      isActive: agent.isActive,
+      isAdmin: agent.isActive,
+      sectorId: agent.sectorId,
+    });
 
-  const canSave = isValid && !isSubmitting;
+    updateOneRecord({
+      idToUpdate: agent.workspaceMemberId,
+      updateOneRecordInput: { agentId: createdAgent.id },
+    });
+  };
 
   const settingsServiceCenterAgentsPagePath = getSettingsPath(
     SettingsPath.ServiceCenterAgents,
   );
 
-  const onSave = async (formValue: SettingsNewAgentSchemaValues) => {
-    try {
-      const agentData: CreateAgentInput = {
-        isAdmin: formValue.isAdmin,
-        memberId: formValue.memberId,
-        sectorIds: formValue.sectorIds,
-        inboxesIds: formValue.inboxesIds,
-        workspaceId: formValue.workspaceId,
-      };
-
-      await createAgent(agentData);
-      // refetchMembers();
-      navigate(settingsServiceCenterAgentsPagePath);
-    } catch (err) {
-      // TODO: Add proper error message
-      enqueueErrorSnackBar({
-        message: (err as Error).message,
-      });
-    }
-  };
-
   return (
     <SubMenuTopBarContainer
-      title={'Agents'}
+      title={t`Create agent`}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!canSave}
-          isCancelDisabled={isSubmitting}
+          isSaveDisabled={
+            !agent.workspaceMemberId || !agent.sectorId || !agent.inboxId
+          }
+          onSave={onSave}
           onCancel={() => navigate(settingsServiceCenterAgentsPagePath)}
-          onSave={formConfig.handleSubmit(onSave)}
         />
       }
       links={[
@@ -118,11 +76,12 @@ export const SettingsServiceCenterNewAgent = () => {
         { children: 'New Agent' },
       ]}
     >
-      <FormProvider {...formConfig}>
-        <StyledDiv>
-          <SettingsServiceCenterAgentAboutForm />
-        </StyledDiv>
-      </FormProvider>
+      <Section>
+        <SettingsServiceCenterAgentAboutForm
+          agent={agent}
+          setAgent={setAgent}
+        />
+      </Section>
     </SubMenuTopBarContainer>
   );
 };
