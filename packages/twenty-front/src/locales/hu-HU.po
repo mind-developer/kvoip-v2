@@ -8066,14 +8066,10 @@ msgstr "Nincs jogosultság rekord létrehozására ehhez az objektumhoz"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Beállíthat bármilyen kombinációt az IMAP (e-mailek fogadása), SMTP (e-mailek küldése) és CalDAV (naptár szinkronizálása) között."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Nem szerkesztheted ezt a kapcsolatot, mert követett táblák vannak benne.\n"
-"Ha módosítani szeretnél rajta, hozz létre egy új kapcsolatot vagy szüntesd meg előbb a táblák szinkronizációját."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

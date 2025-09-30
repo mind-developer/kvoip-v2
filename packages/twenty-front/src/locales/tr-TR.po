@@ -8066,14 +8066,10 @@ msgstr "Bu nesne için kayıt oluşturmaya izin verilmiyor"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "IMAP (e-posta alma), SMTP (e-posta gönderme) ve CalDAV (takvim senkronizasyonu) çözümleri arasında herhangi bir kombinasyonu kurabilirsiniz."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Bağlantıyı düzenleyemezsiniz çünkü izlendiğini tablolara sahiptir.\n"
-"Değişiklik yapmanız gerekiyorsa, lütfen yeni bir bağlantı oluşturun veya önce tabloların eşzamanlılığını kaldırın."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

@@ -1527,11 +1527,9 @@ msgstr ""
 msgid "Destiny Mailbox Busy"
 msgstr ""
 
-#. js-lingui-id: TY69sj
+#. js-lingui-id: gRQSno
 #: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid ""
-"Details of the errors:\n"
-""
+msgid "Details of the errors: "
 msgstr ""
 
 #. js-lingui-id: ZWOD86

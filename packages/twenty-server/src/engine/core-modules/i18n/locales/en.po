@@ -1522,14 +1522,10 @@ msgstr "Destiny Mailbox All Calls or Offline"
 msgid "Destiny Mailbox Busy"
 msgstr "Destiny Mailbox Busy"
 
-#. js-lingui-id: TY69sj
+#. js-lingui-id: gRQSno
 #: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid ""
-"Details of the errors:\n"
-""
-msgstr ""
-"Details of the errors:\n"
-""
+msgid "Details of the errors: "
+msgstr "Details of the errors: "
 
 #. js-lingui-id: ZWOD86
 #: src/modules/telephony/standard-objects/telephony.workspace-entity.ts

@@ -8066,14 +8066,10 @@ msgstr "No tiene permiso para crear registros en este objeto"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Puedes configurar cualquier combinación de IMAP (recibir correos), SMTP (enviar correos) y CalDAV (sincronización de calendario)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"No puede editar esta conexión porque tiene tablas rastreadas.\n"
-"Si necesita hacer cambios, por favor cree una nueva conexión o desincronice las tablas primero."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

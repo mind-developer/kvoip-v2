@@ -128,7 +128,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         </SettingsHeaderContainer>
         {hasSyncedTables && (
           <Info
-            text={t`You cannot edit this connection because it has tracked tables.\nIf you need to make changes, please create a new connection or unsync the tables first.`}
+            text={t`You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first.`}
             accent="blue"
           />
         )}

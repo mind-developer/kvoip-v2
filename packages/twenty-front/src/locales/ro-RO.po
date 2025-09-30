@@ -8066,14 +8066,10 @@ msgstr "Nu aveți permisiunea de a crea înregistrări pentru acest obiect"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Puteți seta orice combinație de IMAP (primirea emailurilor), SMTP (trimiterea emailurilor) și CalDAV (sincronizare calendar)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Nu poți edita această conexiune deoarece are mese urmărite.\n"
-"Dacă ai nevoie să faci modificări, te rugăm să creezi o nouă conexiune sau să anulezi sincronizarea mesei mai întâi."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

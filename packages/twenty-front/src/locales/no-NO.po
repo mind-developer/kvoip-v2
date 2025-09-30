@@ -8066,14 +8066,10 @@ msgstr "Du har ikke tillatelse til å opprette poster for dette objektet"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Du kan sette opp en hvilken som helst kombinasjon av IMAP (motta e-post), SMTP (sende e-post) og CalDAV (kalendersynkronisering)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Du kan ikke redigere denne tilkoblingen fordi den har sporede tabeller.\n"
-"Hvis du trenger å gjøre endringer, vennligst opprett en ny tilkobling eller opphev synkroniseringen av tabellene først."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

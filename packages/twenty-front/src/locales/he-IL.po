@@ -8066,14 +8066,10 @@ msgstr "אין לך הרשאה ליצור רשומות באובייקט זה"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "אתה יכול להגדיר כל קומבינציה של IMAP (קבלת דוא\"ל), SMTP (שליחת דוא\"ל), ו-CalDAV (סנכרון לוח שנה)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"אינך יכול לערוך את החיבור הזה מכיוון שיש בו טבלאות במעקב.\n"
-"אם ברצונך לבצע שינויים, צור חיבור חדש או בטל את הסינכרון של הטבלאות תחילה."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

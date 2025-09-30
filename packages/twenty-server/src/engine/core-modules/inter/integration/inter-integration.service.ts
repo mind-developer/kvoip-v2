@@ -177,7 +177,7 @@ export class InterIntegrationService {
     let message = msg`Inter validation error`.toString();
     
     if (interError.violacoes && interError.violacoes.length > 0) {
-      message += (' -' + msg`Details of the errors:\n`.toString());
+      message += (' -' + msg`Details of the errors: `.toString());
       interError.violacoes.forEach((violacao: any, index: number) => {
         message += `${violacao.propriedade}: ${violacao.razao}`;
         if (violacao.valor) {

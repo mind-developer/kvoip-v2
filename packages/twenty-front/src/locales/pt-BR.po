@@ -275,7 +275,7 @@ msgstr "Sobre este usuário"
 #. js-lingui-id: PtK3Kn
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr "Sobre este espaço de trabalho"
+msgstr "Sobre este workspace"
 
 #. js-lingui-id: g3UF2V
 #: src/modules/softphone/components/WebSoftphone.tsx
@@ -412,13 +412,13 @@ msgstr "Adicionar filtro"
 #. js-lingui-id: r/HN0t
 #: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
 msgid "Add Financial Closing"
-msgstr "Adicione o fechamento financeiro"
+msgstr "Add fechamento financeiro"
 
 #. js-lingui-id: kydAxA
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
 msgid "Add first filter"
-msgstr "Adicionar primeiro filtro"
+msgstr "Add primeiro filtro"
 
 #. js-lingui-id: B0gWuX
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -573,7 +573,7 @@ msgstr "Admin"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr "Painel de Administração"
+msgstr "Painel de Admin"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -718,7 +718,7 @@ msgstr "Todos os objetos padrão"
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "All workspace members already have this role"
-msgstr "Todos os membros do espaço de trabalho já têm este papel"
+msgstr "Todos os membros do workspace já têm este papel"
 
 #. js-lingui-id: MLmnB2
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -801,7 +801,7 @@ msgstr "Qualquer campo :"
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
-msgstr "Qualquer pessoa com um endereço de email nesses domínios pode inscrever-se neste espaço de trabalho."
+msgstr "Qualquer pessoa com um endereço de email nesses domínios pode inscrever-se neste workspace."
 
 #. js-lingui-id: OZtEcz
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1160,7 +1160,7 @@ msgstr "Breve explicação deste campo de saída"
 #. js-lingui-id: s5hKZS
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Woulz, you agree to the"
-msgstr ""
+msgstr "Ao usar o Woulz, você concorda com os"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1350,7 +1350,7 @@ msgstr "Verifique seus emails"
 #. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Woulz team"
-msgstr ""
+msgstr "Erro na sessão de checkout. Tente novamente ou entre em contato com a equipe Woulz."
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1651,7 +1651,7 @@ msgstr "Confirmar exclusão do papel {roleName}? Isso não pode ser desfeito. To
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
-msgstr "Ligar uma nova conta ao seu espaço de trabalho"
+msgstr "Ligar uma nova conta ao seu workspace"
 
 #. js-lingui-id: dUcoLZ
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1887,7 +1887,7 @@ msgstr "Crie um workflow e volte aqui para ver as suas versões"
 #. js-lingui-id: Hn5erC
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
-msgstr "Criar Espaço de Trabalho"
+msgstr "Criar Workspace"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -1966,12 +1966,12 @@ msgstr "Criar Webhook"
 #: src/utils/title-utils.ts
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
-msgstr "Criar Espaço de Trabalho"
+msgstr "Criar Workspace"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
-msgstr "Crie seu espaço de trabalho"
+msgstr "Crie seu workspace"
 
 #. js-lingui-id: YeUQpx
 #: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
@@ -1986,7 +1986,7 @@ msgstr "Criando seu modelo de dados..."
 #. js-lingui-id: YO4SdK
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your workspace"
-msgstr "Criando seu espaço de trabalho"
+msgstr "Criando seu workspace"
 
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2068,7 +2068,7 @@ msgstr "Personalizar campos"
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
-msgstr "Personalize a segurança do seu espaço de trabalho"
+msgstr "Personalize a segurança do seu workspace"
 
 #. js-lingui-id: w9VTXG
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2269,7 +2269,7 @@ msgstr "Definir papéis de usuário e níveis de acesso"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
-msgstr "Defina o que será visível para outros usuários no seu espaço de trabalho"
+msgstr "Defina o que será visível para outros usuários no seu workspace"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -2410,12 +2410,12 @@ msgstr "Eliminar workflows"
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr "Eliminar espaço de trabalho"
+msgstr "Eliminar workspace"
 
 #. js-lingui-id: mk2Ygs
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr "Eliminar todo o seu espaço de trabalho"
+msgstr "Eliminar todo o seu workspace"
 
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3074,7 +3074,7 @@ msgstr "Erro ao alterar o plano, tente agear mais tarde."
 #. js-lingui-id: hh9+iQ
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Woulz team."
-msgstr ""
+msgstr "Erro ao encerrar o período de teste. Entre em contato com a equipe da Woulz."
 
 #. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -3497,7 +3497,7 @@ msgstr "Filtros"
 #: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Financial Closing"
-msgstr "Fechamento Financeiro"
+msgstr "Fechamento"
 
 #. js-lingui-id: cZKC+i
 #: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
@@ -3575,12 +3575,12 @@ msgstr "Fluxo atualizado com sucesso!"
 #. js-lingui-id: S5mpO/
 #: src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts
 msgid "Focus NFe integration created successfully!"
-msgstr "Foco a integração da NFE criada com sucesso!"
+msgstr ""
 
 #. js-lingui-id: 3admaT
 #: src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
 msgid "Focus NFe integration updated successfully!"
-msgstr "Foco a integração do NFE atualizada com sucesso!"
+msgstr "Integração Focus NFe atualizada com sucesso!"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
@@ -3664,7 +3664,7 @@ msgstr "Alemão"
 #. js-lingui-id: NXEW3h
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Get the most out of your workspace by inviting your team."
-msgstr "Tire o máximo partido do seu espaço de trabalho convidando a sua equipa."
+msgstr "Tire o máximo partido do seu workspace convidando a sua equipa."
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -3724,7 +3724,7 @@ msgstr "Ir para workflows"
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
 msgid "Grant access to your workspace so we can troubleshoot problems."
-msgstr "Conceda acesso ao seu espaço de trabalho para que possamos solucionar problemas."
+msgstr "Conceda acesso ao seu workspace para que possamos solucionar problemas."
 
 #. js-lingui-id: MM43i1
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -4088,7 +4088,7 @@ msgstr "Inter integração atualizada com sucesso!"
 #. js-lingui-id: ntgzzG
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
-msgstr "Interaja com os dados do seu espaço de trabalho"
+msgstr "Interaja com os dados do seu workspace"
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4151,7 +4151,7 @@ msgstr "Código de verificação inválido. Por favor, tente novamente."
 #. js-lingui-id: K8XJhc
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr "Espaço de trabalho inválido"
+msgstr "Workspace inválido"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
@@ -4573,7 +4573,7 @@ msgstr "Toras de execução"
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr "Procure usuários e gerencie suas flags de recurso do espaço de trabalho ou personifique-os."
+msgstr "Procure usuários e gerencie suas flags de recurso do workspace ou personifique-os."
 
 #. js-lingui-id: GPSwzy
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -4866,7 +4866,7 @@ msgstr "Nome da sua chave API"
 #. js-lingui-id: J7w8lI
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
-msgstr "Nome do seu espaço de trabalho"
+msgstr "Nome do seu workspace"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
@@ -5024,7 +5024,7 @@ msgstr "Nenhum {objectNameSingular}"
 #. js-lingui-id: pbIf3V
 #: src/modules/settings/integrations/focus-nfe/hooks/useCreateIssuer.ts
 msgid "No active workspace selected."
-msgstr "Sem espaço de trabalho ativo selecionado."
+msgstr "Sem workspace ativo selecionado."
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -5201,7 +5201,7 @@ msgstr "Não há dados de métricas disponíveis"
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
-msgstr "Nenhum modelo disponível. Por favor, configure modelos de IA nas configurações do seu espaço de trabalho."
+msgstr "Nenhum modelo disponível. Por favor, configure modelos de IA nas configurações do seu workspace."
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -5508,7 +5508,7 @@ msgstr "Outros"
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
-msgstr "Nossa equipe pode ajudar a configurar seu espaço de trabalho de acordo com suas necessidades específicas e fluxos de trabalho."
+msgstr "Nossa equipe pode ajudar a configurar seu workspace de acordo com suas necessidades específicas e fluxos de trabalho."
 
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -5758,7 +5758,7 @@ msgstr "Pré-ilimitado"
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
-msgstr "Preenchendo os dados do seu espaço de trabalho..."
+msgstr "Preenchendo os dados do seu workspace..."
 
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
@@ -6586,7 +6586,7 @@ msgstr "Detalhes do Provedor de Serviço"
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr "Defina um papel padrão para este espaço de trabalho"
+msgstr "Defina um papel padrão para este workspace"
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -6606,7 +6606,7 @@ msgstr "Defina a visibilidade do e-mail, gere a sua lista de bloqueio e muito ma
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
-msgstr "Definir preferências globais do espaço de trabalho"
+msgstr "Definir preferências globais do workspace"
 
 #. js-lingui-id: qNbuWB
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -6670,7 +6670,7 @@ msgstr "Sétimo"
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
-msgstr "Partilhe este link para convidar usuários a juntarem-se ao seu espaço de trabalho"
+msgstr "Partilhe este link para convidar usuários a juntarem-se ao seu workspace"
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -7307,7 +7307,7 @@ msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente o se
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
-msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente todo o seu espaço de trabalho. <0/> Por favor, digite o seu e-mail para confirmar."
+msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente todo o seu workspace. <0/> Por favor, digite o seu e-mail para confirmar."
 
 #. js-lingui-id: igSFzI
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
@@ -7967,32 +7967,32 @@ msgstr "Fluxos de trabalho"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
-msgstr "Espaço de trabalho"
+msgstr "Workspace"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
-msgstr "Eliminação do espaço de trabalho"
+msgstr "Eliminação do workspace"
 
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr "Domínio do espaço de trabalho"
+msgstr "Domínio do workspace"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr "Informações do espaço de trabalho"
+msgstr "Informações do workspace"
 
 #. js-lingui-id: Y0Fj4S
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
-msgstr "Logo do espaço de trabalho"
+msgstr "Logo do workspace"
 
 #. js-lingui-id: CozWO1
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
-msgstr "Nome do espaço de trabalho"
+msgstr "Nome do workspace"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -8049,12 +8049,12 @@ msgstr "Ontem"
 #. js-lingui-id: lWUeEt
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to the workspace {workspaceDisplayName}"
-msgstr "Você já pertence ao espaço de trabalho {workspaceDisplayName}"
+msgstr "Você já pertence ao workspace {workspaceDisplayName}"
 
 #. js-lingui-id: Q1CQiy
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to this workspace"
-msgstr "Você já pertence a este espaço de trabalho"
+msgstr "Você já pertence a este workspace"
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -8066,14 +8066,10 @@ msgstr "Você não tem permissão para criar registros para este objeto"
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Você pode configurar qualquer combinação de IMAP (recepção de e-mails), SMTP (envio de e-mails) e CalDAV (sincronização de calendário)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Você não pode editar esta conexão porque ela tem tabelas rastreadas.\n"
-"Se precisar fazer alterações, por favor, crie uma nova conexão ou desincronize as tabelas primeiro."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8128,7 +8124,7 @@ msgstr "O seu nome como será exibido no aplicativo"
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
-msgstr "O seu Espaço de Trabalho"
+msgstr "O seu Workspace"
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -8143,4 +8139,4 @@ msgstr "Seu workspace não possui uma assinatura ativa. Por favor, entre em cont
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
-msgstr "O seu espaço de trabalho será desativado"
+msgstr "O seu workspace será desativado"

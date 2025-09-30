@@ -8068,12 +8068,10 @@ msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφ
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Μπορείτε να ρυθμίσετε οποιονδήποτε συνδυασμό IMAP (λήψη email), SMTP (αποστολή email) και CalDAV (συγχρονισμός ημερολογίου)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Δεν μπορείτε να επεξεργαστείτε αυτή τη σύνδεση γιατί έχει καταγεγραμμένους πίνακες. Αν χρειαστεί να κάνετε αλλαγές, δημιουργήστε μια νέα σύνδεση ή αποσυνδέστε πρώτα τους πίνακες."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
+msgstr ""
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
