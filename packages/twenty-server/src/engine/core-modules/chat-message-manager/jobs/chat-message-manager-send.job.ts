@@ -28,7 +28,7 @@ export class SendChatMessageJob {
     await this[data.chatType](data);
   }
 
-  async whatsApp(data: SendChatMessageQueueData) {
+  async whatsapp(data: SendChatMessageQueueData) {
     console.log('sending', data.sendMessageInput.message);
     const d: [
       Omit<SendWhatsAppMessageInput | SendWhatsAppTemplateInput, 'personId'>,

@@ -20,7 +20,7 @@ export class WhatsappEmmitWaitingChatsCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.chargeQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly whatsAppService: WhatsAppService,
+    private readonly whatsappService: WhatsAppService,
   ) {}
 
   @Process(WhatsappEmmitWaitingChatsCronJob.name)
@@ -32,7 +32,7 @@ export class WhatsappEmmitWaitingChatsCronJob {
     this.logger.warn(`Checking whatsapp chats to change status emmit`);
 
     const whatsappChatsToReassignMap =
-      (await this.whatsAppService.getWorkspaceWhatsappChatsMapToReassign()) ??
+      (await this.whatsappService.getWorkspaceWhatsappChatsMapToReassign()) ??
       {};
 
     const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);

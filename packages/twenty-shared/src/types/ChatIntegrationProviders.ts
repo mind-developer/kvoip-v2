@@ -1,5 +1,5 @@
 export enum ChatIntegrationProvider {
-  WHATSAPP = 'whatsApp',
+  WHATSAPP = 'whatsapp',
   MESSENGER = 'messenger',
   TELEGRAM = 'telegram',
 }

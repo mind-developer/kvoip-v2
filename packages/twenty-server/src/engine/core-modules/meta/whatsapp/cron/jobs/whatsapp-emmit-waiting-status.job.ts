@@ -18,12 +18,12 @@ export type WhatsappEmmitWaitingStatusJobProps = {
 export class WhatsappEmmitWaitingStatusJob {
   private readonly logger = new Logger(WhatsappEmmitWaitingStatusJob.name);
 
-  constructor(private readonly whatsAppService: WhatsAppService) {}
+  constructor(private readonly whatsappService: WhatsAppService) {}
 
   @Process(WhatsappEmmitWaitingStatusJob.name)
   async handle(data: WhatsappEmmitWaitingStatusJobProps): Promise<void> {
     this.logger.warn(`Change chat status ${data.docId}`);
 
-    await this.whatsAppService.handleChatsWaitingStatus(data);
+    await this.whatsappService.handleChatsWaitingStatus(data);
   }
 }

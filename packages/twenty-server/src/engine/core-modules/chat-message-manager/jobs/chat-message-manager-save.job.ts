@@ -26,7 +26,7 @@ export class SaveChatMessageJob {
     await this[data.chatType](data);
   }
 
-  async whatsApp(data: SaveChatMessageJobData) {
+  async whatsapp(data: SaveChatMessageJobData) {
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         data.workspaceId,
@@ -65,7 +65,7 @@ export class SaveChatMessageJob {
     const fullName = person.name?.firstName + ' ' + person.name?.lastName;
     if (!data.saveMessageInput.id)
       throw new Error('Cannot save message without id.');
-    const payloadParams: [ChatIntegrationSaveMessageInput['whatsApp'], string] =
+    const payloadParams: [ChatIntegrationSaveMessageInput['whatsapp'], string] =
       [data.saveMessageInput, data.saveMessageInput.id];
 
     switch (data.saveMessageInput.type) {
@@ -79,7 +79,7 @@ export class SaveChatMessageJob {
       //more cases here in the future if needed
       default:
         this.logger.log(
-          '(whatsApp): Saving message:',
+          '(whatsapp): Saving message:',
           JSON.stringify(
             constructWhatsAppFirebasePayload(
               data.saveMessageInput,

@@ -6,7 +6,7 @@ import {
 import { ChatIntegrationSaveMessageInput } from 'twenty-shared/types';
 
 export function constructWhatsAppFirebasePayload(
-  input: ChatIntegrationSaveMessageInput['whatsApp'],
+  input: ChatIntegrationSaveMessageInput['whatsapp'],
   personId: string,
   fullName: string,
   ppUrl: string | null,

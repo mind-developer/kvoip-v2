@@ -18,12 +18,12 @@ export type WhatsappEmmitResolvedchatsJobProps = {
 export class WhatsappEmmitResolvedchatsJob {
   private readonly logger = new Logger(WhatsappEmmitResolvedchatsJob.name);
 
-  constructor(private readonly whatsAppService: WhatsAppService) {}
+  constructor(private readonly whatsappService: WhatsAppService) {}
 
   @Process(WhatsappEmmitResolvedchatsJob.name)
   async handle(data: WhatsappEmmitResolvedchatsJobProps): Promise<void> {
     this.logger.warn(`Change chat visibility ${data.docId}`);
 
-    await this.whatsAppService.handleResolvedChatsVisibility(data);
+    await this.whatsappService.handleResolvedChatsVisibility(data);
   }
 }
