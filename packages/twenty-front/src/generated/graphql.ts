@@ -1474,6 +1474,7 @@ export type Inbox = {
   __typename: 'Inbox';
   id: Scalars['UUID'];
   name: string;
+  icon: string;
   whatsappIntegration: WhatsappIntegration;
 };
 

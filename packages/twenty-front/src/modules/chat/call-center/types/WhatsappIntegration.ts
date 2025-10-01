@@ -10,6 +10,7 @@ type IWhatsappIntegration = {
   sla: number;
   apiType: string;
   chatbotId: string;
+  inboxId?: string;
 };
 
 export type CreateWhatsappIntegrationInput = Omit<

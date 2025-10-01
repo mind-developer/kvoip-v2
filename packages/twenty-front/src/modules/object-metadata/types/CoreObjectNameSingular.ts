@@ -49,5 +49,6 @@ export enum CoreObjectNameSingular {
   Sector = 'sector',
   Agent = 'agent',
   Inbox = 'inbox',
+  InboxTarget = 'inboxTarget',
   WhatsappIntegration = 'whatsappIntegration',
 }

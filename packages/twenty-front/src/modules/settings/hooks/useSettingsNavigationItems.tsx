@@ -36,7 +36,9 @@ import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
 import {
+  IconHeadset,
   IconIdBadge2,
+  IconInbox,
   IconMessageCircleCog,
   IconRobot,
 } from '@tabler/icons-react';
@@ -136,18 +138,24 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: 'Service Center',
           path: SettingsPath.ServiceCenter,
-          Icon: IconPhone,
+          Icon: IconHeadset,
           subItems: [
             {
-              label: 'Agents',
+              label: t`Agents`,
               path: SettingsPath.ServiceCenterAgents,
               Icon: IconUsers,
               indentationLevel: 2,
             },
             {
-              label: 'Sectors',
+              label: t`Sectors`,
               path: SettingsPath.ServiceCenterSectors,
               Icon: IconIdBadge2,
+              indentationLevel: 2,
+            },
+            {
+              label: t`Inboxes`,
+              path: SettingsPath.ServiceCenterInboxes,
+              Icon: IconInbox,
               indentationLevel: 2,
             },
             {

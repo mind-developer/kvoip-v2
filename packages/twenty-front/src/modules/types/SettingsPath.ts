@@ -32,6 +32,11 @@ export enum SettingsPath {
   EditTelephony = 'service-center/telephony/:telephonySlug/edit',
   ServiceCenterServiceLevel = 'service-center/sla',
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
+  ServiceCenterInboxes = 'service-center/inboxes',
+  ServiceCenterNewInbox = 'service-center/inboxes/new',
+  Chatbots = 'chatbots/',
+  ChatbotsCreate = 'chatbots/create',
+  ChatbotFlow = 'chatbots/flow/:id',
 
   FinancialClosing = 'financial-closing',
   FinancialClosingNew = 'financial-closing/new',
@@ -94,7 +99,4 @@ export enum SettingsPath {
   PageLayout = 'page-layout',
   PageLayoutNew = 'page-layout/new',
   PageLayoutEdit = 'page-layout/:id',
-  Chatbots = 'chatbots/',
-  ChatbotsCreate = 'chatbots/create',
-  ChatbotFlow = 'chatbots/flow/:id',
 }
