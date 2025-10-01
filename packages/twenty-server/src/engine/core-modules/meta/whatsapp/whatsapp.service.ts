@@ -45,10 +45,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import {
-  ChatbotStatus,
-  ChatbotWorkspaceEntity,
-} from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
@@ -231,22 +228,20 @@ export class WhatsAppService {
 
     if (
       whatsappDoc?.status === statusEnum.Waiting &&
-      !whatsappDoc.lastMessage.fromMe
+      !whatsappDoc.lastMessage.fromMe &&
+      whatsappIntegration
     ) {
-      const chatbot = await (
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
+      const inbox = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<InboxWorkspaceEntity>(
           workspaceId,
-          'chatbot',
+          'inbox',
           { shouldBypassPermissionChecks: true },
         )
-      ).findOne({
-        where: {
-          id: whatsappIntegration?.chatbotId ?? undefined,
-          status: ChatbotStatus.ACTIVE,
-        },
-      });
+      ).findOneBy({ id: whatsappIntegration?.inbox?.id });
 
-      if (!whatsappIntegration?.chatbotId || !chatbot) return;
+      const chatbot = inbox?.chatbot;
+
+      if (!chatbot?.id) return;
       const chatbotKey =
         whatsappDoc.integrationId + '_' + whatsappDoc.client.phone;
       let executor = this.ChatbotRunnerService.getExecutor(chatbotKey);

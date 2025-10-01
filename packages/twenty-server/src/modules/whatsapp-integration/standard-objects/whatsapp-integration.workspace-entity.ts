@@ -17,7 +17,6 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WHATSAPP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
 
 @WorkspaceEntity({
@@ -105,25 +104,10 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   disabled: boolean;
 
   @WorkspaceRelation({
-    standardId: WHATSAPP_STANDARD_FIELD_IDS.chatbot,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Chatbot`,
-    description: msg`Integration linked to the Chatbot`,
-    icon: 'IconPhone',
-    inverseSideTarget: () => ChatbotWorkspaceEntity,
-    inverseSideFieldKey: 'integrationId',
-  })
-  @WorkspaceIsNullable()
-  chatbot: Relation<ChatbotWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('chatbot')
-  chatbotId: string | null;
-
-  @WorkspaceRelation({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.inbox,
     type: RelationType.MANY_TO_ONE,
     label: msg`Inbox`,
-    description: msg`Inbox linked to the Chatbot`,
+    description: msg`Inbox linked to this integration`,
     icon: 'IconPhone',
     inverseSideTarget: () => InboxWorkspaceEntity,
     inverseSideFieldKey: 'whatsappIntegration',
@@ -146,7 +130,6 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: any;
-
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.apiType,
     type: FieldMetadataType.TEXT,

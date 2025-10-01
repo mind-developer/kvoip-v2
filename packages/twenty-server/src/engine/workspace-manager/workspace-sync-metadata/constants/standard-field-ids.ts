@@ -357,14 +357,17 @@ export const FOCUS_NFE_STANDARD_FIELD_ID = {
 
 export const SECTOR_FIELD_IDS = {
   name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
+  icon: 'e8b8da42-fd66-4ab3-abb1-15a5aafc5a39',
   agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
 };
 
 export const INBOX_FIELD_IDS = {
   name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
+  icon: '3689ef1d-0feb-49ab-ad8b-b7291f3de250',
   inboxTargets: '720b9068-41c6-451b-92a1-feee79ccc3b3',
   whatsappIntegration: '72b41a26-af1f-4a79-8640-d71a41731487',
+  chatbot: '20258272-136f-4f83-b46d-8520824811ac',
 };
 
 export const INBOX_TARGET_FIELD_IDS = {
@@ -378,6 +381,7 @@ export const AGENT_FIELD_IDS = {
   sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
   inboxTargets: '4be771fa-a3b4-4947-8ebd-50b73000f3bd',
   workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
+  timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
 };
 
 export const INVOICE_FIELD_IDS = {
@@ -506,6 +510,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
   sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
+  agent: '45194ac8-73e8-4e76-85f9-a1e8f7a4cd1e',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -819,8 +824,8 @@ export const CHATBOT_STANDARD_FIELD_IDS = {
   favorites: '045ca203-42d5-4cd9-a320-624e0c76ba25',
   timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
-  integrationId: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
+  inboxes: 'fa8546ab-020d-46ef-8182-39186104fce2',
 };
 
 export const WHATSAPP_STANDARD_FIELD_IDS = {

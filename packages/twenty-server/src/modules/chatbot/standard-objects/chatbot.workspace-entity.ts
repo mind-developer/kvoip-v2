@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -12,17 +11,16 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
 
 export enum ChatbotStatus {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
-  DEACTIVATED = 'DEACTIVATED',
+  DISABLED = 'DISABLED',
 }
 
 const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
@@ -39,7 +37,7 @@ const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
     color: 'green',
   },
   {
-    value: ChatbotStatus.DEACTIVATED,
+    value: ChatbotStatus.DISABLED,
     label: 'Deactivated',
     position: 2,
     color: 'gray',
@@ -78,17 +76,6 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   status: ChatbotStatus | null;
 
   @WorkspaceField({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.position,
-    type: FieldMetadataType.POSITION,
-    label: msg`Position`,
-    description: msg`Chatbot record position`,
-    icon: 'IconHierarchy2',
-    defaultValue: 0,
-  })
-  @WorkspaceIsSystem()
-  position: number;
-
-  @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -96,21 +83,6 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
-
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.integrationId,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Integrations`,
-    description: msg`Integration linked to the charge`,
-    icon: 'IconBrandStackshare',
-    //TODO: this should be platform-agnostic
-    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'chatbot',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  // @WorkspaceIsNullable()
-  //TODO: this should be platform-agnostic
-  integrationId: Relation<WhatsappIntegrationWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.nodes,
@@ -140,4 +112,15 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last saved viewport position`,
   })
   viewport: { [key: string]: any };
+
+  @WorkspaceRelation({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Inbox`,
+    description: msg`Inboxes assigned to this chatbot`,
+    icon: 'IconInbox',
+    inverseSideTarget: () => InboxWorkspaceEntity,
+  })
+  @WorkspaceIsNullable()
+  inboxes: Relation<InboxWorkspaceEntity[]> | null;
 }

@@ -11,6 +11,7 @@ import { AGENT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-met
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { InboxTargetWorkspaceEntity } from 'src/modules/inbox-target/standard-objects/inbox-target.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -80,4 +81,14 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceRelation({
+    standardId: AGENT_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Agent timeline activities`,
+    icon: 'IconArrowUpRight',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+  })
+  @WorkspaceIsNullable()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]> | null;
 }

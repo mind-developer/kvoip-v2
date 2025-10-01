@@ -40,8 +40,8 @@ export class InboxTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: INBOX_TARGET_FIELD_IDS.agent,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Inboxes`,
-    description: msg`Inboxes assigned to this agent`,
+    label: msg`Agents`,
+    description: msg`Agents related to this inbox target`,
     icon: 'IconInbox',
     inverseSideTarget: () => AgentWorkspaceEntity,
     inverseSideFieldKey: 'inboxTargets',

@@ -26,6 +26,15 @@ import { Relation } from 'typeorm';
 @WorkspaceIsSearchable()
 export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
+    standardId: SECTOR_FIELD_IDS.icon,
+    type: FieldMetadataType.TEXT,
+    label: msg`Icon`,
+    description: msg`Sector icon`,
+    icon: 'IconPencil',
+  })
+  icon: string;
+
+  @WorkspaceField({
     standardId: SECTOR_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,

@@ -6,9 +6,11 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { INBOX_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { InboxTargetWorkspaceEntity } from 'src/modules/inbox-target/standard-objects/inbox-target.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -25,6 +27,15 @@ import { Relation } from 'typeorm';
 })
 @WorkspaceIsSystem()
 export class InboxWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: INBOX_FIELD_IDS.icon,
+    type: FieldMetadataType.TEXT,
+    label: msg`Icon`,
+    description: msg`Inbox icon`,
+    icon: 'IconPencil',
+  })
+  icon: string;
+
   @WorkspaceField({
     standardId: INBOX_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -53,9 +64,24 @@ export class InboxWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`WhatsApp account assigned to this inbox`,
     icon: 'IconBrandWhatsapp',
     inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'inbox',
   })
   @WorkspaceIsNullable()
   whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity>;
   // add more integrations here when necessary. one inbox can hold multiple chat providers
+
+  @WorkspaceRelation({
+    standardId: INBOX_FIELD_IDS.chatbot,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Inboxes`,
+    description: msg`Chatbots assigned to this agent`,
+    icon: 'IconInbox',
+    inverseSideTarget: () => ChatbotWorkspaceEntity,
+    inverseSideFieldKey: 'inboxes',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  chatbot: Relation<ChatbotWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string | null;
 }
