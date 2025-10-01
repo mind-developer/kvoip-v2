@@ -26,7 +26,9 @@ import SettingsServiceCenterCreateChatbot from '~/pages/settings/service-center/
 import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
 import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
 import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
+import { SettingsServiceCenterInboxes } from '~/pages/settings/service-center/SettingsServiceCenterInboxes';
 import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
+import { SettingsServiceCenterNewInbox } from '~/pages/settings/service-center/SettingsServiceCenterNewInbox';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
 import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterNewTelephonyExtension';
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
@@ -573,6 +575,14 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ChatbotsCreate}
         element={<SettingsServiceCenterCreateChatbot />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterInboxes}
+        element={<SettingsServiceCenterInboxes />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewInbox}
+        element={<SettingsServiceCenterNewInbox />}
       />
       <Route
         path={SettingsPath.ServiceCenterEditSector}

@@ -1,26 +1,28 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { CreateAgent } from '@/settings/service-center/agents/types/Agent';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Dispatch, SetStateAction } from 'react';
-import { IconUser } from 'twenty-ui/display';
+import { H2Title, IconUser, useIcons } from 'twenty-ui/display';
 import { SelectOption, Toggle } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { Inbox, Sector, WorkspaceMember } from '~/generated/graphql';
 
 const StyledForm = styled.div`
-  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   align-items: center;
   justify-content: center;
 `;
-const StyledFormContainer = styled.div`
-  /* margin: ${({ theme }) => theme.spacing(0, 8, 2)}; */
+
+const StyledFormRow = styled(Section)`
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 export default function SettingsServiceCenterAgentAboutForm({
@@ -45,6 +47,8 @@ export default function SettingsServiceCenterAgentAboutForm({
     (workspaceMember) => !workspaceMember.agentId,
   );
 
+  const { getIcon } = useIcons();
+
   const memberOptions =
     assignableWorkspaceMembers.map(
       (member) =>
@@ -60,6 +64,7 @@ export default function SettingsServiceCenterAgentAboutForm({
         ({
           label: sector.name,
           value: sector.id,
+          Icon: getIcon(sector.icon),
         }) as SelectOption,
     ) ?? [];
   const inboxOptions =
@@ -73,47 +78,54 @@ export default function SettingsServiceCenterAgentAboutForm({
 
   return (
     <SettingsPageContainer>
-      <StyledForm>
-        <FormSelectFieldInput
-          defaultValue={''}
-          label={t`Workspace Member`}
-          options={memberOptions}
-          onChange={(s) => {
-            if (!s) return;
-            setAgent({ ...agent, workspaceMemberId: s });
-          }}
+      <div style={{ overflow: 'visible' }}>
+        <H2Title
+          title={t`About`}
+          description={t`Define this agent's properties`}
         />
-        <FormSelectFieldInput
-          defaultValue={''}
-          label={t`Sector`}
-          options={sectorOptions}
-          onChange={(s) => {
-            if (!s) return;
-            setAgent({ ...agent, sectorId: s });
-          }}
-        />
-        <FormSelectFieldInput
-          defaultValue={''}
-          label={t`Inbox`}
-          options={inboxOptions}
-          onChange={(s) => {
-            if (!s) return;
-            setAgent({ ...agent, inboxId: s });
-          }}
-        />
-      </StyledForm>
-      <div
-        style={{
-          display: 'flex',
-          gap: 16,
-          alignItems: 'center',
-        }}
-      >
-        <Toggle
-          value={agent.isAdmin}
-          onChange={() => setAgent({ ...agent, isAdmin: !agent.isAdmin })}
-        />
-        <p>Administrator</p>
+        <StyledForm>
+          <StyledFormRow>
+            <FormSelectFieldInput
+              defaultValue={''}
+              label={t`Workspace Member`}
+              options={memberOptions}
+              onChange={(s) => {
+                if (!s) return;
+                setAgent({ ...agent, workspaceMemberId: s });
+              }}
+            />
+            <FormSelectFieldInput
+              defaultValue={''}
+              label={t`Sector`}
+              options={sectorOptions}
+              onChange={(s) => {
+                if (!s) return;
+                setAgent({ ...agent, sectorId: s });
+              }}
+            />
+          </StyledFormRow>
+          <StyledFormRow>
+            <FormMultiSelectFieldInput
+              defaultValue={''}
+              label={t`Inboxes`}
+              options={inboxOptions}
+              onChange={(s) => {
+                if (!s) return;
+                setAgent({
+                  ...agent,
+                  inboxes: typeof s === 'string' ? [s] : s,
+                });
+              }}
+            />
+          </StyledFormRow>
+          <StyledFormRow>
+            <Toggle
+              value={agent.isAdmin}
+              onChange={() => setAgent({ ...agent, isAdmin: !agent.isAdmin })}
+            />
+            <p style={{ marginLeft: 4 }}>Administrator</p>
+          </StyledFormRow>
+        </StyledForm>
       </div>
     </SettingsPageContainer>
   );

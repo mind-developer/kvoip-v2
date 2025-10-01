@@ -1,7 +1,7 @@
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from '@tabler/icons-react';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -10,15 +10,11 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export default function SettingsServiceCenterChatbots() {
-  const chatbots = useFindManyRecords({ objectNameSingular: 'chatbot' });
-  console.log(chatbots);
+  const { t } = useLingui();
   return (
     <SubMenuTopBarContainer
+      title={t`Chatbots`}
       links={[
-        {
-          href: getSettingsPath(SettingsPath.ServiceCenter),
-          children: 'Workspace',
-        },
         {
           href: getSettingsPath(SettingsPath.ServiceCenter),
           children: 'Service Center',
@@ -39,7 +35,10 @@ export default function SettingsServiceCenterChatbots() {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Chatbots" description={'Manage all chatbots here.'} />
+          <H2Title
+            title={t`Manage chatbots`}
+            description={t`Chatbots will automatically answer messages as soon as they reach their assigned inboxes. Chats already in attendance will be ignored.`}
+          />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

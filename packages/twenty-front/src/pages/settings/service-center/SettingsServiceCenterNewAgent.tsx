@@ -13,34 +13,39 @@ import {
   CreateAgent,
 } from '@/settings/service-center/agents/types/Agent';
 import SettingsServiceCenterAgentAboutForm from '@/settings/workspace_service-center/SettingsServiceCenterAgentAboutForm';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServiceCenterNewAgent = () => {
   const navigate = useNavigate();
+
+  const { enqueueInfoSnackBar } = useSnackBar();
 
   const [agent, setAgent] = useState<CreateAgent>({
     isAdmin: false,
     isActive: false,
     sectorId: null,
     workspaceMemberId: null,
-    inboxId: null,
+    inboxes: null,
   });
 
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const { createOneRecord } = useCreateOneRecord<
+  const { createOneRecord: createOneAgent } = useCreateOneRecord<
     Agent & { id: string; __typename: string }
   >({ objectNameSingular: CoreObjectNameSingular.Agent });
+  const { createOneRecord: createOneInboxTarget } = useCreateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.InboxTarget,
+  });
   const onSave = async () => {
     if (!agent.workspaceMemberId || !agent.workspaceMemberId || !agent.sectorId)
       throw new Error('Could not save agent');
-    const createdAgent = await createOneRecord({
+    const createdAgent = await createOneAgent({
       isActive: agent.isActive,
       isAdmin: agent.isActive,
       sectorId: agent.sectorId,
@@ -50,6 +55,18 @@ export const SettingsServiceCenterNewAgent = () => {
       idToUpdate: agent.workspaceMemberId,
       updateOneRecordInput: { agentId: createdAgent.id },
     });
+
+    if (createdAgent.id && agent.inboxes && agent.inboxes.length > 0) {
+      agent.inboxes.forEach((inboxId) => {
+        createOneInboxTarget({
+          agentId: createdAgent.id,
+          inboxId,
+        });
+      });
+    }
+
+    enqueueInfoSnackBar({ message: `Agent successfully created.` });
+    navigate(getSettingsPath(SettingsPath.ServiceCenterAgents));
   };
 
   const settingsServiceCenterAgentsPagePath = getSettingsPath(
@@ -62,7 +79,7 @@ export const SettingsServiceCenterNewAgent = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
-            !agent.workspaceMemberId || !agent.sectorId || !agent.inboxId
+            !agent.workspaceMemberId || !agent.sectorId || !agent.inboxes
           }
           onSave={onSave}
           onCancel={() => navigate(settingsServiceCenterAgentsPagePath)}
@@ -76,12 +93,12 @@ export const SettingsServiceCenterNewAgent = () => {
         { children: 'New Agent' },
       ]}
     >
-      <Section>
+      <div style={{ overflow: 'visible' }}>
         <SettingsServiceCenterAgentAboutForm
           agent={agent}
           setAgent={setAgent}
         />
-      </Section>
+      </div>
     </SubMenuTopBarContainer>
   );
 };

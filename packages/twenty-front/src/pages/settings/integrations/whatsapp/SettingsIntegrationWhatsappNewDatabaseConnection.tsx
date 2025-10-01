@@ -15,7 +15,6 @@ import { Section } from 'twenty-ui/layout';
 
 import axios from 'axios';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -32,6 +31,7 @@ export const settingsIntegrationWhatsappConnectionFormSchema = z.object({
   appId: z.string(),
   appKey: z.string(),
   apiType: z.string().min(1, 'Selecione um tipo de API'),
+  inboxToAssignTo: z.string().min(1, 'Inbox'),
 });
 
 export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
@@ -41,7 +41,6 @@ export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
 export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const tokenPair = useRecoilValue(tokenPairState);
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(

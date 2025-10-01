@@ -23,10 +23,9 @@ export const SettingsServiceCenter = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={''}
+            title={'General'}
             description={'Manage all agents and sectors here.'}
           />
-
           <SettingsServiceCenterSection />
         </Section>
       </SettingsPageContainer>
