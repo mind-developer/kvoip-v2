@@ -2,13 +2,9 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Select } from '@/ui/input/components/Select';
-import { IconInbox } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { SelectOption } from 'twenty-ui/input';
-import { Inbox } from '~/generated/graphql';
 import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
@@ -33,7 +29,6 @@ const apiTypeOptions: SelectOption<string>[] = [
 ];
 
 const getFormFields = (
-  inboxes: Inbox[],
 ): {
   name: keyof SettingsIntegrationWhatsappConnectionFormValues;
   label: string;
@@ -51,22 +46,6 @@ const getFormFields = (
       placeholder: 'Select API Type',
       isSelect: true,
       options: apiTypeOptions,
-      showForBaileys: true,
-      showForMetaAPI: true,
-    },
-    {
-      name: 'inboxToAssignTo',
-      placeholder: 'Inbox',
-      label: 'Assign to Inbox',
-      isSelect: true,
-      options:
-        inboxes.length > 0
-          ? inboxes.map((inbox) => ({
-              label: inbox.name,
-              value: inbox.id,
-              Icon: IconInbox,
-            }))
-          : [{ label: 'You have no inboxes set up.', value: '' }],
       showForBaileys: true,
       showForMetaAPI: true,
     },
@@ -127,11 +106,7 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
   const { control, watch, setValue } =
     useFormContext<SettingsIntegrationWhatsappConnectionFormValues>();
   const selectedApiType = watch('apiType');
-  const [inbox, selectedInbox] = useState<Inbox>();
-  const { records: inboxes } = useFindManyRecords<Inbox>({
-    objectNameSingular: CoreObjectNameSingular.Inbox,
-  });
-  const formFields = getFormFields(inboxes);
+  const formFields = getFormFields();
   //
   // Auto-preenchimento dos campos ocultos para Baileys
   useEffect(() => {

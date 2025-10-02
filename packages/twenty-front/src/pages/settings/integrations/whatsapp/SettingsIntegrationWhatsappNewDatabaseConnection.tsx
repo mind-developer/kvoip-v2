@@ -31,7 +31,6 @@ export const settingsIntegrationWhatsappConnectionFormSchema = z.object({
   appId: z.string(),
   appKey: z.string(),
   apiType: z.string().min(1, 'Selecione um tipo de API'),
-  inboxToAssignTo: z.string().min(1, 'Inbox'),
 });
 
 export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
