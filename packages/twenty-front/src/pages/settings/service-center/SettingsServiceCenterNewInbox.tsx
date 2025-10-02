@@ -9,6 +9,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -19,7 +20,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { H2Title, IconX, Label } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { Inbox } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SelectOption } from '../../../../../twenty-ui/dist/input/types/SelectOption';
 
@@ -39,11 +39,11 @@ export const SettingsServiceCenterNewInbox = () => {
   const { enqueueInfoSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const { records: existingInboxes } = useFindManyRecords<Inbox>({
+  const { records: existingInboxes } = useFindManyRecords<Inbox & { __typename: string }>({
     objectNameSingular: CoreObjectNameSingular.Inbox,
   });
 
-  const { createOneRecord } = useCreateOneRecord({
+  const { createOneRecord } = useCreateOneRecord<Inbox & { __typename: string }>({
     objectNameSingular: CoreObjectNameSingular.Inbox,
   });
   const [name, setName] = useState('');
@@ -66,7 +66,7 @@ export const SettingsServiceCenterNewInbox = () => {
       }) as SelectOption,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord<
+  const { updateOneRecord: assignToWhatsappIntegration } = useUpdateOneRecord<
     WhatsappIntegration & { __typename: string }
   >({ objectNameSingular: CoreObjectNameSingular.WhatsappIntegration });
 
@@ -84,7 +84,7 @@ export const SettingsServiceCenterNewInbox = () => {
     const createdInbox = await createOneRecord({ name, icon: selectedIcon });
     if (createdInbox.id) {
       if (selectedWhatsappIntegrationId)
-        updateOneRecord({
+        assignToWhatsappIntegration({
           idToUpdate: selectedWhatsappIntegrationId,
           updateOneRecordInput: { inboxId: createdInbox.id },
         });
