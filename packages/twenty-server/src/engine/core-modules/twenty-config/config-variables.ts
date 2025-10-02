@@ -1479,6 +1479,25 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   KVOIP_ADMIN_INVITE_HASH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Softphone soap username.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_USERNAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Soap password.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_PASSWORD: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
