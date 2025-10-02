@@ -363,7 +363,7 @@ export const SECTOR_FIELD_IDS = {
 };
 
 export const INBOX_FIELD_IDS = {
-  name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
+  name: '14244086-f9be-4cc0-8a31-102fa7ccd3f5',
   icon: '3689ef1d-0feb-49ab-ad8b-b7291f3de250',
   inboxTargets: '720b9068-41c6-451b-92a1-feee79ccc3b3',
   whatsappIntegration: '72b41a26-af1f-4a79-8640-d71a41731487',
@@ -371,8 +371,8 @@ export const INBOX_FIELD_IDS = {
 };
 
 export const INBOX_TARGET_FIELD_IDS = {
-  inbox: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
-  agent: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
+  inbox: 'ada9b369-24eb-4faf-a397-1c2f8c067c24',
+  agent: 'f3611246-cbbe-4fd8-b430-328a72b38d93',
 };
 
 export const AGENT_FIELD_IDS = {
@@ -399,22 +399,6 @@ export const INVOICE_FIELD_IDS = {
   cfop: '284b42dc-e264-431f-b7e9-3106f7ec8e98',
   cstIcmsCsosn: '98ff97ad-a078-4188-b855-835db313c723',
   timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
-  // origem: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1',
-  // aliquotaIcms: 'eb601572-7c52-4dad-b077-585bc1615374',
-  // aliquotaPis: '12f215c3-038e-44d3-8bc3-30a43a21aed9',
-  // aliquotaCofins: '56df9004-2ad1-4a35-93d4-d5976768b525',
-  // aliquotaIpi: '6f2f3e01-521d-4a14-8167-eed31cd1e698',
-  // aliquotaIss: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f',
-  // issRetido: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e',
-  // itemListaServico: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd',
-  // discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
-  // codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
-  // numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
-  // classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
-  // unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
-  // justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
-  // dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
-  // numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
 
   origin: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1', // origem
   icmsRate: 'eb601572-7c52-4dad-b077-585bc1615374', // aliquotaIcms
