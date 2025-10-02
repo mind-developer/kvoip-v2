@@ -5,7 +5,9 @@ import { SectorPill } from '@/chat/internal/components/SectorPill';
 import { SelectServiceStatus } from '@/chat/internal/components/SelectServiceStatus';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatStatusLabel } from '@/chat/utils/formatStatusLabel';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
@@ -103,7 +105,9 @@ export const InfoSection = ({
     data ? (data as statusEnum) : statusEnum.Pending,
   );
 
-  const { sectors } = useFindAllSectors();
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
 
   const serviceActions = useRecoilValue(serviceActionsState);

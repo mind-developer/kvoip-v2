@@ -2,11 +2,13 @@ import { useContext, useState } from 'react';
 
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 // eslint-disable-next-line no-restricted-imports
 import { TransferChatOption } from '@/chat/call-center/components/TransferChatOption';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { IconChevronLeft, IconIdBadge2, IconUsers } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -23,8 +25,9 @@ export const TransferChatOptionsDropdownContent = () => {
     TransferChatOptionsMenu | undefined
   >(undefined);
 
-  const { sectors } = useFindAllSectors();
-
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
   const resetMenu = () => setCurrentMenu(undefined);
 
   const handleSelectMenu = (option: TransferChatOptionsMenu) => {

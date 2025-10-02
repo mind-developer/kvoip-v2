@@ -6,15 +6,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   SettingsSectorFormSchema,
   SettingsServiceCenterSectorAboutForm,
 } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
-import { useUpdateSector } from '@/settings/service-center/sectors/hooks/useUpdateSector';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -35,8 +37,12 @@ export const SettingsServiceCenterEditSector = () => {
   const navigate = useNavigate();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { sectors } = useFindAllSectors();
-  const { editSector } = useUpdateSector();
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
 
   const { sectorSlug } = useParams<{ sectorSlug?: string }>();
 
@@ -79,7 +85,10 @@ export const SettingsServiceCenterEditSector = () => {
           topics: topicsData,
         };
 
-        await editSector(updatedValues);
+        await updateOneRecord({
+          idToUpdate: updatedValues.id,
+          updateOneRecordInput: updatedValues,
+        });
 
         navigate(settingsSectorsPagePath);
       }

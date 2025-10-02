@@ -3,9 +3,12 @@ import {
   RecordType,
 } from '@/chatbot/types/LogicNodeDataType';
 import { comparisonOptions } from '@/chatbot/types/conditionalOptions';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
-import { Select, SelectValue } from '@/ui/input/components/Select';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { SelectValue } from '@/ui/input/components/internal/select/types';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React, { useState } from 'react';
@@ -56,7 +59,9 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   showDeleteButton = true,
 }) => {
   const { getIcon } = useIcons();
-  const { sectors } = useFindAllSectors();
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
 
   const [localMessage, setLocalMessage] = useState(condition.message ?? '');
   const [recordType, setRecordType] = useState<RecordType>(
@@ -76,7 +81,6 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
 
   const recordTypeOptions: { label: string; value: RecordType }[] = [
     // TODO: Fix incorrect type for 'value' property
-    // @ts-expect-error
     { label: 'Choose record', value: '' },
     { label: 'Sectors', value: 'sectors' },
     { label: 'Text', value: 'text' },

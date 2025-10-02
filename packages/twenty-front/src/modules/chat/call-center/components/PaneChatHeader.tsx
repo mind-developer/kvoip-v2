@@ -1,12 +1,11 @@
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
@@ -76,7 +75,6 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
 export const PaneChatHeader = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { openCommandMenuTicket } = useCommandMenuTicket();
 
   const { selectedChat, finalizeService } = useContext(
     CallCenterContext,
@@ -90,15 +88,17 @@ export const PaneChatHeader = () => {
   const integration = whatsappIntegrations.find(
     (wi) => wi.id === selectedChat!.integrationId,
   );
-  const { agents = [] } = useFindAllAgents();
-  const agent = agents.find((agent: any) => agent.id === selectedChat!.agent);
+  const { records: agents } = useFindManyRecords<Agent & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Agent,
+  });
+  const agent = agents.find((agent: Agent) => agent.id === selectedChat!.agent);
 
   const isAdmin = agents.find(
-    (agent: any) => agent.id === currentMember?.agentId,
+    (agent: Agent) => agent.id === currentMember?.agentId,
   )?.isAdmin;
 
   const member = workspaceMembers.find(
-    (wsMember: any) => wsMember.id === agent?.memberId,
+    (wsMember) => wsMember.agentId === agent?.id,
   );
 
   const { toggleModal } = useModal();

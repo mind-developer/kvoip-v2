@@ -39,11 +39,10 @@ import { ExecuteFlow } from '@/chatbot/engine/executeFlow';
 import { GET_CHATBOT_FLOW_BY_ID } from '@/chatbot/graphql/query/getChatbotFlowById';
 import { GET_CHATBOTS } from '@/chatbot/graphql/query/getChatbots';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 
 import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -93,15 +92,15 @@ export const CallCenterProvider = ({
     (member) => member.id === currentWorkspaceMember?.id,
   );
 
-  const { agents = [] } = useFindAllAgents();
+  const { records: agents  } = useFindManyRecords<Agent>({objectNameSingular: CoreObjectNameSingular.Agent});
   const agentIds = agents?.map((agent) => agent.id);
-  const sectorIds = agents
+  const sectorId = agents
     ?.find((agent) => agent.id === currentMember?.agentId)
-    ?.sectors?.map((sector) => sector.id);
+    ?.sectorId;
 
   const workspaceAgents: WorkspaceMember[] = workspaceMembers.filter(
     (member) =>
-      agentIds?.includes(member.agentId) &&
+      member.agentId && agentIds?.includes(member.agentId) &&
       currentMember?.agentId !== member.agentId,
   );
 
@@ -133,7 +132,11 @@ export const CallCenterProvider = ({
   const executors = useRef<Record<string, ExecuteFlow>>({});
   const processedMessageKeys = useRef<Set<string>>(new Set());
 
-  const { sectors } = useFindAllSectors();
+  // Corrige o tipo do hook para garantir que Sector satisfaça o contrato exigido
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
+
   const [waitingChats, setWaitingChats] = useState<WhatsappDocument[]>([]);
   const { sendWhatsappMessage } = useSendWhatsappMessages();
   const apolloClient = useApolloClient();
@@ -154,7 +157,7 @@ export const CallCenterProvider = ({
     })(),
     activeTabId,
     agent: currentAgent,
-    sectors: sectorIds,
+    sectors: sectorId ? [sectorId] : [],
     platform: 'whatsapp',
     setChats: setWhatsappChats,
   });
@@ -175,7 +178,7 @@ export const CallCenterProvider = ({
   //   })(),
   //   activeTabId,
   //   agent: currentAgent,
-  //   sectors: sectorIds,
+  //   sectors: sectorId ? [sectorId] : [],
   //   platform: 'messenger',
   //   setChats: setMessengerChats,
   // });
@@ -184,7 +187,7 @@ export const CallCenterProvider = ({
     integrationWhatsappIds,
     // integrationMessengerIds,
     setUnreadTabMessages,
-    agent: currentMember?.agentId,
+    agent: currentMember?.agentId || undefined,
   });
 
   useEffect(() => {
@@ -335,7 +338,7 @@ export const CallCenterProvider = ({
 
     platformSpecificMessage({
       agent: {
-        id: currentMember?.agentId,
+        id: currentMember?.agentId || '',
         name: `${currentMember?.name.firstName} ${currentMember?.name.lastName}`,
       },
       eventStatus: MessageType.STARTED,
@@ -376,7 +379,7 @@ export const CallCenterProvider = ({
 
     platformSpecificMessage({
       agent: {
-        id: currentMember?.agentId,
+        id: currentMember?.agentId || '',
         name: `${currentMember?.name.firstName} ${currentMember?.name.lastName}`,
       },
       eventStatus: MessageType.END,
@@ -448,7 +451,7 @@ export const CallCenterProvider = ({
 
     platformSpecificMessage({
       agent: {
-        id: currentMember?.agentId,
+        id: currentMember?.agentId || '',
         name: `${currentMember?.name.firstName} ${currentMember?.name.lastName}`,
       },
       eventStatus: MessageType.ONHOLD,
