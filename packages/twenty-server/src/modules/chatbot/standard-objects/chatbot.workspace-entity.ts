@@ -1,48 +1,16 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.workspace-entity';
-
-export enum ChatbotStatus {
-  DRAFT = 'DRAFT',
-  ACTIVE = 'ACTIVE',
-  DISABLED = 'DISABLED',
-}
-
-const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
-  {
-    value: ChatbotStatus.DRAFT,
-    label: 'Draft',
-    position: 0,
-    color: 'yellow',
-  },
-  {
-    value: ChatbotStatus.ACTIVE,
-    label: 'Active',
-    position: 1,
-    color: 'green',
-  },
-  {
-    value: ChatbotStatus.DISABLED,
-    label: 'Deactivated',
-    position: 2,
-    color: 'gray',
-  },
-];
+import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chatbot,
@@ -50,10 +18,8 @@ const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
   labelSingular: msg`Chatbot`,
   labelPlural: msg`Chatbots`,
   description: msg`A chatbot`,
-  icon: STANDARD_OBJECT_ICONS.chatbot,
-  labelIdentifierStandardId: CHATBOT_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,
@@ -62,27 +28,19 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The chatbot's name`,
     icon: 'IconRobot',
   })
+  @WorkspaceIsNullable()
   name: string;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
     label: msg`Status`,
     description: msg`The current status of the chatbot flow`,
     icon: 'IconStatusChange',
-    options: ChatbotStatusOptions,
   })
   @WorkspaceIsNullable()
-  status: ChatbotStatus | null;
+  status: "ACTIVE" | "DRAFT" | "DISABLED";
 
-  @WorkspaceField({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.createdBy,
-    type: FieldMetadataType.ACTOR,
-    label: msg`Created by`,
-    icon: 'IconCreativeCommonsSa',
-    description: msg`The creator of the record`,
-  })
-  createdBy: ActorMetadata;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.nodes,
@@ -111,16 +69,18 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMathXy',
     description: msg`Last saved viewport position`,
   })
-  viewport: { [key: string]: any };
+  @WorkspaceIsNullable()
+  viewport: { [key: string]: any } | null;
 
   @WorkspaceRelation({
     standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
     type: RelationType.ONE_TO_MANY,
     label: msg`Inbox`,
-    description: msg`Inboxes assigned to this chatbot`,
+    description: msg`Inboxes this chatbot is assigned to`,
     icon: 'IconInbox',
     inverseSideTarget: () => InboxWorkspaceEntity,
   })
+
   @WorkspaceIsNullable()
   inboxes: Relation<InboxWorkspaceEntity[]> | null;
 }
