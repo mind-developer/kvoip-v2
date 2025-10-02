@@ -4,14 +4,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -28,7 +24,6 @@ import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.w
   icon: 'IconBrandWhatsapp',
   labelIdentifierStandardId: WHATSAPP_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsSearchable()
 @WorkspaceIsSystem()
 export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -118,18 +113,6 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('inbox')
   inboxId: string | null;
 
-  @WorkspaceField({
-    standardId: WHATSAPP_STANDARD_FIELD_IDS.searchVector,
-    type: FieldMetadataType.TS_VECTOR,
-    label: SEARCH_VECTOR_FIELD.label,
-    description: SEARCH_VECTOR_FIELD.description,
-    icon: 'IconUser',
-    generatedType: 'STORED',
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.apiType,
     type: FieldMetadataType.TEXT,

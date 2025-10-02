@@ -23,19 +23,9 @@ import { Relation } from 'typeorm';
   labelPlural: msg`inboxes`,
   description: msg`inboxes on this Workspace`,
   icon: 'IconUsers',
-  labelIdentifierStandardId: INBOX_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 export class InboxWorkspaceEntity extends BaseWorkspaceEntity {
-  @WorkspaceField({
-    standardId: INBOX_FIELD_IDS.icon,
-    type: FieldMetadataType.TEXT,
-    label: msg`Icon`,
-    description: msg`Inbox icon`,
-    icon: 'IconPencil',
-  })
-  icon: string;
-
   @WorkspaceField({
     standardId: INBOX_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -44,6 +34,15 @@ export class InboxWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPencil',
   })
   name: string;
+
+  @WorkspaceField({
+    standardId: INBOX_FIELD_IDS.icon,
+    type: FieldMetadataType.TEXT,
+    label: msg`Icon`,
+    description: msg`Inbox icon`,
+    icon: 'IconPencil',
+  })
+  icon: string;
 
   @WorkspaceRelation({
     standardId: INBOX_FIELD_IDS.inboxTargets,
@@ -59,22 +58,27 @@ export class InboxWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: INBOX_FIELD_IDS.whatsappIntegration,
-    type: RelationType.ONE_TO_MANY,
+    type: RelationType.MANY_TO_ONE,
     label: msg`WhatsApp integration`,
-    description: msg`WhatsApp account assigned to this inbox`,
+    description: msg`WhatsApp integration assigned to this inbox`,
     icon: 'IconBrandWhatsapp',
     inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
+    // CHECK: This is a one-to-one relation, but we are using a many-to-one because there is no native implementation
+    inverseSideFieldKey: 'inbox',
   })
   @WorkspaceIsNullable()
-  whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity>;
-  // add more integrations here when necessary. one inbox can hold multiple chat providers
+  whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('whatsappIntegration')
+  whatsappIntegrationId: string | null;
+  // add more integrations here when necessary. one inbox can hold one integration per provider
 
   @WorkspaceRelation({
     standardId: INBOX_FIELD_IDS.chatbot,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Inboxes`,
-    description: msg`Chatbots assigned to this agent`,
-    icon: 'IconInbox',
+    label: msg`Chatbot`,
+    description: msg`Chatbot assigned to this inbox`,
+    icon: 'IconRobot',
     inverseSideTarget: () => ChatbotWorkspaceEntity,
     inverseSideFieldKey: 'inboxes',
     onDelete: RelationOnDeleteAction.SET_NULL,
