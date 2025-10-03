@@ -1,16 +1,13 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
-import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chatbot,
@@ -26,6 +23,7 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The chatbot's name`,
+    icon: 'IconRobot',
   })
   @WorkspaceIsNullable()
   name: string;
@@ -35,49 +33,39 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Status`,
     description: msg`The current status of the chatbot flow`,
+    icon: 'IconStatusChange',
   })
   @WorkspaceIsNullable()
-  status: 'ACTIVE' | 'DRAFT' | 'DISABLED' | null;
+  status: "ACTIVE" | "DRAFT" | "DISABLED";
+
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.nodes,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Nodes`,
+    icon: 'IconBrandStackshare',
+    description: msg`Flow nodes`,
   })
   @WorkspaceIsNullable()
   nodes: any[];
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.edges,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Edges`,
+    icon: 'IconGizmo',
+    description: msg`Flow edges`,
   })
   @WorkspaceIsNullable()
   edges: any[];
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.viewport,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Viewport Position`,
+    icon: 'IconMathXy',
+    description: msg`Last saved viewport position`,
   })
   @WorkspaceIsNullable()
   viewport: { [key: string]: any } | null;
-
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Inbox`,
-    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'chatbot',
-  })
-  inbox: Relation<WhatsappIntegrationWorkspaceEntity>;
-
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Inbox`,
-    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'chatbot',
-  })
-  whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity>;
 }

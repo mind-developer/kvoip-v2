@@ -27,7 +27,6 @@ export class InboxTargetWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Inboxes`,
     description: msg`Inboxes assigned to this agent`,
-    icon: 'IconInbox',
     inverseSideTarget: () => InboxWorkspaceEntity,
     inverseSideFieldKey: 'inboxTargets',
   })
@@ -42,7 +41,6 @@ export class InboxTargetWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Agents`,
     description: msg`Agents related to this inbox target`,
-    icon: 'IconInbox',
     inverseSideTarget: () => AgentWorkspaceEntity,
     inverseSideFieldKey: 'inboxTargets',
     onDelete: RelationOnDeleteAction.SET_NULL,

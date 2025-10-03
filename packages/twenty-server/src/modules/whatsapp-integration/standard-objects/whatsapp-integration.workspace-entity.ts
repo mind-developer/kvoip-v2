@@ -21,8 +21,6 @@ import { InboxWorkspaceEntity } from 'src/modules/inbox/standard-objects/inbox.w
   labelSingular: msg`WhatsApp Integration`,
   labelPlural: msg`Whatsapp Integrations`,
   description: msg`A Whatsapp integration`,
-  icon: 'IconBrandWhatsapp',
-  labelIdentifierStandardId: WHATSAPP_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
@@ -100,18 +98,17 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.inbox,
-    type: RelationType.MANY_TO_ONE,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Inbox`,
-    description: msg`Inbox linked to this integration`,
-    icon: 'IconPhone',
+    description: msg`Inbox linked to this integration (1:1 relation)`,
     inverseSideTarget: () => InboxWorkspaceEntity,
     inverseSideFieldKey: 'whatsappIntegration',
   })
   @WorkspaceIsNullable()
-  inbox: Relation<InboxWorkspaceEntity> | null;
+  chatbot: Relation<InboxWorkspaceEntity[]>;
 
-  @WorkspaceJoinColumn('inbox')
-  inboxId: string | null;
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string | null;
 
   @WorkspaceField({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.apiType,

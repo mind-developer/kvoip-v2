@@ -1,4 +1,4 @@
-import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot_old/standard-objects/chatbot.workspace-entity';
 
 export const sanitizeFlow = (flow: ChatbotWorkspaceEntity) => {
   return {

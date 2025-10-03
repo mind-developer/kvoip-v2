@@ -79,7 +79,6 @@ const baseStandardObjectMetadataDefinitions = [
   WorkflowWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,
-  ChatbotWorkspaceEntity,
   WorkflowAutomatedTriggerWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
@@ -110,6 +109,7 @@ const baseStandardObjectMetadataDefinitions = [
   TelephonyWorkspaceEntity,
   SectorWorkspaceEntity,
   AgentWorkspaceEntity,
+  ChatbotWorkspaceEntity,
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace

@@ -8,7 +8,6 @@ import {
   CreateExecutorInput,
   ExecutorInput,
 } from 'src/engine/core-modules/chatbot-runner/types/CreateExecutorInput';
-import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import { NodeTypes } from 'src/engine/core-modules/chatbot-runner/types/NodeTypes';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -57,64 +56,64 @@ class ExecuteFlow {
   currentNodeId: string | undefined;
   chosenInput: string | undefined;
   constructor(private i: ExecutorInput) {
-    this.currentNodeId = this.i.chatbot.nodes.find(
-      (node) => node.data?.nodeStart,
-    )?.id;
+    // this.currentNodeId = this.i.chatbot.nodes.find(
+    //   (node) => node.data?.nodeStart,
+    // )?.id;
   }
 
   public async runFlow(incomingMessage: string) {
-    while (this.currentNodeId) {
-      const currentNode = this.i.chatbot.nodes.find(
-        (node) => node.id === this.currentNodeId,
-      );
+    // while (this.currentNodeId) {
+    //   const currentNode = this.i.chatbot.nodes.find(
+    //     (node) => node.id === this.currentNodeId,
+    //   );
 
-      if (!currentNode || typeof currentNode.type !== 'string') break;
+    //   if (!currentNode || typeof currentNode.type !== 'string') break;
 
-      const handler = this.i.handlers[currentNode.type];
+    //   const handler = this.i.handlers[currentNode.type];
 
-      if (!handler) break;
+    //   if (!handler) break;
 
-      const nextNodeId = await handler.process({
-        integrationId: this.i.integrationId,
-        workspaceId: this.i.workspaceId,
-        sendTo: this.i.sendTo,
-        chatbotName: this.i.chatbotName,
-        sectors: this.i.sectors,
-        node: currentNode,
-        context: {
-          incomingMessage,
-        },
-      });
+    //   const nextNodeId = await handler.process({
+    //     integrationId: this.i.integrationId,
+    //     workspaceId: this.i.workspaceId,
+    //     sendTo: this.i.sendTo,
+    //     chatbotName: this.i.chatbotName,
+    //     sectors: this.i.sectors,
+    //     node: currentNode,
+    //     context: {
+    //       incomingMessage,
+    //     },
+    //   });
 
-      if (currentNode.type === NodeTypes.CONDITION) {
-        const logic = currentNode.data?.logic as NewConditionalState;
+    //   if (currentNode.type === NodeTypes.CONDITION) {
+    //     const logic = currentNode.data?.logic as NewConditionalState;
 
-        if (logic?.logicNodeData && nextNodeId) {
-          const matchedCondition = logic.logicNodeData.find(
-            (condition) => condition.outgoingNodeId === nextNodeId,
-          );
+    //     if (logic?.logicNodeData && nextNodeId) {
+    //       const matchedCondition = logic.logicNodeData.find(
+    //         (condition) => condition.outgoingNodeId === nextNodeId,
+    //       );
 
-          if (matchedCondition) {
-            this.chosenInput = matchedCondition.sectorId;
-          }
-        }
+    //       if (matchedCondition) {
+    //         this.chosenInput = matchedCondition.sectorId;
+    //       }
+    //     }
 
-        if (!nextNodeId) {
-          return null;
-        }
-      }
+    //     if (!nextNodeId) {
+    //       return null;
+    //     }
+    //   }
 
-      if (!nextNodeId) {
-        if (
-          this.i.onFinish &&
-          ['text', 'image', 'file'].includes(currentNode.type)
-        ) {
-          this.i.onFinish(currentNode, this.chosenInput);
-        }
-        break;
-      }
+    //   if (!nextNodeId) {
+    //     if (
+    //       this.i.onFinish &&
+    //       ['text', 'image', 'file'].includes(currentNode.type)
+    //     ) {
+    //       this.i.onFinish(currentNode, this.chosenInput);
+    //     }
+    //     break;
+    //   }
 
-      this.currentNodeId = nextNodeId;
-    }
+    //   this.currentNodeId = nextNodeId;
+    // }
   }
 }
