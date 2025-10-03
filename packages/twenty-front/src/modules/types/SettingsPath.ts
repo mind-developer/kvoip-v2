@@ -34,8 +34,10 @@ export enum SettingsPath {
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
   ServiceCenterInboxes = 'service-center/inboxes',
   ServiceCenterNewInbox = 'service-center/inboxes/new',
+  ServiceCenterEditInbox = 'service-center/inboxes/:inboxSlug/edit',
   Chatbots = 'chatbots/',
   ChatbotsCreate = 'chatbots/create',
+  ChatbotsEdit = 'chatbots/:chatbotSlug/edit',
   ChatbotFlow = 'chatbots/flow/:id',
 
   FinancialClosing = 'financial-closing',

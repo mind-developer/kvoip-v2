@@ -1,186 +1,155 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
-import { Select } from '@/ui/input/components/Select';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { type AgentFormValues } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
+import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
-import { IconBadge, IconUsers } from '@tabler/icons-react';
-import { useEffect } from 'react';
+import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, useIcons } from 'twenty-ui/display';
-import { Toggle } from 'twenty-ui/input';
+import { H2Title, IconUser, useIcons } from 'twenty-ui/display';
+import { SelectOption, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
-import { z } from 'zod';
-import { Inbox, Sector } from '~/generated/graphql';
-
-const agentMetadataFormSchema = z.object({
-  isAdmin: z.boolean(),
-  isActive: z.boolean(),
-  sectorId: z.string(),
-});
-
-export type SettingsServiceCenterAgentFormSchemaValues = z.infer<
-  typeof agentMetadataFormSchema
->;
-
-type SettingsServiceCenterAgentAboutFormProps = {
-  disabled?: boolean;
-  disableNameEdit?: boolean;
-  activeAgent?: Agent;
-};
-
-const StyledSection = styled(Section)`
-  display: flex;
-  gap: 4px;
+const StyledForm = styled.div`
+  gap: ${({ theme }) => theme.spacing(1)};
+  align-items: center;
+  justify-content: center;
 `;
 
-export const SettingsServiceCenterAgentAboutForm = ({
-  disabled,
-  activeAgent,
-}: SettingsServiceCenterAgentAboutFormProps) => {
-  const { control, reset } =
-    useFormContext<SettingsServiceCenterAgentFormSchemaValues>();
-  // const { t } = useTranslation();
-  const { getIcon } = useIcons();
+const StyledFormRow = styled(Section)`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
 
-  const { records: agents } = useFindManyRecords<Agent>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+export default function SettingsServiceCenterAgentAboutForm() {
+  const form = useFormContext<AgentFormValues>();
+
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const { records: sectors } = useFindManyRecords<Sector>({
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
     objectNameSingular: CoreObjectNameSingular.Sector,
   });
-  const { records: inboxes } = useFindManyRecords<Inbox>({
+  const { records: inboxes } = useFindManyRecords<
+    Inbox & { __typename: string }
+  >({
     objectNameSingular: CoreObjectNameSingular.Inbox,
   });
-
-  const whatsappIntegrations = useFindManyRecords({
-    objectNameSingular: 'whatsappIntegration',
-  }).records;
-
-  const Icon = getIcon('IconIdBadge2');
-
-  const membersWithAgent =
-    agents.length > 0 ? agents.map((agent) => agent.workspaceMember?.id) : [];
-  const assignableAgents = workspaceMembers.filter(
-    (workspaceMember) => !membersWithAgent.includes(workspaceMember.id),
+  const assignableWorkspaceMembers = workspaceMembers.filter(
+    (workspaceMember) => !workspaceMember.agentId,
   );
-  const membersOptions = workspaceMembers?.map((member) => ({
-    Icon: IconUsers,
-    label: member.name.firstName + ' ' + member.name.lastName,
-    value: member.id,
-  }));
 
-  const sectorsOptions =
-    sectors?.map((sector) => ({
-      Icon: IconBadge,
-      label: sector.name,
-      value: sector.id,
-    })) ?? [];
+  const { getIcon } = useIcons();
 
-  const inboxesOptions =
-    inboxes?.map((inbox) => {
-      const isWhatsapp = inbox.whatsappIntegration;
-      const IconName = isWhatsapp ? 'IconBrandWhatsapp' : 'IconBrandMessenger';
-
-      return {
-        Icon: getIcon(IconName),
-        label: 'New integration',
-        value: inbox.id,
-      };
-    }) ?? [];
-
-  useEffect(() => {
-    if (activeAgent) {
-      reset({
-        isAdmin: activeAgent.isAdmin ?? false,
-        sectorId: activeAgent.sectors?.map((sector) => sector.id) ?? [],
-      });
-    }
-  }, [activeAgent, reset]);
-
-  const selectedSectors =
-    activeAgent?.sectors?.map((sector) => sector.id) ?? [];
-  const selectedInboxes = activeAgent?.inboxes?.map((inbox) => inbox.id) ?? [];
+  const memberOptions =
+    assignableWorkspaceMembers.map(
+      (member) =>
+        ({
+          Icon: IconUser,
+          label: member.name.firstName + ' ' + member.name.lastName,
+          value: member.id,
+        }) as SelectOption,
+    ) ?? [];
+  const sectorOptions =
+    sectors.map(
+      (sector) =>
+        ({
+          label: sector.name,
+          value: sector.id,
+          Icon: getIcon(sector.icon),
+        }) as SelectOption,
+    ) ?? [];
+  const inboxOptions =
+    inboxes.map(
+      (inbox) =>
+        ({
+          label: inbox.name,
+          value: inbox.id,
+        }) as SelectOption,
+    ) ?? [];
 
   return (
-    <>
-      <StyledSection>
-        <Icon />
+    <SettingsPageContainer>
+      <div style={{ overflow: 'visible' }}>
         <H2Title
-          title={'Admin permissions'}
-          adornment={
+          title={t`About`}
+          description={t`Define this agent's properties`}
+        />
+        <StyledForm>
+          <StyledFormRow>
             <Controller
-              control={control}
-              name="isAdmin"
-              render={({ field: { onChange, value } }) => (
-                <Toggle value={value} onChange={onChange} />
+              name="workspaceMemberId"
+              control={form.control}
+              render={({ field }) => (
+                <FormSelectFieldInput
+                  defaultValue={''}
+                  label={t`Workspace Member`}
+                  options={memberOptions}
+                  onChange={(value) => {
+                    if (!value) return;
+                    field.onChange(value);
+                  }}
+                />
               )}
             />
-          }
-          description={
-            'This agent will be able to view all the chats in the service center'
-          }
-        />
-      </StyledSection>
-      <Section>
-        <Controller
-          control={control}
-          name="memberId"
-          render={({ field }) => (
-            <Select
-              disabled={disabled}
-              dropdownId="member"
-              label={'Member'}
-              options={[
-                {
-                  label: 'Choose a member',
-                  value: '',
-                },
-                ...membersOptions,
-              ]}
-              value={field.value}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
+            <Controller
+              name="sectorId"
+              control={form.control}
+              render={({ field }) => (
+                <FormSelectFieldInput
+                  defaultValue={''}
+                  label={t`Sector`}
+                  options={sectorOptions}
+                  onChange={(value) => {
+                    if (!value) return;
+                    field.onChange(value);
+                  }}
+                />
+              )}
             />
-          )}
-        />
-      </Section>
-      <Section>
-        <Controller
-          name="sectorIds"
-          control={control}
-          render={({ field: { onChange } }) => {
-            return (
-              <FormMultiSelectFieldInput
-                label="Select Sectors"
-                options={sectorsOptions}
-                defaultValue={selectedSectors}
-                onChange={onChange}
-              />
-            );
-          }}
-        />
-      </Section>
-      <Section>
-        <Controller
-          name="inboxesIds"
-          control={control}
-          render={({ field: { onChange } }) => (
-            <FormMultiSelectFieldInput
-              label="Select Inboxes"
-              options={inboxesOptions}
-              defaultValue={selectedInboxes}
-              onChange={onChange}
+          </StyledFormRow>
+          <StyledFormRow>
+            <Controller
+              name="inboxes"
+              control={form.control}
+              render={({ field }) => (
+                <FormMultiSelectFieldInput
+                  defaultValue={''}
+                  label={t`Inboxes`}
+                  options={inboxOptions}
+                  onChange={(value) => {
+                    if (!value) return;
+                    const inboxValues =
+                      typeof value === 'string' ? [value] : value;
+                    field.onChange(inboxValues);
+                  }}
+                />
+              )}
             />
-          )}
-        />
-      </Section>
-    </>
+          </StyledFormRow>
+          <StyledFormRow>
+            <Controller
+              name="isAdmin"
+              control={form.control}
+              render={({ field }) => (
+                <Toggle
+                  value={field.value}
+                  onChange={() => field.onChange(!field.value)}
+                />
+              )}
+            />
+            <p style={{ marginLeft: 4 }}>Administrator</p>
+          </StyledFormRow>
+        </StyledForm>
+      </div>
+    </SettingsPageContainer>
   );
-};
+}

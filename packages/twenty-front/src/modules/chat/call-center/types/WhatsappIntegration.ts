@@ -9,8 +9,8 @@ type IWhatsappIntegration = {
   disabled: boolean;
   sla: number;
   apiType: string;
-  chatbotId: string;
-  inboxId?: string;
+  inboxId?: string; // Deprecated: use inbox relation instead
+  inbox?: Array<{ id: string; name: string }>;
 };
 
 export type CreateWhatsappIntegrationInput = Omit<
