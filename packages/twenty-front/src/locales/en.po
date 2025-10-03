@@ -277,6 +277,11 @@ msgstr "About this workspace"
 msgid "Accept"
 msgstr "Accept"
 
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr "Accesses over time"
+
 #. js-lingui-id: v+L6Nt
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
 msgid "Accont has been removed"
@@ -5107,6 +5112,12 @@ msgstr "No data containing errors"
 msgid "No data found"
 msgstr "No data found"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr "No data to display"
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -5479,6 +5490,11 @@ msgstr "Or"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "Organization"
+
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr "Origin of accesses"
 
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
@@ -6446,15 +6462,35 @@ msgstr "See workflow"
 msgid "See workflows"
 msgstr "See workflows"
 
+#. js-lingui-id: DuOCie
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a city"
+msgstr "Select a city"
+
+#. js-lingui-id: L+nQeT
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a country"
+msgstr "Select a country"
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Select a field from a previous step"
 
+#. js-lingui-id: Yt7E+k
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a link"
+msgstr "Select a link"
+
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
 msgstr "Select a role"
+
+#. js-lingui-id: ie7roR
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a state"
+msgstr "Select a state"
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -7319,6 +7355,11 @@ msgstr "This database value overrides environment settings. "
 msgid "This is required to enable manual row reordering."
 msgstr "This is required to enable manual row reordering."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr "This month"
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -7346,6 +7387,7 @@ msgstr "This value will be saved to the database."
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "This week"
 
@@ -7353,6 +7395,11 @@ msgstr "This week"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr "This year"
 
 #. js-lingui-id: kjAL4v
 #: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts

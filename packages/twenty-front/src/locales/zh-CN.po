@@ -282,6 +282,11 @@ msgstr "关于此工作区"
 msgid "Accept"
 msgstr ""
 
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr ""
+
 #. js-lingui-id: v+L6Nt
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
 msgid "Accont has been removed"
@@ -5112,6 +5117,12 @@ msgstr "无包含错误的数据"
 msgid "No data found"
 msgstr "未找到数据"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr ""
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -5484,6 +5495,11 @@ msgstr "或"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "组织"
+
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr ""
 
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
@@ -6451,15 +6467,35 @@ msgstr "查看工作流"
 msgid "See workflows"
 msgstr "查看工作流"
 
+#. js-lingui-id: DuOCie
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a city"
+msgstr ""
+
+#. js-lingui-id: L+nQeT
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a country"
+msgstr ""
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "从上一步选择一个字段"
 
+#. js-lingui-id: Yt7E+k
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a link"
+msgstr ""
+
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
 msgstr "选择角色"
+
+#. js-lingui-id: ie7roR
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a state"
+msgstr ""
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -7324,6 +7360,11 @@ msgstr "此数据库值会覆盖环境设置。"
 msgid "This is required to enable manual row reordering."
 msgstr "这需要启用手动行重新排序。"
 
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr ""
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -7351,6 +7392,7 @@ msgstr "此值将保存到数据库。"
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "本周"
 
@@ -7358,6 +7400,11 @@ msgstr "本周"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "这将使数据库值恢复为环境/默认值。数据库覆盖将被移除，系统将使用环境设置。"
+
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr ""
 
 #. js-lingui-id: kjAL4v
 #: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts

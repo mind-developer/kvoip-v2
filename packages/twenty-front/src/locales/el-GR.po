@@ -282,6 +282,11 @@ msgstr "Σχετικά με αυτό το χώρο εργασίας"
 msgid "Accept"
 msgstr ""
 
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr ""
+
 #. js-lingui-id: v+L6Nt
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
 msgid "Accont has been removed"
@@ -5112,6 +5117,12 @@ msgstr "Δεν υπάρχουν δεδομένα που περιέχουν λά�
 msgid "No data found"
 msgstr "Δεν βρέθηκαν δεδομένα"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr ""
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -5484,6 +5495,11 @@ msgstr "Ή"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "Οργανωτικός"
+
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr ""
 
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
@@ -6451,15 +6467,35 @@ msgstr "Δείτε τη ροή εργασίας"
 msgid "See workflows"
 msgstr "Δείτε τις ροές εργασίας"
 
+#. js-lingui-id: DuOCie
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a city"
+msgstr ""
+
+#. js-lingui-id: L+nQeT
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a country"
+msgstr ""
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Επιλέξτε ένα πεδίο από το προηγούμενο βήμα"
 
+#. js-lingui-id: Yt7E+k
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a link"
+msgstr ""
+
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
 msgstr "Επιλογή ρόλου"
+
+#. js-lingui-id: ie7roR
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a state"
+msgstr ""
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -7326,6 +7362,11 @@ msgstr "Αυτή η τιμή βάσης δεδομένων υπερισχύει 
 msgid "This is required to enable manual row reordering."
 msgstr "Αυτό είναι απαραίτητο για να επιτρέψετε την χειροκίνητη αναδιάταξη σειρών."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr ""
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -7353,6 +7394,7 @@ msgstr "Αυτή η τιμή θα αποθηκευτεί στη βάση δεδ�
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "Αυτή την εβδομάδα"
 
@@ -7360,6 +7402,11 @@ msgstr "Αυτή την εβδομάδα"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Αυτό θα επαναφέρει την τιμή της βάσης δεδομένων στην προεπιλεγμένη/τιμή περιβάλλοντος. Η υπερισχύ του περιβάλλοντος βάσης δεδομένων θα αφαιρεθεί και το σύστημα θα χρησιμοποιήσει τις ρυθμίσεις περιβάλλοντος."
+
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr ""
 
 #. js-lingui-id: kjAL4v
 #: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
