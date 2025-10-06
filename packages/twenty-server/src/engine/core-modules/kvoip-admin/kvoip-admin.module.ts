@@ -19,6 +19,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -28,12 +29,13 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Workspace,
+      BillingSubscription,
+      FeatureFlag,
+      ObjectMetadataEntity,
+      RoleEntity,
       User,
       UserWorkspace,
-      ObjectMetadataEntity,
-      FeatureFlag,
-      BillingSubscription,
+      Workspace,
     ]),
     TypeORMModule,
     WorkspaceModule,

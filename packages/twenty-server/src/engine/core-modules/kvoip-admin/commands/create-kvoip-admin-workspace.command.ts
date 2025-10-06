@@ -160,9 +160,10 @@ export class CreateKvoipAdminWorkspaceCommand extends CommandRunner {
       if (
         existingWorkspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE
       ) {
-        this.logger.log('Initiating worksapce permissions...');
-        await this.createKvoipAdminWorkspaceCommandService.initPermissions(
+        this.logger.log('Setting up default roles and activating workspace...');
+        await this.createKvoipAdminWorkspaceCommandService.setupDefaultRoles(
           KVOIP_ADMIN_WORKSPACE.id,
+          KVOIP_ADMIN_USER.id,
         );
       }
 

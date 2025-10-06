@@ -24,7 +24,7 @@ export class BillingSubscriptionSubscriber
 
   constructor(
     private readonly moduleRef: ModuleRef,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {
     this.dataSource.subscribers.push(this);
@@ -43,10 +43,10 @@ export class BillingSubscriptionSubscriber
     try {
       const { id, stripeSubscriptionId } = event.entity;
 
-      if(isDefined(id) || isDefined(stripeSubscriptionId)) {
+      if (isDefined(id) || isDefined(stripeSubscriptionId)) {
         await this.subscriptionService.handleSubscriptionUpsert({
           id,
-          stripeSubscriptionId
+          stripeSubscriptionId,
         });
       }
     } catch (error) {
