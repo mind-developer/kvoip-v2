@@ -1,7 +1,6 @@
-import { DataSource } from 'typeorm';
+import { type DataSource, type EntityManager } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillIntegration } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-integration';
@@ -11,23 +10,25 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 export const standardObjectsPrefillData = async (
-  mainDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ) => {
-  mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
+  dataSource.transaction(async (entityManager: EntityManager) => {
     await prefillIntegration(entityManager, schemaName);
 
     await prefillCompanies(entityManager, schemaName);
 
     await prefillPeople(entityManager, schemaName);
 
-    await prefillWorkflows(entityManager, schemaName);
+    await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
 
     const viewDefinitionsWithId = await prefillViews(
       entityManager,
       schemaName,
       objectMetadataItems,
+      featureFlags,
     );
 
     await prefillWorkspaceFavorites(

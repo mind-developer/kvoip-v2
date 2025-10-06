@@ -4,7 +4,7 @@ import {
   GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
   SignUpInWorkspaceDocument,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const queries = {
   getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,
@@ -51,7 +51,7 @@ export const results = {
   },
   getAuthTokensFromLoginToken: {
     tokens: {
-      accessToken: { token, expiresAt: 'expiresAt' },
+      accessOrWorkspaceAgnosticToken: { token, expiresAt: 'expiresAt' },
       refreshToken: { token, expiresAt: 'expiresAt' },
     },
   },

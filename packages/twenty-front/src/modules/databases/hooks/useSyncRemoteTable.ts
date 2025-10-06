@@ -3,19 +3,19 @@ import { useCallback } from 'react';
 
 import { SYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/syncRemoteTable';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
-  RemoteTableInput,
-  SyncRemoteTableMutation,
-  SyncRemoteTableMutationVariables,
+  type RemoteTableInput,
+  type SyncRemoteTableMutation,
+  type SyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSyncRemoteTable = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
 
   const { refetch: refetchObjectMetadataItems } =

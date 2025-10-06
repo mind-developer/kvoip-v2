@@ -2,15 +2,11 @@ import { gql } from '@apollo/client';
 
 export const GET_ALL_TELEPHONYS = gql`
   query GetAllTelephonys($workspaceId: ID!) {
-    findAllTelephony(workspaceId: $workspaceId) {
+    findAllTelephonyIntegration(workspaceId: $workspaceId) {
       id
       memberId
       numberExtension
-      workspace {
-        id
-      }
       createdAt
-      updatedAt
       SIPPassword
       areaCode
       blockExtension

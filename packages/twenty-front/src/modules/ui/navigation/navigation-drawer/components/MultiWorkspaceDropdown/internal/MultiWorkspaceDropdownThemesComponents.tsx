@@ -35,8 +35,13 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
           <MenuItem
             key={theme.id}
             LeftIcon={theme.icon}
-            /* eslint-disable-next-line lingui/no-expression-in-message */
-            text={t`${theme.id}`}
+            text={
+              theme.id === 'System'
+                ? t`System`
+                : theme.id === 'Dark'
+                  ? t`Dark`
+                  : t`Light`
+            }
             onClick={() => setColorScheme(theme.id)}
             RightIcon={theme.id === colorScheme ? IconCheck : undefined}
           />

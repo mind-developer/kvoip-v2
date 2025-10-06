@@ -1,4 +1,4 @@
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type EntityManager } from 'typeorm';
 
 const tableName = 'integration';
 
@@ -8,13 +8,11 @@ export const DEV_SEED_INTEGRATION_IDS = {
 };
 
 export const prefillIntegration = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['id', 'name', 'position'])
     .orIgnore()

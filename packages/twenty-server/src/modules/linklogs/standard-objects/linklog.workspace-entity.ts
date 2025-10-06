@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -134,6 +134,50 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   userAgent: string | null;
 
   @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.platform,
+    type: FieldMetadataType.TEXT,
+    label: msg`Platform`,
+    description: msg`Platform`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
+  platform: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.country,
+    type: FieldMetadataType.TEXT,
+    label: msg`Country`,
+    description: msg`Country`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
+  country: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.regionName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Region name`,
+    description: msg`Region name`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
+  regionName: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.city,
+    type: FieldMetadataType.TEXT,
+    label: msg`City`,
+    description: msg`City`,
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
+  city: string | null;
+
+  @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -147,5 +191,5 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  searchVector: string;
 }

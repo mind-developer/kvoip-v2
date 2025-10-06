@@ -1,9 +1,9 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import {
   AuthException,
@@ -17,7 +17,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 export class GoogleOauthGuard extends AuthGuard('google') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
   ) {

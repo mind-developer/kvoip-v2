@@ -7,19 +7,19 @@ import { validate } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { InterCustomerUf } from 'src/engine/core-modules/inter/interfaces/charge.interface';
+import { type InterCustomerUf } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeEmmitBillDataDto } from 'src/modules/charges/inter/dtos/charge-emmit-bill-data.dto';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
 import {
   ChargeAction,
-  ChargeRecurrence,
-  ChargeWorkspaceEntity,
+  type ChargeRecurrence,
+  type ChargeWorkspaceEntity,
 } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ChargeService {
   private readonly logger = new Logger(ChargeService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,

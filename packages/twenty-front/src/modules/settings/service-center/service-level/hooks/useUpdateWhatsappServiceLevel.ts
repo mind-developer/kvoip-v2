@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/client';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { UPDATE_SERVICE_LEVEL } from '@/settings/service-center/service-level/graphql/mutation/updateWhatsappServiceLevel';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 
 interface UseUpdateServiceLevelReturn {
   updateSla: (integrationId: string, sla: number) => Promise<void>;
@@ -9,17 +9,20 @@ interface UseUpdateServiceLevelReturn {
 
 export const useUpdateWhatsappServiceLevel =
   (): UseUpdateServiceLevelReturn => {
-    const { enqueueSnackBar } = useSnackBar();
+    const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+    const { t } = useLingui();
 
     const [updateServiceLevel] = useMutation(UPDATE_SERVICE_LEVEL, {
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        // TODO: Add proper error message
+        enqueueErrorSnackBar({
+          message: (error as Error).message,
         });
       },
       onCompleted: () => {
-        enqueueSnackBar('Service Level updated successfully!', {
-          variant: SnackBarVariant.Success,
+        enqueueErrorSnackBar({
+          message: t`Service Level updated successfully!`,
         });
       },
     });

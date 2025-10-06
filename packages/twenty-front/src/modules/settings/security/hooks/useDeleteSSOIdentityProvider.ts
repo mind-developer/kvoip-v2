@@ -3,9 +3,9 @@
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSetRecoilState } from 'recoil';
 import {
-  DeleteSsoIdentityProviderMutationVariables,
+  type DeleteSsoIdentityProviderMutationVariables,
   useDeleteSsoIdentityProviderMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useDeleteSSOIdentityProvider = () => {
   const [deleteSsoIdentityProviderMutation] =

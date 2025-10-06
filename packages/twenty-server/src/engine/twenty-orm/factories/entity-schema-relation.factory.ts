@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { EntitySchemaRelationOptions } from 'typeorm';
+import { type EntitySchemaRelationOptions } from 'typeorm';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -27,12 +28,17 @@ export class EntitySchemaRelationFactory {
     );
 
     for (const fieldMetadata of fieldMetadataCollection) {
-      if (
-        !isFieldMetadataInterfaceOfType(
+      const isRelation =
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
-        )
-      ) {
+        ) ||
+        isFieldMetadataEntityOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        );
+
+      if (!isRelation) {
         continue;
       }
 
@@ -47,7 +53,25 @@ export class EntitySchemaRelationFactory {
         objectMetadataMaps,
       );
 
-      entitySchemaRelationMap[fieldMetadata.name] = {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (!targetObjectMetadata) {
+        throw new Error(
+          `Target object metadata not found for field ${fieldMetadata.name}`,
+        );
+      }
+
+      const fieldName =
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+          ? computeMorphRelationFieldName({
+              fieldName: fieldMetadata.name,
+              relationDirection: fieldMetadata.settings.relationType,
+              targetObjectMetadata,
+            })
+          : fieldMetadata.name;
+
+      entitySchemaRelationMap[fieldName] = {
         type: schemaRelationDetails.relationType,
         target: schemaRelationDetails.target,
         inverseSide: schemaRelationDetails.inverseSide,

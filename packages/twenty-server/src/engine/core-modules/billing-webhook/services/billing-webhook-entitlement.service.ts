@@ -3,8 +3,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 import {
@@ -17,9 +18,9 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 @Injectable()
 export class BillingWebhookEntitlementService {
   constructor(
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingEntitlement, 'core')
+    @InjectRepository(BillingEntitlement)
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
   ) {}
 

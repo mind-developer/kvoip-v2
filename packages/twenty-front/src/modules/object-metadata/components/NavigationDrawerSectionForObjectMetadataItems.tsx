@@ -1,5 +1,5 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -16,15 +16,17 @@ const ORDERED_STANDARD_OBJECTS = [
   'note',
 ];
 
+type NavigationDrawerSectionForObjectMetadataItemsProps = {
+  sectionTitle: string;
+  isRemote: boolean;
+  objectMetadataItems: ObjectMetadataItem[];
+};
+
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
   isRemote,
   objectMetadataItems,
-}: {
-  sectionTitle: string;
-  isRemote: boolean;
-  objectMetadataItems: ObjectMetadataItem[];
-}) => {
+}: NavigationDrawerSectionForObjectMetadataItemsProps) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
@@ -47,6 +49,8 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
       }
       return indexA - indexB;
     });
+
+  console.log(objectMetadataItems);
 
   const sortedCustomObjectMetadataItems = [...objectMetadataItems]
     .filter((item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))

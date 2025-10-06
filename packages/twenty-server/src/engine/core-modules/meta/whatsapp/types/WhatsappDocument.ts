@@ -1,11 +1,12 @@
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 
-export type WhatsappDocument = {
+export type WhatsAppDocument = {
   integrationId: string;
   workspaceId?: string;
   agent?: string;
   sector?: string;
-  client: IClient;
+  client: IClient; //deprecate
+  personId: string;
   messages: IMessage[];
   status: statusEnum;
   lastMessage: IMessage;
@@ -14,16 +15,24 @@ export type WhatsappDocument = {
   isVisible: boolean;
 };
 
-type IClient = {
+export type IClient = {
   phone: string;
   name?: string;
+  ppUrl?: string | null;
+  email?: string | null;
 };
 
-type IMessage = {
+export type IMessage = {
+  id?: string | null;
   from: string;
   message: string;
   createdAt: Date;
   type: string;
+  sent?: boolean;
+  received?: boolean;
+  read?: boolean;
+  edited?: boolean;
+  fromMe?: boolean;
 };
 
 type ITimeline = {

@@ -18,6 +18,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { isDefined } from 'twenty-shared/utils';
 import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
@@ -260,6 +261,14 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
       advancedFowarding5Value: activeTelephony.advancedFowarding5Value,
     });
   }, [activeTelephony, reset]);
+
+  const extNumber = watch('extensionNumber');
+
+  useEffect(() => {
+    if (!loadingDids && (dids?.length ?? 0) === 0 && isDefined(extNumber)) {
+      setValue('callerExternalID', extNumber, { shouldValidate: true });
+    }
+  }, [dids, extNumber, loadingDids, setValue]);
 
   const switchFowards = (
     fowardValue: string | undefined,
@@ -657,12 +666,9 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
                 dropdownId="callerExternalID"
                 label={'Caller external ID'}
                 options={
-                  !loadingDids && dids?.length > 0
+                  !loadingDids && (dids?.length ?? 0) > 0
                     ? [
-                        {
-                          label: 'Choose an option',
-                          value: '',
-                        },
+                        { label: 'Choose an option', value: '' },
                         ...dids.map((did) => ({
                           label: did.numero || '',
                           value: did.did_id || '',
@@ -670,15 +676,13 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
                       ]
                     : [
                         {
-                          label: 'loading',
-                          value: '',
+                          label: extNumber || 'loading',
+                          value: extNumber || '',
                         },
                       ]
                 }
                 value={field.value}
-                onChange={(value) => {
-                  field.onChange(value);
-                }}
+                onChange={(value) => field.onChange(value)}
               />
             )}
           />

@@ -7,7 +7,6 @@ import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks
 import { useUpdateInterIntegration } from '@/settings/integrations/inter/hooks/useUpdateInterIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +25,7 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   integrationName: z.string().min(1),
   clientId: z.string(),
   clientSecret: z.string(),
+  currentAccount: z.string(),
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),
@@ -39,7 +39,7 @@ export type SettingsEditIntegrationInterConnectionFormValues = z.infer<
 export const SettingsIntegrationInterEditDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
@@ -47,27 +47,19 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
   const { updateInterIntegration } = useUpdateInterIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
-  const integration = integrationCategoryAll.integrations.find(
+  const integration = integrationCategoryAll?.integrations?.find(
     ({ from: { key } }) => key === 'inter',
   );
 
   const { connectionId } = useParams<{ connectionId?: string }>();
 
-  const { interIntegrations } = useFindAllInterIntegrations();
-  const activeConnection = interIntegrations.find(
+  const { interIntegrations, loading } = useFindAllInterIntegrations();
+  const activeConnection = interIntegrations?.find(
     (wa) => wa.id === connectionId,
   );
 
   const isIntegrationAvailable = !!integration;
-
-  useEffect(() => {
-    if (!isIntegrationAvailable) {
-      navigateApp(AppPath.NotFound);
-    }
-    // eslint-disable-next-line no-sparse-arrays
-  }, [integration, , navigateApp, isIntegrationAvailable]);
-
-  if (!isIntegrationAvailable) return null;
+  const isDataLoaded = !loading && interIntegrations !== undefined;
 
   const formConfig = useForm<SettingsEditIntegrationInterConnectionFormValues>({
     mode: 'onChange',
@@ -77,11 +69,21 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
       clientId: activeConnection?.clientId,
       clientSecret: activeConnection?.clientSecret,
       integrationName: activeConnection?.integrationName,
+      currentAccount: activeConnection?.currentAccount,
       expirationDate: activeConnection?.expirationDate ?? undefined,
       certificate: activeConnection?.certificate,
       privateKey: activeConnection?.privateKey,
     },
   });
+
+  useEffect(() => {
+    if (!isIntegrationAvailable) {
+      navigateApp(AppPath.NotFound);
+    }
+    // eslint-disable-next-line no-sparse-arrays
+  }, [integration, , navigateApp, isIntegrationAvailable]);
+
+  if (!isIntegrationAvailable || !isDataLoaded) return null;
 
   const canSave = formConfig.formState.isValid;
 
@@ -94,6 +96,7 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
         clientId: formValues.clientId,
         integrationName: formValues.integrationName,
         clientSecret: formValues.clientSecret,
+        currentAccount: formValues.currentAccount,
         certificate: formValues.certificate,
         privateKey: formValues.privateKey,
         expirationDate: formValues.expirationDate,
@@ -101,8 +104,9 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
 
       navigate(SettingsPath.IntegrationInterDatabase);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     }
   };

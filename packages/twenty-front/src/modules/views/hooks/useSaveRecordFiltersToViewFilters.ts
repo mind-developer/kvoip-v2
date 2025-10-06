@@ -1,5 +1,5 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -19,7 +19,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
     currentRecordFiltersComponentState,
   );
 
@@ -65,11 +65,11 @@ export const useSaveRecordFiltersToViewFilters = () => {
         await deleteViewFilterRecords(viewFilterIdsToDelete);
       },
     [
-      createViewFilterRecords,
-      deleteViewFilterRecords,
-      updateViewFilterRecords,
-      currentRecordFiltersCallbackState,
       currentView,
+      currentRecordFiltersCallbackState,
+      createViewFilterRecords,
+      updateViewFilterRecords,
+      deleteViewFilterRecords,
     ],
   );
 

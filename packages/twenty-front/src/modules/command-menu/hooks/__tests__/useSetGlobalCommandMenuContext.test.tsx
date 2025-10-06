@@ -7,6 +7,7 @@ import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/cons
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -14,8 +15,9 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 
 const mockCopyContextStoreStates = jest.fn();
 jest.mock(
@@ -78,6 +80,18 @@ describe('useSetGlobalCommandMenuContext', () => {
           }),
         );
 
+        const filterGroups = useRecoilValue(
+          contextStoreFilterGroupsComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+        );
+
+        const anyFieldFilterValue = useRecoilValue(
+          contextStoreAnyFieldFilterValueComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+        );
+
         const currentViewType = useRecoilValue(
           contextStoreCurrentViewTypeComponentState.atomFamily({
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
@@ -95,9 +109,11 @@ describe('useSetGlobalCommandMenuContext', () => {
           targetedRecordsRule,
           numberOfSelectedRecords,
           filters,
+          filterGroups,
           currentViewType,
           commandMenuPageInfo,
           hasUserSelectedCommand,
+          anyFieldFilterValue,
         };
       },
       {
@@ -111,6 +127,7 @@ describe('useSetGlobalCommandMenuContext', () => {
     });
     expect(result.current.numberOfSelectedRecords).toBe(2);
     expect(result.current.filters).toEqual([]);
+    expect(result.current.anyFieldFilterValue).toEqual('');
     expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: undefined,
@@ -129,6 +146,7 @@ describe('useSetGlobalCommandMenuContext', () => {
     });
     expect(result.current.numberOfSelectedRecords).toBe(0);
     expect(result.current.filters).toEqual([]);
+    expect(result.current.anyFieldFilterValue).toEqual('');
     expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: undefined,

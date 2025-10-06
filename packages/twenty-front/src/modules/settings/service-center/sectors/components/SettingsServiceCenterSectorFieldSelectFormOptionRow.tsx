@@ -10,7 +10,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import {
   ColorSample,
   IconCheck,
@@ -72,10 +72,8 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
     };
   }, []);
 
-  const { closeDropdown: closeColorDropdown } = useDropdown(dropdownIds.color);
-  const { closeDropdown: closeActionsDropdown } = useDropdown(
-    dropdownIds.actions,
-  );
+  const { toggleDropdown: togleColorDropdown } = useToggleDropdown();
+  const { toggleDropdown: togleActionsDropdown } = useToggleDropdown();
 
   const handleInputEnter = () => {
     onInputEnter?.();
@@ -100,7 +98,7 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
-                    closeColorDropdown();
+                    togleColorDropdown();
                   }}
                   color={colorName}
                   selected={colorName === option.color}
@@ -121,7 +119,7 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
         }
         RightIcon={isDefault ? IconCheck : undefined}
         maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-        onInputEnter={handleInputEnter}
+        onInput={handleInputEnter}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}
@@ -137,7 +135,7 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
                   text={'Remove topic'}
                   onClick={() => {
                     onRemove();
-                    closeActionsDropdown();
+                    togleActionsDropdown();
                   }}
                 />
               )}

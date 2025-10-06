@@ -1,21 +1,29 @@
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
+import {
+  type HotkeyCallback,
+  type Keys,
+  type Options,
+} from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 
-export const useGlobalHotkeys = (
-  keys: Keys,
-  callback: HotkeyCallback,
-  containsModifier: boolean,
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string,
-  dependencies?: unknown[],
-  options?: UseHotkeysOptionsWithoutBuggyOptions,
-) => {
+export const useGlobalHotkeys = ({
+  keys,
+  callback,
+  containsModifier,
+  dependencies,
+  options,
+}: {
+  keys: Keys;
+  callback: HotkeyCallback;
+  containsModifier: boolean;
+  dependencies?: unknown[];
+  options?: UseHotkeysOptionsWithoutBuggyOptions;
+}) => {
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
@@ -59,7 +67,6 @@ export const useGlobalHotkeys = (
         callback: () => {
           handleCallback(keyboardEvent, hotkeysEvent);
         },
-        scope,
         preventDefault,
         containsModifier,
       });

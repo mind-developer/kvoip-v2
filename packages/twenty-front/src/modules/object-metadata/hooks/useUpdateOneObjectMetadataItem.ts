@@ -1,29 +1,28 @@
 import { useMutation } from '@apollo/client';
 
 import {
-  UpdateOneObjectInput,
-  UpdateOneObjectMetadataItemMutation,
-  UpdateOneObjectMetadataItemMutationVariables,
+  type UpdateOneObjectInput,
+  type UpdateOneObjectMetadataItemMutation,
+  type UpdateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { UPDATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 // TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneObjectMetadataItem = () => {
-  const apolloClientMetadata = useApolloMetadataClient();
-
   const [mutate, { loading }] = useMutation<
     UpdateOneObjectMetadataItemMutation,
     UpdateOneObjectMetadataItemMutationVariables
-  >(UPDATE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloClientMetadata ?? undefined,
-  });
+  >(UPDATE_ONE_OBJECT_METADATA_ITEM);
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const updateOneObjectMetadataItem = async ({
     idToUpdate,
@@ -40,6 +39,7 @@ export const useUpdateOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
+    await refreshCoreViewsByObjectMetadataId(idToUpdate);
 
     return result;
   };

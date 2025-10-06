@@ -13,7 +13,6 @@ import {
 import { useFindAllTelephonys } from '@/settings/service-center/telephony/hooks/useFindAllTelephony';
 import { useUpdateTelephony } from '@/settings/service-center/telephony/hooks/useUpdateTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -29,7 +28,7 @@ type SettingsEditTelephonySchemaValues = z.infer<
 
 export const SettingsTelephonyEdit = () => {
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { telephonys } = useFindAllTelephonys();
   const { editTelephony } = useUpdateTelephony();
@@ -101,8 +100,9 @@ export const SettingsTelephonyEdit = () => {
 
       navigate(settingsServiceCenterTelephonyPagePath);
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

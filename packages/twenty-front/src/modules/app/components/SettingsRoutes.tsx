@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
 import { SettingsIntegrationFocusNfeEditIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditIssuer';
 import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
@@ -28,6 +28,9 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
+import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
+import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
+import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -53,14 +56,6 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
-const SettingsWebhooks = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
-  ).then((module) => ({
-    default: module.SettingsWebhooks,
-  })),
-);
-
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
     (module) => ({
@@ -84,6 +79,22 @@ const SettingsNewAccount = lazy(() =>
 const SettingsNewObject = lazy(() =>
   import('~/pages/settings/data-model/SettingsNewObject').then((module) => ({
     default: module.SettingsNewObject,
+  })),
+);
+
+const SettingsNewImapSmtpCaldavConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewImapSmtpCaldavConnection,
+  })),
+);
+
+const SettingsEditImapSmtpCaldavConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsEditImapSmtpCaldavConnection,
   })),
 );
 
@@ -119,12 +130,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const Releases = lazy(() =>
-  import('~/pages/settings/Releases').then((module) => ({
-    default: module.Releases,
-  })),
-);
-
 const SettingsServerlessFunctions = lazy(() =>
   import(
     '~/pages/settings/serverless-functions/SettingsServerlessFunctions'
@@ -153,9 +158,33 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsDomains = lazy(() =>
+  import('~/pages/settings/domains/SettingsDomains').then((module) => ({
+    default: module.SettingsDomains,
+  })),
+);
+
 const SettingsDomain = lazy(() =>
-  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
+  import('~/pages/settings/domains/SettingsDomain').then((module) => ({
     default: module.SettingsDomain,
+  })),
+);
+
+const SettingsApiWebhooks = lazy(() =>
+  import('~/pages/settings/workspace/SettingsApiWebhooks').then((module) => ({
+    default: module.SettingsApiWebhooks,
+  })),
+);
+
+const SettingsAI = lazy(() =>
+  import('~/pages/settings/ai/SettingsAI').then((module) => ({
+    default: module.SettingsAI,
+  })),
+);
+
+const SettingsAgentForm = lazy(() =>
+  import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
+    default: module.SettingsAgentForm,
   })),
 );
 
@@ -165,10 +194,36 @@ const SettingsWorkspaceMembers = lazy(() =>
   })),
 );
 
+const SettingsFinancialClosing = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosing').then((module) => ({
+    default: module.SettingsFinancialClosing,
+  })),
+);
+
+const SettingsFinancialClosingExecutions = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingExecutions').then((module) => ({
+    default: module.SettingsFinancialClosingExecutions,
+  })),
+);
+
+const SettingsFinancialClosingNew = lazy(() =>
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingNew').then((module) => ({
+    default: module.SettingsFinancialClosingNew,
+  })),
+);
+
 const SettingsProfile = lazy(() =>
   import('~/pages/settings/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
   })),
+);
+
+const SettingsTwoFactorAuthenticationMethod = lazy(() =>
+  import('~/pages/settings/SettingsTwoFactorAuthenticationMethod').then(
+    (module) => ({
+      default: module.SettingsTwoFactorAuthenticationMethod,
+    }),
+  ),
 );
 
 const SettingsExperience = lazy(() =>
@@ -229,6 +284,14 @@ const SettingsIntegrationDatabase = lazy(() =>
   ),
 );
 
+const SettingsIntegrationMCP = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrationMCPPage').then(
+    (module) => ({
+      default: module.SettingsIntegrationMCPPage,
+    }),
+  ),
+);
+
 const SettingsIntegrationNewDatabaseConnection = lazy(() =>
   import(
     '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
@@ -255,7 +318,7 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
 
 const SettingsObjectNewFieldSelect = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldSelect,
   })),
@@ -263,7 +326,7 @@ const SettingsObjectNewFieldSelect = lazy(() =>
 
 const SettingsObjectNewFieldConfigure = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldConfigure,
   })),
@@ -272,6 +335,20 @@ const SettingsObjectFieldEdit = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
     (module) => ({
       default: module.SettingsObjectFieldEdit,
+    }),
+  ),
+);
+
+const SettingsPageLayouts = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayouts').then((module) => ({
+    default: module.SettingsPageLayouts,
+  })),
+);
+
+const SettingsPageLayoutEdit = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayoutEdit').then(
+    (module) => ({
+      default: module.SettingsPageLayoutEdit,
     }),
   ),
 );
@@ -320,9 +397,9 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
   })),
 );
 
-const SettingsLab = lazy(() =>
-  import('~/pages/settings/lab/SettingsLab').then((module) => ({
-    default: module.SettingsLab,
+const SettingsReleases = lazy(() =>
+  import('~/pages/settings/releases/SettingsReleases').then((module) => ({
+    default: module.SettingsReleases,
   })),
 );
 
@@ -361,15 +438,21 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPageLayoutFeatureFlagEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPageLayoutFeatureFlagEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
+      <Route
+        path={SettingsPath.TwoFactorAuthenticationStrategyConfig}
+        element={<SettingsTwoFactorAuthenticationMethod />}
+      />
       <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
@@ -382,20 +465,42 @@ export const SettingsRoutes = ({
         element={<SettingsAccountsEmails />}
       />
       <Route
+        path={SettingsPath.NewImapSmtpCaldavConnection}
+        element={<SettingsNewImapSmtpCaldavConnection />}
+      />
+      <Route
+        path={SettingsPath.EditImapSmtpCaldavConnection}
+        element={<SettingsEditImapSmtpCaldavConnection />}
+      />
+      <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.Domains} element={<SettingsDomains />} />
+        <Route
+          path={SettingsPath.ApiWebhooks}
+          element={<SettingsApiWebhooks />}
+        />
+        <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route
+          path={SettingsPath.AINewAgent}
+          element={<SettingsAgentForm mode="create" />}
+        />
+        <Route
+          path={SettingsPath.AIAgentDetail}
+          element={<SettingsAgentForm mode="edit" />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       </Route>
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE_MEMBERS}
+            settingsPermission={PermissionFlagType.WORKSPACE_MEMBERS}
           />
         }
       >
@@ -468,7 +573,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.DATA_MODEL}
+            settingsPermission={PermissionFlagType.DATA_MODEL}
           />
         }
       >
@@ -498,7 +603,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.ROLES}
+            settingsPermission={PermissionFlagType.ROLES}
           />
         }
       >
@@ -520,12 +625,10 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.API_KEYS_AND_WEBHOOKS}
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
           />
         }
       >
-        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
           path={`${SettingsPath.GraphQLPlayground}`}
           element={<SettingsGraphQLPlayground />}
@@ -569,6 +672,10 @@ export const SettingsRoutes = ({
         <Route
           path={SettingsPath.IntegrationDatabaseConnection}
           element={<SettingsIntegrationShowDatabaseConnection />}
+        />
+        <Route
+          path={SettingsPath.IntegrationMCP}
+          element={<SettingsIntegrationMCP />}
         />
       </Route>
       {isFunctionSettingsEnabled && (
@@ -664,11 +771,10 @@ export const SettingsRoutes = ({
         path={SettingsPath.ObjectFieldEdit}
         element={<SettingsObjectFieldEdit />}
       />
-      <Route path={SettingsPath.Releases} element={<Releases />} />
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.SECURITY}
+            settingsPermission={PermissionFlagType.SECURITY}
           />
         }
       >
@@ -697,15 +803,59 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      {isPageLayoutFeatureFlagEnabled && (
+        <>
+          <Route
+            path={SettingsPath.PageLayout}
+            element={<SettingsPageLayouts />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutNew}
+            element={<SettingsPageLayoutEdit />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutEdit}
+            element={<SettingsPageLayoutEdit />}
+          />
+        </>
+      )}
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >
-        <Route path={SettingsPath.Lab} element={<SettingsLab />} />
+        <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
       </Route>
+
+
+      {/* Kvoip : TO-DO */}
+      <Route
+        path={SettingsPath.FinancialClosing}
+        element={<SettingsFinancialClosing />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingNew}
+        element={<SettingsFinancialClosingNew />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingEdit}
+        element={<SettingsFinancialClosingEdit />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingExecutions}
+        element={<SettingsFinancialClosingExecutions />}
+      />
+      <Route
+        path={SettingsPath.FinancialClosingExecution}
+        element={<SettingsFinancialClosingExecutionShow />}
+      />
+      <Route
+        path={SettingsPath.CompanyFinancialClosingExecution}
+        element={<SettingsCompanyFinancialClosingExecutionShow />}
+      />
+      
     </Routes>
   </Suspense>
 );

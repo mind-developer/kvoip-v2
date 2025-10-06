@@ -1,8 +1,8 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { ChatContextType } from '../../types/chat';
 import { ChatContext } from '../context/chatContext';
-import { ChatContextType } from '../types/chat';
 
 interface StatusPillProps {
   status: 'Available' | 'Busy' | 'Away' | string;

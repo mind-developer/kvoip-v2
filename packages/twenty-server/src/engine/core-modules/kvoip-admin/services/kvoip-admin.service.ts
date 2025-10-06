@@ -15,7 +15,7 @@ import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/
 @Injectable()
 export class KvoipAdminService {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}

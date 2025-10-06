@@ -8,9 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -22,7 +19,7 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
-  FileWorkspaceFolderDeletionJobData,
+  type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -32,14 +29,14 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -50,6 +47,10 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { SoapClientService } from 'src/modules/soap-client/soap-client.service';
+import {
+  ListRegionsResponse,
+  Regiao,
+} from 'src/modules/telephony/types/regions.type';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
@@ -59,11 +60,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   protected readonly logger = new Logger(WorkspaceService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
@@ -71,18 +72,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly auditService: AuditService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly pabxService: PabxService,
     private readonly soapClientService: SoapClientService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super(workspaceRepository);
   }
@@ -198,8 +198,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const chromeWebOrigin = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
-
-    this.logger.log(`🌐 chromeWebOrigin: ${chromeWebOrigin}`);
 
     try {
       this.logger.log(
@@ -371,6 +369,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      workspace.isCustomDomainEnabled = false;
     }
 
     if (
@@ -537,7 +536,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       };
 
       try {
-        const soapResult = await this.soapClientService.createCompleteClient(
+        await this.soapClientService.createCompleteClient(
           clienteData,
           contaVoipData,
           ipData,
@@ -546,7 +545,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           11,
         );
 
-        this.logger.log('SOAP client setup completed:', soapResult);
+        this.logger.log('SOAP client setup completed');
 
         await this.setupPabxEnvironment(
           workspace,
@@ -606,32 +605,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new Error('Failed to create PABX company or retrieve ID.');
       }
 
+      const regionsResponse = await this.pabxService.listRegions(0);
+      const regioes: Regiao[] = (regionsResponse.data as ListRegionsResponse)
+        .dados;
+
+      const tarifas = regioes.map((regiao: Regiao) => ({
+        regiao_id: Number(regiao.regiao_id),
+        tarifa: 0,
+        fracionamento: '4/30/6',
+      }));
+
       const trunkInput = {
         cliente_id: companyId,
         tronco_id: 0,
-        nome: 'TroncoPadrao',
+        nome: 'Tronco Padrao',
         endereco: 'log.kvoip.com.br',
         qtd_digitos_cortados: 0,
         insere_digitos: techPrefix,
         autentica_user_pass: 0,
         host_dinamico: 0,
-        tarifas: [
-          {
-            regiao_id: 1,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-          {
-            regiao_id: 2,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-          {
-            regiao_id: 3,
-            tarifa: 0,
-            fracionamento: '4/30/6',
-          },
-        ],
+        tarifas,
       };
 
       const trunkResult = await this.pabxService.createTrunk(trunkInput);
@@ -642,47 +635,41 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new Error('Failed to create PABX trunk or retrieve ID.');
       }
 
-      const dialingPlanInput = {
-        plano_discagem_id: 0,
-        nome: 'PlanoPadrao',
+      const dialingPlansResponse = await this.pabxService.listDialingPlans({
         cliente_id: companyId,
-        workspaceId: workspace.id,
-      };
+      });
 
-      const dialingPlanResult =
-        await this.pabxService.createDialingPlan(dialingPlanInput);
+      const dialingPlan = dialingPlansResponse.data.dados[0];
 
-      const dialingPlanAPIId = dialingPlanResult.data.id;
-
-      if (!dialingPlanAPIId) {
+      if (!dialingPlan) {
         throw new Error('Failed to create PABX dialing plan or retrieve ID.');
       }
+
+      const dialingPlanId = dialingPlan.plano_discagem_id;
 
       await this.workspaceRepository.update(workspace.id, {
         id: workspace.id,
         pabxCompanyId: companyId,
         pabxTrunkId: trunkAPIId,
-        pabxDialingPlanId: dialingPlanAPIId,
+        pabxDialingPlanId: dialingPlanId,
       });
 
       const routingRulesData = {
-        regioes: [
-          {
-            regiao_id: 1,
-            regiao_nome: 'RegiaoPadrao',
-            roteamentos: [
-              {
-                prioridade: 1,
-                tronco_id: trunkAPIId,
-                tronco_nome: 'TroncoPadrao',
-              },
-            ],
-          },
-        ],
+        regioes: regioes.map((regiao: Regiao, index: number) => ({
+          regiao_id: Number(regiao.regiao_id),
+          regiao_nome: regiao.nome,
+          roteamentos: [
+            {
+              prioridade: index + 1,
+              tronco_id: trunkAPIId,
+              tronco_nome: trunkResult.data.nome,
+            },
+          ],
+        })),
       };
 
       const routingRulesInput = {
-        plano_discagem_id: dialingPlanAPIId,
+        plano_discagem_id: dialingPlanId,
         cliente_id: companyId,
         dados: routingRulesData,
       };
@@ -696,7 +683,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         message: 'PABX environment set up successfully.',
         companyId,
         trunkId: trunkAPIId,
-        dialingPlanId: dialingPlanAPIId,
+        dialingPlanId: dialingPlanId,
       };
     } catch (error) {
       return {
@@ -826,38 +813,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return !existingWorkspace;
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
-
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        workspace.customDomain,
-      );
-
-    if (!customDomainDetails) return;
-
-    const isCustomDomainWorking =
-      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      await this.workspaceRepository.save(workspace);
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-      });
-
-      analytics.insertWorkspaceEvent(
-        workspace.isCustomDomainEnabled
-          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
-          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-        {},
-      );
-    }
-
-    return customDomainDetails;
-  }
-
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
@@ -882,15 +837,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          setting: SettingPermissionType.SECURITY,
+          setting: PermissionFlagType.SECURITY,
           workspaceId: workspaceId,
-          isExecutedByApiKey: isDefined(apiKey),
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+          },
         );
       }
     }
@@ -929,14 +888,18 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          setting: SettingPermissionType.WORKSPACE,
-          isExecutedByApiKey: isDefined(apiKey),
+          setting: PermissionFlagType.WORKSPACE,
+          apiKeyId: apiKey,
         });
 
       if (!userHasPermission) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage:
+              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+          },
         );
       }
     }

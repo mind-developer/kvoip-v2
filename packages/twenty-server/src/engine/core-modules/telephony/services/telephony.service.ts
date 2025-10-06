@@ -1,70 +1,57 @@
-import { BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
-
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
-import { CreateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Create';
-import { DeleteTelephonyHandler } from 'src/engine/core-modules/telephony/types/Delete';
-import { GetAllTelephonyHandler } from 'src/engine/core-modules/telephony/types/GetAll';
-import { FindOneTelephonyHandler } from 'src/engine/core-modules/telephony/types/GetOne/FindOne.type';
-import { UpdateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Update';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
+import { type CreateTelephonyHandler } from 'src/modules/telephony/types/Create';
+import { type DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
+import { type GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
+import { type FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
+import { type UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class TelephonyService extends TypeOrmQueryService<Telephony> {
+@Injectable()
+export class TelephonyService {
   constructor(
-    @InjectRepository(Telephony, 'core')
-    private readonly telephonyRepository: Repository<Telephony>,
-
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {
-    super(telephonyRepository);
-  }
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   findAll: GetAllTelephonyHandler = async (data) => {
-    const [telephonys] = await this.telephonyRepository.findAndCount({
-      where: {
-        workspace: {
-          id: data.workspaceId,
-        },
-      },
-      relations: ['workspace'],
-      order: {
-        createdAt: 'DESC',
-      },
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        data.workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    const telephonys = await telephonyRepository.find({
+      order: { createdAt: 'DESC' },
     });
 
     return telephonys;
   };
 
-  createTelehony: CreateTelephonyHandler = async (data) => {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: data.workspaceId,
-      },
-    });
+  createTelephony: CreateTelephonyHandler = async (data, workspaceId) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
 
-    if (!workspace) {
-      throw new Error('Workspace not found');
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
     }
 
     try {
-      const createdTelephony = this.telephonyRepository.create({
+      const createdTelephony = telephonyRepository.create({
         ...data,
-        workspace,
       });
 
-      return await this.telephonyRepository.save(createdTelephony);
+      return await telephonyRepository.save(createdTelephony);
     } catch (error) {
       throw new Error(
         'Error creating telephony. Maybe the member already has a number extension or the choosen extension is already in use.',
@@ -72,28 +59,67 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
     }
   };
 
-  findOne: FindOneTelephonyHandler = async ({ id }) => {
-    const telephony = await this.telephonyRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['workspace'],
-    });
+  findOne: FindOneTelephonyHandler = async ({ id, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
 
-    return telephony;
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    return await telephonyRepository.findOne({
+      where: { id },
+    });
   };
 
-  updateTelephony: UpdateTelephonyHandler = async ({ id, data }) => {
+  updateTelephony: UpdateTelephonyHandler = async ({
+    id,
+    workspaceId,
+    data,
+  }) => {
     const updateTelephonyData = {
       id,
       ...data,
     };
 
-    return this.telephonyRepository.save(updateTelephonyData);
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    const telephony = await telephonyRepository.findOne({
+      where: { id },
+    });
+
+    return await telephonyRepository.save({
+      ...telephony,
+      ...updateTelephonyData,
+    });
   };
 
-  delete: DeleteTelephonyHandler = async ({ id }) => {
-    const { affected } = await this.telephonyRepository.delete(id);
+  delete: DeleteTelephonyHandler = async ({ id, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    const { affected } = await telephonyRepository.delete(id);
 
     if (!affected)
       throw new BadRequestException(undefined, {
@@ -108,49 +134,55 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
     memberId: string,
     extensionNumber: string,
   ) => {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+    if (!workspaceMemberRepository) {
+      throw new Error('Workspace member repository not found');
+    }
 
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='${extensionNumber}' WHERE "id"='${memberId}'`,
-    );
+    const member = await workspaceMemberRepository.findOne({
+      where: { id: memberId },
+    });
 
-    const updatedWorkspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
-    );
+    if (!member) {
+      throw new BadRequestException(`Workspace member ${memberId} not found`);
+    }
 
-    return updatedWorkspaceMember?.[0] || null;
+    member.extensionNumber = extensionNumber;
+
+    return await workspaceMemberRepository.save(member);
   };
 
   removeAgentIdInWorkspaceMember = async (
     workspaceId: string,
     memberId: string,
   ) => {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+    if (!workspaceMemberRepository) {
+      throw new Error('Workspace member repository not found');
+    }
 
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='' WHERE "id"='${memberId}'`,
-    );
+    const member = await workspaceMemberRepository.findOne({
+      where: { id: memberId },
+    });
 
-    const updatedWorkspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
-    );
+    if (!member) {
+      throw new BadRequestException(`Workspace member ${memberId} not found`);
+    }
 
-    return updatedWorkspaceMember?.[0] || null;
+    member.extensionNumber = '';
+
+    return await workspaceMemberRepository.save(member);
   };
 }

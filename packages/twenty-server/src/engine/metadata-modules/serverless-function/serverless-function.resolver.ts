@@ -30,7 +30,7 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(ServerlessFunctionEntity, 'core')
+    @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
@@ -163,7 +163,7 @@ export class ServerlessFunctionResolver {
     try {
       const { id } = input;
 
-      return await this.serverlessFunctionService.publishOneServerlessFunction(
+      return await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
         id,
         workspaceId,
       );

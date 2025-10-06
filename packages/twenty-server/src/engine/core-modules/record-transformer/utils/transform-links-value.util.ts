@@ -1,9 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import isEmpty from 'lodash.isempty';
+import {
+  isDefined,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
+  parseJson,
+} from 'twenty-shared/utils';
 
-import { lowercaseDomainAndRemoveTrailingSlash } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
-import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
   | {
@@ -14,10 +18,11 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
+// TODO refactor this function handle partial composite field update
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
-  if (!value) {
+  if (!isDefined(value)) {
     return value;
   }
 
@@ -25,15 +30,9 @@ export const transformLinksValue = (
   const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
   const secondaryLinksRaw = value.secondaryLinks as string | null;
 
-  let secondaryLinksArray: LinkMetadataNullable[] | null = null;
-
-  if (isNonEmptyString(secondaryLinksRaw)) {
-    try {
-      secondaryLinksArray = JSON.parse(secondaryLinksRaw);
-    } catch {
-      /* empty */
-    }
-  }
+  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
+    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
+    : null;
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {
@@ -43,19 +42,21 @@ export const transformLinksValue = (
     },
   );
 
+  const processedSecondaryLinks = secondaryLinks?.map((link) => ({
+    ...link,
+    url: isDefined(link.url)
+      ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
+      : link.url,
+  }));
+
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseDomainAndRemoveTrailingSlash(primaryLinkUrl)
+      ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
-    secondaryLinks: JSON.stringify(
-      secondaryLinks?.map((link) => ({
-        ...link,
-        url: isDefined(link.url)
-          ? lowercaseDomainAndRemoveTrailingSlash(link.url)
-          : link.url,
-      })),
-    ),
+    secondaryLinks: isEmpty(processedSecondaryLinks)
+      ? null
+      : JSON.stringify(processedSecondaryLinks),
   };
 };

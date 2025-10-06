@@ -14,6 +14,7 @@ export type CallCenterContextType = {
   setSelectedChatId: Dispatch<SetStateAction<string | null>>;
   sortChats: () => void;
   selectedChat: WhatsappDocument | undefined; // | FacebookDocument
+  setSelectedChat: Dispatch<SetStateAction<WhatsappDocument | undefined>>;
   TAB_LIST_COMPONENT_ID: string;
   activeTabId: string | null;
   whatsappChats: WhatsappDocument[];

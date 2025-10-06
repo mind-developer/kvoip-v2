@@ -1,22 +1,21 @@
 import {
-  FieldArrayValue,
-  FieldBooleanValue,
-  FieldDateTimeValue,
-  FieldDateValue,
-  FieldJsonValue,
-  FieldMultiSelectValue,
-  FieldNumberValue,
-  FieldRatingValue,
-  FieldRelationValue,
-  FieldSelectValue,
-  FieldTextValue,
-  FieldUUidValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+  type FieldArrayValue,
+  type FieldBooleanValue,
+  type FieldDateTimeValue,
+  type FieldDateValue,
+  type FieldJsonValue,
+  type FieldMultiSelectValue,
+  type FieldNumberValue,
+  type FieldRatingValue,
+  type FieldRelationValue,
+  type FieldSelectValue,
+  type FieldTextValue,
+  type FieldUUidValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
-import { SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
+import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
+import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
 import {
-  IconComponent,
   IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
@@ -29,6 +28,7 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
   IllustrationIconUid,
+  type IconComponent,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -119,6 +119,11 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     } as const satisfies SettingsFieldTypeConfig<FieldMultiSelectValue>,
     [FieldMetadataType.RELATION]: {
       label: 'Relation',
+      Icon: IllustrationIconOneToMany,
+      category: 'Relation',
+    } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,
+    [FieldMetadataType.MORPH_RELATION]: {
+      label: 'Morph Relation',
       Icon: IllustrationIconOneToMany,
       category: 'Relation',
     } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,

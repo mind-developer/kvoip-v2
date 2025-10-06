@@ -11,7 +11,7 @@ import {
   WhatsappEmmitWaitingStatusJobProps,
 } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { WHATSAPP_EMMIT_CRON_PATTERN } from 'src/engine/core-modules/meta/whatsapp/cron/utils/whatsapp-emmit-cron-pattern';
-import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 
 @Processor(MessageQueue.cronQueue)
 export class WhatsappEmmitWaitingChatsCronJob {
@@ -20,7 +20,7 @@ export class WhatsappEmmitWaitingChatsCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.chargeQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly whatsappService: WhatsappService,
+    private readonly whatsAppService: WhatsAppService,
   ) {}
 
   @Process(WhatsappEmmitWaitingChatsCronJob.name)
@@ -32,7 +32,7 @@ export class WhatsappEmmitWaitingChatsCronJob {
     this.logger.warn(`Checking whatsapp chats to change status emmit`);
 
     const whatsappChatsToReassignMap =
-      (await this.whatsappService.getWorkspaceWhatsappChatsMapToReassign()) ??
+      (await this.whatsAppService.getWorkspaceWhatsappChatsMapToReassign()) ??
       {};
 
     const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);

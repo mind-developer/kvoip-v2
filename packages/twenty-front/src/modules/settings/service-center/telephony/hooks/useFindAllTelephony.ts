@@ -1,12 +1,12 @@
 // packages/twenty-front/src/modules/roles/hooks/useAllRoles.ts
 import { useQuery } from '@apollo/client';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_TELEPHONYS } from '@/settings/service-center/telephony/graphql/queries/getAllTelephonys';
+import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 
 type UseFindAllTelephonyReturn = {
   telephonys: Telephony[];
@@ -15,7 +15,7 @@ type UseFindAllTelephonyReturn = {
 };
 
 export const useFindAllTelephonys = (): UseFindAllTelephonyReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -25,14 +25,15 @@ export const useFindAllTelephonys = (): UseFindAllTelephonyReturn => {
   } = useQuery(GET_ALL_TELEPHONYS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });
 
   return {
-    telephonys: telephonysData?.findAllTelephony,
+    telephonys: telephonysData?.findAllTelephonyIntegration,
     loading,
     refetch,
   };

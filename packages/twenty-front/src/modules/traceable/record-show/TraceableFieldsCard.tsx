@@ -3,24 +3,23 @@ import groupBy from 'lodash.groupby';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
+
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { Traceable } from '@/traceable/types/Traceable';
 import { useLingui } from '@lingui/react/macro';
 import { ReactElement } from 'react';
-import { FieldMetadataType } from '~/generated/graphql';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import {
   TraceableFieldSection,
   getTraceableFieldSectionLabel,
@@ -30,6 +29,10 @@ type TraceableFieldsCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
 };
+
+type TraceableFieldsKeys = keyof Traceable;
+
+const INPUT_ID_PREFIX = 'traceable-fields-card';
 
 const StyledFieldsSectionContainer = styled.div`
   display: flex;
@@ -62,11 +65,29 @@ export const TraceableFieldsCard = ({
   objectNameSingular,
   objectRecordId,
 }: TraceableFieldsCardProps) => {
-  const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
-    useRecordShowContainerData({
-      objectNameSingular,
-      objectRecordId,
-    });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Traceable,
+  });
+
+  const fieldsToDisplay: (keyof Traceable)[] = [
+    'name',
+    'websiteUrl',
+    'campaignName',
+    'campaignSource',
+    'meansOfCommunication',
+    'keyword',
+    'campaignContent',
+    'generatedUrl',
+  ];
+
+  const fieldsByName = mapArrayToObject(
+    objectMetadataItem.fields,
+    ({ name }) => name,
+  );
+
+  const { isPrefetchLoading, recordLoading } = useRecordShowContainerData({
+    objectRecordId,
+  });
 
   const { t } = useLingui();
 
@@ -81,72 +102,44 @@ export const TraceableFieldsCard = ({
     objectRecordId,
   });
 
-  const availableFieldMetadataItems = objectMetadataItemTraceable.fields
-    .filter(
-      (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
-    )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    );
-
-  const inlineFieldMetadataItems = availableFieldMetadataItems
-    .filter(
-      (fieldMetadataItem) =>
-        !['createdAt', 'deletedAt', 'updatedAt'].includes(
-          fieldMetadataItem.name,
-        ),
-    )
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
-    )
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.RELATION,
-    );
-
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItemTraceable.id,
   });
 
-  const urlFieldKey: (keyof Traceable)[] = ['websiteUrl'];
-  const utmFieldsKeys: (keyof Traceable)[] = [
+  const urlFieldKey: TraceableFieldsKeys[] = ['websiteUrl'];
+  const utmFieldsKeys: TraceableFieldsKeys[] = [
     'campaignName',
     'campaignSource',
     'meansOfCommunication',
     'keyword',
     'campaignContent',
   ];
-  const generatedFieldsKeys: (keyof Traceable)[] = ['generatedUrl', 'url'];
+  const generatedFieldsKeys: TraceableFieldsKeys[] = ['generatedUrl', 'url'];
 
   const {
     urlInlineFieldMetadataItem,
     utmInlineFieldsMetadataItems,
     generatedInlineFieldsMetadataItems,
     inlineOthersFieldMetadataItems,
-  } = groupBy(inlineFieldMetadataItems, (fieldMetadataItem) => {
-    if (urlFieldKey.includes(fieldMetadataItem.name as keyof Traceable))
-      return 'urlInlineFieldMetadataItem';
-    if (utmFieldsKeys.includes(fieldMetadataItem.name as keyof Traceable))
-      return 'utmInlineFieldsMetadataItems';
-    if (generatedFieldsKeys.includes(fieldMetadataItem.name as keyof Traceable))
+  } = groupBy(fieldsToDisplay, (fieldKey) => {
+    if (urlFieldKey.includes(fieldKey)) return 'urlInlineFieldMetadataItem';
+    if (utmFieldsKeys.includes(fieldKey)) return 'utmInlineFieldsMetadataItems';
+    if (generatedFieldsKeys.includes(fieldKey))
       return 'generatedInlineFieldsMetadataItems';
     else return 'inlineOthersFieldMetadataItems';
   });
 
-  const fieldsMetadataMapper = (fieldsMetadata: FieldMetadataItem[]) =>
-    fieldsMetadata.map((fieldMetadataItem, index) => (
+  const fieldsMetadataMapper = (fieldsToDisplay: TraceableFieldsKeys[]) =>
+    fieldsToDisplay.map((fieldName, index) => (
       <FieldContext.Provider
-        key={objectRecordId + fieldMetadataItem.id}
+        key={fieldName}
         value={{
           recordId: objectRecordId,
           maxWidth: 200,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-            field: fieldMetadataItem,
+            field: fieldsByName[fieldName],
             position: index,
             objectMetadataItem: objectMetadataItemTraceable,
             showLabel: true,
@@ -154,21 +147,16 @@ export const TraceableFieldsCard = ({
           }),
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
-          isReadOnly: isFieldValueReadOnly({
-            objectNameSingular,
-            fieldName: fieldMetadataItem.name,
-            fieldType: fieldMetadataItem.type,
-            isRecordReadOnly,
-          }),
+          isRecordFieldReadOnly: isRecordReadOnly,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: getRecordFieldInputId(
-              objectRecordId,
-              fieldMetadataItem.name,
-              'fields-card',
-            ),
+            instanceId: getRecordFieldInputInstanceId({
+              recordId: objectRecordId,
+              fieldName,
+              prefix: INPUT_ID_PREFIX,
+            }),
           }}
         >
           <RecordInlineCell loading={recordLoading} />

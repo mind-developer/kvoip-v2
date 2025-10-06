@@ -1,4 +1,8 @@
 {
+  "workspaceLayout": {
+    "appsDir": "packages",
+    "libsDir": "packages"
+  },
   "namedInputs": {
     "default": ["{projectRoot}/**/*"],
     "excludeStories": [
@@ -40,10 +44,9 @@
       "cache": true,
       "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "eslintConfig": "{projectRoot}/eslint.config.mjs",
         "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore"
+        "cacheLocation": "{workspaceRoot}/.cache/eslint"
       },
       "configurations": {
         "ci": {
@@ -101,7 +104,7 @@
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
+        "jestConfig": "{projectRoot}/jest.config.mjs",
         "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
@@ -262,7 +265,7 @@
       "cache": true,
       "inputs": [
         "default",
-        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/eslint.config.mjs",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },
@@ -277,7 +280,7 @@
     }
   },
   "installation": {
-    "version": "18.3.3"
+    "version": "21.3.11"
   },
   "generators": {
     "@nx/react": {
@@ -308,5 +311,8 @@
     }
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "tui": {
+    "enabled": false
+  }
 }

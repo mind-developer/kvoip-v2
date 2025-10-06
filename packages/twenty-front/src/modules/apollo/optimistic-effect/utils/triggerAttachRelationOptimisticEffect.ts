@@ -1,6 +1,6 @@
-import { ApolloCache, StoreObject } from '@apollo/client';
+import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -47,6 +47,15 @@ export const triggerAttachRelationOptimisticEffect = ({
         }
 
         if (fieldValueIsObjectRecordConnectionWithRefs) {
+          const recordAlreadyExists = targetRecordFieldValue.edges.some(
+            (edge: RecordGqlRefEdge) =>
+              edge.node.__ref === sourceRecordReference.__ref,
+          );
+
+          if (recordAlreadyExists) {
+            return targetRecordFieldValue;
+          }
+
           const nextEdges: RecordGqlRefEdge[] = [
             ...targetRecordFieldValue.edges,
             {

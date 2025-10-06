@@ -1,14 +1,16 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { Label } from 'twenty-ui/display';
 
 type ChatbotFlowTextEventFormProps = {
@@ -107,13 +109,13 @@ export const ChatbotFlowTextEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
   const { deleteSelectedNode } = useDeleteSelectedNode();
 
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
+  const chatbotFlow = useGetChatbotFlowState();
+  const saveChatbotFlowState = useSaveChatbotFlowState();
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -153,18 +155,13 @@ export const ChatbotFlowTextEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
-    // TODO: Build a type using Omit<...> instead.
-    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
-
-    const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
+    saveChatbotFlowState({
+      chatbotId: chatbotFlow.chatbotId,
+      edges: chatbotFlow.edges,
       nodes: updatedNodes,
       viewport: { x: 0, y: 0, zoom: 0 },
-    };
-
+    });
     setChatbotFlowSelectedNode(updatedNode);
-    updateFlow(updatedChatbotFlow);
   };
 
   return (
@@ -173,6 +170,7 @@ export const ChatbotFlowTextEventForm = ({
         <StyledHeaderInfo>
           <StyledHeaderTitle>
             <TitleInput
+              instanceId="chatbot-flow-text-event-form-title-input"
               sizeVariant="md"
               value={title as string}
               onChange={handleChange}

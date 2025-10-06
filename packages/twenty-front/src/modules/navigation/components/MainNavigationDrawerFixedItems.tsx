@@ -1,4 +1,5 @@
 import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
+import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
@@ -9,6 +10,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -18,8 +20,10 @@ import {
   IconRobot,
   IconSearch,
   IconSettings,
+  IconSparkles,
 } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -51,7 +55,9 @@ export const MainNavigationDrawerFixedItems = () => {
     );
 
     const viewId = objectMetadata?.id;
-    const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+    const lastVisitedViewId = viewId
+      ? lastVisitedViewPerObjectMetadataItem[viewId]
+      : undefined;
 
     return getAppPath(
       AppPath.RecordIndexPage,
@@ -64,6 +70,8 @@ export const MainNavigationDrawerFixedItems = () => {
   const chatbotPath = getNavigationPath('chatbot');
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   return (
     !isMobile && (
@@ -75,6 +83,15 @@ export const MainNavigationDrawerFixedItems = () => {
           keyboard={['/']}
           mouseUpNavigation={true}
         />
+        {isAiEnabled && (
+          <NavigationDrawerItem
+            label={t`Ask AI`}
+            Icon={IconSparkles}
+            onClick={() => openAskAIPage()}
+            keyboard={['@']}
+            mouseUpNavigation={true}
+          />
+        )}
         <NavigationDrawerItem
           label={t`Settings`}
           to={getSettingsPath(SettingsPath.ProfilePage)}

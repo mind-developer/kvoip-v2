@@ -1,35 +1,26 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { GET_CHATBOT_FLOW_BY_ID } from '@/chatbot/graphql/query/getChatbotFlowById';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
-import { UpdateChatbotFlow } from '@/chatbot/types/chatbotFlow.type';
+import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
+import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
 import { useQuery } from '@apollo/client';
-import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-
-type ChatbotFlowByIdReturn = {
-  chatbotFlowData: UpdateChatbotFlow | null;
-  refetch: () => void;
-};
+import { initialEdges, initialNodes } from '../flow-templates/mockFlowTemplate';
 
 export const useGetChatbotFlowById = (
   chatbotId: string,
-): ChatbotFlowByIdReturn => {
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
-  const chatbotFlow = useRecoilValue(chatbotFlowState);
-
-  const { data, refetch } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
+): ChatbotFlowData | null => {
+  const saveChatbotFlowState = useSaveChatbotFlowState();
+  const { data } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
     variables: { chatbotId },
+    onCompleted: (d) => {
+      if (d.errors) {
+        saveChatbotFlowState({
+          nodes: initialNodes,
+          edges: initialEdges,
+          chatbotId: chatbotId,
+        });
+      }
+    },
   });
 
-  useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (isDefined(data)) {
-      setChatbotFlow(data.getChatbotFlowById);
-    }
-  }, [data]);
-
-  return {
-    chatbotFlowData: chatbotFlow,
-    refetch,
-  };
+  return data;
 };

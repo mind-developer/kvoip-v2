@@ -9,7 +9,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -27,7 +27,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { NotaFiscalWorkspaceEntity } from 'src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity';
+import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -180,17 +180,17 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   cest: string;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.unidade,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.unit,
     type: FieldMetadataType.TEXT,
     label: msg`Unidade Comercial`,
     description: msg`Unidade comercial. Placeholder: UN`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
-  unidade: string;
+  unit: string;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.origem,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.origin,
     type: FieldMetadataType.NUMBER,
     label: msg`Origem da Mercadoria`,
     description: msg`Origem da mercadoria (0-8). Placeholder: 0`,
@@ -230,57 +230,57 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   cstCofins: string;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.aliquotaIcms,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.rateIcms,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota ICMS (%)`,
     description: msg`Alíquota do ICMS. Placeholder: 18.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaIcms: number;
+  rateIcms: number;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.aliquotaPis,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.ratePis,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota PIS (%)`,
     description: msg`Alíquota do PIS. Placeholder: 1.65`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaPis: number;
+  ratePis: number;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.aliquotaCofins,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.rateCofins,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota COFINS (%)`,
     description: msg`Alíquota do COFINS. Placeholder: 7.60`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaCofins: number;
+  rateCofins: number;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.aliquotaIss,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.rateIss,
     type: FieldMetadataType.NUMBER,
     label: msg`Alíquota ISS`,
     description: msg`Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais.`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  aliquotaIss: number;
+  rateIss: number;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.valorIpi,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.ipiValue,
     type: FieldMetadataType.NUMBER,
     label: msg`Valor/Alíquota IPI`,
     description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
-  valorIpi: number;
+  ipiValue: number;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.issRetido,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.issRetained,
     type: FieldMetadataType.BOOLEAN,
     label: msg`ISS Retido`,
     description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
@@ -288,37 +288,37 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: false,
   })
   @WorkspaceFieldIndex()
-  issRetido: boolean;
+  issRetained: boolean;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.itemListaServico,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.serviceListItem,
     type: FieldMetadataType.TEXT,
     label: msg`Item Lista Serviço`,
     description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  itemListaServico: string;
+  serviceListItem: string;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.codigoTributarioMunicipio,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.municipalTaxCode,
     type: FieldMetadataType.TEXT,
     label: msg`Código Tributário Município`,
     description: msg`Informar o código tributário de acordo com a tabela de cada município (não há um padrão).`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  codigoTributarioMunicipio: string;
+  municipalTaxCode: string;
 
   @WorkspaceField({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.classificacao,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.classification,
     type: FieldMetadataType.TEXT,
     label: msg`Classificação`,
     description: msg`Classificação do produto`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
-  classificacao: string;
+  classification: string;
 
   // Relations
   @WorkspaceRelation({
@@ -341,7 +341,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.ONE_TO_MANY,
     label: msg`Charges`,
     description: msg`Charges using this product`,
-    icon: 'IconSettings',
+    icon: 'IconReportMoney',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
@@ -349,16 +349,16 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   charges: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
-    standardId: PRODUCT_STANDARD_FIELD_IDS.notaFiscal,
+    standardId: PRODUCT_STANDARD_FIELD_IDS.invoices,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Nota Fiscal`,
-    description: msg`Nota Fiscal using this product`,
-    icon: 'IconSettings',
-    inverseSideTarget: () => NotaFiscalWorkspaceEntity,
+    label: msg`Invoices`,
+    description: msg`Invoices using this product`,
+    icon: 'IconFileDollar',
+    inverseSideTarget: () => InvoiceWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  notaFiscal: Relation<NotaFiscalWorkspaceEntity[]> | null;
+  invoices: Relation<InvoiceWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.searchVector,

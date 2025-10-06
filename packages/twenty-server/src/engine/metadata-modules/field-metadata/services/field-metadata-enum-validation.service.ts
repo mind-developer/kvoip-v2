@@ -1,38 +1,44 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type EnumFieldMetadataType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { type EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
-type Validator<T> = { validator: (str: T) => boolean; message: string };
+type Validator<T> = {
+  validator: (str: T) => boolean;
+  message: string;
+};
 
 type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
 
 type ValidateEnumFieldMetadataArgs = {
   existingFieldMetadata?: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     'type' | 'isNullable' | 'defaultValue' | 'options'
   >;
   fieldMetadataInput: FieldMetadataUpdateCreateInput;
@@ -55,6 +61,9 @@ export class FieldMetadataEnumValidationService {
       throw new FieldMetadataException(
         message,
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        {
+          userFriendlyMessage: message,
+        },
       );
     }
   }
@@ -80,23 +89,23 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (label) => !isDefined(label),
-        message: 'Option label is required',
+        message: t`Option label is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: `Option label "${sanitizedLabel}" exceeds 63 characters`,
+        message: t`Option label exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: `Option label "${sanitizedLabel}" is beneath 1 character`,
+        message: t`Option label "${sanitizedLabel}" is beneath 1 character`,
       },
       {
         validator: (label) => label.includes(','),
-        message: 'Label must not contain a comma',
+        message: t`Label must not contain a comma`,
       },
       {
         validator: (label) => !isNonEmptyString(label) || label === ' ',
-        message: 'Label must not be empty',
+        message: t`Label must not be empty`,
       },
     ];
 
@@ -109,15 +118,15 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (value) => !isDefined(value),
-        message: 'Option value is required',
+        message: t`Option value is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: `Option value "${sanitizedValue}" exceeds 63 characters`,
+        message: t`Option value exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: `Option value "${sanitizedValue}" is beneath 1 character`,
+        message: t`Option value "${sanitizedValue}" is beneath 1 character`,
       },
       {
         validator: (value) => !isSnakeCaseString(value),
@@ -130,12 +139,17 @@ export class FieldMetadataEnumValidationService {
     );
   }
 
-  private validateDuplicates(options: FieldMetadataOptions) {
+  private validateDuplicates(
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
+  ) {
     const fieldsToCheckForDuplicates = [
       'position',
       'id',
       'value',
-    ] as const satisfies (keyof FieldMetadataOptions[number])[];
+    ] as const satisfies (keyof (
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[]
+    )[number])[];
     const duplicatedValidators = fieldsToCheckForDuplicates.map<
       Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
     >((field) => ({
@@ -171,7 +185,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (typeof defaultValue !== 'string') {
@@ -202,7 +216,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateMultiSelectDefaultValue(
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     if (!Array.isArray(defaultValue)) {
@@ -234,7 +248,7 @@ export class FieldMetadataEnumValidationService {
 
   private validateFieldMetadataDefaultValue(
     fieldType: EnumFieldMetadataType,
-    options: FieldMetadataOptions,
+    options: FieldMetadataOptions<EnumFieldMetadataType>,
     defaultValue: unknown,
   ) {
     switch (fieldType) {

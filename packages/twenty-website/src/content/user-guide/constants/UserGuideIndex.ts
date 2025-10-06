@@ -4,23 +4,37 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'getting-started' },
       { fileName: 'what-is-twenty' },
       { fileName: 'create-workspace' },
+      { fileName: 'getting-around-twenty' },
+      { fileName: 'configure-workspace-in-three-steps' },
     ],
-    Objects: [
-      { fileName: 'objects' },
+    'Data Model': [
+      { fileName: 'data-model' },
+      { fileName: 'customize-your-data-model' },
       { fileName: 'standard-objects' },
       { fileName: 'fields' },
-      { fileName: 'views-sort-filter' },
-      { fileName: 'table-views' },
-      { fileName: 'kanban-views' },
-      { fileName: 'import-export-data' },
+      { fileName: 'creating-records' },
     ],
-    Functions: [
-      { fileName: 'functions' },
-      { fileName: 'emails' },
+    Views: [
+      { fileName: 'views' },
+      { fileName: 'views-sort-filter' },
+      { fileName: 'kanban-views' },
+    ],
+    Collaboration: [
+      { fileName: 'collaboration' },
       { fileName: 'notes' },
       { fileName: 'tasks' },
+    ],
+    Integrations: [
       { fileName: 'integrations' },
+      { fileName: 'getting-started-workflows' },
+      { fileName: 'workflows' },
+      { fileName: 'emails' },
       { fileName: 'api-webhooks' },
+      { fileName: 'import-export-data' },
+    ],
+    Settings: [
+      { fileName: 'settings' },
+      { fileName: 'permissions' },
     ],
     Other: [
       { fileName: 'other' },

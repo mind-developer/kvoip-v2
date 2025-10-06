@@ -11,6 +11,7 @@ export const GET_ALL_WHATSAPP_INTEGRATIONS = gql`
       appKey
       disabled
       sla
+      tipoApi
       chatbot {
         id
         name

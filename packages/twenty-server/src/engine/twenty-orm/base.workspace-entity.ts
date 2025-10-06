@@ -6,6 +6,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsPrimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -22,6 +23,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'Icon123',
   })
   @WorkspaceIsPrimaryField()
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   @Field(() => String, { nullable: false })
   id: string;
@@ -37,6 +39,8 @@ export abstract class BaseWorkspaceEntity {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
+  @WorkspaceIsFieldUIReadOnly()
+  @Field(() => Date, { nullable: false })
   createdAt: string;
 
   @WorkspaceField({
@@ -50,6 +54,8 @@ export abstract class BaseWorkspaceEntity {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
+  @WorkspaceIsFieldUIReadOnly()
+  @Field(() => Date, { nullable: false })
   updatedAt: string;
 
   @WorkspaceField({
@@ -63,5 +69,6 @@ export abstract class BaseWorkspaceEntity {
     },
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   deletedAt: string | null;
 }

@@ -6,7 +6,7 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
-import { aiModuleFactory } from 'src/engine/core-modules/ai/ai.module-factory';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -25,8 +25,10 @@ import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { KvoipAdminModule } from 'src/engine/core-modules/kvoip-admin/kvoip-admin.module';
@@ -39,6 +41,7 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { OnboardingPlansModule } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.module';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
+import { PageLayoutModule } from 'src/engine/core-modules/page-layout/page-layout.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
@@ -52,6 +55,8 @@ import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.mod
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
+import { WebhookModule } from 'src/engine/core-modules/webhook/webhook.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { AgentModule } from 'src/engine/core-modules/workspace-agent/workspace-agent.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
@@ -66,6 +71,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 import { IssuerModule } from './issuer/issuer.module';
 import { StripeModule } from './stripe/stripe.module';
+import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
 
 @Module({
   imports: [
@@ -105,6 +111,7 @@ import { StripeModule } from './stripe/stripe.module';
     RedisClientModule,
     MetaModule,
     SectorModule,
+    FinancialClosingModule,
     AgentModule,
     InboxModule,
     GoogleStorageModule,
@@ -112,8 +119,10 @@ import { StripeModule } from './stripe/stripe.module';
     DashboardLinklogsModule,
     ChatbotFlowModule,
     WorkspaceQueryRunnerModule,
+    GeoMapModule,
     SubscriptionsModule,
     FocusNfeModule,
+    ImapSmtpCaldavModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
@@ -136,15 +145,16 @@ import { StripeModule } from './stripe/stripe.module';
       wildcard: true,
     }),
     CacheStorageModule,
-    AiModule.forRoot({
-      useFactory: aiModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    AiModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [TwentyConfigService, FileStorageService],
     }),
     SearchModule,
+    ApiKeyModule,
+    WebhookModule,
+    CoreViewModule,
+    PageLayoutModule,
   ],
   exports: [
     AuditModule,
@@ -162,6 +172,7 @@ import { StripeModule } from './stripe/stripe.module';
     BillingPlansModule,
     FocusNfeModule,
     IssuerModule,
+    ImapSmtpCaldavModule,
   ],
 })
 export class CoreEngineModule {}

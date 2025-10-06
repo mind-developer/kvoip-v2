@@ -29,6 +29,11 @@ export class CreateInterIntegrationInput {
   @IsOptional()
   certificate?: string;
 
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  currentAccount: string;
+
   @Field({ defaultValue: 'active' })
   @IsString()
   @IsOptional()

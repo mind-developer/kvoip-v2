@@ -2,11 +2,7 @@
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class BillingException extends CustomException {
-  constructor(message: string, code: BillingExceptionCode) {
-    super(message, code);
-  }
-}
+export class BillingException extends CustomException<BillingExceptionCode> {}
 
 export enum BillingExceptionCode {
   BILLING_CUSTOMER_NOT_FOUND = 'BILLING_CUSTOMER_NOT_FOUND',
@@ -28,4 +24,6 @@ export enum BillingExceptionCode {
   BILLING_CHARGE_NOT_FOUND = 'BILLING_CHARGE_NOT_FOUND',
   BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE = 'BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE',
   BILLING_PRODUCT_LIMIT_REACHED = 'BILLING_PRODUCT_LIMIT_REACHED',
+  BILLING_PRICE_INVALID_TIERS = 'BILLING_PRICE_INVALID_TIERS',
+  BILLING_PRICE_UPDATE_REQUIRES_INCREASE = 'BILLING_PRICE_UPDATE_REQUIRES_INCREASE',
 }

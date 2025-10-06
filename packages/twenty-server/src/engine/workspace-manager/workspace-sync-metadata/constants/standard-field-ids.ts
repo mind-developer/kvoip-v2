@@ -1,11 +1,11 @@
-import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
-
 /**
  * /!\ DO NOT EDIT THE IDS OF THIS FILE /!\
  * This file contains static ids for standard objects.
  * These ids are used to identify standard objects in the database and compare them even when renamed.
  * For readability keys can be edited but the values should not be changed.
  */
+
+import { KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 
 // TODO: check if this can be deleted
 export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
@@ -14,7 +14,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
   custom: '20202020-7f21-442f-94be-32462281b1ca',
-};
+} as const;
 
 // TODO: check if this can be deleted
 export const ACTIVITY_STANDARD_FIELD_IDS = {
@@ -29,13 +29,7 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   comments: '20202020-6b2e-4d29-bbd1-ecddb330e71a',
   author: '20202020-455f-44f2-8e89-1b0ef01cb7fb',
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
-};
-
-export const API_KEY_STANDARD_FIELD_IDS = {
-  name: '20202020-72e6-4079-815b-436ce8a62f23',
-  expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
-  revokedAt: '20202020-06ab-44b5-8faf-f6e407685001',
-};
+} as const;
 
 export const ATTACHMENT_STANDARD_FIELD_IDS = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
@@ -51,27 +45,27 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
-  notaFiscal: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
-};
+  invoice: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
+} as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
   id: '20202020-eda0-4cee-9577-3eb357e3c22b',
   createdAt: '20202020-66ac-4502-9975-e4d959c50311',
   updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
   deletedAt: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-};
+} as const;
 
 export const BLOCKLIST_STANDARD_FIELD_IDS = {
   handle: '20202020-eef3-44ed-aa32-4641d7fd4a3e',
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
-};
+} as const;
 
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
   calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
   calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',
   eventExternalId: '20202020-9ec8-48bb-b279-21d0734a75a1',
   recurringEventExternalId: '20202020-c58f-4c69-9bf8-9518fa31aa50',
-};
+} as const;
 
 export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   connectedAccount: '20202020-95b1-4f44-82dc-61b042ae2414',
@@ -87,7 +81,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
   syncStageStartedAt: '20202020-a934-46f1-a8e7-9568b1e3a53e',
   syncedAt: '20202020-2ff5-4f70-953a-3d0d36357576',
-};
+} as const;
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
   calendarEvent: '20202020-fe3a-401c-b889-af4f4657a861',
@@ -97,7 +91,7 @@ export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
   responseStatus: '20202020-cec0-4be8-8fba-c366abc23147',
   person: '20202020-5761-4842-8186-e1898ef93966',
   workspaceMember: '20202020-20e4-4591-93ed-aeb17a4dcbd2',
-};
+} as const;
 
 export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   title: '20202020-080e-49d1-b21d-9702a7e2525c',
@@ -114,14 +108,14 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
-};
+} as const;
 
 // TODO: check if this can be deleted
 export const COMMENT_STANDARD_FIELD_IDS = {
   body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
   author: '20202020-2ab1-427e-a981-cf089de3a9bd',
   activity: '20202020-c8d9-4c30-a35e-dc7f44388070',
-};
+} as const;
 
 export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
@@ -154,13 +148,28 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
   PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
   PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
+
+  billingModel: '4cc08331-5132-469f-97bf-c74d978c0ac5',
+  cdrId: '90cdde6a-eaf2-4b96-8bd9-369a2a851e64',
+  typeDiscount: '134bf698-f696-4c43-b8a8-9eb3e6a2cc41',
+  discount: '8f18333e-fd58-4a58-86e6-a1257b1f75c5',
+  quantitiesRemainingFinancialClosingsDiscounts:
+    '9e02eaaf-cd24-4fad-a935-53a7f6388b4c',
+  totalValueCharged: '7f37e462-60dc-4088-8b84-90702f58abed',
+  valueMinimumMonthly: '5463a986-cbb6-4a7a-a23d-4bc0ae6dfa79',
+  valueFixedMonthly: '7406e13b-7bb9-4ffa-ba24-035b4936b96e',
+  slipDueDay: '99b453b5-31bc-411b-87ef-71f36c477610',
+  typeEmissionNF: '2dc5ea21-1510-42fd-b3a8-cd38dab6d10d',
+
   codigoMunicipio: 'f623074b-8340-487e-950b-3fcc0518a8f1',
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
   emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
   notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
   tenants: '5eca6f7c-4d68-4bb1-9945-0420d9fe72d5',
-};
+  invoices: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
+  companyFinancialClosingExecutions: '22c5ce2b-375b-45ea-81e6-8f379098cc41',
+} as const;
 
 export const CHARGE_STANDARD_FIELD_IDS = {
   name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c66',
@@ -184,8 +193,9 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
-  notaFiscal: 'c3a90d91-f458-4331-8d55-ff86a066191d',
-};
+  invoices: 'c3a90d91-f458-4331-8d55-ff86a066191d',
+  companyFinancialClosingExecutions: '8eecb7cc-889b-4192-90d9-32626d021c9e',
+} as const;
 
 export const SUPPORT_STANDARD_FIELD_IDS = {
   name: '5217e7f5-bd7a-4af5-8bbd-ec21c5f7d3af',
@@ -198,40 +208,55 @@ export const SUPPORT_STANDARD_FIELD_IDS = {
   person: '918887f8-37c5-4747-abe4-dd0e9491a1d5',
   timelineActivities: '4c8bf8da-92c4-421c-b267-6229095245f3',
   searchVector: '78a63bbb-83d8-472b-bd90-162c43f4f414',
-};
+} as const;
 
 export const PRODUCT_STANDARD_FIELD_IDS = {
   name: '02020202-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   salePrice: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5b',
   cost: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5c',
-  createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
-  updatedAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5e',
+
   unitOfMeasure: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5f',
   status: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c60',
   position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
-  searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
-  charges: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
   ncm: '0beb7064-e505-4451-82a1-4469b3ac68f2',
   cfop: 'b8990536-861d-4ede-82c1-4e794b8bdaae',
   cest: '46b3b263-8245-4eb6-bd80-1894c3d5fef3',
-  unidade: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
-  origem: '8523f0af-4e57-40b9-8b91-6da6d35a5f6d',
+  productType: '73460110-2f05-49db-a76e-7c0ac0880888',
   cstIcmsCsosn: 'c6efc059-14fe-4ffb-a884-5e57bf0d556b',
   cstPis: '004ea842-997a-4f9a-8099-23ecfcaea421',
   cstCofins: 'ebcc8de5-3821-43f1-bd42-2261fbc81f96',
-  aliquotaIcms: '5dce0057-f878-4e98-9901-889ba0c6a53d',
-  aliquotaPis: '542891a0-5388-4ac8-b58a-ce3404704f49',
-  aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
-  valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
-  productType: '73460110-2f05-49db-a76e-7c0ac0880888',
+  // origem: '8523f0af-4e57-40b9-8b91-6da6d35a5f6d',
+  // aliquotaIcms: '5dce0057-f878-4e98-9901-889ba0c6a53d',
+  // aliquotaPis: '542891a0-5388-4ac8-b58a-ce3404704f49',
+  // aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
+  // valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
+  // unidade: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
+  // aliquotaIss: 'cd4d2f86-ed16-4eee-b78a-412a2a5e3be9',
+  // issRetido: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
+  // itemListaServico: 'c4606156-e1b0-477d-972f-1373be7099f4',
+  // codigoTributarioMunicipio: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
+  // classificacao: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
+
+  origin: '8523f0af-4e57-40b9-8b91-6da6d35a5f6d',
+  rateIcms: '5dce0057-f878-4e98-9901-889ba0c6a53d',
+  ratePis: '542891a0-5388-4ac8-b58a-ce3404704f49',
+  rateCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
+  rateIss: 'cd4d2f86-ed16-4eee-b78a-412a2a5e3be9',
+  ipiValue: 'adf71e83-c959-4eba-991e-33672d835622',
+  unit: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
+  issRetained: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
+  serviceListItem: 'c4606156-e1b0-477d-972f-1373be7099f4',
+  municipalTaxCode: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
+  classification: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
+
+  createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
+  updatedAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5e',
+  searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
+
+  invoices: '71aceb60-96b8-4c23-b5c0-aadd9f6b256e',
   company: 'a9e553b0-b233-474a-a22b-5f76541e1f70',
-  aliquotaIss: 'cd4d2f86-ed16-4eee-b78a-412a2a5e3be9',
-  issRetido: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
-  itemListaServico: 'c4606156-e1b0-477d-972f-1373be7099f4',
-  codigoTributarioMunicipio: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
-  notaFiscal: '71aceb60-96b8-4c23-b5c0-aadd9f6b256e',
-  classificacao: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
-};
+  charges: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
+} as const;
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
   name: '20202020-0707-4245-9105-6b568abfab9f',
@@ -246,6 +271,38 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
+} as const;
+
+export const FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
+  name: 'f51db802-9330-43f0-8a18-e4816b24a9d6',
+  executedAt: 'b3ee06fe-cb77-4b1f-8df9-39c186e48ff1',
+  financialClosingId: '758004cc-af11-4adf-912d-f416c3217744',
+  status: '92df31e3-e107-4977-8f2b-d593d4c982c3',
+  companiesTotal: '32f76dca-2399-4cb3-8958-4ed9621d9324',
+  companiesWithError: 'b353e425-18de-4e75-90a6-6b1c79606a37',
+  completedCompanySearch: 'f61236c0-ad8c-47a2-bbe1-1b9a7c7d07f4',
+  completedCostIdentification: '30d59336-6225-4d19-8bb5-b52122ee8826',
+  completedBoletoIssuance: '1365faae-3a89-4382-a912-8f2eb954f7a8',
+  completedInvoiceIssuance: '5f54730e-fc86-40fe-96e0-101f86ff7df6',
+  billingModel: '83e79212-06ab-4663-81c3-5ccf51c0a839',
+  logs: '3472f9a8-39c3-41fa-9898-615d1f4613e2',
+  companyFinancialClosingExecutions: '6e47f8b7-2f7e-4fef-a0a0-e793ca9e541e',
+};
+
+export const COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
+  name: '8f3d5a71-7f25-4d84-baf0-1ecac13d5b4e',
+  executedAt: '7f41255c-5b55-4e3c-b1cf-86ddcfc1fb44',
+  financialClosingExecution: '2a0a6e41-6f3b-4c43-b726-298a61d43dbd',
+  status: 'b6e58a10-54cd-43c1-a2d3-5a62b87e96b4',
+  company: 'd0114e38-b19b-430a-a84e-24193d5b3489',
+  chargeValue: 'd12f743b-4c20-4c57-8b5e-4c83a8780a92',
+  calculatedChargeValue: 'f67a8f47-63b2-497a-8725-98f0b36a7cf9',
+  completedBoletoIssuance: 'a97ed23b-6ef5-49a2-9e9d-28c3f76e8b2c',
+  invoiceEmissionType: '2c1b2c94-6ff2-44e6-9d12-dc2d7af08420',
+  completedInvoiceIssuance: '71bfc1f2-65cd-40e4-8c6f-89453f2a5e0b',
+  charge: '4c8b620c-33db-470a-a080-61c86e23cea5',
+  invoices: 'a43c42f1-79b0-40db-9e12-ab4d093c2464',
+  logs: 'ce3b3f25-dba1-46f2-9c33-bc2a94f5c10e',
 };
 
 export const LINKLOGS_STANDARD_FIELD_IDS = {
@@ -261,7 +318,12 @@ export const LINKLOGS_STANDARD_FIELD_IDS = {
   linkName: '20202020-0b7b-4d0d-8b5d-4b7c3d2b3e7a',
   uv: '20202020-0b7b-4d0d-8b5d-4b7c3d2b5f8b',
   searchVector: '20202020-0b7b-4d0d-8b5d-4b7c3d2b7e3f',
-};
+  country: 'a2804ebf-9cae-406f-8ab7-4b898e1def2d',
+  regionName: '65fd53f5-f950-4fe3-b851-62512066a267',
+  cityName: 'b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e',
+  city: '25f0cf05-3e98-4e6a-9e18-4441c3431e07',
+  platform: 'bafd9c2b-c4c9-4886-9a47-4b394369385f',
+} as const;
 
 export const INTEGRATION_STANDARD_FIELD_IDS = {
   name: '20202020-9f5a-4f9b-8b7e-6e2d9e8e0a5d',
@@ -271,7 +333,7 @@ export const INTEGRATION_STANDARD_FIELD_IDS = {
   attachments: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5e',
   position: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5f',
   searchVector: '85c71601-72f9-4b7b-b343-d00000b2a27a',
-};
+} as const;
 
 export const FOCUS_NFE_STANDARD_FIELD_ID = {
   name: '967f34da-329a-474a-abd3-0d51be34f77c',
@@ -292,10 +354,10 @@ export const FOCUS_NFE_STANDARD_FIELD_ID = {
   taxRegime: '25913ca9-c4e2-4333-a7e0-de84a621f520',
   position: 'c7e01234-d211-4a85-94f2-bcd0ba8d00ea',
   searchVector: '2e4ba6eb-fe44-44e4-b9e5-840925dda55b',
-  notaFiscal: 'df67718b-deba-4f31-b947-e9a8b4967976',
-};
+  invoices: 'df67718b-deba-4f31-b947-e9a8b4967976',
+} as const;
 
-export const NOTA_FISCAL_FIELD_IDS = {
+export const INVOICE_FIELD_IDS = {
   name: '1881e61b-4bd7-4aa7-ad37-6e507a99e9c6',
   nfType: '2548531e-456f-4ca8-b85b-a7260326e696',
   totalAmount: '18adc333-c20a-4131-99a6-394822409d0c',
@@ -309,31 +371,50 @@ export const NOTA_FISCAL_FIELD_IDS = {
   ncm: 'c0cd3d9c-bcc2-4d75-8d8c-c8663e677cba',
   cfop: '284b42dc-e264-431f-b7e9-3106f7ec8e98',
   cstIcmsCsosn: '98ff97ad-a078-4188-b855-835db313c723',
-  origem: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1',
-  aliquotaIcms: 'eb601572-7c52-4dad-b077-585bc1615374',
-  aliquotaPis: '12f215c3-038e-44d3-8bc3-30a43a21aed9',
-  aliquotaCofins: '56df9004-2ad1-4a35-93d4-d5976768b525',
-  aliquotaIpi: '6f2f3e01-521d-4a14-8167-eed31cd1e698',
-  aliquotaIss: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f',
-  issRetido: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e',
-  itemListaServico: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd',
+  timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
+  // origem: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1',
+  // aliquotaIcms: 'eb601572-7c52-4dad-b077-585bc1615374',
+  // aliquotaPis: '12f215c3-038e-44d3-8bc3-30a43a21aed9',
+  // aliquotaCofins: '56df9004-2ad1-4a35-93d4-d5976768b525',
+  // aliquotaIpi: '6f2f3e01-521d-4a14-8167-eed31cd1e698',
+  // aliquotaIss: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f',
+  // issRetido: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e',
+  // itemListaServico: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd',
+  // discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
+  // codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
+  // numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
+  // classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
+  // unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
+  // justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
+  // dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
+  // numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
+
+  origin: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1', // origem
+  icmsRate: 'eb601572-7c52-4dad-b077-585bc1615374', // aliquotaIcms
+  pisRate: '12f215c3-038e-44d3-8bc3-30a43a21aed9', // aliquotaPis
+  cofinsRate: '56df9004-2ad1-4a35-93d4-d5976768b525', // aliquotaCofins
+  ipiRate: '6f2f3e01-521d-4a14-8167-eed31cd1e698', // aliquotaIpi
+  issRate: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f', // aliquotaIss
+  issRetained: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e', // issRetido
+  serviceListItem: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd', // itemListaServico
+  discrimination: '4ca3e13c-1522-4b06-949b-7a19597bebb4', // discriminacao
+  subscriberCode: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4', // codAssinante
+  numSubscriberAgreement: '2aecf923-83b1-46a0-be75-1a7b770c34ac', // numContratoAssinante
+  classification: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2', // classificacao
+  unit: '744d7802-7e21-4f65-b0c9-696e2204c4f2', // unidade
+  justification: '8169d623-fa6a-4c54-9812-3ea56a69640b', // justificativa
+  issueDate: '50332075-7324-49ab-ae38-2d6c468f8580', // dataEmissao
+  rpsNumber: '60027ee6-65d3-4ff7-8219-8e0ac367d55b', // numeroRps
+
   position: '50184293-008d-4d8e-84a4-d99f5d86ef98',
   charge: '390bbb03-c3e8-4580-942a-897383695974',
   company: '34b09c03-ae49-4293-8c08-c4e5a2b7c3bf',
   product: '81e0fdc3-525c-4e07-adff-47327baca957',
   searchVector: '809a78c5-3a28-481e-a9c8-fea97a026a68',
   focusNFe: 'd156564a-6e20-4c43-a61b-e2ee8ca4fcbc',
-  discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
-  timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
-  codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
-  numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
-  classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
-  unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
-  justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
-  dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
-  numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
   createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
-};
+  companyFinancialClosingExecution: 'ca00afdd-cf6e-4189-8cc4-b814cd06d705',
+} as const;
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
@@ -347,7 +428,8 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
   handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
   scopes: '20202020-8a3d-46be-814f-6228af16c47c',
-};
+  connectionParameters: '20202020-a1b2-46be-814f-6228af16c481',
+} as const;
 
 export const EVENT_STANDARD_FIELD_IDS = {
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
@@ -356,7 +438,7 @@ export const EVENT_STANDARD_FIELD_IDS = {
   company: '20202020-04ad-4221-a744-7a8278a5ce20',
   opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
-};
+} as const;
 
 export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
@@ -366,7 +448,7 @@ export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
   recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
-};
+} as const;
 
 export const BEHAVIORAL_EVENT_STANDARD_FIELD_IDS = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
@@ -374,7 +456,7 @@ export const BEHAVIORAL_EVENT_STANDARD_FIELD_IDS = {
   context: '20202020-bd62-4b5b-8385-6caeed8f8078',
   objectName: '20202020-a744-406c-a2e1-9d83d74f4341',
   recordId: '20202020-6d8b-4ca5-9869-f882cb335673',
-};
+} as const;
 
 export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   happensAt: '20202020-9526-4993-b339-c4318c4d39f0',
@@ -399,8 +481,8 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
-  notaFiscal: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
-};
+  invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+} as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
@@ -417,13 +499,13 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   custom: '20202020-855a-4bc8-9861-79deef37011f',
   favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
   chatbot: '82cb4030-897c-45d5-9b0d-9cf2f72b8c92',
-};
+} as const;
 
 export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
   position: '20202020-5278-4bde-8909-2cec74d43744',
   name: '20202020-82a3-4537-8ff0-dbce7eec35d6',
   favorites: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
-};
+} as const;
 
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
@@ -431,7 +513,7 @@ export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
   messageExternalId: '20202020-37d6-438f-b6fd-6503596c8f34',
   messageThread: '20202020-fac8-42a8-94dd-44dbc920ae16',
   messageThreadExternalId: '20202020-35fb-421e-afa0-0b8e8f7f9018',
-};
+} as const;
 
 export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   visibility: '20202020-6a6b-4532-9767-cbc61b469453',
@@ -451,13 +533,16 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
-};
+} as const;
 
 export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   name: '20202020-7cf8-40bc-a681-b80b771449b7',
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
   syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
-};
+  isSentFolder: '20202020-2af5-4a25-b2de-3c9386da941b',
+  isSynced: '20202020-764f-4e09-8f95-cd46b6bfe3c4',
+  externalId: '20202020-f3a8-4d2b-9c7e-1b5f9a8e4c6d',
+} as const;
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
   message: '20202020-985b-429a-9db9-9e55f4898a2a',
@@ -466,18 +551,18 @@ export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
   displayName: '20202020-36dd-4a4f-ac02-228425be9fac',
   person: '20202020-249d-4e0f-82cd-1b9df5cd3da2',
   workspaceMember: '20202020-77a7-4845-99ed-1bcbb478be6f',
-};
+} as const;
 
 export const MESSAGE_THREAD_STANDARD_FIELD_IDS = {
   messages: '20202020-3115-404f-aade-e1154b28e35a',
   messageChannelMessageAssociations: '20202020-314e-40a4-906d-a5d5d6c285f6',
   messageThreadSubscribers: '20202020-3b3b-4b3b-8b3b-7f8d6a1d7d5b',
-};
+} as const;
 
 export const MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS = {
   messageThread: '20202020-2c8f-4f3e-8b9a-7f8d6a1c7d5b',
   workspaceMember: '20202020-7f7b-4b3b-8b3b-7f8d6a1d7d5a',
-};
+} as const;
 
 export const MESSAGE_STANDARD_FIELD_IDS = {
   headerMessageId: '20202020-72b5-416d-aed8-b55609067d01',
@@ -488,7 +573,7 @@ export const MESSAGE_STANDARD_FIELD_IDS = {
   receivedAt: '20202020-140a-4a2a-9f86-f13b6a979afc',
   messageParticipants: '20202020-7cff-4a74-b63c-73228448cbd9',
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
-};
+} as const;
 
 export const NOTE_STANDARD_FIELD_IDS = {
   position: '20202020-368d-4dc2-943f-ed8a49c7fdfb',
@@ -501,7 +586,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
   searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
-};
+} as const;
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   note: '20202020-57f3-4f50-9599-fc0f671df003',
@@ -510,7 +595,7 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
   support: 'ddb83ecc-e243-4842-8190-ba15dceddcd6',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
-};
+} as const;
 
 export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
@@ -530,7 +615,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
-};
+} as const;
 
 export const PERSON_STANDARD_FIELD_IDS = {
   name: '20202020-3875-44d5-8c33-a6239011cab8',
@@ -559,7 +644,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
-};
+} as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
   position: '20202020-7d47-4690-8a98-98b9a0c05dd8',
@@ -575,7 +660,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
   favorites: '20202020-4d1d-41ac-b13b-621631298d65',
   searchVector: '20202020-4746-4e2f-870c-52b02c67c90d',
-};
+} as const;
 
 export const TASK_TARGET_STANDARD_FIELD_IDS = {
   task: '20202020-e881-457a-8758-74aaef4ae78a',
@@ -583,7 +668,7 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
   custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
-};
+} as const;
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-135f-4c5b-b361-15f24870473c',
@@ -592,7 +677,7 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   position: '20202020-19e5-4e4c-8c15-3a96d1fd0650',
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
   aggregateOperation: '20202020-2cd7-4f94-ae83-4a14f5731a04',
-};
+} as const;
 
 export const VIEW_GROUP_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-8f26-46ae-afed-fdacd7778682',
@@ -600,7 +685,7 @@ export const VIEW_GROUP_STANDARD_FIELD_IDS = {
   isVisible: '20202020-0fed-4b44-88fd-a064c4fcfce4',
   position: '20202020-748e-4645-8f32-84aae7726c04',
   view: '20202020-5bc7-4110-b23f-fb851fb133b4',
-};
+} as const;
 
 export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
@@ -611,20 +696,20 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
   positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
   subFieldName: '20202020-3bb0-4f66-a537-a46fe0dc469a',
-};
+} as const;
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
   view: '20202020-ff7a-4b54-8be5-aa0249047b74',
   parentViewFilterGroupId: '20202020-edbf-4929-8ede-64f48d6bf2a7',
   logicalOperator: '20202020-64d9-4bc5-85ba-c250796ce9aa',
   positionInViewFilterGroup: '20202020-90d6-4299-ad87-d05ddd3a0a3f',
-};
+} as const;
 
 export const VIEW_SORT_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-8240-4657-aee4-7f0df8e94eca',
   direction: '20202020-b06e-4eb3-9b58-0a62e5d79836',
   view: '20202020-bd6c-422b-9167-5c105f2d02c8',
-};
+} as const;
 
 export const VIEW_STANDARD_FIELD_IDS = {
   name: '20202020-12c6-4f37-b588-c9b9bf57328d',
@@ -645,21 +730,14 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
-};
-
-export const WEBHOOK_STANDARD_FIELD_IDS = {
-  targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
-  operation: '20202020-15b7-458e-bf30-74770a54410c',
-  operations: '20202020-15b7-458e-bf30-74770a54411c',
-  description: '20202020-15b7-458e-bf30-74770a54410d',
-  secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
-};
+  anyFieldFilterValue: '20202020-3143-46c0-bb05-034063ce0703',
+} as const;
 
 export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
   type: '20202020-3319-4234-a34c-3f92c1ab56e7',
   settings: '20202020-3319-4234-a34c-bac8f903de12',
   workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
-};
+} as const;
 
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
@@ -673,12 +751,14 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
-};
+  searchVector: '20202020-535d-4ffa-b7f3-4fa0d5da1b7a',
+} as const;
 
 export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   name: '20202020-b840-4253-aef9-4e5013694587',
   workflowVersion: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
   workflow: '20202020-8c57-4e7f-84f5-f373f68e1b82',
+  enqueuedAt: '20202020-f1e3-4de1-a461-b5c4fdbc861d',
   startedAt: '20202020-a234-4e2d-bd15-85bcea6bb183',
   endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
   status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
@@ -686,9 +766,11 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
   output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
   context: '20202020-189c-478a-b867-d72feaf5926a',
+  state: '20202020-611f-45f3-9cde-d64927e8ec57',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
-};
+  searchVector: '20202020-0b91-4ded-b1ac-cbd5efa58cb9',
+} as const;
 
 export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   name: '20202020-a12f-4cca-9937-a2e40cc65509',
@@ -700,7 +782,8 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   steps: '20202020-5988-4a64-b94a-1f9b7b989039',
   favorites: '20202020-b8e0-4e57-928d-b51671cc71f2',
   timelineActivities: '20202020-fcb0-4695-b17e-3b43a421c633',
-};
+  searchVector: '20202020-3f17-44ef-b8c1-b282ae8469b2',
+} as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {
   name: '92a00578-f689-43c6-9d79-5171e9d9ab74',
@@ -725,6 +808,7 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
+  tipoApi: 'c0a80101-0000-0000-0000-000000000001',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
@@ -757,7 +841,8 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
   extensionNumber: '0271a0fa-20de-45e1-9908-b198bd1e7b99',
-};
+  calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+} as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
@@ -771,12 +856,56 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
   timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
+} as const;
+
+export const DASHBOARD_STANDARD_FIELD_IDS = {
+  title: '20202020-20ee-4091-95dc-44b57eda3a89',
+  pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
+} as const;
+
+export const TELEPHONY_STANDARD_FIELD_IDS = {
+  name: '31f61bb0-d981-454f-9703-64d5fbee9d2c',
+  memberId: '469eb1cb-72d3-4f94-b0cd-dd9a05c6c84a',
+  numberExtension: '28680674-5024-496a-b554-20ab12f1a02c',
+  extensionName: 'bfbc7a80-0260-4e92-be5c-fee6f699e226',
+  extensionGroup: '5f86fbba-8fa9-487c-b247-b225b3cfc143',
+  type: '8e54abf8-6de7-46f4-8dc6-ef75747f20ea',
+  dialingPlan: '88459446-5b09-458e-80d8-957a0ac01a3f',
+  areaCode: 'dbbfccc1-f0bd-42a9-a015-204acec4be12',
+  SIPPassword: '9ee84dfc-ad04-4b56-9b70-189f33b31399',
+  callerExternalID: '62649474-32fc-4e7b-ada8-7e49894b9953',
+  pullCalls: 'fc84ef46-2cfa-4d89-a4d0-cd64ed05a148',
+  listenToCalls: '576c72b3-1942-4dbb-b5a8-05412af2f105',
+  recordCalls: 'c9b8040f-3f50-4afc-9cea-562bc75413c7',
+  blockExtension: '8a7b8432-2ca5-4147-bd62-4b3898f38850',
+  enableMailbox: 'c4d569ca-99af-48c1-a87c-784ac0c86033',
+  emailForMailbox: '676dc81b-ec3b-4c19-ad58-35808f5a35c4',
+  fowardAllCalls: '9746e5e0-1718-467e-87eb-404a0400ecd5',
+  fowardBusyNotAvailable: '1089ca02-965d-45ad-8add-67ccca5f9fc9',
+  fowardOfflineWithoutService: '7e2b5086-c221-4fc5-8f9a-64d85fa19353',
+  extensionAllCallsOrOffline: '4a33410e-e747-4064-aff8-d8cf1b9f54d7',
+  externalNumberAllCallsOrOffline: '3a1c3882-1860-4ab3-80f2-cb8fa8b9873c',
+  destinyMailboxAllCallsOrOffline: 'cda5ef93-8116-4fcf-823c-c1fe846b5824',
+  extensionBusy: 'd39dfde3-e256-4af0-99b7-75fe2f72b8c0',
+  externalNumberBusy: 'c1628c28-8701-422f-b041-22ed3eb8ce7d',
+  destinyMailboxBusy: '109ef9d0-a27c-490d-b91b-752346119367',
+  ramal_id: '94fe9829-1146-491b-ad8c-65d036c1d58b',
+  advancedFowarding1: 'd2508f07-1a4e-4b44-b060-158b0425e9c2',
+  advancedFowarding2: 'caf2562a-2068-4619-bae3-c3e3209448c3',
+  advancedFowarding3: 'a698723a-aab5-41a9-831e-3e4e7a1f8b69',
+  advancedFowarding4: '91d30d6f-07df-487a-8dcb-df45e56fc10b',
+  advancedFowarding5: '2a773cc2-cef5-4f4d-8d8d-07709051dc68',
+  advancedFowarding1Value: 'a4714e00-5508-46fb-a265-6ce5dd68d24b',
+  advancedFowarding2Value: '01d1ad74-1ef9-4b68-882a-4401d8199cc1',
+  advancedFowarding3Value: '5ad5f44a-45ef-454d-bef0-b49e2d6258d6',
+  advancedFowarding4Value: '61b78fc7-3f67-4449-962e-6f401cdfff02',
+  advancedFowarding5Value: '21991b1d-2583-4732-bd88-ce339ab6fdf5',
+  searchVector: 'cbeba309-6b50-4d4c-9b4a-1ae4b6af2a58',
 };
 
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
-  apiKey: API_KEY_STANDARD_FIELD_IDS,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
   behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
@@ -788,6 +917,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   comment: COMMENT_STANDARD_FIELD_IDS,
   company: COMPANY_STANDARD_FIELD_IDS,
   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
+  dashboard: DASHBOARD_STANDARD_FIELD_IDS,
   favorite: FAVORITE_STANDARD_FIELD_IDS,
   auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
   messageChannelMessageAssociation:
@@ -809,11 +939,10 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   viewFilter: VIEW_FILTER_STANDARD_FIELD_IDS,
   viewSort: VIEW_SORT_STANDARD_FIELD_IDS,
   view: VIEW_STANDARD_FIELD_IDS,
-  webhook: WEBHOOK_STANDARD_FIELD_IDS,
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
   chatbot: CHATBOT_STANDARD_FIELD_IDS,
   ...KVOIP_ADMIN_STANDARD_OBJECT_FIELD_IDS,
-};
+} as const;

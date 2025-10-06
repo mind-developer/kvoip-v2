@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  HealthIndicatorResult,
+  type HealthIndicatorResult,
   HealthIndicatorService,
 } from '@nestjs/terminus';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -16,7 +16,7 @@ export class DatabaseHealthIndicator {
   private stateManager = new HealthStateManager();
 
   constructor(
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}

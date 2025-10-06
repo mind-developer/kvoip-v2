@@ -2,68 +2,79 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
+import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
-import {
-  AvatarComponent,
-  UsernameComponent,
-} from '@/chat/call-center/components/UserInfoChat';
+import StyledAudio from '@/chat/call-center/components/StyledAudio';
+import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
+import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import StyledImage from '@/chat/components/StyledImage';
+import { StyledMessageBubble } from '@/chat/components/StyledMessageBubble';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
-import { TDateFirestore } from '@/chat/internal/types/chat';
-import { validAudioTypes, validVideoTypes } from '@/chat/types/FileTypes';
+import { TDateFirestore } from '@/chat/types/chat';
+import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
-import { statusEnum } from '@/chat/types/WhatsappDocument';
+import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Person } from '@/people/types/Person';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui/display';
+import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
 const StyledPaneChatContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 0;
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(0)};
   width: 100%;
+  background-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'black' : theme.background.primary};
 `;
 
 const StyledChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(0)};
   max-width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  margin-inline: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(6)};
+  padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 
-const StyledMessageContainer = styled.div<{ isSystemMessage: boolean }>`
+const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
   display: flex;
-  flex-direction: ${({ isSystemMessage }) =>
-    isSystemMessage ? 'row-reverse' : 'row'};
+  flex-direction: ${({ fromMe }) => (fromMe ? 'row-reverse' : 'row')};
   align-items: center;
   width: 100%;
   justify-content: flex-start;
   border-radius: ${({ theme }) => theme.spacing(2)};
   transition: all 0.15s;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledAvatarMessage = styled.div`
-  align-self: flex-start;
-  margin-top: 4px;
+  align-self: flex-end;
+  /* max-height: 20%; */
+  z-index: 1;
 `;
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
@@ -74,10 +85,7 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   gap: ${({ theme }) => theme.spacing(1.5)};
   width: auto;
   max-width: 70%;
-  margin-left: ${({ isSystemMessage, theme }) =>
-    isSystemMessage ? '0' : theme.spacing(2)};
-  margin-right: ${({ isSystemMessage, theme }) =>
-    isSystemMessage ? theme.spacing(2) : '0'};
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -110,16 +118,6 @@ const StyledDocument = styled.a`
   }
 `;
 
-const StyledImage = styled.img`
-  align-items: end;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  height: 200px;
-  object-fit: cover;
-  width: 200px;
-`;
-
 const StyledMessage = styled.div<{ isSystemMessage: boolean }>`
   max-width: ${({ isSystemMessage }) => (isSystemMessage ? 'none' : '100%')};
   text-align: left;
@@ -140,15 +138,12 @@ const StyledLine = styled.p`
 `;
 
 const StyledInputContainer = styled.div`
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-inline: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(1)};
-  position: relative;
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.xxl};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInput = styled.textarea`
@@ -158,12 +153,13 @@ const StyledInput = styled.textarea`
   outline: none;
   resize: none;
   font-size: ${({ theme }) => theme.font.size.md};
+  font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding-right: ${({ theme }) => theme.spacing(15)};
-  padding-left: ${({ theme }) => theme.spacing(12)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
-  min-height: 20px;
+  height: 10px;
   max-height: 200px;
+  &::placeholder {
+    line-height: 10px;
+  }
 `;
 
 const StyledDiv = styled.div`
@@ -195,6 +191,15 @@ const StyledIconButton = styled(IconButton)`
   height: 24px;
   padding: '5px';
   min-width: 24px;
+  animation: swap 0.5s cubic-bezier(0, 1.06, 0.53, 0.99);
+  @keyframes swap {
+    0% {
+      transform: translateY(5px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -207,14 +212,10 @@ const StyledMessageEvent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
   color: ${({ theme }) => theme.color.gray50};
-`;
-
-const StyledAudio = styled.audio<{ isSystemMessage: boolean }>`
-  display: block;
-  margin-left: ${({ isSystemMessage }) => (isSystemMessage ? 'auto' : '0')};
-  margin-right: ${({ isSystemMessage }) => (isSystemMessage ? '0' : 'auto')};
+  padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
@@ -230,29 +231,48 @@ const StyledModalOverlay = styled(motion.div)`
   user-select: none;
   width: 100%;
   z-index: 1000;
+  animation: blur 0.3s ease-out;
+  backdrop-filter: blur(20px);
+  @keyframes blur {
+    0% {
+      backdrop-filter: blur(0px);
+    }
+    100% {
+      backdrop-filter: blur(20px);
+    }
+  }
 `;
 
 const StyledModalImage = styled.img`
-  max-width: 90%;
-  max-height: 90dvh;
+  max-width: 40%;
+  max-height: 40dvh;
   object-fit: contain;
-`;
-
-const StyledBalloon = styled.div<{ isSystemMessage: boolean }>`
-  background-color: ${({ isSystemMessage, theme }) =>
-    isSystemMessage
-      ? theme.name === 'dark'
-        ? '#171E2C'
-        : '#E8EFFD'
-      : theme.background.tertiary};
-  padding: ${({ theme }) => theme.spacing(3)};
-  border-radius: ${({ theme }) => theme.spacing(3)};
-  max-width: max-content;
-  word-wrap: break-word;
+  ${MODAL_IMAGE_POPUP}
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  transition: border-radius 0.3s;
+  transition: transform cubic-bezier(0, 0.42, 0, 1.03) 0.3s;
+  animation: zoom-in 800ms cubic-bezier(0, 0.42, 0, 1.03);
+  &:hover {
+    border-radius: 0;
+    transform: scale(2);
+  }
+  @keyframes zoom-in {
+    0% {
+      transform: scale(0.95);
+    }
+    8% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 `;
 
 const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
+  justify-items: 'flex-end';
   justify-content: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'none'};
   align-items: ${({ isSystemMessage }) =>
@@ -270,7 +290,15 @@ const StyledNewMessagesButton = styled.button`
   border-radius: ${({ theme }) => theme.border.radius.md};
   padding: ${({ theme }) => theme.spacing(2)};
   cursor: pointer;
-  z-index: 1000;
+  z-index: 2;
+`;
+
+const StyledAmplitudeValue = styled.div<{ amplitudeValue: number }>`
+  width: 2px;
+  margin-right: 1px;
+  background-color: ${({ theme }) => theme.background.invertedPrimary};
+  height: ${({ amplitudeValue }) =>
+    Math.round(Math.min(60 * amplitudeValue + 3, 40))}px;
 `;
 
 const StyledUnreadMarker = styled.div`
@@ -298,29 +326,33 @@ const StyledUnreadMarker = styled.div`
     background-color: ${({ theme }) => theme.color.red};
     margin-left: ${({ theme }) => theme.spacing(2)};
   }
+
+  user-select: none;
 `;
 
 export const PaneChat = () => {
   const {
     selectedChat,
+    setSelectedChat,
     startService,
     setStartChatNumber,
     setStartChatIntegrationId,
   } = useContext(CallCenterContext) as CallCenterContextType;
+  const [lastFromClient, setLastFromClient] = useState<IMessage | null>(null);
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
-  const { getIcon } = useIcons();
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
-
-  const [isRecording, setIsRecording] = useState(false);
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+const { t } = useLingui();
+  const [recordingState, setRecordingState] = useState<
+    'none' | 'recording' | 'paused'
+  >('none');
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
-
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
@@ -330,6 +362,12 @@ export const PaneChat = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { updateOneRecord } = useUpdateOneRecord<Person>({
+    objectNameSingular: CoreObjectNameSingular.Person,
+  });
+
+  const { getIcon } = useIcons();
 
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
@@ -342,6 +380,11 @@ export const PaneChat = () => {
     } else if (!isAtBottom) {
       setNewMessagesIndicator(true);
     }
+    const clientMessages = selectedChat?.messages.filter(
+      (message) => !message.fromMe,
+    );
+    if (clientMessages)
+      setLastFromClient(clientMessages[clientMessages.length - 1]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat?.messages]);
 
@@ -359,6 +402,8 @@ export const PaneChat = () => {
       to: `${identifier}`,
       type,
       from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+      fromMe: true,
+      personId: selectedChat.personId,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -396,15 +441,17 @@ export const PaneChat = () => {
     if (type === MessageType.TEXT) {
       const sendMessageInput = {
         ...sendMessageInputBase,
-        message: newMessage.trim(),
+        message:
+          `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n` +
+          newMessage.trim(),
       };
 
       sendWhatsappMessage(sendMessageInput);
       setNewMessage('');
     } else if (type === MessageType.AUDIO) {
       if (!audioBlob) {
-        enqueueSnackBar('No audio recorded', {
-          variant: SnackBarVariant.Warning,
+        enqueueInfoSnackBar({
+          message: t`No audio recorded`,
         });
         return;
       }
@@ -433,9 +480,42 @@ export const PaneChat = () => {
     // }
   };
 
+  let audioCtx = new window.AudioContext();
+  const visualize = (stream: MediaStream, recorder: MediaRecorder) => {
+    if (!audioCtx) {
+      audioCtx = new AudioContext();
+    }
+
+    const source = audioCtx.createMediaStreamSource(stream);
+
+    const bufferLength = 2048;
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = bufferLength;
+    const dataArray = new Float32Array(bufferLength);
+
+    source.connect(analyser);
+
+    const setValues = () => {
+      analyser.getFloatTimeDomainData(dataArray);
+      const dataSquared = dataArray.map((data) => data ** 2);
+      let total = 0;
+      dataSquared.forEach((data) => (total += data));
+      const rms = parseFloat(Math.sqrt(total / dataSquared.length).toFixed(5));
+      setAmplitudeValues((prev) => [...prev.slice(-150), rms]);
+    };
+
+    const timeout = () =>
+      setTimeout(() => {
+        if (recorder.state === 'recording') setValues();
+        if (stream.active) timeout();
+      }, 50);
+    timeout();
+  };
+
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
+    visualize(stream, recorder);
 
     const chunks: Blob[] = [];
 
@@ -451,12 +531,26 @@ export const PaneChat = () => {
         setAudioBlob(audioBlob);
       };
 
-      recorder.start();
+      recorder.onstop = () => {
+        setRecordingState('none');
+        setAudioBlob(null);
+        setAmplitudeValues([]);
+      };
+
+      recorder.onpause = () => {
+        setRecordingState('paused');
+      };
+
+      recorder.onresume = () => {
+        setRecordingState('recording');
+      };
+
+      recorder.start(50);
       setMediaRecorder(recorder);
-      setIsRecording(true);
+      setRecordingState('recording');
     } catch (error) {
-      enqueueSnackBar('Failed to start recording. Check microphone access.', {
-        variant: SnackBarVariant.Warning,
+      enqueueErrorSnackBar({
+        message: t`Failed to start recording. Check microphone access.`,
       });
     }
   };
@@ -464,15 +558,18 @@ export const PaneChat = () => {
   const handleStopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      setIsRecording(false);
     }
   };
 
-  const handleToggleRecording = () => {
-    if (isRecording) {
-      handleStopRecording();
-    } else {
-      handleStartRecording();
+  const handlePauseRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.pause();
+    }
+  };
+
+  const handleResumeRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.resume();
     }
   };
 
@@ -484,14 +581,53 @@ export const PaneChat = () => {
   }
 
   const handleSendMessage = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'initial';
-    }
 
     if (isWhatsappDocument(selectedChat)) {
       if (audioBlob) {
+        setSelectedChat((prev) => {
+          if (prev)
+            return {
+              ...prev,
+              messages: [
+                ...prev.messages,
+                {
+                  type: 'audio',
+                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                  message: '',
+                  fromMe: true,
+                  status: 'attempting',
+                  id: null,
+                  createdAt: {
+                    seconds: Date.now() / 1000,
+                    nanoseconds: Date.now() * 1000,
+                  },
+                },
+              ],
+            };
+        });
         onSendMessage(MessageType.AUDIO);
       } else {
+        setSelectedChat((prev) => {
+          if (prev)
+            return {
+              ...prev,
+              messages: [
+                ...prev.messages,
+                {
+                  type: 'text',
+                  message: newMessage,
+                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                  fromMe: true,
+                  status: 'attempting',
+                  id: null,
+                  createdAt: {
+                    seconds: Date.now() / 1000,
+                    nanoseconds: Date.now() * 1000,
+                  },
+                },
+              ],
+            };
+        });
         onSendMessage(MessageType.TEXT);
       }
     } else {
@@ -500,10 +636,6 @@ export const PaneChat = () => {
   };
 
   const handleInputChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = ev.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-
     setNewMessage(ev.target.value);
   };
 
@@ -564,9 +696,8 @@ export const PaneChat = () => {
   };
 
   const renderButtons = () => {
-    const IconX = getIcon('IconX');
     const IconMicrophone = getIcon('IconMicrophone');
-    const IconArrowRight = getIcon('IconArrowRight');
+    const IconArrowUp = getIcon('IconArrowUp');
 
     if (isWhatsappDocument(selectedChat) && showStartConversationButton) {
       return (
@@ -590,12 +721,19 @@ export const PaneChat = () => {
       return (
         <StyledInputContainer>
           <StyledAnexDiv>
-            <IconButton
+            <StyledIconButton
               disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={AnexIcon}
-              accent="default"
+              Icon={recordingState === 'none' ? AnexIcon : IconTrash}
+              accent={recordingState === 'none' ? 'default' : 'danger'}
               variant="tertiary"
-              onClick={() => setIsAnexOpen(!isAnexOpen)}
+              size="small"
+              onClick={() => {
+                if (recordingState === 'none') {
+                  setIsAnexOpen(!isAnexOpen);
+                  return;
+                }
+                handleStopRecording();
+              }}
             />
           </StyledAnexDiv>
           {isAnexOpen && (
@@ -604,51 +742,82 @@ export const PaneChat = () => {
               from={`_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
             />
           )}
-          <StyledInput
-            disabled={selectedChat.lastMessage.type === 'template'}
-            className="new-message-input"
-            placeholder="Message"
-            onInput={handleInputChange}
-            value={newMessage}
-            ref={textareaRef}
-            onKeyDown={handleInputKeyDown}
-          />
+          {recordingState !== 'none' && (
+            <div
+              onClick={(e) => e.preventDefault()}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: 30,
+                overflow: 'clip',
+                pointerEvents: 'none',
+              }}
+            >
+              {amplitudeValues.map((amplitudeValue, i) => {
+                return (
+                  <StyledAmplitudeValue
+                    key={i}
+                    amplitudeValue={amplitudeValue}
+                  />
+                );
+              })}
+            </div>
+          )}
+          {recordingState === 'none' && (
+            <StyledInput
+              disabled={selectedChat.lastMessage.type === 'template'}
+              className="new-message-input"
+              placeholder="Message"
+              onInput={handleInputChange}
+              value={newMessage}
+              onKeyDown={handleInputKeyDown}
+            />
+          )}
           <StyledDiv>
-            <StyledIconButton
-              disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={
-                isRecording
-                  ? (props) => (
-                      // eslint-disable-next-line react/jsx-props-no-spreading
-                      <IconX {...props} color={theme.font.color.inverted} />
-                    )
-                  : (props) => (
-                      <IconMicrophone
-                        // eslint-disable-next-line react/jsx-props-no-spreading
-                        {...props}
-                        color={theme.font.color.inverted}
-                      />
-                    )
-              }
-              onClick={handleToggleRecording}
-              variant="primary"
-              accent={isRecording ? 'danger' : 'blue'}
-              size="medium"
-            />
-            <StyledIconButton
-              disabled={selectedChat.lastMessage.type === 'template'}
-              Icon={(props) => (
-                <IconArrowRight
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...props}
-                  color={theme.font.color.inverted}
-                />
-              )}
-              onClick={handleSendMessage}
-              variant="primary"
-              accent="blue"
-              size="medium"
-            />
+            {!newMessage.length && (
+              <StyledIconButton
+                Icon={
+                  recordingState !== 'recording'
+                    ? IconMicrophone
+                    : IconPlayerPause
+                }
+                onClick={() => {
+                  switch (recordingState) {
+                    case 'none':
+                      handleStartRecording();
+                      break;
+                    case 'recording':
+                      handlePauseRecording();
+                      break;
+                    case 'paused':
+                      handleResumeRecording();
+                      break;
+                  }
+                }}
+                size="small"
+              />
+            )}
+            {(newMessage.length > 0 || recordingState !== 'none') && (
+              <StyledIconButton
+                disabled={selectedChat.lastMessage.type === 'template'}
+                Icon={(props) => (
+                  <IconArrowUp
+                    {...props}
+                    color={theme.font.color.inverted}
+                    style={{ pointerEvents: 'none' }}
+                  />
+                )}
+                onClick={() => {
+                  handleSendMessage();
+                  handleStopRecording();
+                }}
+                variant="primary"
+                accent="blue"
+                size="medium"
+              />
+            )}
           </StyledDiv>
         </StyledInputContainer>
       );
@@ -674,8 +843,8 @@ export const PaneChat = () => {
       <StyledPaneChatContainer>
         <PaneChatHeader />
         <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
-          {selectedChat.messages.map((message: any, index: number) => {
-            const isSystemMessage = message.from !== selectedChat.client.name;
+          {selectedChat.messages.map((message: IMessage, index: number) => {
+            const isSystemMessage = message.fromMe;
 
             const validMessageType =
               message.type === MessageType.STARTED ||
@@ -686,7 +855,11 @@ export const PaneChat = () => {
             let messageContent;
 
             if (validMessageType)
-              return <StyledMessageEvent>{message.message}</StyledMessageEvent>;
+              return (
+                <StyledMessageEvent>
+                  <IconExclamationCircleFilled size={13} /> {message.message}
+                </StyledMessageEvent>
+              );
 
             switch (message.type) {
               case MessageType.IMAGE:
@@ -696,7 +869,7 @@ export const PaneChat = () => {
                     isSystemMessage={isSystemMessage}
                   >
                     <StyledImage
-                      src={message.message}
+                      message={message}
                       onClick={() => {
                         setModalImageSrc(message.message);
                         setIsModalOpen(true);
@@ -706,17 +879,7 @@ export const PaneChat = () => {
                 );
                 break;
               case MessageType.AUDIO:
-                messageContent = (
-                  <StyledAudio
-                    isSystemMessage={isSystemMessage}
-                    key={index}
-                    controls
-                  >
-                    {validAudioTypes.map((type) => (
-                      <source src={message.message} type={type} />
-                    ))}
-                  </StyledAudio>
-                );
+                messageContent = <StyledAudio key={index} message={message} />;
                 break;
               case MessageType.DOCUMENT: {
                 const msg = message?.message
@@ -727,14 +890,7 @@ export const PaneChat = () => {
                     key={index}
                     isSystemMessage={isSystemMessage}
                   >
-                    <StyledDocument href={message.message} target="_blank">
-                      {msg}
-                    </StyledDocument>
-                    <OpenOnAnotherTab
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.primary}
-                    />
+                    <DocumentPreview fromMe={message.fromMe} documentUrl={message.message} />
                   </StyledDocumentContainer>
                 );
                 break;
@@ -755,7 +911,14 @@ export const PaneChat = () => {
               default:
                 messageContent = (
                   <StyledMessage key={index} isSystemMessage={isSystemMessage}>
-                    {formatMessageContent(message.message)}
+                    {formatMessageContent(
+                      isSystemMessage
+                        ? //first line will be member name, which is redundant since we already show it in the avatar
+                          message.message
+                            .replace(`*#${message.from.replace('_', '')}*`, '')
+                            .trim()
+                        : message.message,
+                    )}
                   </StyledMessage>
                 );
                 break;
@@ -764,6 +927,8 @@ export const PaneChat = () => {
             const unreadIndex =
               selectedChat.messages.length - selectedChat.unreadMessages;
             const showUnreadMarker = index === unreadIndex;
+            const lastOfRow =
+              selectedChat.messages[index + 1]?.from !== message.from;
 
             return (
               <>
@@ -771,34 +936,38 @@ export const PaneChat = () => {
                   <StyledUnreadMarker>New Messages</StyledUnreadMarker>
                 )}
 
-                <StyledMessageContainer
-                  key={index}
-                  isSystemMessage={isSystemMessage}
-                >
-                  <StyledAvatarMessage>
+                <StyledMessageContainer key={index} fromMe={isSystemMessage}>
+                  <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
                     <AvatarComponent
                       message={message}
                       selectedChat={selectedChat}
                       currentWorkspaceMember={currentWorkspaceMember}
                     />
                   </StyledAvatarMessage>
-                  <StyledContainer isSystemMessage={isSystemMessage}>
+                  <StyledContainer
+                    key={index}
+                    isSystemMessage={isSystemMessage}
+                  >
                     <StyledMessageItem
                       key={index}
                       isSystemMessage={isSystemMessage}
                     >
-                      <StyledBalloon isSystemMessage={isSystemMessage}>
+                      <StyledMessageBubble
+                        key={index}
+                        time={formatDate(message.createdAt).time}
+                        message={message}
+                        hasTail={lastOfRow}
+                      >
                         {messageContent}
-                      </StyledBalloon>
+                      </StyledMessageBubble>
                       <StyledNameAndTimeContainer
                         isSystemMessage={isSystemMessage}
                       >
-                        <UsernameComponent message={message} />
-                        <StyledDateContainer>
-                          {formatDate(message.createdAt).date}
-                          <span> - </span>
-                          {formatDate(message.createdAt).time}
-                        </StyledDateContainer>
+                        {isMessageOlderThan24Hours(message.createdAt) ?? (
+                          <StyledDateContainer>
+                            {formatDate(message.createdAt).date}
+                          </StyledDateContainer>
+                        )}
                       </StyledNameAndTimeContainer>
                     </StyledMessageItem>
                   </StyledContainer>

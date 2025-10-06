@@ -1,3 +1,4 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
@@ -5,17 +6,14 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
-import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
-import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -30,6 +28,7 @@ type MultipleRecordPickerProps = {
   componentInstanceId: string;
   onClickOutside: () => void;
   focusId: string;
+  objectMetadataItemIdForCreate?: string;
 };
 
 export const MultipleRecordPicker = ({
@@ -40,9 +39,8 @@ export const MultipleRecordPicker = ({
   layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
   focusId,
+  objectMetadataItemIdForCreate,
 }: MultipleRecordPickerProps) => {
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
-
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
@@ -50,19 +48,16 @@ export const MultipleRecordPicker = ({
     selectableListComponentInstanceId,
   );
 
-  const multipleRecordPickerSearchFilterState =
-    useRecoilComponentCallbackStateV2(
-      multipleRecordPickerSearchFilterComponentState,
-      componentInstanceId,
-    );
+  const multipleRecordPickerSearchFilterState = useRecoilComponentCallbackState(
+    multipleRecordPickerSearchFilterComponentState,
+    componentInstanceId,
+  );
 
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
-
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const resetState = useRecoilCallback(
     ({ set }) => {
@@ -79,7 +74,6 @@ export const MultipleRecordPicker = ({
 
   const handleSubmit = () => {
     onSubmit?.();
-    goBackToPreviousHotkeyScope();
     resetSelectedItem();
     resetState();
   };
@@ -95,7 +89,6 @@ export const MultipleRecordPicker = ({
       handleSubmit();
     },
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [handleSubmit],
   });
 
@@ -113,8 +106,12 @@ export const MultipleRecordPicker = ({
     [multipleRecordPickerSearchFilterState, onCreate],
   );
 
+  const hasCreatePermissionOnObjectForCreate = useObjectPermissionsForObject(
+    objectMetadataItemIdForCreate ?? '',
+  ).canUpdateObjectRecords;
+
   const createNewButtonSection =
-    isDefined(onCreate) && !hasObjectReadOnlyPermission ? (
+    isDefined(onCreate) && hasCreatePermissionOnObjectForCreate ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}

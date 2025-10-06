@@ -1,33 +1,30 @@
+import { type EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { KVOIP_ADMIN_ALL_VIEWS } from 'src/engine/core-modules/kvoip-admin/standard-objects/views/get-all-kvoip-admin-views';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
-import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
-import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
+import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { integrationsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/integrations-all-views';
-import { notaFiscalAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notaFiscal-all-views';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
-import { productsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/products-all-views';
-import { supportAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/support-all-views';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
-import { tracaebleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/traceable-all-views';
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const prefillViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
   prefillAdminViews = false,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
@@ -50,13 +47,7 @@ export const prefillViews = async (
     workflowsAllView(objectMetadataItems),
     workflowVersionsAllView(objectMetadataItems),
     workflowRunsAllView(objectMetadataItems),
-    chargesAllView(objectMetadataItems),
     integrationsAllView(objectMetadataItems),
-    chatbotsAllView(objectMetadataItems),
-    supportAllView(objectMetadataItems),
-    tracaebleAllView(objectMetadataItems),
-    productsAllView(objectMetadataItems),
-    notaFiscalAllView(objectMetadataItems),
     // Kvoip admin views
     ...(prefillAdminViews
       ? KVOIP_ADMIN_ALL_VIEWS.map((view) => view(objectMetadataItems))
@@ -64,11 +55,15 @@ export const prefillViews = async (
     ...customViews,
   ];
 
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems));
+  }
+
   return createWorkspaceViews(entityManager, schemaName, views);
 };
 
 const createWorkspaceViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   viewDefinitions: ViewDefinition[],
 ) => {
@@ -78,9 +73,7 @@ const createWorkspaceViews = async (
   }));
 
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.view`, [
       'id',
@@ -111,7 +104,7 @@ const createWorkspaceViews = async (
           kanbanAggregateOperationFieldMetadataId,
         }) => ({
           id,
-          name,
+          name: name as string,
           objectMetadataId,
           type,
           key,
@@ -130,9 +123,7 @@ const createWorkspaceViews = async (
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewField`, [
           'fieldMetadataId',
@@ -157,9 +148,7 @@ const createWorkspaceViews = async (
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewFilter`, [
           'fieldMetadataId',
@@ -187,9 +176,7 @@ const createWorkspaceViews = async (
       viewDefinition.groups.length > 0
     ) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewGroup`, [
           'fieldMetadataId',

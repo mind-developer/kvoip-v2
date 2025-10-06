@@ -25,7 +25,7 @@ export class GoogleStorageService {
   bucketName = this.twentyConfigService.get('BUCKET_NAME');
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {

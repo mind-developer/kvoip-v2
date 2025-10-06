@@ -1,27 +1,26 @@
 import { useMutation } from '@apollo/client';
 
 import {
-  DeleteOneObjectMetadataItemMutation,
-  DeleteOneObjectMetadataItemMutationVariables,
+  type DeleteOneObjectMetadataItemMutation,
+  type DeleteOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 export const useDeleteOneObjectMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
-
   const [mutate] = useMutation<
     DeleteOneObjectMetadataItemMutation,
     DeleteOneObjectMetadataItemMutationVariables
-  >(DELETE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloMetadataClient,
-  });
+  >(DELETE_ONE_OBJECT_METADATA_ITEM);
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: DeleteOneObjectMetadataItemMutationVariables['idToDelete'],
@@ -33,6 +32,7 @@ export const useDeleteOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
+    await refreshCoreViewsByObjectMetadataId(idToDelete);
 
     return result;
   };

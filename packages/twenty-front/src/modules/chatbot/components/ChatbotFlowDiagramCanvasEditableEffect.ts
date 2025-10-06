@@ -42,7 +42,7 @@ export const ChatbotFlowDiagramCanvasEditableEffect = () => {
 
       if (!chatbotFlowId) return;
 
-      const selectedNode = nodes[0] as Node | undefined;
+      const selectedNode = (nodes[0] as Node) ?? undefined;
       const nodeType = selectedNode?.type;
 
       if (

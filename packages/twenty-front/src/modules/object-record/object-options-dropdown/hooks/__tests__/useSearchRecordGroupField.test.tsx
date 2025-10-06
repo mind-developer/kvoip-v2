@@ -4,7 +4,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('useSearchRecordGroupField', () => {
   const renderWithContext = (contextValue: any) =>
@@ -23,13 +23,16 @@ describe('useSearchRecordGroupField', () => {
     });
 
   it('filters fields correctly based on input', () => {
+    const fields = [
+      { type: FieldMetadataType.SELECT, label: 'First' },
+      { type: FieldMetadataType.SELECT, label: 'Second' },
+      { type: FieldMetadataType.TEXT, label: 'Third' },
+    ];
     const mockContextValue = {
       objectMetadataItem: {
-        fields: [
-          { type: FieldMetadataType.SELECT, label: 'First' },
-          { type: FieldMetadataType.SELECT, label: 'Second' },
-          { type: FieldMetadataType.TEXT, label: 'Third' },
-        ],
+        fields,
+        readableFields: fields,
+        updatableFields: fields,
       },
     };
 
@@ -45,13 +48,16 @@ describe('useSearchRecordGroupField', () => {
   });
 
   it('returns all select fields when search input is empty', () => {
+    const fields = [
+      { type: FieldMetadataType.SELECT, label: 'First' },
+      { type: FieldMetadataType.SELECT, label: 'Second' },
+      { type: FieldMetadataType.TEXT, label: 'Third' },
+    ];
     const mockContextValue = {
       objectMetadataItem: {
-        fields: [
-          { type: FieldMetadataType.SELECT, label: 'First' },
-          { type: FieldMetadataType.SELECT, label: 'Second' },
-          { type: FieldMetadataType.TEXT, label: 'Third' },
-        ],
+        fields,
+        readableFields: fields,
+        updatableFields: fields,
       },
     };
 

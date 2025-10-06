@@ -14,7 +14,6 @@ import {
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { useUpdateAgent } from '@/settings/service-center/agents/hooks/useUpdateAgent';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { UpdateWorkspaceAgentInput } from '~/generated/graphql';
@@ -33,7 +32,7 @@ type SettingsEditAgentSchemaValues = z.infer<typeof editAgentFormSchema>;
 export const SettingsServiceCenterEditAgent = () => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { agents } = useFindAllAgents();
   const { editAgent } = useUpdateAgent();
@@ -76,8 +75,9 @@ export const SettingsServiceCenterEditAgent = () => {
         navigate(settingsAgentsPagePath);
       }
     } catch (err) {
-      enqueueSnackBar((err as Error).message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
       });
     }
   };

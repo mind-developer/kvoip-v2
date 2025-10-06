@@ -1,4 +1,3 @@
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { REMOVE_STRIPE_INTEGRATION } from '~/pages/settings/integrations/stripe/graphql/mutation/removeStripeIntegration';
@@ -8,17 +7,18 @@ interface ToggleStripeIntegration {
 }
 
 export const useRemoveStripeIntegration = (): ToggleStripeIntegration => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const [removeStripeIntegration] = useMutation(REMOVE_STRIPE_INTEGRATION, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper errror message
+      enqueueErrorSnackBar({
+        message: error.message,
       });
     },
     onCompleted: () => {
-      enqueueSnackBar('Successful integration excluded!', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: 'Successful integration excluded!',
       });
     },
   });

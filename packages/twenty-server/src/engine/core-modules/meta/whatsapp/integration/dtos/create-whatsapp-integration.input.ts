@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateWhatsappIntegrationInput {
@@ -27,4 +27,9 @@ export class CreateWhatsappIntegrationInput {
   @Field()
   @IsString()
   accessToken: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  tipoApi: string
 }

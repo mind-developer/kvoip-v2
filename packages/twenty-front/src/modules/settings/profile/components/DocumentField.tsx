@@ -7,9 +7,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { formatCnpj } from '~/utils/formatCnpj';
 import { formatCpf } from '~/utils/formatCpf';
 import isCnpj from '~/utils/isCnpj';
@@ -128,7 +128,7 @@ export const DocumentField = ({
         options={PERSON_TYPE_OPTIONS}
         readonly={disabled}
       />
-      <TextInputV2
+      <TextInput
         label="Document"
         value={document}
         onChange={(text) => {

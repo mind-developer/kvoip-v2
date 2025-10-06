@@ -6,8 +6,10 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
     BillingModule,
     WorkflowRunModule,
     MetricsModule,
+    WorkflowRunQueueModule,
+    FeatureFlagModule,
   ],
   providers: [WorkflowRunnerWorkspaceService, RunWorkflowJob],
   exports: [WorkflowRunnerWorkspaceService],

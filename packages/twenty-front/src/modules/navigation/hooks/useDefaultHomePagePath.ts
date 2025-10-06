@@ -1,12 +1,13 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
-import { ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
+import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -22,11 +23,12 @@ export const useDefaultHomePagePath = () => {
     alphaSortedActiveNonSystemObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
-  const arePrefetchViewsLoaded = useRecoilValue(arePrefetchViewsLoadedState);
-
   const readableAlphaSortedActiveNonSystemObjectMetadataItems = useMemo(() => {
     return alphaSortedActiveNonSystemObjectMetadataItems.filter((item) => {
-      const objectPermissions = objectPermissionsByObjectMetadataId[item.id];
+      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId: item.id,
+      });
       return objectPermissions?.canReadObjectRecords;
     });
   }, [
@@ -43,22 +45,18 @@ export const useDefaultHomePagePath = () => {
     [activeNonSystemObjectMetadataItems],
   );
 
-  const getFirstView = useRecoilCallback(
-    ({ snapshot }) => {
-      return (objectMetadataItemId: string | undefined | null) => {
-        if (!arePrefetchViewsLoaded) {
-          return undefined;
-        }
+  const getFirstView = useRecoilCallback(({ snapshot }) => {
+    return (objectMetadataItemId: string | undefined | null) => {
+      const views = snapshot
+        .getLoadable(coreViewsState)
+        .getValue()
+        .map(convertCoreViewToView);
 
-        const views = snapshot.getLoadable(prefetchViewsState).getValue();
-
-        return views.find(
-          (view) => view.objectMetadataId === objectMetadataItemId,
-        );
-      };
-    },
-    [arePrefetchViewsLoaded],
-  );
+      return views.find(
+        (view) => view.objectMetadataId === objectMetadataItemId,
+      );
+    };
+  }, []);
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     const [firstObjectMetadataItem] =
@@ -82,8 +80,10 @@ export const useDefaultHomePagePath = () => {
 
         if (
           !isDefined(lastVisitedObjectMetadataItemId) ||
-          !objectPermissionsByObjectMetadataId[lastVisitedObjectMetadataItemId]
-            ?.canReadObjectRecords
+          !getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: lastVisitedObjectMetadataItemId,
+          }).canReadObjectRecords
         ) {
           return firstObjectPathInfo;
         }
@@ -112,10 +112,6 @@ export const useDefaultHomePagePath = () => {
   );
 
   const defaultHomePagePath = useMemo(() => {
-    if (!arePrefetchViewsLoaded) {
-      return undefined;
-    }
-
     if (!isDefined(currentUser)) {
       return AppPath.SignInUp;
     }
@@ -139,7 +135,6 @@ export const useDefaultHomePagePath = () => {
       viewId ? { viewId } : undefined,
     );
   }, [
-    arePrefetchViewsLoaded,
     currentUser,
     getDefaultObjectPathInfo,
     readableAlphaSortedActiveNonSystemObjectMetadataItems,

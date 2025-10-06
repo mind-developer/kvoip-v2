@@ -1,18 +1,21 @@
-import { START_CHAT_MODAL_ID } from '@/chat/call-center/constants/StartChatModalId';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useContext, useEffect, useMemo, useState } from 'react';
+
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+
+import { START_CHAT_MODAL_ID } from '@/chat/call-center/constants/StartChatModalId';
+import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
+import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+
+import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 type StartChatProps = {
   isStartChatOpen: boolean;
@@ -20,6 +23,10 @@ type StartChatProps = {
   onPhoneUpdate: (phoneNumber: string | null) => void;
   onIntegrationUpdate: (integrationId: string | null) => void;
 };
+
+const StyledDiv = styled.div`
+  z-index: 1;
+`;
 
 const StyledInitChatModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
@@ -120,55 +127,57 @@ export const StartChat = ({
   openModal(START_CHAT_MODAL_ID);
 
   return (
-    <AnimatePresence mode="wait">
-      <LayoutGroup>
-        {isStartChatOpen && (
-          <StyledInitChatModal
-            modalId={START_CHAT_MODAL_ID}
-            isClosable
-            onClose={handleCancel}
-          >
-            <StyledCenteredTitle>
-              <H1Title
-                title={'Start Conversation'}
-                fontColor={H1TitleFontColor.Primary}
-              />
-            </StyledCenteredTitle>
-            <StyledSection
-              alignment={SectionAlignment.Center}
-              fontColor={SectionFontColor.Primary}
+    <StyledDiv>
+      <AnimatePresence mode="wait">
+        <LayoutGroup>
+          {isStartChatOpen && (
+            <StyledInitChatModal
+              modalId={START_CHAT_MODAL_ID}
+              isClosable
+              onClose={handleCancel}
             >
-              {
-                'This will start a conversation with a template, enter the number below'
-              }
-            </StyledSection>
-            <StyledSection>
-              <FormSelectFieldInput
-                label="Inbox"
-                defaultValue={integrationId}
-                options={waIntegration}
-                onChange={handleBusinessIdChange}
+              <StyledCenteredTitle>
+                <H1Title
+                  title={'Start Conversation'}
+                  fontColor={H1TitleFontColor.Primary}
+                />
+              </StyledCenteredTitle>
+              <StyledSection
+                alignment={SectionAlignment.Center}
+                fontColor={SectionFontColor.Primary}
+              >
+                {
+                  'This will start a conversation with a template, enter the number below'
+                }
+              </StyledSection>
+              <StyledSection>
+                <FormSelectFieldInput
+                  label="Inbox"
+                  defaultValue={integrationId}
+                  options={waIntegration}
+                  onChange={handleBusinessIdChange}
+                />
+                <FormPhoneFieldInput onChange={handlePhoneChange} />
+              </StyledSection>
+              <StyledCenteredButton
+                onClick={handleConfirm}
+                variant="primary"
+                accent="blue"
+                title={'Start conversation'}
+                disabled={!isPhoneValid}
+                fullWidth
+                dataTestId="init-chat-modal-confirm-button"
               />
-              <FormPhoneFieldInput onChange={handlePhoneChange} />
-            </StyledSection>
-            <StyledCenteredButton
-              onClick={handleConfirm}
-              variant="primary"
-              accent="blue"
-              title={'Start conversation'}
-              disabled={!isPhoneValid}
-              fullWidth
-              dataTestId="init-chat-modal-confirm-button"
-            />
-            <StyledCenteredButton
-              onClick={handleCancel}
-              variant="secondary"
-              title={'Cancel'}
-              fullWidth
-            />
-          </StyledInitChatModal>
-        )}
-      </LayoutGroup>
-    </AnimatePresence>
+              <StyledCenteredButton
+                onClick={handleCancel}
+                variant="secondary"
+                title={'Cancel'}
+                fullWidth
+              />
+            </StyledInitChatModal>
+          )}
+        </LayoutGroup>
+      </AnimatePresence>
+    </StyledDiv>
   );
 };

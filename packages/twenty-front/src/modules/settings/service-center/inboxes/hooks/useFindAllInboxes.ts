@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_INBOXES } from '@/settings/service-center/inboxes/graphql/inboxesByWorkspace';
 import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
@@ -13,7 +12,7 @@ type UseFindAllInboxesReturn = {
 };
 
 export const useFindAllInboxes = (): UseFindAllInboxesReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
@@ -23,8 +22,8 @@ export const useFindAllInboxes = (): UseFindAllInboxesReturn => {
   } = useQuery(GET_ALL_INBOXES, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: error.message,
       });
     },
   });

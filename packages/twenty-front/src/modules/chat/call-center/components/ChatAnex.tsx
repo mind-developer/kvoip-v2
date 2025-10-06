@@ -1,13 +1,15 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { MessageType } from '@/chat/types/MessageType';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 interface ChatAnexProps {
@@ -29,6 +31,7 @@ const StyledMainContainer = styled.div`
   flex-direction: column;
   position: absolute;
   width: 180px;
+  z-index: 10;
 `;
 
 const StyledLabel = styled.label<LabelProps>`
@@ -55,12 +58,13 @@ const StyledInput = styled.input`
 `;
 
 export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
-  const { selectedChat } = useContext(
+  const { selectedChat, setSelectedChat } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
-  const { uploadFileToBucket } = useUploadFileToBucket();
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
-  // const { messengerSendMessage } = useMessengerSendMessage();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -72,6 +76,28 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
   const handleSendFile = async (file: File, type: MessageType) => {
     if (!selectedChat) return;
 
+    if (type === 'image')
+      setSelectedChat((prev) => {
+        if (prev)
+          return {
+            ...prev,
+            messages: [
+              ...prev.messages,
+              {
+                type: 'image',
+                from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+                message: URL.createObjectURL(file),
+                fromMe: true,
+                status: 'attempting',
+                id: null,
+                createdAt: {
+                  seconds: Date.now(),
+                  nanoseconds: Date.now() * 1000,
+                },
+              },
+            ],
+          };
+      });
     // const identifier = isWhatsappDocument(selectedChat)
     //   ? `+${selectedChat.client.phone}`
     //   : selectedChat.client.id;
@@ -80,19 +106,24 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
 
     if (!identifier) return;
 
-    const url = await uploadFileToBucket({ file, type });
+    const url = await uploadAttachmentFile(file, {
+      id: selectedChat?.personId,
+      targetObjectNameSingular: 'person',
+    });
 
     const sendMessageInputBase = {
       integrationId: selectedChat.integrationId,
       to: identifier,
       type,
       from,
+      fromMe: true,
+      personId: selectedChat.personId,
     };
 
     if (isWhatsappDocument(selectedChat)) {
       const sendMessageInput = {
         ...sendMessageInputBase,
-        fileId: url,
+        fileId: url.attachmentAbsoluteURL,
       };
 
       sendWhatsappMessage(sendMessageInput);
@@ -124,7 +155,7 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
         Image
         <StyledInput
           type="file"
-          accept="image/*"
+          accept=".bmp,.csv,.odt,.doc,.docx,.htm,.html,.jpg,.jpeg,.pdf,.ppt,.pptx,.txt,.xls,.xlsx"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
@@ -171,7 +202,6 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
         Document
         <StyledInput
           type="file"
-          accept=".pdf, .doc, .docx, .txt"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {

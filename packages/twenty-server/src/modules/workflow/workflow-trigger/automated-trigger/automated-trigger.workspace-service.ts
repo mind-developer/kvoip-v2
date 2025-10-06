@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
-  AutomatedTriggerType,
-  WorkflowAutomatedTriggerWorkspaceEntity,
+  type AutomatedTriggerType,
+  type WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 @Injectable()
 export class AutomatedTriggerWorkspaceService {
@@ -14,12 +13,10 @@ export class AutomatedTriggerWorkspaceService {
 
   async addAutomatedTrigger({
     workflowId,
-    manager,
     type,
     settings,
   }: {
     workflowId: string;
-    manager: WorkspaceEntityManager;
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
   }) {
@@ -28,31 +25,19 @@ export class AutomatedTriggerWorkspaceService {
         'workflowAutomatedTrigger',
       );
 
-    const workflowAutomatedTrigger = workflowAutomatedTriggerRepository.create({
+    await workflowAutomatedTriggerRepository.insert({
       type,
       settings,
       workflowId,
     });
-
-    await workflowAutomatedTriggerRepository.save(
-      workflowAutomatedTrigger,
-      {},
-      manager,
-    );
   }
 
-  async deleteAutomatedTrigger({
-    workflowId,
-    manager,
-  }: {
-    workflowId: string;
-    manager: WorkspaceEntityManager;
-  }) {
+  async deleteAutomatedTrigger({ workflowId }: { workflowId: string }) {
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
       );
 
-    await workflowAutomatedTriggerRepository.delete({ workflowId }, manager);
+    await workflowAutomatedTriggerRepository.delete({ workflowId });
   }
 }

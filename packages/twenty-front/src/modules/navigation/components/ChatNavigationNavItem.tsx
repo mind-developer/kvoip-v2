@@ -4,7 +4,6 @@ import { Theme, useTheme } from '@emotion/react';
 // eslint-disable-next-line no-restricted-imports
 import { IconBrandWechat } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconBriefcase, IconHeadphones } from 'twenty-ui/display';
 
@@ -25,7 +24,6 @@ export const ChatNavigationNavItem = () => {
   const theme = useTheme();
   const { pathname, search } = useLocation();
   const currentPathWithSearch = pathname + search;
-  const [currentPath, setCurrentPath] = useState(currentPathWithSearch);
 
   const navigationPath = '/chat';
 
@@ -65,13 +63,11 @@ export const ChatNavigationNavItem = () => {
           >
             {chatsPath.map(({ id, label, path, Icon }) => {
               return (
-                <div key={id} onClick={() => setCurrentPath(path)}>
+                <div key={id}>
                   <NavigationDrawerSubItem
                     label={label}
                     to={path}
-                    active={
-                      currentPath === path || currentPathWithSearch === path
-                    }
+                    active={currentPathWithSearch === path}
                     Icon={Icon}
                   />
                 </div>

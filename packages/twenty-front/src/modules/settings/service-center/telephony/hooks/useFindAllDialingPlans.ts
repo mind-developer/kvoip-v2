@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_DIALING_PLANS } from '@/settings/service-center/telephony/graphql/queries/getAllDialingPlans';
 import { DialingPlans } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 
@@ -15,7 +14,7 @@ type UseFindAllDialingPlansReturn = {
 };
 
 export const useFindAllDialingPlans = (): UseFindAllDialingPlansReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -26,8 +25,9 @@ export const useFindAllDialingPlans = (): UseFindAllDialingPlansReturn => {
   } = useQuery(GET_ALL_DIALING_PLANS, {
     variables: { workspaceId: currentWorkspace?.id },
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });

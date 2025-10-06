@@ -1,7 +1,7 @@
 import { UPDATE_AGENT } from '@/settings/service-center/agents/graphql/mutation/updateAgent';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 import { UpdateWorkspaceAgentInput } from '~/generated/graphql';
 
 interface UseToggleAgentActiveReturn {
@@ -11,17 +11,19 @@ interface UseToggleAgentActiveReturn {
 }
 
 export const useUpdateAgent = (): UseToggleAgentActiveReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const { t } = useLingui();
 
   const [updateAgent, { loading, error }] = useMutation(UPDATE_AGENT, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: error.message,
       });
     },
     onCompleted: () => {
-      enqueueSnackBar('Agent updated successfully!', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Agent updated successfully!`,
       });
     },
   });
@@ -34,8 +36,8 @@ export const useUpdateAgent = (): UseToggleAgentActiveReturn => {
         },
       });
     } catch (err) {
-      enqueueSnackBar('Error updating agent', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error updating agent`,
       });
     }
   };

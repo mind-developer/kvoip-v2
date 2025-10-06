@@ -1,32 +1,32 @@
 import { SEND_TEMPLATE } from '@/chat/call-center/graphql/mutation/sendWhatsappTemplateMessage';
-import { SendTemplateInput } from '@/chat/call-center/types/SendTemplateInput';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { SendWhatsAppTemplateInput } from '@/chat/call-center/types/SendWhatsAppTemplateInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
-interface SendTemplateReturn {
+interface SendWhatsAppTemplateReturn {
   sendWhatsappTemplateMessage: (
-    sendTemplateInput: SendTemplateInput,
+    sendWhatsAppTemplateInput: SendWhatsAppTemplateInput,
   ) => Promise<void>;
 }
 
-export const useWhatsappTemplateMessage = (): SendTemplateReturn => {
-  const { enqueueSnackBar } = useSnackBar();
+export const useWhatsappTemplateMessage = (): SendWhatsAppTemplateReturn => {
+  const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [sendTemplateMutation] = useMutation(SEND_TEMPLATE, {
+  const [sendWhatsAppTemplateMutation] = useMutation(SEND_TEMPLATE, {
     onError: (error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      // TODO: Add proper error message
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
       });
     },
   });
 
   const sendWhatsappTemplateMessage = async (
-    sendTemplateInput: SendTemplateInput,
+    sendWhatsAppTemplateInput: SendWhatsAppTemplateInput,
   ) => {
-    await sendTemplateMutation({
+    await sendWhatsAppTemplateMutation({
       variables: {
-        sendTemplateInput,
+        sendWhatsAppTemplateInput,
       },
     });
   };
