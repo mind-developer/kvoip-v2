@@ -6,7 +6,7 @@ type IWhatsappIntegration = {
   accessToken: string;
   appId: string;
   appKey: string;
-  disabled: boolean;
+  paused: boolean;
   sla: number;
   apiType: string;
   inboxId?: string; // Deprecated: use inbox relation instead

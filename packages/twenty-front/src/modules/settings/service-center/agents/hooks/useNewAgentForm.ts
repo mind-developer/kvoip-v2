@@ -27,26 +27,17 @@ export const useNewAgentForm = () => {
     Agent & { id: string; __typename: string }
   >({ objectNameSingular: CoreObjectNameSingular.Agent });
 
-  const { createOneRecord: createOneInboxTarget } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.InboxTarget,
-  });
-
   const form = useForm<AgentFormValues>({
     mode: 'onChange',
     defaultValues: {
       workspaceMemberId: '',
       sectorId: '',
-      inboxes: [],
-      isAdmin: false,
-      isActive: false,
     },
     resolver: zodResolver(agentFormSchema),
   });
 
   const onSubmit = async (data: AgentFormValues) => {
     const createdAgent = await createOneAgent({
-      isActive: data.isActive,
-      isAdmin: data.isAdmin,
       sectorId: data.sectorId,
     });
 
@@ -54,15 +45,6 @@ export const useNewAgentForm = () => {
       idToUpdate: data.workspaceMemberId,
       updateOneRecordInput: { agentId: createdAgent.id },
     });
-
-    if (createdAgent.id && data.inboxes && data.inboxes.length > 0) {
-      for (const inboxId of data.inboxes) {
-        await createOneInboxTarget({
-          agentId: createdAgent.id,
-          inboxId,
-        });
-      }
-    }
 
     enqueueInfoSnackBar({ message: `Agent successfully created.` });
     navigate(getSettingsPath(SettingsPath.ServiceCenterAgents));

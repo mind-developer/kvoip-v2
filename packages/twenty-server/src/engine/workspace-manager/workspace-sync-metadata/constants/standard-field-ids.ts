@@ -362,19 +362,6 @@ export const SECTOR_FIELD_IDS = {
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
 };
 
-export const INBOX_FIELD_IDS = {
-  name: '14244086-f9be-4cc0-8a31-102fa7ccd3f5',
-  icon: '3689ef1d-0feb-49ab-ad8b-b7291f3de250',
-  inboxTargets: '720b9068-41c6-451b-92a1-feee79ccc3b3',
-  whatsappIntegration: '72b41a26-af1f-4a79-8640-d71a41731487',
-  chatbot: '20258272-136f-4f83-b46d-8520824811ac',
-};
-
-export const INBOX_TARGET_FIELD_IDS = {
-  inbox: 'ada9b369-24eb-4faf-a397-1c2f8c067c24',
-  agent: 'f3611246-cbbe-4fd8-b430-328a72b38d93',
-};
-
 export const AGENT_FIELD_IDS = {
   isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
   isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
@@ -809,8 +796,8 @@ export const CHATBOT_STANDARD_FIELD_IDS = {
   timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
-  inboxes: 'fa8546ab-020d-46ef-8182-39186104fce2',
-};
+  whatsappIntegrations: 'fa8546ab-020d-46ef-8182-39186104fce2',
+} as const;
 
 export const WHATSAPP_STANDARD_FIELD_IDS = {
   name: 'f34bf730-b3e2-4513-a8dc-a85f8817105a',

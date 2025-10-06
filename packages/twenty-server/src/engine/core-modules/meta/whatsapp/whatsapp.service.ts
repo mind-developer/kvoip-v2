@@ -45,7 +45,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { ChatIntegrationProvider } from 'twenty-shared/types';
 
@@ -224,64 +226,62 @@ export class WhatsAppService {
       )
     ).findOneBy({ id: whatsappDoc.integrationId });
 
-    // if (
-    //   whatsappDoc?.status === statusEnum.Waiting &&
-    //   !whatsappDoc.lastMessage.fromMe &&
-    //   whatsappIntegration
-    // ) {
-    //   const inbox = await (
-    //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<InboxWorkspaceEntity>(
-    //       workspaceId,
-    //       'inbox',
-    //       { shouldBypassPermissionChecks: true },
-    //     )
-    //   ).findOneBy({ id: whatsappIntegration?.inbox?.id });
+    if (
+      whatsappDoc?.status === statusEnum.Waiting &&
+      !whatsappDoc.lastMessage.fromMe &&
+      whatsappIntegration
+    ) {
+      const chatbot = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
+          workspaceId,
+          'chatbot',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).findOneBy({ id: whatsappIntegration?.chatbotId ?? '' });
 
-    //   const chatbot = inbox?.chatbot;
+      if (!chatbot?.id) return;
+      const chatbotKey =
+        whatsappDoc.integrationId + '_' + whatsappDoc.client.phone;
+      let executor = this.ChatbotRunnerService.getExecutor(chatbotKey);
+      if (executor) {
+        executor.runFlow(whatsappDoc.lastMessage.message);
+        return true;
+      }
+      const sectorsRepo = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+          workspaceId,
+          'sector',
+        )
+      ).find();
 
-    //   if (!chatbot?.id) return;
-    //   const chatbotKey =
-    //     whatsappDoc.integrationId + '_' + whatsappDoc.client.phone;
-    //   let executor = this.ChatbotRunnerService.getExecutor(chatbotKey);
-    //   if (executor) {
-    //     executor.runFlow(whatsappDoc.lastMessage.message);
-    //     return true;
-    //   }
-    //   const sectorsFromWorkspace = await (
-    //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
-    //       workspaceId,
-    //       'sector',
-    //     )
-    //   ).find();
-
-    //   executor = this.ChatbotRunnerService.createExecutor({
-    //     integrationId: whatsappDoc.integrationId,
-    //     workspaceId,
-    //     chatbotName: chatbot?.name || 'Chatbot',
-    //     chatbot: {
-    //       ...chatbot,
-    //       workspace: { id: workspaceId },
-    //     },
-    //     sendTo: whatsappDoc.client.phone ?? '',
-    //     sectors: sectorsFromWorkspace,
-    //     onFinish: (_, sectorId: string) => {
-    //       if (sectorId) {
-    //         console.log('transfer to sector:', sectorId);
-    //         // transferBotService(
-    //         //   whatsappIntegration.integrationId,
-    //         //   whatsappIntegration.client.name ?? '',
-    //         //   statusEnum.Waiting,
-    //         //   sendWhatsappEventMessage,
-    //         //   sectorId,
-    //         //   sectorsFromWorkspace,
-    //         //   chatbot.name,
-    //         // );
-    //       }
-    //       this.ChatbotRunnerService.clearExecutor(chatbotKey);
-    //     },
-    //   });
-    //   executor.runFlow(whatsappDoc.lastMessage.message);
-    // }
+      executor = this.ChatbotRunnerService.createExecutor({
+        integrationId: whatsappDoc.integrationId,
+        workspaceId,
+        chatbotName: chatbot?.name || 'Chatbot',
+        chatbot: {
+          ...chatbot,
+          workspace: { id: workspaceId },
+        },
+        sendTo: whatsappDoc.client.phone ?? '',
+        sectors: sectorsRepo,
+        onFinish: (_, sectorId: string) => {
+          if (sectorId) {
+            console.log('transfer to sector:', sectorId);
+            // transferBotService(
+            //   whatsappIntegration.integrationId,
+            //   whatsappIntegration.client.name ?? '',
+            //   statusEnum.Waiting,
+            //   sendWhatsappEventMessage,
+            //   sectorId,
+            //   sectorsFromWorkspace,
+            //   chatbot.name,
+            // );
+          }
+          this.ChatbotRunnerService.clearExecutor(chatbotKey);
+        },
+      });
+      executor.runFlow(whatsappDoc.lastMessage.message);
+    }
   }
 
   async sendNotification(externalIds: string[], message: string) {

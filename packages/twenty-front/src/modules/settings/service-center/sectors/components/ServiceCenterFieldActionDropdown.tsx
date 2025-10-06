@@ -178,7 +178,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    closeModal(SERVCIE_CENTER_ACTION_MODAL_ID);
+    closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
     toggleDropdown();
   };
 
@@ -201,7 +201,6 @@ export const ServiceCenterFieldActionDropdown = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              {/* --- FIXOS --- */}
               <MenuItem
                 text={t`Edit`}
                 LeftIcon={IconPencil}
@@ -238,7 +237,6 @@ export const ServiceCenterFieldActionDropdown = ({
                 />
               )}
 
-              {/* --- DINÂMICOS --- */}
               {extraMenuItems?.map((item, idx) => (
                 <MenuItem
                   key={idx}
@@ -268,7 +266,6 @@ export const ServiceCenterFieldActionDropdown = ({
         confirmButtonText={t`Continue`}
       />
 
-      {/* Modal para itens dinâmicos */}
       {activeExtraModal && (
         <ConfirmationModal
           modalId={SERVICE_CENTER_ACTION_MODAL_ID}

@@ -2,15 +2,26 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Section,
+} from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { WorkspaceMember } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -25,10 +36,21 @@ const StyledTextInput = styled(TextInput)`
 
 export const SettingsServiceCenterAgents = () => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   const { records: workspaceMembers } = useFindManyRecords<
     WorkspaceMember & { __typename: string }
   >({ objectNameSingular: CoreObjectNameSingular.WorkspaceMember });
+
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({ objectNameSingular: CoreObjectNameSingular.Sector });
+
+  const { records: agents } = useFindManyRecords<
+    Agent & { __typename: string }
+  >({ objectNameSingular: CoreObjectNameSingular.Agent });
+
   const workspaceMembersWithAgent = workspaceMembers.filter(
     (workspaceMember) => !!workspaceMember.agentId,
   );
@@ -48,16 +70,22 @@ export const SettingsServiceCenterAgents = () => {
   const [searchByWorkspaceMemberName, setSearchByWorkspaceMemberName] =
     useState('');
 
+  function getAgentStatus(agentId: string): string {
+    const agent = agents.find((agent) => agent.id === agentId);
+    const sector = sectors.find((sector) => sector.id === agent?.sectorId);
+    return sector?.name || t`No sector assigned`;
+  }
+
   return (
     <SubMenuTopBarContainer
-      title={'Agents'}
+      title={t`Agents`}
       actionButton={
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.ServiceCenterNewAgent)}
         >
           <Button
             Icon={IconPlus}
-            title={'Add agent'}
+            title={t`Add agent`}
             accent="blue"
             size="small"
           />
@@ -65,20 +93,20 @@ export const SettingsServiceCenterAgents = () => {
       }
       links={[
         {
-          children: 'Service Center',
+          children: t`Service Center`,
           href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Agents' },
+        { children: t`Agents` },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
             title={t`Manage agents`}
-            description={t`Agents can be assigned to sectors and message inboxes`}
+            description={t`Agents can be assigned to sectors`}
           />
           <StyledTextInput
-            placeholder="Search for an agent..."
+            placeholder={t`Search for an agent...`}
             value={searchByWorkspaceMemberName}
             LeftIcon={IconSearch}
             onChange={(s) => {
@@ -89,6 +117,8 @@ export const SettingsServiceCenterAgents = () => {
           {filteredAgents.map((member) => {
             return (
               <StyledSettingsCard
+                key={member.id}
+                Status={getAgentStatus(member.agentId)}
                 Icon={
                   <Avatar
                     placeholder={member.name.firstName}
@@ -97,10 +127,34 @@ export const SettingsServiceCenterAgents = () => {
                   />
                 }
                 title={member.name.firstName + ' ' + member.name.lastName}
+                onClick={() => {
+                  navigate(
+                    getSettingsPath(SettingsPath.ServiceCenterEditAgent, {
+                      agentSlug: member.agentId,
+                    }),
+                  );
+                }}
               />
             );
           })}
         </Section>
+        {filterAgents.length === 0 && (
+          <Section>
+            <div style={{ marginTop: theme.spacing(10) }}>
+              <AnimatedPlaceholderEmptyContainer>
+                <AnimatedPlaceholder type="noRecord" />
+                <AnimatedPlaceholderEmptyTextContainer>
+                  <AnimatedPlaceholderEmptyTitle>
+                    {t`No chatbots found`}
+                  </AnimatedPlaceholderEmptyTitle>
+                  <AnimatedPlaceholderEmptySubTitle>
+                    {t`Create a chatbot to get started`}
+                  </AnimatedPlaceholderEmptySubTitle>
+                </AnimatedPlaceholderEmptyTextContainer>
+              </AnimatedPlaceholderEmptyContainer>
+            </div>
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

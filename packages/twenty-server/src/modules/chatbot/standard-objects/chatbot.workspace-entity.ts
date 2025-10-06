@@ -64,20 +64,11 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   viewport: { [key: string]: any } | null;
 
   @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Inbox`,
+    standardId: CHATBOT_STANDARD_FIELD_IDS.whatsappIntegrations,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Whatsapp Integrations`,
     inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
     inverseSideFieldKey: 'chatbot',
   })
-  inbox: Relation<WhatsappIntegrationWorkspaceEntity>;
-
-  @WorkspaceRelation({
-    standardId: CHATBOT_STANDARD_FIELD_IDS.inboxes,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Inbox`,
-    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'chatbot',
-  })
-  whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity>;
+  whatsappIntegrations: Relation<WhatsappIntegrationWorkspaceEntity[]> | null;
 }

@@ -38,7 +38,6 @@ import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 import {
   IconHeadset,
   IconIdBadge2,
-  IconInbox,
   IconMessageCircleCog,
   IconRobot,
 } from '@tabler/icons-react';
@@ -150,12 +149,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               label: t`Sectors`,
               path: SettingsPath.ServiceCenterSectors,
               Icon: IconIdBadge2,
-              indentationLevel: 2,
-            },
-            {
-              label: t`Inboxes`,
-              path: SettingsPath.ServiceCenterInboxes,
-              Icon: IconInbox,
               indentationLevel: 2,
             },
             {

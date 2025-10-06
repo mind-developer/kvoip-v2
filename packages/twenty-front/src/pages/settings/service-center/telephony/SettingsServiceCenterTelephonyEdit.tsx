@@ -10,13 +10,22 @@ import {
   SettingsServiceCenterTelephonyAboutForm,
   SettingsServiceCenterTelephonyFormSchema,
 } from '@/settings/service-center/telephony/components/forms/SettingsServiceCenterTelephonyForm';
+import { useDeleteTelephony } from '@/settings/service-center/telephony/hooks/useDeleteTelephony';
 import { useFindAllTelephonys } from '@/settings/service-center/telephony/hooks/useFindAllTelephony';
 import { useUpdateTelephony } from '@/settings/service-center/telephony/hooks/useUpdateTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { t } from '@lingui/core/macro';
+import { H2Title } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
+const DELETE_TELEPHONY_MODAL_ID = 'delete-telephony-modal';
 
 const editTelephonyFormSchema = z
   .object({})
@@ -29,9 +38,11 @@ type SettingsEditTelephonySchemaValues = z.infer<
 export const SettingsTelephonyEdit = () => {
   const navigate = useNavigate();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { openModal } = useModal();
 
   const { telephonys } = useFindAllTelephonys();
   const { editTelephony } = useUpdateTelephony();
+  const { deleteTelephony } = useDeleteTelephony();
 
   const { telephonySlug } = useParams<{ telephonySlug?: string }>();
 
@@ -107,33 +118,72 @@ export const SettingsTelephonyEdit = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!activeTelephony?.id) return;
+
+    try {
+      await deleteTelephony(activeTelephony.id);
+      navigate(settingsServiceCenterTelephonyPagePath);
+    } catch (err) {
+      enqueueErrorSnackBar({
+        message: (err as Error).message,
+      });
+    }
+  };
+
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer links={[]} title="Settings">
-        <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Telephony',
-                  href: settingsServiceCenterTelephonyPagePath,
-                },
-                { children: 'Edit' },
-              ]}
+    <>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...formConfig}>
+        <SubMenuTopBarContainer links={[]} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  {
+                    children: 'Telephony',
+                    href: settingsServiceCenterTelephonyPagePath,
+                  },
+                  { children: 'Edit' },
+                ]}
+              />
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() =>
+                  navigate(settingsServiceCenterTelephonyPagePath)
+                }
+                onSave={formConfig.handleSubmit(onSave)}
+              />
+            </SettingsHeaderContainer>
+            <SettingsServiceCenterTelephonyAboutForm
+              activeTelephony={activeTelephony}
             />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(settingsServiceCenterTelephonyPagePath)}
-              onSave={formConfig.handleSubmit(onSave)}
-            />
-          </SettingsHeaderContainer>
-          <SettingsServiceCenterTelephonyAboutForm
-            activeTelephony={activeTelephony}
-          />
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+            <Section>
+              <H2Title
+                title={t`Danger zone`}
+                description={t`Delete this telephony integration`}
+              />
+              <Button
+                accent="danger"
+                onClick={() => openModal(DELETE_TELEPHONY_MODAL_ID)}
+                variant="secondary"
+                size="small"
+                title={t`Delete telephony`}
+              />
+            </Section>
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+      <ConfirmationModal
+        confirmationPlaceholder={t`yes`}
+        confirmationValue={t`yes`}
+        modalId={DELETE_TELEPHONY_MODAL_ID}
+        title={t`Delete telephony integration`}
+        subtitle={t`Please type "yes" to confirm you want to delete this telephony integration.`}
+        onConfirmClick={handleDelete}
+        confirmButtonText={t`Delete`}
+      />
+    </>
   );
 };

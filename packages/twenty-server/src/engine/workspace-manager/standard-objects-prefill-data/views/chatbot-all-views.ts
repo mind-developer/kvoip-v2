@@ -69,7 +69,9 @@ export const chatbotsAllView = (
       {
         fieldMetadataId:
           chatbotObjectMetadata.fields.find(
-            (field) => field.standardId === CHATBOT_STANDARD_FIELD_IDS.inboxes,
+            (field) =>
+              field.standardId ===
+              CHATBOT_STANDARD_FIELD_IDS.whatsappIntegrations,
           )?.id ?? '',
         position: 4,
         isVisible: true,

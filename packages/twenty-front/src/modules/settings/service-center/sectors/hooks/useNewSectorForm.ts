@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import {
   newSectorFormSchema,
@@ -32,11 +34,18 @@ export const useNewSectorForm = () => {
     objectNameSingular: CoreObjectNameSingular.Sector,
   });
 
+  const { updateOneRecord: updateAgent } = useUpdateOneRecord<
+    Agent & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Agent,
+  });
+
   const form = useForm<NewSectorFormValues>({
     mode: 'onChange',
     defaultValues: {
       name: '',
       icon: 'IconBadge',
+      agentIds: [],
     },
     resolver: zodResolver(newSectorFormSchema),
   });
@@ -59,6 +68,18 @@ export const useNewSectorForm = () => {
     });
 
     if (createdSector.id) {
+      // Update agents with the new sector
+      if (data.agentIds && data.agentIds.length > 0) {
+        await Promise.all(
+          data.agentIds.map((agentId) =>
+            updateAgent({
+              idToUpdate: agentId,
+              updateOneRecordInput: { sectorId: createdSector.id },
+            }),
+          ),
+        );
+      }
+
       navigate(getSettingsPath(SettingsPath.ServiceCenterSectors));
       enqueueInfoSnackBar({
         message: t`Sector ${createdSector.name} created`,

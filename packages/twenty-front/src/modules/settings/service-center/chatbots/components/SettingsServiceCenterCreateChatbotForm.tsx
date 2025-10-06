@@ -1,10 +1,10 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { ChatbotStatus } from '@/service-center/types/ChatbotStatus';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { type ChatbotFormValues } from '@/settings/service-center/chatbots/validation-schemas/chatbotFormSchema';
-import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
+import { type IWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/WhatsappIntegration';
+import { ChatbotFormValues } from '@/settings/service-center/chatbots/validation-schemas/chatbotFormSchema';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -15,32 +15,45 @@ import { Section } from 'twenty-ui/layout';
 
 const StyledInfoForm = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledFormRow = styled.div`
+  width: 100%;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledSection = styled(Section)`
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsServiceCenterCreateChatbotForm = () => {
   const form = useFormContext<ChatbotFormValues>();
 
-  const { records: inboxes } = useFindManyRecords<
-    Inbox & { __typename: string }
+  const { records: integrations } = useFindManyRecords<
+    IWhatsappIntegration & { __typename: string }
   >({
-    objectNameSingular: CoreObjectNameSingular.Inbox,
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
   });
 
-  const inboxOptions: SelectOption[] = inboxes.map((inbox) => ({
-    label: inbox.name,
-    value: inbox.id,
-  }));
+  const integrationOptions: SelectOption[] = integrations.map(
+    (integration) => ({
+      label: integration.name,
+      value: integration.id,
+    }),
+  );
 
   return (
-    <SettingsPageContainer>
-      <Section>
-        <H2Title
-          title={t`About`}
-          description={t`Create a chatbot and define what inboxes it will answer to. Chatbots in "Draft" or "Disabled" statuses will not answer to any messages. You can change this later.\n\nAfter creating a chatbot, you will be able to design an automated interaction flow for new messages on the previous page.`}
-        />
-        <StyledInfoForm>
+    <StyledSection>
+      <H2Title
+        title={t`About`}
+        description={t`Create a chatbot and define what integrations it will answer to. Chatbots in "Draft" or "Disabled" statuses will not answer to any messages. You can change this later.\n\n`}
+      />
+      <StyledInfoForm>
+        <StyledFormRow>
           <Controller
             name="name"
             control={form.control}
@@ -85,24 +98,26 @@ export const SettingsServiceCenterCreateChatbotForm = () => {
               />
             )}
           />
+        </StyledFormRow>
+        <StyledFormRow>
           <Controller
-            name="inboxId"
+            name="whatsappIntegrationIds"
             control={form.control}
             render={({ field }) => (
-              <FormSelectFieldInput
-                label={t`Inbox`}
-                defaultValue=""
+              <FormMultiSelectFieldInput
+                label={t`Integrations`}
+                defaultValue={[]}
+                options={integrationOptions}
                 onChange={(value) => {
                   if (value) {
-                    field.onChange(value);
+                    field.onChange(typeof value === 'string' ? [value] : value);
                   }
                 }}
-                options={inboxOptions}
               />
             )}
           />
-        </StyledInfoForm>
-      </Section>
-    </SettingsPageContainer>
+        </StyledFormRow>
+      </StyledInfoForm>
+    </StyledSection>
   );
 };

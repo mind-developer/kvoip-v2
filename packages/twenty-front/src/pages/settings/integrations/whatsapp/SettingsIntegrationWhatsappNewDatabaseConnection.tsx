@@ -58,7 +58,10 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
   const { createOneRecord } = useCreateOneRecord<
     WhatsappIntegration & { __typename: string }
-  >({ objectNameSingular: 'whatsappIntegration' });
+  >({
+    objectNameSingular: 'whatsappIntegration',
+    recordGqlFields: { id: true },
+  });
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -214,7 +217,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         appId: formValues.appId,
         appKey: formValues.appKey,
         apiType: formValues.apiType,
-        disabled: false,
+        paused: false,
         sla: 30,
       });
 

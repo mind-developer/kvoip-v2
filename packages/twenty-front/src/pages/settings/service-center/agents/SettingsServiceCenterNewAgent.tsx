@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import SettingsServiceCenterAgentAboutForm from '@/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm';
 import { useNewAgentForm } from '@/settings/service-center/agents/hooks/useNewAgentForm';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -35,11 +36,13 @@ export const SettingsServiceCenterNewAgent = () => {
         { children: 'New Agent' },
       ]}
     >
-      <FormProvider {...form}>
-        <div style={{ overflow: 'visible' }}>
-          <SettingsServiceCenterAgentAboutForm />
-        </div>
-      </FormProvider>
+      <SettingsPageContainer>
+        <FormProvider {...form}>
+          <div style={{ overflow: 'visible' }}>
+            <SettingsServiceCenterAgentAboutForm />
+          </div>
+        </FormProvider>
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

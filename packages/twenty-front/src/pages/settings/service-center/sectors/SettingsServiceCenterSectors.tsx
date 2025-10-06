@@ -9,12 +9,23 @@ import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { H2Title, IconPlus, IconSearch, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Section,
+} from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { truncateList } from '~/pages/settings/service-center/utils/truncateList';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledSettingsCard = styled(SettingsCard)`
@@ -27,7 +38,9 @@ const StyledTextInput = styled(TextInput)`
 
 export const SettingsServiceCenterSectors = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { getIcon } = useIcons();
+  const navigate = useNavigate();
 
   const { records: sectors } = useFindManyRecords<
     Sector & { __typename: string }
@@ -53,7 +66,7 @@ export const SettingsServiceCenterSectors = () => {
   }
   const [searchBySectorName, setSearchBySectorName] = useState('');
 
-  function getSectorDescription(sectorId: string): string {
+  function getSectorStatus(sectorId: string): string {
     const agentIdsForSector = agents
       .filter((agent) => agent.sectorId === sectorId)
       .map((agent) => agent.id);
@@ -64,13 +77,10 @@ export const SettingsServiceCenterSectors = () => {
       .map(
         (member) =>
           member.name.firstName + ' ' + member.name.lastName.slice(0, 1) + '.',
-      )
-      .slice(0, 5);
+      );
 
-    if (agentNames.length === 0) return 'No agents assigned';
-    return agentNames.length >= 5
-      ? agentNames.join(', ') + ' ' + t`and more`
-      : agentNames.join(', ');
+    const truncated = truncateList(agentNames, 5, 'No agents assigned');
+    return truncated;
   }
 
   return (
@@ -100,28 +110,55 @@ export const SettingsServiceCenterSectors = () => {
         <div>
           <H2Title
             title={t`Manage sectors`}
-            description={t`Sectors group agents for easier management`}
+            description={t`Group agents into sectors for easier management`}
           />
-          <StyledTextInput
-            onChange={(s) => {
-              setFilteredSectors(filterSectors({ name: s }));
-              setSearchBySectorName(s);
-            }}
-            value={searchBySectorName}
-            placeholder="Search for a sector..."
-            LeftIcon={IconSearch}
-          />
+          {sectors.length > 0 && (
+            <StyledTextInput
+              onChange={(s) => {
+                setFilteredSectors(filterSectors({ name: s }));
+                setSearchBySectorName(s);
+              }}
+              value={searchBySectorName}
+              placeholder="Search for a sector..."
+              LeftIcon={IconSearch}
+            />
+          )}
           {filteredSectors.map((sector) => {
             const Icon = getIcon(sector.icon, 'IconDots');
             return (
               <StyledSettingsCard
+                key={sector.id}
                 Icon={<Icon size={18} />}
                 title={sector.name}
-                description={'• ' + getSectorDescription(sector.id)}
+                Status={'• ' + getSectorStatus(sector.id)}
+                onClick={() => {
+                  navigate(
+                    getSettingsPath(SettingsPath.ServiceCenterEditSector, {
+                      sectorSlug: sector.id,
+                    }),
+                  );
+                }}
               />
             );
           })}
         </div>
+        {sectors.length === 0 && (
+          <Section>
+            <div style={{ marginTop: theme.spacing(10) }}>
+              <AnimatedPlaceholderEmptyContainer>
+                <AnimatedPlaceholder type="noRecord" />
+                <AnimatedPlaceholderEmptyTextContainer>
+                  <AnimatedPlaceholderEmptyTitle>
+                    {t`No sectors found`}
+                  </AnimatedPlaceholderEmptyTitle>
+                  <AnimatedPlaceholderEmptySubTitle>
+                    {t`Create a sector to get started`}
+                  </AnimatedPlaceholderEmptySubTitle>
+                </AnimatedPlaceholderEmptyTextContainer>
+              </AnimatedPlaceholderEmptyContainer>
+            </div>
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

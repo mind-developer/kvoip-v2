@@ -11,18 +11,21 @@ import {
 } from '@/settings/service-center/chatbots/validation-schemas/chatbotFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useCreateChatbotForm = () => {
   const navigate = useNavigate();
   const { enqueueInfoSnackBar } = useSnackBar();
-
+  const { t } = useLingui();
   const { createOneRecord: createChatbot } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Chatbot,
+    recordGqlFields: { id: true, name: true },
   });
 
-  const { updateOneRecord: updateInbox } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Inbox,
+  const { updateOneRecord: updateWhatsappIntegration } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    recordGqlFields: { id: true, name: true },
   });
 
   const form = useForm<ChatbotFormValues>({
@@ -30,7 +33,7 @@ export const useCreateChatbotForm = () => {
     defaultValues: {
       name: '',
       status: 'DRAFT',
-      inboxId: '',
+      whatsappIntegrationIds: [],
     },
     resolver: zodResolver(chatbotFormSchema),
   });
@@ -41,15 +44,18 @@ export const useCreateChatbotForm = () => {
       status: data.status,
     });
 
-    if (createdChatbot.id) {
-      await updateInbox({
-        idToUpdate: data.inboxId,
-        updateOneRecordInput: { chatbotId: createdChatbot.id },
-      });
-
-      enqueueInfoSnackBar({
-        message: `Chatbot ${createdChatbot.name} created successfully`,
-      });
+    if (createdChatbot.id && data.whatsappIntegrationIds) {
+      for (const whatsappIntegrationId of data.whatsappIntegrationIds) {
+        const updatedWhatsappIntegration = await updateWhatsappIntegration({
+          idToUpdate: whatsappIntegrationId,
+          updateOneRecordInput: { chatbotId: createdChatbot.id },
+        });
+        enqueueInfoSnackBar({
+          message: updatedWhatsappIntegration.id
+            ? t`Chatbot "${createdChatbot.name}" created and linked to "${data.whatsappIntegrationIds.join(', ')}"`
+            : t`Could not link chatbot "${createdChatbot.name}" to WhatsApp integration "${updatedWhatsappIntegration.name}", please try again`,
+        });
+      }
       navigate(getSettingsPath(SettingsPath.Chatbots));
     }
   };

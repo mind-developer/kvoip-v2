@@ -7,9 +7,9 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconIdBadge2,
-  IconInbox,
   IconMailCog,
   IconPhone,
+  IconRobot,
   IconUsers,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -45,11 +45,9 @@ export const SettingsServiceCenterSection = () => {
             {t`Sectors group agents for easier management`}
           </SettingsNavigationCard>
         </UndecoratedLink>
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.ServiceCenterInboxes)}
-        >
-          <SettingsNavigationCard Icon={IconInbox} title={'Inboxes'}>
-            {t`Inboxes are where messages from defined integrations will appear, and can be assigned to agents.`}
+        <UndecoratedLink to={getSettingsPath(SettingsPath.Chatbots)}>
+          <SettingsNavigationCard Icon={IconRobot} title={'Chatbots'}>
+            {t`Chatbots can be assigned to sectors and chat providers`}
           </SettingsNavigationCard>
         </UndecoratedLink>
         <UndecoratedLink

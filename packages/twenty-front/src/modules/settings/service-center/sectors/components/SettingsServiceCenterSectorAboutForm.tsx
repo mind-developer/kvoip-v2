@@ -27,7 +27,6 @@ const sectorMetadataFormSchema = z.object({
 export const SettingsSectorFormSchema = sectorMetadataFormSchema.pick({
   icon: true,
   name: true,
-  topics: true,
 });
 
 export type SettingsSectorFormSchemaValues = z.infer<

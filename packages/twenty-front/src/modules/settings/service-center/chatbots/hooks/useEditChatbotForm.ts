@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   chatbotFormSchema,
@@ -17,7 +18,7 @@ type Chatbot = {
   id: string;
   name: string;
   status: 'ACTIVE' | 'DRAFT' | 'DISABLED';
-  inboxId?: string;
+  whatsappIntegrationIds?: string[];
 };
 
 export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
@@ -26,10 +27,16 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
 
   const { updateOneRecord: updateChatbot } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Chatbot,
+    recordGqlFields: { id: true, name: true, status: true },
   });
 
-  const { updateOneRecord: updateInbox } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Inbox,
+  const { updateOneRecord: updateWhatsappIntegration } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    recordGqlFields: { id: true, name: true },
+  });
+
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Chatbot,
   });
 
   const form = useForm<ChatbotFormValues>({
@@ -37,7 +44,7 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
     defaultValues: {
       name: '',
       status: 'DRAFT',
-      inboxId: '',
+      whatsappIntegrationIds: [],
     },
     resolver: zodResolver(chatbotFormSchema),
   });
@@ -47,7 +54,7 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
       form.reset({
         name: activeChatbot.name,
         status: activeChatbot.status,
-        inboxId: activeChatbot.inboxId || '',
+        whatsappIntegrationIds: activeChatbot.whatsappIntegrationIds || [],
       });
     }
   }, [activeChatbot, form]);
@@ -63,15 +70,33 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
       },
     });
 
-    if (data.inboxId && data.inboxId !== activeChatbot.inboxId) {
-      await updateInbox({
-        idToUpdate: data.inboxId,
-        updateOneRecordInput: { chatbotId: activeChatbot.id },
-      });
+    if (data.whatsappIntegrationIds) {
+      for (const whatsappIntegrationId of data.whatsappIntegrationIds) {
+        const updatedWhatsappIntegration = await updateWhatsappIntegration({
+          idToUpdate: whatsappIntegrationId,
+          updateOneRecordInput: { chatbotId: activeChatbot.id },
+        });
+        enqueueInfoSnackBar({
+          message: updatedWhatsappIntegration.id
+            ? `Chatbot "${data.name}" added to WhatsApp integration "${updatedWhatsappIntegration.name}"`
+            : `Could not add chatbot "${data.name}" to WhatsApp integration "${updatedWhatsappIntegration.name}", please try again`,
+        });
+      }
     }
 
     enqueueInfoSnackBar({
-      message: `Chatbot ${data.name} updated successfully`,
+      message: `Chatbot "${data.name}" updated successfully`,
+    });
+    navigate(getSettingsPath(SettingsPath.Chatbots));
+  };
+
+  const handleDelete = async () => {
+    if (!activeChatbot) return;
+
+    await deleteOneRecord(activeChatbot.id);
+
+    enqueueInfoSnackBar({
+      message: `Chatbot ${activeChatbot.name} deleted successfully`,
     });
     navigate(getSettingsPath(SettingsPath.Chatbots));
   };
@@ -79,5 +104,6 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
+    handleDelete,
   };
 };
