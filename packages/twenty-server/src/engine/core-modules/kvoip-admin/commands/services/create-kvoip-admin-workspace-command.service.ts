@@ -15,7 +15,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
-import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
+import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -75,17 +75,15 @@ export class CreateKvoipAdminWorkspaceCommandService {
           });
         }
 
-        // For now views/favorites are auto-created for custom
-        // objects but not for standard objects.
-        // This is probably something we want to fix in the future.
-
-        const viewDefinitionsWithId = await prefillViews(
-          entityManager,
+        const viewDefinitionsWithId = await prefillCoreViews({
+          coreDataSource: this.coreDataSource,
+          workspaceId,
           schemaName,
-          objectMetadataItems.filter((item) => !item.isCustom),
-          undefined,
-          true,
-        );
+          objectMetadataItems: objectMetadataItems.filter(
+            (item) => !item.isCustom,
+          ),
+          shouldPrefillAdminViews: true,
+        });
 
         await prefillWorkspaceFavorites(
           viewDefinitionsWithId
