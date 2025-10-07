@@ -41,10 +41,12 @@ import {
   WhatsAppDocument,
 } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
+import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { ClientChatWorkspaceEntity } from 'src/modules/chat/standard-objects/chat.workspace-entity';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -206,6 +208,65 @@ export class WhatsAppService {
     >,
     workspaceId: string,
   ) {
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
+        'person',
+        { shouldBypassPermissionChecks: true },
+      );
+    let person = await personRepository.findOne({
+      where: {
+        phones: {
+          primaryPhoneNumber: whatsappDoc.client.phone,
+        },
+      },
+    });
+
+    if (!person)
+      person = await personRepository.save(
+        createRelatedPerson(
+          {
+            firstName: whatsappDoc.client.name?.split(' ')[0] ?? '',
+            lastName: whatsappDoc.client.name?.split(' ')[1] ?? '',
+          },
+          whatsappDoc.client.phone,
+          whatsappDoc.client.ppUrl ?? null,
+          ChatIntegrationProvider.WHATSAPP,
+          'Via WhatsApp',
+        ),
+      );
+
+    const chatRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+        workspaceId,
+        'chat',
+        { shouldBypassPermissionChecks: true },
+      );
+    let chat = await chatRepository.findOne({
+      where: {
+        whatsappIntegrationId: whatsappDoc.integrationId,
+        personId: person.id,
+      },
+    });
+
+    if (!chat)
+      chat = await chatRepository.save({
+        person: {
+          id: person.id,
+        },
+        whatsappIntegration: {
+          id: whatsappDoc.integrationId,
+        },
+        agent: {
+          id: whatsappDoc.agent,
+        },
+      });
+
+    if (!chat.id)
+      throw new InternalServerError(
+        'No chat found, and fallback chat creation failed',
+      );
+
     this.saveMessageQueue.add<SaveChatMessageJobData>(SaveChatMessageJob.name, {
       chatType: ChatIntegrationProvider.WHATSAPP,
       saveMessageInput: {
@@ -215,6 +276,8 @@ export class WhatsAppService {
         id: whatsappDoc.lastMessage.id ?? null,
         fromMe: !!whatsappDoc.lastMessage.fromMe,
         recipientPpUrl: whatsappDoc.client.ppUrl ?? null,
+        chatId: chat.id,
+        personId: person.id,
       },
       workspaceId,
     });

@@ -6099,13 +6099,6 @@ export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
 
 export type FindOneServerlessFunctionSourceCodeQuery = { __typename?: 'Query', getServerlessFunctionSourceCode?: any | null };
 
-export type CreateTelephonyMutationVariables = Exact<{
-  createTelephonyInput: CreateTelephonyInput;
-}>;
-
-
-export type CreateTelephonyMutation = { __typename?: 'Mutation', createTelephonyIntegration: { __typename?: 'TelephonyWorkspaceEntity', id: string } };
-
 export type UpdateTelephonyMutationVariables = Exact<{
   id: Scalars['ID'];
   updateTelephonyInput: UpdateTelephonyInput;
@@ -12404,39 +12397,6 @@ export function useFindOneServerlessFunctionSourceCodeLazyQuery(baseOptions?: Ap
 export type FindOneServerlessFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeQuery>;
 export type FindOneServerlessFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeLazyQuery>;
 export type FindOneServerlessFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>;
-export const CreateTelephonyDocument = gql`
-    mutation CreateTelephony($createTelephonyInput: CreateTelephonyInput!) {
-  createTelephonyIntegration(createTelephonyInput: $createTelephonyInput) {
-    id
-  }
-}
-    `;
-export type CreateTelephonyMutationFn = Apollo.MutationFunction<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
-
-/**
- * __useCreateTelephonyMutation__
- *
- * To run a mutation, you first call `useCreateTelephonyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTelephonyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createTelephonyMutation, { data, loading, error }] = useCreateTelephonyMutation({
- *   variables: {
- *      createTelephonyInput: // value for 'createTelephonyInput'
- *   },
- * });
- */
-export function useCreateTelephonyMutation(baseOptions?: Apollo.MutationHookOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTelephonyMutation, CreateTelephonyMutationVariables>(CreateTelephonyDocument, options);
-      }
-export type CreateTelephonyMutationHookResult = ReturnType<typeof useCreateTelephonyMutation>;
-export type CreateTelephonyMutationResult = Apollo.MutationResult<CreateTelephonyMutation>;
-export type CreateTelephonyMutationOptions = Apollo.BaseMutationOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
 export const UpdateTelephonyDocument = gql`
     mutation UpdateTelephony($id: ID!, $updateTelephonyInput: UpdateTelephonyInput!) {
   updateTelephonyIntegration(id: $id, updateTelephonyInput: $updateTelephonyInput) {

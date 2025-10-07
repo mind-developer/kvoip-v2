@@ -369,6 +369,8 @@ export const AGENT_FIELD_IDS = {
   inboxTargets: '4be771fa-a3b4-4947-8ebd-50b73000f3bd',
   workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
   timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
+  chats: 'e6ce11d2-d479-4147-aa02-8a31885638c2',
+  support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
 };
 
 export const INVOICE_FIELD_IDS = {
@@ -644,6 +646,20 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
+  chats: '2f828aa3-a5b0-4fcf-85a9-fe90989b1367',
+} as const;
+
+export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
+  providerMessageId: '76413383-fb39-4587-a686-6736d0f7feb0',
+  chat: 'a224b390-a112-491b-8beb-863d97612f51',
+  type: '86f2f89f-54ff-4365-b5ca-9484f64d8fc5',
+  textBody: '9bb1f483-e428-47ed-a015-9aba0c91f35f',
+  caption: 'dab24e69-2728-47b1-bdb9-371dcc07d5a1',
+  deliveryStatus: '1374f720-eea1-43a4-8f8e-79bbdb53aa0f',
+  edited: '30005416-0c21-4557-98c7-c9d75b5b5ca8',
+  from: 'fd6cad84-5105-4b88-a3b9-4081f5209a40',
+  to: 'dd40445b-9e5c-44d3-a7bb-afe543b52a82',
+  attachmentUrl: 'ac734b13-92c2-4edd-8a44-04b5e5a4c81f',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
@@ -785,6 +801,15 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   searchVector: '20202020-3f17-44ef-b8c1-b282ae8469b2',
 } as const;
 
+export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
+  whatsappIntegration: '291c6ec4-cba9-48a9-9e6a-b1fac0d8266b',
+  sector: '6af22d10-1af5-42fb-bc2e-82c001227eb8',
+  agent: '521b5083-c7bd-419d-80fe-2c41ee73a6be',
+  person: '81157d97-44b6-432e-aa2b-065b1eefb548',
+  status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
+  chatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
+} as const;
+
 export const CHATBOT_STANDARD_FIELD_IDS = {
   name: '92a00578-f689-43c6-9d79-5171e9d9ab74',
   status: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
@@ -813,7 +838,8 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
   apiType: '0f112edf-794d-4e0d-b054-b7a5a72f15cd',
   inbox: '84b0151b-547b-4b14-a9ad-263968e2868d',
-};
+  chats: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
+} as const;
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   position: '20202020-1810-4591-a93c-d0df97dca843',

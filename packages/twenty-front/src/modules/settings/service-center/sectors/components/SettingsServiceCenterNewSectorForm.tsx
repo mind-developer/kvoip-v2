@@ -1,6 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { type NewSectorFormValues } from '@/settings/service-center/sectors/validation-schemas/newSectorFormSchema';
@@ -10,7 +9,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, Label, useIcons } from 'twenty-ui/display';
+import { H2Title, Label } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
@@ -31,16 +30,13 @@ const StyledSection = styled(Section)`
 export const SettingsServiceCenterNewSectorForm = () => {
   const { t } = useLingui();
   const form = useFormContext<NewSectorFormValues>();
-  const { getIcon } = useIcons();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    recordGqlFields: { id: true, name: true, agent: true },
   });
 
   const agents = workspaceMembers.filter((wm) => wm.agentId);
-
-  const { updateMultipleRecordsFromManyObjects } =
-    useUpdateMultipleRecordsFromManyObjects();
 
   return (
     <SettingsPageContainer>
@@ -90,10 +86,10 @@ export const SettingsServiceCenterNewSectorForm = () => {
                 label={t`Agents`}
                 options={
                   workspaceMembers
-                    .filter((wm) => wm.agentId)
+                    .filter((wm) => wm.agent)
                     .map((wm) => ({
                       label: wm.name.firstName + ' ' + wm.name.lastName,
-                      value: wm.agentId,
+                      value: wm.agent.id,
                     })) as SelectOption[]
                 }
                 defaultValue={field.value}

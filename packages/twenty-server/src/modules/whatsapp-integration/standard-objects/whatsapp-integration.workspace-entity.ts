@@ -9,6 +9,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WHATSAPP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ClientChatWorkspaceEntity } from 'src/modules/chat/standard-objects/chat.workspace-entity';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { Relation } from 'typeorm';
 
@@ -100,6 +101,15 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`WhatsApp API Type`,
   })
   apiType?: 'MetaAPI' | 'Baileys';
+
+  @WorkspaceRelation({
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.chats,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Chat`,
+    inverseSideTarget: () => ClientChatWorkspaceEntity,
+    inverseSideFieldKey: 'whatsappIntegration',
+  })
+  chats: Relation<ClientChatWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.chatbot,

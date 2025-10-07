@@ -8,6 +8,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { AGENT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ClientChatWorkspaceEntity } from 'src/modules/chat/standard-objects/chat.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -32,21 +33,22 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconIdBadge2',
     inverseSideTarget: () => SectorWorkspaceEntity,
     inverseSideFieldKey: 'agents',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  sector: Relation<SectorWorkspaceEntity>;
+  sector: Relation<SectorWorkspaceEntity | null>;
 
   @WorkspaceJoinColumn('sector')
-  sectorId: string;
+  sectorId: string | null;
 
   @WorkspaceRelation({
     standardId: AGENT_FIELD_IDS.workspaceMember,
     type: RelationType.ONE_TO_MANY,
     label: msg`Workspace Member`,
-    description: msg`Workspace member assigned to this sector`,
+    description: msg`Workspace member assigned to this agent`,
     icon: 'IconUsers',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
@@ -60,4 +62,14 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: AGENT_FIELD_IDS.chats,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Agent chats`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ClientChatWorkspaceEntity,
+    inverseSideFieldKey: 'agent',
+  })
+  chats: Relation<ClientChatWorkspaceEntity[]> | null;
 }

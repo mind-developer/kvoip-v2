@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { SaveChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
-import { constructWhatsAppFirebasePayload } from 'src/engine/core-modules/chat-message-manager/utils/constructWhatsAppFirebasePayload';
+import { constructChatMessageInput } from 'src/engine/core-modules/chat-message-manager/utils/contructChatMessageInput';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/chat-message/standard-objects/chat-message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import {
   ChatIntegrationProvider,
@@ -17,7 +17,6 @@ import {
 export class SaveChatMessageJob {
   protected readonly logger = new Logger(SaveChatMessageJob.name);
   constructor(
-    private readonly firebaseService: FirebaseService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -80,27 +79,16 @@ export class SaveChatMessageJob {
       default:
         this.logger.log(
           '(whatsapp): Saving message:',
-          JSON.stringify(
-            constructWhatsAppFirebasePayload(
-              data.saveMessageInput,
-              person.id,
-              fullName,
-              person.avatarUrl,
-              person.emails.primaryEmail,
-              data.saveMessageInput.id,
-            ),
-          ),
+          JSON.stringify(constructChatMessageInput(data.saveMessageInput)),
         );
-        await this.firebaseService.saveWhatsAppMessage(
-          constructWhatsAppFirebasePayload(
-            data.saveMessageInput,
-            person.id,
-            fullName,
-            person.avatarUrl,
-            person.emails.primaryEmail,
-            data.saveMessageInput.id,
-          ),
-        );
+        await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+            data.workspaceId,
+            'chatMessage',
+          )
+        ).save(constructChatMessageInput(data.saveMessageInput));
+        return true;
     }
+    return false;
   }
 }

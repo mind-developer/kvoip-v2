@@ -119,12 +119,12 @@ export class FirebaseService {
 
           const sectors = await sectorRepository.find();
 
-          await this.chatMessageManagerService.sendMessageNotification(
-            sectors.flatMap((sector) =>
-              sector.agents.map((agent) => agent.workspaceMember.id),
-            ),
-            `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
-          );
+          // await this.chatMessageManagerService.sendMessageNotification(
+          //   sectors.flatMap((sector) =>
+          //     sector.agents.map((agent) => agent.workspaceMember.id),
+          //   ),
+          //   `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
+          // );
         }
         return newDoc;
       }
@@ -171,10 +171,10 @@ export class FirebaseService {
             return whatsappIntegration;
           }
 
-          await this.chatMessageManagerService.sendMessageNotification(
-            sector.agents.map((agent) => agent.workspaceMember.id),
-            `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-          );
+          // await this.chatMessageManagerService.sendMessageNotification(
+          //   sector.agents.map((agent) => agent.workspaceMember.id),
+          //   `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+          // );
         }
       }
       return whatsappIntegration;

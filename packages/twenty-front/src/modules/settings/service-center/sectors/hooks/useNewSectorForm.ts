@@ -44,7 +44,7 @@ export const useNewSectorForm = () => {
     mode: 'onChange',
     defaultValues: {
       name: '',
-      icon: 'IconBadge',
+      icon: 'IconIdBadge2',
       agentIds: [],
     },
     resolver: zodResolver(newSectorFormSchema),

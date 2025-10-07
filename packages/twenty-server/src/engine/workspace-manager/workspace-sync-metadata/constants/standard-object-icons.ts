@@ -1,4 +1,4 @@
-import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
+import { KVOIP_ADMIN_STANDARD_OBJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 
 export const STANDARD_OBJECT_ICONS = {
   activityTarget: 'IconCheckbox',
@@ -44,5 +44,6 @@ export const STANDARD_OBJECT_ICONS = {
   workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
   chatbot: 'IconSettingsAutomation',
-  ...KVOIP_ADMIN_STANRD_BOJECT_ICONS,
+  chat: 'IconChat',
+  ...KVOIP_ADMIN_STANDARD_OBJECT_ICONS,
 } as const;

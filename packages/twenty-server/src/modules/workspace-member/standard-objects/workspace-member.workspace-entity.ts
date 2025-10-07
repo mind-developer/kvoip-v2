@@ -396,6 +396,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUsers',
     inverseSideTarget: () => AgentWorkspaceEntity,
     inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   agent: Relation<AgentWorkspaceEntity>;

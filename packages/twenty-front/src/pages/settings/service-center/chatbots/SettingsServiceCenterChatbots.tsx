@@ -3,11 +3,13 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus, IconRobot } from '@tabler/icons-react';
+import { IconPlus, IconRobot, IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { H2Title } from 'twenty-ui/display';
@@ -53,6 +55,11 @@ const StyledTag = styled(Tag)`
   justify-content: center;
 `;
 
+const StyledTextInput = styled(TextInput)`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
+`;
+
 export default function SettingsServiceCenterChatbots() {
   const theme = useTheme();
   const { t } = useLingui();
@@ -62,6 +69,14 @@ export default function SettingsServiceCenterChatbots() {
   >({
     objectNameSingular: CoreObjectNameSingular.Chatbot,
   });
+  const [filteredChatbots, setFilteredChatbots] = useState<Chatbot[]>(chatbots);
+  const [searchByChatbotName, setSearchByChatbotName] = useState('');
+
+  function filterChatbots({ name }: { name: string }): Chatbot[] {
+    return chatbots.filter((chatbot) =>
+      chatbot.name.toLowerCase().includes(name.toLowerCase()),
+    );
+  }
   return (
     <SubMenuTopBarContainer
       title={t`Chatbots`}
@@ -90,6 +105,16 @@ export default function SettingsServiceCenterChatbots() {
             title={t`Manage chatbots`}
             description={t`Chatbots will automatically answer messages as soon as they reach their assigned integrations. Chats already in attendance will be ignored.`}
           />
+
+          <StyledTextInput
+            placeholder={t`Search for a chatbot...`}
+            value={searchByChatbotName}
+            LeftIcon={IconSearch}
+            onChange={(s) => {
+              setFilteredChatbots(filterChatbots({ name: s }));
+              setSearchByChatbotName(s);
+            }}
+          />
           {chatbots.map((chatbot) => {
             const statusProps = getChatbotStatusTagProps(chatbot.status);
             return (
@@ -112,7 +137,7 @@ export default function SettingsServiceCenterChatbots() {
                       />
                     </>
                   }
-                  Icon={<IconRobot size={18} />}
+                  Icon={<IconRobot size={16} />}
                   onClick={() => {
                     navigate(
                       getSettingsPath(SettingsPath.ChatbotsEdit, {
@@ -131,7 +156,7 @@ export default function SettingsServiceCenterChatbots() {
                   <AnimatedPlaceholder type="noRecord" />
                   <AnimatedPlaceholderEmptyTextContainer>
                     <AnimatedPlaceholderEmptyTitle>
-                      {t`No chatbots found`}
+                      {t`No chatbots created yet`}
                     </AnimatedPlaceholderEmptyTitle>
                     <AnimatedPlaceholderEmptySubTitle>
                       {t`Create a chatbot to get started`}

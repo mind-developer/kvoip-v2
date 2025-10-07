@@ -50,10 +50,9 @@ export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Agents assigned to this sector`,
     icon: 'IconUsers',
     inverseSideTarget: () => AgentWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  agents: Relation<AgentWorkspaceEntity[]>;
+  agents: Relation<AgentWorkspaceEntity[] | null>;
 
   @WorkspaceRelation({
     standardId: SECTOR_FIELD_IDS.timelineActivities,

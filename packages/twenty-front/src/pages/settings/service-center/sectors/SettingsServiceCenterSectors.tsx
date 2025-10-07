@@ -4,7 +4,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -12,6 +11,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { Agent } from 'http';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, IconPlus, IconSearch, useIcons } from 'twenty-ui/display';
@@ -46,8 +46,11 @@ export const SettingsServiceCenterSectors = () => {
     Sector & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.Sector,
+    recordGqlFields: { id: true, icon: true, name: true, agents: true },
   });
-  const { records: agents } = useFindManyRecords<Agent & { id: string }>({
+  const { records: agents } = useFindManyRecords<
+    Agent & { id: string; __typename: string }
+  >({
     objectNameSingular: CoreObjectNameSingular.Agent,
   });
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -112,53 +115,51 @@ export const SettingsServiceCenterSectors = () => {
             title={t`Manage sectors`}
             description={t`Group agents into sectors for easier management`}
           />
-          {sectors.length > 0 && (
-            <StyledTextInput
-              onChange={(s) => {
-                setFilteredSectors(filterSectors({ name: s }));
-                setSearchBySectorName(s);
-              }}
-              value={searchBySectorName}
-              placeholder="Search for a sector..."
-              LeftIcon={IconSearch}
-            />
-          )}
-          {filteredSectors.map((sector) => {
-            const Icon = getIcon(sector.icon, 'IconDots');
-            return (
-              <StyledSettingsCard
-                key={sector.id}
-                Icon={<Icon size={18} />}
-                title={sector.name}
-                Status={'• ' + getSectorStatus(sector.id)}
-                onClick={() => {
-                  navigate(
-                    getSettingsPath(SettingsPath.ServiceCenterEditSector, {
-                      sectorSlug: sector.id,
-                    }),
-                  );
-                }}
-              />
-            );
-          })}
-        </div>
-        {sectors.length === 0 && (
+          <StyledTextInput
+            onChange={(s) => {
+              setFilteredSectors(filterSectors({ name: s }));
+              setSearchBySectorName(s);
+            }}
+            value={searchBySectorName}
+            placeholder="Search for a sector..."
+            LeftIcon={IconSearch}
+          />
           <Section>
-            <div style={{ marginTop: theme.spacing(10) }}>
-              <AnimatedPlaceholderEmptyContainer>
-                <AnimatedPlaceholder type="noRecord" />
-                <AnimatedPlaceholderEmptyTextContainer>
-                  <AnimatedPlaceholderEmptyTitle>
-                    {t`No sectors found`}
-                  </AnimatedPlaceholderEmptyTitle>
-                  <AnimatedPlaceholderEmptySubTitle>
-                    {t`Create a sector to get started`}
-                  </AnimatedPlaceholderEmptySubTitle>
-                </AnimatedPlaceholderEmptyTextContainer>
-              </AnimatedPlaceholderEmptyContainer>
-            </div>
+            {filteredSectors.map((sector) => {
+              const Icon = getIcon(sector.icon, 'IconDots');
+              return (
+                <StyledSettingsCard
+                  key={sector.id}
+                  Icon={<Icon size={16} />}
+                  title={sector.name}
+                  Status={'• ' + getSectorStatus(sector.id)}
+                  onClick={() => {
+                    navigate(
+                      getSettingsPath(SettingsPath.ServiceCenterEditSector, {
+                        sectorSlug: sector.id,
+                      }),
+                    );
+                  }}
+                />
+              );
+            })}
+            {filteredSectors.length === 0 && (
+              <div style={{ marginTop: theme.spacing(10) }}>
+                <AnimatedPlaceholderEmptyContainer>
+                  <AnimatedPlaceholder type="noRecord" />
+                  <AnimatedPlaceholderEmptyTextContainer>
+                    <AnimatedPlaceholderEmptyTitle>
+                      {t`No sectors created yet`}
+                    </AnimatedPlaceholderEmptyTitle>
+                    <AnimatedPlaceholderEmptySubTitle>
+                      {t`Create a sector to get started`}
+                    </AnimatedPlaceholderEmptySubTitle>
+                  </AnimatedPlaceholderEmptyTextContainer>
+                </AnimatedPlaceholderEmptyContainer>
+              </div>
+            )}
           </Section>
-        )}
+        </div>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -9,6 +9,8 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/chat-message/standard-objects/chat-message.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/chat/standard-objects/chat.workspace-entity';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -106,6 +108,8 @@ const baseStandardObjectMetadataDefinitions = [
   SectorWorkspaceEntity,
   AgentWorkspaceEntity,
   ChatbotWorkspaceEntity,
+  ClientChatWorkspaceEntity,
+  ClientChatMessageWorkspaceEntity,
 ];
 
 // Admin-specific objects that are only available in the kvoip admin workspace

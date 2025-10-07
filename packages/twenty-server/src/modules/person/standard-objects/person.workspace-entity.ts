@@ -35,6 +35,7 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/chat/standard-objects/chat.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -208,6 +209,18 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   charge: Relation<ChargeWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.chats,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Chats`,
+    description: msg`Chats linked to the person`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ClientChatWorkspaceEntity,
+    inverseSideFieldKey: 'person',
+  })
+  @WorkspaceIsNullable()
+  chats: Relation<ClientChatWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.support,

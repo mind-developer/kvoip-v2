@@ -7,7 +7,8 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, IconUser, useIcons } from 'twenty-ui/display';
+import { AvatarChip } from 'twenty-ui/components';
+import { H2Title, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
@@ -32,17 +33,24 @@ export default function SettingsServiceCenterAgentAboutForm({
   isEditMode = false,
 }: SettingsServiceCenterAgentAboutFormProps) {
   const form = useFormContext<AgentFormValues>();
+  const { getIcon } = useIcons();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    recordGqlFields: {
+      id: true,
+      name: true,
+      agentId: true,
+      agent: true,
+      avatarUrl: true,
+    },
   });
+
   const { records: sectors } = useFindManyRecords<
     Sector & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.Sector,
   });
-
-  const { getIcon } = useIcons();
 
   const workspaceMemberId = form.watch('workspaceMemberId');
 
@@ -52,13 +60,20 @@ export default function SettingsServiceCenterAgentAboutForm({
     ? workspaceMembers.filter(
         (member) => !member.agentId || member.id === workspaceMemberId,
       )
-    : workspaceMembers.filter((member) => !member.agentId);
+    : workspaceMembers.filter((member) => !member.agent);
 
   const memberOptions =
     selectableWorkspaceMembers.map(
       (member) =>
         ({
-          Icon: IconUser,
+          Icon: () => (
+            <AvatarChip
+              avatarType={'rounded'}
+              avatarUrl={member.avatarUrl ?? undefined}
+              placeholder={member.name.firstName + ' ' + member.name.lastName}
+              placeholderColorSeed={member.id}
+            />
+          ),
           label: member.name.firstName + ' ' + member.name.lastName,
           value: member.id,
         }) as SelectOption,
@@ -69,7 +84,7 @@ export default function SettingsServiceCenterAgentAboutForm({
         ({
           label: sector.name,
           value: sector.id,
-          Icon: getIcon(sector.icon),
+          icon: getIcon(sector.icon),
         }) as SelectOption,
     ) ?? [];
 

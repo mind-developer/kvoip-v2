@@ -1,4 +1,5 @@
 export type IMessage = {
+  chatId: string;
   id?: string | null;
   from: string;
   message: string;
@@ -19,11 +20,9 @@ export type MessageInput = {
   personId: string;
 };
 
-export interface MessageAgent {
+export type MessageAgent = {
   name: string;
   id: string;
-}
+};
 
 export type MessageSector = MessageAgent;
-
-
