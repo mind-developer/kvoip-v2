@@ -5,6 +5,10 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ServiceCenterTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterTabContent';
 import { useFindAllTelephonys } from '../../../modules/settings/service-center/telephony/hooks/useFindAllTelephony';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useLingui } from '@lingui/react/macro';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -14,7 +18,8 @@ const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   width: 100%;
 `;
 
-export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
+// export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
+const TAB_LIST_COMPONENT_ID = 'service-center-telephony-tabs';
 
 type ShowServiceCenterTelephonyTabsProps = {
   isRightDrawer?: boolean;
@@ -25,19 +30,45 @@ export const ShowServiceCenterTelephonyTabs = ({
   isRightDrawer = false,
 }: ShowServiceCenterTelephonyTabsProps) => {
   const isMobile = useIsMobile() || isRightDrawer;
+  const { t } = useLingui();
+
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    TAB_LIST_COMPONENT_ID,
+  );
+
+  const tabs = [
+    {
+      id: 'operators',
+      title: t`Operators`,
+      // Icon: IconFileText,
+    },
+    {
+      id: 'all-extensions',
+      title: t`All Extensions`,
+      // Icon: IconFileText,
+    },
+  ];
+
   const { telephonys, refetch } = useFindAllTelephonys();
 
   useEffect(() => {
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // const [allExtensions, setAllExtensions] = useState([]);
 
   return (
     <>
       <StyledShowServiceCenterTabs isMobile={isMobile}>
-        <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
+        <TabList tabs={tabs} componentInstanceId={TAB_LIST_COMPONENT_ID} />
+
+        {activeTabId === 'operators' && (
+          <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
+        )}
+
+        {activeTabId === 'all-extensions' && (
+          // <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
+          <></>
+        )}
       </StyledShowServiceCenterTabs>
     </>
   );
