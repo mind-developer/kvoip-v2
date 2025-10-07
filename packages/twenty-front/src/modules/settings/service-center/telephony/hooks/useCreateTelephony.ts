@@ -34,11 +34,12 @@ export const useCreateTelephony = (): UserCreateTelephonyReturn => {
       await createTelephonyMutation({
         variables: { createTelephonyInput: createTelephonyInput },
       });
-    } catch (err) {
+    } catch (err: any) {
       // TODO: Add proper error message
-      enqueueErrorSnackBar({
-        message: t`Telephony creation error`,
-      });
+      // enqueueErrorSnackBar({
+      //   message: err.message || t`Telephony creation error`,
+      // });
+      throw err;
     }
   };
 

@@ -3,10 +3,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   areaCodeOptions,
   dontFowardOptions,
-  extensionGroupOptions,
   fowardAllCallsOptions,
   pullCallsOptions,
-  typeOptions,
+  typeOptions
 } from '@/settings/service-center/telephony/components/forms/options';
 import { useFindAllDialingPlans } from '@/settings/service-center/telephony/hooks/useFindAllDialingPlans';
 import { useFindAllDids } from '@/settings/service-center/telephony/hooks/useFindAllDids';
@@ -565,7 +564,8 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
             )}
           />
         </Section>
-        <Section>
+        {/* Removido devido a não haver meios na api para manipular os grupos de ramais */}
+        {/* <Section>
           <Controller
             control={control}
             name="extensionGroup"
@@ -582,7 +582,7 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
               />
             )}
           />
-        </Section>
+        </Section> */}
         <Section>
           <Controller
             control={control}

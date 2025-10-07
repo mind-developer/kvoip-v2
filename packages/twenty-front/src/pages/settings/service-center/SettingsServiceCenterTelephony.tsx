@@ -3,6 +3,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -11,6 +12,9 @@ import { ShowServiceCenterTelephonyTabs } from '~/pages/settings/service-center/
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServiceCenterTelephony = () => {
+
+  const { t } = useLingui();
+
   return (
     <SubMenuTopBarContainer
       links={[]}
@@ -21,9 +25,9 @@ export const SettingsServiceCenterTelephony = () => {
           <Breadcrumb
             links={[
               {
-                children: 'Service Center',
+                children: t`Service Center`,
               },
-              { children: 'Telephony' },
+              { children: t`Telephony` },
             ]}
           />
           <UndecoratedLink
@@ -33,14 +37,14 @@ export const SettingsServiceCenterTelephony = () => {
           >
             <Button
               Icon={IconPlus}
-              title={'Add Extension'}
+              title={t`Add Extension`}
               accent="blue"
               size="small"
             />
           </UndecoratedLink>
         </SettingsHeaderContainer>
         <Section>
-          <H2Title title="" description={'Manage all extensions here.'} />
+          <H2Title title="" description={t`Manage all extensions here.`} />
           <ShowServiceCenterTelephonyTabs />
         </Section>
       </SettingsPageContainer>

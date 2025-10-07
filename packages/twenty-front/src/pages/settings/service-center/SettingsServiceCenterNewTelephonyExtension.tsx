@@ -21,6 +21,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line import/no-duplicates
@@ -31,6 +32,7 @@ type SettingsNewTelephonySchemaValues = z.infer<
 
 export const SettingsServiceCenterNewTelephonyExtension = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { createTelephony } = useCreateTelephony();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -82,7 +84,8 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
         dialingPlan: formValue.dialingPlan,
         enableMailbox: formValue.enableMailbox,
         emailForMailbox: formValue.emailForMailbox || '',
-        extensionGroup: formValue.extensionGroup || '',
+        // extensionGroup: formValue.extensionGroup || '',
+        extensionGroup: '', // Valor padrão - campo removido do formulário
         fowardAllCalls: formValue.fowardAllCalls || '',
         fowardBusyNotAvailable: formValue.fowardBusyNotAvailable || '',
         fowardOfflineWithoutService:
@@ -119,8 +122,9 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
           'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character',
         );
 
-      await createTelephony(telephonyData);
-      navigate(settingsServiceCenterTelephonyPagePath);
+      const createdTelephony = await createTelephony(telephonyData);
+      
+      // navigate(settingsServiceCenterTelephonyPagePath);
     } catch (err) {
       // TODO: Add proper error message
       enqueueErrorSnackBar({
@@ -142,10 +146,10 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
             <Breadcrumb
               links={[
                 {
-                  children: 'Telephony',
+                  children: t`Telephony`,
                   href: settingsServiceCenterTelephonyPagePath,
                 },
-                { children: 'New' },
+                { children: t`New` },
               ]}
             />
             <SaveAndCancelButtons

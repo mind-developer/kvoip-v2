@@ -159,7 +159,7 @@ export interface UpdateTelephonyInput {
   numberExtension: string;
   type: string;
   extensionName: string;
-  extensionGroup: string;
+  // extensionGroup: string;
   dialingPlan: string;
   areaCode: string;
   SIPPassword: string;

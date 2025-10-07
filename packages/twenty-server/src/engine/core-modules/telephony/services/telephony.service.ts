@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Not } from 'typeorm';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
@@ -184,5 +185,48 @@ export class TelephonyService {
     member.extensionNumber = '';
 
     return await workspaceMemberRepository.save(member);
+  };
+
+  /**
+   * Verifica se um membro já possui um ramal na tabela telephony
+   * @param memberId - ID do membro a ser verificado
+   * @param workspaceId - ID do workspace
+   * @param excludeId - ID do registro a ser excluído da verificação (opcional, para updates)
+   * @returns Promise<boolean> - true se o membro já possui um ramal, false caso contrário
+   */
+  checkMemberHasTelephony: (memberId: string, workspaceId: string, excludeId?: string) => Promise<boolean> = async (
+    memberId,
+    workspaceId,
+    excludeId,
+  ) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    let existingTelephony;
+    
+    if (excludeId) {
+      // Se excludeId for fornecido, exclui esse registro da verificação usando Not()
+      existingTelephony = await telephonyRepository.findOne({
+        where: { 
+          memberId,
+          id: Not(excludeId),
+        },
+      });
+    } else {
+      // Busca normal sem exclusão
+      existingTelephony = await telephonyRepository.findOne({
+        where: { memberId },
+      });
+    }
+
+    return !!existingTelephony;
   };
 }

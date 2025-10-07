@@ -3,6 +3,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
@@ -56,6 +57,8 @@ export const SettingsServiceCenterItemTableRow = ({
   telephony,
   accessory,
 }: SettingsServiceCenterItemTableRowProps) => {
+  const { t } = useLingui();
+
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -81,7 +84,7 @@ export const SettingsServiceCenterItemTableRow = ({
       </StyledContent>
       <StyledStatusContainer>
         <div>
-          <StyledExtensionText>Ramal: </StyledExtensionText>
+          <StyledExtensionText>{t`Extension`}: </StyledExtensionText>
           <StyledExtensionContentText>
             {telephony.numberExtension}
           </StyledExtensionContentText>

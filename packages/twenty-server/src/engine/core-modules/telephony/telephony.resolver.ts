@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
@@ -31,6 +31,7 @@ import { TelephonyExtension } from 'src/modules/telephony/types/TelephonyExtensi
 
 @Resolver(() => TelephonyWorkspaceEntity)
 export class TelephonyResolver {
+  private readonly logger = new Logger(TelephonyResolver.name);
   constructor(
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
@@ -163,6 +164,7 @@ export class TelephonyResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('createTelephonyInput') createTelephonyInput: CreateTelephonyInput,
   ): Promise<TelephonyWorkspaceEntity | undefined> {
+
     if (!userId) {
       throw new Error('User id not found');
     }
@@ -171,10 +173,35 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
+    if (!workspace.pabxCompanyId) {
+      // TODO: adicionar chamada para criação de empresa
+      throw new Error('PABX company not found');
+    }
+
+    // Validação 1: Verificar se o membro já possui um ramal na tabela telephony
+    const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
+      createTelephonyInput.memberId,
+      workspace.id,
+    );
+
+    if (memberHasTelephony) {
+      throw new Error('Este membro já possui um ramal de telefonia. Não é possível criar duplicatas.');
+    }
+
     const ramalBody = await this.getRamalBody(
       createTelephonyInput,
       workspace.id,
     );
+
+    // Validação 2: Verificar se o número da extensão já existe na API PABX
+    const extensionExists = await this.pabxService.checkExtensionExists(
+      createTelephonyInput.numberExtension,
+      workspace.pabxCompanyId,
+    );
+
+    if (extensionExists) {
+      throw new Error(`O número de extensão ${createTelephonyInput.numberExtension} já está em uso no sistema PABX.`);
+    }
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
@@ -226,6 +253,8 @@ export class TelephonyResolver {
       throw new Error('User id not found');
     }
 
+    this.logger.log('updateTelephonyInput ------------------------------------------------', JSON.stringify(updateTelephonyInput, null, 2));
+
     const telephony = await this.telephonyService.findOne({
       id,
       workspaceId: workspace.id,
@@ -233,6 +262,35 @@ export class TelephonyResolver {
 
     if (!telephony) {
       throw new Error('Telephony not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    // Validação 2: Se o número da extensão está sendo alterado, verificar se já existe na API PABX
+    if (updateTelephonyInput.numberExtension && updateTelephonyInput.numberExtension !== telephony.numberExtension) {
+      const extensionExists = await this.pabxService.checkExtensionExists(
+        updateTelephonyInput.numberExtension,
+        workspace.pabxCompanyId,
+      );
+
+      if (extensionExists) {
+        throw new Error(`O número de extensão ${updateTelephonyInput.numberExtension} já está em uso no sistema PABX.`);
+      }
+    }
+
+    // Validação 1: Se o memberId está sendo alterado, verificar se o novo membro já possui um ramal
+    if (updateTelephonyInput.memberId && updateTelephonyInput.memberId !== telephony.memberId) {
+      const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
+        updateTelephonyInput.memberId,
+        workspace.id,
+        id,
+      );
+
+      if (memberHasTelephony) {
+        throw new Error('O novo membro já possui um ramal de telefonia. Não é possível atribuir duplicatas.');
+      }
     }
 
     try {
@@ -244,6 +302,9 @@ export class TelephonyResolver {
         },
       };
 
+
+      this.logger.log('ramalBody ------------------------------------------------', JSON.stringify(ramalBody, null, 2));
+      
       const updatedRamal = await this.pabxService.updateExtention(ramalBody);
 
       if (!updatedRamal) {
