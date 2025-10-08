@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-runner/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
@@ -8,7 +7,13 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ChatIntegrationProvider } from 'twenty-shared/types';
+import {
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-message-manager-send.job';
 
 @Injectable()
@@ -19,26 +24,39 @@ export class ImageInputHandler implements NodeHandler {
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const { node, integrationId, sendTo, chatbotName, workspaceId } = params;
+    const {
+      node,
+      providerIntegrationId,
+      provider,
+      clientChat,
+      chatbotName,
+      workspaceId,
+    } = params;
     const image =
       typeof node.data?.imageUrl === 'string' ? node.data.imageUrl : null;
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (image) {
-      const message = {
-        integrationId,
-        to: sendTo,
-        type: MessageTypes.IMAGE,
-        fileId: image,
+      const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        chatId: clientChat.id,
         from: chatbotName,
-        fromMe: true,
+        fromType: ChatMessageFromType.CHATBOT,
+        to: clientChat.person.id,
+        toType: ChatMessageToType.PERSON,
+        provider: provider,
+        type: ChatMessageType.IMAGE,
+        textBody: null,
+        caption: null,
+        deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+        edited: false,
+        attachmentUrl: image,
+        event: null,
       };
-      console.log('sending', message.fileId);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {
-          chatType: ChatIntegrationProvider.WHATSAPP,
-          sendMessageInput: message,
+          clientChatMessage: message,
+          providerIntegrationId,
           workspaceId,
         },
       );

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-runner/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
@@ -10,7 +9,13 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ChatIntegrationProvider } from 'twenty-shared/types';
+import {
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 
 @Injectable()
 export class ConditionalInputHandler implements NodeHandler {
@@ -43,8 +48,9 @@ export class ConditionalInputHandler implements NodeHandler {
   async process(params: ProcessParams): Promise<string | null> {
     const {
       node,
-      integrationId,
-      sendTo,
+      providerIntegrationId,
+      provider,
+      clientChat,
       chatbotName,
       workspaceId,
       sectors,
@@ -62,20 +68,27 @@ export class ConditionalInputHandler implements NodeHandler {
     if (!this.askedNodes.has(nodeId)) {
       this.askedNodes.add(nodeId);
       if (prompt) {
-        const message = {
-          type: MessageTypes.TEXT,
-          message: prompt,
-          integrationId,
-          to: sendTo,
+        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+          type: ChatMessageType.TEXT,
+          textBody: prompt,
+          chatId: clientChat.id,
+          to: clientChat.providerContactId,
           from: chatbotName,
-          fromMe: true,
+          fromType: ChatMessageFromType.CHATBOT,
+          toType: ChatMessageToType.PERSON,
+          provider: provider,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: null,
+          event: null,
         };
-        console.log('sending', message.message);
+        console.log('sending', message.textBody);
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProvider.WHATSAPP,
-            sendMessageInput: message,
+            clientChatMessage: message,
+            providerIntegrationId,
             workspaceId,
           },
         );
@@ -99,19 +112,26 @@ export class ConditionalInputHandler implements NodeHandler {
         .join('\n');
 
       if (optionsList) {
-        const message = {
-          type: MessageTypes.TEXT,
-          message: optionsList,
-          integrationId,
-          to: sendTo,
+        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+          type: ChatMessageType.TEXT,
+          textBody: optionsList,
+          chatId: clientChat.id,
+          to: clientChat.providerContactId,
           from: chatbotName,
-          fromMe: true,
+          fromType: ChatMessageFromType.CHATBOT,
+          toType: ChatMessageToType.PERSON,
+          provider: provider,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: null,
+          event: null,
         };
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {
-            chatType: ChatIntegrationProvider.WHATSAPP,
-            sendMessageInput: message,
+            clientChatMessage: message,
+            providerIntegrationId,
             workspaceId,
           },
         );

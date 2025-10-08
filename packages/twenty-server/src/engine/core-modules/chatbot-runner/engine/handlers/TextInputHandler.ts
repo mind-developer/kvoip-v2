@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
-import { MessageTypes } from 'src/engine/core-modules/chatbot-runner/types/MessageTypes';
 import {
   NodeHandler,
   ProcessParams,
@@ -8,37 +8,55 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ChatIntegrationProvider } from 'twenty-shared/types';
-import { SendChatMessageJob } from '../../../chat-message-manager/jobs/chat-message-manager-send.job';
+import {
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 
 @Injectable()
 export class TextInputHandler implements NodeHandler {
   constructor(
     @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private sendChatMessageQueue: MessageQueueService,
+    private sendClientChatMessageQueue: MessageQueueService,
   ) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    const { node, integrationId, sendTo, chatbotName, workspaceId } = params;
+    const {
+      node,
+      providerIntegrationId,
+      provider,
+      chatbotName,
+      workspaceId,
+      clientChat,
+    } = params;
     const text = typeof node.data?.text === 'string' ? node.data.text : null;
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (text) {
       const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
-      const message = {
-        integrationId: integrationId,
-        to: sendTo,
-        type: MessageTypes.TEXT,
-        message: formattedText,
+      const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        chatId: clientChat.id,
         from: chatbotName,
-        fromMe: true,
+        fromType: ChatMessageFromType.CHATBOT,
+        to: clientChat.person.id,
+        toType: ChatMessageToType.PERSON,
+        provider: provider,
+        type: ChatMessageType.TEXT,
+        textBody: formattedText,
+        caption: null,
+        deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+        edited: false,
+        attachmentUrl: null,
+        event: null,
       };
-      console.log('sending', message.message);
-      this.sendChatMessageQueue.add<SendChatMessageQueueData>(
+      this.sendClientChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {
-          chatType: ChatIntegrationProvider.WHATSAPP,
-          sendMessageInput: message,
+          clientChatMessage: message,
+          providerIntegrationId,
           workspaceId,
         },
       );
