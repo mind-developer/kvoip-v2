@@ -9,18 +9,27 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export type { Chat, InternalChat } from './Chat';
+export { ChatStatus } from './Chat';
 export type {
   ChatIntegrationSendMessageInput,
-  ChatIntegrationSaveMessageInput,
   ChatIntegrationSendMessageResponse,
 } from './ChatIntegrationProviders';
 export { ChatIntegrationProvider } from './ChatIntegrationProviders';
 export type {
-  IMessage,
-  MessageInput,
-  MessageAgent,
-  MessageSector,
-} from './ChatMessageBase';
+  ChatMessage,
+  InternalChatMessage,
+  ClientChatMessage,
+  ClientChatMessageFromType,
+  ClientChatMessageToType,
+} from './ChatMessage';
+export {
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ChatMessageDeliveryStatus,
+  ClientChatMessageEvent,
+} from './ChatMessage';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
@@ -50,9 +59,3 @@ export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';
-export type {
-  SendWhatsAppMessageInput,
-  SendWhatsAppEventMessageInput,
-  SendWhatsAppTemplateInput,
-  SendWhatsAppMessageResponse,
-} from './WhatsAppTypes';

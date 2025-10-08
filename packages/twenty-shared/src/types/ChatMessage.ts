@@ -1,0 +1,88 @@
+import { ChatIntegrationProvider } from '@/types/ChatIntegrationProviders';
+
+export type ChatMessage = {
+  chatId: string; //done
+  from: string; //done
+  fromType: ChatMessageFromType; //done
+  to: string; //done
+  toType: ChatMessageToType; //done
+  provider: ChatIntegrationProvider; //done
+  providerMessageId: string; //done
+  type: ChatMessageType; //done
+  textBody: string | null; //done
+  caption: string | null; //done;
+  deliveryStatus: ChatMessageDeliveryStatus; //done
+  edited: boolean | null; //done
+  attachmentUrl: string | null; //done
+};
+
+// export type ClientChatMessage = ChatMessage & {
+//   fromType: Omit<ChatMessageFromType, 'WORKSPACE_MEMBER'>;
+//   toType: Omit<ChatMessageToType, 'WORKSPACE_MEMBER'>;
+// };
+
+export type InternalChatMessage = Omit<
+  ChatMessage,
+  'chatId' | 'fromType' | 'toType' | 'provider' | 'providerMessageId' | 'event'
+> & { internalChatId: string };
+
+export type ClientChatMessage = ChatMessage & {
+  fromType: ClientChatMessageFromType;
+  toType: ClientChatMessageToType;
+  event: ClientChatMessageEvent | null;
+};
+
+export enum ChatMessageFromType {
+  PERSON = 'PERSON',
+  AGENT = 'AGENT',
+  SECTOR = 'SECTOR',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
+  CHATBOT = 'CHATBOT',
+}
+
+export type ClientChatMessageFromType = Exclude<
+  ChatMessageFromType,
+  ChatMessageFromType.WORKSPACE_MEMBER
+>;
+
+export type ClientChatMessageToType = Exclude<
+  ChatMessageToType,
+  ChatMessageToType.WORKSPACE_MEMBER
+>;
+
+export enum ChatMessageToType {
+  PERSON = 'PERSON',
+  AGENT = 'AGENT',
+  SECTOR = 'SECTOR',
+  PROVIDER_INTEGRATION = 'PROVIDER_INTEGRATION',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
+}
+export enum ChatMessageType {
+  TEXT = 'TEXT',
+  TEMPLATE = 'TEMPLATE',
+  IMAGE = 'IMAGE',
+  VIDEO = 'VIDEO',
+  AUDIO = 'AUDIO',
+  DOCUMENT = 'DOCUMENT',
+  STICKER = 'STICKER',
+  EVENT = 'EVENT',
+}
+export enum ChatMessageDeliveryStatus {
+  PENDING = 'PENDING',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  READ = 'READ',
+  FAILED = 'FAILED',
+}
+export enum ClientChatMessageEvent {
+  CHATBOT_START = 'CHATBOT_START',
+  CHATBOT_END = 'CHATBOT_END',
+
+  START = 'START',
+  END = 'END',
+
+  TRANSFER_TO_AGENT = 'TRANSFER_TO_AGENT',
+  TRANSFER_TO_SECTOR = 'TRANSFER_TO_SECTOR',
+
+  ONHOLD = 'ONHOLD',
+}
