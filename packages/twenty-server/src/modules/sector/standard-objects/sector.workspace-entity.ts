@@ -5,11 +5,13 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { SECTOR_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -41,6 +43,7 @@ export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sector name`,
     icon: 'IconPencil',
   })
+  @WorkspaceIsUnique()
   name: string;
 
   @WorkspaceRelation({
@@ -65,4 +68,15 @@ export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: SECTOR_FIELD_IDS.chats,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Chats`,
+    description: msg`Chats assigned to this sector`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ClientChatWorkspaceEntity,
+    inverseSideFieldKey: 'sector',
+  })
+  chats: Relation<ClientChatWorkspaceEntity[]> | null;
 }

@@ -360,7 +360,8 @@ export const SECTOR_FIELD_IDS = {
   icon: 'e8b8da42-fd66-4ab3-abb1-15a5aafc5a39',
   agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
-};
+  chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
+} as const;
 
 export const AGENT_FIELD_IDS = {
   isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
@@ -371,7 +372,7 @@ export const AGENT_FIELD_IDS = {
   timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
   chats: 'e6ce11d2-d479-4147-aa02-8a31885638c2',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
-};
+} as const;
 
 export const INVOICE_FIELD_IDS = {
   name: '1881e61b-4bd7-4aa7-ad37-6e507a99e9c6',
@@ -650,15 +651,19 @@ export const PERSON_STANDARD_FIELD_IDS = {
 } as const;
 
 export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
+  clientChat: 'a224b390-a112-491b-8beb-863d97612f51',
+  from: 'fd6cad84-5105-4b88-a3b9-4081f5209a40',
+  fromType: '9ca3f7be-79bc-483d-b87b-97bd25479aa6',
+  to: 'dd40445b-9e5c-44d3-a7bb-afe543b52a82',
+  toType: '6bb8dabc-4f1c-4120-9479-d5aea729ef71',
+  provider: 'ac28ef07-65da-4afd-941a-d4c6e20dea80',
   providerMessageId: '76413383-fb39-4587-a686-6736d0f7feb0',
-  chat: 'a224b390-a112-491b-8beb-863d97612f51',
   type: '86f2f89f-54ff-4365-b5ca-9484f64d8fc5',
+  event: 'a844a730-789d-41f7-969d-24b744405eb6',
   textBody: '9bb1f483-e428-47ed-a015-9aba0c91f35f',
   caption: 'dab24e69-2728-47b1-bdb9-371dcc07d5a1',
   deliveryStatus: '1374f720-eea1-43a4-8f8e-79bbdb53aa0f',
   edited: '30005416-0c21-4557-98c7-c9d75b5b5ca8',
-  from: 'fd6cad84-5105-4b88-a3b9-4081f5209a40',
-  to: 'dd40445b-9e5c-44d3-a7bb-afe543b52a82',
   attachmentUrl: 'ac734b13-92c2-4edd-8a44-04b5e5a4c81f',
 } as const;
 
@@ -803,11 +808,12 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 
 export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
   whatsappIntegration: '291c6ec4-cba9-48a9-9e6a-b1fac0d8266b',
+  providerContactId: 'e3bb903b-1490-4e58-81e3-af028dfd4453',
   sector: '6af22d10-1af5-42fb-bc2e-82c001227eb8',
   agent: '521b5083-c7bd-419d-80fe-2c41ee73a6be',
   person: '81157d97-44b6-432e-aa2b-065b1eefb548',
   status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
-  chatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
+  clientChatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
 } as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {
