@@ -9,6 +9,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsServiceCenterExtensionsTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent';
+import { useFindAllExternalExtensions } from '@/settings/service-center/telephony/hooks/useFindAllExternalExtensions';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -51,6 +53,7 @@ export const ShowServiceCenterTelephonyTabs = ({
   ];
 
   const { telephonys, refetch } = useFindAllTelephonys();
+  const { telephonys: telephonysExtensions, refetch: refetchExtensions } = useFindAllExternalExtensions();
 
   useEffect(() => {
     refetch();
@@ -66,8 +69,7 @@ export const ShowServiceCenterTelephonyTabs = ({
         )}
 
         {activeTabId === 'all-extensions' && (
-          // <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
-          <></>
+          <SettingsServiceCenterExtensionsTabContent telephonys={telephonysExtensions} refetch={refetchExtensions} />
         )}
       </StyledShowServiceCenterTabs>
     </>

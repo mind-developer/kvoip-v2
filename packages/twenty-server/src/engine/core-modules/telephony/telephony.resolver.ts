@@ -241,6 +241,35 @@ export class TelephonyResolver {
     return await this.telephonyService.findAll({ workspaceId });
   }
 
+  @Query(() => [TelephonyExtension])
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async findAllExternalExtensions(
+    @AuthUser() { id: userId }: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyExtension[]> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      cliente_id: workspace.pabxCompanyId,
+    });
+
+    this.logger.log('extensions ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
+
+    return extensions.data.dados;
+  }
+
   @Mutation(() => TelephonyWorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async updateTelephonyIntegration(
@@ -252,8 +281,6 @@ export class TelephonyResolver {
     if (!userId) {
       throw new Error('User id not found');
     }
-
-    this.logger.log('updateTelephonyInput ------------------------------------------------', JSON.stringify(updateTelephonyInput, null, 2));
 
     const telephony = await this.telephonyService.findOne({
       id,
@@ -301,9 +328,6 @@ export class TelephonyResolver {
           ramal_id: telephony.ramal_id,
         },
       };
-
-
-      this.logger.log('ramalBody ------------------------------------------------', JSON.stringify(ramalBody, null, 2));
       
       const updatedRamal = await this.pabxService.updateExtention(ramalBody);
 
@@ -350,6 +374,7 @@ export class TelephonyResolver {
     const extensions = await this.pabxService.listExtentions({
       cliente_id: workspace.pabxCompanyId,
     });
+    this.logger.log('extensions ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
 
     return extensions.data.dados;
   }
