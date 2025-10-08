@@ -3,14 +3,15 @@ import { useEffect } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { SettingsServiceCenterExtensionsTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent';
 import { ServiceCenterTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterTabContent';
-import { useFindAllTelephonys } from '../../../modules/settings/service-center/telephony/hooks/useFindAllTelephony';
+import { useFindAllExternalExtensions } from '@/settings/service-center/telephony/hooks/useFindAllExternalExtensions';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { SettingsServiceCenterExtensionsTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent';
-import { useFindAllExternalExtensions } from '@/settings/service-center/telephony/hooks/useFindAllExternalExtensions';
+import { useFindAllTelephonys } from '../../../modules/settings/service-center/telephony/hooks/useFindAllTelephony';
+import { useLinkMemberToExtension } from '@/settings/service-center/telephony/hooks/useLinkMemberToExtension';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -53,7 +54,8 @@ export const ShowServiceCenterTelephonyTabs = ({
   ];
 
   const { telephonys, refetch } = useFindAllTelephonys();
-  const { telephonys: telephonysExtensions, refetch: refetchExtensions } = useFindAllExternalExtensions();
+  const { extensions, refetch: refetchExtensions } = useFindAllExternalExtensions();
+  const { linkMemberToExtension } = useLinkMemberToExtension();
 
   useEffect(() => {
     refetch();
@@ -69,7 +71,7 @@ export const ShowServiceCenterTelephonyTabs = ({
         )}
 
         {activeTabId === 'all-extensions' && (
-          <SettingsServiceCenterExtensionsTabContent telephonys={telephonysExtensions} refetch={refetchExtensions} />
+          <SettingsServiceCenterExtensionsTabContent extensions={extensions} refetch={refetchExtensions} />
         )}
       </StyledShowServiceCenterTabs>
     </>

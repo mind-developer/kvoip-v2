@@ -681,6 +681,75 @@ export class TelephonyResolver {
     }
   }
 
+  @Mutation(() => TelephonyWorkspaceEntity, { name: 'linkMemberToExtension' })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async linkMemberToExtension(
+    @AuthUser() { id: userId }: User,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('extensionId', { type: () => String }) extensionId: string,
+    @Args('memberId', { type: () => ID }) memberId: string,
+  ): Promise<TelephonyWorkspaceEntity> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!workspace.id) {
+      throw new Error('Workspace id not found');
+    }
+
+    // Buscar a extensão na API PABX
+    const extension = await this.pabxService.getExtensionById(extensionId, workspace.pabxCompanyId);
+    
+    if (!extension) {
+      throw new Error('Extension not found');
+    }
+
+    // Verificar se o membro já possui um ramal
+    const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
+      memberId,
+      workspace.id,
+    );
+
+    if (memberHasTelephony) {
+      throw new Error('Este membro já possui um ramal de telefonia. Não é possível criar duplicatas.');
+    }
+
+    // Criar registro na tabela telephony
+    const telephonyData = {
+      memberId,
+      ramal_id: extensionId,
+      extensionName: extension.nome,
+      numberExtension: extension.numero,
+      type: extension.tipo,
+      SIPPassword: extension.senha_sip,
+      callerExternalID: extension.caller_id_externo,
+      dialingPlan: extension.plano_discagem_id,
+      areaCode: extension.codigo_area,
+      pullCalls: extension.puxar_chamadas,
+      listenToCalls: extension.escutar_chamadas === '1',
+      recordCalls: extension.gravar_chamadas === '1',
+      blockExtension: extension.bloquear_ramal === '1',
+      enableMailbox: false,
+      emailForMailbox: '',
+      fowardAllCalls: extension.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
+      fowardOfflineWithoutService: extension.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
+      fowardBusyNotAvailable: extension.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
+    };
+
+    const result = await this.telephonyService.createTelephony(
+      telephonyData,
+      workspace.id,
+    );
+
+    await this.telephonyService.setExtensionNumberInWorkspaceMember(
+      workspace.id,
+      memberId,
+      extension.numero,
+    );
+
+    return result;
+  }
+
   @Mutation(() => SetupPabxEnvironmentResponseType, {
     name: 'setupPabxEnvironment',
   })

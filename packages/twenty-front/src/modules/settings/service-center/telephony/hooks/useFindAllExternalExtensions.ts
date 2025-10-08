@@ -2,24 +2,23 @@
 import { useQuery } from '@apollo/client';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { GET_ALL_EXTERNAL_EXTENSIONS } from '@/settings/service-center/telephony/graphql/queries/getAllExternalExtensions';
+import { ExternalTelephonyExtension } from '@/settings/service-center/telephony/types/ExternalTelephonyExtension';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
-import { GET_ALL_EXTERNAL_EXTENSIONS } from '@/settings/service-center/telephony/graphql/queries/getAllExternalExtensions';
 
-type UseFindAllTelephonyReturn = {
-  telephonys: Telephony[];
+type UseFindAllExternalExtensionsReturn = {
+  extensions: ExternalTelephonyExtension[];
   loading: boolean;
   refetch: () => void;
 };
 
-export const useFindAllExternalExtensions = (): UseFindAllTelephonyReturn => {
+export const useFindAllExternalExtensions = (): UseFindAllExternalExtensionsReturn => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const {
-    data: telephonysData,
+    data: extensionsData,
     loading,
     refetch,
   } = useQuery(GET_ALL_EXTERNAL_EXTENSIONS, {
@@ -33,7 +32,7 @@ export const useFindAllExternalExtensions = (): UseFindAllTelephonyReturn => {
   });
 
   return {
-    telephonys: telephonysData?.findAllExternalExtensions,
+    extensions: extensionsData?.findAllExternalExtensions,
     loading,
     refetch,
   };

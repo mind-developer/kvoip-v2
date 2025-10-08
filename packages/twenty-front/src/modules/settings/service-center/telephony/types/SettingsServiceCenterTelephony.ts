@@ -39,7 +39,7 @@ export interface Telephony {
 }
 
 export interface TelephonyExtension {
-  ramal_id: string;
+  ramal_id: string | undefined;
   cliente_id: string;
   nome: string;
   tipo: string;

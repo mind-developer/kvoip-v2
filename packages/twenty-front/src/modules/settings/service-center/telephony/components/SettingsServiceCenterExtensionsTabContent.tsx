@@ -1,6 +1,7 @@
 /* @kvoip-woulz proprietary */
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { ExternalTelephonyExtension } from '@/settings/service-center/telephony/types/ExternalTelephonyExtension';
+import { TelephonyExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -11,37 +12,28 @@ import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
-  telephonys: Telephony[];
+  extensions: ExternalTelephonyExtension[];
   refetch: () => void;
 };
 
-const StyledSection = styled(Section)`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
-`;
+// const StyledSection = styled(Section)`
+//   background: ${({ theme }) => theme.background.secondary};
+//   border: 1px solid ${({ theme }) => theme.border.color.medium};
+//   border-radius: ${({ theme }) => theme.spacing(1)};
+//   margin-top: ${({ theme }) => theme.spacing(4)};
+// `;
 
 export const SettingsServiceCenterExtensionsTabContent = ({
-  telephonys,
+  extensions,
 }: SettingsServiceCenterExtensionsTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
   const EditTelephonyIcon = getIcon('IconEdit');
 
-  const handleEditTelephony = (telephonyId: string) => {
-    const path = getSettingsPath(SettingsPath.EditTelephony).replace(
-      ':telephonySlug',
-      telephonyId,
-    );
-
-    navigate(path);
-  };
-
   return (
     <>
-      <StyledSection>
+      {/* <StyledSection>
         {telephonys?.map((telephony) => (
           <SettingsServiceCenterItemTableRow
             key={telephony.id}
@@ -59,7 +51,7 @@ export const SettingsServiceCenterExtensionsTabContent = ({
             }
           />
         ))}
-      </StyledSection>
+      </StyledSection> */}
     </>
   );
 };
