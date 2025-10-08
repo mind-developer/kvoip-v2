@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 
 const StyledBox = styled.div<{ isInRightDrawer?: boolean }>`
   height: ${({ isInRightDrawer }) => (isInRightDrawer ? 'auto' : '100%')};

@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { IconChartBar } from '@tabler/icons-react';
 
 import { DashboardLinksChart } from '@/dashboard-links/components/DashboardLinksChart';
@@ -11,7 +10,7 @@ import { DashboardLinksPageBodyLoader } from '@/dashboard-links/components/ui/Da
 import { GET_DASHBOARD_LINKLOGS } from '@/dashboard-links/graphql/queries/getDashboardLinklogs';
 import {
   filterLinkLogsData,
-  FilterType,
+  type FilterType,
 } from '@/dashboard-links/utils/filterLinkLogsData';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useQuery } from '@apollo/client';
@@ -22,8 +21,9 @@ import { DashboardAccessOverTime } from '@/dashboard-links/components/DashboardA
 import { generateSelectOptions } from '@/dashboard-links/utils/generateSelectOptions';
 import { groupPlatformsOverTime } from '@/dashboard-links/utils/groupLinkLogsAccessOverTimeData';
 import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Query } from '~/generated-metadata/graphql';
+import { type Query } from '~/generated-metadata/graphql';
 import { groupLinkLogsData } from '~/utils/groupLinkLogsData';
 
 const StyledSection = styled.div`
@@ -36,6 +36,8 @@ const StyledSection = styled.div`
 `;
 
 export const DashboardLinks = () => {
+  const { t } = useLingui();
+
   const [filter, setFilter] = useState<FilterType>('week');
   const [filterAccessOverTime, setFilterAccessOverTime] =
     useState<FilterType>('week');
@@ -49,6 +51,7 @@ export const DashboardLinks = () => {
     Pick<Query, 'getDashboardLinklogs'>
   >(GET_DASHBOARD_LINKLOGS);
 
+  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
   if (isDefined(error))
     throw new Error(error?.message ?? 'No Data', {
       cause: error?.cause ?? JSON.stringify(data),
@@ -61,25 +64,25 @@ export const DashboardLinks = () => {
   const filterLinkOptions = generateSelectOptions(
     rawData,
     'linkName',
-    'Selecione um link',
+    t`Select a link`,
   );
 
   const filterCountryOptions = generateSelectOptions(
     rawData,
     'country',
-    'Selecione um país',
+    t`Select a country`,
   );
 
   const filterStateOptions = generateSelectOptions(
     rawData,
     'regionName',
-    'Selecione um estado',
+    t`Select a state`,
   );
 
   const filterCityOptions = generateSelectOptions(
     rawData,
     'city',
-    'Selecione uma cidade',
+    t`Select a city`,
   );
 
   const filteredBySelection = useMemo(() => {

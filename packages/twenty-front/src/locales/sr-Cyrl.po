@@ -93,6 +93,12 @@ msgstr "{0, plural, one {{дан} {1}} few {{дана} {2}} other {{дана} {2
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
 msgstr "{0, plural, one {{година} {1}} few {{године} {2}} other {{година} {2}}}"
 
+#. js-lingui-id: RfrN2K
+#. placeholder {0}: fileRejection.file.name
+#: src/modules/settings/integrations/inter/components/FileDropZone.tsx
+msgid "{0} upload rejected"
+msgstr ""
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -162,7 +168,7 @@ msgid "1. Type"
 msgstr "1. Тип"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "10,000 workflow node executions"
 msgstr "10.000 извршења чворова радног тока"
 
@@ -189,7 +195,7 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. Поставите {objectLabelPlural} дозволе"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "20,000 workflow node executions"
 msgstr "20.000 извршења чворова радног тока"
 
@@ -270,6 +276,21 @@ msgstr "О овом кориснику"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
 msgstr "О овом радном простору"
+
+#. js-lingui-id: g3UF2V
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Accept"
+msgstr ""
+
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr ""
+
+#. js-lingui-id: v+L6Nt
+#: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
+msgid "Accont has been removed"
+msgstr ""
 
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -392,6 +413,11 @@ msgstr "Додај фајл"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Додајте филтер"
+
+#. js-lingui-id: r/HN0t
+#: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
+msgid "Add Financial Closing"
+msgstr ""
 
 #. js-lingui-id: kydAxA
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
@@ -519,6 +545,12 @@ msgstr "Додато {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Додато на црну листу"
 
+#. js-lingui-id: Du6bPw
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Address"
+msgstr ""
+
 #. js-lingui-id: hW/fMg
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Address 1"
@@ -574,6 +606,16 @@ msgstr "Африканс"
 msgid "Agent"
 msgstr "Агент"
 
+#. js-lingui-id: RSQn8/
+#: src/modules/settings/service-center/agents/hooks/useCreateAgent.ts
+msgid "Agent created successfully!"
+msgstr ""
+
+#. js-lingui-id: u2JOu2
+#: src/modules/settings/service-center/agents/hooks/useCreateAgent.ts
+msgid "Agent creation error"
+msgstr ""
+
 #. js-lingui-id: Q37C8E
 #: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
 msgid "Agent Handoffs"
@@ -588,6 +630,11 @@ msgstr "Агент није пронађен"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Agent Roles"
 msgstr "Улоге агента"
+
+#. js-lingui-id: SFW8BY
+#: src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts
+msgid "Agent updated successfully!"
+msgstr ""
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -728,6 +775,11 @@ msgstr "Омогућите позивање нових корисника дељ
 msgid "Allow users to sign in with an email and password."
 msgstr "Омогућите корисницима да се пријаве са е-мејлом и лозинком."
 
+#. js-lingui-id: wgwm72
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Allows you to change your current subscription plan"
+msgstr ""
+
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -762,8 +814,8 @@ msgid "API"
 msgstr "АПИ"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "API & Webhooks"
 msgstr "API и Вебхукси"
 
@@ -868,10 +920,25 @@ msgstr "Одобрени домени"
 msgid "Arabic"
 msgstr "Арапски"
 
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
+
+#. js-lingui-id: QRW/xV
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period."
+msgstr ""
+
 #. js-lingui-id: 2BZAqa
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
 msgstr "Да ли сте сигурни да желите да обришете ове записе? Могу се повратити из командног менија."
+
+#. js-lingui-id: Zqlbk6
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
+msgid "Are you sure you want to delete this financial closing? This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: yb2hF4
 #: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
@@ -953,16 +1020,6 @@ msgstr "Додела"
 #: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
 msgid "At"
 msgstr ""
-
-#. js-lingui-id: wqWX3R
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-#~ msgid "At {0} of the last day of the month"
-#~ msgstr ""
-
-#. js-lingui-id: 9OmijL
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
-#~ msgid "At {1} of every day {2}"
-#~ msgstr ""
 
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
@@ -1048,6 +1105,7 @@ msgstr "Просек"
 #. js-lingui-id: iH8pgl
 #: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Back"
 msgstr "Назад"
@@ -1074,6 +1132,11 @@ msgstr "Интервал наплате"
 msgid "Blocklist"
 msgstr "Црна листа"
 
+#. js-lingui-id: HssMtJ
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Boleto"
+msgstr ""
+
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
@@ -1099,10 +1162,10 @@ msgstr "Булевска вредност"
 msgid "Brief explanation of this output field"
 msgstr "Кратко објашњење овог излазног поља"
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: s5hKZS
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Коришћењем Twenty, слажете се са"
+msgid "By using Woulz, you agree to the"
+msgstr ""
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1187,6 +1250,7 @@ msgstr "Не можете да скенирате? Копирајте"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 msgid "Cancel"
 msgstr "Откажи"
 
@@ -1200,10 +1264,25 @@ msgstr "Откажи план"
 msgid "Cancel your subscription"
 msgstr "Откажите претплату"
 
+#. js-lingui-id: GHEVpv
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Cartão de crédito"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Каталонски"
+
+#. js-lingui-id: V9PU36
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "CEP"
+msgstr ""
+
+#. js-lingui-id: o+XJ9D
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
@@ -1222,20 +1301,31 @@ msgstr "Промени имејл"
 msgid "Change Password"
 msgstr "Промени лозинку"
 
-#. js-lingui-id: wRtBJP
-#: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Change Plan"
-msgstr "Промени план"
+#. js-lingui-id: /A54X+
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change plan"
+msgstr ""
 
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "Променити поддомен?"
 
+#. js-lingui-id: tGRbQa
+#: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change subscription plan"
+msgstr ""
+
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Промените на организациони план?"
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1247,6 +1337,11 @@ msgstr "Променити на годишње?"
 msgid "Changelog"
 msgstr "Историја измена"
 
+#. js-lingui-id: 86UtDt
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Charge Value"
+msgstr ""
+
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
@@ -1257,10 +1352,10 @@ msgstr "Ћаскање"
 msgid "Check your Emails"
 msgstr "Проверите имејл пошту"
 
-#. js-lingui-id: SxwQE8
+#. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Грешка у сесији наплате. Молимо да покушате поново или контактирајте Twenty тим"
+msgid "Checkout session error. Please retry or contact Woulz team"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1302,6 +1397,21 @@ msgstr "Изаберите поља која ће идентификовати �
 msgid "Choose the format used to display date value"
 msgstr "Изаберите формат за приказ датума"
 
+#. js-lingui-id: cnKeIQ
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
+msgid "Choose your new Plan"
+msgstr ""
+
+#. js-lingui-id: tjXxZj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Choose your payment method"
+msgstr ""
+
+#. js-lingui-id: y1elF1
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Choose your plan"
+msgstr ""
+
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
@@ -1309,6 +1419,7 @@ msgstr "Изаберите врсту пробе"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "City"
 msgstr "Град"
 
@@ -1420,6 +1531,54 @@ msgstr "Компактан приказ"
 msgid "Companies"
 msgstr "Компаније"
 
+#. js-lingui-id: lQ7o8t
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+msgid "Companies with Error"
+msgstr ""
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Company"
+msgstr ""
+
+#. js-lingui-id: R9Ietm
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Company Execution"
+msgstr ""
+
+#. js-lingui-id: SrOxs9
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Company Executions"
+msgstr ""
+
+#. js-lingui-id: nZmECt
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Completed Boleto Issuance"
+msgstr ""
+
+#. js-lingui-id: G6usDl
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+msgid "Completed Company Search"
+msgstr ""
+
+#. js-lingui-id: RB1Xcb
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Completed Cost Identification"
+msgstr ""
+
+#. js-lingui-id: pvmZhS
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Completed Invoice Issuance"
+msgstr ""
+
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
@@ -1480,6 +1639,7 @@ msgstr "Подесите своје подешавања е-поште и кал
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1558,6 +1718,8 @@ msgstr "Контекст"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
@@ -1816,6 +1978,11 @@ msgstr "Креирај радни простор"
 msgid "Create your workspace"
 msgstr "Креирај свој радни простор"
 
+#. js-lingui-id: YeUQpx
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+msgid "Created at"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -1873,8 +2040,8 @@ msgid "Custom domain updated"
 msgstr "Прилагођени домен ажуриран"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Custom objects"
 msgstr "Прилагођени објекти"
 
@@ -1949,6 +2116,7 @@ msgstr "Брисање података"
 #. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Data model"
 msgstr "Модел података"
 
@@ -1975,6 +2143,8 @@ msgid "Database configuration is currently disabled."
 msgstr "Конфигурација базе података је тренутно онемогућена."
 
 #. js-lingui-id: mYGY3B
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -2008,6 +2178,11 @@ msgstr "дани"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Days between triggers"
 msgstr "Дани између окидача"
+
+#. js-lingui-id: VyJUHj
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
+msgid "deactivate"
+msgstr ""
 
 #. js-lingui-id: 5y3O+A
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2112,6 +2287,7 @@ msgstr "обриши"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2164,6 +2340,11 @@ msgstr "Обриши грану"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Delete field"
 msgstr "Обриши поље"
+
+#. js-lingui-id: XlVZA7
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
+msgid "Delete Financial Closing"
+msgstr ""
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2304,6 +2485,51 @@ msgstr "Уништи {objectLabelPlural}"
 msgid "Destroy Records on All Objects"
 msgstr "Избриши записе на свим објектима"
 
+#. js-lingui-id: reaKlT
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "Detailed history of the execution"
+msgstr ""
+
+#. js-lingui-id: Iu4pPb
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Detailed history of the execution of the company"
+msgstr ""
+
+#. js-lingui-id: URmyfc
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Details"
+msgstr ""
+
+#. js-lingui-id: hqK2oQ
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Details of Company Execution"
+msgstr ""
+
+#. js-lingui-id: e25dbH
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Details of Execution"
+msgstr ""
+
+#. js-lingui-id: 7RQZOo
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Details of the execution of the company in the financial closing"
+msgstr ""
+
+#. js-lingui-id: wqAFwb
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Dial the phone number"
+msgstr ""
+
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2394,6 +2620,16 @@ msgstr "Не креирајте контакте од/до Gmail, Outlook име
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Не синхронизујте имејлове од team@ support@ noreply@..."
 
+#. js-lingui-id: Iari6C
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Donwload bank slip"
+msgstr ""
+
+#. js-lingui-id: XxrnrL
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Download bank slip"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2438,6 +2674,7 @@ msgstr "Најранији датум"
 #. js-lingui-id: ePK91l
 #: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -2535,8 +2772,8 @@ msgid "Email copied to clipboard"
 msgstr "Емаил копиран у клипборд"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Email integration"
 msgstr "Имејл интеграција"
 
@@ -2638,6 +2875,12 @@ msgstr "Празан пријемни сандуче"
 msgid "Empty Object"
 msgstr "Празан објекат"
 
+#. js-lingui-id: cEyYbs
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "End call"
+msgstr ""
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -2659,7 +2902,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "Побољшава безбедност тако што захтева код заједно са вашом лозинком"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/onboarding/components/OnboardingPlanCard.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Уживајте у бесплатном пробном периоду од {withCreditCardTrialPeriodDuration} дана"
 
@@ -2703,6 +2946,11 @@ msgstr "Унесите акредитиве за подешавање везе"
 msgid "Enter the infos to set the connection"
 msgstr "Унесите информације за подешавање везе"
 
+#. js-lingui-id: MCN1I4
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
+msgid "Enter the name of the closing"
+msgstr ""
+
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
@@ -2734,6 +2982,12 @@ msgstr "ID ентитета копиран у клипборд"
 msgid "Environment variable"
 msgstr "Променљива окружења"
 
+#. js-lingui-id: SlfejT
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+msgid "Error"
+msgstr ""
+
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -2748,6 +3002,11 @@ msgstr "Грешка приликом брисања API кључа."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
 msgstr "Грешка приликом брисања позивнице"
+
+#. js-lingui-id: euw+Ln
+#: src/modules/settings/service-center/sectors/hooks/useDeleteSector.ts
+msgid "Error deleting sector"
+msgstr ""
 
 #. js-lingui-id: cyvTSq
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
@@ -2764,6 +3023,11 @@ msgstr "Грешка приликом измене провајдера за SSO
 msgid "Error loading message"
 msgstr "Грешка у учитавању поруке"
 
+#. js-lingui-id: DKZ60B
+#: src/modules/settings/integrations/inter/components/FileDropZone.tsx
+msgid "Error processing file"
+msgstr ""
+
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key."
@@ -2774,30 +3038,73 @@ msgstr "Грешка приликом поновног генерисања API 
 msgid "Error resending invitation"
 msgstr "Грешка у поновном слању позивнице"
 
+#. js-lingui-id: 2NAP09
+#: src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts
+msgid "Error toggling agent status"
+msgstr ""
+
+#. js-lingui-id: oR+hvI
+#: src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts
+msgid "Error updating agent"
+msgstr ""
+
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts
+#: src/modules/settings/integrations/inter/hooks/useUpdateInterIntegration.ts
+#: src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
 msgid "Error updating role"
 msgstr "Грешка приликом ажурирања улоге"
+
+#. js-lingui-id: TKkMd8
+#: src/modules/settings/service-center/sectors/hooks/useUpdateSector.ts
+msgid "Error updating sector"
+msgstr ""
+
+#. js-lingui-id: mTV4LO
+#: src/modules/chat/internal/context/chatContext.tsx
+msgid "Error uploading file"
+msgstr ""
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
 msgstr "Грешка при валидацији одобреног приступног домена"
 
-#. js-lingui-id: QmR+2U
+#. js-lingui-id: s7gpl0
+#: src/modules/settings/billing/hooks/useHandleSwichPlan.ts
+msgid "Error while changing plan, try againg later."
+msgstr ""
+
+#. js-lingui-id: hh9+iQ
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr "Грешка приликом завршетка пробног периода. Молимо вас контактирајте Twenty тим."
+msgid "Error while ending trial period. Please contact Woulz team."
+msgstr ""
 
 #. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to Organization Plan."
 msgstr "Грешка приликом преласка претплате на организациони план."
 
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
+
 #. js-lingui-id: ENV7jU
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to Yearly."
 msgstr "Грешка приликом преласка на претплату на годишње."
+
+#. js-lingui-id: ON1CRr
+#: src/modules/settings/billing/hooks/useHandleUpdateSubscription.ts
+msgid "Error while updating subscription."
+msgstr ""
+
+#. js-lingui-id: UirGxE
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+msgid "Errors"
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2836,6 +3143,56 @@ msgstr "Изузми непрофесионалне имејлове"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Искључи следеће особе и домене из моје синхронизације е-поште. Интерни разговори неће бити увезени"
+
+#. js-lingui-id: L4jnDP
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/modules/settings/financial-closing/constants/LogLevelColors.ts
+msgid "Executed"
+msgstr ""
+
+#. js-lingui-id: 0r4e6z
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
+msgid "Execution Date"
+msgstr ""
+
+#. js-lingui-id: j0S1n8
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "Execution Details"
+msgstr ""
+
+#. js-lingui-id: f/b1TA
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
+msgid "Execution History"
+msgstr ""
+
+#. js-lingui-id: KBTDuI
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "Execution Information"
+msgstr ""
+
+#. js-lingui-id: 2A9Jmz
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "Execution Logs"
+msgstr ""
+
+#. js-lingui-id: Kulopc
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Execution not found"
+msgstr ""
+
+#. js-lingui-id: um816y
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Executions"
+msgstr ""
 
 #. js-lingui-id: uwM4yU
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
@@ -2998,6 +3355,16 @@ msgstr "Израз"
 msgid "Extra Credits Used"
 msgstr "Искоришћени додатни кредити"
 
+#. js-lingui-id: 7Bj3x9
+#: src/modules/settings/financial-closing/constants/LogLevelColors.ts
+msgid "Failed"
+msgstr ""
+
+#. js-lingui-id: MmQOlJ
+#: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
+msgid "Failed to create checkout session"
+msgstr ""
+
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
@@ -3022,6 +3389,17 @@ msgstr "Неуспешно уклањање препуштања"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
 msgstr "Није успело уклањање заменске вредности"
+
+#. js-lingui-id: KvW5x6
+#: src/modules/chat/internal/components/OpenChat.tsx
+#: src/modules/chat/call-center/components/PaneChat.tsx
+msgid "Failed to start recording. Check microphone access."
+msgstr ""
+
+#. js-lingui-id: U/94Qz
+#: src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts
+msgid "Failed to update issuer."
+msgstr ""
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -3189,6 +3567,26 @@ msgstr "Првих 5 линија"
 msgid "First Name"
 msgstr "Име"
 
+#. js-lingui-id: ylQd2j
+#: src/modules/chatbot/hooks/useChatbotFlowCommandMenu.ts
+msgid "Flow"
+msgstr ""
+
+#. js-lingui-id: xmqRLE
+#: src/modules/chatbot/hooks/useUpdateChatbotFlow.ts
+msgid "Flow updated successfully!"
+msgstr ""
+
+#. js-lingui-id: S5mpO/
+#: src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts
+msgid "Focus NFe integration created successfully!"
+msgstr ""
+
+#. js-lingui-id: 3admaT
+#: src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
+msgid "Focus NFe integration updated successfully!"
+msgstr ""
+
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
@@ -3225,10 +3623,15 @@ msgid "French"
 msgstr "Француски"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Full access"
 msgstr "Потпун приступ"
+
+#. js-lingui-id: 0W0FHK
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Full name"
+msgstr ""
 
 #. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -3253,6 +3656,11 @@ msgstr "Опште"
 msgid "General - Settings"
 msgstr "Опште - Подешавања"
 
+#. js-lingui-id: bSnYaI
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "General details of the financial closing execution"
+msgstr ""
+
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "German"
@@ -3262,11 +3670,6 @@ msgstr "Немачки"
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Get the most out of your workspace by inviting your team."
 msgstr "Искористите максимално свој радни простор тако што ћете позвати свој тим."
-
-#. js-lingui-id: zSGbaR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Get your subscription"
-msgstr "Набави претплату"
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -3606,10 +4009,25 @@ msgstr "Неактивно"
 msgid "Inbox"
 msgstr "Пријемно сандуче"
 
+#. js-lingui-id: ciXrsj
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "incoming"
+msgstr ""
+
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
 msgstr "Индекси"
+
+#. js-lingui-id: fByw/g
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Individual"
+msgstr ""
+
+#. js-lingui-id: A2PiTl
+#: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
+msgid "Information of Execution"
+msgstr ""
 
 #. js-lingui-id: T6szT2
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
@@ -3661,6 +4079,16 @@ msgstr "Интеграције"
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
 msgstr "Интеграције - Подешавања"
+
+#. js-lingui-id: rPBMma
+#: src/modules/settings/integrations/inter/hooks/useCreateInterIntegration.ts
+msgid "Inter integration created successfully!"
+msgstr ""
+
+#. js-lingui-id: pPvrdO
+#: src/modules/settings/integrations/inter/hooks/useUpdateInterIntegration.ts
+msgid "Inter integration updated successfully!"
+msgstr ""
 
 #. js-lingui-id: ntgzzG
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
@@ -3776,11 +4204,6 @@ msgstr "Позовите свој тим"
 msgid "Invoice Emission Type"
 msgstr ""
 
-#. js-lingui-id: rL/Ga2
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Invoice Emission Type:"
-#~ msgstr ""
-
 #. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
@@ -3885,6 +4308,16 @@ msgstr "Је релативно"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today"
 msgstr "Је данас"
+
+#. js-lingui-id: x8FhNp
+#: src/modules/settings/integrations/focus-nfe/hooks/useCreateIssuer.ts
+msgid "Issuer created successfully!"
+msgstr ""
+
+#. js-lingui-id: 6RcOnq
+#: src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts
+msgid "Issuer updated successfully!"
+msgstr ""
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4076,6 +4509,11 @@ msgstr "Светли"
 msgid "Link copied to clipboard"
 msgstr "Веза копирана у клипборд"
 
+#. js-lingui-id: pGCSfW
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
+msgid "List of specific executions by company"
+msgstr ""
+
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -4151,6 +4589,11 @@ msgstr "Потражите кориснике да их имперсонират
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
 msgstr "Имејл налог"
+
+#. js-lingui-id: lD1zht
+#: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
+msgid "Manage all financial closings here."
+msgstr ""
 
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -4583,6 +5026,11 @@ msgstr "Нема {fieldLabel}"
 msgid "No {objectNameSingular}"
 msgstr "Нема {objectNameSingular}"
 
+#. js-lingui-id: pbIf3V
+#: src/modules/settings/integrations/focus-nfe/hooks/useCreateIssuer.ts
+msgid "No active workspace selected."
+msgstr ""
+
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "No Agent"
@@ -4622,6 +5070,12 @@ msgstr "Нема доступних API кључева"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "Ниједан API кључ не одговара вашој претрази"
+
+#. js-lingui-id: urMmxl
+#: src/modules/chat/internal/components/OpenChat.tsx
+#: src/modules/chat/call-center/components/PaneChat.tsx
+msgid "No audio recorded"
+msgstr ""
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -4663,6 +5117,12 @@ msgstr "Нема података са грешкама"
 msgid "No data found"
 msgstr "Нема пронађених података"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr ""
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -4682,6 +5142,12 @@ msgstr "Нема описа"
 #: src/modules/activities/emails/components/EmailThreads.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "Још увек није дошло до размене имејла са овим записом."
+
+#. js-lingui-id: emrO20
+#: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
+msgid "No executions found"
+msgstr ""
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/Attachments.tsx
@@ -4717,6 +5183,11 @@ msgstr "Ниједно препуштање не одговара вашој п�
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Није пронађена најновија верзија"
+
+#. js-lingui-id: XZkeaI
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList.tsx
+msgid "No logs found"
+msgstr ""
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -4931,6 +5402,16 @@ msgstr "Објекти"
 msgid "Objects and fields permissions settings"
 msgstr "Подешавања дозвола за објекте и поља"
 
+#. js-lingui-id: V7rxgd
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+msgid "of every day"
+msgstr ""
+
+#. js-lingui-id: RwsZQw
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
+msgid "of the last day of the month"
+msgstr ""
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
@@ -5015,6 +5496,11 @@ msgstr "Или"
 msgid "Organization"
 msgstr "Организација"
 
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr ""
+
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -5082,6 +5568,17 @@ msgstr "Линк за ресетовање лозинке је послат на
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"
 msgstr "Залепите код испод"
+
+#. js-lingui-id: +Fx9ea
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Payment data"
+msgstr ""
+
+#. js-lingui-id: UbRKMZ
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+msgid "Pending"
+msgstr ""
 
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -5151,6 +5648,17 @@ msgstr "Дозволе"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Дозволе · {objectLabelSingular}"
 
+#. js-lingui-id: 19jdAl
+#: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Person type"
+msgstr ""
+
+#. js-lingui-id: sJYPeP
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Personal Details"
+msgstr ""
+
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
@@ -5172,6 +5680,11 @@ msgstr "Слика"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "План"
+
+#. js-lingui-id: bohmua
+#: src/modules/settings/billing/hooks/useHandleSwichPlan.ts
+msgid "Plan changed sucessfuly"
+msgstr ""
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -5229,10 +5742,34 @@ msgstr "Португалски — Бразил"
 msgid "Portuguese — Portugal"
 msgstr "Португалски — Португал"
 
+#. js-lingui-id: tGaokP
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Post-paid"
+msgstr ""
+
+#. js-lingui-id: HSN+Cu
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Post-unlimited"
+msgstr ""
+
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "Поштански број"
+
+#. js-lingui-id: EeVpQW
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Pre-paid"
+msgstr ""
+
+#. js-lingui-id: BoG5Jt
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+#: src/modules/settings/financial-closing/constants/BillingModelOptions.ts
+msgid "Pre-unlimited"
+msgstr ""
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -5314,6 +5851,11 @@ msgstr "Информације о редоследу нису доступне �
 msgid "Queue performance"
 msgstr "Перформансе реда"
 
+#. js-lingui-id: rikyRM
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
+msgid "reactivate"
+msgstr ""
+
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -5387,6 +5929,11 @@ msgstr "Регенеришите кључ"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Регенеришите кључ"
+
+#. js-lingui-id: 1t/NnN
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Reject"
+msgstr ""
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -5635,6 +6182,7 @@ msgstr "Субота"
 
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "Сачувај"
@@ -5803,6 +6351,26 @@ msgstr "Тајна"
 msgid "Secret (optional)"
 msgstr "Секрет (опционално)"
 
+#. js-lingui-id: xmdoZY
+#: src/modules/settings/service-center/sectors/hooks/useCreateSector.ts
+msgid "Sector created successfully!"
+msgstr ""
+
+#. js-lingui-id: h0llnT
+#: src/modules/settings/service-center/sectors/hooks/useCreateSector.ts
+msgid "Sector creation error"
+msgstr ""
+
+#. js-lingui-id: gd3T/w
+#: src/modules/settings/service-center/sectors/hooks/useDeleteSector.ts
+msgid "Sector deleted successfully!"
+msgstr ""
+
+#. js-lingui-id: LpDMsV
+#: src/modules/settings/service-center/sectors/hooks/useUpdateSector.ts
+msgid "Sector updated successfully!"
+msgstr ""
+
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -5899,15 +6467,35 @@ msgstr "Погледајте ток рада"
 msgid "See workflows"
 msgstr "Погледајте токове рада"
 
+#. js-lingui-id: DuOCie
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a city"
+msgstr ""
+
+#. js-lingui-id: L+nQeT
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a country"
+msgstr ""
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Изаберите поље из претходног корака"
 
+#. js-lingui-id: Yt7E+k
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a link"
+msgstr ""
+
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
 msgstr "Изаберите улогу"
+
+#. js-lingui-id: ie7roR
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a state"
+msgstr ""
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -5954,6 +6542,16 @@ msgstr "Изаберите ред заглавља"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Source"
 msgstr "Изаберите извор"
+
+#. js-lingui-id: 36zeFI
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
+msgid "Select the billing models"
+msgstr ""
+
+#. js-lingui-id: 7Pxp0Y
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
+msgid "Select the day..."
+msgstr ""
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -6011,6 +6609,11 @@ msgstr "Послато и примљено"
 msgid "Serbian (Cyrillic)"
 msgstr "Српски (ћирилица)"
 
+#. js-lingui-id: Np58q1
+#: src/modules/settings/service-center/service-level/hooks/useUpdateWhatsappServiceLevel.ts
+msgid "Service Level updated successfully!"
+msgstr ""
+
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -6025,6 +6628,11 @@ msgstr "Подесите подразумевану улогу за овај р�
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Постави као подразумевано"
+
+#. js-lingui-id: oRlBtg
+#: src/modules/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown.tsx
+msgid "Set as record text"
+msgstr ""
 
 #. js-lingui-id: V7fgiB
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -6257,7 +6865,7 @@ msgid "SSO"
 msgstr "Јединствена пријава"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "SSO (SAML / OIDC)"
 msgstr "ССО (SAML / OIDC)"
 
@@ -6296,12 +6904,6 @@ msgstr "Стање"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Статус"
-
-#. js-lingui-id: htTcVX
-#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
-#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
-#~ msgid "Status:"
-#~ msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -6386,15 +6988,46 @@ msgstr "Претплата"
 msgid "Subscription activated."
 msgstr "Претплата је активирана."
 
+#. js-lingui-id: 8Ucb+k
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+msgstr ""
+
+#. js-lingui-id: h69Gpa
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Please contact your admin."
+msgstr ""
+
 #. js-lingui-id: KNMVB5
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Organization Plan."
 msgstr "Претплата је промењена у организациони план."
 
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
+
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Претплата је промењена на годишње."
+
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr ""
+
+#. js-lingui-id: zzDlyQ
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+#: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
+msgid "Success"
+msgstr ""
+
+#. js-lingui-id: 1vN0Fy
+#: src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts
+msgid "Successful agent status change"
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6431,6 +7064,11 @@ msgstr "Подршка"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Swedish"
 msgstr "Шведски"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
 
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6677,6 +7315,11 @@ msgstr "Још увек постоје редови који садрже гре
 msgid "There was an error while updating password."
 msgstr "Дошло је до грешке при ажурирању лозинке."
 
+#. js-lingui-id: Fb+kqj
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Theses are the necessary data to emit your bank slip"
+msgstr ""
+
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Third"
@@ -6712,6 +7355,11 @@ msgstr "Ова вредност из базе података замењује 
 msgid "This is required to enable manual row reordering."
 msgstr "Ово је потребно за омогућавање ручног прераспоређивања редова."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr ""
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -6739,6 +7387,7 @@ msgstr "Ова вредност ће бити сачувана у бази по�
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "Ове недеље"
 
@@ -6747,10 +7396,25 @@ msgstr "Ове недеље"
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Ово ће вратити вредност из базе података на вредност окружења/подразумевану вредност. Измена базе података ће бити уклоњена и систем ће користити подешавања окружења."
 
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr ""
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
+msgstr ""
+
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Tidy up workflow"
 msgstr "Средити workflow"
+
+#. js-lingui-id: LhMjLm
+#: src/modules/settings/financial-closing/components/SettingsFinancialClosingForm.tsx
+msgid "Time"
+msgstr ""
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6790,6 +7454,11 @@ msgstr "Промени све дозволе за подешавања"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Сутра"
+
+#. js-lingui-id: 49sgpO
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+msgid "Total of Companies"
+msgstr ""
 
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -6898,6 +7567,11 @@ msgstr "Тип"
 msgid "Type anything"
 msgstr "Укуцајте било шта"
 
+#. js-lingui-id: VKRQFd
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "UF"
+msgstr ""
+
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Ukrainian"
@@ -6926,8 +7600,8 @@ msgid "Unknown error"
 msgstr "Непозната грешка"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Unlimited contacts"
 msgstr "Неограничени контакти"
 
@@ -6966,6 +7640,11 @@ msgstr "Ажурирајте информације о агенту"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Ажурирајте конфигурацију вашег налога. Подесите било коју комбинацију IMAP, SMTP и CalDAV по потреби."
+
+#. js-lingui-id: 4StVS4
+#: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
+msgid "Updated at"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7012,6 +7691,11 @@ msgstr "Користите слово, број и црту само. Почет
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Користите наш API или ручно додајте први {objectLabel}"
+
+#. js-lingui-id: 8jD9Kq
+#: src/modules/traceable/record-show/TraceableFieldsCard.tsx
+msgid "Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign."
+msgstr ""
 
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -7069,6 +7753,7 @@ msgstr "Потврдите податке"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Value"
@@ -7126,6 +7811,7 @@ msgid "Vietnamese"
 msgstr "Вијетнамски"
 
 #. js-lingui-id: jpctdh
+#: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
 msgstr "Преглед"
@@ -7189,10 +7875,10 @@ msgstr "је враћен од стране"
 msgid "We encountered an issue verifying"
 msgstr "Дошло је до проблема приликом верификације"
 
-#. js-lingui-id: id6ein
+#. js-lingui-id: Rhpaof
 #: src/modules/ui/input/components/ImageInput.tsx
-msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
-msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фајлове величине испод 10MB"
+msgid "We support your square PNGs, JPEGs and GIFs under {maxSize}MB"
+msgstr ""
 
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7257,6 +7943,16 @@ msgstr "Добродошли у {workspaceName}"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "What this API can do: Select a user role to define its permissions."
 msgstr "Шта овај АПИ може: Изаберите корисничку улогу да дефинишете њене дозволе."
+
+#. js-lingui-id: fUMmQw
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration.ts
+msgid "Whatsapp integration created successfully!"
+msgstr ""
+
+#. js-lingui-id: LfslSL
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts
+msgid "Whatsapp integration updated successfully!"
+msgstr ""
 
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -7412,14 +8108,10 @@ msgstr "Није дозвољено креирање записа за овај 
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Можете подесити било коју комбинацију ИМАП-а (примање имејлова), SMTP-а (слање имејлова) и CalDAV-а (синхронизација календара)."
 
-#. js-lingui-id: aiJY7y
+#. js-lingui-id: d/FAD7
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
+msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr ""
-"Не можете измењивати ову везу јер има праћене табеле.\n"
-"Ако желите да извршите измене, креирајте нову везу или најпре искључите табеле."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

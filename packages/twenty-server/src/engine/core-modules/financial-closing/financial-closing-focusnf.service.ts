@@ -25,6 +25,7 @@ import {
 } from './constants/nf-constants';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
+import { msg } from '@lingui/core/macro';
 
 @Injectable()
 export class FinancialClosingNFService {
@@ -73,7 +74,7 @@ export class FinancialClosingNFService {
     this.logger.log(`focusNFe: ${JSON.stringify(focusNFe, null, 2)}`);
 
     if (!focusNFe) {
-      throw new Error('Nenhuma integração Focus NFe encontrada');
+      throw new Error(msg`No Focus NFe integration found`.toString());
     }
 
     const invoiceRepository =
@@ -129,7 +130,7 @@ export class FinancialClosingNFService {
       const fakeProductNfCom = {
         id: nfCom.id,
         name: NF_TEXTS.TELEPHONY_PLAN,
-        producttype: ProductTypeStatus.COMMODITY,
+        productType: ProductTypeStatus.COMMODITY,
         unitOfMeasure: UnitOfMeasureEnum.UN,
         unit: UNIT_VALUES.SINGLE,
         classification: NfComClassificationEnum.TELEPHONY_SERVICE,
@@ -162,7 +163,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            `Solicitação de emissão da nota fiscal (${getNfTypeLabel(NfType.NFCOM)}) emitida, aguardando processamento`,
+            msg`Invoice emission request` + ' (' + getNfTypeLabel(NfType.NFCOM) + ')' + msg`issued, waiting for processing`.toString(),
             'info',
           );
         }
@@ -217,7 +218,7 @@ export class FinancialClosingNFService {
         id: nfse.id,
         name: NF_TEXTS.TELEPHONY_PLAN,
         issRetained: false,
-        producttype: ProductTypeStatus.SERVICE,
+        productType: ProductTypeStatus.SERVICE,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       } as unknown as ProductWorkspaceEntity;
@@ -246,7 +247,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            `Solicitação de emissão da nota fiscal (${getNfTypeLabel(NfType.NFSE)}) emitida, aguardando processamento`,
+            msg`Invoice emission request` + ' (' + getNfTypeLabel(NfType.NFSE) + ')' + msg`issued, waiting for processing`.toString(),
             'info',
           );
         }
@@ -255,7 +256,7 @@ export class FinancialClosingNFService {
         nfse.nfStatus = NfStatus.CANCELLED;
         await invoiceRepository.save(nfse);
           
-        throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || 'Sem retorno'}`);
+        throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || msg`No return`.toString()}`);
       }
     }
 
@@ -267,13 +268,13 @@ export class FinancialClosingNFService {
   ): string {
     if (!emitterState) {
       throw new Error(
-        'Estado do emissor é obrigatório para definir o CFOP. (Configure na integração com a FocusNFE)',
+        msg`Emitter state is required to define the CFOP. (Configure in the FocusNFE integration)`.toString(),
       );
     }
 
     if (!clientState) {
       throw new Error(
-        'Estado da empresa é obrigatório para definir o CFOP. (Configure no cadastro da empresa)',
+        msg`Company state is required to define the CFOP. (Configure in the company registration)`.toString(),
       );
     }
 

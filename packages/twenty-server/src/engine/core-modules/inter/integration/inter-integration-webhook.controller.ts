@@ -1,4 +1,5 @@
 /* eslint-disable @nx/workspace-rest-api-methods-should-be-guarded */
+import { msg } from '@lingui/core/macro';
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common';
 
 import { FinancialClosingNFService } from 'src/engine/core-modules/financial-closing/financial-closing-focusnf.service';
@@ -217,7 +218,7 @@ export class InterIntegrationWebhookController {
       await addCompanyFinancialClosingExecutionLog(
         companyExecution,
         companyExecutionRepository,
-        'Nota fiscal emitida com sucesso após pagamento confirmado via webhook inter',
+        msg`Invoice issued successfully after payment confirmation via webhook inter`.toString(),
         'info',
       );
 

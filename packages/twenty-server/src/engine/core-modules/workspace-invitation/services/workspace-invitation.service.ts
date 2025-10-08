@@ -319,9 +319,9 @@ export class WorkspaceInvitationService {
         i18n.activate(sender.locale);
 
         await this.emailService.send({
-          from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: `${sender.name.firstName} ${sender.name.lastName} (via Woulz) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
-          subject: t`Join your team on Twenty`,
+          subject: t`Join your team on Woulz`,
           text,
           html,
         });

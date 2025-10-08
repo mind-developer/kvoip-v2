@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
+import { msg } from '@lingui/core/macro';
 import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
@@ -130,7 +131,7 @@ export class FocusNFeService {
           this.logger.error(`Erro ao buscar código do município do prestador: ${error.message}`);
           return {
             success: false,
-            error: `Erro na cidade do prestador: ${focusNFe?.city} - ${error.message}`,
+            error: msg`Error in the city of the provider` + ' ' + focusNFe?.city + ' - ' + error.message,
             data: null
           };
         }
@@ -143,7 +144,7 @@ export class FocusNFeService {
         } catch (error) {
           return {
             success: false,
-            error: `Erro na cidade do tomador: ${invoice.company?.address.addressCity} - ${error.message}`,
+            error: msg`Error in the city of the recipient` + ' ' + invoice.company?.address.addressCity + ' - ' + error.message,
             data: null
           };
         }
@@ -196,7 +197,7 @@ export class FocusNFeService {
           this.logger.error(`Erro ao buscar código do município do emitente: ${error.message}`);
           return {
             success: false,
-            error: `Erro na cidade do emitente: ${focusNFe?.city} - ${error.message}`,
+            error: msg`Error in the city of the emitter` + ' ' + focusNFe?.city + ' - ' + error.message,
             data: null
           };
         }
@@ -210,7 +211,7 @@ export class FocusNFeService {
           this.logger.error(`Erro ao buscar código do município do tomador: ${error.message}`);
           return {
             success: false,
-            error: `Erro na cidade do tomador: ${invoice.company?.address.addressCity} - ${error.message}`,
+            error: msg`Error in the city of the recipient` + ' ' + invoice.company?.address.addressCity + ' - ' + error.message,
             data: null
           };
         }
@@ -262,7 +263,7 @@ export class FocusNFeService {
     if (!strategy.validate(data)) {
       return {
         success: false,
-        error: `Invalid ${type.toUpperCase()} data. Please check all required fields.`,
+        error: msg`Invalid` + ' ' + type.toUpperCase() + ' ' + msg`data. Please check all required fields.`,
       };
     }
 
@@ -310,13 +311,13 @@ export class FocusNFeService {
     this.logger.log(`getCodigoMunicipio: ${JSON.stringify(response, null, 2)}`);
 
     if (!response.success) {
-      const errorMessage = response.error || 'Erro ao buscar código do município';
+      const errorMessage = response.error || msg`Error to search the city code`.toString();
       this.logger.error(`Erro na API Focus NFe: ${errorMessage}`);
-      throw new Error(`Erro ao buscar código do município "${nomeMunicipio}": ${errorMessage}`);
+      throw new Error(msg`Error to search the city code` + ' ' + nomeMunicipio + ': ' + errorMessage);
     }
 
     if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
-      const errorMessage = `Município "${nomeMunicipio}" não encontrado`;
+      const errorMessage = msg`City` + ' ' + nomeMunicipio + ' ' + msg`not found`.toString();
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }

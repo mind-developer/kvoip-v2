@@ -138,7 +138,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: INVOICE_FIELD_IDS.ncm,
     type: FieldMetadataType.TEXT,
     label: msg`NCM`,
-    description: msg`Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12`,
+    description: msg`Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12`,
     icon: 'IconBarcode',
   })
   @WorkspaceIsNullable()
@@ -148,7 +148,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: INVOICE_FIELD_IDS.cfop,
     type: FieldMetadataType.TEXT,
     label: msg`CFOP`,
-    description: msg`Código Fiscal de Operações. Placeholder: 5102`,
+    description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
   })
   @WorkspaceIsNullable()
@@ -158,7 +158,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: INVOICE_FIELD_IDS.cstIcmsCsosn,
     type: FieldMetadataType.TEXT,
     label: msg`CST/CSOSN`,
-    description: msg`Código da Situação Tributária ou CSOSN. Placeholder: 102`,
+    description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
   })
   @WorkspaceIsNullable()
@@ -177,8 +177,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.origin,
     type: FieldMetadataType.NUMBER,
-    label: msg`Origem da Mercadoria`,
-    description: msg`Origem da mercadoria (0-8). Placeholder: 0`,
+    label: msg`Product origin`,
+    description: msg`Product origin (0-8). Example: 0`,
     icon: 'IconFlag',
   })
   @WorkspaceIsNullable()
@@ -187,8 +187,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.icmsRate,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ICMS (%)`,
-    description: msg`Alíquota do ICMS. Placeholder: 18.00`,
+    label: msg`ICMS rate (%)`,
+    description: msg`ICMS rate. Example: 18.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -197,8 +197,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.pisRate,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota PIS (%)`,
-    description: msg`Alíquota do PIS. Placeholder: 1.65`,
+    label: msg`PIS rate (%)`,
+    description: msg`PIS rate. Example: 1.65`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -207,8 +207,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.cofinsRate,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota COFINS (%)`,
-    description: msg`Alíquota do COFINS. Placeholder: 7.60`,
+    label: msg`COFINS rate (%)`,
+    description: msg`COFINS rate. Example: 7.60`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -217,8 +217,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.ipiRate,
     type: FieldMetadataType.NUMBER,
-    label: msg`Valor/Alíquota IPI`,
-    description: msg`Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00`,
+    label: msg`Value/IPI rate`,
+    description: msg`Value or IPI rate. Example: 0.00`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -227,8 +227,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.issRate,
     type: FieldMetadataType.NUMBER,
-    label: msg`Alíquota ISS`,
-    description: msg`Aliquota do ISS. Algumas cidades permitem usar 4 dígitos decimais.`,
+    label: msg`ISS rate (%)`,
+    description: msg`ISS rate. Some cities allow using 4 decimal places.`,
     icon: 'IconPercentage',
   })
   @WorkspaceIsNullable()
@@ -237,8 +237,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.issRetained,
     type: FieldMetadataType.BOOLEAN,
-    label: msg`ISS Retido`,
-    description: msg`Informar true (verdadeiro) ou false (falso) se o ISS foi retido`,
+    label: msg`ISS Retained`,
+    description: msg`Inform true or false if the ISS was retained`,
     icon: 'IconTag',
     defaultValue: false,
   })
@@ -248,8 +248,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.serviceListItem,
     type: FieldMetadataType.TEXT,
-    label: msg`Item Lista Serviço`,
-    description: msg`Informar o código da lista de serviços, normalmente de acordo com a Lei Complementar 116/2003.`,
+    label: msg`Service List Item`,
+    description: msg`Inform the service list code, usually according to Law Complement 116/2003.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -269,8 +269,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.discrimination,
     type: FieldMetadataType.TEXT,
-    label: msg`Discriminação`,
-    description: msg`Discriminação dos serviços prestados.`,
+    label: msg`Discrimination`,
+    description: msg`Discrimination of the services provided.`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -279,8 +279,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.subscriberCode,
     type: FieldMetadataType.TEXT,
-    label: msg`Código do Assinante`,
-    description: msg`Código do assinante`,
+    label: msg`Subscriber Code`,
+    description: msg`Subscriber code`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -289,8 +289,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.numSubscriberAgreement,
     type: FieldMetadataType.TEXT,
-    label: msg`Número do Contrato do Assinante`,
-    description: msg`Número do contrato do assinante`,
+    label: msg`Subscriber Agreement Number`,
+    description: msg`Subscriber agreement number`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -299,8 +299,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.classification,
     type: FieldMetadataType.TEXT,
-    label: msg`Classificação`,
-    description: msg`Classificação do produto`,
+    label: msg`Classification`,
+    description: msg`Product classification`,
     icon: 'IconNotes',
   })
   @WorkspaceIsNullable()
@@ -309,8 +309,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.unit,
     type: FieldMetadataType.TEXT,
-    label: msg`Unidade Comercial`,
-    description: msg`Unidade comercial. Placeholder: UN`,
+    label: msg`Commercial Unit`,
+    description: msg`Commercial unit. Example: UN`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
@@ -319,8 +319,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.justification,
     type: FieldMetadataType.TEXT,
-    label: msg`Justificativa`,
-    description: msg`Justificativa de cancelamento da Invoice`,
+    label: msg`Justification`,
+    description: msg`Justification of the invoice cancellation`,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
@@ -329,8 +329,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.issueDate,
     type: FieldMetadataType.TEXT,
-    label: msg`Data de emissão`,
-    description: msg`Data de emissão da Invoice`,
+    label: msg`Issue Date`,
+    description: msg`Issue date of the invoice`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -340,8 +340,8 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INVOICE_FIELD_IDS.rpsNumber,
     type: FieldMetadataType.TEXT,
-    label: msg`Número RPS`,
-    description: msg`Número RPS`,
+    label: msg`RPS Number`,
+    description: msg`RPS number`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
