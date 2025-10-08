@@ -13,8 +13,9 @@ import { CLIENT_CHAT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wor
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
-import { ClientChatMessageWorkspaceEntity } from 'src/modules/chat-message/standard-objects/chat-message.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -83,10 +84,19 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'chats',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsNullable()
   whatsappIntegration: Relation<WhatsappIntegrationWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('whatsappIntegration')
   whatsappIntegrationId: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.providerContactId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Provider Contact ID`,
+    description: msg`The provider contact ID of the chat. For WhatsApp, this is the phone number of the client.`,
+  })
+  providerContactId: string;
 
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.agent,
@@ -100,6 +110,19 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('agent')
   agentId: string | null;
+
+  @WorkspaceRelation({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.sector,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Sector`,
+    inverseSideTarget: () => SectorWorkspaceEntity,
+    inverseSideFieldKey: 'chats',
+  })
+  @WorkspaceIsNullable()
+  sector: Relation<SectorWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('sector')
+  sectorId: string | null;
 
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.person,
@@ -120,16 +143,17 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The status of the chat`,
     options: ChatStatusOptions,
   })
-  status: ChatStatus | null;
+  status: ChatStatus;
 
   @WorkspaceRelation({
-    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.chatMessages,
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.clientChatMessages,
     type: RelationType.ONE_TO_MANY,
     label: msg`Chat Messages`,
     description: msg`Messages from the chat`,
     icon: 'IconMessage',
     inverseSideTarget: () => ClientChatMessageWorkspaceEntity,
-    inverseSideFieldKey: 'chat',
+    inverseSideFieldKey: 'clientChat',
   })
-  chatMessages: Relation<ClientChatMessageWorkspaceEntity[]> | null;
+  @WorkspaceIsNullable()
+  clientChatMessages: Relation<ClientChatMessageWorkspaceEntity[]> | null;
 }
