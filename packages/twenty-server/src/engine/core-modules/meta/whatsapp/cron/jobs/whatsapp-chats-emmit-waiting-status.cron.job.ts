@@ -6,10 +6,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  WhatsappEmmitWaitingStatusJob,
-  WhatsappEmmitWaitingStatusJobProps,
-} from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { WHATSAPP_EMMIT_CRON_PATTERN } from 'src/engine/core-modules/meta/whatsapp/cron/utils/whatsapp-emmit-cron-pattern';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 
@@ -31,36 +27,26 @@ export class WhatsappEmmitWaitingChatsCronJob {
   async handle() {
     this.logger.warn(`Checking whatsapp chats to change status emmit`);
 
-    const whatsappChatsToReassignMap =
-      (await this.whatsappService.getWorkspaceWhatsappChatsMapToReassign()) ??
-      {};
+    // TODO: Implement
 
-    const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);
+    // this.logger.log(
+    //   `Found ${whatsappChatsMapMapList.length} chats with status in progress to emmit`,
+    // );
 
-    if (whatsappChatsMapMapList.length === 0) {
-      this.logger.warn(`No whatsapp chats found to change status emmit`);
+    // for (const whatsappChatsMapMap of whatsappChatsMapMapList) {
+    //   const [docId, waDocs] = whatsappChatsMapMap;
 
-      return;
-    }
-
-    this.logger.log(
-      `Found ${whatsappChatsMapMapList.length} chats with status in progress to emmit`,
-    );
-
-    for (const whatsappChatsMapMap of whatsappChatsMapMapList) {
-      const [docId, waDocs] = whatsappChatsMapMap;
-
-      await Promise.all(
-        waDocs.map((waDoc) =>
-          this.messageQueueService.add<WhatsappEmmitWaitingStatusJobProps>(
-            WhatsappEmmitWaitingStatusJob.name,
-            {
-              docId,
-              waDoc,
-            },
-          ),
-        ),
-      );
-    }
+    //   await Promise.all(
+    //     waDocs.map((waDoc) =>
+    //       this.messageQueueService.add<WhatsappEmmitWaitingStatusJobProps>(
+    //         WhatsappEmmitWaitingStatusJob.name,
+    //         {
+    //           docId,
+    //           waDoc,
+    //         },
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 }
