@@ -1,9 +1,7 @@
-import { ChatIntegrationSendMessageInput } from 'twenty-shared/types';
+import { ClientChatMessage } from 'twenty-shared/types';
 
 export type SendChatMessageQueueData = {
-  [K in keyof ChatIntegrationSendMessageInput]: {
-    chatType: K;
-    sendMessageInput: ChatIntegrationSendMessageInput[K];
-    workspaceId: string;
-  };
-}[keyof ChatIntegrationSendMessageInput];
+  clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>;
+  providerIntegrationId: string;
+  workspaceId: string;
+};
