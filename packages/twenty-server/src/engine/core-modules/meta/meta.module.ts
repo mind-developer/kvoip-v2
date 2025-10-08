@@ -16,12 +16,10 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsappCronCommand } from 'src/engine/core-modules/meta/whatsapp/cron/command/whatsapp.cron.command';
 import { WhatsappEmmitResolvedchatsJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WhatsappEmmitWaitingStatusJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
-import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -42,9 +40,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   providers: [
     ChatbotRunnerService,
     WhatsAppService,
-    WhatsappResolver,
     GoogleStorageService,
-    FirebaseService,
     WhatsappEmmitWaitingStatusJob,
     WhatsappEmmitResolvedchatsJob,
     WhatsappCronCommand,

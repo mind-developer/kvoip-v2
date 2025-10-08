@@ -23,7 +23,6 @@ import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/googl
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsappEmmitResolvedChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-resolved-status.cron.job';
 import { WhatsappEmmitWaitingChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-waiting-status.cron.job';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
@@ -96,7 +95,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CheckExpiredSubscriptionsJob,
     WhatsAppService,
     GoogleStorageService,
-    FirebaseService,
     WhatsappEmmitWaitingChatsCronJob,
     WhatsappEmmitResolvedChatsCronJob,
     ChatbotRunnerService,

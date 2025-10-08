@@ -13,7 +13,6 @@ import { HandlersModule } from 'src/engine/core-modules/chatbot-runner/engine/ha
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
@@ -35,7 +34,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     ConditionalInputHandler,
     FileInputHandler,
     GoogleStorageService,
-    FirebaseService,
   ],
   exports: [ChatbotRunnerService],
 })

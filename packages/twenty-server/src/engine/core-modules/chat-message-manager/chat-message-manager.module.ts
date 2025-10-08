@@ -15,7 +15,6 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -33,7 +32,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     ChatMessageManagerService,
     WhatsAppService,
     GoogleStorageService,
-    FirebaseService,
     ChatbotRunnerService,
     TextInputHandler,
     ImageInputHandler,
