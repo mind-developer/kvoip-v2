@@ -5,10 +5,9 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import {
-  KVOIP_ADMIN_STANDARD_OBJECT_IDS,
-  OWNER_STANDARD_FIELD_IDS,
-} from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { OWNER_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
 import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
@@ -20,6 +19,8 @@ import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -29,7 +30,8 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
+import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -50,6 +52,10 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: OWNER_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: OWNER_STANDARD_FIELD_IDS.avatarUrl,
 })
+@WorkspaceGate({
+  featureFlag: FeatureFlagKey.IS_KVOIP_ADMIN,
+})
+@WorkspaceIsNotAuditLogged()
 @WorkspaceDuplicateCriteria([
   ['nameFirstName', 'nameLastName'],
   ['emailsPrimaryEmail'],
@@ -138,6 +144,17 @@ export class OwnerWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   workspaces: Relation<TenantWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: OWNER_STANDARD_FIELD_IDS.subscriptions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Subscriptions`,
+    description: msg`Subscriptions linked to the owner.`,
+    icon: 'IconFileImport',
+    inverseSideTarget: () => SubscriptionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  subscriptions: Relation<SubscriptionWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: OWNER_STANDARD_FIELD_IDS.position,

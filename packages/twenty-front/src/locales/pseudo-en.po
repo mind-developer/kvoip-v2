@@ -529,6 +529,11 @@ msgstr ""
 msgid "Adjust the role-related settings"
 msgstr ""
 
+#. js-lingui-id: U3pytU
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Admin"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -6595,6 +6600,16 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
+#. js-lingui-id: l6ot2p
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Tax Invocies"
+msgstr ""
+
+#. js-lingui-id: yEt5zR
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Telephony"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -7397,6 +7412,7 @@ msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Workspaces"
 msgstr ""
 

@@ -529,6 +529,11 @@ msgstr "Address 2"
 msgid "Adjust the role-related settings"
 msgstr "Adjust the role-related settings"
 
+#. js-lingui-id: U3pytU
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Admin"
+msgstr "Admin"
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -6397,6 +6402,11 @@ msgstr "Subscription has been switched to Organization Plan."
 msgid "Subscription has been switched to Yearly."
 msgstr "Subscription has been switched to Yearly."
 
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr "Subscriptions"
+
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Successfully merged {recordCount} records"
@@ -6525,6 +6535,16 @@ msgstr "Target Agent"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr "Tasks"
+
+#. js-lingui-id: l6ot2p
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Tax Invocies"
+msgstr "Tax Invocies"
+
+#. js-lingui-id: yEt5zR
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Telephony"
+msgstr "Telephony"
 
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -7328,6 +7348,7 @@ msgstr "Workspace name"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Workspaces"
 msgstr "Workspaces"
 

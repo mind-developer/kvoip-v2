@@ -534,6 +534,11 @@ msgstr "Adres 2"
 msgid "Adjust the role-related settings"
 msgstr "Dostosuj ustawienia związane z rolą"
 
+#. js-lingui-id: U3pytU
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Admin"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -6396,6 +6401,11 @@ msgstr "Subskrypcja została zmieniona na roczny."
 msgid "Successfully merged {recordCount} records"
 msgstr "Pomyślnie scalono {recordCount} rekordów"
 
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr ""
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -6519,6 +6529,16 @@ msgstr "Docelowy Agent"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr "Zadania"
+
+#. js-lingui-id: l6ot2p
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Tax Invocies"
+msgstr ""
+
+#. js-lingui-id: yEt5zR
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Telephony"
+msgstr ""
 
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -7322,6 +7342,7 @@ msgstr "Nazwa miejsca pracy"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Workspaces"
 msgstr "Miejsca pracy"
 

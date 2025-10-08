@@ -165,6 +165,8 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
   emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
+  notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
+  tenants: '5eca6f7c-4d68-4bb1-9945-0420d9fe72d5',
   invoices: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
   companyFinancialClosingExecutions: '22c5ce2b-375b-45ea-81e6-8f379098cc41',
 } as const;
@@ -244,7 +246,7 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   unit: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
   issRetained: 'a236232b-4da2-43ca-b18f-99d96bbc1790',
   serviceListItem: 'c4606156-e1b0-477d-972f-1373be7099f4',
-  municipalTaxCode: '731eda3a-f8a3-418d-b84d-c2bc675e4507', 
+  municipalTaxCode: '731eda3a-f8a3-418d-b84d-c2bc675e4507',
   classification: '809c09e7-469c-4c5e-ac63-12c7b9ab7c69',
 
   createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
@@ -480,6 +482,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+  tenant: '30303030-390e-4271-8f14-03957ae27f6e',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

@@ -534,6 +534,11 @@ msgstr "주소 2"
 msgid "Adjust the role-related settings"
 msgstr "역할 관련 설정 조정"
 
+#. js-lingui-id: U3pytU
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Admin"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -6396,6 +6401,11 @@ msgstr "구독이 연간으로 전환되었습니다."
 msgid "Successfully merged {recordCount} records"
 msgstr "{recordCount}개의 레코드가 성공적으로 병합되었습니다"
 
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr ""
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -6519,6 +6529,16 @@ msgstr "대상 에이전트"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr "작업"
+
+#. js-lingui-id: l6ot2p
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Tax Invocies"
+msgstr ""
+
+#. js-lingui-id: yEt5zR
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Telephony"
+msgstr ""
 
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -7322,6 +7342,7 @@ msgstr "워크스페이스 이름"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Workspaces"
 msgstr "워크스페이스"
 

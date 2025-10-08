@@ -534,6 +534,11 @@ msgstr "Διεύθυνση 2"
 msgid "Adjust the role-related settings"
 msgstr "Ρυθμίστε τις ρυθμίσεις που σχετίζονται με τον ρόλο"
 
+#. js-lingui-id: U3pytU
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Admin"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -6398,6 +6403,11 @@ msgstr "Η συνδρομή έχει αλλάξει σε ετήσια."
 msgid "Successfully merged {recordCount} records"
 msgstr "Επιτυχής συγχώνευση {recordCount} εγγραφών"
 
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr ""
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -6521,6 +6531,16 @@ msgstr "Στόχος Πράκτορας"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr "Εργασίες"
+
+#. js-lingui-id: l6ot2p
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Tax Invocies"
+msgstr ""
+
+#. js-lingui-id: yEt5zR
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Telephony"
+msgstr ""
 
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -7324,6 +7344,7 @@ msgstr "Όνομα Workspace"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Workspaces"
 msgstr "Περιοχές Εργασίας"
 
