@@ -9,12 +9,8 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
-export type { Chat, InternalChat } from './Chat';
-export { ChatStatus } from './Chat';
-export type {
-  ChatIntegrationSendMessageInput,
-  ChatIntegrationSendMessageResponse,
-} from './ChatIntegrationProviders';
+export type { ClientChat, InternalChat } from './Chat';
+export { ClientChatStatus } from './Chat';
 export { ChatIntegrationProvider } from './ChatIntegrationProviders';
 export type {
   ChatMessage,
