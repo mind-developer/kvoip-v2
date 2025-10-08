@@ -482,6 +482,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+  tenant: '30303030-390e-4271-8f14-03957ae27f6e',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

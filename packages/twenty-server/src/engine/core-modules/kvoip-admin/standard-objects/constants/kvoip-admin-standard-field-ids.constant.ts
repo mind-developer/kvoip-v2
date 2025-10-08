@@ -9,6 +9,7 @@ export const TENANT_STANDARD_FIELD_IDS = {
   coreWorkspaceId: '20202020-14cd-4c9b-94f4-b0323a6f1055',
   subscriptions: '7128fb62-353d-488b-bd19-928d6eaf3256',
   company: '269af23b-1e82-47d8-b521-489cf835222d',
+  timelineActivities: '30303030-2c96-44ab-bba2-110fcef4df0f',
 };
 
 export const OWNER_STANDARD_FIELD_IDS = {
