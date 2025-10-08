@@ -17,6 +17,9 @@ prod-migrate-kvoipv2-db:
 prod-sync-metadata:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:sync-metadata"
 
+prod-kvoip-add-admin-workspace:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod kvoip:add-admin-workspace"
+
 prod-sync-billing-plans:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod billing:sync-plans-data"
 
