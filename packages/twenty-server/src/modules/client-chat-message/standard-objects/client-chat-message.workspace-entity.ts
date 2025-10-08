@@ -1,11 +1,11 @@
 /* @kvoip-woulz proprietary */
 import { msg } from '@lingui/core/macro';
-import { ObjectType } from '@nestjs/graphql';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -29,7 +29,7 @@ import { Relation } from 'typeorm';
   labelPlural: msg`Chat Messages`,
   description: msg`A message in a chat`,
 })
-@ObjectType()
+@WorkspaceIsSystem()
 export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.clientChat,

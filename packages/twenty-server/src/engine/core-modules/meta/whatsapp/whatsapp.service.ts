@@ -17,7 +17,6 @@ import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graph
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsAppMessage';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
@@ -37,9 +36,9 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ChatStatus,
   ClientChatMessage,
   ClientChatMessageEvent,
+  ClientChatStatus,
 } from 'twenty-shared/types';
 
 export class WhatsAppService {
@@ -53,7 +52,6 @@ export class WhatsAppService {
     private readonly environmentService: TwentyConfigService,
     public readonly googleStorageService: GoogleStorageService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly firebaseService: FirebaseService,
     private readonly ChatbotRunnerService: ChatbotRunnerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fileService: FileService,
@@ -61,9 +59,7 @@ export class WhatsAppService {
     private sendMessageQueue: MessageQueueService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private saveMessageQueue: MessageQueueService,
-  ) {
-    this.firestoreDb = this.firebaseService.getFirestoreDb();
-  }
+  ) {}
 
   async getWhatsappTemplates(
     integrationId: string,
@@ -169,7 +165,7 @@ export class WhatsAppService {
         whatsappIntegration: {
           id: integrationId,
         },
-        status: ChatStatus.UNASSIGNED,
+        status: ClientChatStatus.UNASSIGNED,
       });
     }
 
@@ -196,7 +192,7 @@ export class WhatsAppService {
     ).findOneBy({ id: integrationId });
 
     if (
-      clientChat.status === ChatStatus.UNASSIGNED &&
+      clientChat.status === ClientChatStatus.UNASSIGNED &&
       !message.fromMe &&
       whatsappIntegration
     ) {

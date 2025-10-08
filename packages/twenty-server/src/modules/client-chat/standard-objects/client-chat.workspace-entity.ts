@@ -1,12 +1,11 @@
 /* @kvoip-woulz proprietary */
 import { msg } from '@lingui/core/macro';
-import { ObjectType, registerEnumType } from '@nestjs/graphql';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CLIENT_CHAT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -17,54 +16,12 @@ import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-messag
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  ClientChatStatus,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 import { Relation } from 'typeorm';
-
-export enum ChatStatus {
-  UNASSIGNED = 'UNASSIGNED',
-  ASSIGNED = 'ASSIGNED',
-  ABANDONED = 'ABANDONED',
-  RESOLVED = 'RESOLVED',
-  CHATBOT = 'CHATBOT',
-}
-
-const ChatStatusOptions: FieldMetadataComplexOption[] = [
-  {
-    value: ChatStatus.UNASSIGNED,
-    label: 'Unassigned',
-    position: 0,
-    color: 'red',
-  },
-  {
-    value: ChatStatus.ASSIGNED,
-    label: 'Assigned',
-    position: 1,
-    color: 'green',
-  },
-  {
-    value: ChatStatus.ABANDONED,
-    label: 'Abandoned',
-    position: 2,
-    color: 'gray',
-  },
-  {
-    value: ChatStatus.RESOLVED,
-    label: 'Resolved',
-    position: 3,
-    color: 'blue',
-  },
-  {
-    value: ChatStatus.CHATBOT,
-    label: 'Chatbot',
-    position: 4,
-    color: 'purple',
-  },
-];
-
-registerEnumType(ChatStatus, {
-  name: 'ChatStatus',
-  description: 'Chat status options',
-});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.clientChat,
@@ -74,7 +31,7 @@ registerEnumType(ChatStatus, {
   description: msg`A chat`,
   icon: STANDARD_OBJECT_ICONS.chat,
 })
-@ObjectType()
+@WorkspaceIsSystem()
 export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.whatsappIntegration,
@@ -138,12 +95,11 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
     label: msg`Status`,
     description: msg`The status of the chat`,
-    options: ChatStatusOptions,
   })
-  status: ChatStatus;
+  status: ClientChatStatus;
 
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.clientChatMessages,
