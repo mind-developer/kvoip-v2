@@ -10,12 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsAppMessage';
 
-import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
-import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ChatMessageType } from 'twenty-shared/types';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -56,11 +56,11 @@ export class WhatsappController {
     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
   }
 
-  @Post('/webhook/:workspaceId/:id')
+  @Post('/webhook/:workspaceId/:integrationId')
   @UseGuards(PublicEndpointGuard)
   async handleIncomingMessage(
     @Param('workspaceId') workspaceId: string,
-    @Param('id') id: string,
+    @Param('integrationId') integrationId: string,
     // TO DO
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
@@ -86,17 +86,18 @@ export class WhatsappController {
       let mediaId: string | undefined;
       let fileUrl;
 
+      msg.type = msg.type.toUpperCase();
       switch (msg.type) {
-        case 'image':
+        case ChatMessageType.IMAGE:
           mediaId = msg.image.id;
           break;
-        case 'audio':
+        case ChatMessageType.AUDIO:
           mediaId = msg.audio.id;
           break;
-        case 'document':
+        case ChatMessageType.DOCUMENT:
           mediaId = msg.document.id;
           break;
-        case 'video':
+        case ChatMessageType.VIDEO:
           mediaId = msg.video.id;
           break;
         default:
@@ -175,44 +176,32 @@ export class WhatsappController {
           // Fluxo normal: baixa a mídia
           fileUrl = await this.whatsappService.downloadMedia(
             mediaId,
-            id,
+            integrationId,
             msg.from,
             msg.type,
             workspaceId,
           );
         }
 
-        const lastMessage = {
-          createdAt: new Date(),
+        const message: FormattedWhatsAppMessage = {
           id: msg.id,
-          from: body.entry[0].changes[0].value.contacts[0].profile.name,
-          message: mediaId || isBase64Media ? fileUrl : msg.text.body,
-          type: msg.type,
+          from: msg.from,
+          to: msg.to,
           fromMe: !!msg.fromMe,
-        };
-
-        const whatsappIntegration: Omit<
-          WhatsAppDocument,
-          'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
-        > = {
-          integrationId: id,
-          workspaceId: workspaceId,
-          client: {
-            phone: msg.from.replace('@s.whatsapp.net', ''),
-            name: body.entry[0].changes[0].value.contacts[0].profile.name,
-            ppUrl: body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
-          },
-          messages: [
-            {
-              ...lastMessage,
-            },
-          ],
-          status: statusEnum.Waiting,
-          lastMessage,
+          senderAvatarUrl:
+            body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
+          contactName:
+            body.entry[0].changes[0].value.contacts[0].profile.name ?? null,
+          textBody: msg.text.body,
+          fileUrl: mediaId || isBase64Media ? (fileUrl ?? null) : null,
+          caption: null,
+          type: msg.type,
+          deliveryStatus: msg.status,
         };
 
         await this.whatsappService.saveMessage(
-          whatsappIntegration,
+          message,
+          integrationId,
           workspaceId,
         );
       }

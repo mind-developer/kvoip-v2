@@ -1,7 +1,9 @@
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SendWhatsAppMessageInput } from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
+import { ChatMessageType, ClientChatMessage } from 'twenty-shared/types';
 
-export function parseFields(input: Omit<SendWhatsAppMessageInput, 'personId'>) {
+export function getMessageFields(
+  input: Omit<ClientChatMessage, 'providerMessageId'>,
+) {
   const fields: any = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
@@ -10,33 +12,33 @@ export function parseFields(input: Omit<SendWhatsAppMessageInput, 'personId'>) {
   };
 
   const commonFields = {
-    link: input.fileId,
-    caption: input.message || '',
+    link: input.attachmentUrl,
+    caption: input.textBody || '',
   };
 
   switch (input.type) {
-    case 'text':
+    case ChatMessageType.TEXT:
       fields.text = {
         preview_url: true,
-        body: input.message || '',
+        body: input.textBody || '',
       };
       break;
-    case 'audio':
+    case ChatMessageType.AUDIO:
       fields.audio = {
-        link: input.fileId,
+        link: input.attachmentUrl,
       };
       break;
-    case 'document':
+    case ChatMessageType.DOCUMENT:
       fields.document = commonFields;
       break;
-    case 'image':
+    case ChatMessageType.IMAGE:
       fields.image = commonFields;
       break;
-    case 'video':
+    case ChatMessageType.VIDEO:
       fields.video = commonFields;
       break;
     default:
-      throw new InternalServerError('Invalid message type');
+      throw new InternalServerError('Invalid message type: ' + input.type);
   }
   return fields;
 }
