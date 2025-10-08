@@ -15,6 +15,7 @@ import { Section } from 'twenty-ui/layout';
 
 import axios from 'axios';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -41,6 +42,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const tokenPair = useRecoilValue(tokenPairState);
+  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
@@ -207,24 +209,6 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
-    const response = await fetch(
-      `http://localhost:3000/Whats-App-rest/whatsapp/qr/${formValues.name}`,
-      {
-        headers: {
-          Authorization: `Bearer ${tokenPair?.accessOrWorkspaceAgnosticToken?.token}`,
-        },
-      },
-    );
-
-    const data = await response.json();
-
-    if (data.qr) {
-      setQrCodeValue(data.qr);
-    } else {
-      setQrCodeError('QR code não disponível');
-      setIsLoadingQrCode(false);
-      return;
-    }
 
     try {
       const integration: WhatsappIntegration = await createOneRecord({
@@ -238,6 +222,14 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         paused: false,
         sla: 30,
       });
+      await axios.post(
+        `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+        {
+          webhook: `https://${process.env.NEXT_PUBLIC_APP_URL}/whatsapp/webhook/${workspaceId}/${integration.id}/`,
+          workspaceID: workspaceId,
+          canalID: integration.id,
+        },
+      );
 
       if (formValues.apiType === 'Baileys') {
         setIntegrationName(formValues.name);
