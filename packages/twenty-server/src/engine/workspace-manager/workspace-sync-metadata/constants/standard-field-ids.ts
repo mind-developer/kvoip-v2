@@ -844,7 +844,7 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
   apiType: '0f112edf-794d-4e0d-b054-b7a5a72f15cd',
   inbox: '84b0151b-547b-4b14-a9ad-263968e2868d',
-  chats: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
+  clientChats: 'ee41e808-1b6f-4593-a421-87a85118506e',
 } as const;
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
