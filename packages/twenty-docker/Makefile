@@ -11,14 +11,8 @@
 PLATFORM ?= linux/amd64
 TAG ?= latest
 
-prod-migrate-kvoipv2-db:
-	docker exec -it kvoipv2-server sh -c "yarn database:migrate:prod"
-
 prod-sync-metadata:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:sync-metadata"
-
-prod-kvoip-add-admin-workspace:
-	docker exec -it kvoipv2-server sh -c "yarn command:prod kvoip:add-admin-workspace"
 
 prod-sync-billing-plans:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod billing:sync-plans-data"
@@ -35,12 +29,6 @@ dev-seed-workspace:
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --platform $(PLATFORM) --tag twenty:$(TAG) . && cd -
 
-kvoip-prod-build:
-	@cd ../.. && docker build -t kvoipcrm/v2:canary -f ./packages/twenty-docker/twenty/Dockerfile .
-
-kvoip-add-workspace-admin:
-	docker exec -it kvoipv2-server sh -c "yarn command:prod kvoip:add-admin-workspace"
-
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty:$(TAG)
 
@@ -52,3 +40,9 @@ prod-website-build:
 
 prod-website-run:
 	@docker run -d -p 3000:3000 --name twenty-website twenty-website:$(TAG)
+
+kvoip-prod-canary-build:
+	@cd ../.. && docker build -t kvoipcrm/v2:canary -f ./packages/twenty-docker/twenty/Dockerfile .
+
+kvoip-prod-add-admin-workspace:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod kvoip:add-admin-workspace"
