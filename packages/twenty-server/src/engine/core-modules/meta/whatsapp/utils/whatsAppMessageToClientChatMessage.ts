@@ -5,35 +5,38 @@ import {
   ClientChatMessage,
 } from 'twenty-shared/types';
 
-import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsAppMessage';
+import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 
 export const whatsAppMessageToClientChatMessage = (
   whatsappMessage: FormattedWhatsAppMessage,
   clientChat: ClientChatWorkspaceEntity,
 ): ClientChatMessage => {
-  if (!clientChat.whatsappIntegration) {
+  if (!clientChat.whatsappIntegrationId) {
+    console.log(clientChat);
     throw new Error(
       'This should never happen: client chat has no WhatsApp integration',
     );
   }
   return {
-    chatId: clientChat.id,
+    clientChatId: clientChat.id,
 
     // If message is not coming from the client, this means the chat is assigned to an agent
     // (since you can't send messages unless you are assigned to a chat),
     // which is who sent it
-    from: whatsappMessage.fromMe ? clientChat.agent!.id : clientChat.person.id,
+    from: whatsappMessage.fromMe
+      ? (clientChat.agentId ?? clientChat.personId)
+      : clientChat.personId,
 
     fromType: whatsappMessage.fromMe
       ? ChatMessageFromType.AGENT
       : ChatMessageFromType.PERSON,
 
     to: whatsappMessage.fromMe
-      ? clientChat.person.id
-      : (clientChat.agent?.id ??
-        clientChat.sector?.id ??
-        clientChat.whatsappIntegration!.id),
+      ? clientChat.personId
+      : (clientChat.agentId ??
+        clientChat.sectorId ??
+        clientChat.whatsappIntegrationId),
     toType: whatsappMessage.fromMe
       ? ChatMessageToType.PERSON
       : // Message is not fromMe: client is sending to an agent or sector

@@ -38,7 +38,7 @@ export class FileInputHandler implements NodeHandler {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (file) {
       const message: Omit<ClientChatMessage, 'providerMessageId'> = {
-        chatId: clientChat.id,
+        clientChatId: clientChat.id,
         from: chatbotName,
         fromType: ChatMessageFromType.CHATBOT,
         to: clientChat.providerContactId,

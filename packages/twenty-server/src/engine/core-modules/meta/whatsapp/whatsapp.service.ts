@@ -1,31 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { Firestore } from 'firebase/firestore';
-import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { SaveClientChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
 import { SaveClientChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
-import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsAppMessage';
+import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
 import { whatsAppMessageToClientChatMessage } from 'src/engine/core-modules/meta/whatsapp/utils/whatsAppMessageToClientChatMessage';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -42,19 +38,14 @@ import {
 } from 'twenty-shared/types';
 
 export class WhatsAppService {
-  private META_API_URL = this.environmentService.get('META_API_URL');
-  private firestoreDb: Firestore;
+  private META_API_URL = this.twentyConfigService.get('META_API_URL');
   protected readonly logger = new Logger(WhatsAppService.name);
 
   constructor(
-    @InjectRepository(Workspace)
-    private workspaceRepository: Repository<Workspace>,
-    private readonly environmentService: TwentyConfigService,
-    public readonly googleStorageService: GoogleStorageService,
     private readonly twentyConfigService: TwentyConfigService,
+    public readonly googleStorageService: GoogleStorageService,
     private readonly ChatbotRunnerService: ChatbotRunnerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly fileService: FileService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
     private sendMessageQueue: MessageQueueService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
@@ -73,7 +64,7 @@ export class WhatsAppService {
     const whatsappIntegrationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
-        'whatsapp',
+        'whatsappIntegration',
       );
 
     const integration = await whatsappIntegrationRepository.findOne({
@@ -120,179 +111,236 @@ export class WhatsAppService {
     integrationId: string,
     workspaceId: string,
   ) {
-    const providerContactId = message.fromMe ? message.to : message.from;
-    const clientChatRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
-        workspaceId,
-        'clientChat',
-        { shouldBypassPermissionChecks: true },
-      );
-    let clientChat = await clientChatRepository.findOne({
-      where: {
-        whatsappIntegrationId: integrationId,
-        providerContactId,
-      },
-      relations: ['agent', 'sector'],
-    });
-
-    if (!clientChat) {
-      const personRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+    try {
+      const providerContactId = message.fromMe
+        ? message.toPhoneNumber
+        : message.fromPhoneNumber;
+      const clientChatRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
           workspaceId,
-          'person',
+          'clientChat',
           { shouldBypassPermissionChecks: true },
         );
-      const person = await personRepository.save(
-        createRelatedPerson(
-          message.contactName
-            ? {
-                firstName: message.contactName?.split(' ')[0] ?? '',
-                lastName: message.contactName?.split(' ')[1] ?? '',
-              }
-            : {
-                firstName: message.fromMe ? message.to : message.from,
-                lastName: '',
-              },
+      let clientChat = await clientChatRepository.findOne({
+        where: {
+          whatsappIntegrationId: integrationId,
           providerContactId,
-          message.senderAvatarUrl ?? null,
-          ChatIntegrationProvider.WHATSAPP,
-          'Via WhatsApp',
-        ),
-      );
-      clientChat = await clientChatRepository.save({
-        providerContactId,
-        person,
-        whatsappIntegration: {
-          id: integrationId,
         },
-        status: ClientChatStatus.UNASSIGNED,
+        relations: ['agent', 'sector'],
       });
-    }
 
-    if (!clientChat?.id)
-      throw new InternalServerError(
-        'No chat found, and fallback chat creation failed',
-      );
-
-    this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-      SaveClientChatMessageJob.name,
-      {
-        chatMessage: whatsAppMessageToClientChatMessage(message, clientChat),
-        workspaceId,
-      },
-    );
-
-    //initialize chatbot runner if needed
-    const whatsappIntegration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
-        workspaceId,
-        'whatsapp',
-        { shouldBypassPermissionChecks: true },
-      )
-    ).findOneBy({ id: integrationId });
-
-    if (
-      clientChat.status === ClientChatStatus.UNASSIGNED &&
-      !message.fromMe &&
-      whatsappIntegration
-    ) {
-      const chatbot = await (
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
-          workspaceId,
-          'chatbot',
-          { shouldBypassPermissionChecks: true },
-        )
-      ).findOneBy({ id: whatsappIntegration?.chatbotId ?? '' });
-
-      if (!chatbot) return;
-
-      const baseEventMessage = {
-        chatId: clientChat.id,
-        from: chatbot.name,
-        fromType: ChatMessageFromType.CHATBOT,
-        to: clientChat.person.id,
-        toType: ChatMessageToType.PERSON,
-        provider: ChatIntegrationProvider.WHATSAPP,
-        providerMessageId: message.id,
-        type: ChatMessageType.EVENT,
-        textBody: null,
-        caption: null,
-        deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
-        edited: false,
-        attachmentUrl: null,
-      } as ClientChatMessage;
-
-      let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
-      if (executor) {
-        executor.runFlow(message.textBody);
-        return true;
+      this.logger.log(message.senderAvatarUrl);
+      if (!clientChat) {
+        const personRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+            workspaceId,
+            'person',
+            { shouldBypassPermissionChecks: true },
+          );
+        const person = await personRepository.save(
+          createRelatedPerson(
+            message.contactName
+              ? {
+                  firstName: message.contactName?.split(' ')[0] ?? '',
+                  lastName: message.contactName?.split(' ')[1] ?? '',
+                }
+              : {
+                  firstName: message.fromMe
+                    ? message.toPhoneNumber
+                    : message.fromPhoneNumber,
+                  lastName: '',
+                },
+            message.fromPhoneNumber,
+            message.senderAvatarUrl ?? null,
+            ChatIntegrationProvider.WHATSAPP,
+            'Via WhatsApp (Chat)',
+          ),
+        );
+        clientChat = await clientChatRepository.save({
+          providerContactId,
+          person,
+          whatsappIntegration: {
+            id: integrationId,
+          },
+          status: ClientChatStatus.UNASSIGNED,
+        });
       }
+
+      if (!clientChat?.id)
+        throw new InternalServerError(
+          'No chat found, and fallback chat creation failed',
+        );
 
       this.saveMessageQueue.add<SaveClientChatMessageJobData>(
         SaveClientChatMessageJob.name,
         {
-          chatMessage: {
-            ...baseEventMessage,
-            event: ClientChatMessageEvent.CHATBOT_START,
-          },
+          chatMessage: whatsAppMessageToClientChatMessage(message, clientChat),
           workspaceId,
         },
       );
 
-      const sectors = await (
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+      //initialize chatbot runner if needed
+      const whatsappIntegration = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
           workspaceId,
-          'sector',
+          'whatsappIntegration',
+          { shouldBypassPermissionChecks: true },
         )
-      ).find();
+      ).findOneBy({ id: integrationId });
 
-      executor = this.ChatbotRunnerService.createExecutor({
-        provider: ChatIntegrationProvider.WHATSAPP,
-        providerIntegrationId: integrationId,
-        clientChat,
-        workspaceId,
-        chatbotName: chatbot?.name || 'Chatbot',
-        chatbot: {
-          ...chatbot,
-          workspace: { id: workspaceId },
-        },
-        sectors: sectors,
-        onFinish: (_, sectorId: string) => {
-          if (sectorId) {
-            clientChatRepository.update(clientChat.id, {
-              sector: { id: sectorId },
-            });
+      if (
+        clientChat.status === ClientChatStatus.UNASSIGNED &&
+        !message.fromMe &&
+        whatsappIntegration &&
+        whatsappIntegration.chatbotId
+      ) {
+        const chatbot = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
+            workspaceId,
+            'chatbot',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOneBy({ id: whatsappIntegration.chatbotId });
+
+        if (!chatbot) return;
+
+        const baseEventMessage: ClientChatMessage = {
+          clientChatId: clientChat.id,
+          from: chatbot.name,
+          fromType: ChatMessageFromType.CHATBOT,
+          to: clientChat.person.id,
+          toType: ChatMessageToType.PERSON,
+          provider: ChatIntegrationProvider.WHATSAPP,
+          providerMessageId: message.id,
+          type: ChatMessageType.EVENT,
+          textBody: null,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: 'now',
+          event: null,
+        };
+
+        let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
+        if (executor) {
+          executor.runFlow(message.textBody);
+          return true;
+        }
+
+        this.saveMessageQueue.add<SaveClientChatMessageJobData>(
+          SaveClientChatMessageJob.name,
+          {
+            chatMessage: {
+              ...baseEventMessage,
+              event: ClientChatMessageEvent.CHATBOT_START,
+            },
+            workspaceId,
+          },
+        );
+
+        clientChatRepository.update(clientChat.id, {
+          status: ClientChatStatus.CHATBOT,
+        });
+
+        const sectors = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+            workspaceId,
+            'sector',
+          )
+        ).find();
+
+        executor = this.ChatbotRunnerService.createExecutor({
+          provider: ChatIntegrationProvider.WHATSAPP,
+          providerIntegrationId: integrationId,
+          clientChat,
+          workspaceId,
+          chatbotName: chatbot?.name || 'Chatbot',
+          chatbot: {
+            ...chatbot,
+            workspace: { id: workspaceId },
+          },
+          sectors: sectors,
+          onFinish: (_, sectorId: string) => {
+            if (sectorId) {
+              clientChatRepository.update(clientChat.id, {
+                sector: { id: sectorId },
+              });
+              this.saveMessageQueue.add<SaveClientChatMessageJobData>(
+                SaveClientChatMessageJob.name,
+                {
+                  chatMessage: {
+                    ...baseEventMessage,
+                    event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
+                  },
+                  workspaceId,
+                },
+              );
+              clientChatRepository.update(clientChat.id, {
+                status: ClientChatStatus.ASSIGNED_TO_AGENT,
+              });
+              return;
+            }
+            // if (agentId) {
+            //   clientChatRepository.update(clientChat.id, {
+            //     status: ClientChatStatus.ASSIGNED_TO_AGENT,
+            //   });
+            // }
             this.saveMessageQueue.add<SaveClientChatMessageJobData>(
               SaveClientChatMessageJob.name,
               {
                 chatMessage: {
                   ...baseEventMessage,
-                  event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
+                  event: ClientChatMessageEvent.CHATBOT_END,
                 },
                 workspaceId,
               },
             );
-          }
-          this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-            SaveClientChatMessageJob.name,
-            {
-              chatMessage: {
-                ...baseEventMessage,
-                event: ClientChatMessageEvent.CHATBOT_END,
-              },
-              workspaceId,
-            },
-          );
-          this.ChatbotRunnerService.clearExecutor(clientChat.id);
+            this.ChatbotRunnerService.clearExecutor(clientChat.id);
+            clientChatRepository.update(clientChat.id, {
+              status: ClientChatStatus.UNASSIGNED,
+            });
+          },
+        });
+        executor.runFlow(message.textBody);
+      }
+    } catch (error) {
+      this.logger.error('Error saving message:', error);
+    }
+  }
+
+  async updateMessage(
+    providerMessageId: string,
+    data: Partial<ClientChatMessage>,
+    workspaceId: string,
+  ) {
+    console.log('updateMessage', providerMessageId, data, workspaceId);
+    try {
+      const messageRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+        );
+      const message = await messageRepository.findOne({
+        where: {
+          providerMessageId,
         },
       });
-      executor.runFlow(message.textBody);
+      if (!message) return;
+      const updatedMessage = {
+        ...message,
+        ...data,
+      };
+      await messageRepository.save(updatedMessage);
+    } catch (error) {
+      this.logger.error('Error updating message:', error);
     }
   }
 
   async sendNotification(externalIds: string[], message: string) {
-    const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
-    const ONESIGNAL_REST_API_KEY = this.environmentService.get(
+    const ONESIGNAL_APPID = this.twentyConfigService.get('ONESIGNAL_APP_ID');
+    const ONESIGNAL_REST_API_KEY = this.twentyConfigService.get(
       'ONESIGNAL_REST_API_KEY',
     );
 
@@ -343,7 +391,7 @@ export class WhatsAppService {
     const whatsappRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
-        'whatsapp',
+        'whatsappIntegration',
       );
 
     const integration = await whatsappRepository.findOne({

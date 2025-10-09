@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/WhatsAppMessage';
+import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
 
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -66,16 +66,14 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     if (body.entry[0].changes[0].statuses) {
-      // return await this.whatsappService.updateMessageAtFirebase({
-      //   integrationId: id,
-      //   id: body.entry[0].changes[0].statuses[0].id,
-      //   clientPhoneNumber:
-      //     body.entry[0].changes[0].statuses[0].baileysRecipientId.replace(
-      //       '@s.whatsapp.net',
-      //       '',
-      //     ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
-      //   status: body.entry[0].changes[0].statuses[0].status ?? null,
-      // });
+      this.whatsappService.updateMessage(
+        body.entry[0].changes[0].statuses[0].id,
+        {
+          deliveryStatus:
+            body.entry[0].changes[0].statuses[0].status?.toUpperCase() ?? null,
+        },
+        workspaceId,
+      );
       return true;
     }
 
@@ -185,8 +183,8 @@ export class WhatsappController {
 
         const message: FormattedWhatsAppMessage = {
           id: msg.id,
-          from: msg.from,
-          to: msg.to,
+          fromPhoneNumber: msg.from,
+          toPhoneNumber: msg.to,
           fromMe: !!msg.fromMe,
           senderAvatarUrl:
             body.entry[0].changes[0].value.contacts[0].profile.ppUrl,

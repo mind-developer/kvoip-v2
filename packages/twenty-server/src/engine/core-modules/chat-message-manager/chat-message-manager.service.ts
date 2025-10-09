@@ -30,7 +30,7 @@ export class ChatMessageManagerService {
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
-        'whatsapp',
+        'whatsappIntegration',
       )
     ).findOne({ where: { id: whatsappIntegrationId } });
 

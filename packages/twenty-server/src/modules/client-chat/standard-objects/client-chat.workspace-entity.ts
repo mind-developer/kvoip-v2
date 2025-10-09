@@ -25,10 +25,10 @@ import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.clientChat,
-  namePlural: 'chats',
+  namePlural: 'clientChats',
   labelSingular: msg`Client Chat`,
-  labelPlural: msg`Chats`,
-  description: msg`A chat`,
+  labelPlural: msg`Client Chats`,
+  description: msg`A client chat`,
   icon: STANDARD_OBJECT_ICONS.chat,
 })
 @WorkspaceIsSystem()
@@ -38,7 +38,7 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Whatsapp Integration`,
     inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'chats',
+    inverseSideFieldKey: 'clientChats',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

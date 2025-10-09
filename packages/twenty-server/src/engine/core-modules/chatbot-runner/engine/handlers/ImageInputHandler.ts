@@ -38,7 +38,7 @@ export class ImageInputHandler implements NodeHandler {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (image) {
       const message: Omit<ClientChatMessage, 'providerMessageId'> = {
-        chatId: clientChat.id,
+        clientChatId: clientChat.id,
         from: chatbotName,
         fromType: ChatMessageFromType.CHATBOT,
         to: clientChat.person.id,

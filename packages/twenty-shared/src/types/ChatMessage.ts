@@ -1,7 +1,6 @@
 import { ChatIntegrationProvider } from '@/types/ChatIntegrationProviders';
 
 export type ChatMessage = {
-  chatId: string; //done
   from: string; //done
   fromType: ChatMessageFromType; //done
   to: string; //done
@@ -14,6 +13,8 @@ export type ChatMessage = {
   deliveryStatus: ChatMessageDeliveryStatus; //done
   edited: boolean | null; //done
   attachmentUrl: string | null; //done
+  createdAt?: string; // ISO string timestamp
+  updatedAt?: string; // ISO string timestamp
 };
 
 // export type ClientChatMessage = ChatMessage & {
@@ -27,6 +28,7 @@ export type InternalChatMessage = Omit<
 > & { internalChatId: string };
 
 export type ClientChatMessage = ChatMessage & {
+  clientChatId: string;
   fromType: ClientChatMessageFromType;
   toType: ClientChatMessageToType;
   event: ClientChatMessageEvent | null;

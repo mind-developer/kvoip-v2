@@ -105,13 +105,13 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   apiType?: 'MetaAPI' | 'Baileys';
 
   @WorkspaceRelation({
-    standardId: WHATSAPP_STANDARD_FIELD_IDS.chats,
+    standardId: WHATSAPP_STANDARD_FIELD_IDS.clientChats,
     type: RelationType.ONE_TO_MANY,
     label: msg`Chat`,
     inverseSideTarget: () => ClientChatWorkspaceEntity,
     inverseSideFieldKey: 'whatsappIntegration',
   })
-  chats: Relation<ClientChatWorkspaceEntity[]> | null;
+  clientChats: Relation<ClientChatWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WHATSAPP_STANDARD_FIELD_IDS.chatbot,

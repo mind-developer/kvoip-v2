@@ -26,12 +26,11 @@ export class SaveClientChatMessageJob {
         break;
       //more cases here in the future if needed
       default:
-        await (
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-            data.workspaceId,
-            'clientChatMessage',
-          )
-        ).save(data.chatMessage);
+        await (console.log(data.chatMessage),
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          data.workspaceId,
+          'clientChatMessage',
+        )).save(data.chatMessage);
         return true;
     }
     return false;

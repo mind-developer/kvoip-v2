@@ -15,6 +15,7 @@ import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
   ChatMessageType,
+  ClientChatMessageEvent,
   ClientChatMessageFromType,
   ClientChatMessageToType,
   FieldMetadataType,
@@ -24,9 +25,9 @@ import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.clientChatMessage,
-  namePlural: 'chatMessages',
-  labelSingular: msg`Chat Message`,
-  labelPlural: msg`Chat Messages`,
+  namePlural: 'clientChatMessages',
+  labelSingular: msg`Client Chat Message`,
+  labelPlural: msg`Client Chat Messages`,
   description: msg`A message in a chat`,
 })
 @WorkspaceIsSystem()
@@ -34,7 +35,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.clientChat,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Chat`,
+    label: msg`Client Chat`,
     inverseSideTarget: () => ClientChatWorkspaceEntity,
     inverseSideFieldKey: 'clientChatMessages',
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -48,7 +49,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.from,
     type: FieldMetadataType.TEXT,
     label: msg`From`,
-    description: msg`The from of the chat message - ID of the entity based on fromType`,
+    description: msg`The from of the client chat message - ID of the entity based on fromType`,
   })
   from: string;
 
@@ -56,7 +57,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.fromType,
     type: FieldMetadataType.TEXT,
     label: msg`From Type`,
-    description: msg`The from type of the chat message`,
+    description: msg`The from type of the client chat message`,
   })
   fromType: ClientChatMessageFromType;
 
@@ -64,7 +65,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.to,
     type: FieldMetadataType.TEXT,
     label: msg`To`,
-    description: msg`The to of the chat message`,
+    description: msg`The to of the client chat message`,
   })
   to: string;
 
@@ -72,7 +73,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.toType,
     type: FieldMetadataType.TEXT,
     label: msg`To Type`,
-    description: msg`The to type of the chat message`,
+    description: msg`The to type of the client chat message`,
   })
   toType: ClientChatMessageToType;
 
@@ -80,7 +81,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
     label: msg`Provider`,
-    description: msg`The provider of the chat message`,
+    description: msg`The provider of the client chat message`,
   })
   provider: ChatIntegrationProvider;
 
@@ -88,7 +89,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.providerMessageId,
     type: FieldMetadataType.TEXT,
     label: msg`Provider Message Id`,
-    description: msg`The provider message id of the chat message`,
+    description: msg`The provider message id of the client chat message`,
   })
   providerMessageId: string;
 
@@ -96,7 +97,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: msg`Type`,
-    description: msg`The type of the chat message`,
+    description: msg`The type of the client chat message`,
   })
   type: ChatMessageType;
 
@@ -104,7 +105,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.textBody,
     type: FieldMetadataType.TEXT,
     label: msg`Text Body`,
-    description: msg`The text body of the chat message`,
+    description: msg`The text body of the client chat message`,
   })
   @WorkspaceIsNullable()
   textBody: string | null;
@@ -113,7 +114,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.caption,
     type: FieldMetadataType.TEXT,
     label: msg`Caption`,
-    description: msg`The caption of the chat message`,
+    description: msg`The caption of the client chat message`,
   })
   @WorkspaceIsNullable()
   caption: string | null;
@@ -122,7 +123,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.deliveryStatus,
     type: FieldMetadataType.TEXT,
     label: msg`Delivery Status`,
-    description: msg`The delivery status of the chat message`,
+    description: msg`The delivery status of the client chat message`,
   })
   deliveryStatus: ChatMessageDeliveryStatus;
 
@@ -143,4 +144,13 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   attachmentUrl: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.event,
+    type: FieldMetadataType.TEXT,
+    label: msg`Event`,
+    description: msg`The event of the chat message`,
+  })
+  @WorkspaceIsNullable()
+  event: ClientChatMessageEvent | null;
 }

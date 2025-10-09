@@ -71,7 +71,7 @@ export class ConditionalInputHandler implements NodeHandler {
         const message: Omit<ClientChatMessage, 'providerMessageId'> = {
           type: ChatMessageType.TEXT,
           textBody: prompt,
-          chatId: clientChat.id,
+          clientChatId: clientChat.id,
           to: clientChat.providerContactId,
           from: chatbotName,
           fromType: ChatMessageFromType.CHATBOT,
@@ -115,7 +115,7 @@ export class ConditionalInputHandler implements NodeHandler {
         const message: Omit<ClientChatMessage, 'providerMessageId'> = {
           type: ChatMessageType.TEXT,
           textBody: optionsList,
-          chatId: clientChat.id,
+          clientChatId: clientChat.id,
           to: clientChat.providerContactId,
           from: chatbotName,
           fromType: ChatMessageFromType.CHATBOT,

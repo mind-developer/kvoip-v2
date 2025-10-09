@@ -38,7 +38,7 @@ export class TextInputHandler implements NodeHandler {
     if (text) {
       const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
       const message: Omit<ClientChatMessage, 'providerMessageId'> = {
-        chatId: clientChat.id,
+        clientChatId: clientChat.id,
         from: chatbotName,
         fromType: ChatMessageFromType.CHATBOT,
         to: clientChat.person.id,
