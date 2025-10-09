@@ -1,16 +1,15 @@
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import { ClientChatWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -72,30 +71,26 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   font-size: 10px;
 `;
 
-export const PaneChatHeader = () => {
+export const PaneChatHeader = ({ chat }: { chat: ClientChatWithPerson }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const { selectedChat, finalizeService } = useContext(
-    CallCenterContext,
-  ) as CallCenterContextType;
-
-  const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
-    useContext(CallCenterContext) as CallCenterContextType;
   const { records: workspaceMembers } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const integration = whatsappIntegrations.find(
-    (wi) => wi.id === selectedChat!.integrationId,
-  );
-  const { records: agents } = useFindManyRecords<Agent & { __typename: string }>({
+
+  const { records: agents } = useFindManyRecords<
+    Agent & { __typename: string }
+  >({
     objectNameSingular: CoreObjectNameSingular.Agent,
   });
-  const agent = agents.find((agent: Agent) => agent.id === selectedChat!.agent);
 
-  const isAdmin = agents.find(
-    (agent: Agent) => agent.id === currentMember?.agentId,
-  )?.isAdmin;
+  const agent = agents.find((agent: Agent) => agent.id === chat!.agentId);
+
+  const { record: whatsappIntegration } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    objectRecordId: chat!.whatsappIntegrationId ?? undefined,
+  });
 
   const member = workspaceMembers.find(
     (wsMember) => wsMember.agentId === agent?.id,
@@ -104,74 +99,76 @@ export const PaneChatHeader = () => {
   const { toggleModal } = useModal();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  if (!selectedChat) return;
+  if (!chat) return;
 
   const IconX = getIcon('IconX');
   const IconDotsVertical = getIcon('IconDotsVertical');
 
-  return (
-    <>
-      <StyledChatHeader>
-        <StyledDiv>
-          <Avatar
-            avatarUrl={selectedChat.client.ppUrl}
-            placeholder={selectedChat.client.name}
-            size="xl"
-            type={'rounded'}
-            placeholderColorSeed={selectedChat.client.name}
-          />
-          <StyledChatTitle>{selectedChat.client.name}</StyledChatTitle>
-          <StyledIntegrationCard>
-            {integration?.name} ({integration?.apiType})
-          </StyledIntegrationCard>
-          {isAdmin && selectedChat.agent !== 'empty' && (
+  if (chat.person?.id)
+    return (
+      <>
+        <StyledChatHeader>
+          <StyledDiv>
+            <Avatar
+              avatarUrl={chat.person.avatarUrl}
+              placeholder={chat.person.firstName ?? undefined}
+              size="xl"
+              type={'rounded'}
+              placeholderColorSeed={chat.person.firstName ?? undefined}
+            />
+            <StyledChatTitle>
+              {chat.person.firstName + ' ' + chat.person.lastName}
+            </StyledChatTitle>
+            <StyledIntegrationCard>
+              {whatsappIntegration?.name} ({whatsappIntegration?.apiType})
+            </StyledIntegrationCard>
             <StyledIntegrationCard>
               {member?.name.firstName} {member?.name.lastName}
             </StyledIntegrationCard>
-          )}
-        </StyledDiv>
-        <StyledActionsContainer>
-          <StyledIconButton
-            onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
-            variant="secondary"
-            accent="danger"
-            size="medium"
-            Icon={(props) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconX {...props} />
-            )}
-          />
-          <TransferChatOptionsDropdown />
-          <StyledIconButton
-            onClick={() => {
-              openRecordInCommandMenu({
-                recordId: selectedChat.personId,
-                objectNameSingular: 'person',
-              });
-            }}
-            variant="secondary"
-            accent="default"
-            size="medium"
-            Icon={(props) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconDotsVertical {...props} />
-            )}
-          />
-        </StyledActionsContainer>
-      </StyledChatHeader>
-      <ConfirmationModal
-        modalId={PANEL_CHAT_HEADER_MODAL_ID}
-        title={'Close service'}
-        subtitle={
-          <>
-            {
-              'This will end the chat and change the status of the service to closed'
-            }
-          </>
-        }
-        onConfirmClick={finalizeService}
-        confirmButtonText={'Close'}
-      />
-    </>
-  );
+          </StyledDiv>
+          <StyledActionsContainer>
+            <StyledIconButton
+              onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
+              variant="secondary"
+              accent="danger"
+              size="medium"
+              Icon={(props) => (
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                <IconX {...props} />
+              )}
+            />
+            <TransferChatOptionsDropdown />
+            <StyledIconButton
+              onClick={() => {
+                openRecordInCommandMenu({
+                  recordId: chat.person!.id,
+                  objectNameSingular: 'person',
+                });
+              }}
+              variant="secondary"
+              accent="default"
+              size="medium"
+              Icon={(props) => (
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                <IconDotsVertical {...props} />
+              )}
+            />
+          </StyledActionsContainer>
+        </StyledChatHeader>
+        <ConfirmationModal
+          modalId={PANEL_CHAT_HEADER_MODAL_ID}
+          title={'Close service'}
+          subtitle={
+            <>
+              {
+                'This will end the chat and change the status of the service to closed'
+              }
+            </>
+          }
+          //TODO: Implement finalize service
+          onConfirmClick={() => {}}
+          confirmButtonText={'Close'}
+        />
+      </>
+    );
 };

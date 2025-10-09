@@ -1,6 +1,7 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
+import { useId } from 'react';
 
 type TabItemProps = {
   id: string;
@@ -25,6 +26,7 @@ export const PaneSideTabs = ({
   loading,
   className,
 }: PaneSideTabsProps) => {
+  const id = useId();
   // Transform TabItemProps to SingleTabProps
   const transformedTabs: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -37,7 +39,7 @@ export const PaneSideTabs = ({
       tabs={transformedTabs}
       loading={loading}
       className={className}
-      componentInstanceId={tabListId}
+      componentInstanceId={id}
       behaveAsLinks={false}
     />
   );

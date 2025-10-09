@@ -1,21 +1,22 @@
-import { IMessage } from '@/chat/types/WhatsappDocument';
+import { getMessageContent } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import styled from '@emotion/styled';
+import {
+  ChatMessageDeliveryStatus,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../call-center/constants/ATTEMPTING_MESSAGE_KEYFRAMES';
-import { MessageStatus } from '../call-center/types/MessageStatus';
 
-const StyledImageContainer = styled.div<{ status: MessageStatus }>`
+const StyledImageContainer = styled.div<{ isPending: boolean }>`
   display: flex;
   align-items: center;
   gap: 5px;
-  ${({ status }) =>
-    status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''}
+  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
   overflow: hidden;
   border-radius: ${({ theme }) => theme.spacing(3)};
 `;
-const StyledImageImg = styled.img<{ status: MessageStatus }>`
-  ${({ status }) =>
-    status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''};
-  filter: ${({ status }) => (status === 'attempting' ? 'blur(10px)' : 'none')};
+const StyledImageImg = styled.img<{ isPending: boolean }>`
+  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')};
+  filter: ${({ isPending }) => (isPending ? 'blur(10px)' : 'none')};
   z-index: 1;
   min-width: 150px;
   min-height: 150px;
@@ -33,14 +34,18 @@ const StyledImage = ({
   message,
   onClick,
 }: {
-  message: IMessage;
+  message: ClientChatMessage;
   onClick: () => void;
 }) => {
+  const isPending =
+    message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
+  const imageUrl = getMessageContent(message);
+
   return (
-    <StyledImageContainer onClick={onClick} status={message.status}>
+    <StyledImageContainer onClick={onClick} isPending={isPending}>
       <StyledImageImg
-        status={message.status}
-        src={message.message}
+        isPending={isPending}
+        src={imageUrl}
         width="100%"
         height="100%"
       />
