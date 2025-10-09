@@ -35,7 +35,8 @@ export enum AppPath {
   DevelopersCatchAll = `/${Developers}/*`,
 
   InternalChat = '/chat/internal',
-  ExternalChat = '/chat/call-center',
+  CallCenter = '/chat/call-center',
+  CallCenterChat = '/chat/call-center/:chatId',
 
   Chatbot = 'objects/chatbot',
   DashboardLinks = '/dashboard-links',
