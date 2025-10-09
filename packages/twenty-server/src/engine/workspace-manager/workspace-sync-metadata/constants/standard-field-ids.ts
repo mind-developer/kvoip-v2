@@ -645,6 +645,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
+  tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
