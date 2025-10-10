@@ -17,11 +17,6 @@ export type ChatMessage = {
   updatedAt?: string; // ISO string timestamp
 };
 
-// export type ClientChatMessage = ChatMessage & {
-//   fromType: Omit<ChatMessageFromType, 'WORKSPACE_MEMBER'>;
-//   toType: Omit<ChatMessageToType, 'WORKSPACE_MEMBER'>;
-// };
-
 export type InternalChatMessage = Omit<
   ChatMessage,
   'chatId' | 'fromType' | 'toType' | 'provider' | 'providerMessageId' | 'event'
