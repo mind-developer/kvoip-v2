@@ -11,6 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
 import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -147,6 +148,97 @@ export class OwnerService {
       await this.handleOwnerUpsert({
         user: updatedUser,
         workspaceId,
+      });
+    }
+  }
+
+  async handleWorkspaceMemberPersonUpsert({
+    workspaceId,
+    member,
+  }: {
+    workspaceId: string;
+    member: WorkspaceMemberWorkspaceEntity;
+  }) {
+    const adminWorkspace = await this.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace)) return;
+
+    const tenantRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
+        adminWorkspace.id,
+        'tenant',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const tenant = await tenantRepository.findOne({
+      where: {
+        coreWorkspaceId: workspaceId,
+      },
+    });
+
+    if (!isDefined(tenant)) return;
+
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        adminWorkspace.id,
+        'person',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const existingPerson = member.userEmail
+      ? await personRepository.findOne({
+          where: {
+            emails: {
+              primaryEmail: member.userEmail,
+            },
+          },
+        })
+      : null;
+
+    const personData: Partial<PersonWorkspaceEntity> = {
+      emails: member.userEmail
+        ? {
+            primaryEmail: member.userEmail,
+            additionalEmails: null,
+          }
+        : existingPerson?.emails || {
+            primaryEmail: '',
+            additionalEmails: null,
+          },
+    };
+
+    if (isDefined(member.name)) {
+      const hasName =
+        isDefined(member.name.firstName) || isDefined(member.name.lastName);
+
+      if (hasName) {
+        personData.name = {
+          firstName: member.name.firstName || '',
+          lastName: member.name.lastName || '',
+        };
+      }
+    }
+
+    if (isDefined(member.avatarUrl) && member.avatarUrl !== '') {
+      personData.avatarUrl = member.avatarUrl;
+    }
+
+    if (isDefined(tenant.companyId)) {
+      personData.companyId = tenant.companyId;
+    }
+
+    const person = await personRepository.save({
+      ...existingPerson,
+      ...personData,
+    });
+
+    if (tenant.personId !== person.id) {
+      await tenantRepository.update(tenant.id, {
+        personId: person.id,
       });
     }
   }

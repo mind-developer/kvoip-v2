@@ -13,6 +13,7 @@ export const TENANT_STANDARD_FIELD_IDS = {
   person: '30303030-bc51-40b6-bcf0-ffc9febd57e5',
 };
 
+// TODO: Remvoe this field after migration to person
 export const OWNER_STANDARD_FIELD_IDS = {
   name: '20202020-22f1-449e-aa30-268b0cc09f83',
   emails: '20202020-4c3a-47b3-8177-477496ec055a',

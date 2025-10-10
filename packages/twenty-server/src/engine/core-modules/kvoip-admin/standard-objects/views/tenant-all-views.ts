@@ -35,7 +35,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.owner,
+            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.person,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -44,18 +44,9 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.person,
-          )?.id ?? '',
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          tenantObjectMetadata.fields.find(
             (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.company,
           )?.id ?? '',
-        position: 3,
+        position: 2,
         isVisible: true,
         size: 150,
       },
@@ -65,7 +56,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
             (field) =>
               field.standardId === TENANT_STANDARD_FIELD_IDS.ownerEmail,
           )?.id ?? '',
-        position: 4,
+        position: 3,
         isVisible: true,
         size: 150,
       },
@@ -75,7 +66,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
             (field) =>
               field.standardId === TENANT_STANDARD_FIELD_IDS.membersCount,
           )?.id ?? '',
-        position: 5,
+        position: 4,
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.COUNT,
@@ -86,7 +77,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
             (field) =>
               field.standardId === TENANT_STANDARD_FIELD_IDS.extentionsCount,
           )?.id ?? '',
-        position: 6,
+        position: 5,
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.COUNT,
@@ -98,7 +89,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
             (field) =>
               field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
-        position: 7,
+        position: 6,
         isVisible: true,
         size: 150,
       },
