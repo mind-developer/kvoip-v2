@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientChatStatus } from 'twenty-shared/types';
-import { TAB_LIST_COMPONENT_ID } from '~/pages/settings/service-center/SettingsServiceCenterShowTabs';
 
 const StyledPaneSideContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -38,6 +37,8 @@ const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
   height: 80dvh;
   overflow-y: ${({ isScrollable }) => (isScrollable ? 'scroll' : 'unset')};
 `;
+
+const TAB_LIST_COMPONENT_ID = 'chat-call-center-tabs';
 
 export const PaneSide = () => {
   const navigate = useNavigate();
