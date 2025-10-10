@@ -21,7 +21,7 @@ export const SettingsServiceCenterTelephony = () => {
       title={t`Extensions`}
       actionButton={
         <UndecoratedLink
-          to={getSettingsPath(SettingsPath.FinancialClosingNew)}
+          to={getSettingsPath(SettingsPath.ServiceCenterNewTelephonyExtension)}
         >
           <Button
             Icon={IconPlus}

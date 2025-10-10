@@ -56,7 +56,6 @@ export const ShowServiceCenterTelephonyTabs = ({
 
   const { telephonys, refetch } = useFindAllTelephonys();
   const { extensions, refetch: refetchExtensions } = useFindAllExternalExtensions();
-  const { linkMemberToExtension } = useLinkMemberToExtension();
 
   useEffect(() => {
     refetch();

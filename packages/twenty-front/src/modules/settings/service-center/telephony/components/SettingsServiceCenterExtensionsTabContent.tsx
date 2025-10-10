@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { IconUser, useIcons } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
@@ -33,36 +33,59 @@ export const SettingsServiceCenterExtensionsTabContent = ({
 
   return (
     <>
-      <StyledSection>
-        {extensions?.map((extension) => (
+      { extensions && extensions?.length > 0 ? (
 
-          <ServiceCenterExternalExtensionTableRow
-            key={extension.ramal_id}
-            extension={extension}
-            accessory={
-              <ServiceCenterFieldActionDropdown
-                scopeKey={extension.nome ?? extension.numero!}
-                // onDelete={async () => {
-                  
-                // }}
-                extraMenuItems={[
-                  {
-                    text: t`Link member`,
-                    icon: IconUser,
-                    onClick: () => {
-                      navigate(
-                        getSettingsPath(SettingsPath.ServiceCenterLinkTelephonyExtension, {
-                          extensionNumber: extension.numero!,
-                        })
-                      );
-                    },
-                  },
-                ]}
+          <StyledSection>
+            {extensions?.map((extension) => (
+    
+              <ServiceCenterExternalExtensionTableRow
+                key={extension.ramal_id}
+                extension={extension}
+                accessory={
+                  <ServiceCenterFieldActionDropdown
+                    key={extension.ramal_id}
+                    scopeKey={extension.nome ?? extension.numero!}
+                    // onDelete={async () => {
+                      
+                    // }}
+                    extraMenuItems={[
+                      {
+                        text: t`Link member`,
+                        icon: IconUser,
+                        onClick: () => {
+                          navigate(
+                            getSettingsPath(SettingsPath.ServiceCenterLinkTelephonyExtension, {
+                              extensionNumber: extension.numero!,
+                            })
+                          );
+                        },
+                      },
+                    ]}
+                  />
+                }
               />
-            }
-          />
-        ))}
-      </StyledSection>
+            ))}
+          </StyledSection>
+
+        ) : (
+
+          <Section>
+            <div style={{ marginTop: theme.spacing(10) }}>
+              <AnimatedPlaceholderEmptyContainer>
+                <AnimatedPlaceholder type="noRecord" />
+                <AnimatedPlaceholderEmptyTextContainer>
+                  <AnimatedPlaceholderEmptyTitle>
+                    {t`No extensions found`}
+                  </AnimatedPlaceholderEmptyTitle>
+                  <AnimatedPlaceholderEmptySubTitle>
+                    {t`Create an extension to get started`}
+                  </AnimatedPlaceholderEmptySubTitle>
+                </AnimatedPlaceholderEmptyTextContainer>
+              </AnimatedPlaceholderEmptyContainer>
+            </div>
+          </Section>
+          
+        )}
     </>
   );
 };

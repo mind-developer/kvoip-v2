@@ -3,14 +3,14 @@ import { SettingsFinancialClosingTableRow } from '@/settings/financial-closing/c
 import { useDeleteFinancialClosing } from '@/settings/financial-closing/hooks/useDeleteFinancialClosing';
 import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
-import { useDeleteSector } from '@/settings/service-center/sectors/hooks/useDeleteSector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconArchive, IconClock, IconTextSize } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Section } from 'twenty-ui/layout';
+import { AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTitle, AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptyTextContainer, Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
@@ -46,6 +46,7 @@ export const SettingsFinancialClosings = ({
   const { t } = useLingui();
   const navigate = useNavigate();
   const isMobile = useIsMobile() || isRightDrawer;
+  const theme = useTheme();
 
   const { deleteFinancialClosingById } = useDeleteFinancialClosing();
 
@@ -96,6 +97,26 @@ export const SettingsFinancialClosings = ({
               }
             />
           ))}
+
+        {
+          financialClosings && financialClosings?.length === 0 && (
+            <Section>
+              <div style={{ marginTop: theme.spacing(10) }}>
+                <AnimatedPlaceholderEmptyContainer>
+                  <AnimatedPlaceholder type="noRecord" />
+                  <AnimatedPlaceholderEmptyTextContainer>
+                    <AnimatedPlaceholderEmptyTitle>
+                      {t`No financial closings found`}
+                    </AnimatedPlaceholderEmptyTitle>
+                    <AnimatedPlaceholderEmptySubTitle>
+                      {t`Create a financial closing to get started`}
+                    </AnimatedPlaceholderEmptySubTitle>
+                  </AnimatedPlaceholderEmptyTextContainer>
+                </AnimatedPlaceholderEmptyContainer>
+              </div>
+            </Section>
+          )
+        }
         </StyledSection>
       )}
     </StyledShowServiceCenterTabs>
