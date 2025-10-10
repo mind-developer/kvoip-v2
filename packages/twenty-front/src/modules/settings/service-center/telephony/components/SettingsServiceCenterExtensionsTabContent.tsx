@@ -1,27 +1,25 @@
 /* @kvoip-woulz proprietary */
-import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow';
-import { ExternalTelephonyExtension } from '@/settings/service-center/telephony/types/ExternalTelephonyExtension';
-import { TelephonyExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { SettingsPath } from '@/types/SettingsPath';
+import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
+import { ServiceCenterExternalExtensionTableRow } from '@/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow';
+import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { useIcons } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { IconUser, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
-  extensions: ExternalTelephonyExtension[];
+  extensions: SettingsServiceCenterExternalExtension[];
   refetch: () => void;
 };
 
-// const StyledSection = styled(Section)`
-//   background: ${({ theme }) => theme.background.secondary};
-//   border: 1px solid ${({ theme }) => theme.border.color.medium};
-//   border-radius: ${({ theme }) => theme.spacing(1)};
-//   margin-top: ${({ theme }) => theme.spacing(4)};
-// `;
+const StyledSection = styled(Section)`
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+`;
 
 export const SettingsServiceCenterExtensionsTabContent = ({
   extensions,
@@ -29,29 +27,37 @@ export const SettingsServiceCenterExtensionsTabContent = ({
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
-  const EditTelephonyIcon = getIcon('IconEdit');
+  const { t } = useLingui();
 
   return (
     <>
-      {/* <StyledSection>
-        {telephonys?.map((telephony) => (
-          <SettingsServiceCenterItemTableRow
-            key={telephony.id}
-            telephony={telephony}
+      <StyledSection>
+        {extensions?.map((extension) => (
+
+          <ServiceCenterExternalExtensionTableRow
+            key={extension.ramal_id}
+            extension={extension}
             accessory={
-              <IconButton
-                onClick={() => handleEditTelephony(telephony.id)}
-                Icon={() => (
-                  <EditTelephonyIcon
-                    size={theme.icon.size.md}
-                    color={theme.font.color.tertiary}
-                  />
-                )}
+              <ServiceCenterFieldActionDropdown
+                scopeKey={extension.nome ?? extension.numero!}
+                // onEdit={() => { 
+                  
+                // }}
+                // onDelete={async () => {
+                  
+                // }}
+                extraMenuItems={[
+                  {
+                    text: t`Link member`,
+                    icon: IconUser,
+                    onClick: () => {},
+                  },
+                ]}
               />
             }
           />
         ))}
-      </StyledSection> */}
+      </StyledSection>
     </>
   );
 };

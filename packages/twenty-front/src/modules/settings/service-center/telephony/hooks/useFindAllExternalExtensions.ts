@@ -1,14 +1,14 @@
-// packages/twenty-front/src/modules/roles/hooks/useAllRoles.ts
+/* @kvoip-woulz proprietary */
 import { useQuery } from '@apollo/client';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_EXTERNAL_EXTENSIONS } from '@/settings/service-center/telephony/graphql/queries/getAllExternalExtensions';
-import { ExternalTelephonyExtension } from '@/settings/service-center/telephony/types/ExternalTelephonyExtension';
+import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 
 type UseFindAllExternalExtensionsReturn = {
-  extensions: ExternalTelephonyExtension[];
+  extensions: SettingsServiceCenterExternalExtension[];
   loading: boolean;
   refetch: () => void;
 };

@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 
-export type ExternalTelephonyExtension = {
+export type SettingsServiceCenterExternalExtension = {
   ramal_id?: string;
   cliente_id?: string;
   nome?: string;

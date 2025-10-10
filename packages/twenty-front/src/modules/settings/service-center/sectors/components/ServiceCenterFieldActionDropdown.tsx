@@ -138,13 +138,13 @@ type ExtraMenuItem = {
 };
 
 type ServiceCenterFieldActionDropdownProps = {
-  modalMessage: {
+  modalMessage?: {
     title: string;
     subtitle: string;
   };
   onDelete?: () => void;
   onDeactivate?: () => void;
-  onEdit: (action: ActionType) => void;
+  onEdit?: (action: ActionType) => void;
   onSetAsLabelIdentifier?: () => void;
   scopeKey: string;
   isActive?: boolean;
@@ -178,7 +178,7 @@ export const ServiceCenterFieldActionDropdown = ({
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    closeModal(SERVCIE_CENTER_ACTION_MODAL_ID);
+    closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
     toggleDropdown();
   };
 
@@ -202,14 +202,17 @@ export const ServiceCenterFieldActionDropdown = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {/* --- FIXOS --- */}
-              <MenuItem
-                text={t`Edit`}
-                LeftIcon={IconPencil}
-                onClick={() => {
-                  onEdit('Edit');
-                  toggleDropdown();
-                }}
-              />
+
+              {!!onEdit && (              
+                <MenuItem
+                  text={t`Edit`}
+                  LeftIcon={IconPencil}
+                  onClick={() => {
+                    onEdit('Edit');
+                    toggleDropdown();
+                  }}
+                />
+              )}
 
               {!!onSetAsLabelIdentifier && (
                 <MenuItem
@@ -260,13 +263,15 @@ export const ServiceCenterFieldActionDropdown = ({
         }
       />
 
-      <ConfirmationModal
-        modalId={SERVICE_CENTER_ACTION_MODAL_ID}
-        title={modalMessage.title}
-        subtitle={modalMessage.subtitle}
-        onConfirmClick={onDelete ? handleDelete : handleDeactivate}
-        confirmButtonText={t`Continue`}
-      />
+      {!!modalMessage && (
+        <ConfirmationModal
+          modalId={SERVICE_CENTER_ACTION_MODAL_ID}
+          title={modalMessage.title}
+          subtitle={modalMessage.subtitle}
+          onConfirmClick={onDelete ? handleDelete : handleDeactivate}
+          confirmButtonText={t`Continue`}
+        />
+      )}
 
       {/* Modal para itens dinâmicos */}
       {activeExtraModal && (

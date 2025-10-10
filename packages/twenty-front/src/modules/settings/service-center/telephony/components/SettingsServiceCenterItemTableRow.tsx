@@ -40,12 +40,14 @@ const StyledEmailText = styled.span`
 `;
 
 const StyledExtensionText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledExtensionContentText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledTextContent = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
 `;
 
 type SettingsServiceCenterItemTableRowProps = {
@@ -82,15 +84,13 @@ export const SettingsServiceCenterItemTableRow = ({
         />
         <StyledEmailText>{member?.userEmail}</StyledEmailText>
       </StyledContent>
-      <StyledStatusContainer>
-        <div>
-          <StyledExtensionText>{t`Extension`}: </StyledExtensionText>
-          <StyledExtensionContentText>
-            {telephony.numberExtension}
-          </StyledExtensionContentText>
-        </div>
+        <StyledTextContent>
+          <StyledExtensionText> {t`Extension`}: </StyledExtensionText>
+          <OverflowingTextWithTooltip
+            text={telephony.numberExtension}
+          />
+        </StyledTextContent>
         {accessory}
-      </StyledStatusContainer>
     </StyledContainer>
   );
 };

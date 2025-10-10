@@ -686,7 +686,7 @@ export class TelephonyResolver {
   async linkMemberToExtension(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args('extensionId', { type: () => String }) extensionId: string,
+    @Args('numberExtension', { type: () => String }) numberExtension: string,
     @Args('memberId', { type: () => ID }) memberId: string,
   ): Promise<TelephonyWorkspaceEntity> {
     if (!userId) {
@@ -698,11 +698,20 @@ export class TelephonyResolver {
     }
 
     // Buscar a extensão na API PABX
-    const extension = await this.pabxService.getExtensionById(extensionId, workspace.pabxCompanyId);
+    // const extension = await this.pabxService.getExtensionById(extensionId, workspace.pabxCompanyId);
     
-    if (!extension) {
+    const extension = await this.pabxService.listExtentions({
+      numero: numberExtension,
+      cliente_id: workspace.pabxCompanyId,
+    });
+
+    this.logger.log('extension ------------------------------------------------', JSON.stringify(extension.data.dados, null, 2));
+
+    if (!extension?.data?.dados) {
       throw new Error('Extension not found');
     }
+
+    const extensionData = Array.isArray(extension.data.dados) ? extension.data.dados[0] : extension.data.dados;
 
     // Verificar se o membro já possui um ramal
     const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
@@ -717,23 +726,23 @@ export class TelephonyResolver {
     // Criar registro na tabela telephony
     const telephonyData = {
       memberId,
-      ramal_id: extensionId,
-      extensionName: extension.nome,
-      numberExtension: extension.numero,
-      type: extension.tipo,
-      SIPPassword: extension.senha_sip,
-      callerExternalID: extension.caller_id_externo,
-      dialingPlan: extension.plano_discagem_id,
-      areaCode: extension.codigo_area,
-      pullCalls: extension.puxar_chamadas,
-      listenToCalls: extension.escutar_chamadas === '1',
-      recordCalls: extension.gravar_chamadas === '1',
-      blockExtension: extension.bloquear_ramal === '1',
+      ramal_id: extensionData.numero,
+      extensionName: extensionData.nome,
+      numberExtension: extensionData.numero,
+      type: extensionData.tipo,
+      SIPPassword: extensionData.senha_sip,
+      callerExternalID: extensionData.caller_id_externo,
+      dialingPlan: extensionData.plano_discagem_id,
+      areaCode: extensionData.codigo_area,
+      pullCalls: extensionData.puxar_chamadas,
+      listenToCalls: extensionData.escutar_chamadas === '1',
+      recordCalls: extensionData.gravar_chamadas === '1',
+      blockExtension: extensionData.bloquear_ramal === '1',
       enableMailbox: false,
       emailForMailbox: '',
-      fowardAllCalls: extension.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
-      fowardOfflineWithoutService: extension.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
-      fowardBusyNotAvailable: extension.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
+      fowardAllCalls: extensionData.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
+      fowardOfflineWithoutService: extensionData.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
+      fowardBusyNotAvailable: extensionData.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
     };
 
     const result = await this.telephonyService.createTelephony(
@@ -744,7 +753,7 @@ export class TelephonyResolver {
     await this.telephonyService.setExtensionNumberInWorkspaceMember(
       workspace.id,
       memberId,
-      extension.numero,
+      extensionData.numero,
     );
 
     return result;
