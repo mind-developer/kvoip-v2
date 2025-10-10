@@ -3,7 +3,7 @@ import { Avatar } from 'twenty-ui/display';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
-import { formatDate } from '@/chat/utils/formatDate';
+import { ClientChatWithPerson } from '../hooks/useClientChatsWithPerson';
 
 const StyledItemChat = styled.div<{ isSelected?: boolean }>`
   align-items: center;
@@ -77,27 +77,31 @@ const StyledContainerPills = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
-  // const integration =
-  //   platform === 'whatsapp'
-  //     ? whatsappIntegrations.find((wi) => wi.id === chat.integrationId)
-  //     : messengerIntegrations.find(
-  //         (fi: MessengerIntegration) => fi.id === chat.integrationId,
-  //       );
+type ChatCellProps = {
+  chat: ClientChatWithPerson;
+  isSelected?: boolean;
+  onSelect: () => void;
+};
 
-  const userNameToDisplay = chat.lastMessage.from.replace('_', '');
-  const formattedMessage = chat.lastMessage.fromMe
-    ? chat.lastMessage.message.replace(`*#${userNameToDisplay}*`, '')
-    : chat.lastMessage.message;
+export const ChatCell = ({ chat, isSelected, onSelect }: ChatCellProps) => {
+  // Get client name from person data
+  const clientName = chat.person
+    ? `${chat.person.firstName || ''} ${chat.person.lastName || ''}`.trim() ||
+      'Cliente'
+    : 'Cliente';
 
-  const messageToDisplay = `${chat.lastMessage.fromMe ? userNameToDisplay + ':' : ''} ${formattedMessage}`;
+  // Get client avatar from person data
+  const clientAvatar = chat.person?.avatarUrl || null;
+
+  // For now, show a placeholder message since we don't have lastMessage in ClientChat
+  const messageContent = 'Clique para abrir o chat';
 
   return (
     <StyledItemChat onClick={onSelect} isSelected={isSelected}>
       <Avatar
-        avatarUrl={chat.client.ppUrl}
-        placeholderColorSeed={chat.client.name}
-        placeholder={chat.client.name}
+        avatarUrl={clientAvatar}
+        placeholderColorSeed={clientName}
+        placeholder={clientName}
         type={'rounded'}
         size="xl"
       />
@@ -105,16 +109,14 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
         <StyledContainerPills></StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
-            <StyledUserName>{chat.client.name}</StyledUserName>
+            <StyledUserName>{clientName}</StyledUserName>
             <StyledLastMessagePreview>
-              {messageToDisplay}
+              {messageContent}
             </StyledLastMessagePreview>
           </StyledDiv>
           <StyledDateAndUnreadMessagesContainer>
-            {formatDate(chat.lastMessage.createdAt).time}
-            {chat.unreadMessages > 0 && (
-              <StyledUnreadMessages>{chat.unreadMessages}</StyledUnreadMessages>
-            )}
+            {/* TODO: Show last message time */}
+            {/* TODO: Implement unread messages count */}
           </StyledDateAndUnreadMessagesContainer>
         </StyledContainer>
       </StyledContentContainer>

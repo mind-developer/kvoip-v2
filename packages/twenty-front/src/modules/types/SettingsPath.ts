@@ -33,6 +33,10 @@ export enum SettingsPath {
   EditTelephony = 'service-center/telephony/:telephonySlug/edit',
   ServiceCenterServiceLevel = 'service-center/sla',
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
+  Chatbots = 'chatbots/',
+  ChatbotsCreate = 'chatbots/create',
+  ChatbotsEdit = 'chatbots/:chatbotSlug/edit',
+  ChatbotFlow = 'chatbots/flow/:id',
 
   FinancialClosing = 'financial-closing',
   FinancialClosingNew = 'financial-closing/new',

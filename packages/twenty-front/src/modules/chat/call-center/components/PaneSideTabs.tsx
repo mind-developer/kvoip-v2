@@ -1,8 +1,7 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
-
-
+import { useId } from 'react';
 
 type TabItemProps = {
   id: string;
@@ -17,15 +16,8 @@ type PaneSideTabsProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  user-select: none;
+const StyledTabList = styled(TabList)`
+  min-width: 270px;
 `;
 
 export const PaneSideTabs = ({
@@ -34,6 +26,7 @@ export const PaneSideTabs = ({
   loading,
   className,
 }: PaneSideTabsProps) => {
+  const id = useId();
   // Transform TabItemProps to SingleTabProps
   const transformedTabs: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -42,11 +35,11 @@ export const PaneSideTabs = ({
   }));
 
   return (
-    <TabList
+    <StyledTabList
       tabs={transformedTabs}
       loading={loading}
       className={className}
-      componentInstanceId={tabListId}
+      componentInstanceId={id}
       behaveAsLinks={false}
     />
   );

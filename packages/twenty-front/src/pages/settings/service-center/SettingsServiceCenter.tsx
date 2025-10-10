@@ -14,18 +14,19 @@ export const SettingsServiceCenter = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Service Center' },
+        {
+          children: 'Service Center',
+        },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={''}
+            title={'General'}
             description={'Manage all agents and sectors here.'}
           />
-
           <SettingsServiceCenterSection />
         </Section>
       </SettingsPageContainer>

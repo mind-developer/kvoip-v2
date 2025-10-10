@@ -6,10 +6,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  WhatsappEmmitResolvedchatsJob,
-  WhatsappEmmitResolvedchatsJobProps,
-} from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WHATSAPP_EMMIT_CRON_PATTERN } from 'src/engine/core-modules/meta/whatsapp/cron/utils/whatsapp-emmit-cron-pattern';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 
@@ -20,7 +16,7 @@ export class WhatsappEmmitResolvedChatsCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.chargeQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly whatsAppService: WhatsAppService,
+    private readonly whatsappService: WhatsAppService,
   ) {}
 
   @Process(WhatsappEmmitResolvedChatsCronJob.name)
@@ -31,36 +27,40 @@ export class WhatsappEmmitResolvedChatsCronJob {
   async handle() {
     this.logger.warn(`Checking resolved whatsapp chats to emmit`);
 
-    const whatsappChatsToReassignMap =
-      (await this.whatsAppService.getWorkspaceWhatsappResolvedChatsMapToReassign()) ??
-      {};
+    // TODO: Implement
 
-    const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);
+    // this.logger.warn(`Checking resolved whatsapp chats to emmit`);
 
-    if (whatsappChatsMapMapList.length === 0) {
-      this.logger.warn(`No resolved whatsapp chats found to emmit`);
+    // const whatsappChatsToReassignMap =
+    //   (await this.whatsappService.getWorkspaceWhatsappResolvedChatsMapToReassign()) ??
+    //   {};
 
-      return;
-    }
+    // const whatsappChatsMapMapList = Object.entries(whatsappChatsToReassignMap);
 
-    this.logger.log(
-      `Found ${whatsappChatsMapMapList.length} resolved chats with visibility to emmit`,
-    );
+    // if (whatsappChatsMapMapList.length === 0) {
+    //   this.logger.warn(`No resolved whatsapp chats found to emmit`);
 
-    for (const whatsappChatsMapMap of whatsappChatsMapMapList) {
-      const [docId, waDocs] = whatsappChatsMapMap;
+    //   return;
+    // }
 
-      await Promise.all(
-        waDocs.map((waDoc) =>
-          this.messageQueueService.add<WhatsappEmmitResolvedchatsJobProps>(
-            WhatsappEmmitResolvedchatsJob.name,
-            {
-              docId,
-              waDoc,
-            },
-          ),
-        ),
-      );
-    }
+    // this.logger.log(
+    //   `Found ${whatsappChatsMapMapList.length} resolved chats with visibility to emmit`,
+    // );
+
+    // for (const whatsappChatsMapMap of whatsappChatsMapMapList) {
+    //   const [docId, waDocs] = whatsappChatsMapMap;
+
+    //   await Promise.all(
+    //     waDocs.map((waDoc) =>
+    //       this.messageQueueService.add<WhatsappEmmitResolvedchatsJobProps>(
+    //         WhatsappEmmitResolvedchatsJob.name,
+    //         {
+    //           docId,
+    //           waDoc,
+    //         },
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 }

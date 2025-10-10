@@ -127,6 +127,7 @@ export const PaneSideHeader = () => {
         name: `${currentMember?.name.firstName} ${currentMember?.name.lastName}`,
         id: currentMember?.agentId,
       },
+      type: 'template',
     };
 
     sendWhatsappTemplateMessage(sendTemplateInput);

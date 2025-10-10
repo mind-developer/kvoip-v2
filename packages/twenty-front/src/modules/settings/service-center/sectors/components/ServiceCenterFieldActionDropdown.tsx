@@ -241,7 +241,6 @@ export const ServiceCenterFieldActionDropdown = ({
                 />
               )}
 
-              {/* --- DINÂMICOS --- */}
               {extraMenuItems?.map((item, idx) => (
                 <MenuItem
                   key={idx}
@@ -273,7 +272,6 @@ export const ServiceCenterFieldActionDropdown = ({
         />
       )}
 
-      {/* Modal para itens dinâmicos */}
       {activeExtraModal && (
         <ConfirmationModal
           modalId={SERVICE_CENTER_ACTION_MODAL_ID}

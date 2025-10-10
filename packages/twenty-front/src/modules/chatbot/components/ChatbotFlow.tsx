@@ -11,15 +11,12 @@ import TextNode from '@/chatbot/components/nodes/TextNode';
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
 import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
 
-import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
-import { GET_CHATBOT_FLOW_BY_ID } from '../graphql/query/getChatbotFlowById';
 
-import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { useSetChatbotFlowState } from '@/chatbot/hooks/useSetChatbotFlowState';
-import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
-import { initialEdges, initialNodes } from '../flow-templates/mockFlowTemplate';
+import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useEffect } from 'react';
 
 const types: NodeTypes = {
   text: TextNode,
@@ -28,54 +25,34 @@ const types: NodeTypes = {
   file: FileNode,
 };
 
-export const ChatbotFlow = ({
-  targetableObjectId,
-}: {
-  targetableObjectId: string;
-}) => {
-  const { chatbot } = useGetChatbot(targetableObjectId);
-  const status = chatbot?.statuses ?? 'DEACTIVATED';
-
-  const chatbotFlow = useGetChatbotFlowState();
-  const { setChatbotFlowState } = useSetChatbotFlowState();
-  const [canRender, setCanRender] = useState(false);
-
-  const { refetch, loading } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
-    variables: { chatbotId: targetableObjectId },
-    onCompleted: (d) => {
-      setChatbotFlowState(d.getChatbotFlowById);
-      setCanRender(true);
-    },
-    onError: () => {
-      setChatbotFlowState({
-        nodes: initialNodes,
-        edges: initialEdges,
-        chatbotId: targetableObjectId,
-      });
-      setCanRender(true);
-    },
+export const ChatbotFlow = ({ chatbotId }: { chatbotId: string }) => {
+  const { record: chatbot } = useFindOneRecord<
+    Omit<ChatbotFlowData, 'id'> & { id: string; __typename: string }
+  >({
+    objectNameSingular: 'chatbot',
+    objectRecordId: chatbotId,
   });
+  const { setChatbotFlowState } = useSetChatbotFlowState();
+  const status = chatbot?.status ?? 'DEACTIVATED';
 
   useEffect(() => {
-    if (chatbot?.id) refetch();
+    if (chatbot) setChatbotFlowState(chatbot);
   }, [chatbot]);
 
   const tagProps = chatbotStatusTagProps({
     chatbotStatus: status,
   });
 
-  if (loading) return <p>Loading</p>;
-  if (canRender) {
+  if (chatbot)
     return (
       <ReactFlowProvider>
         <BotDiagramBase
           nodeTypes={types}
           tagColor={tagProps.color}
           tagText={tagProps.text}
-          chatbotId={targetableObjectId}
+          chatbotId={chatbot.id}
         />
         <ChatbotFlowDiagramCanvasEditableEffect />
       </ReactFlowProvider>
     );
-  }
 };

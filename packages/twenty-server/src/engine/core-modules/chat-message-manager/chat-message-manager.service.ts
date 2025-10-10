@@ -4,15 +4,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import axios from 'axios';
-import {
-  SendWhatsAppMessageInput,
-  SendWhatsAppTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
-import { SendWhatsAppMessageResponse } from 'src/engine/core-modules/meta/whatsapp/types/SendWhatsAppMessageResponse';
-import { parseFields } from 'src/engine/core-modules/meta/whatsapp/utils/parseMessage';
+import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
+import { ClientChatMessage } from 'twenty-shared/types';
 
 @Injectable()
 export class ChatMessageManagerService {
@@ -27,45 +23,45 @@ export class ChatMessageManagerService {
   }
 
   async sendWhatsAppMessage(
-    input: Omit<SendWhatsAppMessageInput, 'personId'>,
+    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
+    whatsappIntegrationId: string,
     workspaceId: string,
-  ): Promise<SendWhatsAppMessageResponse | null> {
-    this.logger.log('(sendWhatsAppMessage): Sending message:', input);
+  ): Promise<{ id: string } | null> {
     const integration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
-        'whatsapp',
+        'whatsappIntegration',
       )
-    ).findOne({ where: { id: input.integrationId } });
+    ).findOne({ where: { id: whatsappIntegrationId } });
 
     if (!integration) {
-      this.logger.log(
+      this.logger.error(
         '(sendWhatsAppMessage): Could not find WhatsApp integration:',
-        integration,
+        whatsappIntegrationId,
       );
       throw new InternalServerErrorException('WhatsApp integration not found');
     }
     const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
     const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
 
-    const tipoApi = integration?.tipoApi || 'MetaAPI';
-    this.logger.log('(sendWhatsAppMessage): API Type:', tipoApi);
+    const apiType = integration?.apiType || 'MetaAPI';
+    this.logger.log('(sendWhatsAppMessage): API Type:', apiType);
 
     const headers = {
       Authorization: `Bearer ${integration.accessToken}`,
       'Content-Type': 'application/json',
     };
 
-    const fields = parseFields(input);
+    const fields = getMessageFields(clientChatMessage);
 
     try {
-      if (tipoApi === 'MetaAPI') {
+      if (apiType === 'MetaAPI') {
         const response = await axios.post(metaUrl, fields, { headers });
-        this.logger.log('(sendWhatsAppMessage): Sent:', response.data);
+        this.logger.log('(sendWhatsAppMessage): Sent message:', response.data);
         return response.data;
       }
       const response = await axios.post(baileysUrl, { fields });
-      this.logger.log('(sendWhatsAppMessage): Sent:', response.data);
+      this.logger.log('(sendWhatsAppMessage): Sent message:', response.data);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -73,50 +69,50 @@ export class ChatMessageManagerService {
     }
   }
 
-  async sendWhatsAppTemplate(
-    input: SendWhatsAppTemplateInput,
-    workspaceId: string,
-  ) {
-    const integration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
-        workspaceId,
-        'whatsapp',
-      )
-    ).findOne({ where: { id: input.integrationId } });
+  // async sendWhatsAppTemplate(
+  //   input: SendWhatsAppTemplateInput,
+  //   workspaceId: string,
+  // ) {
+  //   const integration = await (
+  //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+  //       workspaceId,
+  //       'whatsapp',
+  //     )
+  //   ).findOne({ where: { id: input.integrationId } });
 
-    if (!integration) {
-      throw new Error('WhatsApp integration not found');
-    }
+  //   if (!integration) {
+  //     throw new Error('WhatsApp integration not found');
+  //   }
 
-    const fields: any = {
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
-      to: input.to,
-      type: 'template',
-      template: {
-        name: input.templateName,
-        language: {
-          code: input.language,
-        },
-      },
-    };
+  //   const fields: any = {
+  //     messaging_product: 'whatsapp',
+  //     recipient_type: 'individual',
+  //     to: input.to,
+  //     type: 'template',
+  //     template: {
+  //       name: input.templateName,
+  //       language: {
+  //         code: input.language,
+  //       },
+  //     },
+  //   };
 
-    const url = `${this.META_API_URL}/${integration.phoneId}/messages`;
-    const headers = {
-      Authorization: `Bearer ${integration.accessToken}`,
-      'Content-Type': 'application/json',
-    };
+  //   const url = `${this.META_API_URL}/${integration.phoneId}/messages`;
+  //   const headers = {
+  //     Authorization: `Bearer ${integration.accessToken}`,
+  //     'Content-Type': 'application/json',
+  //   };
 
-    try {
-      await axios.post(url, fields, { headers });
-      return true;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to send template message',
-        error.message,
-      );
-    }
-  }
+  //   try {
+  //     await axios.post(url, fields, { headers });
+  //     return true;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       'Failed to send template message',
+  //       error.message,
+  //     );
+  //   }
+  // }
 
   async sendMessageNotification(externalIds: string[], message: string) {
     const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');

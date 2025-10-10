@@ -1,21 +1,23 @@
 import AudioCanvas from '@/chat/call-center/components/AudioCanvas';
-import { IMessage } from '@/chat/types/WhatsappDocument';
+import { getMessageContent } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import styled from '@emotion/styled';
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
 } from '@tabler/icons-react';
 import { LegacyRef, useEffect, useRef, useState } from 'react';
+import {
+  ChatMessageDeliveryStatus,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../constants/ATTEMPTING_MESSAGE_KEYFRAMES';
-import { MessageStatus } from '../types/MessageStatus';
 
-const StyledAudioContainer = styled.div<{ status: MessageStatus }>`
+const StyledAudioContainer = styled.div<{ isPending: boolean }>`
   display: flex;
   align-items: center;
   gap: 5px;
-  ${({ status }) =>
-    status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''}
+  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
 `;
 
 const StyledTime = styled.p`
@@ -55,7 +57,7 @@ const StyledScrubber = styled.input`
   }
 `;
 
-const StyledAudio = ({ message }: { message: IMessage }) => {
+const StyledAudio = ({ message }: { message: ClientChatMessage }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [rangeValue, setRangeValue] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
@@ -63,6 +65,9 @@ const StyledAudio = ({ message }: { message: IMessage }) => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>();
+  const isPending =
+    message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
+  const audioUrl = getMessageContent(message);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -78,7 +83,7 @@ const StyledAudio = ({ message }: { message: IMessage }) => {
   }, [audioRef]);
 
   return (
-    <StyledAudioContainer status={message.status}>
+    <StyledAudioContainer isPending={isPending}>
       <IconButton
         Icon={isPlaying ? IconPlayerPauseFilled : IconPlayerPlayFilled}
         onClick={() => {
@@ -107,7 +112,7 @@ const StyledAudio = ({ message }: { message: IMessage }) => {
           }
         }}
       />
-      {message.status !== 'attempting' && (
+      {!isPending && (
         <StyledTime>
           {!isPlaying ? (
             <>
@@ -122,10 +127,7 @@ const StyledAudio = ({ message }: { message: IMessage }) => {
           )}
         </StyledTime>
       )}
-      <audio
-        src={message.message}
-        ref={audioRef as LegacyRef<HTMLAudioElement>}
-      />
+      <audio src={audioUrl} ref={audioRef as LegacyRef<HTMLAudioElement>} />
       {audioBlob && <AudioCanvas audioBlob={audioBlob} />}
     </StyledAudioContainer>
   );

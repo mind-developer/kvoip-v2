@@ -6,9 +6,11 @@ type IWhatsappIntegration = {
   accessToken: string;
   appId: string;
   appKey: string;
-  disabled: boolean;
+  paused: boolean;
   sla: number;
-  tipoApi: string;
+  apiType: string;
+  inboxId?: string; // Deprecated: use inbox relation instead
+  inbox?: Array<{ id: string; name: string }>;
 };
 
 export type CreateWhatsappIntegrationInput = Omit<

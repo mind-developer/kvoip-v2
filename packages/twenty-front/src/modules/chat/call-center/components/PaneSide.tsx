@@ -2,12 +2,13 @@ import { ChatCell } from '@/chat/call-center/components/ChatCell';
 import { PaneSideHeader } from '@/chat/call-center/components/PaneSideHeader';
 import { PaneSideTabs } from '@/chat/call-center/components/PaneSideTabs';
 import { ResolvedChats } from '@/chat/call-center/components/ResolvedChats';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { statusEnum } from '@/chat/types/WhatsappDocument';
+import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ClientChatStatus } from 'twenty-shared/types';
+import { TAB_LIST_COMPONENT_ID } from '~/pages/settings/service-center/SettingsServiceCenterShowTabs';
 
 const StyledPaneSideContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -15,7 +16,6 @@ const StyledPaneSideContainer = styled.div`
   flex-direction: column;
   min-height: max-content;
   padding: 0 ${({ theme }) => theme.spacing(3)};
-  width: 400px;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -40,49 +40,63 @@ const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
 `;
 
 export const PaneSide = () => {
-  const {
-    selectedChatId,
-    setSelectedChatId,
-    TAB_LIST_COMPONENT_ID,
-    whatsappChats,
-    unreadTabMessages,
-    // messengerChats,
-  } = useContext(CallCenterContext) as CallCenterContextType;
+  const navigate = useNavigate();
+  const params = useParams();
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(
+    params.chatId || null,
+  );
+
+  // Handle chat selection with navigation
+  const handleChatSelect = (chatId: string) => {
+    navigate(`/chat/call-center/${chatId}`);
+  };
+
+  // Buscar chats em tempo real do ClientChatWorkspaceEntity com dados da pessoa
+  const { chats: clientChats, loading: loadingChats } =
+    useClientChatsWithPerson();
 
   const tabs: SingleTabProps[] = [
     {
       id: 'mine',
       title: 'Mine',
-      incomingMessages: unreadTabMessages?.unreadMine,
+      // incomingMessages: unreadTabMessages?.unreadMine,
     },
     {
       id: 'unassigned',
       title: 'Unassigned',
-      incomingMessages: unreadTabMessages?.unreadUnassigned,
+      // incomingMessages: unreadTabMessages?.unreadUnassigned,
     },
     {
       id: 'abandoned',
       title: 'Abandoned',
-      incomingMessages: unreadTabMessages?.unreadAbandoned,
+      // incomingMessages: unreadTabMessages?.unreadAbandoned,
     },
   ];
 
-  const activeWhatsappChats = whatsappChats.filter(
-    (chat) => chat.status !== statusEnum.Resolved,
+  // Filtrar chats ativos (não resolvidos)
+  const activeClientChats = clientChats.filter(
+    (chat) => chat.status !== ClientChatStatus.RESOLVED,
   );
 
-  const isScrollable = activeWhatsappChats.length > 5;
+  const isScrollable = activeClientChats.length > 5;
 
-  const renderWhatsappChats = () =>
-    activeWhatsappChats.map(({ client, integrationId, ...chat }) => (
-      <ChatCell
-        key={`${integrationId}_${client.phone}`}
-        platform="whatsapp"
-        chat={{ client, integrationId, ...chat }}
-        isSelected={selectedChatId === `${integrationId}_${client.phone}`}
-        onSelect={() => setSelectedChatId(`${integrationId}_${client.phone}`)}
-      />
-    ));
+  const renderClientChats = () =>
+    activeClientChats.map((chat) => {
+      const person = chat.person;
+      const clientName = person
+        ? `${person.firstName || ''} ${person.lastName || ''}`.trim() ||
+          'Cliente'
+        : `Cliente ${chat.providerContactId}`;
+
+      return (
+        <ChatCell
+          key={chat.id}
+          chat={chat}
+          isSelected={selectedChatId === chat.id}
+          onSelect={() => handleChatSelect(chat.id)}
+        />
+      );
+    });
 
   // const renderMessengerChats = () => {
   //   return messengerChats.map((chat: any) => {
@@ -116,8 +130,14 @@ export const PaneSide = () => {
           />
         </StyledTabListContainer>
         <StyledChatsContainer isScrollable={isScrollable}>
-          {renderWhatsappChats()}
-          <ResolvedChats />
+          {loadingChats ? (
+            <div>Carregando chats...</div>
+          ) : (
+            <>
+              {renderClientChats()}
+              <ResolvedChats />
+            </>
+          )}
         </StyledChatsContainer>
       </div>
     </StyledPaneSideContainer>
