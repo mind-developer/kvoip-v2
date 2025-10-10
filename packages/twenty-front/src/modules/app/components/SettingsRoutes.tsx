@@ -5,6 +5,9 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { PermissionFlagType } from '~/generated/graphql';
+import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
+import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
+import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
 import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
 import { SettingsIntegrationFocusNfeEditIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditIssuer';
 import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
@@ -21,6 +24,7 @@ import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/Set
 import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
 import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
 import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
+import { SettingsServiceCenterLinkTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterLinkTelephonyExtension';
 import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
 import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterNewTelephonyExtension';
@@ -28,9 +32,6 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
-import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
-import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
-import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -523,10 +524,6 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterTelephony />}
       />
       <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
         path={SettingsPath.EditTelephony}
         element={<SettingsTelephonyEdit />}
       />
@@ -539,12 +536,12 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterEditAgent />}
       />
       <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
         path={SettingsPath.ServiceCenterNewTelephonyExtension}
         element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterLinkTelephonyExtension}
+        element={<SettingsServiceCenterLinkTelephonyExtension />}
       />
       <Route
         path={SettingsPath.EditTelephony}

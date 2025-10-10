@@ -29,6 +29,7 @@ export enum SettingsPath {
   ServiceCenterEditAgent = 'service-center/agents/:agentSlug/edit',
   ServiceCenterTelephony = 'service-center/telephony',
   ServiceCenterNewTelephonyExtension = 'service-center/telephony/new',
+  ServiceCenterLinkTelephonyExtension = 'service-center/telephony/link/:extensionNumber',
   EditTelephony = 'service-center/telephony/:telephonySlug/edit',
   ServiceCenterServiceLevel = 'service-center/sla',
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',

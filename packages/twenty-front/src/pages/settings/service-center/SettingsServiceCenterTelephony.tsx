@@ -18,32 +18,27 @@ export const SettingsServiceCenterTelephony = () => {
 
   return (
     <SubMenuTopBarContainer
-      links={[]}
-      // title="Settings"
+      title={t`Extensions`}
+      actionButton={
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.FinancialClosingNew)}
+        >
+          <Button
+            Icon={IconPlus}
+            title={t`Add Extension`}
+            accent="blue"
+            size="small"
+          />
+        </UndecoratedLink>
+      }
+      links={[
+        {
+          children: t`Service Center`,
+        },
+        { children: t`Extensions` },
+      ]}
     >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              {
-                children: t`Service Center`,
-              },
-              { children: t`Telephony` },
-            ]}
-          />
-          <UndecoratedLink
-            to={getSettingsPath(
-              SettingsPath.ServiceCenterNewTelephonyExtension,
-            )}
-          >
-            <Button
-              Icon={IconPlus}
-              title={t`Add Extension`}
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
-        </SettingsHeaderContainer>
         <Section>
           <H2Title title="" description={t`Manage all extensions here.`} />
           <ShowServiceCenterTelephonyTabs />

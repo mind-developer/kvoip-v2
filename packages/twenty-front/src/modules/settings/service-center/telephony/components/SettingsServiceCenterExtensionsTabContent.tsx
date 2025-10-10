@@ -2,12 +2,14 @@
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
 import { ServiceCenterExternalExtensionTableRow } from '@/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow';
 import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { IconUser, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
   extensions: SettingsServiceCenterExternalExtension[];
@@ -40,9 +42,6 @@ export const SettingsServiceCenterExtensionsTabContent = ({
             accessory={
               <ServiceCenterFieldActionDropdown
                 scopeKey={extension.nome ?? extension.numero!}
-                // onEdit={() => { 
-                  
-                // }}
                 // onDelete={async () => {
                   
                 // }}
@@ -50,7 +49,13 @@ export const SettingsServiceCenterExtensionsTabContent = ({
                   {
                     text: t`Link member`,
                     icon: IconUser,
-                    onClick: () => {},
+                    onClick: () => {
+                      navigate(
+                        getSettingsPath(SettingsPath.ServiceCenterLinkTelephonyExtension, {
+                          extensionNumber: extension.numero!,
+                        })
+                      );
+                    },
                   },
                 ]}
               />

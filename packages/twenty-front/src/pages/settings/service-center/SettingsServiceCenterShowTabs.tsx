@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 

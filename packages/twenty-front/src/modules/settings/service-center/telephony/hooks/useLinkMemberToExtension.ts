@@ -4,11 +4,11 @@ import { LINK_MEMBER_TO_EXTENSION } from '../graphql/mutations/linkMemberToExten
 export const useLinkMemberToExtension = () => {
   const [linkMemberToExtension, { loading, error }] = useMutation(LINK_MEMBER_TO_EXTENSION);
 
-  const handleLinkMember = async (extensionId: string, memberId: string) => {
+  const handleLinkMember = async (numberExtension: string, memberId: string) => {
     try {
       const result = await linkMemberToExtension({
         variables: {
-          extensionId,
+          numberExtension,
           memberId,
         },
       });

@@ -403,6 +403,79 @@ export class TelephonyResolver {
     return extensions.data.dados[0];
   }
 
+  @Query(() => TelephonyExtension, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async getExternalExtension(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('extNum', { type: () => String, nullable: true }) extNum?: string,
+  ): Promise<TelephonyExtension | null> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!extNum) {
+      return null;
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      numero: extNum,
+      cliente_id: workspace.pabxCompanyId,
+    });
+
+    this.logger.log('extensions2 ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
+
+    if (!extensions?.data?.dados || extensions.data.dados.length === 0) {
+      this.logger.log('No extensions found or empty array');
+      return null;
+    }
+
+    const extension = extensions.data.dados[0];
+    this.logger.log('Returning extension:', JSON.stringify(extension, null, 2));
+    this.logger.log('Extension type:', typeof extension);
+    this.logger.log('Extension keys:', Object.keys(extension || {}));
+    
+    // Mapear explicitamente os dados da API para o tipo GraphQL
+    const mappedExtension = {
+      ramal_id: extension.ramal_id,
+      cliente_id: extension.cliente_id,
+      nome: extension.nome,
+      tipo: extension.tipo,
+      usuario_autenticacao: extension.usuario_autenticacao,
+      numero: extension.numero,
+      senha_sip: extension.senha_sip,
+      senha_web: extension.senha_web,
+      caller_id_externo: extension.caller_id_externo,
+      grupo_ramais: extension.grupo_ramais,
+      centro_custo: extension.centro_custo,
+      plano_discagem_id: extension.plano_discagem_id,
+      grupo_musica_espera: extension.grupo_musica_espera,
+      puxar_chamadas: extension.puxar_chamadas,
+      habilitar_timers: extension.habilitar_timers,
+      habilitar_blf: extension.habilitar_blf,
+      escutar_chamadas: extension.escutar_chamadas,
+      gravar_chamadas: extension.gravar_chamadas,
+      bloquear_ramal: extension.bloquear_ramal,
+      codigo_incorporacao: extension.codigo_incorporacao,
+      codigo_area: extension.codigo_area,
+      habilitar_dupla_autenticacao: extension.habilitar_dupla_autenticacao,
+      dupla_autenticacao_ip_permitido: extension.dupla_autenticacao_ip_permitido,
+      dupla_autenticacao_mascara: extension.dupla_autenticacao_mascara,
+      encaminhar_todas_chamadas: extension.encaminhar_todas_chamadas,
+      encaminhar_offline_sem_atendimento: extension.encaminhar_offline_sem_atendimento,
+      encaminhar_ocupado_indisponivel: extension.encaminhar_ocupado_indisponivel,
+    };
+    
+    this.logger.log('Mapped extension:', JSON.stringify(mappedExtension, null, 2));
+    
+    return mappedExtension;
+  }
+
   @Query(() => [TelephonyDialingPlan], { nullable: true })
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async getTelephonyPlans(
