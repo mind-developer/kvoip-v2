@@ -29,7 +29,7 @@ export const SEARCH_FIELDS_FOR_TELEPHONY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.telephony,
-  namePlural: 'Telephonies',
+  namePlural: 'telephonies',
   labelSingular: msg`Telephony`,
   labelPlural: msg`Telephonies`,
   description: msg`A telephony integration`,

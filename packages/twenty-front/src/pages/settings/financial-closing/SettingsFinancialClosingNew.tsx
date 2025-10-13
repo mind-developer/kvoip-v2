@@ -42,8 +42,8 @@ export const SettingsFinancialClosingNew = () => {
       name: '',
       lastDayMonth: false,
       time: '00:00',
-      day: undefined, // Campo obrigatório - precisa ser preenchido
-      billingModelIds: [], // Campo obrigatório - precisa ser preenchido
+      day: undefined, 
+      billingModelIds: [],
       workspaceId: currentWorkspace?.id,
     },
   });

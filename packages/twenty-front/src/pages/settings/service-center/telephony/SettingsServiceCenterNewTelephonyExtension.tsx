@@ -35,7 +35,7 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
   const navigate = useNavigate();
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createTelephony } = useCreateTelephony();
+  const { createTelephony, data } = useCreateTelephony();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const formConfig = useForm<SettingsNewTelephonySchemaValues>({
@@ -123,9 +123,11 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
           'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character',
         );
 
-      const createdTelephony = await createTelephony(telephonyData);
+      await createTelephony(telephonyData);
       
-      // navigate(settingsServiceCenterTelephonyPagePath);
+      if (data) {
+        navigate(settingsServiceCenterTelephonyPagePath);
+      }
     } catch (err) {
       // TODO: Add proper error message
       enqueueErrorSnackBar({
@@ -138,11 +140,7 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer links={[]} title="">
-        <SettingsPageContainer
-        // style={{
-        //   gap: theme.spacing(4.5),
-        // }}
-        >
+        <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb
               links={[

@@ -10,6 +10,7 @@ const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledTabSkeleton = styled.div`
@@ -34,17 +35,6 @@ export const SettingsServiceCenterTelephonySkeletonLoader = () => {
       borderRadius={4}
     >
       <StyledSkeletonContainer>
-        {/* Tab skeleton */}
-        <StyledTabSkeleton>
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width={120}
-          />
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width={140}
-          />
-        </StyledTabSkeleton>
 
         {/* Content skeleton */}
         <Section>

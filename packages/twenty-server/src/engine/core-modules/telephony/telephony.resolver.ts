@@ -247,8 +247,8 @@ export class TelephonyResolver {
     }
 
     if (!workspace.pabxCompanyId) {
+
       // If the workspace does not have a PABX company, setup the PABX environment
-      
       if (this.twentyConfigService.get('NODE_ENV') === 'production') {
         this.logger.log('Iniciando configuração de telefonia para workspace: ', workspace.id);
   
@@ -371,7 +371,7 @@ export class TelephonyResolver {
 
       await this.telephonyService.setExtensionNumberInWorkspaceMember(
         workspace.id,
-        telephony.memberId,
+        telephony.memberId!,
         updateTelephonyInput.numberExtension || telephony.numberExtension,
       );
 
@@ -636,7 +636,7 @@ export class TelephonyResolver {
 
     await this.telephonyService.removeAgentIdInWorkspaceMember(
       workspace.id,
-      telephonyToDelete.memberId,
+      telephonyToDelete.memberId!,
     );
 
     const result = await this.telephonyService.delete({
@@ -797,11 +797,11 @@ export class TelephonyResolver {
     @Args('memberId', { type: () => ID }) memberId: string,
   ): Promise<TelephonyWorkspaceEntity> {
     if (!userId) {
-      throw new Error('User id not found');
+      throw new Error('Usuário não encontrado');
     }
 
     if (!workspace.id) {
-      throw new Error('Workspace id not found');
+      throw new Error('Workspace não encontrado');
     }
 
     // Buscar a extensão na API PABX
@@ -812,10 +812,10 @@ export class TelephonyResolver {
       cliente_id: workspace.pabxCompanyId,
     });
 
-    this.logger.log('extension ------------------------------------------------', JSON.stringify(extension.data.dados, null, 2));
+    this.logger.log('extension ------------------------------------------------', JSON.stringify(extension.data.dados[0], null, 2));
 
     if (!extension?.data?.dados) {
-      throw new Error('Extension not found');
+      throw new Error('Ramal não encontrado');
     }
 
     const extensionData = Array.isArray(extension.data.dados) ? extension.data.dados[0] : extension.data.dados;

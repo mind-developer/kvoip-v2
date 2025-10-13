@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -11,6 +11,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader';
 import { useGetExternalExtension } from '@/settings/service-center/telephony/hooks/useGetExternalExtension';
 import { useLinkMemberToExtension } from '@/settings/service-center/telephony/hooks/useLinkMemberToExtension';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -22,12 +23,12 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPhone, useIcons } from 'twenty-ui/display';
+import { IconPhone } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader';
 
 const SettingsServiceCenterLinkTelephonyExtensionFormSchema = z.object({
   memberId: z.string().min(1, 'Member is required'),
@@ -80,17 +81,15 @@ const StyledFormSection = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   padding: ${({ theme }) => theme.spacing(4)};
 `;
-
   
 export const SettingsServiceCenterLinkTelephonyExtension = () => {
   const navigate = useNavigate();
   const { extensionNumber } = useParams<{ extensionNumber: string }>();
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const { linkMemberToExtension, loading } = useLinkMemberToExtension();
+  const { linkMemberToExtension, loading, data } = useLinkMemberToExtension();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const theme = useTheme();
-  const { getIcon } = useIcons();
 
   const { data: extensionData, loading: extensionLoading } = useGetExternalExtension({
     workspaceId: currentWorkspace?.id || '',
@@ -101,6 +100,18 @@ export const SettingsServiceCenterLinkTelephonyExtension = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
+  const { records: telephonyRecords, loading: telephonyLoading } = useFindManyRecords<any>({
+    objectNameSingular: CoreObjectNameSingular.Telephony,
+    filter: {
+      numberExtension: {
+        eq: extensionNumber,
+      },
+    },
+    skip: !extensionNumber,
+  });
+
+  const telephonyWorkspaceEntity = telephonyRecords?.[0];
+
   const formConfig = useForm<SettingsServiceCenterLinkTelephonyExtensionFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(SettingsServiceCenterLinkTelephonyExtensionFormSchema),
@@ -110,7 +121,7 @@ export const SettingsServiceCenterLinkTelephonyExtension = () => {
   });
 
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting && !loading;
+  const canSave = isValid && !isSubmitting;
 
   const settingsServiceCenterTelephonyPagePath = getSettingsPath(
     SettingsPath.ServiceCenterTelephony,
@@ -121,26 +132,31 @@ export const SettingsServiceCenterLinkTelephonyExtension = () => {
     value: member.id,
   })) || [];
 
-  const handleSelectMember = (value: string) => {
-    formConfig.setValue('memberId', value);
-  };
+  // Definir valor inicial do formulário quando telephonyWorkspaceEntity for carregado
+  useEffect(() => {
+    if (telephonyWorkspaceEntity?.memberId && !telephonyLoading) {
+      formConfig.setValue('memberId', telephonyWorkspaceEntity.memberId);
+    }
+  }, [telephonyWorkspaceEntity, telephonyLoading, formConfig]);
+
 
   const onSave = async (formValue: SettingsServiceCenterLinkTelephonyExtensionFormValues) => {
     if (!extensionNumber) {
       enqueueErrorSnackBar({
-        message: 'Extension number not found',
+        message: t`Extension number not found`,
       });
       return;
     }
 
     try {
-      await linkMemberToExtension(extensionNumber, formValue.memberId);
+      const result = await linkMemberToExtension(extensionNumber, formValue.memberId);
       
-      enqueueSuccessSnackBar({
-        message: 'Member linked to extension successfully',
-      });
-      
-      navigate(settingsServiceCenterTelephonyPagePath);
+      if (result?.data?.linkMemberToExtension) {
+        enqueueSuccessSnackBar({
+          message: t`Member linked to extension successfully`,
+        });
+        navigate(settingsServiceCenterTelephonyPagePath);
+      }
     } catch (err) {
       enqueueErrorSnackBar({
         message: (err as Error).message,
@@ -148,17 +164,16 @@ export const SettingsServiceCenterLinkTelephonyExtension = () => {
     }
   };
 
-
   return (
     <SubMenuTopBarContainer
         title={t`Link Extension`}
         actionButton={
-            <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                isCancelDisabled={isSubmitting}
-                onCancel={() => navigate(settingsServiceCenterTelephonyPagePath)}
-                onSave={formConfig.handleSubmit(onSave)}
-            />
+          <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              isCancelDisabled={isSubmitting}
+              onCancel={() => navigate(settingsServiceCenterTelephonyPagePath)}
+              onSave={formConfig.handleSubmit(onSave)}
+          />
         }
         links={[
             {
@@ -210,18 +225,29 @@ export const SettingsServiceCenterLinkTelephonyExtension = () => {
                     </StyledCardContent>
                 </StyledCard>
 
-
                 <StyledFormSection>
                     <FormFieldInputContainer>
                         <InputLabel>{t`Select Member to Link`}</InputLabel>
                         <FormFieldInputRowContainer>
-                            <Select
-                            dropdownId="member-picker"
-                            options={memberOptions}
-                            value={formConfig.watch('memberId')}
-                            onChange={handleSelectMember}
-                            fullWidth
-                            withSearchInput
+                            <Controller
+                              name="memberId"
+                              control={formConfig.control}
+                              render={({ field }) => (
+                                <Select
+                                  dropdownId="member-picker-link-extension"
+                                  options={[
+                                    {
+                                      label: t`Choose Member`,
+                                      value: '',
+                                    },
+                                    ...memberOptions,
+                                  ]}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  fullWidth
+                                  withSearchInput
+                                />
+                              )}
                             />
                         </FormFieldInputRowContainer>
                     </FormFieldInputContainer>

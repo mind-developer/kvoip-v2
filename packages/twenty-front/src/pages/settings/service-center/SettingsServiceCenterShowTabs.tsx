@@ -79,7 +79,7 @@ export const ShowServiceCenterTelephonyTabs = ({
   }, [telephonyLoading, hasError, telephonys]);
 
   // Mostra loading enquanto está carregando telefonia ou se ainda não pode carregar extensões
-  const isLoading = telephonyLoading || (!shouldLoadExtensions && activeTabId === 'all-extensions');
+  const isLoading = telephonyLoading || extensionsLoading;
 
   return (
     <>

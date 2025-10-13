@@ -34,7 +34,7 @@ import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-cent
 import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit';
-import { SettingsServiceCenterLinkTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterLinkTelephonyExtension';
+import { SettingsServiceCenterLinkTelephonyExtension } from '~/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
