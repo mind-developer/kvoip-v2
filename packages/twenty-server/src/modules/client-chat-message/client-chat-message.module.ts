@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
+import { ClientChatMessageController } from './client-chat-message.controller';
+import { ClientChatMessageService } from './client-chat-message.service';
 
-@Module({ imports: [], providers: [], exports: [ClientChatMessageService] })
-export class ClientChatModule {}
+@Module({
+  imports: [],
+  providers: [ClientChatMessageService, ClientChatMessageController],
+  exports: [ClientChatMessageService],
+})
+export class ClientChatMessageModule {}
