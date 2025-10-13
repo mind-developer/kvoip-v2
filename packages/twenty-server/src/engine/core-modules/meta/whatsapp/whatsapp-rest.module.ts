@@ -13,6 +13,8 @@ import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/googl
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
+import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 import { Workspace } from '../../workspace/workspace.entity';
 import { WhatsappRestController } from './whatsapp-rest.controller';
 import { WhatsAppService } from './whatsapp.service';
@@ -23,6 +25,7 @@ import { WhatsAppService } from './whatsapp.service';
     WorkspaceModule,
     NestjsQueryTypeOrmModule.forFeature([Workspace]),
     MessageQueueModule,
+    ClientChatMessageModule,
   ],
   controllers: [WhatsappRestController],
   providers: [
@@ -37,6 +40,7 @@ import { WhatsAppService } from './whatsapp.service';
     FileService,
     JwtService,
     JwtWrapperService,
+    ClientChatMessageService,
   ],
   exports: [],
 })

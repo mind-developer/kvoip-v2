@@ -25,7 +25,6 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { WhatsappEmmitResolvedChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-resolved-status.cron.job';
 import { WhatsappEmmitWaitingChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-waiting-status.cron.job';
-import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -93,7 +92,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     CheckExpiredSubscriptionsJob,
-    WhatsAppService,
     GoogleStorageService,
     WhatsappEmmitWaitingChatsCronJob,
     WhatsappEmmitResolvedChatsCronJob,

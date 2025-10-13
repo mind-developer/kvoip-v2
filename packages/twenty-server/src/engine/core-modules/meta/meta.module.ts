@@ -23,6 +23,8 @@ import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsa
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
+import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     }),
     WorkspaceModule,
     MessageQueueModule,
+    ClientChatMessageModule,
   ],
   exports: [WhatsAppService],
   controllers: [WhatsappController],
@@ -52,6 +55,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     FileService,
     JwtService,
     JwtWrapperService,
+    ClientChatMessageService,
   ],
 })
 export class MetaModule {}

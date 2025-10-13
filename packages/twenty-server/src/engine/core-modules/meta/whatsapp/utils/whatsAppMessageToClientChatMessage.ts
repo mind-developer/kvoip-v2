@@ -8,6 +8,16 @@ import {
 import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 
+const getFromMeFromType = (clientChat: ClientChatWorkspaceEntity) => {
+  if (clientChat.agentId) {
+    return ChatMessageFromType.AGENT;
+  }
+  if (clientChat.sectorId) {
+    return ChatMessageFromType.SECTOR;
+  }
+  return ChatMessageFromType.PROVIDER_INTEGRATION;
+};
+
 export const whatsAppMessageToClientChatMessage = (
   whatsappMessage: FormattedWhatsAppMessage,
   clientChat: ClientChatWorkspaceEntity,
@@ -25,23 +35,26 @@ export const whatsAppMessageToClientChatMessage = (
     // (since you can't send messages unless you are assigned to a chat),
     // which is who sent it
     from: whatsappMessage.fromMe
-      ? (clientChat.agentId ?? clientChat.personId)
-      : clientChat.personId,
+      ? (clientChat.agentId ??
+        clientChat.sectorId ??
+        clientChat.whatsappIntegrationId)
+      : 'FROM_UNKNOWN',
 
     fromType: whatsappMessage.fromMe
-      ? ChatMessageFromType.AGENT
+      ? getFromMeFromType(clientChat)
       : ChatMessageFromType.PERSON,
 
     to: whatsappMessage.fromMe
       ? clientChat.personId
       : (clientChat.agentId ??
         clientChat.sectorId ??
-        clientChat.whatsappIntegrationId),
+        clientChat.whatsappIntegrationId ??
+        'TO_UNKNOWN'),
     toType: whatsappMessage.fromMe
       ? ChatMessageToType.PERSON
-      : // Message is not fromMe: client is sending to an agent or sector
+      : // Message is not fromMe: client is sending to an agent or sector. just set toType to PERSON.
         // Chat has agent assigned: message goes to agent
-        // Chat has sector but no agent assigned: message goes to sector
+        // Chat has sector, but no agent assigned: message goes to sector
         // Chat has no agent or sector assigned: message falls back to provider integration (default inbox)
         clientChat.agent?.id
         ? ChatMessageToType.AGENT

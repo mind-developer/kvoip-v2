@@ -21,6 +21,7 @@ import { whatsAppMessageToClientChatMessage } from 'src/engine/core-modules/meta
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -50,6 +51,7 @@ export class WhatsAppService {
     private sendMessageQueue: MessageQueueService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private saveMessageQueue: MessageQueueService,
+    private readonly clientChatMessageService: ClientChatMessageService,
   ) {}
 
   async getWhatsappTemplates(
@@ -126,10 +128,9 @@ export class WhatsAppService {
           whatsappIntegrationId: integrationId,
           providerContactId,
         },
-        relations: ['agent', 'sector'],
+        relations: ['agent', 'sector', 'whatsappIntegration'],
       });
 
-      this.logger.log(message.senderAvatarUrl);
       if (!clientChat) {
         const personRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
@@ -171,13 +172,19 @@ export class WhatsAppService {
           'No chat found, and fallback chat creation failed',
         );
 
-      this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-        SaveClientChatMessageJob.name,
+      this.clientChatMessageService.publishMessageCreated(
         {
-          chatMessage: whatsAppMessageToClientChatMessage(message, clientChat),
-          workspaceId,
+          ...whatsAppMessageToClientChatMessage(message, clientChat),
+          createdAt: new Date().toISOString(),
         },
+        clientChat.id,
       );
+      (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+        )
+      ).save(whatsAppMessageToClientChatMessage(message, clientChat));
 
       //initialize chatbot runner if needed
       const whatsappIntegration = await (
@@ -315,7 +322,6 @@ export class WhatsAppService {
     data: Partial<ClientChatMessage>,
     workspaceId: string,
   ) {
-    console.log('updateMessage', providerMessageId, data, workspaceId);
     try {
       const messageRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -332,6 +338,13 @@ export class WhatsAppService {
         ...message,
         ...data,
       };
+      this.clientChatMessageService.publishMessageUpdated(
+        {
+          ...updatedMessage,
+          createdAt: new Date().toISOString(),
+        },
+        updatedMessage.clientChatId,
+      );
       await messageRepository.save(updatedMessage);
     } catch (error) {
       this.logger.error('Error updating message:', error);

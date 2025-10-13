@@ -814,6 +814,7 @@ export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
   person: '81157d97-44b6-432e-aa2b-065b1eefb548',
   status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
   clientChatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
+  lastMessage: 'd19bbf53-e718-4f74-b50b-3abc5526bfe3',
 } as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {

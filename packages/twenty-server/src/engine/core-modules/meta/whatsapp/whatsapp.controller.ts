@@ -65,6 +65,7 @@ export class WhatsappController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
+    console.log(body);
     if (body.entry[0].changes[0].statuses) {
       this.whatsappService.updateMessage(
         body.entry[0].changes[0].statuses[0].id,

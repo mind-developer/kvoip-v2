@@ -8,6 +8,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 import { ChatMessageType } from 'twenty-shared/types';
 
 @Processor(MessageQueue.chatMessageManagerSendMessageQueue)
@@ -17,6 +18,7 @@ export class SendChatMessageJob {
     private readonly chatMessageManagerService: ChatMessageManagerService,
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private readonly saveMessageQueue: MessageQueueService,
+    private readonly clientChatMessageService: ClientChatMessageService,
   ) {}
 
   @Process(SendChatMessageJob.name)
@@ -39,6 +41,13 @@ export class SendChatMessageJob {
           );
         if (response) {
           //message id is returned in response object
+          await this.clientChatMessageService.publishMessageCreated(
+            {
+              ...data.clientChatMessage,
+              providerMessageId: response.id,
+            },
+            data.clientChatMessage.clientChatId,
+          );
           this.saveMessageQueue.add<SaveClientChatMessageJobData>(
             SaveClientChatMessageJob.name,
             {
