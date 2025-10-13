@@ -30,11 +30,18 @@ export type ClientChatMessage = ChatMessage & {
 };
 
 export enum ChatMessageFromType {
+  //a client sent a message
   PERSON = 'PERSON',
+  //an agent sent a message
   AGENT = 'AGENT',
+  //a sector sent a message
   SECTOR = 'SECTOR',
+  //a workspace member sent a message (internal chats only)
   WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
+  //a chatbot sent a message
   CHATBOT = 'CHATBOT',
+  //a message was sent directly through the integration (e.g. WhatsApp on mobile, Telegram, etc.)
+  PROVIDER_INTEGRATION = 'PROVIDER_INTEGRATION',
 }
 
 export type ClientChatMessageFromType = Exclude<
