@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';

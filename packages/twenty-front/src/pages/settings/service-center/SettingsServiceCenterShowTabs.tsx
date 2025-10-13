@@ -1,9 +1,10 @@
 /* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { SettingsServiceCenterTelephonySkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterTelephonySkeletonLoader';
 import { SettingsServiceCenterExtensionsTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent';
 import { ServiceCenterTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterTabContent';
 import { useFindAllExternalExtensions } from '@/settings/service-center/telephony/hooks/useFindAllExternalExtensions';
@@ -12,7 +13,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { useFindAllTelephonys } from '../../../modules/settings/service-center/telephony/hooks/useFindAllTelephony';
-import { useLinkMemberToExtension } from '@/settings/service-center/telephony/hooks/useLinkMemberToExtension';
+import { IconPhone, IconUser } from '@tabler/icons-react';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -35,6 +36,7 @@ export const ShowServiceCenterTelephonyTabs = ({
 }: ShowServiceCenterTelephonyTabsProps) => {
   const isMobile = useIsMobile() || isRightDrawer;
   const { t } = useLingui();
+  const [shouldLoadExtensions, setShouldLoadExtensions] = useState(false);
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -45,33 +47,60 @@ export const ShowServiceCenterTelephonyTabs = ({
     {
       id: 'operators',
       title: t`Operators`,
-      // Icon: IconFileText,
+      Icon: IconUser,
     },
     {
       id: 'all-extensions',
       title: t`All Extensions`,
-      // Icon: IconFileText,
+      Icon: IconPhone,
     },
   ];
 
-  const { telephonys, refetch } = useFindAllTelephonys();
-  const { extensions, refetch: refetchExtensions } = useFindAllExternalExtensions();
+  const { telephonys, loading: telephonyLoading, refetch, hasError } = useFindAllTelephonys();
+
+  // Só carrega extensões se a companhia já foi criada ou se não há erro
+  const { extensions, refetch: refetchExtensions, loading: extensionsLoading } = useFindAllExternalExtensions({
+    skip: !shouldLoadExtensions,
+  });
 
   useEffect(() => {
     refetch();
   }, []);
+
+  // Controla quando carregar as extensões
+  useEffect(() => {
+    if (!telephonyLoading && !hasError && telephonys && telephonys.length > 0) {
+      // Se não está carregando, não há erro e há telefonia configurada, pode carregar extensões
+      setShouldLoadExtensions(true);
+    } else if (!telephonyLoading && hasError) {
+      // Se há erro, não carrega extensões
+      setShouldLoadExtensions(false);
+    }
+  }, [telephonyLoading, hasError, telephonys]);
+
+  // Mostra loading enquanto está carregando telefonia ou se ainda não pode carregar extensões
+  const isLoading = telephonyLoading || (!shouldLoadExtensions && activeTabId === 'all-extensions');
 
   return (
     <>
       <StyledShowServiceCenterTabs isMobile={isMobile}>
         <TabList tabs={tabs} componentInstanceId={TAB_LIST_COMPONENT_ID} />
 
-        {activeTabId === 'operators' && (
-          <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
-        )}
+        {isLoading ? (
+          <SettingsServiceCenterTelephonySkeletonLoader />
+        ) : (
+          <>
+            {activeTabId === 'operators' && (
+              <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
+            )}
 
-        {activeTabId === 'all-extensions' && (
-          <SettingsServiceCenterExtensionsTabContent extensions={extensions} refetch={refetchExtensions} />
+            {activeTabId === 'all-extensions' && (
+              <SettingsServiceCenterExtensionsTabContent 
+                extensions={extensions || []} 
+                refetch={refetchExtensions} 
+              />
+            )}
+          </>
         )}
       </StyledShowServiceCenterTabs>
     </>

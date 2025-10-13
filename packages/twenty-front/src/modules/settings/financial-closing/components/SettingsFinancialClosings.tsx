@@ -98,25 +98,25 @@ export const SettingsFinancialClosings = ({
             />
           ))}
 
-        {
-          financialClosings && financialClosings?.length === 0 && (
-            <Section>
-              <div style={{ marginTop: theme.spacing(10) }}>
-                <AnimatedPlaceholderEmptyContainer>
-                  <AnimatedPlaceholder type="noRecord" />
-                  <AnimatedPlaceholderEmptyTextContainer>
-                    <AnimatedPlaceholderEmptyTitle>
-                      {t`No financial closings found`}
-                    </AnimatedPlaceholderEmptyTitle>
-                    <AnimatedPlaceholderEmptySubTitle>
-                      {t`Create a financial closing to get started`}
-                    </AnimatedPlaceholderEmptySubTitle>
-                  </AnimatedPlaceholderEmptyTextContainer>
-                </AnimatedPlaceholderEmptyContainer>
-              </div>
-            </Section>
-          )
-        }
+          {
+            financialClosings && financialClosings?.length === 0 && (
+              <Section>
+                <div style={{ marginTop: theme.spacing(10) }}>
+                  <AnimatedPlaceholderEmptyContainer>
+                    <AnimatedPlaceholder type="noRecord" />
+                    <AnimatedPlaceholderEmptyTextContainer>
+                      <AnimatedPlaceholderEmptyTitle>
+                        {t`No financial closings found`}
+                      </AnimatedPlaceholderEmptyTitle>
+                      <AnimatedPlaceholderEmptySubTitle>
+                        {t`Create a financial closing to get started`}
+                      </AnimatedPlaceholderEmptySubTitle>
+                    </AnimatedPlaceholderEmptyTextContainer>
+                  </AnimatedPlaceholderEmptyContainer>
+                </div>
+              </Section>
+            )
+          }
         </StyledSection>
       )}
     </StyledShowServiceCenterTabs>

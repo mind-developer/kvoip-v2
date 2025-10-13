@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Not } from 'typeorm';
 

@@ -13,7 +13,11 @@ type UseFindAllExternalExtensionsReturn = {
   refetch: () => void;
 };
 
-export const useFindAllExternalExtensions = (): UseFindAllExternalExtensionsReturn => {
+type UseFindAllExternalExtensionsOptions = {
+  skip?: boolean;
+};
+
+export const useFindAllExternalExtensions = (options?: UseFindAllExternalExtensionsOptions): UseFindAllExternalExtensionsReturn => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -23,6 +27,7 @@ export const useFindAllExternalExtensions = (): UseFindAllExternalExtensionsRetu
     refetch,
   } = useQuery(GET_ALL_EXTERNAL_EXTENSIONS, {
     variables: { workspaceId: currentWorkspace?.id },
+    skip: options?.skip || false,
     onError: (error) => {
       // TODO: Add proper error message
       enqueueErrorSnackBar({

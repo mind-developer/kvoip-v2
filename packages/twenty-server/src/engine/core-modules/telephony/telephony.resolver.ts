@@ -1,9 +1,12 @@
+/* @kvoip-woulz proprietary */
 import { Logger, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceTelephonyService } from 'src/engine/core-modules/workspace/services/workspace-telephony.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -36,6 +39,8 @@ export class TelephonyResolver {
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
     private readonly workspaceService: WorkspaceService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceTelephonyService: WorkspaceTelephonyService,
   ) {}
 
   async getRamalBody(
@@ -231,13 +236,42 @@ export class TelephonyResolver {
   @Query(() => [TelephonyWorkspaceEntity])
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async findAllTelephonyIntegration(
-    @AuthUser() { id: userId }: User,
+    @AuthUser() user: User,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyWorkspaceEntity[]> {
-    if (!userId) {
-      throw new Error('User id not found');
+
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
     }
 
+    if (!workspace.pabxCompanyId) {
+      // If the workspace does not have a PABX company, setup the PABX environment
+      
+      if (this.twentyConfigService.get('NODE_ENV') === 'production') {
+        this.logger.log('Iniciando configuração de telefonia para workspace: ', workspace.id);
+  
+        try {
+          await this.workspaceTelephonyService.setupWorkspaceTelephony(
+            workspace,
+            user,
+            workspace.displayName!,
+          );
+  
+          this.logger.log('Configuração de telefonia concluída com sucesso');
+        } catch (error) {
+  
+          // TODO: implementar classe de exceção para telefonia
+  
+          this.logger.error('Erro na configuração de telefonia:', error);
+          throw error;
+        }
+      } else {
+        throw new Error('Companhia PABX não encontrada');
+      }
+    }
+    
     return await this.telephonyService.findAll({ workspaceId });
   }
 
@@ -258,7 +292,7 @@ export class TelephonyResolver {
     }
 
     if (!workspace.pabxCompanyId) {
-      throw new Error('PABX company not found');
+      throw new Error('Companhia PABX não encontrada');
     }
 
     const extensions = await this.pabxService.listExtentions({

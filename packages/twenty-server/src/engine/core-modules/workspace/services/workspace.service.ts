@@ -464,6 +464,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       version: extractVersionMajorMinorPatch(appVersion),
     });
 
+    // TODO: Implementação ruim, deve ser refatorada
     await this.setupOneSignalApp(workspace.id).catch((error) =>
       this.logger.log(
         `Failed to setup onesignal app: \n${JSON.stringify(error)}`,
@@ -490,6 +491,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
         this.logger.log('Configuração de telefonia concluída com sucesso');
       } catch (error) {
+
+        // TODO: implementar classe de exceção para telefonia
+
         this.logger.error('Erro na configuração de telefonia:', error);
         throw error;
       }

@@ -27,7 +27,7 @@ import { IconPhone, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader } from './SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader';
+import { SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader';
 
 const SettingsServiceCenterLinkTelephonyExtensionFormSchema = z.object({
   memberId: z.string().min(1, 'Member is required'),
