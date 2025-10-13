@@ -2,10 +2,9 @@ import { ChatCell } from '@/chat/call-center/components/ChatCell';
 import { PaneSideHeader } from '@/chat/call-center/components/PaneSideHeader';
 import { PaneSideTabs } from '@/chat/call-center/components/PaneSideTabs';
 import { ResolvedChats } from '@/chat/call-center/components/ResolvedChats';
-import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientChatStatus } from 'twenty-shared/types';
 import { TAB_LIST_COMPONENT_ID } from '~/pages/settings/service-center/SettingsServiceCenterShowTabs';
@@ -41,19 +40,28 @@ const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
 
 export const PaneSide = () => {
   const navigate = useNavigate();
-  const params = useParams();
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(
-    params.chatId || null,
-  );
+  const { chatId: openChatId } = useParams();
 
   // Handle chat selection with navigation
   const handleChatSelect = (chatId: string) => {
     navigate(`/chat/call-center/${chatId}`);
   };
 
-  // Buscar chats em tempo real do ClientChatWorkspaceEntity com dados da pessoa
-  const { chats: clientChats, loading: loadingChats } =
-    useClientChatsWithPerson();
+  const { records: clientChats } = useFindManyRecords({
+    objectNameSingular: 'clientChat',
+    recordGqlFields: {
+      id: true,
+      providerContactId: true,
+      status: true,
+      updatedAt: true,
+      person: {
+        id: true,
+        avatarUrl: true,
+        name: true,
+      },
+    },
+    orderBy: [{ updatedAt: 'DescNullsLast' }],
+  });
 
   const tabs: SingleTabProps[] = [
     {
@@ -84,15 +92,17 @@ export const PaneSide = () => {
     activeClientChats.map((chat) => {
       const person = chat.person;
       const clientName = person
-        ? `${person.firstName || ''} ${person.lastName || ''}`.trim() ||
+        ? `${person.name.firstName || ''} ${person.name.lastName || ''}`.trim() ||
           'Cliente'
         : `Cliente ${chat.providerContactId}`;
 
       return (
         <ChatCell
           key={chat.id}
-          chat={chat}
-          isSelected={selectedChatId === chat.id}
+          name={clientName}
+          avatarUrl={chat.person?.avatarUrl || ''}
+          lastMessagePreview={'Última mensagem'}
+          isSelected={openChatId === chat.id}
           onSelect={() => handleChatSelect(chat.id)}
         />
       );
@@ -130,7 +140,7 @@ export const PaneSide = () => {
           />
         </StyledTabListContainer>
         <StyledChatsContainer isScrollable={isScrollable}>
-          {loadingChats ? (
+          {clientChats.length === 0 ? (
             <div>Carregando chats...</div>
           ) : (
             <>

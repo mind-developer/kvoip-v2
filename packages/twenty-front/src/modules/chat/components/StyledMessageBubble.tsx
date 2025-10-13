@@ -1,7 +1,6 @@
 import {
   getMessageContent,
   getMessageDisplayType,
-  isMessageFromAgent,
 } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import { MessageType } from '@/chat/types/MessageType';
 import { useTheme } from '@emotion/react';
@@ -11,6 +10,7 @@ import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import {
   ChatMessageDeliveryStatus,
+  ChatMessageFromType,
   ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconCheck } from 'twenty-ui/display';
@@ -126,7 +126,7 @@ export const StyledMessageBubble = ({
   customButton?: ReactNode;
 }) => {
   const theme = useTheme();
-  const fromMe = isMessageFromAgent(message);
+  const fromMe = message.fromType !== ChatMessageFromType.PERSON;
   const messageContent = getMessageContent(message);
   const messageType = getMessageDisplayType(message);
   const isPending =

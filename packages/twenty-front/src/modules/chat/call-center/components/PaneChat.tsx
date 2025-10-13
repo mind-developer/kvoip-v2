@@ -8,14 +8,11 @@ import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
-import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import {
   getMessageContent,
   getMessageDisplayType,
-  isMessageFromAgent,
 } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import StyledImage from '@/chat/components/StyledImage';
 import { StyledMessageBubble } from '@/chat/components/StyledMessageBubble';
@@ -24,13 +21,22 @@ import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { formatDate } from '@/chat/utils/formatDate';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
@@ -45,6 +51,7 @@ import {
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
+import { useClientMessageSubscription } from '../hooks/useClientMessageSubscription';
 
 const StyledPaneChatContainer = styled.div`
   display: flex;
@@ -341,13 +348,57 @@ const StyledUnreadMarker = styled.div`
 
 export const PaneChat = () => {
   const { chatId } = useParams() || '';
-  const { chats } = useClientChatsWithPerson();
-  const selectedChat = chats.find((chat) => chat.id === chatId);
+  const { record: selectedChat } = useFindOneRecord({
+    objectNameSingular: 'clientChat',
+    objectRecordId: chatId,
+    skip: !chatId,
+  });
+
   const { startService, setStartChatNumber, setStartChatIntegrationId } =
     useContext(CallCenterContext) as CallCenterContextType;
 
   const [lastFromClient, setLastFromClient] =
     useState<ClientChatMessage | null>(null);
+
+  const handleMessageCreated = useCallback((message: ClientChatMessage) => {
+    console.log('Nova mensagem criada via subscription:', message);
+    setDbMessages((prev) => [...prev, message]);
+  }, []);
+
+  const handleMessageUpdated = useCallback((message: ClientChatMessage) => {
+    setDbMessages((prev) =>
+      prev.map((msg) =>
+        msg.providerMessageId === message.providerMessageId ? message : msg,
+      ),
+    );
+  }, []);
+
+  const handleSubscriptionError = useCallback((error: any) => {
+    console.error('Erro na subscription de mensagem:', error);
+  }, []);
+
+  useClientMessageSubscription({
+    input: { chatId: chatId! },
+    onMessageCreated: handleMessageCreated,
+    onMessageUpdated: handleMessageUpdated,
+    onError: handleSubscriptionError,
+    skip: !chatId,
+  });
+
+  const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>([]);
+  const { records: dbMessagesRecord } = useFindManyRecords<
+    ClientChatMessage & { __typename: string; id: string }
+  >({
+    objectNameSingular: 'clientChatMessage',
+    filter: chatId ? { clientChatId: { eq: chatId } } : undefined,
+    skip: !chatId,
+    orderBy: [{ createdAt: 'AscNullsFirst' }],
+  });
+  useEffect(() => {
+    if (dbMessagesRecord) {
+      setDbMessages(dbMessagesRecord as ClientChatMessage[]);
+    }
+  }, [dbMessagesRecord]);
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
@@ -384,9 +435,6 @@ export const PaneChat = () => {
   >([]);
 
   // Usar o hook para buscar mensagens do banco de dados
-  const { messages: dbMessages, loading: loadingMessages } =
-    useClientChatMessages(chatId!);
-
   const [lastMessage, setLastMessage] = useState<ClientChatMessage>(
     dbMessages[dbMessages.length - 1],
   );
@@ -406,7 +454,6 @@ export const PaneChat = () => {
 
   useEffect(() => {
     if (messages?.length > 0) setLastMessage(messages[messages.length - 1]);
-    console.log(lastMessage);
     if (isAtBottom && chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
@@ -414,7 +461,9 @@ export const PaneChat = () => {
       setNewMessagesIndicator(true);
     }
     const clientMessages = messages.filter(
-      (message) => !isMessageFromAgent(message),
+      (message) =>
+        message.fromType !== ChatMessageFromType.AGENT &&
+        message.fromType !== ChatMessageFromType.CHATBOT,
     );
     if (clientMessages.length > 0)
       setLastFromClient(clientMessages[clientMessages.length - 1]);
@@ -721,7 +770,6 @@ export const PaneChat = () => {
         chatContainerRef.current;
       const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
       setIsAtBottom(isBottom);
-
       if (isBottom) {
         setNewMessagesIndicator(false);
       }
@@ -884,10 +932,15 @@ export const PaneChat = () => {
     return (
       <>
         <StyledPaneChatContainer>
-          <PaneChatHeader chat={selectedChat} />
+          <PaneChatHeader
+            avatarUrl={selectedChat.person?.avatarUrl || ''}
+            name={selectedChat.person?.firstName || ''}
+            personId={selectedChat.person?.id || ''}
+          />
           <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
             {messages.map((message: ClientChatMessage, index: number) => {
-              const isSystemMessage = isMessageFromAgent(message);
+              const isSystemMessage =
+                message.fromType !== ChatMessageFromType.PERSON;
               const messageDisplayType = getMessageDisplayType(message);
               const messageContent = getMessageContent(message);
 
@@ -975,6 +1028,7 @@ export const PaneChat = () => {
                               .trim()
                           : messageContent,
                       )}
+                      {message.from}
                     </StyledMessage>
                   );
                   break;
@@ -999,15 +1053,24 @@ export const PaneChat = () => {
                   >
                     <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
                       <AvatarComponent
-                        message={message}
-                        selectedChat={selectedChat}
-                        currentWorkspaceMember={currentWorkspaceMember!}
+                        avatarUrl={
+                          //this has to actually fetch the avatar url from the correct source
+                          message.fromType !== ChatMessageFromType.PERSON
+                            ? currentWorkspaceMember?.avatarUrl
+                            : selectedChat.person?.avatarUrl
+                        }
+                        senderName={
+                          //TODO: this has to actually fetch the name from the correct source
+                          message.fromType !== ChatMessageFromType.PERSON
+                            ? currentWorkspaceMember?.name.firstName
+                            : selectedChat.person?.name.firstName
+                        }
                       />
                     </StyledAvatarMessage>
                     <StyledContainer isSystemMessage={isSystemMessage}>
                       <StyledMessageItem isSystemMessage={isSystemMessage}>
                         <StyledMessageBubble
-                          time={formatDate(message.createdAt).time}
+                          time={formatDate(message.createdAt ?? '').time}
                           message={message}
                           hasTail={lastOfRow}
                         >
@@ -1016,9 +1079,11 @@ export const PaneChat = () => {
                         <StyledNameAndTimeContainer
                           isSystemMessage={isSystemMessage}
                         >
-                          {isMessageOlderThan24Hours(message.createdAt) ?? (
+                          {isMessageOlderThan24Hours(
+                            message.createdAt ?? '',
+                          ) ?? (
                             <StyledDateContainer>
-                              {formatDate(message.createdAt).time}
+                              {formatDate(message.createdAt ?? '').time}
                             </StyledDateContainer>
                           )}
                         </StyledNameAndTimeContainer>

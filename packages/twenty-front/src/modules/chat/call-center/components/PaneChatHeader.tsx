@@ -1,14 +1,8 @@
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
-import { ClientChatWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -71,60 +65,36 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   font-size: 10px;
 `;
 
-export const PaneChatHeader = ({ chat }: { chat: ClientChatWithPerson }) => {
-  const theme = useTheme();
+export const PaneChatHeader = ({
+  name,
+  avatarUrl,
+  personId,
+}: {
+  name: string;
+  avatarUrl: string;
+  personId: string;
+}) => {
   const { getIcon } = useIcons();
-
-  const { records: workspaceMembers } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
-
-  const { records: agents } = useFindManyRecords<
-    Agent & { __typename: string }
-  >({
-    objectNameSingular: CoreObjectNameSingular.Agent,
-  });
-
-  const agent = agents.find((agent: Agent) => agent.id === chat!.agentId);
-
-  const { record: whatsappIntegration } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
-    objectRecordId: chat!.whatsappIntegrationId ?? undefined,
-  });
-
-  const member = workspaceMembers.find(
-    (wsMember) => wsMember.agentId === agent?.id,
-  );
 
   const { toggleModal } = useModal();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  if (!chat) return;
-
   const IconX = getIcon('IconX');
   const IconDotsVertical = getIcon('IconDotsVertical');
 
-  if (chat.person?.id)
+  if (personId)
     return (
       <>
         <StyledChatHeader>
           <StyledDiv>
             <Avatar
-              avatarUrl={chat.person.avatarUrl}
-              placeholder={chat.person.firstName ?? undefined}
+              avatarUrl={avatarUrl}
+              placeholder={name}
               size="xl"
               type={'rounded'}
-              placeholderColorSeed={chat.person.firstName ?? undefined}
+              placeholderColorSeed={name}
             />
-            <StyledChatTitle>
-              {chat.person.firstName + ' ' + chat.person.lastName}
-            </StyledChatTitle>
-            <StyledIntegrationCard>
-              {whatsappIntegration?.name} ({whatsappIntegration?.apiType})
-            </StyledIntegrationCard>
-            <StyledIntegrationCard>
-              {member?.name.firstName} {member?.name.lastName}
-            </StyledIntegrationCard>
+            <StyledChatTitle>{name}</StyledChatTitle>
           </StyledDiv>
           <StyledActionsContainer>
             <StyledIconButton
@@ -141,7 +111,7 @@ export const PaneChatHeader = ({ chat }: { chat: ClientChatWithPerson }) => {
             <StyledIconButton
               onClick={() => {
                 openRecordInCommandMenu({
-                  recordId: chat.person!.id,
+                  recordId: personId,
                   objectNameSingular: 'person',
                 });
               }}

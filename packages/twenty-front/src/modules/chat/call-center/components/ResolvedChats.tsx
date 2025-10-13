@@ -1,6 +1,6 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatCell } from '@/chat/call-center/components/ChatCell';
-import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,10 +25,25 @@ const StyledExpandDiv = styled.div`
 `;
 
 export const ResolvedChats = () => {
-  const { chats: clientChats } = useClientChatsWithPerson();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const navigate = useNavigate();
   const { chatId: openChatId } = useParams();
+
+  const { records: clientChats } = useFindManyRecords({
+    objectNameSingular: 'clientChat',
+    recordGqlFields: {
+      id: true,
+      providerContactId: true,
+      status: true,
+      updatedAt: true,
+      person: {
+        id: true,
+        avatarUrl: true,
+        firstName: true,
+        lastName: true,
+      },
+    },
+  });
 
   // Filtrar chats resolvidos
   const resolvedChats = clientChats.filter(
@@ -57,7 +72,9 @@ export const ResolvedChats = () => {
               return (
                 <ChatCell
                   key={chat.id}
-                  chat={chat}
+                  name={clientName}
+                  avatarUrl={chat.person?.avatarUrl || ''}
+                  lastMessagePreview={chat.lastMessage?.textBody || ''}
                   isSelected={openChatId === chat.id}
                   onSelect={() => {
                     navigate(`/chat/call-center/${chat.id}`);

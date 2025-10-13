@@ -3,7 +3,6 @@ import { Avatar } from 'twenty-ui/display';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
-import { ClientChatWithPerson } from '../hooks/useClientChatsWithPerson';
 
 const StyledItemChat = styled.div<{ isSelected?: boolean }>`
   align-items: center;
@@ -78,30 +77,26 @@ const StyledContainerPills = styled.div`
 `;
 
 type ChatCellProps = {
-  chat: ClientChatWithPerson;
+  name: string;
+  avatarUrl: string;
+  lastMessagePreview: string;
   isSelected?: boolean;
   onSelect: () => void;
 };
 
-export const ChatCell = ({ chat, isSelected, onSelect }: ChatCellProps) => {
-  // Get client name from person data
-  const clientName = chat.person
-    ? `${chat.person.firstName || ''} ${chat.person.lastName || ''}`.trim() ||
-      'Cliente'
-    : 'Cliente';
-
-  // Get client avatar from person data
-  const clientAvatar = chat.person?.avatarUrl || null;
-
-  // For now, show a placeholder message since we don't have lastMessage in ClientChat
-  const messageContent = 'Clique para abrir o chat';
-
+export const ChatCell = ({
+  name,
+  avatarUrl,
+  lastMessagePreview,
+  isSelected,
+  onSelect,
+}: ChatCellProps) => {
   return (
     <StyledItemChat onClick={onSelect} isSelected={isSelected}>
       <Avatar
-        avatarUrl={clientAvatar}
-        placeholderColorSeed={clientName}
-        placeholder={clientName}
+        avatarUrl={avatarUrl}
+        placeholderColorSeed={name}
+        placeholder={name}
         type={'rounded'}
         size="xl"
       />
@@ -109,9 +104,9 @@ export const ChatCell = ({ chat, isSelected, onSelect }: ChatCellProps) => {
         <StyledContainerPills></StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
-            <StyledUserName>{clientName}</StyledUserName>
+            <StyledUserName>{name}</StyledUserName>
             <StyledLastMessagePreview>
-              {messageContent}
+              {lastMessagePreview}
             </StyledLastMessagePreview>
           </StyledDiv>
           <StyledDateAndUnreadMessagesContainer>
