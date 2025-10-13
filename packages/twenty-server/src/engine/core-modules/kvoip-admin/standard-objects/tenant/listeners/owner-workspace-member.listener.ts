@@ -80,11 +80,27 @@ export class OwnerWorkspaceMemberListener {
             id: ownerWorkspaceMemberPayloadEvent.workspaceMemberId,
           });
 
+          // TODO: Maybe remove this since we are going to use person instead of owner (confirm buisiness logic)
           await this.ownerService.handleOwnerWorkspaceMemberUpsert({
             userId: ownerWorkspaceMemberPayloadEvent.properties.after.userId,
             workspaceId: payload.workspaceId,
             member,
           });
+        }
+
+        for (const event of payload.events) {
+          if (event.properties.after) {
+            const member = await workspaceMemberRepository.findOneBy({
+              id: event.workspaceMemberId,
+            });
+
+            if (isDefined(member)) {
+              await this.ownerService.handleWorkspaceMemberPersonUpsert({
+                workspaceId: payload.workspaceId,
+                member,
+              });
+            }
+          }
         }
       }
     } catch (error) {

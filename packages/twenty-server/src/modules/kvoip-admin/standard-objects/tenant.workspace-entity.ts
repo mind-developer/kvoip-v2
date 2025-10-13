@@ -31,6 +31,7 @@ import {
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
 import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -139,6 +140,22 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.person,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Owner`,
+    description: msg`Workspace owner member`,
+    icon: 'IconUser',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'tenants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
 
   @WorkspaceRelation({
     standardId: TENANT_STANDARD_FIELD_IDS.subscriptions,

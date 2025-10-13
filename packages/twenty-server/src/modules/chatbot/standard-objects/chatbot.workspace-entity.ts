@@ -77,6 +77,7 @@ export const SEARCH_FIELDS_FOR_CHATBOT: FieldTypeAndNameMetadata[] = [
   icon: STANDARD_OBJECT_ICONS.chatbot,
   labelIdentifierStandardId: CHATBOT_STANDARD_FIELD_IDS.name,
 })
+//! We should either remove this decorator or remove the timelineActivities relation
 @WorkspaceIsNotAuditLogged()
 @ObjectType()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {

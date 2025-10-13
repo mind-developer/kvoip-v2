@@ -41,6 +41,7 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
 ];
 
+// TODO: Remvoe this entity after migration to person
 @WorkspaceEntity({
   standardId: KVOIP_ADMIN_STANDARD_OBJECT_IDS.owner,
   namePlural: 'owners',
