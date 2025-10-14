@@ -282,6 +282,11 @@ msgstr "Sobre aquest espai de treball"
 msgid "Accept"
 msgstr ""
 
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr ""
+
 #. js-lingui-id: v+L6Nt
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
 msgid "Accont has been removed"
@@ -5112,6 +5117,12 @@ msgstr "Sense dades que continguin errors"
 msgid "No data found"
 msgstr "No s'han trobat dades"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr ""
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -5484,6 +5495,11 @@ msgstr "O"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "Organització"
+
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr ""
 
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
@@ -6451,15 +6467,35 @@ msgstr "Veure el flux de treball"
 msgid "See workflows"
 msgstr "Veure els fluxos de treball"
 
+#. js-lingui-id: DuOCie
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a city"
+msgstr ""
+
+#. js-lingui-id: L+nQeT
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a country"
+msgstr ""
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Seleccioneu un camp d'un pas anterior"
 
+#. js-lingui-id: Yt7E+k
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a link"
+msgstr ""
+
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
 msgstr "Selecciona un rol"
+
+#. js-lingui-id: ie7roR
+#: src/pages/dashboard-links/DashboarLinks.tsx
+msgid "Select a state"
+msgstr ""
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -6998,6 +7034,11 @@ msgstr ""
 msgid "Successfully merged {recordCount} records"
 msgstr "{recordCount, plural, one {s'ha fusionat un registre} other {s'han fusionat {recordCount} registres}}"
 
+#. js-lingui-id: P6F38F
+#: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
+msgid "Subscriptions"
+msgstr ""
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -7135,16 +7176,6 @@ msgstr ""
 #. js-lingui-id: yEt5zR
 #: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Telephony"
-msgstr ""
-
-#. js-lingui-id: W4A/Fb
-#: src/modules/settings/service-center/telephony/hooks/useCreateTelephony.ts
-msgid "Telephony creation error"
-msgstr ""
-
-#. js-lingui-id: KIk6yG
-#: src/modules/settings/service-center/telephony/hooks/useCreateTelephony.ts
-msgid "Telephony extension added successfully!"
 msgstr ""
 
 #. js-lingui-id: xowcRf
@@ -7324,6 +7355,11 @@ msgstr "Aquest valor de la base de dades supera la configuració de l'entorn."
 msgid "This is required to enable manual row reordering."
 msgstr "Això és necessari per permetre la reordenació manual de les files."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr ""
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -7351,6 +7387,7 @@ msgstr "Aquest valor s'emmagatzemarà a la base de dades."
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "Aquesta setmana"
 
@@ -7358,6 +7395,11 @@ msgstr "Aquesta setmana"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Això revertirà el valor de la base de dades al valor d'entorn/predeterminat. L'anul·lació de la base de dades serà eliminada i el sistema utilitzarà la configuració de l'entorn."
+
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr ""
 
 #. js-lingui-id: kjAL4v
 #: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts

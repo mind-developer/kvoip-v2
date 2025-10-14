@@ -20,6 +20,7 @@ import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -40,6 +41,7 @@ import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/char
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -393,6 +395,19 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   invoices: Relation<InvoiceWorkspaceEntity[]>;
 
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.tenants,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Workspace`,
+    description: msg`Workspaces linked to the company.`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => TenantWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceGate({ featureFlag: 'IS_KVOIP_ADMIN' })
+  @WorkspaceIsNullable()
+  tenants: Relation<TenantWorkspaceEntity[]>;
+
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
@@ -453,7 +468,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   discount: number | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.quantitiesRemainingFinancialClosingsDiscounts,
+    standardId:
+      COMPANY_STANDARD_FIELD_IDS.quantitiesRemainingFinancialClosingsDiscounts,
     type: FieldMetadataType.NUMBER,
     label: msg`Quantity of Financial Closings Remaining for Discount`,
     description: msg`Number of financial closings remaining for this discount to be applied`,
@@ -534,5 +550,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  companyFinancialClosingExecutions: Relation<CompanyFinancialClosingExecutionWorkspaceEntity[]>;
+  companyFinancialClosingExecutions: Relation<
+    CompanyFinancialClosingExecutionWorkspaceEntity[]
+  >;
 }

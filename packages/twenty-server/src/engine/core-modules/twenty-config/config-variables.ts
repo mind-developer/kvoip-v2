@@ -35,6 +35,7 @@ import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
+import { ValidateFreeTrialDuration } from 'src/engine/core-modules/twenty-config/decorators/validate-free-trial-duration.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
@@ -565,12 +566,25 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
+    description: 'Enable or disable free trial for billing',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_IS_FREE_TRIAL_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
     description: 'Duration of free trial with credit card in days',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  @ValidateFreeTrialDuration({
+    message:
+      'Free trial duration with credit card must be greater than 0 when free trial is enabled',
+  })
   BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
 
   @ConfigVariablesMetadata({
@@ -581,6 +595,10 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  @ValidateFreeTrialDuration({
+    message:
+      'Free trial duration without credit card must be greater than 0 when free trial is enabled',
+  })
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @ConfigVariablesMetadata({

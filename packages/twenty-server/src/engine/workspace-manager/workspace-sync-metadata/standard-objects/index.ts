@@ -1,5 +1,6 @@
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { KVOIP_ADMIN_OBJECT_METADATA_DEFINITIONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-object-metadata-definitions.constant';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -53,11 +54,9 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
-import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
 
 // Base standard objects that are available in all workspaces
-const baseStandardObjectMetadataDefinitions = [
+export const baseStandardObjectMetadataDefinitions = [
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
   CalendarEventWorkspaceEntity,
@@ -112,13 +111,6 @@ const baseStandardObjectMetadataDefinitions = [
   ClientChatMessageWorkspaceEntity,
 ];
 
-// Admin-specific objects that are only available in the kvoip admin workspace
-// TODO: Use @WorkspaceGate decorator with 'IS_KVOIP_ADMIN' feature flag instead
-const adminSpecificObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[] = [
-  TenantWorkspaceEntity,
-  OwnerWorkspaceEntity,
-];
-
 /**
  * Returns the standard object metadata definitions based on the workspace context
  * This allows for workspace-specific objects to be included conditionally
@@ -131,7 +123,7 @@ export function getStandardObjectMetadataDefinitions(
   // Add admin-specific objects only for the admin workspace
   if (context.featureFlags.IS_KVOIP_ADMIN) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    standardObjects.push(...(adminSpecificObjectMetadataDefinitions as any));
+    standardObjects.push(...(KVOIP_ADMIN_OBJECT_METADATA_DEFINITIONS as any));
   }
 
   return standardObjects;

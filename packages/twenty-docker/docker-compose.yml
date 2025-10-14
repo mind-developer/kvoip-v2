@@ -123,23 +123,14 @@ services:
     restart: always
 
   db:
-    container_name: kvoipv2-pg
-    image: kvoipcrm/v2-kvoip-pg-spilo:latest
-    build:
-      context: ../..
-      dockerfile: ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile
+    image: postgres:16
     volumes:
-      - db-data:/home/postgres/pgdata
+      - db-data:/var/lib/postgresql/data
     environment:
-      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
-      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
-      POSTGRES_DB: ${PG_DATABASE:-postgres}
-      ALLOW_NOSSL: 'true'
-      SPILO_PROVIDER: 'local'
-    ports:
-      - '5433:5432'
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
     healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h db -d postgres
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10

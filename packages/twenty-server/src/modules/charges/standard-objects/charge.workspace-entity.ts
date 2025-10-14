@@ -78,8 +78,9 @@ registerEnumType(ChargeEntityType, {
   icon: 'IconReportMoney',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsSearchable()
+//! We should either remove this decorator or remove the timelineActivities relation
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsSearchable()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.name,

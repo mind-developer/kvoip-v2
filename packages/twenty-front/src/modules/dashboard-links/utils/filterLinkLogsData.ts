@@ -1,6 +1,13 @@
 export type FilterType = 'week' | 'month' | 'year';
 
 const toDate = (createdAt: string | number): Date => {
+  if (typeof createdAt === 'string') {
+    const date = new Date(createdAt);
+    if (!Number.isNaN(date.getTime())) {
+      return date;
+    }
+  }
+
   const ts = Number(createdAt) || 0;
   const ms = ts < 1e12 ? ts * 1000 : ts;
   return new Date(ms);

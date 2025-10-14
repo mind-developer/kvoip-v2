@@ -4,6 +4,7 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TENANT_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
 import { KVOIP_ADMIN_STANDARD_OBJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
@@ -15,7 +16,9 @@ import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
@@ -25,7 +28,11 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
+import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -44,6 +51,10 @@ export const SEARCH_FIELDS_FOR_WORKSPACES: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: TENANT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['ownerEmail'], ['coreWorkspaceId']])
+@WorkspaceGate({
+  featureFlag: FeatureFlagKey.IS_KVOIP_ADMIN,
+})
+@WorkspaceIsObjectUIReadOnly()
 @WorkspaceIsSearchable()
 export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -59,8 +70,8 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TENANT_STANDARD_FIELD_IDS.ownerEmail,
     type: FieldMetadataType.TEXT,
-    label: msg`Workspace owner primary e-mail`,
-    description: msg`The workspace woner primary email.`,
+    label: msg`Owner e-mail`,
+    description: msg`The workspace owner primary email.`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
@@ -113,6 +124,60 @@ export class TenantWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('owner')
   ownerId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.company,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Company`,
+    description: msg`Workspace company`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'tenants',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.person,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Owner`,
+    description: msg`Workspace owner member`,
+    icon: 'IconUser',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'tenants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.subscriptions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Subscriptions`,
+    description: msg`Subscriptions linked to the workspace.`,
+    icon: 'IconFileImport',
+    inverseSideTarget: () => SubscriptionWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  subscriptions: Relation<SubscriptionWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: TENANT_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the tenant`,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: TENANT_STANDARD_FIELD_IDS.position,

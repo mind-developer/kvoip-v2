@@ -1,10 +1,9 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import {
-  KVOIP_ADMIN_STANDARD_OBJECT_IDS,
-  OWNER_STANDARD_FIELD_IDS,
-} from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { OWNER_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+// TODO: Remvoe this view after migration to person
 export const ownerAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   const ownerObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === KVOIP_ADMIN_STANDARD_OBJECT_IDS.owner,

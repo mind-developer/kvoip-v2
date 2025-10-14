@@ -167,7 +167,7 @@ export default defineConfig(({ command, mode }) => {
         enforce: 'pre',
       },
       visualizer({
-        open: true,
+        open: false, // Disabled to prevent PowerShell errors in Docker/WSL environments
         gzipSize: true,
         brotliSize: true,
         filename: 'dist/stats.html',

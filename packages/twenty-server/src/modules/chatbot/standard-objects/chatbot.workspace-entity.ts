@@ -12,6 +12,7 @@ import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspa
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { Relation } from 'typeorm';
+import { ObjectType } from '@nestjs/graphql';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chatbot,
@@ -21,6 +22,7 @@ import { Relation } from 'typeorm';
   description: msg`A chatbot`,
 })
 @WorkspaceIsSystem()
+@ObjectType()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,
