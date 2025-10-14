@@ -52,6 +52,7 @@ export class WhatsAppService {
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private saveMessageQueue: MessageQueueService,
     private readonly clientChatMessageService: ClientChatMessageService,
+    private readonly clientChatMessageService: ClientChatMessageService,
   ) {}
 
   async getWhatsappTemplates(
