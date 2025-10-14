@@ -29,12 +29,10 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
-import { IconArrowLeft, IconPhone, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
-import { useDialingTone } from '../hooks/useDialingTone';
-import { useCallAudio } from '../hooks/useCallAudio';
-import { useMicrophone } from '../hooks/useMicrophone';
 import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
 import { SipConfig } from '../types/sipConfig';
@@ -42,9 +40,6 @@ import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import HoldButton from './HoldButton';
 import TransferButton from './TransferButton';
-import AudioDevicesModal from './AudioDevicesModal';
-import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { useActiveCallRing } from '../hooks/useActiveCallRing';
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -162,24 +157,7 @@ const StyledEndButton = styled.div`
   }
 `;
 
-const StyledSettingsButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1)};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
-`;
-
 const WebSoftphone: React.FC = () => {
-  const { enqueueDialog, closeDialog } = useDialogManager();
   const [config, setConfig] = useState<SipConfig>();
   const [callState, setCallState] = useState<CallState>(defaultCallState);
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
@@ -194,34 +172,12 @@ const WebSoftphone: React.FC = () => {
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
   const [isRinging, setIsRinging] = useState(false);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
-  const [isActiveCall, setIsActiveCall] = useState(false);
   const registerIntervalRef = useRef<number>();
   const holdAudioRef = useRef<HTMLAudioElement>(
     new Audio('https://kvoip.com.br/musicadeespera.mp3'),
   );
-  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedRingDevice, setSelectedRingDevice] = useState<string>('');
-  const [selectedCallDevice, setSelectedCallDevice] = useState<string>('');
-  const [selectedMicDevice, setSelectedMicDevice] = useState<string>('');
-  const ringAudioRef = useRef<HTMLAudioElement | null>(null);
-  const callAudioRef = useRef<HTMLAudioElement | null>(null);
-  const { getMediaStream } = useMicrophone();
-
-  useEffect(() => {
-    setIsRinging(callState.callStatus === CallStatus.CALLING);
-  }, [callState.callStatus]);
-
-  useEffect(() => {
-    setIsIncomingCall(callState.incomingCall);
-  }, [callState.incomingCall]);
-
-  useEffect(() => {
-    setIsActiveCall(callState.isInCall && !callState.incomingCall);
-  }, [callState.isInCall, callState.incomingCall]);
 
   useRingTone(isRinging, isIncomingCall);
-  useDialingTone(isRinging, isActiveCall);
-  useCallAudio(remoteAudioRef.current);
 
   const { getIcon } = useIcons();
 
@@ -238,7 +194,7 @@ const WebSoftphone: React.FC = () => {
 
   // const { telephonyExtensions, loading } = useFindAllPABX();
   const { telephonyExtension } = useGetUserSoftfone({
-    extNum: workspaceMember?.extensionNumber || '',
+    extNum: workspaceMember?.extensionNumber ?? undefined,
   });
 
   useEffect(() => {
@@ -256,14 +212,19 @@ const WebSoftphone: React.FC = () => {
   }, [telephonyExtension]);
 
   useEffect(() => {
-    if (config?.username && config?.password && config?.domain) {
+    if (
+      config?.username &&
+      config?.password &&
+      config?.domain &&
+      telephonyExtension
+    ) {
       updateConfigWithHa1();
     }
     return () => {
       onComponentUnmount();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config?.username, config?.password, config?.domain]);
+  }, [config?.username, config?.password, config?.domain, telephonyExtension]);
 
   const startTimer = (
     startTime: number | null,
@@ -303,98 +264,18 @@ const WebSoftphone: React.FC = () => {
   );
 
   useEffect(() => {
+    setIsRinging(callState.callStatus === CallStatus.CALLING);
+  }, [callState.callStatus]);
+
+  useEffect(() => {
+    setIsIncomingCall(callState.incomingCall);
+  }, [callState.incomingCall]);
+
+  useEffect(() => {
     if (holdAudioRef.current) {
       holdAudioRef.current.load();
     }
   }, []);
-
-  // Carregar dispositivos de áudio salvos
-  useEffect(() => {
-    const loadAudioDevices = () => {
-      const savedRingDevice = localStorage.getItem('disp_toque');
-      const savedCallDevice = localStorage.getItem('disp_chamada');
-      const savedMicDevice = localStorage.getItem('disp_microfone');
-      
-      if (savedRingDevice) setSelectedRingDevice(savedRingDevice);
-      if (savedCallDevice) setSelectedCallDevice(savedCallDevice);
-      if (savedMicDevice) setSelectedMicDevice(savedMicDevice);
-    };
-
-    loadAudioDevices();
-  }, []);
-
-  // Função para configurar o dispositivo de áudio
-  const setAudioDevice = async (audioElement: HTMLAudioElement, deviceId: string) => {
-    if ('setSinkId' in audioElement) {
-      try {
-        await (audioElement as any).setSinkId(deviceId);
-        console.log('Dispositivo de áudio configurado com sucesso:', deviceId);
-      } catch (error) {
-        console.error('Erro ao configurar dispositivo de áudio:', error);
-      }
-    }
-  };
-
-  // Função para tocar o som de chamada
-  const playRingtone = async () => {
-    try {
-      // Parar qualquer toque anterior
-      if (ringAudioRef.current) {
-        ringAudioRef.current.pause();
-        ringAudioRef.current.currentTime = 0;
-      }
-
-      // Criar novo elemento de áudio
-      const audio = new Audio('https://kvoip.com.br/toquedechamada.mp3');
-      ringAudioRef.current = audio;
-
-      // Configurar o dispositivo de toque
-      if (selectedRingDevice) {
-        await setAudioDevice(audio, selectedRingDevice);
-      }
-
-      // Reproduzir o toque
-      await audio.play();
-      console.log('Toque iniciado com sucesso');
-    } catch (error) {
-      console.error('Erro ao tocar o som de chamada:', error);
-    }
-  };
-
-  // Função para parar o toque
-  const stopRingtone = () => {
-    if (ringAudioRef.current) {
-      ringAudioRef.current.pause();
-      ringAudioRef.current.currentTime = 0;
-      ringAudioRef.current = null;
-    }
-  };
-
-  // Função para configurar o áudio da chamada
-  const setupCallAudio = async () => {
-    try {
-      // Parar o toque
-      stopRingtone();
-
-      // Configurar o dispositivo de chamada
-      if (callAudioRef.current && selectedCallDevice) {
-        await setAudioDevice(callAudioRef.current, selectedCallDevice);
-      }
-    } catch (error) {
-      console.error('Erro ao configurar áudio da chamada:', error);
-    }
-  };
-
-  // Atualizar o estado da chamada
-  useEffect(() => {
-    if (callState.callStatus === CallStatus.INCOMING_CALL) {
-      playRingtone();
-    } else if (callState.callStatus === CallStatus.CONNECTED) {
-      setupCallAudio();
-    } else if (callState.callStatus === CallStatus.NONE) {
-      stopRingtone();
-    }
-  }, [callState.callStatus]);
 
   const updateConfigWithHa1 = async () => {
     const authorizationHa1 = await generateAuthorizationHa1(
@@ -482,7 +363,7 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
-  const setupRemoteMedia = async (session: Session) => {
+  const setupRemoteMedia = (session: Session) => {
     const sessionDescriptionHandler = session.sessionDescriptionHandler as
       | SessionDescriptionHandler
       | undefined;
@@ -500,46 +381,6 @@ const WebSoftphone: React.FC = () => {
       return;
     }
 
-    // Configurar o microfone local
-    try {
-      // Primeiro, parar qualquer stream existente
-      const existingSenders = peerConnection.getSenders();
-      for (const sender of existingSenders) {
-        if (sender.track) {
-          sender.track.stop();
-        }
-      }
-
-      // Configurar o novo stream com o microfone selecionado
-      const constraints = {
-        audio: {
-          deviceId: selectedMicDevice ? { exact: selectedMicDevice } : undefined,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      };
-
-      console.log('Configurando microfone com constraints:', constraints);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      
-      if (stream) {
-        const audioTrack = stream.getAudioTracks()[0];
-        console.log('Nova trilha de áudio obtida:', audioTrack.label);
-        
-        // Substituir a trilha de áudio existente
-        const audioSender = peerConnection.getSenders().find(sender => sender.track?.kind === 'audio');
-        if (audioSender) {
-          await audioSender.replaceTrack(audioTrack);
-          console.log('Microfone configurado com sucesso:', selectedMicDevice);
-        } else {
-          console.error('Nenhum sender de áudio encontrado');
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao configurar microfone:', error);
-    }
-
     if (remoteAudioRef.current) {
       const remoteStream = new MediaStream();
       peerConnection.getReceivers().forEach((receiver: RTCRtpReceiver) => {
@@ -551,100 +392,16 @@ const WebSoftphone: React.FC = () => {
       remoteAudioRef.current.play().catch((error) => {
         console.error('Error playing remote audio:', error);
       });
-    }
-  };
 
-  const updateMicrophoneInRealTime = async () => {
-    if (sessionRef.current?.state === SessionState.Established) {
-      try {
-        const sessionDescriptionHandler = sessionRef.current.sessionDescriptionHandler as SessionDescriptionHandler;
-        if (!sessionDescriptionHandler || !('peerConnection' in sessionDescriptionHandler)) {
-          console.error('Session description handler não encontrado');
-          return;
-        }
-
-        const peerConnection = sessionDescriptionHandler.peerConnection;
-        if (!peerConnection) {
-          console.error('PeerConnection não disponível');
-          return;
-        }
-
-        // Encontrar o sender de áudio atual
-        const audioSender = peerConnection.getSenders().find(sender => sender.track?.kind === 'audio');
-        if (!audioSender) {
-          console.error('Nenhum sender de áudio encontrado');
-          return;
-        }
-
-        // Parar a trilha antiga antes de configurar a nova
-        if (audioSender.track) {
-          audioSender.track.stop();
-        }
-
-        // Configurar novo stream com o microfone selecionado
-        const constraints = {
-          audio: {
-            deviceId: selectedMicDevice ? { exact: selectedMicDevice } : undefined,
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          }
-        };
-
-        console.log('Configurando novo microfone:', constraints);
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        
-        if (!stream) {
-          console.error('Falha ao obter novo stream de áudio');
-          return;
-        }
-
-        const audioTrack = stream.getAudioTracks()[0];
-        if (!audioTrack) {
-          console.error('Nenhuma trilha de áudio encontrada no novo stream');
-          return;
-        }
-
-        console.log('Nova trilha de áudio obtida:', audioTrack.label);
-        
-        // Substituir a trilha no sender
-        await audioSender.replaceTrack(audioTrack);
-        console.log('Microfone atualizado com sucesso:', selectedMicDevice);
-
-        // Verificar se a troca foi bem sucedida
-        const newTrack = audioSender.track;
-        if (newTrack && newTrack.enabled) {
-          console.log('Nova trilha de áudio ativa e funcionando');
-        } else {
-          console.error('Falha ao ativar nova trilha de áudio');
-        }
-
-      } catch (error) {
-        console.error('Erro ao atualizar microfone em tempo real:', error);
-      }
-    } else {
-      console.log('Não é possível atualizar microfone: chamada não está ativa');
-    }
-  };
-
-  // Monitorar mudanças no microfone selecionado
-  useEffect(() => {
-    if (selectedMicDevice) {
-      console.log('Microfone alterado para:', selectedMicDevice);
-      updateMicrophoneInRealTime();
-    }
-  }, [selectedMicDevice]);
-
-  // Monitorar mudanças no dispositivo de chamada selecionado
-  useEffect(() => {
-    if (remoteAudioRef.current && selectedCallDevice) {
-      if ('setSinkId' in remoteAudioRef.current) {
-        (remoteAudioRef.current as any).setSinkId(selectedCallDevice)
-          .then(() => console.log('Dispositivo de chamada configurado:', selectedCallDevice))
-          .catch((error: Error) => console.error('Erro ao configurar dispositivo de chamada:', error));
+      // Verifica se o canal de DTMF está disponível
+      const dtmfSender = peerConnection
+        .getSenders()
+        .find((sender) => sender.track?.kind === 'audio')?.dtmf;
+      if (!dtmfSender) {
+        console.error('DTMF sender not available');
       }
     }
-  }, [selectedCallDevice]);
+  };
 
   const initializeSIP = async (updatedConfig: SipConfig | undefined) => {
     if (!updatedConfig) return;
@@ -658,7 +415,6 @@ const WebSoftphone: React.FC = () => {
         throw new Error('Missing required configuration');
       }
 
-      console.log('Initializing SIP connection...', { updatedConfig });
       setCallState((prev) => ({ ...prev, isRegistering: true }));
 
       const uri = UserAgent.makeURI(
@@ -711,22 +467,38 @@ const WebSoftphone: React.FC = () => {
       // Manter o UserAgent na referência
       userAgentRef.current = userAgent;
 
+      // // Enviar pacotes OPTIONS a cada 30 segundos
+      // setInterval(() => {
+      //   // const optionsRequest = new Request('OPTIONS', {
+      //   //   to: uri,
+      //   //   from: uri,
+      //   //   headers: {
+      //   //     to: { uri: uri },
+      //   //     from: { uri: uri },
+      //   //     'max-forwards': 70,
+      //   //   },
+      //   // }); ISSO NAO FAZ SENTIDO MAS TA FUNCIONANDO.
+      //   try {
+      //     userAgent.transport.send('aa');
+      //   } catch (err) {
+      //     console.error('Error sending OPTIONS packet:', err);
+      //   }
+      //   console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
+      // }, 30000); // Intervalo de 30 segundos
+
       // Evento para encerrar a conexão quando a página for fechada ou recarregada
       window.addEventListener('beforeunload', () => {
         if (userAgentRef.current) {
           userAgentRef.current.stop(); // Encerra a conexão SIP
-          console.log('Conexão SIP encerrada.');
+          console.warn('Conexão SIP encerrada.');
         }
       });
 
       userAgent.delegate = {
         onInvite: (invitation) => {
-          console.log('Incoming call received');
-
           // Don't clean up the session for incoming calls - this prevents race conditions
           // We'll only clean up if there's already an active call
           if (sessionRef.current || invitationRef.current) {
-            console.log('Session state:', sessionRef.current?.state);
             cleanupSession();
           }
 
@@ -740,18 +512,7 @@ const WebSoftphone: React.FC = () => {
             callStatus: CallStatus.INCOMING_CALL,
           }));
 
-          invitation.delegate = {
-            onCancel: () => {
-              console.log('Call cancelled by remote party');
-              if (sessionRef.current && sessionRef.current.state !== SessionState.Established) {
-                cleanupSession();
-              }
-            }
-          };
-          //Analisa se a chamada realmente foi encerrada
           invitation.stateChange.addListener((state: SessionState) => {
-            console.log('Incoming call state changed:', state);
-            
             if (state === SessionState.Establishing) {
               setCallState((prev) => ({
                 ...prev,
@@ -769,19 +530,14 @@ const WebSoftphone: React.FC = () => {
                 callStartTime: Date.now(),
                 ringingStartTime: null,
               }));
-              console.log('Incoming call accepted:', invitationRef.current);
             } else if (state === SessionState.Terminated) {
-              console.log('Call terminated with reason:', invitation);
-              if (!sessionRef.current || sessionRef.current.state !== SessionState.Established) {
-                cleanupSession();
-              }
+              cleanupSession();
             }
           });
         },
       };
 
       userAgent.transport.onConnect = async () => {
-        console.log('Transport connected');
         try {
           const registerer = new Registerer(userAgent, {
             expires: 10, //tempo de registro
@@ -792,7 +548,6 @@ const WebSoftphone: React.FC = () => {
           registererRef.current = registerer;
 
           registerer.stateChange.addListener((newState: RegistererState) => {
-            console.log('Registerer state changed:', newState);
             switch (newState) {
               case RegistererState.Registered:
                 setCallState((prev) => ({
@@ -815,7 +570,6 @@ const WebSoftphone: React.FC = () => {
           });
 
           await registerer.register();
-          console.log('Registration request sent');
 
           // Set interval to renew registration
           registerIntervalRef.current = window.setInterval(() => {
@@ -836,7 +590,6 @@ const WebSoftphone: React.FC = () => {
       };
 
       userAgent.transport.onDisconnect = (error?: Error) => {
-        console.log('Transport disconnected', error);
         setCallState((prev) => ({
           ...prev,
           isRegistered: false,
@@ -846,7 +599,6 @@ const WebSoftphone: React.FC = () => {
       };
 
       await userAgent.start();
-      console.log('UserAgent started');
     } catch (error) {
       console.error('SIP initialization error:', error);
       setCallState((prev) => ({
@@ -862,7 +614,6 @@ const WebSoftphone: React.FC = () => {
       !sessionRef.current ||
       sessionRef.current.state !== SessionState.Established
     ) {
-      console.log('Não é possível enviar DTMF: chamada não está ativa');
       return;
     }
 
@@ -891,14 +642,12 @@ const WebSoftphone: React.FC = () => {
       return;
     }
 
-    console.log('Enviando DTMF:', tone);
     dtmfSender.insertDTMF(tone, 100);
   };
 
   const requestMediaPermissions = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('Media permissions granted');
     } catch (error) {
       console.error('Media permissions error:', error);
     }
@@ -937,10 +686,7 @@ const WebSoftphone: React.FC = () => {
 
       sessionRef.current = inviter;
 
-      console.log('Inviting:', inviter);
-
       inviter.stateChange.addListener(async (state: SessionState) => {
-        console.log('Call state changed:', state);
         if (state === SessionState.Establishing) {
           setCallState((prev) => ({
             ...prev,
@@ -957,7 +703,6 @@ const WebSoftphone: React.FC = () => {
             callStartTime: Date.now(),
             ringingStartTime: null,
           }));
-          console.log('Active call established:', inviter);
         } else if (state === SessionState.Terminated) {
           await cleanupSession();
         }
@@ -972,7 +717,6 @@ const WebSoftphone: React.FC = () => {
 
   const handleAcceptCall = async () => {
     if (!invitationRef.current) {
-      console.log('entrou aqui');
       return;
     }
 
@@ -994,7 +738,6 @@ const WebSoftphone: React.FC = () => {
       });
 
       setupRemoteMedia(invitationRef.current);
-      console.log('Incoming call accepted:', invitationRef.current);
     } catch (error) {
       console.error('Error accepting call:', error);
       await cleanupSession();
@@ -1069,34 +812,14 @@ const WebSoftphone: React.FC = () => {
     if (sessionRef.current?.state === SessionState.Established) {
       const keyTrimmedLastChar = key.trim()[key.length - 1];
 
-      console.log('Sending DTMF tone from app:', keyTrimmedLastChar);
       setDtmf(dtmf + keyTrimmedLastChar);
       sendDTMF(keyTrimmedLastChar);
     }
   };
 
-  const handleOpenAudioDevicesModal = () => {
-    const dialogId = 'c6fd8fca-da37-497b-ac85-411d5ef244cf';
-    const dialogElement = document.getElementById(dialogId);
-    
-    if (dialogElement) {
-      dialogElement.remove();
-      return;
-    }
-
-    enqueueDialog({
-      title: 'Configurações de Áudio',
-      children: (
-        <AudioDevicesModal
-          isOpen={true}
-          onClose={() => {
-            closeDialog(dialogId);
-          }}
-        />
-      )
-      
-    });
-  };
+  if (!telephonyExtension) {
+    return <></>;
+  }
 
   return (
     <Draggable
@@ -1131,21 +854,16 @@ const WebSoftphone: React.FC = () => {
           </StyledIncomingCall>
         ) : (
           <StyledStatusAndTimer>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <StatusIndicator
-                status={
-                  callState.isRegistered
-                    ? 'online'
-                    : callState.isRegistering
-                      ? 'registering'
-                      : 'offline'
-                }
-                extension={config?.username}
-              />
-              <StyledSettingsButton onClick={handleOpenAudioDevicesModal}>
-                <IconSettings size={theme.icon.size.md} />
-              </StyledSettingsButton>
-            </div>
+            <StatusIndicator
+              status={
+                callState.isRegistered
+                  ? 'online'
+                  : callState.isRegistering
+                    ? 'registering'
+                    : 'offline'
+              }
+              extension={config?.username}
+            />
             {(callState.isInCall || callState.ringingStartTime) && (
               <StyledIncomingTimerAndIcon>
                 <IconPhoneOutgoing
@@ -1196,19 +914,25 @@ const WebSoftphone: React.FC = () => {
                       }}
                       RightIcon={() =>
                         isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardOffIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
                           />
                         ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
@@ -1252,19 +976,25 @@ const WebSoftphone: React.FC = () => {
                       }}
                       RightIcon={() =>
                         isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
+                            Icon={() => (
+                              <KeyboardOffIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                           />
                         ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
@@ -1352,22 +1082,24 @@ const WebSoftphone: React.FC = () => {
                       setCallState={setCallState}
                       callState={callState}
                     />
-
-                    <IconMicrophoneOff
+                    <IconButton
                       onClick={handleMute}
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.secondary}
-                      style={{
-                        cursor: 'pointer',
-                        padding: theme.spacing(3),
-                        borderRadius: '50%',
-                        // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-                        border: `1px solid #fff`,
-                        backgroundColor: callState.isMuted
-                          ? theme.background.overlaySecondary
-                          : theme.background.tertiary,
-                      }}
+                      Icon={() => (
+                        <IconMicrophoneOff
+                          size={theme.icon.size.lg}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.secondary}
+                          style={{
+                            padding: theme.spacing(3),
+                            borderRadius: '50%',
+                            // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+                            border: `1px solid #fff`,
+                            backgroundColor: callState.isMuted
+                              ? theme.background.overlaySecondary
+                              : theme.background.tertiary,
+                          }}
+                        />
+                      )}
                     />
 
                     <TransferButton
@@ -1400,3 +1132,218 @@ const WebSoftphone: React.FC = () => {
 };
 
 export default WebSoftphone;
+
+// const setupUserAgent = (updatedConfig: SipConfig, uri: URI) => {
+//   const wsServer = `${updatedConfig.protocol}${updatedConfig.proxy}`;
+
+//   return new UserAgent({
+//     uri,
+//     userAgentString: 'RamalWeb/1.1.11', // Define o UserAgent
+//     transportOptions: {
+//       server: wsServer,
+//       traceSip: true,
+//       wsServers: [wsServer],
+//     },
+//     sipExtensionReplaces: 'Supported' as SIPExtension,
+//     sipExtensionExtraSupported: ['path', 'gruu', '100rel'],
+//     authorizationUsername: updatedConfig.username,
+//     authorizationPassword: updatedConfig.password,
+//     displayName: updatedConfig.username,
+//     contactName: updatedConfig.username,
+//     noAnswerTimeout: 60,
+//     hackIpInContact: false,
+//     logLevel: 'error',
+//     logConnector: console.log,
+//     sessionDescriptionHandlerFactoryOptions: {
+//       constraints: {
+//         audio: true,
+//         video: false,
+//       },
+//       peerConnectionOptions: {
+//         rtcConfiguration: {
+//           iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
+//         },
+//       },
+//       modifiers: [
+//         (description: RTCSessionDescriptionInit) => {
+//           description.sdp = description.sdp?.replace(
+//             'a=rtpmap:101 telephone-event/8000',
+//             'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
+//           );
+//           return Promise.resolve(description);
+//         },
+//       ],
+//     },
+//   });
+// };
+
+// const keepConectionAlive = async (userAgent: UserAgent, uri: URI) => {
+//   // Enviar pacotes OPTIONS a cada 30 segundos
+//   setInterval(async () => {
+//     if (!userAgent || !userAgent.transport) {
+//       console.error('Erro: UserAgent ou transporte não está disponível.');
+//       return;
+//     }
+
+//     try {
+//       const optionsMessage = `OPTIONS sip:${uri} SIP/2.0
+//       Via: SIP/2.0/WSS example.com;branch=z9hG4bK776asdhds
+//       Max-Forwards: 70
+//       To: <sip:${uri}>
+//       From: <sip:${uri}>;tag=12345
+//       Call-ID: ${Math.random().toString(36).slice(2, 12)}
+//       CSeq: 1 OPTIONS
+//       Content-Length: 0`;
+
+//       await userAgent.transport.send(optionsMessage);
+//       console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
+//     } catch (error) {
+//       console.error('Erro ao enviar pacote OPTIONS:', error);
+//     }
+//   }, 30000); // A cada 30 segundos
+// };
+
+// const onInvite = async (invitation: Invitation) => {
+//   console.log('Incoming call received');
+
+//   await cleanupSession();
+
+//   invitationRef.current = invitation;
+//   const fromNumber = invitation.remoteIdentity.uri.user;
+//   setCallState((prev) => ({
+//     ...prev,
+//     incomingCall: true,
+//     incomingCallNumber: fromNumber || '',
+//     ringingStartTime: Date.now(),
+//     callStatus: CallStatus.INCOMING_CALL,
+//   }));
+
+//   invitation.stateChange.addListener(async (state: SessionState) => {
+//     console.log('Incoming call state changed:', state);
+//     if (state === SessionState.Establishing) {
+//       setCallState((prev) => ({
+//         ...prev,
+//         callStatus: CallStatus.CONNECTING,
+//       }));
+//     } else if (state === SessionState.Established) {
+//       sessionRef.current = invitation;
+//       setupRemoteMedia(invitation);
+//       setCallState((prev) => ({
+//         ...prev,
+//         isInCall: true,
+//         incomingCall: false,
+//         incomingCallNumber: '',
+//         callStatus: CallStatus.CONNECTED,
+//         callStartTime: Date.now(),
+//         ringingStartTime: null,
+//       }));
+//       console.log('Incoming call accepted:', invitationRef.current);
+//     } else if (state === SessionState.Terminated) {
+//       await cleanupSession();
+//     }
+//   });
+// };
+
+// const onConnect = async (userAgent: UserAgent) => {
+//   console.log('Transport connected');
+//   try {
+//     const registerer = new Registerer(userAgent, {
+//       expires: 300, //tempo de registro
+//       extraHeaders: ['X-oauth-dazsoft: 1'],
+//       regId: 1,
+//     });
+
+//     registererRef.current = registerer;
+
+//     registerer.stateChange.addListener(async (newState: RegistererState) => {
+//       console.log('Registerer state changed:', newState);
+//       switch (newState) {
+//         case RegistererState.Registered:
+//           setCallState((prev) => ({
+//             ...prev,
+//             isRegistered: true,
+//             isRegistering: false,
+//           }));
+//           requestMediaPermissions();
+//           break;
+//         case RegistererState.Unregistered:
+//         case RegistererState.Terminated:
+//           setCallState((prev) => ({
+//             ...prev,
+//             isRegistered: false,
+//             isRegistering: false,
+//           }));
+//           await cleanupSession();
+//           break;
+//       }
+//     });
+
+//     await registerer.register();
+//     console.log('Registration request sent');
+
+//     // Set interval to renew registration
+//     registerIntervalRef.current = window.setInterval(() => {
+//       if (registererRef.current) {
+//         registererRef.current.register().catch((error) => {
+//           console.error('Error renewing registration:', error);
+//         });
+//       }
+//     }, 270000); // Renew registration every 4.5 minutes (270000 ms)
+//   } catch (error) {
+//     console.error('Registration error:', error);
+//     setCallState((prev) => ({
+//       ...prev,
+//       isRegistered: false,
+//       isRegistering: false,
+//     }));
+//   }
+// };
+
+// const onDisconnect = async (error?: Error) => {
+//   console.log('Transport disconnected', error);
+//   setCallState((prev) => ({
+//     ...prev,
+//     isRegistered: false,
+//     isRegistering: false,
+//   }));
+//   await cleanupSession();
+// };
+
+// const sendDTMF = (tone: string) => {
+//   console.log('Sending DTMF tone:', tone);
+//   console.log(
+//     'Comparacao',
+//     sessionRef.current?.state,
+//     ' x ',
+//     SessionState.Established,
+//   );
+//   // sessionManager?.transfer(session, `sip:${transferTarget}@${domain}`);
+//   console.log('Session ref', sessionRef.current);
+
+//   if (sessionRef.current?.state === SessionState.Established) {
+//     const dtmfSender = (
+//       sessionRef.current.sessionDescriptionHandler as
+//         | SessionDescriptionHandler
+//         | undefined
+//     )?.peerConnection
+//       ?.getSenders()
+//       .find((sender) => sender.track?.kind === 'audio')?.dtmf;
+
+//     console.log('DtmfSender:', dtmfSender);
+//     console.log(
+//       'SessionDescriptionHandler:',
+//       (
+//         sessionRef.current.sessionDescriptionHandler as
+//           | SessionDescriptionHandler
+//           | undefined
+//       )?.peerConnection?.getSenders(),
+//     );
+
+//     if (dtmfSender) {
+//       console.log(`Sending DTMF: ${tone}`);
+//       dtmfSender.insertDTMF(tone, 1000);
+//     } else {
+//       console.error('DTMF sender not available');
+//     }
+//   }
+// };

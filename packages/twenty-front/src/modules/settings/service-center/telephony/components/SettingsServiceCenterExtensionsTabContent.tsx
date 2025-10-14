@@ -58,7 +58,6 @@ export const SettingsServiceCenterExtensionsTabContent = ({
     const extensionMatch = (
       extension.nome?.toLowerCase().includes(searchLower) ||
       extension.numero?.toLowerCase().includes(searchLower)
-      // extension.usuario_autenticacao?.toLowerCase().includes(searchLower)
     );
     
     // Se já encontrou na extensão, retorna true

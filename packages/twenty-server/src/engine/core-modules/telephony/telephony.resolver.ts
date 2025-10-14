@@ -634,10 +634,10 @@ export class TelephonyResolver {
       throw new Error('Telephony not found');
     }
 
-    // await this.telephonyService.removeAgentIdInWorkspaceMember(
-    //   workspace.id,
-    //   telephonyToDelete.memberId!,
-    // );
+    await this.telephonyService.removeAgentIdInWorkspaceMember(
+      workspace.id,
+      telephonyToDelete.memberId!,
+    );
 
     const result = await this.telephonyService.delete({
       id: id,

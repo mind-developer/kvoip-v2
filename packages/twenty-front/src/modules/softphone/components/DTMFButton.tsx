@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
 
 const DTMFButton = ({
   setIsSendingDTMF,
@@ -14,24 +13,21 @@ const DTMFButton = ({
   const IconDialpad = getIcon('IconDialpad');
 
   return (
-    <IconButton
+    <IconDialpad
       onClick={() => {
         setIsSendingDTMF(true);
       }}
-      Icon={() => (
-        <IconDialpad
-          size={theme.icon.size.lg}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.secondary}
-          style={{
-            padding: theme.spacing(3),
-            borderRadius: '50%',
-            // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-            border: `1px solid #fff`,
-            backgroundColor: theme.background.tertiary,
-          }}
-        />
-      )}
+      size={theme.icon.size.lg}
+      stroke={theme.icon.stroke.sm}
+      color={theme.font.color.secondary}
+      style={{
+        cursor: 'pointer',
+        padding: theme.spacing(3),
+        borderRadius: '50%',
+        // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+        border: `1px solid #fff`,
+        backgroundColor: theme.background.tertiary,
+      }}
     />
   );
 };
