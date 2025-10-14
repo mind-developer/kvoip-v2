@@ -42,6 +42,7 @@ import { InterIntegrationService } from 'src/engine/core-modules/inter/integrati
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -367,7 +368,10 @@ export class InterService {
 
     i18n.activate(locale);
 
-    const isDev = this.twentyConfigService.get('NODE_ENV') === 'development';
+    const isSandbox = [
+      NodeEnvironment.DEVELOPMENT,
+      NodeEnvironment.TEST,
+    ].includes(this.twentyConfigService.get('NODE_ENV'));
 
     this.logger.log(`Sengind email to ${userEmail}`);
     this.emailService.send({
@@ -375,7 +379,7 @@ export class InterService {
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: userEmail,
-      subject: t`Inter Bilepix Billing Charge ${isDev ? `(${interChargeCode})` : ''}`,
+      subject: t`Inter Bilepix Billing Charge ${isSandbox ? `(${interChargeCode})` : ''}`,
       text,
       html,
     });
