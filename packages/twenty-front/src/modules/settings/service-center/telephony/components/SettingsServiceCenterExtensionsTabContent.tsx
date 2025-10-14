@@ -35,7 +35,6 @@ export const SettingsServiceCenterExtensionsTabContent = ({
   searchTerm,
 }: SettingsServiceCenterExtensionsTabContentProps) => {
   const navigate = useNavigate();
-  const { getIcon } = useIcons();
   const theme = useTheme();
   const { t } = useLingui();
 
@@ -119,7 +118,7 @@ export const SettingsServiceCenterExtensionsTabContent = ({
           </StyledSection>
 
         ) : (
-
+          // No extensions found
           <Section>
             <div style={{ marginTop: theme.spacing(10) }}>
               <AnimatedPlaceholderEmptyContainer>

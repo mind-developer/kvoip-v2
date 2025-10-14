@@ -615,18 +615,18 @@ export class TelephonyResolver {
   async deleteTelephonyIntegration(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args('telephonyId', { type: () => ID }) telephonyId: string,
+    @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
     if (!userId) {
       throw new Error('User id not found');
     }
 
-    if (!telephonyId) {
+    if (!id) {
       throw new Error('Agent id not found');
     }
 
     const telephonyToDelete = await this.telephonyService.findOne({
-      id: telephonyId,
+      id: id,
       workspaceId: workspace.id,
     });
 
@@ -634,13 +634,13 @@ export class TelephonyResolver {
       throw new Error('Telephony not found');
     }
 
-    await this.telephonyService.removeAgentIdInWorkspaceMember(
-      workspace.id,
-      telephonyToDelete.memberId!,
-    );
+    // await this.telephonyService.removeAgentIdInWorkspaceMember(
+    //   workspace.id,
+    //   telephonyToDelete.memberId!,
+    // );
 
     const result = await this.telephonyService.delete({
-      id: telephonyId,
+      id: id,
       workspaceId: workspace.id,
     });
 
