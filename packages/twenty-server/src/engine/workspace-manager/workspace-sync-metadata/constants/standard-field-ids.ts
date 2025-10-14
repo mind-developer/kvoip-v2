@@ -361,6 +361,7 @@ export const SECTOR_FIELD_IDS = {
   agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
   chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
+  whatsappIntegrations: 'f12979a9-a1a3-4091-b536-0d4345d58f70',
 } as const;
 
 export const AGENT_FIELD_IDS = {
@@ -814,7 +815,9 @@ export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
   person: '81157d97-44b6-432e-aa2b-065b1eefb548',
   status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
   clientChatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
-  lastMessage: 'd19bbf53-e718-4f74-b50b-3abc5526bfe3',
+  lastMessageType: 'c391a517-1514-450b-9751-6239c4c18d62',
+  lastMessageDate: 'dde154dd-bfbc-49bd-a127-c71aa5e34b41',
+  lastMessagePreview: '5ebec8ba-14a7-4ac3-91f5-45bbfd27907a',
 } as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {
@@ -844,7 +847,7 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
   apiType: '0f112edf-794d-4e0d-b054-b7a5a72f15cd',
-  inbox: '84b0151b-547b-4b14-a9ad-263968e2868d',
+  defaultSector: '84b0151b-547b-4b14-a9ad-263968e2868d',
   clientChats: 'ee41e808-1b6f-4593-a421-87a85118506e',
 } as const;
 

@@ -13,6 +13,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
@@ -79,4 +80,13 @@ export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'sector',
   })
   chats: Relation<ClientChatWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: SECTOR_FIELD_IDS.whatsappIntegrations,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`WhatsApp Integrations that default to this sector`,
+    inverseSideTarget: () => WhatsappIntegrationWorkspaceEntity,
+    inverseSideFieldKey: 'defaultSector',
+  })
+  whatsappIntegrations: Relation<WhatsappIntegrationWorkspaceEntity[]>;
 }

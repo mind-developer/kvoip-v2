@@ -17,6 +17,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import {
+  ChatMessageType,
   ClientChatStatus,
   FieldMetadataType,
   RelationType,
@@ -112,4 +113,29 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   clientChatMessages: Relation<ClientChatMessageWorkspaceEntity[]> | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.lastMessageType,
+    type: FieldMetadataType.TEXT,
+    label: msg`Last Message Type`,
+    description: msg`The type of the last message in the chat`,
+  })
+  lastMessageType: ChatMessageType;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.lastMessageDate,
+    type: FieldMetadataType.DATE,
+    label: msg`Last Message Date`,
+    description: msg`The date of the last message in the chat`,
+  })
+  lastMessageDate: Date;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.lastMessagePreview,
+    type: FieldMetadataType.TEXT,
+    label: msg`Last Message Preview`,
+    description: msg`The preview of the last message in the chat`,
+  })
+  @WorkspaceIsNullable()
+  lastMessagePreview: string | null;
 }
