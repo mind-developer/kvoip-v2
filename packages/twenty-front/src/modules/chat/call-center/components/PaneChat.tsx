@@ -385,20 +385,15 @@ export const PaneChat = () => {
     skip: !chatId,
   });
 
-  const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>([]);
-  const { records: dbMessagesRecord } = useFindManyRecords<
-    ClientChatMessage & { __typename: string; id: string }
-  >({
-    objectNameSingular: 'clientChatMessage',
-    filter: chatId ? { clientChatId: { eq: chatId } } : undefined,
-    skip: !chatId,
-    orderBy: [{ createdAt: 'AscNullsFirst' }],
-  });
-  useEffect(() => {
-    if (dbMessagesRecord) {
-      setDbMessages(dbMessagesRecord as ClientChatMessage[]);
-    }
-  }, [dbMessagesRecord]);
+  const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>(
+    useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
+      objectNameSingular: 'clientChatMessage',
+      limit: 5000,
+      filter: { clientChatId: { eq: chatId } },
+      orderBy: [{ createdAt: 'AscNullsFirst' }],
+    }).records,
+  );
+  console.log(dbMessages);
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);

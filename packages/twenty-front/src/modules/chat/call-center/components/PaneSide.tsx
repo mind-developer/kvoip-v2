@@ -32,7 +32,7 @@ const StyledTabListContainer = styled.div`
   justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  width: 100%;
+  min-width: 350px;
 `;
 
 const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
@@ -137,6 +137,11 @@ export const PaneSide = () => {
     {
       id: 'abandoned',
       title: 'Abandoned',
+      // incomingMessages: unreadTabMessages?.unreadAbandoned,
+    },
+    {
+      id: 'chatbot',
+      title: 'With Chatbot',
       // incomingMessages: unreadTabMessages?.unreadAbandoned,
     },
   ];

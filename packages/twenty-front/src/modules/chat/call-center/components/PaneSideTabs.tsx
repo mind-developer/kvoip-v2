@@ -16,7 +16,7 @@ type PaneSideTabsProps = {
 };
 
 const StyledTabList = styled(TabList)`
-  min-width: 270px;
+  min-width: 350px;
 `;
 
 export const PaneSideTabs = ({
