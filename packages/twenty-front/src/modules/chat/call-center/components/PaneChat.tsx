@@ -934,7 +934,11 @@ export const PaneChat = () => {
         <StyledPaneChatContainer>
           <PaneChatHeader
             avatarUrl={selectedChat.person?.avatarUrl || ''}
-            name={selectedChat.person?.firstName || ''}
+            name={
+              selectedChat.person?.name.firstName +
+              ' ' +
+              selectedChat.person?.name.lastName
+            }
             personId={selectedChat.person?.id || ''}
           />
           <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
@@ -1028,7 +1032,6 @@ export const PaneChat = () => {
                               .trim()
                           : messageContent,
                       )}
-                      {message.from}
                     </StyledMessage>
                   );
                   break;

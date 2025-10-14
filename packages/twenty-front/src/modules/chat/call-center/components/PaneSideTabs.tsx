@@ -10,7 +10,6 @@ type TabItemProps = {
 };
 
 type PaneSideTabsProps = {
-  tabListId: string;
   tabs: TabItemProps[];
   loading?: boolean;
   className?: string;
@@ -22,7 +21,6 @@ const StyledTabList = styled(TabList)`
 
 export const PaneSideTabs = ({
   tabs,
-  tabListId,
   loading,
   className,
 }: PaneSideTabsProps) => {

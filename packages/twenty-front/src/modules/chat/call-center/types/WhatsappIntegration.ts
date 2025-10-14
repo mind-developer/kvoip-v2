@@ -9,8 +9,7 @@ type IWhatsappIntegration = {
   paused: boolean;
   sla: number;
   apiType: string;
-  inboxId?: string; // Deprecated: use inbox relation instead
-  inbox?: Array<{ id: string; name: string }>;
+  defaultSectorId: string;
 };
 
 export type CreateWhatsappIntegrationInput = Omit<

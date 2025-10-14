@@ -38,6 +38,7 @@ const StyledLastMessagePreview = styled.p`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  max-width: 200px;
 `;
 
 const StyledDateAndUnreadMessagesContainer = styled.div`
