@@ -68,57 +68,55 @@ export const SettingsFinancialClosings = ({
 
   return (
     <StyledShowServiceCenterTabs isMobile={isMobile}>
-      {financialClosings?.length > 0 && (
-        <StyledSection>
-          {financialClosings.map((financialClosing) => (
-            <SettingsFinancialClosingTableRow
-              key={financialClosing.id}
-              financialClosing={financialClosing}
-              accessory={
-                <ServiceCenterFieldActionDropdown
-                  modalMessage={{
-                    title: t`Delete Financial Closing`,
-                    subtitle: t`Are you sure you want to delete this financial closing? This action cannot be undone.`,
-                  }}
-                  scopeKey={financialClosing.name}
-                  onEdit={() => { handleEditFinancialClosing(financialClosing.id) }}
-                  onDelete={async () => {
-                    await deleteFinancialClosingById(financialClosing.id);
-                    refetchFinancialClosings();
-                  }}
-                  extraMenuItems={[
-                    {
-                      text: t`Execution History`,
-                      icon: IconClock,
-                      onClick: () => { handleFinancialClosingExecutions(financialClosing.id) },
-                    },
-                  ]}
-                />
-              }
-            />
-          ))}
-
-          {
-            financialClosings && financialClosings?.length === 0 && (
-              <Section>
-                <div style={{ marginTop: theme.spacing(10) }}>
-                  <AnimatedPlaceholderEmptyContainer>
-                    <AnimatedPlaceholder type="noRecord" />
-                    <AnimatedPlaceholderEmptyTextContainer>
-                      <AnimatedPlaceholderEmptyTitle>
-                        {t`No financial closings found`}
-                      </AnimatedPlaceholderEmptyTitle>
-                      <AnimatedPlaceholderEmptySubTitle>
-                        {t`Create a financial closing to get started`}
-                      </AnimatedPlaceholderEmptySubTitle>
-                    </AnimatedPlaceholderEmptyTextContainer>
-                  </AnimatedPlaceholderEmptyContainer>
-                </div>
-              </Section>
-            )
-          }
-        </StyledSection>
-      )}
+      {
+        financialClosings?.length > 0 ? (
+          <StyledSection>
+            {financialClosings.map((financialClosing) => (
+              <SettingsFinancialClosingTableRow
+                key={financialClosing.id}
+                financialClosing={financialClosing}
+                accessory={
+                  <ServiceCenterFieldActionDropdown
+                    modalMessage={{
+                      title: t`Delete Financial Closing`,
+                      subtitle: t`Are you sure you want to delete this financial closing? This action cannot be undone.`,
+                    }}
+                    scopeKey={financialClosing.name}
+                    onEdit={() => { handleEditFinancialClosing(financialClosing.id) }}
+                    onDelete={async () => {
+                      await deleteFinancialClosingById(financialClosing.id);
+                      refetchFinancialClosings();
+                    }}
+                    extraMenuItems={[
+                      {
+                        text: t`Execution History`,
+                        icon: IconClock,
+                        onClick: () => { handleFinancialClosingExecutions(financialClosing.id) },
+                      },
+                    ]}
+                  />
+                }
+              />
+            ))}
+          </StyledSection>
+        ) : (
+          <Section>
+            <div style={{ marginTop: theme.spacing(10) }}>
+              <AnimatedPlaceholderEmptyContainer>
+                <AnimatedPlaceholder type="noRecord" />
+                <AnimatedPlaceholderEmptyTextContainer>
+                  <AnimatedPlaceholderEmptyTitle>
+                    {t`No financial closings found`}
+                  </AnimatedPlaceholderEmptyTitle>
+                  <AnimatedPlaceholderEmptySubTitle>
+                    {t`Create a financial closing to get started`}
+                  </AnimatedPlaceholderEmptySubTitle>
+                </AnimatedPlaceholderEmptyTextContainer>
+              </AnimatedPlaceholderEmptyContainer>
+            </div>
+          </Section>
+        )
+      }
     </StyledShowServiceCenterTabs>
   );
 };

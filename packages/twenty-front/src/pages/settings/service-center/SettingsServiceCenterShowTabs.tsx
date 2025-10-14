@@ -29,10 +29,12 @@ const TAB_LIST_COMPONENT_ID = 'service-center-telephony-tabs';
 type ShowServiceCenterTelephonyTabsProps = {
   isRightDrawer?: boolean;
   loading?: boolean;
+  searchTerm: string;
 };
 
 export const ShowServiceCenterTelephonyTabs = ({
   isRightDrawer = false,
+  searchTerm,
 }: ShowServiceCenterTelephonyTabsProps) => {
   const isMobile = useIsMobile() || isRightDrawer;
   const { t } = useLingui();
@@ -91,13 +93,18 @@ export const ShowServiceCenterTelephonyTabs = ({
         ) : (
           <>
             {activeTabId === 'operators' && (
-              <ServiceCenterTabContent telephonys={telephonys} refetch={refetch} />
+              <ServiceCenterTabContent 
+                telephonys={telephonys} 
+                searchTerm={searchTerm}
+                refetch={refetch} 
+              />
             )}
 
             {activeTabId === 'all-extensions' && (
               <SettingsServiceCenterExtensionsTabContent 
                 extensions={extensions || []} 
                 telephonys={telephonys || []}
+                searchTerm={searchTerm}
                 refetch={refetchExtensions} 
               />
             )}

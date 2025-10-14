@@ -1,9 +1,12 @@
 /* @kvoip-woulz proprietary */
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
 import { ServiceCenterExternalExtensionTableRow } from '@/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow';
 import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -15,6 +18,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 type SettingsServiceCenterExtensionsTabContentProps = {
   extensions: SettingsServiceCenterExternalExtension[];
   telephonys: Telephony[];
+  searchTerm: string;
   refetch: () => void;
 };
 
@@ -28,23 +32,58 @@ const StyledSection = styled(Section)`
 export const SettingsServiceCenterExtensionsTabContent = ({
   extensions,
   telephonys,
+  searchTerm,
 }: SettingsServiceCenterExtensionsTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
   const { t } = useLingui();
 
+  // Buscar dados dos membros do workspace
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
+
   // Criar mapeamento de extensões para membros vinculados
   const getLinkedMemberForExtension = (extensionNumber: string) => {
     return telephonys.find(telephony => telephony.numberExtension === extensionNumber);
   };
 
+  // Filtrar extensões baseado no termo de busca
+  const filteredExtensions = extensions.filter(extension => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    
+    // Buscar nos campos da extensão
+    const extensionMatch = (
+      extension.nome?.toLowerCase().includes(searchLower) ||
+      extension.numero?.toLowerCase().includes(searchLower)
+      // extension.usuario_autenticacao?.toLowerCase().includes(searchLower)
+    );
+    
+    // Se já encontrou na extensão, retorna true
+    if (extensionMatch) return true;
+    
+    // Buscar no nome do usuário vinculado
+    const linkedTelephony = getLinkedMemberForExtension(extension.numero!);
+    if (linkedTelephony) {
+      const linkedMember = workspaceMembers.find(member => member.id === linkedTelephony.memberId);
+      if (linkedMember) {
+        const memberName = `${linkedMember.name.firstName} ${linkedMember.name.lastName}`.toLowerCase();
+        return memberName.includes(searchLower);
+      }
+    }
+    
+    return false;
+  });
+
   return (
     <>
-      { extensions && extensions?.length > 0 ? (
+      { filteredExtensions && filteredExtensions?.length > 0 ? (
 
           <StyledSection>
-            {extensions?.map((extension) => {
+            {filteredExtensions?.map((extension) => {
               const linkedTelephony = getLinkedMemberForExtension(extension.numero!);
               
               return (
@@ -87,10 +126,10 @@ export const SettingsServiceCenterExtensionsTabContent = ({
                 <AnimatedPlaceholder type="noRecord" />
                 <AnimatedPlaceholderEmptyTextContainer>
                   <AnimatedPlaceholderEmptyTitle>
-                    {t`No extensions found`}
+                    {searchTerm ? t`No extensions found for` + '"' + searchTerm + '"' : t`No extensions found`}
                   </AnimatedPlaceholderEmptyTitle>
                   <AnimatedPlaceholderEmptySubTitle>
-                    {t`Create an extension to get started`}
+                    {searchTerm ? t`Try a different search term` : t`Create an extension to get started`}
                   </AnimatedPlaceholderEmptySubTitle>
                 </AnimatedPlaceholderEmptyTextContainer>
               </AnimatedPlaceholderEmptyContainer>

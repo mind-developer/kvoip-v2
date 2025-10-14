@@ -1,24 +1,28 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { 
-  AnimatedPlaceholderEmptyTitle, 
-  AnimatedPlaceholderEmptyContainer, 
-  AnimatedPlaceholder, 
-  AnimatedPlaceholderEmptyTextContainer, 
-  Section, 
-  AnimatedPlaceholderEmptySubTitle 
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Section
 } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {
   telephonys: Telephony[];
+  searchTerm: string;
   refetch: () => void;
 };
 
@@ -31,12 +35,18 @@ const StyledSection = styled(Section)`
 
 export const ServiceCenterTabContent = ({
   telephonys,
+  searchTerm,
 }: ServiceCenterTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
   const EditTelephonyIcon = getIcon('IconEdit');
   const { t } = useLingui();
+
+  // Buscar dados dos membros do workspace
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
 
   const handleEditTelephony = (telephonyId: string) => {
     const path = getSettingsPath(SettingsPath.EditTelephony).replace(
@@ -47,12 +57,38 @@ export const ServiceCenterTabContent = ({
     navigate(path);
   };
 
+  // Filtrar telefonia baseado no termo de busca
+  const filteredTelephonys = telephonys.filter(telephony => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    
+    // Buscar nos campos da telefonia
+    const telephonyMatch = (
+      telephony.extensionName?.toLowerCase().includes(searchLower) ||
+      telephony.numberExtension?.toLowerCase().includes(searchLower) ||
+      telephony.type?.toLowerCase().includes(searchLower)
+    );
+    
+    // Se já encontrou na telefonia, retorna true
+    if (telephonyMatch) return true;
+    
+    // Buscar no nome do usuário vinculado
+    const linkedMember = workspaceMembers.find(member => member.id === telephony.memberId);
+    if (linkedMember) {
+      const memberName = `${linkedMember.name.firstName} ${linkedMember.name.lastName}`.toLowerCase();
+      return memberName.includes(searchLower);
+    }
+    
+    return false;
+  });
+
   return (
     <>
-      {telephonys?.length > 0 ? (
+      {filteredTelephonys?.length > 0 ? (
           
         <StyledSection>
-          {telephonys?.map((telephony) => (
+          {filteredTelephonys?.map((telephony) => (
             <SettingsServiceCenterItemTableRow
               key={telephony.id}
               telephony={telephony}
@@ -79,10 +115,10 @@ export const ServiceCenterTabContent = ({
               <AnimatedPlaceholder type="noRecord" />
               <AnimatedPlaceholderEmptyTextContainer>
                 <AnimatedPlaceholderEmptyTitle>
-                  {t`No members with extensions found`}
+                  {searchTerm ? t`No operators found for "${searchTerm}"` : t`No members with extensions found`}
                 </AnimatedPlaceholderEmptyTitle>
                 <AnimatedPlaceholderEmptySubTitle>
-                  {t`Create an extension for a member to get started`}
+                  {searchTerm ? t`Try a different search term` : t`Create an extension for a member to get started`}
                 </AnimatedPlaceholderEmptySubTitle>
               </AnimatedPlaceholderEmptyTextContainer>
             </AnimatedPlaceholderEmptyContainer>
