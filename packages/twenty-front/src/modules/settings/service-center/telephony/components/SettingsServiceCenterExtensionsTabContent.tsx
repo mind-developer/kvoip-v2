@@ -2,6 +2,7 @@
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
 import { ServiceCenterExternalExtensionTableRow } from '@/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow';
 import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
+import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,6 +14,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
   extensions: SettingsServiceCenterExternalExtension[];
+  telephonys: Telephony[];
   refetch: () => void;
 };
 
@@ -25,23 +27,32 @@ const StyledSection = styled(Section)`
 
 export const SettingsServiceCenterExtensionsTabContent = ({
   extensions,
+  telephonys,
 }: SettingsServiceCenterExtensionsTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
   const { t } = useLingui();
 
+  // Criar mapeamento de extensões para membros vinculados
+  const getLinkedMemberForExtension = (extensionNumber: string) => {
+    return telephonys.find(telephony => telephony.numberExtension === extensionNumber);
+  };
+
   return (
     <>
       { extensions && extensions?.length > 0 ? (
 
           <StyledSection>
-            {extensions?.map((extension) => (
-    
-              <ServiceCenterExternalExtensionTableRow
-                key={extension.ramal_id}
-                extension={extension}
-                accessory={
+            {extensions?.map((extension) => {
+              const linkedTelephony = getLinkedMemberForExtension(extension.numero!);
+              
+              return (
+                <ServiceCenterExternalExtensionTableRow
+                  key={extension.ramal_id}
+                  extension={extension}
+                  linkedTelephony={linkedTelephony}
+                  accessory={
                   <ServiceCenterFieldActionDropdown
                     key={extension.ramal_id}
                     scopeKey={extension.nome ?? extension.numero!}
@@ -63,8 +74,9 @@ export const SettingsServiceCenterExtensionsTabContent = ({
                     ]}
                   />
                 }
-              />
-            ))}
+                />
+              );
+            })}
           </StyledSection>
 
         ) : (
