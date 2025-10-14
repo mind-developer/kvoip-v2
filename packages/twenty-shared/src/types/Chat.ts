@@ -1,4 +1,4 @@
-import { ClientChatMessage } from '@/types/ChatMessage';
+import { ChatMessageType } from '@/types/ChatMessage';
 
 export type ClientChat = {
   id: string;
@@ -12,10 +12,14 @@ export type ClientChat = {
   person: {
     id: string;
     avatarUrl: string;
-    firstName: string;
-    lastName: string;
+    name: {
+      firstName: string;
+      lastName: string;
+    } | null;
   };
-  lastMessage: Partial<ClientChatMessage>;
+  lastMessageType: ChatMessageType;
+  lastMessageDate: Date;
+  lastMessagePreview: string | null;
   status: ClientChatStatus;
 };
 
