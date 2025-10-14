@@ -38,7 +38,7 @@ export const whatsAppMessageToClientChatMessage = (
       ? (clientChat.agentId ??
         clientChat.sectorId ??
         clientChat.whatsappIntegrationId)
-      : 'FROM_UNKNOWN',
+      : (clientChat.personId ?? 'FROM_UNKNOWN'),
 
     fromType: whatsappMessage.fromMe
       ? getFromMeFromType(clientChat)

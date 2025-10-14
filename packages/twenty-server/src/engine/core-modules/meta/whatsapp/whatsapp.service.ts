@@ -52,7 +52,6 @@ export class WhatsAppService {
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private saveMessageQueue: MessageQueueService,
     private readonly clientChatMessageService: ClientChatMessageService,
-    private readonly clientChatMessageService: ClientChatMessageService,
   ) {}
 
   async getWhatsappTemplates(
@@ -115,9 +114,7 @@ export class WhatsAppService {
     workspaceId: string,
   ) {
     try {
-      const providerContactId = message.fromMe
-        ? message.toPhoneNumber
-        : message.fromPhoneNumber;
+      const providerContactId = message.remoteJid;
       const clientChatRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
           workspaceId,
@@ -139,33 +136,53 @@ export class WhatsAppService {
             'person',
             { shouldBypassPermissionChecks: true },
           );
+        const whatsappIntegration = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+            workspaceId,
+            'whatsappIntegration',
+          )
+        ).findOne({ where: { id: integrationId } });
         const person = await personRepository.save(
           createRelatedPerson(
-            message.contactName
+            message.fromMe
               ? {
-                  firstName: message.contactName?.split(' ')[0] ?? '',
-                  lastName: message.contactName?.split(' ')[1] ?? '',
+                  firstName: `WhatsApp (${message.remoteJid})`,
+                  lastName: '',
                 }
               : {
-                  firstName: message.fromMe
-                    ? message.toPhoneNumber
-                    : message.fromPhoneNumber,
-                  lastName: '',
+                  firstName: message.contactName?.split(' ')[0] ?? '',
+                  lastName: message.contactName?.split(' ')[1] ?? '',
                 },
-            message.fromPhoneNumber,
+            //TODO: parse number to get codes
+            message.remoteJid,
             message.senderAvatarUrl ?? null,
             ChatIntegrationProvider.WHATSAPP,
             'Via WhatsApp (Chat)',
           ),
         );
         clientChat = await clientChatRepository.save({
-          providerContactId,
           person,
+          providerContactId,
           whatsappIntegration: {
             id: integrationId,
           },
+          sector: {
+            id: whatsappIntegration?.defaultSectorId ?? undefined,
+          },
+          lastMessageType: message.type,
+          lastMessageDate: new Date(),
+          lastMessagePreview: message.textBody,
           status: ClientChatStatus.UNASSIGNED,
         });
+
+        this.clientChatMessageService.publishChatCreated(
+          {
+            ...clientChat,
+            messengerIntegrationId: null,
+            telegramIntegrationId: null,
+          },
+          whatsappIntegration?.defaultSectorId!,
+        );
       }
 
       if (!clientChat?.id)
@@ -186,6 +203,26 @@ export class WhatsAppService {
           'clientChatMessage',
         )
       ).save(whatsAppMessageToClientChatMessage(message, clientChat));
+
+      await clientChatRepository.update(clientChat.id, {
+        lastMessageType: message.type,
+        lastMessageDate: new Date(),
+        lastMessagePreview: message.textBody,
+      });
+
+      const updatedClientChat = await clientChatRepository.findOne({
+        where: { id: clientChat.id },
+        relations: ['person', 'sector', 'whatsappIntegration'],
+      });
+
+      this.clientChatMessageService.publishChatUpdated(
+        {
+          ...updatedClientChat!,
+          messengerIntegrationId: null,
+          telegramIntegrationId: null,
+        },
+        clientChat.sectorId!,
+      );
 
       //initialize chatbot runner if needed
       const whatsappIntegration = await (
@@ -233,7 +270,7 @@ export class WhatsAppService {
 
         let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
         if (executor) {
-          executor.runFlow(message.textBody);
+          executor.runFlow(message.textBody ?? '');
           return true;
         }
 
@@ -311,7 +348,7 @@ export class WhatsAppService {
             });
           },
         });
-        executor.runFlow(message.textBody);
+        executor.runFlow(message.textBody ?? '');
       }
     } catch (error) {
       this.logger.error('Error saving message:', error);

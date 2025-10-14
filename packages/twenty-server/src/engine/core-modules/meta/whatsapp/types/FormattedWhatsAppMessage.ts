@@ -5,12 +5,11 @@ import {
 
 export type FormattedWhatsAppMessage = {
   id: string;
-  fromPhoneNumber: string;
-  toPhoneNumber: string;
+  remoteJid: string;
   fromMe: boolean;
   senderAvatarUrl: string | null;
   contactName: string | null;
-  textBody: string;
+  textBody: string | null;
   caption: string | null;
   type: ChatMessageType;
   deliveryStatus: ChatMessageDeliveryStatus;

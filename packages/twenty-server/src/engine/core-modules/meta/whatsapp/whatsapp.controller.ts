@@ -184,8 +184,7 @@ export class WhatsappController {
 
         const message: FormattedWhatsAppMessage = {
           id: msg.id,
-          fromPhoneNumber: msg.from,
-          toPhoneNumber: msg.to,
+          remoteJid: msg.from,
           fromMe: !!msg.fromMe,
           senderAvatarUrl:
             body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
