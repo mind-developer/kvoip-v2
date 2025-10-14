@@ -8,6 +8,8 @@ import { type CreateTelephonyHandler } from 'src/modules/telephony/types/Create'
 import { type DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
 import { type GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
 import { type FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
+import { type GetTelephonyByMemberHandler } from 'src/modules/telephony/types/GetOne/GetByMember.type';
+import { type GetTelephonyByNumberHandler } from 'src/modules/telephony/types/GetOne/GetByNumber.type';
 import { type UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -75,6 +77,40 @@ export class TelephonyService {
 
     return await telephonyRepository.findOne({
       where: { id },
+    });
+  };
+
+  getTelephonyByMember: GetTelephonyByMemberHandler = async ({ memberId, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    return await telephonyRepository.findOne({
+      where: { memberId },
+    });
+  };
+
+  getTelephonyByNumber: GetTelephonyByNumberHandler = async ({ numberExtension, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    return await telephonyRepository.findOne({
+      where: { numberExtension },
     });
   };
 

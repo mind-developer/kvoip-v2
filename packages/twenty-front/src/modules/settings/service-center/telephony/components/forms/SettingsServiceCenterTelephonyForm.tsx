@@ -533,6 +533,7 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <TextInput
                 fullWidth
+                disabled={!!activeTelephony}
                 value={value}
                 onChange={(val) => {
                   onChange(val);

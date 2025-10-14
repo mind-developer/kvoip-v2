@@ -800,19 +800,14 @@ export class TelephonyResolver {
       throw new Error('Usuário não encontrado');
     }
 
-    if (!workspace.id) {
-      throw new Error('Workspace não encontrado');
+    if (!workspace.id || !workspace.pabxCompanyId) {
+      throw new Error('Workspace não encontrado ou PABX não configurado');
     }
-
-    // Buscar a extensão na API PABX
-    // const extension = await this.pabxService.getExtensionById(extensionId, workspace.pabxCompanyId);
     
     const extension = await this.pabxService.listExtentions({
       numero: numberExtension,
       cliente_id: workspace.pabxCompanyId,
     });
-
-    this.logger.log('extension ------------------------------------------------', JSON.stringify(extension.data.dados[0], null, 2));
 
     if (!extension?.data?.dados) {
       throw new Error('Ramal não encontrado');
@@ -820,50 +815,74 @@ export class TelephonyResolver {
 
     const extensionData = Array.isArray(extension.data.dados) ? extension.data.dados[0] : extension.data.dados;
 
-    // Verificar se o membro já possui um ramal
-    const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
-      memberId,
-      workspace.id,
-    );
+    const telephonyByMember = await this.telephonyService.getTelephonyByMember({
+      memberId: memberId,
+      workspaceId: workspace.id
+    });
 
-    if (memberHasTelephony) {
-      throw new Error('Este membro já possui um ramal de telefonia. Não é possível criar duplicatas.');
-    }
-
-    // Criar registro na tabela telephony
-    const telephonyData = {
-      memberId,
-      ramal_id: extensionData.numero,
-      extensionName: extensionData.nome,
+    const telephonyByNumber = await this.telephonyService.getTelephonyByNumber({
       numberExtension: extensionData.numero,
-      type: extensionData.tipo,
-      SIPPassword: extensionData.senha_sip,
-      callerExternalID: extensionData.caller_id_externo,
-      dialingPlan: extensionData.plano_discagem_id,
-      areaCode: extensionData.codigo_area,
-      pullCalls: extensionData.puxar_chamadas,
-      listenToCalls: extensionData.escutar_chamadas === '1',
-      recordCalls: extensionData.gravar_chamadas === '1',
-      blockExtension: extensionData.bloquear_ramal === '1',
-      enableMailbox: false,
-      emailForMailbox: '',
-      fowardAllCalls: extensionData.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
-      fowardOfflineWithoutService: extensionData.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
-      fowardBusyNotAvailable: extensionData.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
-    };
+      workspaceId: workspace.id
+    });
 
-    const result = await this.telephonyService.createTelephony(
-      telephonyData,
-      workspace.id,
-    );
+    if (telephonyByMember) {
 
-    await this.telephonyService.setExtensionNumberInWorkspaceMember(
-      workspace.id,
-      memberId,
-      extensionData.numero,
-    );
+      if (telephonyByNumber) {
+        // Situação onde o usuario não esta efetuando modificações em um ramal que ele ja possui
+        if (telephonyByMember.id == telephonyByNumber.id) {
+          return telephonyByMember;
+        }
+      }
 
-    return result;
+      // Deleta o registro antigo do member, para alocar o novo ramal
+      await this.telephonyService.delete({
+        id: telephonyByMember.id,
+        workspaceId: workspace.id
+      });
+    }
+    
+    if (telephonyByNumber) {
+      // Atualiza o member no telefone existente
+      await this.telephonyService.updateTelephony({
+        id: telephonyByNumber.id,
+        workspaceId: workspace.id,
+        data: {
+          memberId: memberId,
+        }
+      });
+
+      return telephonyByNumber;
+
+    } else {
+      // Criar registro na tabela telephony
+      const telephonyData = {
+        memberId,
+        ramal_id: extensionData.numero,
+        extensionName: extensionData.nome,
+        numberExtension: extensionData.numero,
+        type: extensionData.tipo,
+        SIPPassword: extensionData.senha_sip,
+        callerExternalID: extensionData.caller_id_externo,
+        dialingPlan: extensionData.plano_discagem_id,
+        areaCode: extensionData.codigo_area,
+        pullCalls: extensionData.puxar_chamadas,
+        listenToCalls: extensionData.escutar_chamadas === '1',
+        recordCalls: extensionData.gravar_chamadas === '1',
+        blockExtension: extensionData.bloquear_ramal === '1',
+        enableMailbox: false,
+        emailForMailbox: '',
+        fowardAllCalls: extensionData.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
+        fowardOfflineWithoutService: extensionData.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
+        fowardBusyNotAvailable: extensionData.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
+      };
+
+      const result = await this.telephonyService.createTelephony(
+        telephonyData,
+        workspace.id,
+      );
+
+      return (result);
+    }
   }
 
   @Mutation(() => SetupPabxEnvironmentResponseType, {
