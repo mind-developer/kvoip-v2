@@ -108,12 +108,14 @@ export class InterService {
         locale,
         userEmail,
         fileLink: bankSlipFileLink,
+        interChargeCode: currentPendinCharge.metadata.interChargeCode,
       });
 
       return bankSlipFileLink;
     }
 
     try {
+      // TODO: Move this to a inter service to handle token call, session recriation and other inter related operations.
       const token = await this.interInstanceService.getOauthToken();
 
       const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
@@ -151,18 +153,20 @@ export class InterService {
         },
       );
 
+      const interChargeCode = response.data.codigoSolicitacao;
+
       assert(
-        isDefined(response.data.codigoSolicitacao),
-        `Failed to get payment charge id from Inter, got: ${response.data?.codigoSolicitacao}`,
+        isDefined(interChargeCode),
+        `Failed to get payment charge id from Inter, got: ${interChargeCode}`,
       );
 
       // TODO: We should move this to the queue system
       this.logger.log(
-        `Bolepix code for workspace: ${workspaceId}: ${response.data.codigoSolicitacao}`,
+        `Bolepix code for workspace: ${workspaceId}: ${interChargeCode}`,
       );
 
       const bolepixFilePath = await this.getChargePdf({
-        interChargeId: response.data.codigoSolicitacao,
+        interChargeId: interChargeCode,
         workspaceId,
       });
 
@@ -174,7 +178,7 @@ export class InterService {
           metadata: {
             planKey,
             workspaceId,
-            interChargeCode: response.data.codigoSolicitacao,
+            interChargeCode,
           },
         },
         {
@@ -194,6 +198,7 @@ export class InterService {
         fileLink: bankSlipFileLink,
         userEmail,
         locale,
+        interChargeCode,
       });
 
       return bankSlipFileLink;
@@ -344,10 +349,12 @@ export class InterService {
     fileLink,
     locale,
     userEmail,
+    interChargeCode,
   }: {
     fileLink: string;
     userEmail: string;
     locale: keyof typeof APP_LOCALES;
+    interChargeCode: string;
   }) {
     const emailTemplate = InterBillingChargeFileEmail({
       duration: '5 Buisiness days',
@@ -360,13 +367,15 @@ export class InterService {
 
     i18n.activate(locale);
 
+    const isDev = this.twentyConfigService.get('NODE_ENV') === 'development';
+
     this.logger.log(`Sengind email to ${userEmail}`);
     this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: userEmail,
-      subject: t`Inter Bilepix Billing Charge`,
+      subject: t`Inter Bilepix Billing Charge ${isDev ? `(${interChargeCode})` : ''}`,
       text,
       html,
     });
