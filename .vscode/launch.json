@@ -5,10 +5,14 @@
     {
       "name": "twenty-server - start debug",
       "type": "node",
-      "runtimeVersion": "24",
+      "runtimeVersion": "24.5",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["nx", "run", "twenty-server:start"],
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:start"
+      ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
@@ -19,7 +23,11 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["nx", "run", "twenty-server:worker"],
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:worker"
+      ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
@@ -73,7 +81,7 @@
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "test"
-      }
+      },
     },
     {
       "type": "node",
@@ -94,7 +102,7 @@
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "test"
-      }
+      },
     }
   ]
 }
