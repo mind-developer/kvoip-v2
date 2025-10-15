@@ -1,11 +1,6 @@
 /* @license Enterprise */
 
-import {
-  NotImplementedException,
-  UseFilters,
-  UseGuards,
-  UsePipes,
-} from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -17,13 +12,11 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
-import { BillingPaySubscriptionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-pay-subscription.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
 import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
-import { BillingPaySubscriptionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-pay-subscription-input';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingPriceOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-price.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
@@ -48,8 +41,6 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { DevOnlyGuard } from 'src/engine/guards/dev-only.guard';
-import { KvoipAdminApiKeyGuard } from 'src/engine/guards/kvoip-admin-api-key.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -341,15 +332,6 @@ export class BillingResolver {
           : acc,
       [] as BillingPriceOutput[],
     );
-  }
-
-  @Mutation(() => BillingPaySubscriptionOutput)
-  @UseGuards(DevOnlyGuard, KvoipAdminApiKeyGuard)
-  async devOnlyPaySubscription(
-    @Args() { interChargeCode }: BillingPaySubscriptionInput,
-    @AuthApiKey() apiKey?: string,
-  ): Promise<BillingPaySubscriptionOutput> {
-    throw new NotImplementedException();
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({
