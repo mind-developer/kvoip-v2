@@ -24,8 +24,6 @@ export type InternalChatMessage = Omit<
 
 export type ClientChatMessage = ChatMessage & {
   clientChatId: string;
-  fromType: ClientChatMessageFromType;
-  toType: ClientChatMessageToType;
   event: ClientChatMessageEvent | null;
 };
 
@@ -43,16 +41,6 @@ export enum ChatMessageFromType {
   //a message was sent directly through the integration (e.g. WhatsApp on mobile, Telegram, etc.)
   PROVIDER_INTEGRATION = 'PROVIDER_INTEGRATION',
 }
-
-export type ClientChatMessageFromType = Exclude<
-  ChatMessageFromType,
-  ChatMessageFromType.WORKSPACE_MEMBER
->;
-
-export type ClientChatMessageToType = Exclude<
-  ChatMessageToType,
-  ChatMessageToType.WORKSPACE_MEMBER
->;
 
 export enum ChatMessageToType {
   PERSON = 'PERSON',

@@ -83,7 +83,6 @@ export class ConditionalInputHandler implements NodeHandler {
           attachmentUrl: null,
           event: null,
         };
-        console.log('sending', message.textBody);
         this.sendChatMessageQueue.add<SendChatMessageQueueData>(
           SendChatMessageJob.name,
           {

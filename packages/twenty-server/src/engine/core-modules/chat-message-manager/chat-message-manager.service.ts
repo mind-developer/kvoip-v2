@@ -1,72 +1,55 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
+import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
+import { WhatsAppDriver } from 'src/engine/core-modules/chat-message-manager/drivers/WhatsApp';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
-import { ClientChatMessage } from 'twenty-shared/types';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
+import {
+  ChatIntegrationProvider,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 
 @Injectable()
 export class ChatMessageManagerService {
-  META_API_URL: string;
-  protected readonly logger = new Logger(ChatMessageManagerService.name);
-
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
+  ) {}
+
+  async sendMessage(
+    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
+    workspaceId: string,
+    providerIntegrationId: string,
   ) {
-    this.META_API_URL = this.environmentService.get('META_API_URL');
+    const providerDriver = this.getProviderDriver(clientChatMessage.provider);
+    return providerDriver.sendMessage(
+      clientChatMessage,
+      workspaceId,
+      providerIntegrationId,
+    );
   }
 
-  async sendWhatsAppMessage(
-    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
-    whatsappIntegrationId: string,
-    workspaceId: string,
-  ): Promise<{ id: string } | null> {
-    const integration = await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
-        workspaceId,
-        'whatsappIntegration',
+  async saveMessage(clientChatMessage: ClientChatMessage) {
+    const message = await (
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+        clientChatMessage.clientChatId,
+        'clientChatMessage',
       )
-    ).findOne({ where: { id: whatsappIntegrationId } });
+    ).save(clientChatMessage);
+    return message;
+  }
 
-    if (!integration) {
-      this.logger.error(
-        '(sendWhatsAppMessage): Could not find WhatsApp integration:',
-        whatsappIntegrationId,
-      );
-      throw new InternalServerErrorException('WhatsApp integration not found');
-    }
-    const metaUrl = `${this.META_API_URL}/${integration.phoneId}/messages`;
-    const baileysUrl = `http://localhost:3002/api/session/${integration.name}/send`;
-
-    const apiType = integration?.apiType || 'MetaAPI';
-    this.logger.log('(sendWhatsAppMessage): API Type:', apiType);
-
-    const headers = {
-      Authorization: `Bearer ${integration.accessToken}`,
-      'Content-Type': 'application/json',
+  private getProviderDriver(
+    provider: ChatIntegrationProvider,
+  ): ChatProviderDriver {
+    const drivers = {
+      [ChatIntegrationProvider.WHATSAPP]: new WhatsAppDriver(
+        this.twentyORMGlobalManager,
+        this.environmentService,
+      ),
     };
-
-    const fields = getMessageFields(clientChatMessage);
-
-    try {
-      if (apiType === 'MetaAPI') {
-        const response = await axios.post(metaUrl, fields, { headers });
-        this.logger.log('(sendWhatsAppMessage): Sent message:', response.data);
-        return response.data;
-      }
-      const response = await axios.post(baileysUrl, { fields });
-      this.logger.log('(sendWhatsAppMessage): Sent message:', response.data);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
+    return drivers[provider];
   }
 
   // async sendWhatsAppTemplate(
@@ -143,8 +126,6 @@ export class ChatMessageManagerService {
       });
 
       return true;
-    } catch (error) {
-      this.logger.error(error);
-    }
+    } catch (error) {}
   }
 }

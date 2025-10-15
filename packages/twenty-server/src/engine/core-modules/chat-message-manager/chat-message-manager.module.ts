@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ChatMessageManagerResolver } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.resolver';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { SaveClientChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
 import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
@@ -31,6 +32,7 @@ import { ClientChatMessageService } from 'src/modules/client-chat-message/client
     ClientChatMessageModule,
   ],
   providers: [
+    ChatMessageManagerResolver,
     ChatMessageManagerService,
     GoogleStorageService,
     ChatbotRunnerService,

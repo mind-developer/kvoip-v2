@@ -52,7 +52,6 @@ export class FileInputHandler implements NodeHandler {
         attachmentUrl: file,
         event: null,
       };
-      console.log('sending', message.attachmentUrl);
       this.sendChatMessageQueue.add<SendChatMessageQueueData>(
         SendChatMessageJob.name,
         {

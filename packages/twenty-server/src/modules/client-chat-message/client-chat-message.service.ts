@@ -18,7 +18,6 @@ export class ClientChatMessageService {
     chatId: string,
   ): Promise<void> {
     const channel = `client-message-${chatId}`;
-    console.log('publishMessageCreated', channel);
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.CREATED,
       clientChatMessageEventDate: new Date(),
@@ -30,7 +29,6 @@ export class ClientChatMessageService {
 
   async publishChatCreated(chat: ClientChat, sectorId: string): Promise<void> {
     const channel = `client-chat-${sectorId}`;
-    console.log('publishChatCreated', channel);
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.CREATED,
       clientChatEventDate: new Date(),
@@ -45,7 +43,6 @@ export class ClientChatMessageService {
     chatId: string,
   ): Promise<void> {
     const channel = `client-message-${chatId}`;
-    console.log('publishMessageUpdated', channel);
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.UPDATED,
       clientChatMessageEventDate: new Date(),
@@ -57,7 +54,6 @@ export class ClientChatMessageService {
 
   async publishChatUpdated(chat: ClientChat, sectorId: string): Promise<void> {
     const channel = `client-chat-${sectorId}`;
-    console.log('publishChatUpdated', channel);
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.UPDATED,
       clientChatEventDate: new Date(),

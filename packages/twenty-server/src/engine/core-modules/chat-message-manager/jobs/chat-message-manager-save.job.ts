@@ -4,7 +4,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ChatMessageType } from 'twenty-shared/types';
 
 @Processor(MessageQueue.chatMessageManagerSaveMessageQueue)
@@ -26,12 +25,11 @@ export class SaveClientChatMessageJob {
         break;
       //more cases here in the future if needed
       default:
-        await (console.log(data.chatMessage),
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-          data.workspaceId,
-          'clientChatMessage',
-        )).save(data.chatMessage);
-        return true;
+      // await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+      //   data.workspaceId,
+      //   'clientChatMessage',
+      // ).save(data.chatMessage);
+      // return true;
     }
     return false;
   }

@@ -23,7 +23,6 @@ export const whatsAppMessageToClientChatMessage = (
   clientChat: ClientChatWorkspaceEntity,
 ): ClientChatMessage => {
   if (!clientChat.whatsappIntegrationId) {
-    console.log(clientChat);
     throw new Error(
       'This should never happen: client chat has no WhatsApp integration',
     );
@@ -67,7 +66,7 @@ export const whatsAppMessageToClientChatMessage = (
     type: whatsappMessage.type,
     textBody: whatsappMessage.textBody,
     caption: null, // TODO: IMPLEMENT
-    attachmentUrl: whatsappMessage.fileUrl ?? null,
+    attachmentUrl: whatsappMessage.attachmentUrl ?? null,
     deliveryStatus: whatsappMessage.deliveryStatus,
     edited: false,
     event: null,

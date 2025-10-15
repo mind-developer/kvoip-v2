@@ -4,6 +4,7 @@ import { InternalServerErrorException, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { v4 } from 'uuid';
 
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { SaveClientChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
 import { SaveClientChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
@@ -52,6 +53,7 @@ export class WhatsAppService {
     @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
     private saveMessageQueue: MessageQueueService,
     private readonly clientChatMessageService: ClientChatMessageService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
   ) {}
 
   async getWhatsappTemplates(
@@ -197,12 +199,9 @@ export class WhatsAppService {
         },
         clientChat.id,
       );
-      (
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-          workspaceId,
-          'clientChatMessage',
-        )
-      ).save(whatsAppMessageToClientChatMessage(message, clientChat));
+      await this.chatMessageManagerService.saveMessage(
+        whatsAppMessageToClientChatMessage(message, clientChat),
+      );
 
       await clientChatRepository.update(clientChat.id, {
         lastMessageType: message.type,

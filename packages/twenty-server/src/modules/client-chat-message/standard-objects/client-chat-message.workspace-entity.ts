@@ -14,10 +14,10 @@ import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-obje
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
   ChatMessageType,
   ClientChatMessageEvent,
-  ClientChatMessageFromType,
-  ClientChatMessageToType,
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
@@ -59,7 +59,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`From Type`,
     description: msg`The from type of the client chat message`,
   })
-  fromType: ClientChatMessageFromType;
+  fromType: ChatMessageFromType;
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.to,
@@ -75,7 +75,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`To Type`,
     description: msg`The to type of the client chat message`,
   })
-  toType: ClientChatMessageToType;
+  toType: ChatMessageToType;
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.provider,

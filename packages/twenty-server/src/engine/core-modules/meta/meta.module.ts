@@ -12,6 +12,7 @@ import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -37,6 +38,7 @@ import { ClientChatMessageService } from 'src/modules/client-chat-message/client
     WorkspaceModule,
     MessageQueueModule,
     ClientChatMessageModule,
+    FileModule,
   ],
   exports: [WhatsAppService],
   controllers: [WhatsappController],
@@ -56,6 +58,7 @@ import { ClientChatMessageService } from 'src/modules/client-chat-message/client
     JwtService,
     JwtWrapperService,
     ClientChatMessageService,
+    ChatMessageManagerService,
   ],
 })
 export class MetaModule {}

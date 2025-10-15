@@ -16,8 +16,6 @@ export type {
   ChatMessage,
   InternalChatMessage,
   ClientChatMessage,
-  ClientChatMessageFromType,
-  ClientChatMessageToType,
 } from './ChatMessage';
 export {
   ChatMessageFromType,

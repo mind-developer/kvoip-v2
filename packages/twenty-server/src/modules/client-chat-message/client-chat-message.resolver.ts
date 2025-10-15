@@ -25,9 +25,7 @@ export class ClientChatMessageResolver {
   async onClientMessageEvent(
     @Args('input') input: OnChatMessageEventInput,
   ): Promise<AsyncIterator<ClientMessageEventDTO>> {
-    console.log('onClientMessageEvent subscription', input);
     const chatIdChannel = `client-message-${input.chatId}`;
-    console.log('Subscribing to channel:', chatIdChannel);
     return this.pubSub.asyncIterator(chatIdChannel);
   }
 
@@ -37,9 +35,7 @@ export class ClientChatMessageResolver {
   async onClientChatEvent(
     @Args('input') input: OnChatEventInput,
   ): Promise<AsyncIterator<ClientChatEventDTO>> {
-    console.log('onClientChatEvent subscription', input);
     const sectorIdChannel = `client-chat-${input.sectorId}`;
-    console.log('Subscribing to channel:', sectorIdChannel);
     return this.pubSub.asyncIterator(sectorIdChannel);
   }
 }

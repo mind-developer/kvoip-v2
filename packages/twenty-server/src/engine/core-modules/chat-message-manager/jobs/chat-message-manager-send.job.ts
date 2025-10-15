@@ -33,18 +33,17 @@ export class SendChatMessageJob {
         break;
       //more cases here in the future if needed
       default:
-        const response =
-          await this.chatMessageManagerService.sendWhatsAppMessage(
-            data.clientChatMessage,
-            data.providerIntegrationId,
-            data.workspaceId,
-          );
+        const response = await this.chatMessageManagerService.sendMessage(
+          data.clientChatMessage,
+          data.providerIntegrationId,
+          data.workspaceId,
+        );
         if (response) {
           //message id is returned in response object
           await this.clientChatMessageService.publishMessageCreated(
             {
               ...data.clientChatMessage,
-              providerMessageId: response.id,
+              providerMessageId: response,
             },
             data.clientChatMessage.clientChatId,
           );
@@ -53,7 +52,7 @@ export class SendChatMessageJob {
             {
               chatMessage: {
                 ...data.clientChatMessage,
-                providerMessageId: response.id,
+                providerMessageId: response,
               },
               workspaceId: data.workspaceId,
             },
