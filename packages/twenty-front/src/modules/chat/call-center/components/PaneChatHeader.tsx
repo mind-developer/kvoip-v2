@@ -111,8 +111,10 @@ export const PaneChatHeader = ({
             <StyledIconButton
               onClick={() => {
                 openRecordInCommandMenu({
-                  recordId: personId,
                   objectNameSingular: 'person',
+                  recordId: personId,
+                  isNewRecord: false,
+                  resetNavigationStack: true,
                 });
               }}
               variant="secondary"

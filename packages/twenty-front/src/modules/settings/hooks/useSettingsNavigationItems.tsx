@@ -40,6 +40,7 @@ import {
   IconIdBadge2,
   IconMessageCircleCog,
   IconRobot,
+  IconUserScan,
 } from '@tabler/icons-react';
 
 export type SettingsNavigationSection = {
@@ -142,7 +143,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             {
               label: t`Agents`,
               path: SettingsPath.ServiceCenterAgents,
-              Icon: IconUsers,
+              Icon: IconUserScan,
               indentationLevel: 2,
             },
             {

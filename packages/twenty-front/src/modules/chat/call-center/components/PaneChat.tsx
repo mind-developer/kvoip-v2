@@ -1,15 +1,15 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { AudioVisualizer } from '@/chat/call-center/components/AudioVisualizer';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
+import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
 import {
   getMessageContent,
   getMessageDisplayType,
@@ -21,7 +21,6 @@ import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { formatDate } from '@/chat/utils/formatDate';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
@@ -29,14 +28,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
@@ -51,7 +43,7 @@ import {
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-import { useClientMessageSubscription } from '../hooks/useClientMessageSubscription';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledPaneChatContainer = styled.div`
   display: flex;
@@ -156,14 +148,13 @@ const StyledLine = styled.p`
 const StyledInputContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.xxl};
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInput = styled.textarea`
-  /* width: 100%; */
+  width: 100%;
   background: transparent;
   border: none;
   outline: none;
@@ -172,7 +163,6 @@ const StyledInput = styled.textarea`
   font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
   height: 10px;
-  max-height: 200px;
   &::placeholder {
     line-height: 10px;
   }
@@ -183,8 +173,6 @@ const StyledDiv = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  right: 0;
 `;
 
 const StyledAnexDiv = styled.div`
@@ -192,7 +180,6 @@ const StyledAnexDiv = styled.div`
   cursor: pointer;
   margin-left: ${({ theme }) => theme.spacing(2)};
   margin-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
 `;
 
 const StyledImageContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -309,14 +296,6 @@ const StyledNewMessagesButton = styled.button`
   z-index: 2;
 `;
 
-const StyledAmplitudeValue = styled.div<{ amplitudeValue: number }>`
-  width: 2px;
-  margin-right: 1px;
-  background-color: ${({ theme }) => theme.background.invertedPrimary};
-  height: ${({ amplitudeValue }) =>
-    Math.round(Math.min(60 * amplitudeValue + 3, 40))}px;
-`;
-
 const StyledUnreadMarker = styled.div`
   display: flex;
   align-items: center;
@@ -347,59 +326,21 @@ const StyledUnreadMarker = styled.div`
 `;
 
 export const PaneChat = () => {
+  const { t } = useLingui();
+  const theme = useTheme();
+
   const { chatId } = useParams() || '';
   const { record: selectedChat } = useFindOneRecord({
     objectNameSingular: 'clientChat',
     objectRecordId: chatId,
     skip: !chatId,
   });
-
-  const { startService, setStartChatNumber, setStartChatIntegrationId } =
-    useContext(CallCenterContext) as CallCenterContextType;
-
-  const [lastFromClient, setLastFromClient] =
-    useState<ClientChatMessage | null>(null);
-
-  const handleMessageCreated = useCallback((message: ClientChatMessage) => {
-    console.log('Nova mensagem criada via subscription:', message);
-    setDbMessages((prev) => [...prev, message]);
-  }, []);
-
-  const handleMessageUpdated = useCallback((message: ClientChatMessage) => {
-    setDbMessages((prev) =>
-      prev.map((msg) =>
-        msg.providerMessageId === message.providerMessageId ? message : msg,
-      ),
-    );
-  }, []);
-
-  const handleSubscriptionError = useCallback((error: any) => {
-    console.error('Erro na subscription de mensagem:', error);
-  }, []);
-
-  useClientMessageSubscription({
-    input: { chatId: chatId! },
-    onMessageCreated: handleMessageCreated,
-    onMessageUpdated: handleMessageUpdated,
-    onError: handleSubscriptionError,
-    skip: !chatId,
-  });
-
-  const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>(
-    useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
-      objectNameSingular: 'clientChatMessage',
-      limit: 5000,
-      filter: { clientChatId: { eq: chatId } },
-      orderBy: [{ createdAt: 'AscNullsFirst' }],
-    }).records,
-  );
-  console.log(dbMessages);
+  const { messages: dbMessages } = useClientChatMessages(chatId || '');
+  const { sendClientChatMessage } = useSendClientChatMessage();
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
-  const theme = useTheme();
   const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
-  const { t } = useLingui();
   const [recordingState, setRecordingState] = useState<
     'none' | 'recording' | 'paused'
   >('none');
@@ -407,7 +348,9 @@ export const PaneChat = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
-  const [amplitudeValues, setAmplitudeValues] = useState<number[]>([]);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const audioVisualizerRef = useRef<HTMLDivElement>(null);
+  const [audioVisualizerWidth, setAudioVisualizerWidth] = useState<number>(200);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
@@ -421,20 +364,22 @@ export const PaneChat = () => {
   const { getIcon } = useIcons();
 
   const { uploadFileToBucket } = useUploadFileToBucket();
-  const { sendWhatsappMessage } = useSendWhatsappMessages();
-  // const { messengerSendMessage } = useMessengerSendMessage();
+
+  useEffect(() => {
+    if (audioVisualizerRef.current) {
+      setAudioVisualizerWidth(audioVisualizerRef.current.clientWidth);
+    }
+  }, [audioVisualizerRef.current]);
 
   // Mensagens otimistas adicionadas localmente antes da confirmação do servidor
   const [optimisticMessages, setOptimisticMessages] = useState<
     ClientChatMessage[]
   >([]);
 
-  // Usar o hook para buscar mensagens do banco de dados
-  const [lastMessage, setLastMessage] = useState<ClientChatMessage>(
-    dbMessages[dbMessages.length - 1],
+  const [lastMessage, setLastMessage] = useState<ClientChatMessage | null>(
+    null,
   );
 
-  // Combinar mensagens do banco de dados com mensagens otimistas
   const messages = useMemo(() => {
     const combined = [...dbMessages, ...optimisticMessages];
     // Remover duplicatas baseado no providerMessageId
@@ -443,7 +388,6 @@ export const PaneChat = () => {
         index ===
         self.findIndex((m) => m.providerMessageId === msg.providerMessageId),
     );
-    // Ordenar por data não é necessário pois virão em ordem do banco
     return uniqueMessages;
   }, [dbMessages, optimisticMessages]);
 
@@ -455,140 +399,12 @@ export const PaneChat = () => {
     } else if (!isAtBottom) {
       setNewMessagesIndicator(true);
     }
-    const clientMessages = messages.filter(
-      (message) =>
-        message.fromType !== ChatMessageFromType.AGENT &&
-        message.fromType !== ChatMessageFromType.CHATBOT,
-    );
-    if (clientMessages.length > 0)
-      setLastFromClient(clientMessages[clientMessages.length - 1]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
-
-  const onSendMessage = async (type: MessageType) => {
-    if (!selectedChat) return;
-
-    const identifier = `${selectedChat.person?.phone}`;
-
-    const sendMessageInputBase = {
-      integrationId: selectedChat.whatsappIntegrationId,
-      to: `${identifier}`,
-      type,
-      from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-      fromMe: true,
-      personId: selectedChat.person!.id,
-    };
-
-    // if (type === MessageType.FB_RESPONSE) {
-    //   if (!audioBlob) {
-    //     messengerSendMessage({
-    //       ...sendMessageInputBase,
-    //       message: newMessage.trim(),
-    //     });
-
-    //     setNewMessage('');
-    //   } else if (audioBlob) {
-    //     const uniqueFilename = `${identifier}-${v4()}.weba`;
-    //     const audioFile = new File([audioBlob], uniqueFilename, {
-    //       type: 'audio/webm',
-    //     });
-
-    //     const urlStorage = await uploadFileToBucket({
-    //       file: audioFile,
-    //       type: MessageType.AUDIO,
-    //     });
-
-    //     try {
-    //       messengerSendMessage({
-    //         ...sendMessageInputBase,
-    //         type: MessageType.AUDIO,
-    //         fileUrl: urlStorage,
-    //       });
-    //     } catch (error) {
-    //       throw new Error('Failed to send audio message');
-    //     }
-
-    //     setAudioBlob(null);
-    //   }
-    // } else {
-    if (type === MessageType.TEXT) {
-      const sendMessageInput = {
-        ...sendMessageInputBase,
-        message:
-          `*#${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}*\n` +
-          newMessage.trim(),
-      };
-
-      // sendWhatsappMessage(sendMessageInput);
-      setNewMessage('');
-    } else if (type === MessageType.AUDIO) {
-      if (!audioBlob) {
-        enqueueInfoSnackBar({
-          message: t`No audio recorded`,
-        });
-        return;
-      }
-
-      const cleanedIdentifier = identifier?.slice(1);
-      const uniqueFilename = `${cleanedIdentifier}-${v4()}.weba`;
-      const audioFile = new File([audioBlob], uniqueFilename, {
-        type: 'audio/webm',
-      });
-
-      const urlStorage = await uploadFileToBucket({ file: audioFile, type });
-
-      try {
-        const sendMessageInput = {
-          ...sendMessageInputBase,
-          fileId: urlStorage,
-        };
-
-        // sendWhatsappMessage(sendMessageInput);
-      } catch (error) {
-        throw new Error('Failed to send audio message');
-      }
-
-      setAudioBlob(null);
-    }
-    // }
-  };
-
-  let audioCtx = new window.AudioContext();
-  const visualize = (stream: MediaStream, recorder: MediaRecorder) => {
-    if (!audioCtx) {
-      audioCtx = new AudioContext();
-    }
-
-    const source = audioCtx.createMediaStreamSource(stream);
-
-    const bufferLength = 2048;
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = bufferLength;
-    const dataArray = new Float32Array(bufferLength);
-
-    source.connect(analyser);
-
-    const setValues = () => {
-      analyser.getFloatTimeDomainData(dataArray);
-      const dataSquared = dataArray.map((data) => data ** 2);
-      let total = 0;
-      dataSquared.forEach((data) => (total += data));
-      const rms = parseFloat(Math.sqrt(total / dataSquared.length).toFixed(5));
-      setAmplitudeValues((prev) => [...prev.slice(-150), rms]);
-    };
-
-    const timeout = () =>
-      setTimeout(() => {
-        if (recorder.state === 'recording') setValues();
-        if (stream.active) timeout();
-      }, 50);
-    timeout();
-  };
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
-    visualize(stream, recorder);
+    setAudioStream(stream);
 
     const chunks: Blob[] = [];
 
@@ -607,7 +423,7 @@ export const PaneChat = () => {
       recorder.onstop = () => {
         setRecordingState('none');
         setAudioBlob(null);
-        setAmplitudeValues([]);
+        setAudioStream(null);
       };
 
       recorder.onpause = () => {
@@ -655,7 +471,7 @@ export const PaneChat = () => {
 
   const handleSendMessage = () => {
     if (audioBlob) {
-      // Adicionar mensagem otimista
+      //TODO: media type agnostic implementation for all types of messages
       const optimisticMessageId = `optimistic-${v4()}`;
       const optimisticMessage: ClientChatMessage = {
         clientChatId: chatId!,
@@ -675,17 +491,7 @@ export const PaneChat = () => {
         attachmentUrl: null,
         event: null,
       };
-
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
-
-      onSendMessage(MessageType.AUDIO);
-
-      // Limpar mensagens otimistas após um tempo (elas serão substituídas pelas mensagens reais do servidor)
-      setTimeout(() => {
-        setOptimisticMessages((prev) =>
-          prev.filter((msg) => msg.providerMessageId !== optimisticMessageId),
-        );
-      }, 5000);
     } else {
       // Adicionar mensagem otimista
       const optimisticMessageId = `optimistic-${v4()}`;
@@ -709,8 +515,7 @@ export const PaneChat = () => {
       };
 
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
-
-      onSendMessage(MessageType.TEXT);
+      sendClientChatMessage(optimisticMessage);
 
       // Limpar mensagens otimistas após um tempo
       setTimeout(() => {
@@ -791,10 +596,7 @@ export const PaneChat = () => {
           variant="primary"
           accent="blue"
           size="medium"
-          onClick={() => {
-            setStartChatNumber(`+${selectedChat.providerContactId}`);
-            setStartChatIntegrationId(selectedChat.whatsappIntegrationId);
-          }}
+          onClick={() => {}}
         />
       );
     }
@@ -807,7 +609,7 @@ export const PaneChat = () => {
         <StyledInputContainer>
           <StyledAnexDiv>
             <StyledIconButton
-              disabled={lastMessage.type === ChatMessageType.TEMPLATE}
+              disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
               Icon={recordingState === 'none' ? AnexIcon : IconTrash}
               accent={recordingState === 'none' ? 'default' : 'danger'}
               variant="tertiary"
@@ -839,20 +641,22 @@ export const PaneChat = () => {
                 overflow: 'clip',
                 pointerEvents: 'none',
               }}
+              ref={audioVisualizerRef}
             >
-              {amplitudeValues.map((amplitudeValue, i) => {
-                return (
-                  <StyledAmplitudeValue
-                    key={i}
-                    amplitudeValue={amplitudeValue}
-                  />
-                );
-              })}
+              <AudioVisualizer
+                stream={audioStream}
+                isRecording={recordingState === 'recording'}
+                width={audioVisualizerWidth}
+                barWidth={audioVisualizerWidth / 20}
+                color={theme.font.color.primary}
+                barCount={80}
+                scrollSpeed={1}
+              />
             </div>
           )}
           {recordingState === 'none' && (
             <StyledInput
-              disabled={lastMessage.type === ChatMessageType.TEMPLATE}
+              disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
               className="new-message-input"
               placeholder="Message"
               onInput={handleInputChange}
@@ -886,7 +690,7 @@ export const PaneChat = () => {
             )}
             {(newMessage.length > 0 || recordingState !== 'none') && (
               <StyledIconButton
-                disabled={lastMessage.type === ChatMessageType.TEMPLATE}
+                disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
                 Icon={(props) => (
                   <IconArrowUp
                     {...props}
@@ -915,7 +719,10 @@ export const PaneChat = () => {
           variant="primary"
           accent="blue"
           size="medium"
-          onClick={startService}
+          onClick={() => {
+            //todo: set chat status as assigned
+            //todo: set chat agentId to current agentId
+          }}
         />
       );
     }
@@ -923,7 +730,7 @@ export const PaneChat = () => {
     return <></>;
   };
 
-  if (lastMessage && selectedChat)
+  if (selectedChat)
     return (
       <>
         <StyledPaneChatContainer>
@@ -937,160 +744,168 @@ export const PaneChat = () => {
             personId={selectedChat.person?.id || ''}
           />
           <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
-            {messages.map((message: ClientChatMessage, index: number) => {
-              const isSystemMessage =
-                message.fromType !== ChatMessageFromType.PERSON;
-              const messageDisplayType = getMessageDisplayType(message);
-              const messageContent = getMessageContent(message);
+            {(messages ?? []).map(
+              (message: ClientChatMessage, index: number) => {
+                const isSystemMessage =
+                  message.fromType !== ChatMessageFromType.PERSON;
+                const messageDisplayType = getMessageDisplayType(message);
+                const messageContent = getMessageContent(message);
 
-              const validMessageType =
-                messageDisplayType === MessageType.STARTED ||
-                messageDisplayType === MessageType.TRANSFER ||
-                messageDisplayType === MessageType.END ||
-                messageDisplayType === MessageType.ONHOLD;
+                const validMessageType =
+                  messageDisplayType === MessageType.STARTED ||
+                  messageDisplayType === MessageType.TRANSFER ||
+                  messageDisplayType === MessageType.END ||
+                  messageDisplayType === MessageType.ONHOLD;
 
-              let renderedContent;
+                let renderedContent;
 
-              if (validMessageType)
-                return (
-                  <StyledMessageEvent key={message.providerMessageId}>
-                    <IconExclamationCircleFilled size={13} /> {messageContent}
-                  </StyledMessageEvent>
-                );
-
-              switch (messageDisplayType) {
-                case MessageType.IMAGE:
-                  renderedContent = (
-                    <StyledImageContainer
-                      key={index}
-                      isSystemMessage={isSystemMessage}
-                    >
-                      <StyledImage
-                        message={message}
-                        onClick={() => {
-                          setModalImageSrc(messageContent);
-                          setIsModalOpen(true);
-                        }}
-                      />
-                    </StyledImageContainer>
+                if (validMessageType)
+                  return (
+                    <StyledMessageEvent key={message.providerMessageId}>
+                      <IconExclamationCircleFilled size={13} /> {messageContent}
+                    </StyledMessageEvent>
                   );
-                  break;
-                case MessageType.AUDIO:
-                  renderedContent = (
-                    <StyledAudio key={index} message={message} />
-                  );
-                  break;
-                case MessageType.DOCUMENT: {
-                  const fileName = messageContent
-                    ? messageContent.split('/').pop()?.split('?')[0]
-                    : null;
-                  renderedContent = (
-                    <StyledDocumentContainer
-                      key={index}
-                      isSystemMessage={isSystemMessage}
-                    >
-                      <DocumentPreview
-                        fromMe={isSystemMessage}
-                        documentUrl={messageContent}
-                      />
-                    </StyledDocumentContainer>
-                  );
-                  break;
+
+                switch (messageDisplayType) {
+                  case MessageType.IMAGE:
+                    renderedContent = (
+                      <StyledImageContainer
+                        key={index}
+                        isSystemMessage={isSystemMessage}
+                      >
+                        <StyledImage
+                          message={message}
+                          onClick={() => {
+                            setModalImageSrc(
+                              REACT_APP_SERVER_BASE_URL +
+                                '/files/' +
+                                message.attachmentUrl,
+                            );
+                            setIsModalOpen(true);
+                          }}
+                        />
+                      </StyledImageContainer>
+                    );
+                    break;
+                  case MessageType.AUDIO:
+                    renderedContent = (
+                      <StyledAudio key={index} message={message} />
+                    );
+                    break;
+                  case MessageType.DOCUMENT: {
+                    const fileName = messageContent
+                      ? messageContent.split('/').pop()?.split('?')[0]
+                      : null;
+                    renderedContent = (
+                      <StyledDocumentContainer
+                        key={index}
+                        isSystemMessage={isSystemMessage}
+                      >
+                        <DocumentPreview
+                          fromMe={isSystemMessage}
+                          documentUrl={messageContent}
+                        />
+                      </StyledDocumentContainer>
+                    );
+                    break;
+                  }
+                  case MessageType.VIDEO:
+                    renderedContent = (
+                      <StyledVideo
+                        isSystemMessage={isSystemMessage}
+                        key={index}
+                        controls
+                      >
+                        {validVideoTypes.map((type) => (
+                          <source key={type} src={messageContent} type={type} />
+                        ))}
+                      </StyledVideo>
+                    );
+                    break;
+                  default:
+                    renderedContent = (
+                      <StyledMessage
+                        key={index}
+                        isSystemMessage={isSystemMessage}
+                      >
+                        {formatMessageContent(
+                          isSystemMessage
+                            ? // Remover o nome do membro da primeira linha se presente
+                              messageContent
+                                .replace(
+                                  `*#${message.from.replace('_', '')}*`,
+                                  '',
+                                )
+                                .trim()
+                            : messageContent,
+                        )}
+                      </StyledMessage>
+                    );
+                    break;
                 }
-                case MessageType.VIDEO:
-                  renderedContent = (
-                    <StyledVideo
-                      isSystemMessage={isSystemMessage}
-                      key={index}
-                      controls
-                    >
-                      {validVideoTypes.map((type) => (
-                        <source key={type} src={messageContent} type={type} />
-                      ))}
-                    </StyledVideo>
-                  );
-                  break;
-                default:
-                  renderedContent = (
-                    <StyledMessage
-                      key={index}
-                      isSystemMessage={isSystemMessage}
-                    >
-                      {formatMessageContent(
-                        isSystemMessage
-                          ? // Remover o nome do membro da primeira linha se presente
-                            messageContent
-                              .replace(
-                                `*#${message.from.replace('_', '')}*`,
-                                '',
-                              )
-                              .trim()
-                          : messageContent,
-                      )}
-                    </StyledMessage>
-                  );
-                  break;
-              }
 
-              // const unreadIndex =
-              //   messages.length - (selectedChat?.unreadMessages || 0);
-              // const showUnreadMarker = index === unreadIndex;
-              const lastOfRow = messages[index + 1]?.from !== message.from;
+                // const unreadIndex =
+                //   messages.length - (selectedChat?.unreadMessages || 0);
+                // const showUnreadMarker = index === unreadIndex;
+                const lastOfRow = messages[index + 1]?.from !== message.from;
 
-              return (
-                <>
-                  {/* {showUnreadMarker && (
+                return (
+                  <>
+                    {/* {showUnreadMarker && (
                     <StyledUnreadMarker key={`unread-${index}`}>
                       New Messages
                     </StyledUnreadMarker>
                   )} */}
 
-                  <StyledMessageContainer
-                    key={message.providerMessageId}
-                    fromMe={isSystemMessage}
-                  >
-                    <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
-                      <AvatarComponent
-                        avatarUrl={
-                          //this has to actually fetch the avatar url from the correct source
-                          message.fromType !== ChatMessageFromType.PERSON
-                            ? currentWorkspaceMember?.avatarUrl
-                            : selectedChat.person?.avatarUrl
-                        }
-                        senderName={
-                          //TODO: this has to actually fetch the name from the correct source
-                          message.fromType !== ChatMessageFromType.PERSON
-                            ? currentWorkspaceMember?.name.firstName
-                            : selectedChat.person?.name.firstName
-                        }
-                      />
-                    </StyledAvatarMessage>
-                    <StyledContainer isSystemMessage={isSystemMessage}>
-                      <StyledMessageItem isSystemMessage={isSystemMessage}>
-                        <StyledMessageBubble
-                          time={formatDate(message.createdAt ?? '').time}
-                          message={message}
-                          hasTail={lastOfRow}
-                        >
-                          {renderedContent}
-                        </StyledMessageBubble>
-                        <StyledNameAndTimeContainer
-                          isSystemMessage={isSystemMessage}
-                        >
-                          {isMessageOlderThan24Hours(
-                            message.createdAt ?? '',
-                          ) ?? (
-                            <StyledDateContainer>
-                              {formatDate(message.createdAt ?? '').time}
-                            </StyledDateContainer>
-                          )}
-                        </StyledNameAndTimeContainer>
-                      </StyledMessageItem>
-                    </StyledContainer>
-                  </StyledMessageContainer>
-                </>
-              );
-            })}
+                    <StyledMessageContainer
+                      key={message.providerMessageId}
+                      fromMe={isSystemMessage}
+                    >
+                      <StyledAvatarMessage
+                        style={{ opacity: lastOfRow ? 1 : 0 }}
+                      >
+                        <AvatarComponent
+                          avatarUrl={
+                            //TODO: this has to actually fetch the avatar url from the correct source
+                            message.fromType !== ChatMessageFromType.PERSON
+                              ? currentWorkspaceMember?.avatarUrl
+                              : selectedChat.person?.avatarUrl
+                          }
+                          senderName={
+                            //TODO: this has to actually fetch the name from the correct source
+                            message.fromType !== ChatMessageFromType.PERSON
+                              ? currentWorkspaceMember?.name.firstName
+                              : selectedChat.person?.name.firstName
+                          }
+                        />
+                      </StyledAvatarMessage>
+                      <StyledContainer isSystemMessage={isSystemMessage}>
+                        <StyledMessageItem isSystemMessage={isSystemMessage}>
+                          <StyledMessageBubble
+                            time={formatDate(message.createdAt ?? '').time}
+                            message={message}
+                            hasTail={lastOfRow}
+                          >
+                            {renderedContent}
+                          </StyledMessageBubble>
+                          <StyledNameAndTimeContainer
+                            isSystemMessage={isSystemMessage}
+                          >
+                            {isMessageOlderThan24Hours(
+                              message.createdAt ?? '',
+                            ) ?? (
+                              <StyledDateContainer>
+                                {formatDate(message.createdAt ?? '').time}
+                              </StyledDateContainer>
+                            )}
+                          </StyledNameAndTimeContainer>
+                        </StyledMessageItem>
+                      </StyledContainer>
+                    </StyledMessageContainer>
+                  </>
+                );
+              },
+            )}
           </StyledChatContainer>
           {renderButtons()}
           {isModalOpen && modalImageSrc && (

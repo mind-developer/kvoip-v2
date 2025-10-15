@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ClientChat, ClientChatMessage } from 'twenty-shared/types';
+import { useClientMessageSubscription } from '../hooks/useClientChatMessageSubscription';
 import { useClientChatSubscription } from '../hooks/useClientChatSubscription';
-import { useClientMessageSubscription } from '../hooks/useClientMessageSubscription';
 
 type ClientChatSubscriptionExampleProps = {
   chatId: string;

@@ -1,9 +1,9 @@
-import { getMessageContent } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import styled from '@emotion/styled';
 import {
   ChatMessageDeliveryStatus,
   ClientChatMessage,
 } from 'twenty-shared/types';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../call-center/constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
 const StyledImageContainer = styled.div<{ isPending: boolean }>`
@@ -39,13 +39,14 @@ const StyledImage = ({
 }) => {
   const isPending =
     message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
-  const imageUrl = getMessageContent(message);
+  const imageUrl = message.attachmentUrl;
+  const fullImageUrl = REACT_APP_SERVER_BASE_URL + '/files/' + imageUrl;
 
   return (
     <StyledImageContainer onClick={onClick} isPending={isPending}>
       <StyledImageImg
         isPending={isPending}
-        src={imageUrl}
+        src={fullImageUrl}
         width="100%"
         height="100%"
       />

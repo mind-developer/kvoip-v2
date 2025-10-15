@@ -2,7 +2,6 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { MessageType } from '@/chat/types/MessageType';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
@@ -62,7 +61,6 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
     CallCenterContext,
   ) as CallCenterContextType;
   const { uploadAttachmentFile } = useUploadAttachmentFile();
-  const { sendWhatsappMessage } = useSendWhatsappMessages();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -125,8 +123,6 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
         ...sendMessageInputBase,
         fileId: url.attachmentAbsoluteURL,
       };
-
-      sendWhatsappMessage(sendMessageInput);
     }
     // else {
     //   const messengerSendMessageInput = {

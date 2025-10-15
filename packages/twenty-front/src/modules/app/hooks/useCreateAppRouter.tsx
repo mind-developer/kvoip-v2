@@ -4,7 +4,6 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { CallCenterProvider } from '@/chat/call-center/context/CallCenterContext';
-import ChatProvider from '@/chat/internal/context/chatContext';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
@@ -19,7 +18,6 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { CallCenter } from '~/pages/chat/call-center/ExternalChat';
-import { Chat } from '~/pages/chat/internal/InternalChat';
 import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { DashboardLinks } from '~/pages/dashboard-links/DashboarLinks';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -78,14 +76,6 @@ export const useCreateAppRouter = (
                 isAdminPageEnabled={isAdminPageEnabled}
                 isPageLayoutFeatureFlagEnabled={isPageLayoutFeatureFlagEnabled}
               />
-            }
-          />
-          <Route
-            path={AppPath.InternalChat}
-            element={
-              <ChatProvider>
-                <Chat />
-              </ChatProvider>
             }
           />
           <Route

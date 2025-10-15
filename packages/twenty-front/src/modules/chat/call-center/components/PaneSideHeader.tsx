@@ -1,17 +1,12 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Search } from '@/chat/call-center/components/Search';
-import { StartChat } from '@/chat/call-center/components/StartChat';
 import { TemplateMessage } from '@/chat/call-center/components/TemplateMessage';
 import { PANEL_SIDE_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelSideHeaderModalId';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { useGetWhatsappTemplates } from '@/chat/call-center/hooks/useGetWhatsappTemplates';
-import { useWhatsappTemplateMessage } from '@/chat/call-center/hooks/useWhatsappTemplateMessage';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   Avatar,
@@ -78,39 +73,6 @@ export const PaneSideHeader = () => {
   const [integrationId, setIntegrationId] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const {
-    sortChats,
-    currentMember,
-    isStartChatOpen,
-    setIsStartChatOpen,
-    startChatNumber,
-    setStartChatNumber,
-    startChatIntegrationId,
-    setStartChatIntegrationId,
-  } = useContext(CallCenterContext) as CallCenterContextType;
-
-  const { data, loading } = useGetWhatsappTemplates(integrationId || '');
-  const { sendWhatsappTemplateMessage } = useWhatsappTemplateMessage();
-
-  useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (startChatNumber && startChatIntegrationId) {
-      setPhoneNumber(startChatNumber);
-      setIntegrationId(startChatIntegrationId);
-    } else {
-      setPhoneNumber(null);
-      setIntegrationId(null);
-    }
-  }, [startChatNumber]);
-
-  const handlePhoneUpdate = (newPhoneNumber: string | null) => {
-    setPhoneNumber(newPhoneNumber);
-  };
-
-  const handleSelectedIntegrationId = (integrationId: string | null) => {
-    setIntegrationId(integrationId);
-  };
-
   const sendTemplateMessage = (
     templateName: string,
     message: string,
@@ -124,22 +86,18 @@ export const PaneSideHeader = () => {
       language,
       message,
       agent: {
-        name: `${currentMember?.name.firstName} ${currentMember?.name.lastName}`,
-        id: currentMember?.agentId,
+        name: `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+        id: currentWorkspaceMember?.agent?.id,
       },
       type: 'template',
     };
 
-    sendWhatsappTemplateMessage(sendTemplateInput);
-    setPhoneNumber(null);
+    // sendWhatsappTemplateMessage(sendTemplateInput);
   };
 
   const IconSearch = getIcon('IconSearch');
   const IconEdit = getIcon('IconEdit');
   const IconSortDescending = getIcon('IconSortDescending');
-
-  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-  if (loading) return <></>;
 
   openModal(PANEL_SIDE_HEADER_MODAL_ID);
 
@@ -163,7 +121,7 @@ export const PaneSideHeader = () => {
             )}
           />
           <StyledIconButton
-            onClick={() => sortChats()}
+            onClick={() => alert('not implemented')}
             variant="secondary"
             // accent="blue"
             size="medium"
@@ -175,7 +133,7 @@ export const PaneSideHeader = () => {
             )}
           />
           <StyledIconButton
-            onClick={() => setIsStartChatOpen(!isStartChatOpen)}
+            onClick={() => alert('not implemented')}
             variant="secondary"
             size="medium"
             Icon={(props) => (
@@ -183,14 +141,14 @@ export const PaneSideHeader = () => {
               <IconEdit {...props} />
             )}
           />
-          {isStartChatOpen && (
+          {/* {isStartChatOpen && (
             <StartChat
               isStartChatOpen={isStartChatOpen}
               setIsStartChatOpen={setIsStartChatOpen}
               onPhoneUpdate={handlePhoneUpdate}
               onIntegrationUpdate={handleSelectedIntegrationId}
             />
-          )}
+          )} */}
         </StyledActionsContainer>
       </StyledPaneHeaderContainer>
 
@@ -206,15 +164,13 @@ export const PaneSideHeader = () => {
               size="medium"
               variant="tertiary"
               onClick={() => {
-                setPhoneNumber(null);
-                setStartChatNumber(null);
-                setStartChatIntegrationId(null);
+                alert('not implemented');
               }}
             />
           </StyledModalHeader>
           <StyledModalContent>
             <TemplateMessage
-              templates={data?.templates}
+              templates={[]}
               onTemplateUpdate={sendTemplateMessage}
             />
           </StyledModalContent>
