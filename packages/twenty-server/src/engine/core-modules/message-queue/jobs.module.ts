@@ -11,8 +11,6 @@ import { CheckExpiredSubscriptionsJob } from 'src/engine/core-modules/billing/cr
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
-import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
 import { HandlersModule } from 'src/engine/core-modules/chatbot-runner/engine/handlers/handlers.module';
@@ -79,7 +77,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MetaModule,
     HandlersModule,
     ChatbotRunnerModule,
-    ChatMessageManagerModule,
     MessageQueueModule,
     TriggerModule,
     ServerlessFunctionModule,
@@ -96,7 +93,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WhatsappEmmitWaitingChatsCronJob,
     WhatsappEmmitResolvedChatsCronJob,
     ChatbotRunnerService,
-    ChatMessageManagerService,
     FileService,
     JwtService,
     JwtWrapperService,

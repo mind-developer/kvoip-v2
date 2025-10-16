@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { ClientChatMessage } from 'twenty-shared/types';
 
 type ProviderMessageId = string;

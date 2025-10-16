@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import {
   NodeHandler,
@@ -8,7 +7,6 @@ import {
 } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
@@ -39,7 +37,7 @@ export class ConditionalInputHandler implements NodeHandler {
 
   constructor(
     @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private sendChatMessageQueue: MessageQueueService,
+    private chatMessageManagerService: ChatMessageManagerService,
   ) {
     //this will probably cause issues
     this.askedNodes = new Set<string>();
@@ -83,13 +81,10 @@ export class ConditionalInputHandler implements NodeHandler {
           attachmentUrl: null,
           event: null,
         };
-        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
-          SendChatMessageJob.name,
-          {
-            clientChatMessage: message,
-            providerIntegrationId,
-            workspaceId,
-          },
+        this.chatMessageManagerService.sendMessage(
+          message,
+          workspaceId,
+          providerIntegrationId,
         );
       }
 
@@ -126,13 +121,10 @@ export class ConditionalInputHandler implements NodeHandler {
           attachmentUrl: null,
           event: null,
         };
-        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
-          SendChatMessageJob.name,
-          {
-            clientChatMessage: message,
-            providerIntegrationId,
-            workspaceId,
-          },
+        this.chatMessageManagerService.sendMessage(
+          message,
+          workspaceId,
+          providerIntegrationId,
         );
       }
 

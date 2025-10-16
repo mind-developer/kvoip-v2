@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { UseGuards } from '@nestjs/common';
 import { Args, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
@@ -17,12 +18,14 @@ export class ChatMessageManagerResolver {
     @Args('input')
     input: SendClientChatMessageInput,
   ) {
+    const providerMessageId = await this.chatMessageManagerService.sendMessage(
+      input,
+      input.workspaceId,
+      input.providerIntegrationId,
+    );
+    console.log('providerMessageId', providerMessageId);
     return {
-      messageId: await this.chatMessageManagerService.sendMessage(
-        input,
-        input.workspaceId,
-        input.providerIntegrationId,
-      ),
+      messageId: providerMessageId,
     };
   }
 }

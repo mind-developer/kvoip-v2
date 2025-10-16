@@ -5,7 +5,7 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
@@ -25,10 +25,10 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
       ],
     }),
     WorkspaceModule,
+    ChatMessageManagerModule,
   ],
   providers: [
     ChatbotRunnerService,
-    ChatMessageManagerService,
     TextInputHandler,
     ImageInputHandler,
     ConditionalInputHandler,

@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
@@ -18,10 +14,7 @@ import {
 
 @Injectable()
 export class FileInputHandler implements NodeHandler {
-  constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private sendChatMessageQueue: MessageQueueService,
-  ) {}
+  constructor(private chatMessageManagerService: ChatMessageManagerService) {}
 
   async process(params: ProcessParams): Promise<string | null> {
     const {
@@ -52,13 +45,10 @@ export class FileInputHandler implements NodeHandler {
         attachmentUrl: file,
         event: null,
       };
-      this.sendChatMessageQueue.add<SendChatMessageQueueData>(
-        SendChatMessageJob.name,
-        {
-          clientChatMessage: message,
-          providerIntegrationId,
-          workspaceId,
-        },
+      this.chatMessageManagerService.sendMessage(
+        message,
+        workspaceId,
+        providerIntegrationId,
       );
 
       const nextId = node.data?.outgoingNodeId;

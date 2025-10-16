@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
@@ -49,8 +50,14 @@ export class WhatsAppDriver implements ChatProviderDriver {
         const response = await axios.post(metaUrl, fields, { headers });
         return response.data.messages.id;
       }
+      const primaryAddressingMode = fields.to
+        .split('&')[0]
+        .replace('primary=', '');
+      fields.to = primaryAddressingMode;
+
       const response = await axios.post(baileysUrl, { fields });
-      return response.data.messages.id;
+      console.log('response', response.data.messages[0].id);
+      return response.data.messages[0].id;
     } catch (error) {
       throw new InternalServerErrorException('Failed to send message');
     }
