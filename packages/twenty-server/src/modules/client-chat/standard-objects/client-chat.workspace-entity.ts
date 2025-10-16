@@ -76,11 +76,10 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => SectorWorkspaceEntity,
     inverseSideFieldKey: 'chats',
   })
-  @WorkspaceIsNullable()
-  sector: Relation<SectorWorkspaceEntity> | null;
+  sector: Relation<SectorWorkspaceEntity>;
 
   @WorkspaceJoinColumn('sector')
-  sectorId: string | null;
+  sectorId: string;
 
   @WorkspaceRelation({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.person,
@@ -124,7 +123,7 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.lastMessageDate,
-    type: FieldMetadataType.DATE,
+    type: FieldMetadataType.DATE_TIME,
     label: msg`Last Message Date`,
     description: msg`The date of the last message in the chat`,
   })
@@ -138,4 +137,13 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   lastMessagePreview: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_STANDARD_FIELD_IDS.unreadMessagesCount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Unread Messages Count`,
+    description: msg`The number of unread messages in the chat`,
+    defaultValue: 0,
+  })
+  unreadMessagesCount: number;
 }

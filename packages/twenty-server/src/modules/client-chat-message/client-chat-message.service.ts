@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { ClientChat, ClientChatMessage } from 'twenty-shared/types';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { ClientChatEvent, ClientChatEventDTO } from './dtos/on-chat-event.dto';
 import {
   ClientMessageEvent,
@@ -14,7 +15,10 @@ export class ClientChatMessageService {
   ) {}
 
   async publishMessageCreated(
-    message: ClientChatMessage,
+    message: Omit<
+      ClientChatMessageWorkspaceEntity,
+      'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
+    >,
     chatId: string,
   ): Promise<void> {
     const channel = `client-message-${chatId}`;
@@ -27,7 +31,10 @@ export class ClientChatMessageService {
     await this.pubSub.publish(channel, eventData);
   }
 
-  async publishChatCreated(chat: ClientChat, sectorId: string): Promise<void> {
+  async publishChatCreated(
+    chat: ClientChatWorkspaceEntity,
+    sectorId: string,
+  ): Promise<void> {
     const channel = `client-chat-${sectorId}`;
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.CREATED,
@@ -39,7 +46,7 @@ export class ClientChatMessageService {
   }
 
   async publishMessageUpdated(
-    message: ClientChatMessage,
+    message: ClientChatMessageWorkspaceEntity,
     chatId: string,
   ): Promise<void> {
     const channel = `client-message-${chatId}`;
@@ -52,7 +59,10 @@ export class ClientChatMessageService {
     await this.pubSub.publish(channel, eventData);
   }
 
-  async publishChatUpdated(chat: ClientChat, sectorId: string): Promise<void> {
+  async publishChatUpdated(
+    chat: ClientChatWorkspaceEntity,
+    sectorId: string,
+  ): Promise<void> {
     const channel = `client-chat-${sectorId}`;
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.UPDATED,

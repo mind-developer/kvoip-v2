@@ -20,6 +20,7 @@ export type ClientChat = {
   lastMessageType: ChatMessageType;
   lastMessageDate: Date;
   lastMessagePreview: string | null;
+  unreadMessagesCount: number;
   status: ClientChatStatus;
 };
 
@@ -37,9 +38,9 @@ export type InternalChat = Omit<
 
 export enum ClientChatStatus {
   UNASSIGNED = 'UNASSIGNED',
-  ASSIGNED_TO_AGENT = 'ASSIGNED_TO_AGENT',
-  ASSIGNED_TO_SECTOR = 'ASSIGNED_TO_SECTOR',
+  ASSIGNED = 'ASSIGNED',
   ABANDONED = 'ABANDONED',
-  RESOLVED = 'RESOLVED',
+  CANCELLED = 'CANCELLED',
+  FINISHED = 'FINISHED',
   CHATBOT = 'CHATBOT',
 }

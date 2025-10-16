@@ -818,6 +818,7 @@ export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
   lastMessageType: 'c391a517-1514-450b-9751-6239c4c18d62',
   lastMessageDate: 'dde154dd-bfbc-49bd-a127-c71aa5e34b41',
   lastMessagePreview: '5ebec8ba-14a7-4ac3-91f5-45bbfd27907a',
+  unreadMessagesCount: '8f2e9c1a-3b4d-4e5f-9a8b-2c3d4e5f6a7b',
 } as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {

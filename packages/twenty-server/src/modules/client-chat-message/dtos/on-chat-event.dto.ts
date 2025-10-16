@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { ClientChat } from 'twenty-shared/types';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 
 export enum ClientChatEvent {
   CREATED = 'CREATED',
@@ -21,5 +21,5 @@ export class ClientChatEventDTO {
   clientChatEventDate: Date;
 
   @Field(() => GraphQLJSON)
-  clientChat: ClientChat;
+  clientChat: ClientChatWorkspaceEntity;
 }
