@@ -220,12 +220,6 @@ export class TelephonyResolver {
           workspace.id,
         );
 
-        await this.telephonyService.setExtensionNumberInWorkspaceMember(
-          workspace.id,
-          createTelephonyInput.memberId,
-          createTelephonyInput.numberExtension,
-        );
-
         return result;
       }
     } catch (error) {
@@ -369,12 +363,6 @@ export class TelephonyResolver {
         throw new Error('Error updating ramal');
       }
 
-      await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        workspace.id,
-        telephony.memberId!,
-        updateTelephonyInput.numberExtension || telephony.numberExtension,
-      );
-
       const result = await this.telephonyService.updateTelephony({
         id,
         workspaceId: workspace.id,
@@ -435,6 +423,44 @@ export class TelephonyResolver {
     });
 
     return extensions.data.dados[0];
+  }
+
+  @Query(() => TelephonyWorkspaceEntity, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async getTelephonyByMember(
+    @AuthUser() { id: userId }: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('memberId', { type: () => ID }) memberId: string,
+  ): Promise<TelephonyWorkspaceEntity | null> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!workspaceId) {
+      throw new Error('Workspace id not found');
+    }
+
+    if (!memberId) {
+      throw new Error('Member id not found');
+    }
+
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    try {
+      const telephony = await this.telephonyService.getTelephonyByMember({
+        memberId,
+        workspaceId,
+      });
+
+      return telephony;
+    } catch (error) {
+      this.logger.error('Error getting telephony by member:', error);
+      throw new Error(`Failed to get telephony for member: ${error.message}`);
+    }
   }
 
   @Query(() => TelephonyExtension, { nullable: true })
@@ -633,11 +659,6 @@ export class TelephonyResolver {
     if (!telephonyToDelete) {
       throw new Error('Telephony not found');
     }
-
-    await this.telephonyService.removeAgentIdInWorkspaceMember(
-      workspace.id,
-      telephonyToDelete.memberId!,
-    );
 
     const result = await this.telephonyService.delete({
       id: id,

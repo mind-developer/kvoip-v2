@@ -167,63 +167,6 @@ export class TelephonyService {
     return affected ? true : false;
   };
 
-  setExtensionNumberInWorkspaceMember = async (
-    workspaceId: string,
-    memberId: string,
-    extensionNumber: string,
-  ) => {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    if (!workspaceMemberRepository) {
-      throw new Error('Workspace member repository not found');
-    }
-
-    const member = await workspaceMemberRepository.findOne({
-      where: { id: memberId },
-    });
-
-    if (!member) {
-      throw new BadRequestException(`Workspace member ${memberId} not found`);
-    }
-
-    member.extensionNumber = extensionNumber;
-
-    return await workspaceMemberRepository.save(member);
-  };
-
-  removeAgentIdInWorkspaceMember = async (
-    workspaceId: string,
-    memberId: string,
-  ) => {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    if (!workspaceMemberRepository) {
-      throw new Error('Workspace member repository not found');
-    }
-
-    const member = await workspaceMemberRepository.findOne({
-      where: { id: memberId },
-    });
-
-    if (!member) {
-      throw new BadRequestException(`Workspace member ${memberId} not found`);
-    }
-
-    member.extensionNumber = '';
-
-    return await workspaceMemberRepository.save(member);
-  };
-
   /**
    * Verifica se um membro já possui um ramal na tabela telephony
    * @param memberId - ID do membro a ser verificado

@@ -59,10 +59,13 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledWebSoftphoneContainer = styled.div`
-  position: absolute;
-  bottom: 100px;
-  right: 20px;
-  z-index: 100;
+  position: fixed;       
+  top: 0;
+  left: 0;
+  width: 100vw;         
+  height: 100vh; 
+  pointer-events: none;
+  z-index: 9999;
 `;
 
 export const DefaultLayout = () => {
@@ -142,11 +145,17 @@ export const DefaultLayout = () => {
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
+
+      {/* @kvoip-woulz proprietary:begin */}
+
       {!isOnboarding && (
         <StyledWebSoftphoneContainer>
           <WebSoftphone />
         </StyledWebSoftphoneContainer>
       )}
+
+      {/* @kvoip-woulz proprietary:end */}
+
     </>
   );
 };
