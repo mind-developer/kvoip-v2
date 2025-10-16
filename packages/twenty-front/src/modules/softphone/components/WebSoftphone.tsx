@@ -1,6 +1,8 @@
 /* eslint-disable @nx/workspace-no-state-useref */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-console */
+import IncomingCallBody from '@/softphone/components/dialer/IncomingCallBody';
+import IncomingCallHeader from '@/softphone/components/dialer/IncomingCallHeader';
 import DTMFButton from '@/softphone/components/ui/DTMFButton';
 import Keyboard from '@/softphone/components/ui/Keyboard';
 import KeyboardToggleButton from '@/softphone/components/ui/KeyboardToggleButton';
@@ -45,7 +47,7 @@ import AudioDevicesModal from './modal/AudioDevicesModal';
 import HoldButton from './ui/HoldButton';
 import TransferButton from './ui/TransferButton';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
   background-color: ${({ theme }) => theme.background.tertiary};
   display: flex;
   flex-direction: column;
@@ -55,11 +57,13 @@ const StyledContainer = styled.div`
   cursor: grab;
   gap: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  // border: 1px solid ${({ theme }) => theme.color.green60};
-
-  // adicione uma sombra verde 
-  box-shadow: 0 0 5px 0 ${({ theme }) => theme.color.green40};
   
+  box-shadow: 0 0 5px 0 ${({ status, theme }) =>
+    status === SoftphoneStatus.Online
+      ? theme.color.green40
+      : status === SoftphoneStatus.Registering
+        ? theme.color.yellow40
+        : theme.color.red40};
 `;
 
 const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
@@ -67,12 +71,6 @@ const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
   display: flex;
   flex-direction: ${({ column }) => (column ? 'column' : 'row')};
   gap: ${({ theme, gap }) => theme.spacing(gap || 1)};
-`;
-
-const StyledIncomingCall = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIncomingText = styled.span`
@@ -88,23 +86,6 @@ const StyledIncomingNumber = styled.span<{ alignSelf?: string }>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-const StyledIncomingButton = styled.div<{ accept: boolean }>`
-  color: ${({ theme }) => theme.font.color.inverted};
-  font-size: ${({ theme }) => theme.font.size.md};
-  width: 100%;
-  text-align: center;
-
-  background-color: ${({ accept, theme }) =>
-    accept ? theme.color.green60 : theme.color.red};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(2)};
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${({ accept, theme }) =>
-      accept ? theme.color.green70 : theme.color.red50};
-  }
-`;
 
 const StyledTextAndCallButton = styled.div`
   display: flex;
@@ -121,12 +102,6 @@ const StyledDefaultContainer = styled.div`
   width: 100%;
 `;
 
-const StyledIncomingButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-`;
 
 const StyledIncomingTimerAndIcon = styled.div`
   align-items: center;
@@ -988,7 +963,6 @@ const WebSoftphone: React.FC = () => {
     }));
   };
 
-  const PhoneIncoming = getIcon('IconPhoneIncoming');
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
 
@@ -1043,6 +1017,13 @@ const WebSoftphone: React.FC = () => {
       }}
     >
       <StyledContainer
+        status={
+          callState.isRegistered
+            ? SoftphoneStatus.Online
+            : callState.isRegistering
+              ? SoftphoneStatus.Registering
+              : SoftphoneStatus.Offline
+        }
         data-select-disable="true"
         onMouseDown={(e) => {
           e.stopPropagation();
@@ -1064,13 +1045,7 @@ const WebSoftphone: React.FC = () => {
 
         {callState.incomingCall && !callState.isInCall ? (
 
-          <StyledIncomingCall>
-            <PhoneIncoming
-              color={theme.font.color.secondary}
-              size={theme.icon.size.md}
-            />
-            <StyledIncomingText>{t`incoming`}</StyledIncomingText>
-          </StyledIncomingCall>
+          <IncomingCallHeader />
 
         ) : (
 
@@ -1108,21 +1083,13 @@ const WebSoftphone: React.FC = () => {
         <StyledControlsContainer
           column={callState.incomingCall && !callState.isInCall}
         >
-          {callState.incomingCall && !callState.isInCall ? (
-            <>
-              <StyledIncomingNumber>
-                {callState.incomingCallNumber}
-              </StyledIncomingNumber>
-              <StyledIncomingButtonContainer>
-                <StyledIncomingButton accept={false} onClick={handleRejectCall}>
-                  {t`Reject`}
-                </StyledIncomingButton>
-                <StyledIncomingButton accept={true} onClick={handleAcceptCall}>
-                  {t`Accept`}
-                </StyledIncomingButton>
-              </StyledIncomingButtonContainer>
-            </>
-          ) : (
+            {callState.incomingCall && !callState.isInCall ? (
+              <IncomingCallBody
+                incomingCallNumber={callState.incomingCallNumber}
+                onAccept={handleAcceptCall}
+                onReject={handleRejectCall}
+              />
+            ) : (
 
             <div style={{ width: '100%' }}>
               <StyledDefaultContainer>
