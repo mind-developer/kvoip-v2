@@ -263,10 +263,10 @@ export class InterService {
     // TODO: Check if there is are any existing files for this workspace and remove them before uploading a new one
     const { files } = await this.fileUploadService.uploadFile({
       file: Buffer.from(response.data.pdf, 'base64'),
-      fileFolder,
-      workspaceId,
       filename: `bolepix-${interChargeId}-${workspaceId}.pdf`,
       mimeType: 'application/pdf',
+      fileFolder,
+      workspaceId,
     });
 
     files[0].path;
@@ -383,6 +383,59 @@ export class InterService {
       text,
       html,
     });
+  }
+
+  async interSandboxPayBill({
+    interChargeCode,
+  }: {
+    interChargeCode: string;
+  }): Promise<{ success: boolean }> {
+    try {
+      const isSandbox = [
+        NodeEnvironment.DEVELOPMENT,
+        NodeEnvironment.TEST,
+      ].includes(this.twentyConfigService.get('NODE_ENV'));
+
+      if (!isSandbox) {
+        throw new Error(
+          'This endpoint is only available in development/test mode',
+        );
+      }
+
+      const token = await this.interInstanceService.getOauthToken();
+
+      await this.interInstance.post(
+        `/cobranca/v3/cobrancas/${interChargeCode}/pagar`,
+        {
+          pagarCom: 'BOLETO',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Boleto payment failed for inter charge ${interChargeCode}`,
+        error,
+      );
+
+      if (isAxiosError(error)) {
+        throw new InternalServerErrorException(
+          `Inter API error: ${error.response?.data?.message || error.message}`,
+        );
+      }
+
+      throw new InternalServerErrorException(
+        'Unexpected error paying billing charge',
+      );
+    }
   }
 
   getFileLinkFromPath(filePath: string) {
