@@ -201,6 +201,7 @@ export class WhatsAppService {
       );
       await this.chatMessageManagerService.saveMessage(
         whatsAppMessageToClientChatMessage(message, clientChat),
+        workspaceId,
       );
 
       await clientChatRepository.update(clientChat.id, {

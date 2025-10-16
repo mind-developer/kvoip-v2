@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
@@ -30,10 +31,10 @@ export class ChatMessageManagerService {
     );
   }
 
-  async saveMessage(clientChatMessage: ClientChatMessage) {
+  async saveMessage(clientChatMessage: ClientChatMessage, workspaceId: string) {
     const message = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-        clientChatMessage.clientChatId,
+        workspaceId,
         'clientChatMessage',
       )
     ).save(clientChatMessage);
