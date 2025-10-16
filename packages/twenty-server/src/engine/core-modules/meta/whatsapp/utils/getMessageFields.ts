@@ -40,5 +40,6 @@ export function getMessageFields(
     default:
       throw new InternalServerError('Invalid message type: ' + input.type);
   }
+  fields.type = fields.type.toLowerCase();
   return fields;
 }

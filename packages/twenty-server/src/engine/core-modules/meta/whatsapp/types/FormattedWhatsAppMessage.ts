@@ -6,6 +6,7 @@ import {
 export type FormattedWhatsAppMessage = {
   id: string;
   remoteJid: string;
+  senderPhoneNumber: string | null;
   fromMe: boolean;
   senderAvatarUrl: string | null;
   contactName: string | null;

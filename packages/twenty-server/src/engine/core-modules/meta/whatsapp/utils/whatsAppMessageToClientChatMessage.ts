@@ -2,10 +2,10 @@ import {
   ChatIntegrationProvider,
   ChatMessageFromType,
   ChatMessageToType,
-  ClientChatMessage,
 } from 'twenty-shared/types';
 
 import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 
 const getFromMeFromType = (clientChat: ClientChatWorkspaceEntity) => {
@@ -21,7 +21,10 @@ const getFromMeFromType = (clientChat: ClientChatWorkspaceEntity) => {
 export const whatsAppMessageToClientChatMessage = (
   whatsappMessage: FormattedWhatsAppMessage,
   clientChat: ClientChatWorkspaceEntity,
-): ClientChatMessage => {
+): Omit<
+  ClientChatMessageWorkspaceEntity,
+  'createdAt' | 'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
+> => {
   if (!clientChat.whatsappIntegrationId) {
     throw new Error(
       'This should never happen: client chat has no WhatsApp integration',

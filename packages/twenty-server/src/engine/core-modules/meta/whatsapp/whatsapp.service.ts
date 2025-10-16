@@ -5,9 +5,6 @@ import axios from 'axios';
 import { v4 } from 'uuid';
 
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { SaveClientChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
-import { SaveClientChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
-import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -23,7 +20,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
-import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -69,6 +65,7 @@ export class WhatsAppService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsappIntegration',
+        { shouldBypassPermissionChecks: true },
       );
 
     const integration = await whatsappIntegrationRepository.findOne({
@@ -106,10 +103,6 @@ export class WhatsAppService {
     }
   }
 
-  async sendMessage(jobName: string, jobOptions: SendChatMessageQueueData) {
-    this.sendMessageQueue.add<SendChatMessageQueueData>(jobName, jobOptions);
-  }
-
   async saveMessage(
     message: FormattedWhatsAppMessage,
     integrationId: string,
@@ -138,30 +131,37 @@ export class WhatsAppService {
             'person',
             { shouldBypassPermissionChecks: true },
           );
+
         const whatsappIntegration = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
             workspaceId,
             'whatsappIntegration',
+            { shouldBypassPermissionChecks: true },
           )
         ).findOne({ where: { id: integrationId } });
+
+        if (!whatsappIntegration) {
+          throw new InternalServerError('Whatsapp integration not found');
+        }
+
         const person = await personRepository.save(
           createRelatedPerson(
             message.fromMe
               ? {
-                  firstName: `WhatsApp (${message.remoteJid})`,
+                  firstName: `WhatsApp (${message.senderPhoneNumber ?? message.remoteJid})`,
                   lastName: '',
                 }
               : {
                   firstName: message.contactName?.split(' ')[0] ?? '',
                   lastName: message.contactName?.split(' ')[1] ?? '',
                 },
-            //TODO: parse number to get codes
-            message.remoteJid,
+            message.senderPhoneNumber ?? message.remoteJid,
             message.senderAvatarUrl ?? null,
             ChatIntegrationProvider.WHATSAPP,
             'Via WhatsApp (Chat)',
           ),
         );
+
         clientChat = await clientChatRepository.save({
           person,
           providerContactId,
@@ -169,7 +169,7 @@ export class WhatsAppService {
             id: integrationId,
           },
           sector: {
-            id: whatsappIntegration?.defaultSectorId ?? undefined,
+            id: whatsappIntegration.defaultSectorId,
           },
           lastMessageType: message.type,
           lastMessageDate: new Date(),
@@ -177,51 +177,20 @@ export class WhatsAppService {
           status: ClientChatStatus.UNASSIGNED,
         });
 
+        //TODO: this should be done in the chat message manager service
         this.clientChatMessageService.publishChatCreated(
           {
             ...clientChat,
-            messengerIntegrationId: null,
-            telegramIntegrationId: null,
           },
-          whatsappIntegration?.defaultSectorId!,
+          whatsappIntegration.defaultSectorId,
         );
       }
 
-      if (!clientChat?.id)
-        throw new InternalServerError(
-          'No chat found, and fallback chat creation failed',
-        );
+      if (!clientChat) throw new InternalServerError('Client chat not found');
 
-      this.clientChatMessageService.publishMessageCreated(
-        {
-          ...whatsAppMessageToClientChatMessage(message, clientChat),
-          createdAt: new Date().toISOString(),
-        },
-        clientChat.id,
-      );
       await this.chatMessageManagerService.saveMessage(
         whatsAppMessageToClientChatMessage(message, clientChat),
         workspaceId,
-      );
-
-      await clientChatRepository.update(clientChat.id, {
-        lastMessageType: message.type,
-        lastMessageDate: new Date(),
-        lastMessagePreview: message.textBody,
-      });
-
-      const updatedClientChat = await clientChatRepository.findOne({
-        where: { id: clientChat.id },
-        relations: ['person', 'sector', 'whatsappIntegration'],
-      });
-
-      this.clientChatMessageService.publishChatUpdated(
-        {
-          ...updatedClientChat!,
-          messengerIntegrationId: null,
-          telegramIntegrationId: null,
-        },
-        clientChat.sectorId!,
       );
 
       //initialize chatbot runner if needed
@@ -274,15 +243,12 @@ export class WhatsAppService {
           return true;
         }
 
-        this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-          SaveClientChatMessageJob.name,
+        this.chatMessageManagerService.saveMessage(
           {
-            chatMessage: {
-              ...baseEventMessage,
-              event: ClientChatMessageEvent.CHATBOT_START,
-            },
-            workspaceId,
+            ...baseEventMessage,
+            event: ClientChatMessageEvent.CHATBOT_START,
           },
+          workspaceId,
         );
 
         clientChatRepository.update(clientChat.id, {
@@ -293,6 +259,7 @@ export class WhatsAppService {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
             workspaceId,
             'sector',
+            { shouldBypassPermissionChecks: true },
           )
         ).find();
 
@@ -312,18 +279,15 @@ export class WhatsAppService {
               clientChatRepository.update(clientChat.id, {
                 sector: { id: sectorId },
               });
-              this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-                SaveClientChatMessageJob.name,
+              this.chatMessageManagerService.saveMessage(
                 {
-                  chatMessage: {
-                    ...baseEventMessage,
-                    event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
-                  },
-                  workspaceId,
+                  ...baseEventMessage,
+                  event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
                 },
+                workspaceId,
               );
               clientChatRepository.update(clientChat.id, {
-                status: ClientChatStatus.ASSIGNED_TO_AGENT,
+                status: ClientChatStatus.ASSIGNED,
               });
               return;
             }
@@ -332,15 +296,12 @@ export class WhatsAppService {
             //     status: ClientChatStatus.ASSIGNED_TO_AGENT,
             //   });
             // }
-            this.saveMessageQueue.add<SaveClientChatMessageJobData>(
-              SaveClientChatMessageJob.name,
+            this.chatMessageManagerService.saveMessage(
               {
-                chatMessage: {
-                  ...baseEventMessage,
-                  event: ClientChatMessageEvent.CHATBOT_END,
-                },
-                workspaceId,
+                ...baseEventMessage,
+                event: ClientChatMessageEvent.CHATBOT_END,
               },
+              workspaceId,
             );
             this.ChatbotRunnerService.clearExecutor(clientChat.id);
             clientChatRepository.update(clientChat.id, {
@@ -351,41 +312,7 @@ export class WhatsAppService {
         executor.runFlow(message.textBody ?? '');
       }
     } catch (error) {
-      this.logger.error('Error saving message:', error);
-    }
-  }
-
-  async updateMessage(
-    providerMessageId: string,
-    data: Partial<ClientChatMessage>,
-    workspaceId: string,
-  ) {
-    try {
-      const messageRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-          workspaceId,
-          'clientChatMessage',
-        );
-      const message = await messageRepository.findOne({
-        where: {
-          providerMessageId,
-        },
-      });
-      if (!message) return;
-      const updatedMessage = {
-        ...message,
-        ...data,
-      };
-      this.clientChatMessageService.publishMessageUpdated(
-        {
-          ...updatedMessage,
-          createdAt: new Date().toISOString(),
-        },
-        updatedMessage.clientChatId,
-      );
-      await messageRepository.save(updatedMessage);
-    } catch (error) {
-      this.logger.error('Error updating message:', error);
+      this.logger.error(error);
     }
   }
 
@@ -443,6 +370,7 @@ export class WhatsAppService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
         'whatsappIntegration',
+        { shouldBypassPermissionChecks: true },
       );
 
     const integration = await whatsappRepository.findOne({

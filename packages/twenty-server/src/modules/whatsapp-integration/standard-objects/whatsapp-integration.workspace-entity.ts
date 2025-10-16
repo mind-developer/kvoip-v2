@@ -133,8 +133,8 @@ export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => SectorWorkspaceEntity,
     inverseSideFieldKey: 'whatsappIntegrations',
   })
-  defaultSector: Relation<SectorWorkspaceEntity> | null;
+  defaultSector: Relation<SectorWorkspaceEntity>;
 
   @WorkspaceJoinColumn('defaultSector')
-  defaultSectorId: string | null;
+  defaultSectorId: string;
 }
