@@ -1,13 +1,13 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useClientChatMessageSubscription } from '@/chat/call-center/hooks/useClientChatMessageSubscription';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ClientChatMessage } from 'twenty-shared/types';
 
 export const useClientChatMessages = (chatId: string) => {
   const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>([]);
-  const { records: fetchedMessages } = useFindManyRecords<
-    ClientChatMessage & { __typename: string; id: string }
-  >({
+  useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
     objectNameSingular: 'clientChatMessage',
     filter: { clientChatId: { eq: chatId } },
     limit: 5000,
@@ -18,6 +18,7 @@ export const useClientChatMessages = (chatId: string) => {
     skip: !chatId,
   });
 
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   useClientChatMessageSubscription({
     input: { chatId: chatId! },
     onMessageCreated: (message: ClientChatMessage) => {

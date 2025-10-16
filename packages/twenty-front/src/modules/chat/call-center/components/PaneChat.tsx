@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AudioVisualizer } from '@/chat/call-center/components/AudioVisualizer';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
@@ -22,6 +23,7 @@ import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { formatDate } from '@/chat/utils/formatDate';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -335,6 +337,11 @@ export const PaneChat = () => {
     objectRecordId: chatId,
     skip: !chatId,
   });
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'clientChat',
+  });
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const { sendClientChatMessage } = useSendClientChatMessage();
 
@@ -358,8 +365,6 @@ export const PaneChat = () => {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { getIcon } = useIcons();
 
@@ -495,16 +500,13 @@ export const PaneChat = () => {
     } else {
       // Adicionar mensagem otimista
       const optimisticMessageId = `optimistic-${v4()}`;
-      const optimisticMessage: ClientChatMessage = {
+      const optimisticMessage: Omit<ClientChatMessage, 'providerMessageId'> = {
         clientChatId: chatId!,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
         from: currentWorkspaceMember?.id || '',
         fromType: ChatMessageFromType.AGENT,
         to: selectedChat.providerContactId,
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
-        providerMessageId: optimisticMessageId,
         type: ChatMessageType.TEXT,
         textBody: newMessage,
         caption: null,
@@ -514,15 +516,25 @@ export const PaneChat = () => {
         event: null,
       };
 
-      setOptimisticMessages((prev) => [...prev, optimisticMessage]);
-      sendClientChatMessage(optimisticMessage);
+      setOptimisticMessages((prev) => [
+        ...prev,
+        {
+          ...optimisticMessage,
+          providerMessageId: optimisticMessageId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
 
-      // Limpar mensagens otimistas após um tempo
-      setTimeout(() => {
-        setOptimisticMessages((prev) =>
-          prev.filter((msg) => msg.providerMessageId !== optimisticMessageId),
-        );
-      }, 5000);
+      sendClientChatMessage({
+        ...optimisticMessage,
+        workspaceId: currentWorkspace?.id ?? '',
+        providerIntegrationId:
+          selectedChat.whatsappIntegrationId ??
+          selectedChat.messengerIntegrationId ??
+          selectedChat.telegramIntegrationId ??
+          null,
+      });
     }
   };
 
@@ -603,7 +615,7 @@ export const PaneChat = () => {
 
     if (
       !selectedChat.agentId &&
-      selectedChat.status !== ClientChatStatus.RESOLVED
+      selectedChat.status === ClientChatStatus.ASSIGNED
     ) {
       return (
         <StyledInputContainer>
@@ -712,7 +724,7 @@ export const PaneChat = () => {
       );
     }
 
-    if (selectedChat.status !== ClientChatStatus.RESOLVED) {
+    if (selectedChat.status === ClientChatStatus.UNASSIGNED) {
       return (
         <StyledButton
           title="Start Service"
@@ -720,8 +732,13 @@ export const PaneChat = () => {
           accent="blue"
           size="medium"
           onClick={() => {
-            //todo: set chat status as assigned
-            //todo: set chat agentId to current agentId
+            updateOneRecord({
+              idToUpdate: selectedChat.id,
+              updateOneRecordInput: {
+                status: ClientChatStatus.ASSIGNED,
+                agentId: currentWorkspaceMember?.agent?.id || null,
+              },
+            });
           }}
         />
       );

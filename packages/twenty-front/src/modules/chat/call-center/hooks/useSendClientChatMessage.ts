@@ -18,9 +18,19 @@ export const useSendClientChatMessage = () => {
   );
 
   const sendClientChatMessage = async (
-    input: Omit<ClientChatMessage, 'providerMessageId'>,
+    input: Omit<
+      ClientChatMessage,
+      'providerMessageId' | 'createdAt' | 'updatedAt'
+    > & {
+      workspaceId: string;
+      providerIntegrationId: string;
+    },
   ) => {
-    await sendClientChatMessageMutation({ variables: { input } });
+    await sendClientChatMessageMutation({
+      variables: {
+        input,
+      },
+    });
   };
 
   return { sendClientChatMessage };

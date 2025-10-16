@@ -25,6 +25,10 @@ const StyledChatTitle = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 `;
 
 const StyledDiv = styled.div`
@@ -94,7 +98,16 @@ export const PaneChatHeader = ({
               type={'rounded'}
               placeholderColorSeed={name}
             />
-            <StyledChatTitle>{name}</StyledChatTitle>
+            <StyledChatTitle
+              onClick={() =>
+                openRecordInCommandMenu({
+                  objectNameSingular: 'person',
+                  recordId: personId,
+                })
+              }
+            >
+              {name}
+            </StyledChatTitle>
           </StyledDiv>
           <StyledActionsContainer>
             <StyledIconButton

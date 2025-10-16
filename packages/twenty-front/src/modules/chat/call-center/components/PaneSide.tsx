@@ -12,7 +12,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { ClientChat, ClientChatStatus } from 'twenty-shared/types';
+import {
+  ChatMessageType,
+  ClientChat,
+  ClientChatStatus,
+} from 'twenty-shared/types';
 import { WorkspaceMember } from '~/generated/graphql';
 
 const StyledPaneSideContainer = styled.div`
@@ -109,6 +113,23 @@ export const PaneSide = () => {
     navigate(`/chat/call-center/${chatId}`);
   };
 
+  const getChatMessagePreview = (chat: ClientChat) => {
+    switch (chat.lastMessageType) {
+      case ChatMessageType.TEXT:
+        return chat.lastMessagePreview;
+      case ChatMessageType.IMAGE:
+        return '📷 Image';
+      case ChatMessageType.AUDIO:
+        return '🎧 Audio';
+      case ChatMessageType.DOCUMENT:
+        return '📄 Document';
+      case ChatMessageType.VIDEO:
+        return '🎥 Video';
+      default:
+        return t`Click to open chat`;
+    }
+  };
+
   useClientChatSubscription({
     sectorId: sectorId || '',
     onChatCreated: (chat) => {
@@ -148,7 +169,7 @@ export const PaneSide = () => {
 
   // Filtrar chats ativos (não resolvidos)
   const activeClientChats = clientChats.filter(
-    (chat) => chat.status !== ClientChatStatus.RESOLVED,
+    (chat) => chat.status !== ClientChatStatus.FINISHED,
   );
 
   const isScrollable = activeClientChats.length > 5;
@@ -164,7 +185,7 @@ export const PaneSide = () => {
           name={clientName}
           avatarUrl={person?.avatarUrl || ''}
           lastMessagePreview={
-            chat.lastMessagePreview ?? t`Clique para abrir o chat`
+            getChatMessagePreview(chat) || t`Click to open chat`
           }
           isSelected={openChatId === chat.id}
           onSelect={() => handleChatSelect(chat.id)}
