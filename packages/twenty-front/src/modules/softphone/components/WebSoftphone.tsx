@@ -1,9 +1,11 @@
 /* eslint-disable @nx/workspace-no-state-useref */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-console */
-import DTMFButton from '@/softphone/components/DTMFButton';
-import Keyboard from '@/softphone/components/Keyboard';
-import StatusIndicator from '@/softphone/components/StatusPill';
+import DTMFButton from '@/softphone/components/ui/DTMFButton';
+import Keyboard from '@/softphone/components/ui/Keyboard';
+import KeyboardToggleButton from '@/softphone/components/ui/KeyboardToggleButton';
+import StatusIndicator from '@/softphone/components/ui/StatusPill';
+import { SoftphoneStatus } from '@/softphone/constants/SoftphoneStatus';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
@@ -24,7 +26,7 @@ import {
   SessionManager,
 } from 'sip.js/lib/platform/web';
 import { IconArrowLeft, IconPhone, IconSettings, useIcons } from 'twenty-ui/display';
-import defaultCallState from '../constants/defaultCallState';
+import defaultCallState from '../constants/DefaultCallState';
 import { useAudioDevices } from '../hooks/useAudioDevices';
 import { useCallAudio } from '../hooks/useCallAudio';
 import { useCallStates } from '../hooks/useCallStates';
@@ -39,9 +41,9 @@ import { CallStatus } from '../types/callStatusEnum';
 import { SipConfig } from '../types/sipConfig';
 import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
-import AudioDevicesModal from './AudioDevicesModal';
-import HoldButton from './HoldButton';
-import TransferButton from './TransferButton';
+import AudioDevicesModal from './modal/AudioDevicesModal';
+import HoldButton from './ui/HoldButton';
+import TransferButton from './ui/TransferButton';
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -53,6 +55,11 @@ const StyledContainer = styled.div`
   cursor: grab;
   gap: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  // border: 1px solid ${({ theme }) => theme.color.green60};
+
+  // adicione uma sombra verde 
+  box-shadow: 0 0 5px 0 ${({ theme }) => theme.color.green40};
+  
 `;
 
 const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
@@ -981,8 +988,6 @@ const WebSoftphone: React.FC = () => {
     }));
   };
 
-  const KeyboardOffIcon = getIcon('IconKeyboardOff');
-  const KeyboardIcon = getIcon('IconKeyboard');
   const PhoneIncoming = getIcon('IconPhoneIncoming');
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
@@ -1058,6 +1063,7 @@ const WebSoftphone: React.FC = () => {
         <audio ref={sipRefs.remoteAudioRef} autoPlay />
 
         {callState.incomingCall && !callState.isInCall ? (
+
           <StyledIncomingCall>
             <PhoneIncoming
               color={theme.font.color.secondary}
@@ -1065,16 +1071,18 @@ const WebSoftphone: React.FC = () => {
             />
             <StyledIncomingText>{t`incoming`}</StyledIncomingText>
           </StyledIncomingCall>
+
         ) : (
+
           <StyledStatusAndTimer>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <StatusIndicator
                 status={
                   callState.isRegistered
-                    ? 'online'
+                    ? SoftphoneStatus.Online
                     : callState.isRegistering
-                      ? 'registering'
-                      : 'offline'
+                      ? SoftphoneStatus.Registering
+                      : SoftphoneStatus.Offline
                 }
                 extension={config?.username}
               />
@@ -1082,6 +1090,7 @@ const WebSoftphone: React.FC = () => {
                 <IconSettings size={theme.icon.size.md} />
               </StyledSettingsButton>
             </div>
+            
             {(callState.isInCall || callState.ringingStartTime) && (
               <StyledIncomingTimerAndIcon>
                 <IconPhoneOutgoing
@@ -1132,27 +1141,12 @@ const WebSoftphone: React.FC = () => {
                           }));
                         }
                       }}
-                      RightIcon={() =>
-                        isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() =>
-                              setIsKeyboardExpanded(!isKeyboardExpanded)
-                            }
-                          />
-                        ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() =>
-                              setIsKeyboardExpanded(!isKeyboardExpanded)
-                            }
-                          />
-                        )
-                      }
+                      RightIcon={() => (
+                        <KeyboardToggleButton
+                          isExpanded={isKeyboardExpanded}
+                          onToggle={() => setIsKeyboardExpanded(!isKeyboardExpanded)}
+                        />
+                      )}
                       disabled={callState.isInCall}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && callState.isRegistered) {
@@ -1188,27 +1182,12 @@ const WebSoftphone: React.FC = () => {
                       onChange={(e) => {
                         handleSendDtmf(e);
                       }}
-                      RightIcon={() =>
-                        isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() =>
-                              setIsKeyboardExpanded(!isKeyboardExpanded)
-                            }
-                          />
-                        ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() =>
-                              setIsKeyboardExpanded(!isKeyboardExpanded)
-                            }
-                          />
-                        )
-                      }
+                      RightIcon={() => (
+                        <KeyboardToggleButton
+                          isExpanded={isKeyboardExpanded}
+                          onToggle={() => setIsKeyboardExpanded(!isKeyboardExpanded)}
+                        />
+                      )}
                     />
                   )}
 
@@ -1231,13 +1210,12 @@ const WebSoftphone: React.FC = () => {
                   )}
                 </StyledTextAndCallButton>
 
-                {isKeyboardExpanded && (
-                  <Keyboard
-                    onClick={
-                      !isSendingDTMF ? handleKeyboardClick : handleSendDtmf
-                    }
-                  />
-                )}
+                <Keyboard
+                  isVisible={isKeyboardExpanded}
+                  onClick={
+                    !isSendingDTMF ? handleKeyboardClick : handleSendDtmf
+                  }
+                />
 
                 {callState.isRegistered &&
                   !callState.isInCall &&
@@ -1291,11 +1269,8 @@ const WebSoftphone: React.FC = () => {
                       callState={callState}
                     />
 
-                    <IconMicrophoneOff
+                    <div
                       onClick={handleMute}
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.secondary}
                       style={{
                         cursor: 'pointer',
                         padding: theme.spacing(3),
@@ -1305,8 +1280,17 @@ const WebSoftphone: React.FC = () => {
                         backgroundColor: callState.isMuted
                           ? theme.background.overlaySecondary
                           : theme.background.tertiary,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
-                    />
+                    >
+                      <IconMicrophoneOff
+                        size={theme.icon.size.lg}
+                        stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.secondary}
+                      />
+                    </div>
 
                     <TransferButton
                       session={sipRefs.sessionRef.current}

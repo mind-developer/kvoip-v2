@@ -1,14 +1,11 @@
+/* @kvoip-woulz proprietary */
 import React, { useEffect, useState } from 'react';
-import { Button } from 'twenty-ui/input';
 import { ProgressBar } from 'twenty-ui/feedback';
 
-
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import AudioDeviceSelect from './ui/AudioDeviceSelect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useMicrophone } from '../hooks/useMicrophone';
-import styled from '@emotion/styled';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { useMicrophone } from '../../hooks/useMicrophone';
+import AudioDeviceSelect from '../ui/AudioDeviceSelect';
 
 interface AudioDevice {
   deviceId: string;
@@ -22,7 +19,7 @@ interface AudioDevicesModalProps {
 }
 
 const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
   const [selectedRingDevice, setSelectedRingDevice] = useState<string>('');
   const [selectedCallDevice, setSelectedCallDevice] = useState<string>('');
@@ -180,8 +177,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
       }, 2000);
     } catch (error) {
       console.error('Erro ao testar dispositivo:', error);
-      enqueueSnackBar('Erro ao testar dispositivo de áudio', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: 'Erro ao testar dispositivo de áudio',
       });
     }
   };
@@ -198,8 +195,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
       // Verificar se os dispositivos selecionados são válidos
       if (!selectedRingDevice || !selectedCallDevice || !selectedMicDevice) {
         console.warn('Alguns dispositivos não foram selecionados');
-        enqueueSnackBar('Por favor, selecione todos os dispositivos de áudio', {
-          variant: SnackBarVariant.Warning,
+        enqueueErrorSnackBar({
+          message: 'Por favor, selecione todos os dispositivos de áudio',
         });
         return;
       }
@@ -239,8 +236,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
             savedCallDevice === selectedCallDevice && 
             savedMicDevice === selectedMicDevice) {
           console.log('Dispositivos salvos com sucesso!');
-          enqueueSnackBar('Dispositivos de áudio salvos com sucesso!', {
-            variant: SnackBarVariant.Success,
+          enqueueSuccessSnackBar({
+            message: 'Dispositivos de áudio salvos com sucesso!',
           });
           // Fechar o modal imediatamente
           onClose();
@@ -253,8 +250,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
       }
     } catch (error) {
       console.error('Erro ao salvar dispositivos:', error);
-      enqueueSnackBar('Erro ao salvar dispositivos de áudio', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: 'Erro ao salvar dispositivos de áudio',
       });
     }
   };

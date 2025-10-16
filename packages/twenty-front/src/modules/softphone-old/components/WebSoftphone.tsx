@@ -5,9 +5,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
-import DTMFButton from '@/softphone/components/DTMFButton';
 import Keyboard from '@/softphone/components/Keyboard';
-import StatusIndicator from '@/softphone/components/StatusPill';
+import DTMFButton from '@/softphone/components/ui/DTMFButton';
+import StatusIndicator from '@/softphone/components/ui/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';

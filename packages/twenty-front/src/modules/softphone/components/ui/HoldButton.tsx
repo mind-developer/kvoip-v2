@@ -1,12 +1,10 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
-/* eslint-disable no-console */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+/* @kvoip-woulz proprietary */
 import { useTheme } from '@emotion/react';
 import React from 'react';
 import { Session, SessionState } from 'sip.js';
 import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
 import { useIcons } from 'twenty-ui/display';
-import { CallState } from '../types/callState';
+import { CallState } from '../../types/callState';
 
 interface HoldButtonProps {
   session: Session | null;

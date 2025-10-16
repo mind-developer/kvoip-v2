@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { InputLabel } from '@/ui/input/components/InputLabel';

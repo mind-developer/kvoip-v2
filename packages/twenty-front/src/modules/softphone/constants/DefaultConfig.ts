@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { SipConfig } from '../types/sipConfig';
 
 const defaultConfig: SipConfig = {

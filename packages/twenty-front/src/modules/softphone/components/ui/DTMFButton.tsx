@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';
 

@@ -1,6 +1,4 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable no-console */
+/* @kvoip-woulz proprietary */
 import { useTheme } from '@emotion/react';
 import React, { useState } from 'react';
 import { Session } from 'sip.js';
