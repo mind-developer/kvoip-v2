@@ -9,9 +9,9 @@ import { Select } from '@/ui/input/components/Select';
 import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
+import { IconMicrophone, IconPhoneIncoming } from '@tabler/icons-react';
 import {
   H1Title, H1TitleFontColor, IconCheck, IconHeadphones,
-  IconPhone,
   IconPlayerPlay,
   IconSettings,
   IconX
@@ -50,7 +50,12 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.div`
   display: flex;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
+  
+  svg {
+    transform: translateY(-8px);
+  }
 `;
 
 const StyledDeviceSection = styled.div`
@@ -73,8 +78,8 @@ const StyledDeviceRow = styled.div`
 
 const StyledDeviceLabel = styled.div`
   display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -121,6 +126,12 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
   const [selectedRingDevice, setSelectedRingDevice] = useState<string>('');
   const [selectedCallDevice, setSelectedCallDevice] = useState<string>('');
   const [selectedMicDevice, setSelectedMicDevice] = useState<string>('');
+  
+  // Estados para os valores originais (salvos)
+  const [originalRingDevice, setOriginalRingDevice] = useState<string>('');
+  const [originalCallDevice, setOriginalCallDevice] = useState<string>('');
+  const [originalMicDevice, setOriginalMicDevice] = useState<string>('');
+  
   const { micLevel, setMicDevice } = useMicrophone();
 
   const loadDevices = async () => {
@@ -184,9 +195,15 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
       
       console.log('Novas seleções:', { newRingDevice, newCallDevice, newMicDevice });
       
+      // Definir valores atuais e originais
       setSelectedRingDevice(newRingDevice);
       setSelectedCallDevice(newCallDevice);
       setSelectedMicDevice(newMicDevice);
+      
+      // Salvar os valores originais (que estão salvos no localStorage)
+      setOriginalRingDevice(newRingDevice);
+      setOriginalCallDevice(newCallDevice);
+      setOriginalMicDevice(newMicDevice);
     } catch (error) {
       console.error('Erro ao carregar dispositivos:', error);
     }
@@ -219,11 +236,19 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
   const testDevice = async (deviceId: string) => {
     try {
+      console.log('Iniciando teste do dispositivo:', deviceId);
+      
+      // Verificar se o contexto de áudio está suspenso
+      const audioContext = new AudioContext();
+      if (audioContext.state === 'suspended') {
+        console.log('Contexto de áudio suspenso, tentando retomar...');
+        await audioContext.resume();
+      }
+      
+      console.log('Estado do contexto de áudio:', audioContext.state);
+
       // Criar um elemento de áudio
       const audio = new Audio();
-
-      // Criar um contexto de áudio
-      const audioContext = new AudioContext();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       const mediaStreamDestination = audioContext.createMediaStreamDestination();
@@ -231,7 +256,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
       // Configurar o som
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime); // Volume mais baixo
 
       // Conectar os nós
       oscillator.connect(gainNode);
@@ -239,12 +264,15 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
       // Configurar o stream de áudio
       audio.srcObject = mediaStreamDestination.stream;
+      audio.volume = 0.5; // Volume do elemento de áudio
 
       // Tentar configurar o dispositivo de saída
       try {
         if ('setSinkId' in audio) {
+          console.log('Configurando dispositivo de saída via audio.setSinkId');
           await (audio as any).setSinkId(deviceId);
         } else if ('setSinkId' in audioContext.destination) {
+          console.log('Configurando dispositivo de saída via audioContext.destination.setSinkId');
           await (audioContext.destination as any).setSinkId(deviceId);
         } else {
           console.warn('setSinkId não está disponível neste navegador');
@@ -255,11 +283,17 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
       // Iniciar o som
       oscillator.start();
-      await audio.play();
-      console.log('Reprodução iniciada com sucesso');
+      console.log('Oscilador iniciado');
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        await playPromise;
+        console.log('Reprodução iniciada com sucesso');
+      }
 
       // Parar após 2 segundos
       setTimeout(() => {
+        console.log('Parando teste de áudio');
         oscillator.stop();
         audio.pause();
         audio.srcObject = null;
@@ -323,9 +357,15 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
         // Verificar se todos os valores foram salvos corretamente
         if (savedRingDevice === selectedRingDevice && 
-            savedCallDevice === selectedCallDevice && 
-            savedMicDevice === selectedMicDevice) {
+          savedCallDevice === selectedCallDevice && 
+          savedMicDevice === selectedMicDevice) {
           console.log('Dispositivos salvos com sucesso!');
+          
+          // Atualizar os valores originais para os novos valores salvos
+          setOriginalRingDevice(selectedRingDevice);
+          setOriginalCallDevice(selectedCallDevice);
+          setOriginalMicDevice(selectedMicDevice);
+          
           enqueueSuccessSnackBar({
             message: 'Dispositivos de áudio salvos com sucesso!',
           });
@@ -351,8 +391,24 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
   
   // Verificar se os dispositivos foram carregados
   const devicesLoaded = audioDevices.length > 0;
+  
+  // Verificar se há mudanças não salvas
+  const hasUnsavedChanges = 
+    selectedRingDevice !== originalRingDevice ||
+    selectedCallDevice !== originalCallDevice ||
+    selectedMicDevice !== originalMicDevice;
 
   const handleCancelClick = () => {
+    // Reverter os valores para os originais (salvos)
+    setSelectedRingDevice(originalRingDevice);
+    setSelectedCallDevice(originalCallDevice);
+    setSelectedMicDevice(originalMicDevice);
+    
+    // Restaurar o microfone para o valor original
+    if (originalMicDevice) {
+      setMicDevice(originalMicDevice);
+    }
+    
     closeModal(modalId);
     onClose?.();
   };
@@ -371,12 +427,16 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
       padding="large"
       modalVariant={modalVariant}
       size="medium"
+      shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <StyledContainer>
         <StyledHeader>
           <StyledTitle>
             <IconSettings size={24} />
-            <H1Title title="Configurações de Áudio" fontColor={H1TitleFontColor.Primary} />
+            <H1Title 
+              title={t`Softphone Audio Settings`} 
+              fontColor={H1TitleFontColor.Primary} 
+            />
           </StyledTitle>
           <Button
             onClick={(e) => {
@@ -386,7 +446,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
             }}
             variant="tertiary"
             Icon={IconX}
-            size="small"
+            size="medium"
           />
         </StyledHeader>
 
@@ -395,7 +455,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
             <StyledWarningContainer>
               <StyledWarningText>
                 <IconSettings size={16} />
-                Carregando dispositivos de áudio...
+                {t`Loading audio devices...`}
               </StyledWarningText>
             </StyledWarningContainer>
           ) : (
@@ -403,8 +463,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
               {/* Dispositivo de Toque */}
               <StyledDeviceGroup>
                 <StyledDeviceLabel>
-                  <IconHeadphones size={16} />
-                  <InputLabel>Dispositivo de Toque</InputLabel>
+                  <IconPhoneIncoming size={16} />
+                  <InputLabel>{t`Touch Device`}</InputLabel>
                 </StyledDeviceLabel>
                 <StyledDeviceRow>
                   <Select
@@ -419,6 +479,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
                       value: device.deviceId,
                     }))}
                     fullWidth
+                    dropdownWidthAuto
                     disabled={!devicesLoaded || outputDevices.length === 0}
                   />
                   <Button
@@ -429,7 +490,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
                     }}
                     variant="secondary"
                     Icon={IconPlayerPlay}
-                    title="Testar"
+                    title={t`Test`}
                     disabled={!devicesLoaded || !selectedRingDevice}
                   />
                 </StyledDeviceRow>
@@ -438,8 +499,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
               {/* Dispositivo de Chamada */}
               <StyledDeviceGroup>
                 <StyledDeviceLabel>
-                  <IconPhone size={16} />
-                  <InputLabel>Dispositivo de Chamada</InputLabel>
+                  <IconHeadphones size={16} />
+                  <InputLabel>{t`Call Device`}</InputLabel>
                 </StyledDeviceLabel>
                 <StyledDeviceRow>
                   <Select
@@ -454,6 +515,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
                       value: device.deviceId,
                     }))}
                     fullWidth
+                    dropdownWidthAuto
                     disabled={!devicesLoaded || outputDevices.length === 0}
                   />
                   <Button
@@ -464,7 +526,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
                     }}
                     variant="secondary"
                     Icon={IconPlayerPlay}
-                    title="Testar"
+                    title={t`Test`}
                     disabled={!devicesLoaded || !selectedCallDevice}
                   />
                 </StyledDeviceRow>
@@ -473,8 +535,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
               {/* Dispositivo de Microfone */}
               <StyledDeviceGroup>
                 <StyledDeviceLabel>
-                  <IconHeadphones size={16} />
-                  <InputLabel>Dispositivo de Microfone</InputLabel>
+                  <IconMicrophone size={16} />
+                  <InputLabel>{t`Microphone Device`}</InputLabel>
                 </StyledDeviceLabel>
                 <StyledDeviceRow>
                   <Select
@@ -497,7 +559,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
             
                 {selectedMicDevice && (
                   <StyledMicLevelContainer>
-                    <InputLabel>Nível do Microfone</InputLabel>
+                    <InputLabel>{t`Microphone Level`}</InputLabel>
                     <ProgressBar value={micLevel * 100} />
                   </StyledMicLevelContainer>
                 )}
@@ -505,7 +567,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
                 <StyledWarningContainer>
                   <StyledWarningText>
                     <IconSettings size={16} />
-                    Necessário selecionar o microfone antes de iniciar a chamada
+                    {t`You must select the microphone before starting the call`}
                   </StyledWarningText>
                 </StyledWarningContainer>
               </StyledDeviceGroup>
@@ -521,7 +583,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
               handleCancelClick();
             }}
             variant="secondary"
-            title={t`Cancelar`}
+            title={t`Cancel`}
           />
           <Button
             onClick={(e) => {
@@ -532,7 +594,8 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
             Icon={IconCheck}
             variant="primary"
             accent="blue"
-            title="Salvar Configurações"
+            title={hasUnsavedChanges ? t`Save Settings` : t`No changes`}
+            disabled={!hasUnsavedChanges}
           />
         </StyledButtonContainer>
       </StyledContainer>

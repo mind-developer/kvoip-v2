@@ -123,7 +123,7 @@ const StyledOngoingCallContainer = styled.div`
 `;
 
 const StyledEndButton = styled.div`
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${({ theme }) => theme.color.red10};
   font-size: ${({ theme }) => theme.font.size.md};
   width: 100%;
   text-align: center;
@@ -1111,7 +1111,7 @@ const WebSoftphone: React.FC = () => {
                         onClick={handleCall}
                         size={theme.icon.size.lg}
                         stroke={theme.icon.stroke.sm}
-                        color={theme.color.gray30}
+                        color={theme.color.green20}
                         style={{
                           cursor: 'pointer',
                           padding: theme.spacing(1),
@@ -1146,12 +1146,12 @@ const WebSoftphone: React.FC = () => {
                       }}
                       size={theme.icon.size.lg}
                       stroke={theme.icon.stroke.sm}
-                      color={theme.color.gray30}
+                      color={theme.color.red10}
                       style={{
                         cursor: 'pointer',
                         padding: theme.spacing(1),
                         borderRadius: '50%',
-                        backgroundColor: theme.color.red60,
+                        backgroundColor: theme.color.red50,
                       }}
                     />
                   )}
@@ -1190,12 +1190,12 @@ const WebSoftphone: React.FC = () => {
                     }}
                     size={theme.icon.size.lg}
                     stroke={theme.icon.stroke.sm}
-                    color={theme.color.gray30}
+                    color={theme.color.red10}
                     style={{
                       cursor: 'pointer',
                       padding: theme.spacing(5),
                       borderRadius: '50%',
-                      backgroundColor: theme.color.red60,
+                      backgroundColor: theme.color.red50,
                     }}
                   />
                 )}
