@@ -18,12 +18,16 @@ export class ChatMessageManagerResolver {
     @Args('input')
     input: SendClientChatMessageInput,
   ) {
+    const {
+      providerIntegrationId,
+      workspaceId,
+      ...inputWithoutProviderIntegrationId
+    } = input;
     const providerMessageId = await this.chatMessageManagerService.sendMessage(
-      input,
-      input.workspaceId,
-      input.providerIntegrationId,
+      inputWithoutProviderIntegrationId,
+      workspaceId,
+      providerIntegrationId,
     );
-    console.log('providerMessageId', providerMessageId);
     return {
       messageId: providerMessageId,
     };

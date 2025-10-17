@@ -176,14 +176,6 @@ export class WhatsAppService {
           lastMessagePreview: message.textBody,
           status: ClientChatStatus.UNASSIGNED,
         });
-
-        //TODO: this should be done in the chat message manager service
-        this.clientChatMessageService.publishChatCreated(
-          {
-            ...clientChat,
-          },
-          whatsappIntegration.defaultSectorId,
-        );
       }
 
       if (!clientChat) throw new InternalServerError('Client chat not found');
@@ -205,8 +197,7 @@ export class WhatsAppService {
       if (
         clientChat.status === ClientChatStatus.UNASSIGNED &&
         !message.fromMe &&
-        whatsappIntegration &&
-        whatsappIntegration.chatbotId
+        whatsappIntegration?.chatbotId
       ) {
         const chatbot = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
@@ -217,13 +208,14 @@ export class WhatsAppService {
         ).findOneBy({ id: whatsappIntegration.chatbotId });
 
         if (!chatbot) return;
+        if (!chatbot.nodes) return;
 
         const baseEventMessage: ClientChatMessage = {
           clientChatId: clientChat.id,
-          from: chatbot.name,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
-          to: clientChat.person.id,
-          toType: ChatMessageToType.PERSON,
+          to: whatsappIntegration.defaultSectorId,
+          toType: ChatMessageToType.SECTOR,
           provider: ChatIntegrationProvider.WHATSAPP,
           providerMessageId: message.id,
           type: ChatMessageType.EVENT,
@@ -251,9 +243,13 @@ export class WhatsAppService {
           workspaceId,
         );
 
-        clientChatRepository.update(clientChat.id, {
-          status: ClientChatStatus.CHATBOT,
-        });
+        this.chatMessageManagerService.updateChat(
+          clientChat.id,
+          {
+            status: ClientChatStatus.CHATBOT,
+          },
+          workspaceId,
+        );
 
         const sectors = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
@@ -276,9 +272,6 @@ export class WhatsAppService {
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
             if (sectorId) {
-              clientChatRepository.update(clientChat.id, {
-                sector: { id: sectorId },
-              });
               this.chatMessageManagerService.saveMessage(
                 {
                   ...baseEventMessage,
@@ -286,15 +279,22 @@ export class WhatsAppService {
                 },
                 workspaceId,
               );
-              clientChatRepository.update(clientChat.id, {
-                status: ClientChatStatus.ASSIGNED,
-              });
+              this.chatMessageManagerService.updateChat(
+                clientChat.id,
+                {
+                  sectorId: sectorId,
+                  status: ClientChatStatus.UNASSIGNED,
+                },
+                workspaceId,
+              );
               return;
             }
             // if (agentId) {
-            //   clientChatRepository.update(clientChat.id, {
-            //     status: ClientChatStatus.ASSIGNED_TO_AGENT,
-            //   });
+            //   this.chatMessageManagerService.updateChat({
+            //     ...clientChat,
+            //     agentId: agentId,
+            //     status: ClientChatStatus.ASSIGNED,
+            //   }, workspaceId);
             // }
             this.chatMessageManagerService.saveMessage(
               {
@@ -304,9 +304,11 @@ export class WhatsAppService {
               workspaceId,
             );
             this.ChatbotRunnerService.clearExecutor(clientChat.id);
-            clientChatRepository.update(clientChat.id, {
-              status: ClientChatStatus.UNASSIGNED,
-            });
+            this.chatMessageManagerService.updateChat(
+              clientChat.id,
+              { status: ClientChatStatus.UNASSIGNED },
+              workspaceId,
+            );
           },
         });
         executor.runFlow(message.textBody ?? '');

@@ -72,4 +72,18 @@ export class ClientChatMessageService {
 
     await this.pubSub.publish(channel, eventData);
   }
+
+  async publishChatDeleted(
+    chat: ClientChatWorkspaceEntity,
+    sectorId: string,
+  ): Promise<void> {
+    const channel = `client-chat-${sectorId}`;
+    const eventData: ClientChatEventDTO = {
+      event: ClientChatEvent.DELETED,
+      clientChatEventDate: new Date(),
+      clientChat: chat,
+    };
+
+    await this.pubSub.publish(channel, eventData);
+  }
 }
