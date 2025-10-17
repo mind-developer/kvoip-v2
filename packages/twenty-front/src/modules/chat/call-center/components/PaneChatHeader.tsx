@@ -73,10 +73,12 @@ export const PaneChatHeader = ({
   name,
   avatarUrl,
   personId,
+  showCloseOptions,
 }: {
   name: string;
   avatarUrl: string;
   personId: string;
+  showCloseOptions: boolean;
 }) => {
   const { getIcon } = useIcons();
 
@@ -110,16 +112,18 @@ export const PaneChatHeader = ({
             </StyledChatTitle>
           </StyledDiv>
           <StyledActionsContainer>
-            <StyledIconButton
-              onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
-              variant="secondary"
-              accent="danger"
-              size="medium"
-              Icon={(props) => (
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                <IconX {...props} />
-              )}
-            />
+            {showCloseOptions && (
+              <StyledIconButton
+                onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
+                variant="secondary"
+                accent="danger"
+                size="medium"
+                Icon={(props) => (
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  <IconX {...props} />
+                )}
+              />
+            )}
             <TransferChatOptionsDropdown />
             <StyledIconButton
               onClick={() => {

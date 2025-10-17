@@ -8,6 +8,7 @@ import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
+import { EVENT_DESCRIPTION } from '@/chat/call-center/constants/eventDescription';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
 import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
@@ -18,7 +19,6 @@ import {
 import StyledImage from '@/chat/components/StyledImage';
 import { StyledMessageBubble } from '@/chat/components/StyledMessageBubble';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
-import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { formatDate } from '@/chat/utils/formatDate';
@@ -40,12 +40,14 @@ import {
   ChatMessageToType,
   ChatMessageType,
   ClientChatMessage,
+  ClientChatMessageEvent,
   ClientChatStatus,
 } from 'twenty-shared/types';
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { WorkspaceMember } from '~/generated/graphql';
 
 const StyledPaneChatContainer = styled.div`
   display: flex;
@@ -59,7 +61,7 @@ const StyledPaneChatContainer = styled.div`
     theme.name === 'dark' ? 'black' : theme.background.primary};
 `;
 
-const StyledChatContainer = styled.div`
+const StyledChatContainer = styled.div<{ isScrolling: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0)};
@@ -70,6 +72,61 @@ const StyledChatContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
   padding-right: ${({ theme }) => theme.spacing(1.5)};
+
+  /* Always show scrollbar but with opacity transition */
+  scrollbar-width: thin; /* Firefox */
+  -ms-overflow-style: auto; /* Internet Explorer 10+ */
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.border.color.medium};
+    border-radius: 3px;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.border.color.strong};
+  }
+
+  /* Control scrollbar visibility with opacity */
+  ${({ isScrolling, theme }) =>
+    !isScrolling &&
+    `
+    scrollbar-width: none; /* Firefox - hide when not scrolling */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    
+    &::-webkit-scrollbar {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+  `}
+
+  ${({ isScrolling, theme }) =>
+    isScrolling &&
+    `
+    &::-webkit-scrollbar {
+      opacity: 1;
+      transition: opacity 0.1s ease-in-out;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      opacity: 1;
+      transition: opacity 0.1s ease-in-out;
+    }
+  `}
 `;
 
 const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
@@ -164,10 +221,7 @@ const StyledInput = styled.textarea`
   font-size: ${({ theme }) => theme.font.size.md};
   font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.tertiary};
-  height: 10px;
-  &::placeholder {
-    line-height: 10px;
-  }
+  height: 20px;
 `;
 
 const StyledDiv = styled.div`
@@ -213,7 +267,7 @@ const StyledButton = styled(Button)`
   width: 100%;
 `;
 
-const StyledMessageEvent = styled.div`
+const StyledMessageEvent = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,13 +395,20 @@ export const PaneChat = () => {
     objectNameSingular: 'clientChat',
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { record: currentMember } = useFindOneRecord<
+    WorkspaceMember & { __typename: string; agentId: string }
+  >({
+    objectNameSingular: 'workspaceMember',
+    objectRecordId: currentWorkspaceMember?.id || '',
+    skip: !currentWorkspaceMember?.id,
+  });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const { sendClientChatMessage } = useSendClientChatMessage();
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
-  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [recordingState, setRecordingState] = useState<
     'none' | 'recording' | 'paused'
   >('none');
@@ -364,11 +425,11 @@ export const PaneChat = () => {
 
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { getIcon } = useIcons();
-
-  const { uploadFileToBucket } = useUploadFileToBucket();
 
   useEffect(() => {
     if (audioVisualizerRef.current) {
@@ -386,15 +447,12 @@ export const PaneChat = () => {
   );
 
   const messages = useMemo(() => {
-    const combined = [...dbMessages, ...optimisticMessages];
-    // Remover duplicatas baseado no providerMessageId
-    const uniqueMessages = combined.filter(
-      (msg, index, self) =>
-        index ===
-        self.findIndex((m) => m.providerMessageId === msg.providerMessageId),
-    );
-    return uniqueMessages;
+    return [...dbMessages, ...optimisticMessages];
   }, [dbMessages, optimisticMessages]);
+
+  useEffect(() => {
+    setOptimisticMessages([]);
+  }, [dbMessages]);
 
   useEffect(() => {
     if (messages?.length > 0) setLastMessage(messages[messages.length - 1]);
@@ -467,8 +525,21 @@ export const PaneChat = () => {
     }
   };
 
+  useEffect(() => {
+    if (!selectedChat) return;
+    scrollToBottom();
+  }, [selectedChat?.id]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const AnexIcon = getIcon('IconPaperclip');
-  const OpenOnAnotherTab = getIcon('IconExternalLink');
 
   if (!selectedChat) {
     return <NoSelectedChat />;
@@ -498,7 +569,6 @@ export const PaneChat = () => {
       };
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
     } else {
-      // Adicionar mensagem otimista
       const optimisticMessageId = `optimistic-${v4()}`;
       const optimisticMessage: Omit<ClientChatMessage, 'providerMessageId'> = {
         clientChatId: chatId!,
@@ -536,6 +606,7 @@ export const PaneChat = () => {
           null,
       });
     }
+    setNewMessage('');
   };
 
   const handleInputChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -582,8 +653,30 @@ export const PaneChat = () => {
         chatContainerRef.current;
       const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
       setIsAtBottom(isBottom);
+
+      // Show scrollbar when scrolling
+      setIsScrolling(true);
+
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Hide scrollbar after 1 second of no scrolling
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 1000);
+
       if (isBottom) {
         setNewMessagesIndicator(false);
+        if (selectedChat?.unreadMessagesCount > 0) {
+          updateOneRecord({
+            idToUpdate: selectedChat?.id || '',
+            updateOneRecordInput: {
+              unreadMessagesCount: 0,
+            },
+          });
+        }
       }
     }
   };
@@ -613,10 +706,7 @@ export const PaneChat = () => {
       );
     }
 
-    if (
-      !selectedChat.agentId &&
-      selectedChat.status === ClientChatStatus.ASSIGNED
-    ) {
+    if (selectedChat.status === ClientChatStatus.ASSIGNED) {
       return (
         <StyledInputContainer>
           <StyledAnexDiv>
@@ -732,11 +822,32 @@ export const PaneChat = () => {
           accent="blue"
           size="medium"
           onClick={() => {
+            sendClientChatMessage({
+              clientChatId: selectedChat.id,
+              from: currentWorkspaceMember?.id || '',
+              fromType: ChatMessageFromType.AGENT,
+              to: selectedChat.person!.phone || '',
+              toType: ChatMessageToType.PERSON,
+              provider: ChatIntegrationProvider.WHATSAPP,
+              type: ChatMessageType.EVENT,
+              textBody: null,
+              caption: null,
+              deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+              edited: null,
+              attachmentUrl: null,
+              event: ClientChatMessageEvent.START,
+              workspaceId: currentWorkspace?.id ?? '',
+              providerIntegrationId:
+                selectedChat.whatsappIntegrationId ??
+                selectedChat.messengerIntegrationId ??
+                selectedChat.telegramIntegrationId ??
+                null,
+            });
             updateOneRecord({
               idToUpdate: selectedChat.id,
               updateOneRecordInput: {
+                agentId: currentMember?.agentId || null,
                 status: ClientChatStatus.ASSIGNED,
-                agentId: currentWorkspaceMember?.agent?.id || null,
               },
             });
           }}
@@ -744,7 +855,7 @@ export const PaneChat = () => {
       );
     }
 
-    return <></>;
+    return null;
   };
 
   if (selectedChat)
@@ -759,8 +870,13 @@ export const PaneChat = () => {
               selectedChat.person?.name.lastName
             }
             personId={selectedChat.person?.id || ''}
+            showCloseOptions={selectedChat.status === ClientChatStatus.ASSIGNED}
           />
-          <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
+          <StyledChatContainer
+            ref={chatContainerRef}
+            onScroll={handleScroll}
+            isScrolling={isScrolling}
+          >
             {(messages ?? []).map(
               (message: ClientChatMessage, index: number) => {
                 const isSystemMessage =
@@ -768,18 +884,27 @@ export const PaneChat = () => {
                 const messageDisplayType = getMessageDisplayType(message);
                 const messageContent = getMessageContent(message);
 
-                const validMessageType =
-                  messageDisplayType === MessageType.STARTED ||
-                  messageDisplayType === MessageType.TRANSFER ||
-                  messageDisplayType === MessageType.END ||
-                  messageDisplayType === MessageType.ONHOLD;
-
                 let renderedContent;
 
-                if (validMessageType)
+                if (message.event)
                   return (
-                    <StyledMessageEvent key={message.providerMessageId}>
-                      <IconExclamationCircleFilled size={13} /> {messageContent}
+                    <StyledMessageEvent
+                      initial={{ translateY: 20, opacity: 0 }}
+                      animate={{
+                        translateY: 0,
+                        opacity: 1,
+                        transition: {
+                          delay: index * 0.01,
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 20,
+                          mass: 0.8,
+                        },
+                      }}
+                      key={message.providerMessageId}
+                    >
+                      <IconExclamationCircleFilled size={13} />{' '}
+                      {EVENT_DESCRIPTION[message.event]}
                     </StyledMessageEvent>
                   );
 
@@ -810,9 +935,6 @@ export const PaneChat = () => {
                     );
                     break;
                   case MessageType.DOCUMENT: {
-                    const fileName = messageContent
-                      ? messageContent.split('/').pop()?.split('?')[0]
-                      : null;
                     renderedContent = (
                       <StyledDocumentContainer
                         key={index}
@@ -820,7 +942,11 @@ export const PaneChat = () => {
                       >
                         <DocumentPreview
                           fromMe={isSystemMessage}
-                          documentUrl={messageContent}
+                          documentUrl={
+                            REACT_APP_SERVER_BASE_URL +
+                            '/files/' +
+                            message.attachmentUrl
+                          }
                         />
                       </StyledDocumentContainer>
                     );
@@ -894,6 +1020,7 @@ export const PaneChat = () => {
                               ? currentWorkspaceMember?.name.firstName
                               : selectedChat.person?.name.firstName
                           }
+                          animateDelay={index * 0.01}
                         />
                       </StyledAvatarMessage>
                       <StyledContainer isSystemMessage={isSystemMessage}>
@@ -902,6 +1029,7 @@ export const PaneChat = () => {
                             time={formatDate(message.createdAt ?? '').time}
                             message={message}
                             hasTail={lastOfRow}
+                            animateDelay={index * 0.01}
                           >
                             {renderedContent}
                           </StyledMessageBubble>

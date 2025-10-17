@@ -83,6 +83,7 @@ type ChatCellProps = {
   lastMessagePreview: string;
   isSelected?: boolean;
   onSelect: () => void;
+  unreadMessagesCount: number;
 };
 
 export const ChatCell = ({
@@ -91,6 +92,7 @@ export const ChatCell = ({
   lastMessagePreview,
   isSelected,
   onSelect,
+  unreadMessagesCount,
 }: ChatCellProps) => {
   return (
     <StyledItemChat onClick={onSelect} isSelected={isSelected}>
@@ -111,8 +113,9 @@ export const ChatCell = ({
             </StyledLastMessagePreview>
           </StyledDiv>
           <StyledDateAndUnreadMessagesContainer>
-            {/* TODO: Show last message time */}
-            {/* TODO: Implement unread messages count */}
+            {unreadMessagesCount > 0 && (
+              <StyledUnreadMessages>{unreadMessagesCount}</StyledUnreadMessages>
+            )}
           </StyledDateAndUnreadMessagesContainer>
         </StyledContainer>
       </StyledContentContainer>

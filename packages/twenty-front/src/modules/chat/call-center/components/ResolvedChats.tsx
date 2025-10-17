@@ -47,7 +47,7 @@ export const ResolvedChats = () => {
 
   // Filtrar chats resolvidos
   const resolvedChats = clientChats.filter(
-    (chat) => chat.status === ClientChatStatus.RESOLVED,
+    (chat) => chat.status === ClientChatStatus.FINISHED,
   );
 
   if (resolvedChats.length > 0)
@@ -74,7 +74,9 @@ export const ResolvedChats = () => {
                   key={chat.id}
                   name={clientName}
                   avatarUrl={chat.person?.avatarUrl || ''}
-                  lastMessagePreview={chat.lastMessage?.textBody || ''}
+                  lastMessagePreview={chat.lastMessagePreview || ''}
+                  unreadMessagesCount={chat.unreadMessagesCount || 0}
+                  lastMessageTime={chat.lastMessageDate || ''}
                   isSelected={openChatId === chat.id}
                   onSelect={() => {
                     navigate(`/chat/call-center/${chat.id}`);

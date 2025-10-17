@@ -1,5 +1,4 @@
 import AudioCanvas from '@/chat/call-center/components/AudioCanvas';
-import { getMessageContent } from '@/chat/call-center/utils/clientChatMessageHelpers';
 import styled from '@emotion/styled';
 import {
   IconPlayerPauseFilled,
@@ -11,6 +10,7 @@ import {
   ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
 const StyledAudioContainer = styled.div<{ isPending: boolean }>`
@@ -67,7 +67,8 @@ const StyledAudio = ({ message }: { message: ClientChatMessage }) => {
   const audioRef = useRef<HTMLAudioElement | null>();
   const isPending =
     message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
-  const audioUrl = getMessageContent(message);
+  const audioUrl =
+    REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl;
 
   useEffect(() => {
     if (audioRef.current) {

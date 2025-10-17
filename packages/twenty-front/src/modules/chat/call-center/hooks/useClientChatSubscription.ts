@@ -16,6 +16,7 @@ type UseClientChatSubscriptionArgs = {
   sectorId: string;
   onChatCreated?: (chat: ClientChat) => void;
   onChatUpdated?: (chat: ClientChat) => void;
+  onChatDeleted?: (chat: ClientChat) => void;
   onError?: (error: any) => void;
   skip?: boolean;
 };
@@ -24,6 +25,7 @@ export const useClientChatSubscription = ({
   sectorId,
   onChatCreated,
   onChatUpdated,
+  onChatDeleted,
   onError,
   skip = false,
 }: UseClientChatSubscriptionArgs) => {
@@ -42,7 +44,6 @@ export const useClientChatSubscription = ({
 
   const handleData = useCallback(
     (data: any) => {
-      console.log('data', data);
       const { event, clientChat } = data.onClientChatEvent;
 
       switch (event) {
@@ -52,11 +53,12 @@ export const useClientChatSubscription = ({
         case ClientChatEvent.UPDATED:
           onChatUpdated?.(clientChat);
           break;
-        default:
-          console.log('Untreated event:', event);
+        case ClientChatEvent.DELETED:
+          onChatDeleted?.(clientChat);
+          break;
       }
     },
-    [onChatCreated, onChatUpdated],
+    [onChatCreated, onChatUpdated, onChatDeleted],
   );
 
   useEffect(() => {
@@ -65,7 +67,7 @@ export const useClientChatSubscription = ({
     }
     const next = (value: { data: any }) => handleData(value.data);
     const error = (err: unknown) => onError?.(err);
-    const complete = () => console.log('Subscription completed');
+    const complete = () => {};
     const unsubscribe = sseClient.subscribe(
       {
         query: ON_CLIENT_CHAT_EVENT.loc?.source.body || '',

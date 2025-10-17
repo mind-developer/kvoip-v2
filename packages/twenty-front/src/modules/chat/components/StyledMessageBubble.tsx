@@ -5,7 +5,12 @@ import {
 import { MessageType } from '@/chat/types/MessageType';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChecks, IconClock, IconTrash } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconChecks,
+  IconClock,
+  IconTrash,
+} from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import {
@@ -13,7 +18,6 @@ import {
   ChatMessageFromType,
   ClientChatMessage,
 } from 'twenty-shared/types';
-import { IconCheck } from 'twenty-ui/display';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../call-center/constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
 const StyledMessageBubbleContainer = styled(motion.div)<{
@@ -118,12 +122,14 @@ export const StyledMessageBubble = ({
   time,
   hasTail,
   customButton,
+  animateDelay,
 }: {
   children: ReactNode;
   message: ClientChatMessage;
   time: string;
   hasTail: boolean;
   customButton?: ReactNode;
+  animateDelay: number;
 }) => {
   const theme = useTheme();
   const fromMe = message.fromType !== ChatMessageFromType.PERSON;
@@ -158,13 +164,16 @@ export const StyledMessageBubble = ({
       fromMe={fromMe}
       hasTail={hasTail}
       isPending={isPending}
-      initial={{ translateY: 10 }}
+      initial={{ translateY: 20, opacity: 0 }}
       animate={{
         translateY: 0,
+        opacity: 1,
         transition: {
-          duration: 0.5,
-          ease: [0.17, 0.67, 0, 1.01],
+          delay: animateDelay,
           type: 'spring',
+          stiffness: 300,
+          damping: 20,
+          mass: 0.8,
         },
       }}
     >

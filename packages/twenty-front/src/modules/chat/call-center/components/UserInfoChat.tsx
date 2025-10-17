@@ -1,6 +1,7 @@
 import { getCleanName } from '@/chat/call-center/utils/getCleanName';
 
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { Avatar } from 'twenty-ui/display';
 
 const StyledUserName = styled.p`
@@ -14,18 +15,35 @@ const StyledUserName = styled.p`
 export const AvatarComponent = ({
   avatarUrl,
   senderName,
+  animateDelay,
 }: {
   avatarUrl: string;
   senderName: string;
+  animateDelay: number;
 }) => {
   return (
-    <Avatar
-      avatarUrl={avatarUrl}
-      placeholder={senderName}
-      placeholderColorSeed={senderName}
-      type={'rounded'}
-      size="lg"
-    />
+    <motion.div
+      initial={{ translateY: 20, opacity: 0 }}
+      animate={{
+        translateY: 0,
+        opacity: 1,
+        transition: {
+          delay: animateDelay,
+          type: 'spring',
+          stiffness: 300,
+          damping: 20,
+          mass: 0.8,
+        },
+      }}
+    >
+      <Avatar
+        avatarUrl={avatarUrl}
+        placeholder={senderName}
+        placeholderColorSeed={senderName}
+        type={'rounded'}
+        size="lg"
+      />
+    </motion.div>
   );
 };
 
