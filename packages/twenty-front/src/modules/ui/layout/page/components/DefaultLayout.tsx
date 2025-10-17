@@ -65,7 +65,7 @@ const StyledWebSoftphoneContainer = styled.div`
   width: 100vw;         
   height: 100vh; 
   pointer-events: none;
-  z-index: 9999;
+  z-index: 30; /* Abaixo do modal (40) e dropdowns (50) */
   
   /* Permitir eventos de clique no WebSoftphone e seus modais */
   > * {

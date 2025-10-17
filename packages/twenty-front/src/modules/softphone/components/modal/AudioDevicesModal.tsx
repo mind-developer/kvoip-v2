@@ -5,14 +5,19 @@ import { ProgressBar } from 'twenty-ui/feedback';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Select } from '@/ui/input/components/Select';
 import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import {
+  H1Title, H1TitleFontColor, IconCheck, IconHeadphones,
+  IconPhone,
+  IconPlayerPlay,
+  IconSettings,
+  IconX
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useMicrophone } from '../../hooks/useMicrophone';
-import AudioDeviceSelect from '../ui/AudioDeviceSelect';
 
 interface AudioDevice {
   deviceId: string;
@@ -28,45 +33,80 @@ interface AudioDevicesModalProps {
 
 const StyledAudioDevicesModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
-  width: calc(500px - ${({ theme }) => theme.spacing(32)});
-  height: auto;
 `;
 
-const StyledCenteredButton = styled(Button)`
-  box-sizing: border-box;
-  justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
-
-const StyledSection = styled(Section)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledDeviceContainer = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTitle = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledDeviceSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledDeviceGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDeviceRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledDeviceLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledMicLevelContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+`;
+
+const StyledWarningContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+  background-color: ${({ theme }) => theme.background.transparent.danger};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.danger};
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledWarningText = styled.span`
   color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  display: block;
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+  justify-content: flex-end;
 `;
 
 const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ 
@@ -308,6 +348,9 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
   const outputDevices = audioDevices.filter(device => device.kind === 'audiooutput');
   const inputDevices = audioDevices.filter(device => device.kind === 'audioinput');
+  
+  // Verificar se os dispositivos foram carregados
+  const devicesLoaded = audioDevices.length > 0;
 
   const handleCancelClick = () => {
     closeModal(modalId);
@@ -327,10 +370,14 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
       isClosable={true}
       padding="large"
       modalVariant={modalVariant}
+      size="medium"
     >
-      <StyledCenteredTitle>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <H1Title title="Configurações de Áudio" fontColor={H1TitleFontColor.Primary} />
+      <StyledContainer>
+        <StyledHeader>
+          <StyledTitle>
+            <IconSettings size={24} />
+            <H1Title title="Configurações de Áudio" fontColor={H1TitleFontColor.Primary} />
+          </StyledTitle>
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -338,119 +385,157 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
               handleCancelClick();
             }}
             variant="tertiary"
-            title="✕"
+            Icon={IconX}
+            size="small"
           />
-        </div>
-      </StyledCenteredTitle>
-      
-      <StyledSection
-        alignment={SectionAlignment.Center}
-        fontColor={SectionFontColor.Primary}
-      >
-        <StyledDeviceContainer
-          onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-        >
-          <StyledDeviceRow
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-          >
-            <AudioDeviceSelect
-              value={selectedRingDevice}
-              onChange={(value) => {
-                console.log('Dispositivo de toque selecionado:', value);
-                setSelectedRingDevice(value);
-              }}
-              options={outputDevices}
-              label="Dispositivo de Toque"
-            />
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                testDevice(selectedRingDevice);
-              }}
-              variant="secondary"
-              title="🔊 Testar"
-            />
-          </StyledDeviceRow>
+        </StyledHeader>
 
-          <StyledDeviceRow
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-          >
-            <AudioDeviceSelect
-              value={selectedCallDevice}
-              onChange={(value) => {
-                console.log('Dispositivo de chamada selecionado:', value);
-                setSelectedCallDevice(value);
-              }}
-              options={outputDevices}
-              label="Dispositivo de Chamada"
-            />
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                testDevice(selectedCallDevice);
-              }}
-              variant="secondary"
-              title="🔊 Testar"
-            />
-          </StyledDeviceRow>
+        <StyledDeviceSection>
+          {!devicesLoaded ? (
+            <StyledWarningContainer>
+              <StyledWarningText>
+                <IconSettings size={16} />
+                Carregando dispositivos de áudio...
+              </StyledWarningText>
+            </StyledWarningContainer>
+          ) : (
+            <>
+              {/* Dispositivo de Toque */}
+              <StyledDeviceGroup>
+                <StyledDeviceLabel>
+                  <IconHeadphones size={16} />
+                  <InputLabel>Dispositivo de Toque</InputLabel>
+                </StyledDeviceLabel>
+                <StyledDeviceRow>
+                  <Select
+                    dropdownId="ring-device-select"
+                    value={selectedRingDevice}
+                    onChange={(value) => {
+                      console.log('Dispositivo de toque selecionado:', value);
+                      setSelectedRingDevice(value);
+                    }}
+                    options={outputDevices.map(device => ({
+                      label: device.label,
+                      value: device.deviceId,
+                    }))}
+                    fullWidth
+                    disabled={!devicesLoaded || outputDevices.length === 0}
+                  />
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      testDevice(selectedRingDevice);
+                    }}
+                    variant="secondary"
+                    Icon={IconPlayerPlay}
+                    title="Testar"
+                    disabled={!devicesLoaded || !selectedRingDevice}
+                  />
+                </StyledDeviceRow>
+              </StyledDeviceGroup>
 
-          <div
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-          >
-            <AudioDeviceSelect
-              value={selectedMicDevice}
-              onChange={(value) => {
-                console.log('Dispositivo de microfone selecionado:', value);
-                setSelectedMicDevice(value);
-                setMicDevice(value);
-              }}
-              options={inputDevices}
-              label="Dispositivo de Microfone"
-            />
-            <StyledWarningText>
-              ⚠️ Necessário Selecionar o Microfone Antes de Iniciar a Chamada
-            </StyledWarningText>
-          </div>
+              {/* Dispositivo de Chamada */}
+              <StyledDeviceGroup>
+                <StyledDeviceLabel>
+                  <IconPhone size={16} />
+                  <InputLabel>Dispositivo de Chamada</InputLabel>
+                </StyledDeviceLabel>
+                <StyledDeviceRow>
+                  <Select
+                    dropdownId="call-device-select"
+                    value={selectedCallDevice}
+                    onChange={(value) => {
+                      console.log('Dispositivo de chamada selecionado:', value);
+                      setSelectedCallDevice(value);
+                    }}
+                    options={outputDevices.map(device => ({
+                      label: device.label,
+                      value: device.deviceId,
+                    }))}
+                    fullWidth
+                    disabled={!devicesLoaded || outputDevices.length === 0}
+                  />
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      testDevice(selectedCallDevice);
+                    }}
+                    variant="secondary"
+                    Icon={IconPlayerPlay}
+                    title="Testar"
+                    disabled={!devicesLoaded || !selectedCallDevice}
+                  />
+                </StyledDeviceRow>
+              </StyledDeviceGroup>
 
-          {selectedMicDevice && (
-            <StyledMicLevelContainer
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-            >
-              <InputLabel>Nível do Microfone:</InputLabel>
-              <ProgressBar value={micLevel * 100} />
-            </StyledMicLevelContainer>
+              {/* Dispositivo de Microfone */}
+              <StyledDeviceGroup>
+                <StyledDeviceLabel>
+                  <IconHeadphones size={16} />
+                  <InputLabel>Dispositivo de Microfone</InputLabel>
+                </StyledDeviceLabel>
+                <StyledDeviceRow>
+                  <Select
+                    dropdownId="mic-device-select"
+                    value={selectedMicDevice}
+                    onChange={(value) => {
+                      console.log('Dispositivo de microfone selecionado:', value);
+                      setSelectedMicDevice(value);
+                      setMicDevice(value);
+                    }}
+                    options={inputDevices.map(device => ({
+                      label: device.label,
+                      value: device.deviceId,
+                    }))}
+                    fullWidth
+                    dropdownWidthAuto
+                    disabled={!devicesLoaded || inputDevices.length === 0}
+                  />
+                </StyledDeviceRow>
+            
+                {selectedMicDevice && (
+                  <StyledMicLevelContainer>
+                    <InputLabel>Nível do Microfone</InputLabel>
+                    <ProgressBar value={micLevel * 100} />
+                  </StyledMicLevelContainer>
+                )}
+
+                <StyledWarningContainer>
+                  <StyledWarningText>
+                    <IconSettings size={16} />
+                    Necessário selecionar o microfone antes de iniciar a chamada
+                  </StyledWarningText>
+                </StyledWarningContainer>
+              </StyledDeviceGroup>
+            </>
           )}
-        </StyledDeviceContainer>
-      </StyledSection>
+        </StyledDeviceSection>
 
-      <StyledCenteredButton
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleCancelClick();
-        }}
-        variant="secondary"
-        title={t`Cancel`}
-        fullWidth
-      />
-
-      <StyledCenteredButton
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleSaveClick();
-        }}
-        variant="primary"
-        title="💾 Salvar"
-        fullWidth
-      />
+        <StyledButtonContainer>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleCancelClick();
+            }}
+            variant="secondary"
+            title={t`Cancelar`}
+          />
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleSaveClick();
+            }}
+            Icon={IconCheck}
+            variant="primary"
+            accent="blue"
+            title="Salvar Configurações"
+          />
+        </StyledButtonContainer>
+      </StyledContainer>
     </StyledAudioDevicesModal>
   );
 };
