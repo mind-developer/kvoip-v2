@@ -1,9 +1,16 @@
 /* @kvoip-woulz proprietary */
+import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import { ProgressBar } from 'twenty-ui/feedback';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useLingui } from '@lingui/react/macro';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { useMicrophone } from '../../hooks/useMicrophone';
 import AudioDeviceSelect from '../ui/AudioDeviceSelect';
 
@@ -14,12 +21,62 @@ interface AudioDevice {
 }
 
 interface AudioDevicesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  modalId: string;
+  onClose?: () => void;
+  modalVariant?: ModalVariants;
 }
 
-const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }) => {
+const StyledAudioDevicesModal = styled(Modal)`
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  width: calc(500px - ${({ theme }) => theme.spacing(32)});
+  height: auto;
+`;
+
+const StyledCenteredButton = styled(Button)`
+  box-sizing: border-box;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledCenteredTitle = styled.div`
+  text-align: center;
+`;
+
+const StyledSection = styled(Section)`
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledDeviceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledDeviceRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledMicLevelContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledWarningText = styled.span`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  display: block;
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
+const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ 
+  modalId, 
+  onClose, 
+  modalVariant = 'primary' 
+}) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { closeModal } = useModal();
+  const { t } = useLingui();
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
   const [selectedRingDevice, setSelectedRingDevice] = useState<string>('');
   const [selectedCallDevice, setSelectedCallDevice] = useState<string>('');
@@ -80,52 +137,45 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
         return isValid ? deviceId : '';
       };
 
-      // Atualizar as seleções apenas se o modal estiver aberto
-      if (isOpen) {
-        const newRingDevice = validateDevice(savedDevices.ringDevice, audioDevices);
-        const newCallDevice = validateDevice(savedDevices.callDevice, audioDevices);
-        const newMicDevice = validateDevice(savedDevices.micDevice, audioDevices);
-        
-        console.log('Novas seleções:', { newRingDevice, newCallDevice, newMicDevice });
-        
-        setSelectedRingDevice(newRingDevice);
-        setSelectedCallDevice(newCallDevice);
-        setSelectedMicDevice(newMicDevice);
-      }
+      // Atualizar as seleções
+      const newRingDevice = validateDevice(savedDevices.ringDevice, audioDevices);
+      const newCallDevice = validateDevice(savedDevices.callDevice, audioDevices);
+      const newMicDevice = validateDevice(savedDevices.micDevice, audioDevices);
+      
+      console.log('Novas seleções:', { newRingDevice, newCallDevice, newMicDevice });
+      
+      setSelectedRingDevice(newRingDevice);
+      setSelectedCallDevice(newCallDevice);
+      setSelectedMicDevice(newMicDevice);
     } catch (error) {
       console.error('Erro ao carregar dispositivos:', error);
     }
   };
 
-  // Carregar dispositivos disponíveis quando o modal é aberto
+  // Carregar dispositivos disponíveis quando o modal é montado
   useEffect(() => {
-    console.log('Modal aberto:', isOpen);
-    if (isOpen) {
-      console.log('Iniciando carregamento de dispositivos...');
-      loadDevices().catch(error => {
-        console.error('Erro ao carregar dispositivos:', error);
-      });
-    }
-  }, [isOpen]);
+    console.log('Iniciando carregamento de dispositivos...');
+    loadDevices().catch(error => {
+      console.error('Erro ao carregar dispositivos:', error);
+    });
+  }, []);
 
   // Adicionar listener para mudanças nos dispositivos
   useEffect(() => {
     console.log('Configurando listener de mudanças de dispositivos...');
-    if (isOpen) {
-      const handleDeviceChange = () => {
-        console.log('Mudança de dispositivos detectada');
-        loadDevices().catch(error => {
-          console.error('Erro ao carregar dispositivos após mudança:', error);
-        });
-      };
+    const handleDeviceChange = () => {
+      console.log('Mudança de dispositivos detectada');
+      loadDevices().catch(error => {
+        console.error('Erro ao carregar dispositivos após mudança:', error);
+      });
+    };
 
-      navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
-      return () => {
-        console.log('Removendo listener de mudanças de dispositivos');
-        navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
-      };
-    }
-  }, [isOpen]);
+    navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+    return () => {
+      console.log('Removendo listener de mudanças de dispositivos');
+      navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+    };
+  }, []);
 
   const testDevice = async (deviceId: string) => {
     try {
@@ -240,7 +290,7 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
             message: 'Dispositivos de áudio salvos com sucesso!',
           });
           // Fechar o modal imediatamente
-          onClose();
+          closeModal(modalId);
         } else {
           throw new Error('Falha na verificação do salvamento');
         }
@@ -259,137 +309,149 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({ isOpen, onClose }
   const outputDevices = audioDevices.filter(device => device.kind === 'audiooutput');
   const inputDevices = audioDevices.filter(device => device.kind === 'audioinput');
 
+  const handleCancelClick = () => {
+    closeModal(modalId);
+    onClose?.();
+  };
+
+  const handleSaveClick = () => {
+    handleSave();
+  };
+
   return (
-    <div className="grid gap-4 py-4">
-      <div className="flex justify-end mb-2" style={{ position: 'absolute', top: '0', right: '0', padding: '8px' }}>
-        <button 
-          onClick={() => {
-            console.log('Botão de fechar clicado');
-            onClose();
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '8px',
-            background: 'transparent',
-            color: '#999',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '20px',
-            margin: '0',
-            lineHeight: '1',
-            zIndex: 1000
-          }}
-        >
-          ✕
-        </button>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <AudioDeviceSelect
-          value={selectedRingDevice}
-          onChange={(value) => {
-            console.log('Dispositivo de toque selecionado:', value);
-            setSelectedRingDevice(value);
-          }}
-          options={outputDevices}
-          label="Dispositivo de Toque"
-        />
-        <button onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          testDevice(selectedRingDevice);
-        }}
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '8px',
-                background: '#444',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-              }}>
-          🔊 Testar
-        </button>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <AudioDeviceSelect
-          value={selectedCallDevice}
-          onChange={(value) => {
-            console.log('Dispositivo de chamada selecionado:', value);
-            setSelectedCallDevice(value);
-          }}
-          options={outputDevices}
-          label="Dispositivo de Chamada"
-        />
-        <button onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          testDevice(selectedCallDevice);
-        }}
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '8px',
-                background: '#444',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-              }}>
-          🔊 Testar
-        </button>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <AudioDeviceSelect
-          value={selectedMicDevice}
-          onChange={(value) => {
-            console.log('Dispositivo de microfone selecionado:', value);
-            setSelectedMicDevice(value);
-            setMicDevice(value);
-          }}
-          options={inputDevices}
-          label="Dispositivo de Microfone"
-        />
-        <span style={{ color: 'red', display: 'block', marginTop: '4px', fontSize: '10px' }}>
-          ⚠️ Necessário Selecionar o Microfone Antes de Iniciar a Chamada
-        </span>
-      </div>
-
-      {selectedMicDevice && (
-        <div className="mt-2">
-          <InputLabel>Nível do Microfone:</InputLabel>
-          <ProgressBar value={micLevel * 100} />
+    <StyledAudioDevicesModal
+      modalId={modalId}
+      onClose={() => {
+        onClose?.();
+      }}
+      isClosable={true}
+      padding="large"
+      modalVariant={modalVariant}
+    >
+      <StyledCenteredTitle>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1Title title="Configurações de Áudio" fontColor={H1TitleFontColor.Primary} />
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleCancelClick();
+            }}
+            variant="tertiary"
+            title="✕"
+          />
         </div>
-      )}
-
-      <div className="flex justify-end gap-2 mt-4">
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleSave();
-          }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '8px',
-            background: '#444',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          }}
+      </StyledCenteredTitle>
+      
+      <StyledSection
+        alignment={SectionAlignment.Center}
+        fontColor={SectionFontColor.Primary}
+      >
+        <StyledDeviceContainer
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
         >
-          💾 Salvar
-        </button>
-      </div>
-    </div>
+          <StyledDeviceRow
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <AudioDeviceSelect
+              value={selectedRingDevice}
+              onChange={(value) => {
+                console.log('Dispositivo de toque selecionado:', value);
+                setSelectedRingDevice(value);
+              }}
+              options={outputDevices}
+              label="Dispositivo de Toque"
+            />
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                testDevice(selectedRingDevice);
+              }}
+              variant="secondary"
+              title="🔊 Testar"
+            />
+          </StyledDeviceRow>
+
+          <StyledDeviceRow
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <AudioDeviceSelect
+              value={selectedCallDevice}
+              onChange={(value) => {
+                console.log('Dispositivo de chamada selecionado:', value);
+                setSelectedCallDevice(value);
+              }}
+              options={outputDevices}
+              label="Dispositivo de Chamada"
+            />
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                testDevice(selectedCallDevice);
+              }}
+              variant="secondary"
+              title="🔊 Testar"
+            />
+          </StyledDeviceRow>
+
+          <div
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <AudioDeviceSelect
+              value={selectedMicDevice}
+              onChange={(value) => {
+                console.log('Dispositivo de microfone selecionado:', value);
+                setSelectedMicDevice(value);
+                setMicDevice(value);
+              }}
+              options={inputDevices}
+              label="Dispositivo de Microfone"
+            />
+            <StyledWarningText>
+              ⚠️ Necessário Selecionar o Microfone Antes de Iniciar a Chamada
+            </StyledWarningText>
+          </div>
+
+          {selectedMicDevice && (
+            <StyledMicLevelContainer
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <InputLabel>Nível do Microfone:</InputLabel>
+              <ProgressBar value={micLevel * 100} />
+            </StyledMicLevelContainer>
+          )}
+        </StyledDeviceContainer>
+      </StyledSection>
+
+      <StyledCenteredButton
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleCancelClick();
+        }}
+        variant="secondary"
+        title={t`Cancel`}
+        fullWidth
+      />
+
+      <StyledCenteredButton
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSaveClick();
+        }}
+        variant="primary"
+        title="💾 Salvar"
+        fullWidth
+      />
+    </StyledAudioDevicesModal>
   );
 };
 

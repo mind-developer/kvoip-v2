@@ -66,6 +66,11 @@ const StyledWebSoftphoneContainer = styled.div`
   height: 100vh; 
   pointer-events: none;
   z-index: 9999;
+  
+  /* Permitir eventos de clique no WebSoftphone e seus modais */
+  > * {
+    pointer-events: auto;
+  }
 `;
 
 export const DefaultLayout = () => {

@@ -8,8 +8,8 @@ import Keyboard from '@/softphone/components/ui/Keyboard';
 import KeyboardToggleButton from '@/softphone/components/ui/KeyboardToggleButton';
 import StatusIndicator from '@/softphone/components/ui/StatusPill';
 import { SoftphoneStatus } from '@/softphone/constants/SoftphoneStatus';
-import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -172,7 +172,7 @@ const WebSoftphone: React.FC = () => {
   const [dtmf, setDtmf] = useState('');
 
   // Hooks de UI
-  const { enqueueDialog, closeDialog } = useDialogManager();
+  const { openModal } = useModal();
   const { getIcon } = useIcons();
   const { t } = useLingui();
 
@@ -977,26 +977,8 @@ const WebSoftphone: React.FC = () => {
   };
 
   const handleOpenAudioDevicesModal = () => {
-    const dialogId = 'c6fd8fca-da37-497b-ac85-411d5ef244cf';
-    const dialogElement = document.getElementById(dialogId);
-    
-    if (dialogElement) {
-      dialogElement.remove();
-      return;
-    }
-
-    enqueueDialog({
-      title: 'Configurações de Áudio',
-      children: (
-        <AudioDevicesModal
-          isOpen={true}
-          onClose={() => {
-            closeDialog(dialogId);
-          }}
-        />
-      )
-      
-    });
+    const modalId = 'audio-devices-modal';
+    openModal(modalId);
   };
 
   // TODO: montar modo mais eficiente para verificar se o telephonyExtension está disponível
@@ -1005,39 +987,40 @@ const WebSoftphone: React.FC = () => {
   }
 
   return (
-    <Draggable
-      enableUserSelectHack={true}
-      bounds="parent"
-      onStart={(e) => {
-        // Prevent the dragSelect from triggering
-        e.stopPropagation();
-      }}
-    >
-      <StyledContainer
-        status={
-          callState.isRegistered
-            ? SoftphoneStatus.Online
-            : callState.isRegistering
-              ? SoftphoneStatus.Registering
-              : SoftphoneStatus.Offline
-        }
-        data-select-disable="true"
-        onMouseDown={(e) => {
+    <>
+      <Draggable
+        enableUserSelectHack={true}
+        bounds="parent"
+        onStart={(e) => {
+          // Prevent the dragSelect from triggering
           e.stopPropagation();
-        }}
-        onMouseMove={(e) => {
-          e.stopPropagation();
-        }}
-        onMouseUp={(e) => {
-          e.stopPropagation();
-        }}
-        style={{ 
-          pointerEvents: 'auto',
-          position: 'absolute',
-          bottom: '80px',
-          right: '40px'
         }}
       >
+        <StyledContainer
+          status={
+            callState.isRegistered
+              ? SoftphoneStatus.Online
+              : callState.isRegistering
+                ? SoftphoneStatus.Registering
+                : SoftphoneStatus.Offline
+          }
+          data-select-disable="true"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+          onMouseMove={(e) => {
+            e.stopPropagation();
+          }}
+          onMouseUp={(e) => {
+            e.stopPropagation();
+          }}
+          style={{ 
+            pointerEvents: 'auto',
+            position: 'absolute',
+            bottom: '80px',
+            right: '40px'
+          }}
+        >
         <audio ref={sipRefs.remoteAudioRef} autoPlay />
 
         {callState.incomingCall && !callState.isInCall ? (
@@ -1280,8 +1263,11 @@ const WebSoftphone: React.FC = () => {
             </div>
           )}
         </StyledControlsContainer>
-      </StyledContainer>
-    </Draggable>
+        </StyledContainer>
+      </Draggable>
+      
+      <AudioDevicesModal modalId="audio-devices-modal" />
+    </>
   );
 };
 

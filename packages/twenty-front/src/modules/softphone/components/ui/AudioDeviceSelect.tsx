@@ -1,7 +1,7 @@
 /* @kvoip-woulz proprietary */
-import React, { useState, useRef, useEffect } from 'react';
-import styled from '@emotion/styled';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import styled from '@emotion/styled';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface AudioDevice {
   deviceId: string;
@@ -61,18 +61,15 @@ const Dropdown = styled.div`
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 `;
 
-const Option = styled.div`
+const Option = styled.div<{ isSelected?: boolean }>`
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
   color: #374151;
+  background-color: ${({ isSelected }) => isSelected ? '#e5e7eb' : 'transparent'};
 
   &:hover {
     background-color: #f3f4f6;
-  }
-
-  &.selected {
-    background-color: #e5e7eb;
   }
 `;
 
@@ -125,7 +122,7 @@ const AudioDeviceSelect: React.FC<AudioDeviceSelectProps> = ({
             <Option
               key={option.deviceId}
               onClick={(e) => handleOptionClick(e, option.deviceId)}
-              className={option.deviceId === value ? 'selected' : ''}
+              isSelected={option.deviceId === value}
             >
               {option.label}
             </Option>
