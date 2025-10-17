@@ -180,6 +180,9 @@ export const TabList = ({
                   disabled={tab.disabled ?? loading}
                   pill={tab.pill}
                   disableTestId={true}
+                  /* @kvoip-woulz proprietary:begin */
+                  incomingMessages={tab.incomingMessages}
+                  /* @kvoip-woulz proprietary:end */
                 />
               </NodeDimension>
             ))}
@@ -207,6 +210,9 @@ export const TabList = ({
                   onClick={
                     behaveAsLinks ? undefined : () => handleTabSelect(tab.id)
                   }
+                  /* @kvoip-woulz proprietary:begin */
+                  incomingMessages={tab.incomingMessages}
+                  /* @kvoip-woulz proprietary:end */
                 />
               ))}
             </StyledTabContainer>
