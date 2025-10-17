@@ -12,7 +12,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
   ChatIntegrationProvider,
@@ -34,6 +34,7 @@ export const TransferChatOptionsDropdownContent = () => {
   const { toggleDropdown } = useToggleDropdown();
   const { chatId } = useParams();
   const { sendClientChatMessage } = useSendClientChatMessage();
+  const navigate = useNavigate();
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.ClientChat,
   });
@@ -152,6 +153,7 @@ export const TransferChatOptionsDropdownContent = () => {
                     '',
                 });
                 toggleDropdown();
+                navigate(`/chat/call-center/`);
               }}
             />
           ))}
@@ -194,6 +196,7 @@ export const TransferChatOptionsDropdownContent = () => {
                     selectedChat?.telegramIntegrationId ??
                     '',
                 });
+                navigate(`/chat/call-center/`);
               }}
             />
           ))}
