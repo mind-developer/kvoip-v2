@@ -33,7 +33,6 @@ import { useAudioDevices } from '../hooks/useAudioDevices';
 import { useCallAudio } from '../hooks/useCallAudio';
 import { useCallStates } from '../hooks/useCallStates';
 import { useDialingTone } from '../hooks/useDialingTone';
-import { useMicrophone } from '../hooks/useMicrophone';
 import { useRingTone } from '../hooks/useRingTone';
 import { useSipConfig } from '../hooks/useSipConfig';
 import { useSipRefs } from '../hooks/useSipRefs';
@@ -102,7 +101,6 @@ const StyledDefaultContainer = styled.div`
   width: 100%;
 `;
 
-
 const StyledIncomingTimerAndIcon = styled.div`
   align-items: center;
   display: flex;
@@ -162,7 +160,7 @@ const WebSoftphone: React.FC = () => {
   const [callState, setCallState] = useState<CallState>(defaultCallState);
   
   // Hooks customizados
-  const { telephony, telephonyExtension } = useTelephonyUserData();
+  const { telephonyExtension } = useTelephonyUserData();
   const { config, setConfig } = useSipConfig(telephonyExtension);
   const { isRinging, isIncomingCall, isActiveCall } = useCallStates(callState);
   const audioDevices = useAudioDevices();
@@ -177,7 +175,6 @@ const WebSoftphone: React.FC = () => {
   const { enqueueDialog, closeDialog } = useDialogManager();
   const { getIcon } = useIcons();
   const { t } = useLingui();
-  const { getMediaStream } = useMicrophone();
 
   // Hooks de áudio
   useRingTone(isRinging, isIncomingCall);
