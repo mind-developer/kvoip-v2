@@ -1,5 +1,6 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AudioVisualizer } from '@/chat/call-center/components/AudioVisualizer';
@@ -397,6 +398,7 @@ export const PaneChat = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const audioVisualizerRef = useRef<HTMLDivElement>(null);
   const [audioVisualizerWidth, setAudioVisualizerWidth] = useState<number>(200);
@@ -526,9 +528,16 @@ export const PaneChat = () => {
     return <NoSelectedChat />;
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (audioBlob) {
-      //TODO: media type agnostic implementation for all types of messages
+      const attachment = await uploadAttachmentFile(
+        new File([audioBlob], `${Date.now()}.ogg}`, { type: 'audio/ogg' }),
+        {
+          targetObjectNameSingular: 'person',
+          id: selectedChat.person!.id,
+        },
+      );
+      alert(attachment.attachmentAbsoluteURL);
       const optimisticMessageId = `optimistic-${v4()}`;
       const optimisticMessage: ClientChatMessage = {
         clientChatId: chatId!,
@@ -545,7 +554,7 @@ export const PaneChat = () => {
         caption: null,
         deliveryStatus: ChatMessageDeliveryStatus.PENDING,
         edited: null,
-        attachmentUrl: null,
+        attachmentUrl: attachment.attachmentAbsoluteURL,
         event: null,
       };
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
