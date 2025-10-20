@@ -1,9 +1,23 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useClientChats } from '@/chat/call-center/hooks/useClientChats';
+import { useCurrentWorkspaceMemberWithAgent } from '@/chat/call-center/hooks/useCurrentWorkspaceMemberWithAgent';
+import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import {
+  ChatIntegrationProvider,
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChatMessageEvent,
+} from 'twenty-shared/types';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -80,10 +94,20 @@ export const PaneChatHeader = ({
   personId: string;
   showCloseOptions: boolean;
 }) => {
+  const { chatId } = useParams();
   const { getIcon } = useIcons();
+  const { t } = useLingui();
+  const navigate = useNavigate();
 
   const { toggleModal } = useModal();
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+
+  const { sendClientChatMessage } = useSendClientChatMessage();
+  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
+  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
+  const { chats: clientChats } = useClientChats(
+    workspaceMemberWithAgent?.agent?.sectorId || '',
+  );
+  const selectedChat = clientChats.find((chat) => chat.id === chatId);
 
   const IconX = getIcon('IconX');
   const IconDotsVertical = getIcon('IconDotsVertical');
@@ -101,12 +125,7 @@ export const PaneChatHeader = ({
               placeholderColorSeed={name}
             />
             <StyledChatTitle
-              onClick={() =>
-                openRecordInCommandMenu({
-                  objectNameSingular: 'person',
-                  recordId: personId,
-                })
-              }
+              onClick={() => navigate(`/object/person/${personId}`)}
             >
               {name}
             </StyledChatTitle>
@@ -126,14 +145,7 @@ export const PaneChatHeader = ({
             )}
             <TransferChatOptionsDropdown />
             <StyledIconButton
-              onClick={() => {
-                openRecordInCommandMenu({
-                  objectNameSingular: 'person',
-                  recordId: personId,
-                  isNewRecord: false,
-                  resetNavigationStack: true,
-                });
-              }}
+              onClick={() => navigate(`/object/person/${personId}`)}
               variant="secondary"
               accent="default"
               size="medium"
@@ -149,13 +161,29 @@ export const PaneChatHeader = ({
           title={'Close service'}
           subtitle={
             <>
-              {
-                'This will end the chat and change the status of the service to closed'
-              }
+              {t`This will end the chat and change the status of the service to finished`}
             </>
           }
           //TODO: Implement finalize service
-          onConfirmClick={() => {}}
+          onConfirmClick={() => {
+            sendClientChatMessage({
+              clientChatId: chatId || '',
+              from: workspaceMemberWithAgent?.agent?.id || '',
+              fromType: ChatMessageFromType.AGENT,
+              to: workspaceMemberWithAgent?.agent?.sectorId || '',
+              toType: ChatMessageToType.SECTOR,
+              provider: ChatIntegrationProvider.WHATSAPP,
+              type: ChatMessageType.EVENT,
+              textBody: null,
+              caption: null,
+              deliveryStatus: ChatMessageDeliveryStatus.SENT,
+              edited: null,
+              attachmentUrl: null,
+              event: ClientChatMessageEvent.END,
+              workspaceId: workspaceId || '',
+              providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
+            });
+          }}
           confirmButtonText={'Close'}
         />
       </>

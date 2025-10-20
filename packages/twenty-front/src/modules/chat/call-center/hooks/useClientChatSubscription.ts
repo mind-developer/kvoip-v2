@@ -45,6 +45,7 @@ export const useClientChatSubscription = ({
   const handleData = useCallback(
     (data: any) => {
       const { event, clientChat } = data.onClientChatEvent;
+      console.log('handleData', data);
 
       switch (event) {
         case ClientChatEvent.CREATED:

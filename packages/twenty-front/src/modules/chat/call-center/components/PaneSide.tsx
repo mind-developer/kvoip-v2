@@ -1,23 +1,19 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ChatCell } from '@/chat/call-center/components/ChatCell';
 import { PaneSideHeader } from '@/chat/call-center/components/PaneSideHeader';
 import { PaneSideTabs } from '@/chat/call-center/components/PaneSideTabs';
-import { ResolvedChats } from '@/chat/call-center/components/ResolvedChats';
 import { useClientChats } from '@/chat/call-center/hooks/useClientChats';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useCurrentWorkspaceMemberWithAgent } from '@/chat/call-center/hooks/useCurrentWorkspaceMemberWithAgent';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import {
   ChatMessageType,
   ClientChat,
   ClientChatStatus,
 } from 'twenty-shared/types';
-import { WorkspaceMember } from '~/generated/graphql';
 
 const StyledPaneSideContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -54,35 +50,27 @@ export const PaneSide = () => {
 
   const { t } = useLingui();
 
-  const currentMemberId = useRecoilValue(currentWorkspaceMemberState)!.id;
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const [activeTabId, _] = useRecoilComponentState(
     activeTabIdComponentState,
     'pane-side-tabs',
   );
+  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
 
-  const { record: currentMember } = useFindOneRecord<
-    WorkspaceMember & { __typename: string; agentId: string }
-  >({
-    objectNameSingular: 'workspaceMember',
-    objectRecordId: currentMemberId,
-  });
+  const agent = workspaceMemberWithAgent?.agent;
 
-  const { record: agent } = useFindOneRecord<{
-    __typename: string;
-    id: string;
-    sectorId: string;
-  }>({
-    objectNameSingular: 'agent',
-    objectRecordId: currentMember?.agentId || '',
-    skip: !currentMember?.agentId,
-  });
-
-  const { chats: clientChats, loading } = useClientChats(agent?.sectorId || '');
+  const { chats: clientChats } = useClientChats(agent?.sectorId || '');
 
   // Handle chat selection with navigation
   const handleChatSelect = (chatId: string) => {
     navigate(`/chat/call-center/${chatId}`);
   };
+
+  if (
+    !workspaceMemberWithAgent ||
+    !workspaceMemberWithAgent?.agent ||
+    !workspaceMemberWithAgent.agent.sectorId
+  )
+    return null;
 
   const getChatMessagePreview = (chat: ClientChat) => {
     switch (chat.lastMessageType) {
@@ -100,7 +88,6 @@ export const PaneSide = () => {
         return t`Click to open chat`;
     }
   };
-
   const tabs: SingleTabProps[] = [
     {
       id: ClientChatStatus.ASSIGNED,
@@ -108,7 +95,7 @@ export const PaneSide = () => {
       incomingMessages: clientChats.filter(
         (chat) =>
           chat.status === ClientChatStatus.ASSIGNED &&
-          chat.agentId === currentMember?.agentId &&
+          chat.agentId === agent?.id &&
           chat.unreadMessagesCount > 0,
       ).length,
     },
@@ -144,11 +131,14 @@ export const PaneSide = () => {
 
   const renderClientChats = () =>
     activeClientChats.map((chat, index) => {
+      console.log('chat', chat);
       if (chat.status !== activeTabId) return null;
       if (chat.status === ClientChatStatus.FINISHED) return null;
+      console.log('chat.agentId', chat);
+      console.log('agent?.id', agent?.id);
       if (
         chat.status === ClientChatStatus.ASSIGNED &&
-        chat.agentId !== currentMember?.agentId
+        chat.agentId !== agent?.id
       )
         return null;
       const person = chat.person;
@@ -164,14 +154,10 @@ export const PaneSide = () => {
           }
           isSelected={openChatId === chat.id}
           onSelect={() => handleChatSelect(chat.id)}
-          unreadMessagesCount={
-            openChatId === chat.id ? 0 : (chat.unreadMessagesCount ?? 0)
-          }
+          unreadMessagesCount={chat.unreadMessagesCount ?? 0}
         />
       );
     });
-
-  if (!agent?.sectorId || !currentMember) return null;
 
   return (
     <StyledPaneSideContainer>
@@ -182,7 +168,7 @@ export const PaneSide = () => {
       <StyledChatsContainer isScrollable={isScrollable}>
         <>
           {renderClientChats()}
-          <ResolvedChats />
+          {/* <ResolvedChats /> */}
         </>
       </StyledChatsContainer>
     </StyledPaneSideContainer>

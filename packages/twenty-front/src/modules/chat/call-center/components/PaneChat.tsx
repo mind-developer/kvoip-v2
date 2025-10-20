@@ -3,12 +3,12 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AudioVisualizer } from '@/chat/call-center/components/AudioVisualizer';
+import { AvatarComponent } from '@/chat/call-center/components/AvatarComponent';
 import { ChatAnex } from '@/chat/call-center/components/ChatAnex';
 import DocumentPreview from '@/chat/call-center/components/DocumentPreview';
+import EventDescription from '@/chat/call-center/components/EventDescription';
 import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
-import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
-import { EVENT_DESCRIPTION } from '@/chat/call-center/constants/eventDescription';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
 import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
@@ -28,7 +28,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -39,6 +38,7 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
+  ClientChat,
   ClientChatMessage,
   ClientChatMessageEvent,
   ClientChatStatus,
@@ -95,38 +95,6 @@ const StyledChatContainer = styled.div<{ isScrolling: boolean }>`
   &::-webkit-scrollbar-thumb:hover {
     background: ${({ theme }) => theme.border.color.strong};
   }
-
-  /* Control scrollbar visibility with opacity */
-  ${({ isScrolling, theme }) =>
-    !isScrolling &&
-    `
-    scrollbar-width: none; /* Firefox - hide when not scrolling */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    
-    &::-webkit-scrollbar {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-  `}
-
-  ${({ isScrolling, theme }) =>
-    isScrolling &&
-    `
-    &::-webkit-scrollbar {
-      opacity: 1;
-      transition: opacity 0.1s ease-in-out;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      opacity: 1;
-      transition: opacity 0.1s ease-in-out;
-    }
-  `}
 `;
 
 const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
@@ -194,7 +162,7 @@ const StyledVideo = styled.video<{ isSystemMessage: boolean }>`
   display: block;
   margin-left: ${({ isSystemMessage }) => (isSystemMessage ? 'auto' : '0')};
   margin-right: ${({ isSystemMessage }) => (isSystemMessage ? '0' : 'auto')};
-  max-height: 150px;
+  width: 150px;
 `;
 
 const StyledLine = styled.p`
@@ -386,9 +354,22 @@ export const PaneChat = () => {
   const theme = useTheme();
 
   const { chatId } = useParams() || '';
-  const { record: selectedChat } = useFindOneRecord({
+  const { record: selectedChat } = useFindOneRecord<
+    ClientChat & { __typename: string }
+  >({
     objectNameSingular: 'clientChat',
     objectRecordId: chatId,
+    recordGqlFields: {
+      id: true,
+      providerContactId: true,
+      whatsappIntegrationId: true,
+      messengerIntegrationId: true,
+      telegramIntegrationId: true,
+      status: true,
+      person: true,
+      sector: true,
+      agent: true,
+    },
     skip: !chatId,
   });
   const { updateOneRecord } = useUpdateOneRecord({
@@ -555,7 +536,7 @@ export const PaneChat = () => {
         updatedAt: new Date().toISOString(),
         from: currentWorkspaceMember?.id || '',
         fromType: ChatMessageFromType.AGENT,
-        to: selectedChat.person!.phone || '',
+        to: selectedChat.person!.id || '',
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         providerMessageId: optimisticMessageId,
@@ -574,7 +555,7 @@ export const PaneChat = () => {
         clientChatId: chatId!,
         from: currentWorkspaceMember?.id || '',
         fromType: ChatMessageFromType.AGENT,
-        to: selectedChat.providerContactId,
+        to: selectedChat.person!.id,
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         type: ChatMessageType.TEXT,
@@ -599,11 +580,8 @@ export const PaneChat = () => {
       sendClientChatMessage({
         ...optimisticMessage,
         workspaceId: currentWorkspace?.id ?? '',
-        providerIntegrationId:
-          selectedChat.whatsappIntegrationId ??
-          selectedChat.messengerIntegrationId ??
-          selectedChat.telegramIntegrationId ??
-          null,
+        providerIntegrationId: selectedChat.whatsappIntegrationId ?? '',
+        from: selectedChat.agent.id || '',
       });
     }
     setNewMessage('');
@@ -726,10 +704,7 @@ export const PaneChat = () => {
             />
           </StyledAnexDiv>
           {isAnexOpen && (
-            <ChatAnex
-              setIsAnexOpen={setIsAnexOpen}
-              from={`_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
-            />
+            <ChatAnex setIsAnexOpen={setIsAnexOpen} clientChat={selectedChat} />
           )}
           {recordingState !== 'none' && (
             <div
@@ -824,10 +799,10 @@ export const PaneChat = () => {
           onClick={() => {
             sendClientChatMessage({
               clientChatId: selectedChat.id,
-              from: currentWorkspaceMember?.id || '',
+              from: currentMember?.agentId || '',
               fromType: ChatMessageFromType.AGENT,
-              to: selectedChat.person!.phone || '',
-              toType: ChatMessageToType.PERSON,
+              to: selectedChat.sectorId || '',
+              toType: ChatMessageToType.SECTOR,
               provider: ChatIntegrationProvider.WHATSAPP,
               type: ChatMessageType.EVENT,
               textBody: null,
@@ -837,18 +812,7 @@ export const PaneChat = () => {
               attachmentUrl: null,
               event: ClientChatMessageEvent.START,
               workspaceId: currentWorkspace?.id ?? '',
-              providerIntegrationId:
-                selectedChat.whatsappIntegrationId ??
-                selectedChat.messengerIntegrationId ??
-                selectedChat.telegramIntegrationId ??
-                null,
-            });
-            updateOneRecord({
-              idToUpdate: selectedChat.id,
-              updateOneRecordInput: {
-                agentId: currentMember?.agentId || null,
-                status: ClientChatStatus.ASSIGNED,
-              },
+              providerIntegrationId: selectedChat.whatsappIntegrationId ?? '',
             });
           }}
         />
@@ -865,9 +829,9 @@ export const PaneChat = () => {
           <PaneChatHeader
             avatarUrl={selectedChat.person?.avatarUrl || ''}
             name={
-              selectedChat.person?.name.firstName +
+              selectedChat.person?.name?.firstName +
               ' ' +
-              selectedChat.person?.name.lastName
+              selectedChat.person?.name?.lastName
             }
             personId={selectedChat.person?.id || ''}
             showCloseOptions={selectedChat.status === ClientChatStatus.ASSIGNED}
@@ -903,8 +867,25 @@ export const PaneChat = () => {
                       }}
                       key={message.providerMessageId}
                     >
-                      <IconExclamationCircleFilled size={13} />{' '}
-                      {EVENT_DESCRIPTION[message.event]}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: theme.spacing(2),
+                        }}
+                      >
+                        <EventDescription message={message} />
+                        <div
+                          style={{
+                            height: 1,
+                            width: '70%',
+                            opacity: 0.5,
+                            backgroundColor: theme.border.color.medium,
+                          }}
+                        />
+                      </div>
                     </StyledMessageEvent>
                   );
 
@@ -960,7 +941,15 @@ export const PaneChat = () => {
                         controls
                       >
                         {validVideoTypes.map((type) => (
-                          <source key={type} src={messageContent} type={type} />
+                          <source
+                            key={type}
+                            src={
+                              REACT_APP_SERVER_BASE_URL +
+                              '/files/' +
+                              message.attachmentUrl
+                            }
+                            type={type}
+                          />
                         ))}
                       </StyledVideo>
                     );
@@ -1008,17 +997,12 @@ export const PaneChat = () => {
                         style={{ opacity: lastOfRow ? 1 : 0 }}
                       >
                         <AvatarComponent
-                          avatarUrl={
-                            //TODO: this has to actually fetch the avatar url from the correct source
-                            message.fromType !== ChatMessageFromType.PERSON
-                              ? currentWorkspaceMember?.avatarUrl
-                              : selectedChat.person?.avatarUrl
-                          }
-                          senderName={
-                            //TODO: this has to actually fetch the name from the correct source
-                            message.fromType !== ChatMessageFromType.PERSON
-                              ? currentWorkspaceMember?.name.firstName
-                              : selectedChat.person?.name.firstName
+                          senderId={message.from}
+                          senderType={
+                            message.fromType as
+                              | ChatMessageFromType.PERSON
+                              | ChatMessageFromType.AGENT
+                              | ChatMessageFromType.CHATBOT
                           }
                           animateDelay={index * 0.01}
                         />

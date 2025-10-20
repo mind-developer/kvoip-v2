@@ -26,7 +26,6 @@ export const useSendClientChatMessage = () => {
       providerIntegrationId: string;
     },
   ) => {
-    console.log('sendClientChatMessage', input);
     await sendClientChatMessageMutation({
       variables: {
         input,

@@ -1,14 +1,18 @@
 import { useClientChatSubscription } from '@/chat/call-center/hooks/useClientChatSubscription';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ClientChat } from 'twenty-shared/types';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ClientChat, ClientChatStatus } from 'twenty-shared/types';
 
 export const useClientChats = (sectorId: string) => {
+  const { t } = useLingui();
+  const { chatId: openChat } = useParams();
   const [dbChats, setDbChats] = useState<ClientChat[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const { enqueueInfoSnackBar } = useSnackBar();
   useFindManyRecords<ClientChat & { __typename: string; id: string }>({
     objectNameSingular: 'clientChat',
     recordGqlFields: {
@@ -19,6 +23,13 @@ export const useClientChats = (sectorId: string) => {
       lastMessagePreview: true,
       lastMessageType: true,
       lastMessageDate: true,
+      agent: {
+        id: true,
+      },
+      sector: {
+        name: true,
+        id: true,
+      },
       agentId: true,
       person: {
         id: true,
@@ -54,7 +65,12 @@ export const useClientChats = (sectorId: string) => {
     },
     onChatDeleted: (chat) => {
       setDbChats((prev) => prev.filter((c) => c.id !== chat.id));
-      navigate(`/chat/call-center`);
+      if (chat.status === ClientChatStatus.FINISHED) {
+        enqueueInfoSnackBar({
+          message: t`Chat ended`,
+        });
+      }
+      if (openChat === chat.id) navigate(`/chat/call-center`);
     },
   });
   return {

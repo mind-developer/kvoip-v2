@@ -3,13 +3,12 @@ import { useState } from 'react';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 // eslint-disable-next-line no-restricted-imports
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TransferChatOption } from '@/chat/call-center/components/TransferChatOption';
+import { useCurrentWorkspaceMemberWithAgent } from '@/chat/call-center/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,22 +34,8 @@ export const TransferChatOptionsDropdownContent = () => {
   const { chatId } = useParams();
   const { sendClientChatMessage } = useSendClientChatMessage();
   const navigate = useNavigate();
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.ClientChat,
-  });
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { record: currentAgent } = useFindOneRecord<
-    WorkspaceMember & { __typename: string; agent: { id: string } }
-  >({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    objectRecordId: currentWorkspaceMember?.id || '',
-    recordGqlFields: {
-      agent: {
-        id: true,
-      },
-    },
-  });
+  const workspace = useRecoilValue(currentWorkspaceState);
+  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
 
   const selectedChat = useFindOneRecord<ClientChat & { __typename: string }>({
     objectNameSingular: 'clientChat',
@@ -78,20 +63,21 @@ export const TransferChatOptionsDropdownContent = () => {
       agentId: true,
     },
   });
-  console.log(workspaceMembers);
   const workspaceMembersWithAgent = workspaceMembers.filter(
-    (member) => member.agentId && member.agentId !== currentAgent?.agent?.id,
+    (member) =>
+      member.agentId && member.agentId !== workspaceMemberWithAgent?.agent?.id,
   );
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    filter: { id: { neq: workspaceMemberWithAgent?.agent.sectorId } },
+  });
 
   const [currentMenu, setCurrentMenu] = useState<
     TransferChatOptionsMenu | undefined
   >(undefined);
 
-  const { records: sectors } = useFindManyRecords<
-    Sector & { __typename: string }
-  >({
-    objectNameSingular: CoreObjectNameSingular.Sector,
-  });
   const resetMenu = () => setCurrentMenu(undefined);
 
   const handleSelectMenu = (option: TransferChatOptionsMenu) => {
@@ -130,10 +116,11 @@ export const TransferChatOptionsDropdownContent = () => {
               hasAvatar={true}
               agent={member}
               onClick={() => {
-                if (!selectedChat?.id || !currentAgent?.agent?.id) return;
+                if (!selectedChat?.id || !workspaceMemberWithAgent?.agent?.id)
+                  return;
                 sendClientChatMessage({
                   clientChatId: selectedChat.id,
-                  from: currentAgent.agent.id,
+                  from: workspaceMemberWithAgent.agent.id,
                   fromType: ChatMessageFromType.AGENT,
                   to: member.agentId,
                   toType: ChatMessageToType.AGENT,
@@ -145,7 +132,7 @@ export const TransferChatOptionsDropdownContent = () => {
                   edited: null,
                   attachmentUrl: null,
                   event: ClientChatMessageEvent.TRANSFER_TO_AGENT,
-                  workspaceId: currentWorkspace?.id ?? '',
+                  workspaceId: workspace?.id ?? '',
                   providerIntegrationId:
                     selectedChat?.whatsappIntegrationId ??
                     selectedChat?.messengerIntegrationId ??
@@ -173,11 +160,11 @@ export const TransferChatOptionsDropdownContent = () => {
               text={sector.name}
               LeftIcon={sector.icon}
               onClick={() => {
-                console.log(sector);
-                if (!currentAgent?.agent?.id || !selectedChat?.id) return;
+                if (!workspaceMemberWithAgent?.agent?.id || !selectedChat?.id)
+                  return;
                 sendClientChatMessage({
                   clientChatId: selectedChat.id,
-                  from: currentAgent.agent.id,
+                  from: workspaceMemberWithAgent.agent.id,
                   fromType: ChatMessageFromType.AGENT,
                   to: sector.id,
                   toType: ChatMessageToType.SECTOR,
@@ -189,7 +176,7 @@ export const TransferChatOptionsDropdownContent = () => {
                   edited: null,
                   attachmentUrl: null,
                   event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
-                  workspaceId: currentWorkspace?.id ?? '',
+                  workspaceId: workspace?.id ?? '',
                   providerIntegrationId:
                     selectedChat?.whatsappIntegrationId ??
                     selectedChat?.messengerIntegrationId ??

@@ -1,19 +1,24 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { MessageType } from '@/chat/types/MessageType';
-import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useRecoilValue } from 'recoil';
+import {
+  ChatIntegrationProvider,
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChat,
+} from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 
 interface ChatAnexProps {
   setIsAnexOpen: Dispatch<SetStateAction<boolean>>;
-  from: string;
+  clientChat: ClientChat;
 }
 
 interface LabelProps {
@@ -56,13 +61,10 @@ const StyledInput = styled.input`
   display: none;
 `;
 
-export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
-  const { selectedChat, setSelectedChat } = useContext(
-    CallCenterContext,
-  ) as CallCenterContextType;
+export const ChatAnex = ({ setIsAnexOpen, clientChat }: ChatAnexProps) => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
-
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { sendClientChatMessage } = useSendClientChatMessage();
+  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
 
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -71,67 +73,38 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
   const ImageIcon = getIcon('IconCamera');
   const VideoIcon = getIcon('IconVideo');
 
-  const handleSendFile = async (file: File, type: MessageType) => {
-    if (!selectedChat) return;
+  console.log('clientChat', clientChat);
 
-    if (type === 'image')
-      setSelectedChat((prev) => {
-        if (prev)
-          return {
-            ...prev,
-            messages: [
-              ...prev.messages,
-              {
-                type: 'image',
-                from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-                message: URL.createObjectURL(file),
-                fromMe: true,
-                status: 'attempting',
-                id: null,
-                createdAt: {
-                  seconds: Date.now(),
-                  nanoseconds: Date.now() * 1000,
-                },
-              },
-            ],
-          };
-      });
-    // const identifier = isWhatsappDocument(selectedChat)
-    //   ? `+${selectedChat.client.phone}`
-    //   : selectedChat.client.id;
-
-    const identifier = `${selectedChat.client.phone}`;
-
-    if (!identifier) return;
-
-    const url = await uploadAttachmentFile(file, {
-      id: selectedChat?.personId,
+  const handleSendFile = async (file: File, type: ChatMessageType) => {
+    const attachment = await uploadAttachmentFile(file, {
       targetObjectNameSingular: 'person',
+      id: clientChat.person.id,
     });
 
-    const sendMessageInputBase = {
-      integrationId: selectedChat.integrationId,
-      to: identifier,
-      type,
-      from,
-      fromMe: true,
-      personId: selectedChat.personId,
-    };
-
-    if (isWhatsappDocument(selectedChat)) {
-      const sendMessageInput = {
-        ...sendMessageInputBase,
-        fileId: url.attachmentAbsoluteURL,
-      };
+    if (attachment) {
+      sendClientChatMessage({
+        clientChatId: clientChat.id,
+        attachmentUrl: attachment.attachmentAbsoluteURL,
+        type: type,
+        caption: null,
+        from: clientChat.agent.id || '',
+        fromType: ChatMessageFromType.AGENT,
+        to: clientChat.person.id,
+        toType: ChatMessageToType.PERSON,
+        provider: ChatIntegrationProvider.WHATSAPP,
+        deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+        edited: null,
+        event: null,
+        workspaceId: workspaceId || '',
+        providerIntegrationId:
+          clientChat.whatsappIntegrationId ||
+          clientChat.messengerIntegrationId ||
+          clientChat.telegramIntegrationId ||
+          '',
+        textBody: null,
+      });
+      setIsAnexOpen(false);
     }
-    // else {
-    //   const messengerSendMessageInput = {
-    //     ...sendMessageInputBase,
-    //     fileUrl: url,
-    //   };
-
-    //   messengerSendMessage(messengerSendMessageInput);
-    // }
   };
 
   return (
@@ -155,13 +128,13 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
-              handleSendFile(file, MessageType.IMAGE);
+              handleSendFile(file, ChatMessageType.IMAGE);
               setIsAnexOpen(false);
             }
           }}
         />
       </StyledLabel>
-      {selectedChat && (
+      {clientChat && (
         <StyledLabel
           isImage
           style={{
@@ -181,7 +154,7 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                handleSendFile(file, MessageType.VIDEO);
+                handleSendFile(file, ChatMessageType.VIDEO);
                 setIsAnexOpen(false);
               }
             }}
@@ -201,7 +174,7 @@ export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
-              handleSendFile(file, MessageType.DOCUMENT);
+              handleSendFile(file, ChatMessageType.DOCUMENT);
               setIsAnexOpen(false);
             }
           }}

@@ -1,6 +1,5 @@
 import { TransferChatOptionsDropdownContent } from '@/chat/call-center/components/TransferChatOptionsDropdownContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -22,7 +21,6 @@ export const TRANSFER_CHAT_OPTIONS_DROPDOWN_ID =
   'transfer-chat-options-dropdown-id';
 
 export const TransferChatOptionsDropdown = () => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const IconArrowForwardUp = getIcon('IconArrowForwardUp');
@@ -35,10 +33,7 @@ export const TransferChatOptionsDropdown = () => {
           variant="secondary"
           accent="blue"
           size="medium"
-          Icon={(props) => (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <IconArrowForwardUp {...props} />
-          )}
+          Icon={(props) => <IconArrowForwardUp {...props} />}
         />
       }
       dropdownPlacement="bottom-start"

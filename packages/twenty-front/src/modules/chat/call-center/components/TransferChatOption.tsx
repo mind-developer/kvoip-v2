@@ -32,9 +32,6 @@ const StyledMenuItem = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 5.5px ${({ theme }) => theme.spacing(2)};
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
 `;
 
 const StyledIconCheck = styled(IconCheck)`

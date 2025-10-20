@@ -7,6 +7,9 @@ export type ClientChat = {
   messengerIntegrationId: string | null;
   telegramIntegrationId: string | null;
   agentId: string | null;
+  agent: {
+    id: string;
+  };
   sectorId: string | null;
   personId: string;
   person: {
