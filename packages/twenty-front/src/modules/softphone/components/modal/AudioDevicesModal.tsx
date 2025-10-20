@@ -174,9 +174,9 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
 
       // Se não houver estado do softphone, tentar carregar dos itens individuais
       if (!savedDevices.ringDevice) {
-        savedDevices.ringDevice = localStorage.getItem('disp_toque') || '';
-        savedDevices.callDevice = localStorage.getItem('disp_chamada') || '';
-        savedDevices.micDevice = localStorage.getItem('disp_microfone') || '';
+        savedDevices.ringDevice = localStorage.getItem('phone_ring_device') || '';
+        savedDevices.callDevice = localStorage.getItem('calling_device') || '';
+        savedDevices.micDevice = localStorage.getItem('microphone_device') || '';
         console.log('Dispositivos carregados do localStorage:', savedDevices);
       }
 
@@ -335,17 +335,17 @@ const AudioDevicesModal: React.FC<AudioDevicesModalProps> = ({
       // Salvar no localStorage
       try {
         // Salvar individualmente
-        localStorage.setItem('disp_toque', selectedRingDevice);
-        localStorage.setItem('disp_chamada', selectedCallDevice);
-        localStorage.setItem('disp_microfone', selectedMicDevice);
+        localStorage.setItem('phone_ring_device', selectedRingDevice);
+        localStorage.setItem('calling_device', selectedCallDevice);
+        localStorage.setItem('microphone_device', selectedMicDevice);
         
         // Salvar no estado global
         localStorage.setItem('softphone_audio_devices', JSON.stringify(devicesToSave));
 
         // Verificar se os dados foram salvos corretamente
-        const savedRingDevice = localStorage.getItem('disp_toque');
-        const savedCallDevice = localStorage.getItem('disp_chamada');
-        const savedMicDevice = localStorage.getItem('disp_microfone');
+        const savedRingDevice = localStorage.getItem('phone_ring_device');
+        const savedCallDevice = localStorage.getItem('calling_device');
+        const savedMicDevice = localStorage.getItem('microphone_device');
         const savedSoftphoneState = localStorage.getItem('softphone_audio_devices');
         
         console.log('Verificação do salvamento:', {

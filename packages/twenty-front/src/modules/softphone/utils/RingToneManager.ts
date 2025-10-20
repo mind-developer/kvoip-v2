@@ -10,7 +10,7 @@ class RingToneManager {
     this.callAudio.load();
     
     // Carregar dispositivo de toque salvo
-    const savedRingDevice = localStorage.getItem('disp_toque');
+    const savedRingDevice = localStorage.getItem('phone_ring_device');
     if (savedRingDevice) {
       this.selectedRingDevice = savedRingDevice;
       this.lastDeviceId = savedRingDevice;

@@ -7,7 +7,7 @@ class MicrophoneManager {
 
   constructor() {
     // Carregar dispositivo de microfone salvo
-    const savedMicDevice = localStorage.getItem('disp_microfone');
+    const savedMicDevice = localStorage.getItem('microphone_device');
     if (savedMicDevice) {
       this.selectedMicDevice = savedMicDevice;
       this.lastDeviceId = savedMicDevice;

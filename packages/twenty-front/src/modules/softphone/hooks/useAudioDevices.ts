@@ -15,9 +15,9 @@ export const useAudioDevices = () => {
   // Carregar dispositivos salvos
   useEffect(() => {
     const loadAudioDevices = () => {
-      const savedRingDevice = localStorage.getItem('disp_toque');
-      const savedCallDevice = localStorage.getItem('disp_chamada');
-      const savedMicDevice = localStorage.getItem('disp_microfone');
+      const savedRingDevice = localStorage.getItem('phone_ring_device');
+      const savedCallDevice = localStorage.getItem('calling_device');
+      const savedMicDevice = localStorage.getItem('microphone_device');
       
       if (savedRingDevice) setSelectedRingDevice(savedRingDevice);
       if (savedCallDevice) setSelectedCallDevice(savedCallDevice);

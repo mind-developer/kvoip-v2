@@ -12,6 +12,7 @@ interface TransferButtonProps {
 
 const TransferButton: React.FC<TransferButtonProps> = ({ type, sendDTMF }) => {
   const [isTransferring, setIsTransferring] = useState(false);
+  const theme = useTheme();
 
   const handleTransfer = () => {
     const extension = window.prompt('Enter the extension to transfer to:');
@@ -34,8 +35,6 @@ const TransferButton: React.FC<TransferButtonProps> = ({ type, sendDTMF }) => {
 
     setIsTransferring(false);
   };
-
-  const theme = useTheme();
 
   return (
     <>

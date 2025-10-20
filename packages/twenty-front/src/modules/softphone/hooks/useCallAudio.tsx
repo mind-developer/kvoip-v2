@@ -12,7 +12,7 @@ export const useCallAudio = (audioElement: HTMLAudioElement | null) => {
 
     // Atualiza o dispositivo de chamada quando mudar no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'disp_chamada' && e.newValue) {
+      if (e.key === 'calling_device' && e.newValue) {
         managerRef.current?.setCallDevice(e.newValue);
       }
     };
@@ -22,7 +22,7 @@ export const useCallAudio = (audioElement: HTMLAudioElement | null) => {
 
     // Verifica mudanças no localStorage localmente
     const checkLocalStorage = () => {
-      const savedCallDevice = localStorage.getItem('disp_chamada');
+      const savedCallDevice = localStorage.getItem('calling_device');
       if (savedCallDevice && managerRef.current) {
         managerRef.current.setCallDevice(savedCallDevice);
       }

@@ -14,7 +14,7 @@ export const useRingTone = (isRinging: boolean, isIncomingCall: boolean) => {
 
     // Atualiza o dispositivo de toque quando mudar no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'disp_toque' && e.newValue && e.newValue !== lastDeviceRef.current) {
+      if (e.key === 'phone_ring_device' && e.newValue && e.newValue !== lastDeviceRef.current) {
         console.log('Dispositivo de toque alterado:', e.newValue);
         lastDeviceRef.current = e.newValue;
         managerRef.current?.setRingDevice(e.newValue);
@@ -26,7 +26,7 @@ export const useRingTone = (isRinging: boolean, isIncomingCall: boolean) => {
 
     // Verifica mudanças no localStorage localmente
     const checkLocalStorage = () => {
-      const savedRingDevice = localStorage.getItem('disp_toque');
+      const savedRingDevice = localStorage.getItem('phone_ring_device');
       if (savedRingDevice && savedRingDevice !== lastDeviceRef.current) {
         console.log('Verificando dispositivo de toque:', savedRingDevice);
         lastDeviceRef.current = savedRingDevice;
@@ -42,7 +42,7 @@ export const useRingTone = (isRinging: boolean, isIncomingCall: boolean) => {
 
     // Inicia ou para o tom de chamada recebida
     if (isIncomingCall) {
-      const savedRingDevice = localStorage.getItem('disp_toque');
+      const savedRingDevice = localStorage.getItem('phone_ring_device');
       if (savedRingDevice) {
         console.log('Iniciando toque de chamada recebida');
         managerRef.current.startCallTone();

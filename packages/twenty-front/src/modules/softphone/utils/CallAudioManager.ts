@@ -4,7 +4,7 @@ class CallAudioManager {
 
   constructor() {
     // Carregar dispositivo de chamada salvo
-    const savedCallDevice = localStorage.getItem('disp_chamada');
+    const savedCallDevice = localStorage.getItem('calling_device');
     if (savedCallDevice) {
       this.selectedCallDevice = savedCallDevice;
     }
