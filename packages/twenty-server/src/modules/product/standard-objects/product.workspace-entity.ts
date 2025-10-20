@@ -22,8 +22,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { PRODUCT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -155,6 +155,15 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NCM`,
     description: msg`Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12`,
     icon: 'IconBarcode',
+    settings: {
+      validation: {
+        pattern: '^\\d{4}\\.\\d{2}\\.\\d{2}$',
+        mask: '0000.00.00',
+        placeholder: '0000.00.00',
+        errorMessage:
+          'Invalid NCM. Expected format: 0000.00.00 (8 digits with dots)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   ncm: string;
@@ -165,6 +174,14 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CFOP`,
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        pattern: '^\\d{4}$',
+        mask: '0000',
+        placeholder: '0000',
+        errorMessage: 'Invalid CFOP. Expected format: 0000 (4 digits)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cfop: string;
@@ -175,6 +192,14 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CEST`,
     description: msg`Tributary Substitution Code. Example: 28.038.00`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        pattern: '^\\d{2}\\.\\d{3}\\.\\d{2}$',
+        mask: '00.000.00',
+        placeholder: '00.000.00',
+        errorMessage: 'Invalid CEST. Expected format: 00.000.00',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cest: string;
@@ -205,6 +230,14 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST ICMS/CSOSN`,
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        pattern: '^\\d{3}$',
+        mask: '000',
+        placeholder: '000',
+        errorMessage: 'Invalid CST/CSOSN. Expected format: 000 (3 digits)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstIcmsCsosn: string;
