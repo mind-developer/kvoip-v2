@@ -155,7 +155,7 @@ export class WhatsAppService {
                   firstName: message.contactName?.split(' ')[0] ?? '',
                   lastName: message.contactName?.split(' ')[1] ?? '',
                 },
-            message.senderPhoneNumber ?? message.remoteJid,
+            message.senderPhoneNumber ?? providerContactId,
             message.senderAvatarUrl ?? null,
             ChatIntegrationProvider.WHATSAPP,
             'Via WhatsApp (Chat)',

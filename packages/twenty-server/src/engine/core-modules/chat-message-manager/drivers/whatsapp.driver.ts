@@ -5,6 +5,7 @@ import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager
 import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { ClientChatMessage } from 'twenty-shared/types';
 
@@ -22,6 +23,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
     clientChatMessage: ClientChatMessage,
     workspaceId: string,
     providerIntegrationId: string,
+    clientChat: ClientChatWorkspaceEntity,
   ) {
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
@@ -43,7 +45,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
       'Content-Type': 'application/json',
     };
 
-    const fields = getMessageFields(clientChatMessage);
+    const fields = await getMessageFields(clientChatMessage, clientChat);
 
     try {
       if (apiType === 'MetaAPI') {

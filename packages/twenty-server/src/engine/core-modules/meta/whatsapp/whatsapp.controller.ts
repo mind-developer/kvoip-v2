@@ -80,13 +80,17 @@ export class WhatsappController {
     const statuses = body.entry[0]?.changes[0]?.statuses ?? null;
 
     if (statuses) {
-      this.chatMessageManagerService.updateMessage(
-        statuses[0].id,
-        {
-          deliveryStatus: statuses[0].status?.toUpperCase() ?? null,
-        },
-        workspaceId,
-      );
+      try {
+        await this.chatMessageManagerService.updateMessage(
+          statuses[0].id,
+          {
+            deliveryStatus: statuses[0].status?.toUpperCase() ?? null,
+          },
+          workspaceId,
+        );
+      } catch (error) {
+        this.logger.error('Error updating message:', error);
+      }
       return true;
     }
     if (!messages) {

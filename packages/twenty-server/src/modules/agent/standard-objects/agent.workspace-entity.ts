@@ -35,11 +35,10 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'agents',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @WorkspaceIsNullable()
-  sector: Relation<SectorWorkspaceEntity | null>;
+  sector: Relation<SectorWorkspaceEntity>;
 
   @WorkspaceJoinColumn('sector')
-  sectorId: string | null;
+  sectorId: string;
 
   @WorkspaceRelation({
     standardId: AGENT_FIELD_IDS.workspaceMember,

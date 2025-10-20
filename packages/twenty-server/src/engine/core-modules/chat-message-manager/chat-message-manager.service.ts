@@ -10,10 +10,12 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import {
   ChatIntegrationProvider,
   ChatMessageFromType,
@@ -21,6 +23,8 @@ import {
   ClientChatMessageEvent,
   ClientChatStatus,
 } from 'twenty-shared/types';
+import { UpdateResult } from 'typeorm';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class ChatMessageManagerService {
@@ -50,7 +54,6 @@ export class ChatMessageManagerService {
       return;
     }
     clientChat.person = person;
-    this.logger.log('Client chat updated:', clientChat);
     this.clientChatMessageService.publishChatUpdated(
       clientChat,
       clientChat.sectorId!,
@@ -75,7 +78,6 @@ export class ChatMessageManagerService {
       return;
     }
     clientChat.person = person;
-    this.logger.log('Client chat created:', clientChat);
     this.clientChatMessageService.publishChatCreated(
       clientChat,
       clientChat.sectorId!,
@@ -86,56 +88,27 @@ export class ChatMessageManagerService {
     clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
     workspaceId: string,
     providerIntegrationId: string,
-  ) {
+  ): Promise<string> {
     if (clientChatMessage.event) {
-      if (
-        clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_SECTOR ||
-        clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT
-      ) {
-        //from is the agent id or sector id, to is the agent id or sector id
-        const clientChatRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
-            workspaceId,
-            'clientChat',
-            { shouldBypassPermissionChecks: true },
-          );
-        const clientChat = await clientChatRepository.findOne({
-          where: { id: clientChatMessage.clientChatId },
-          relations: ['person'],
-        });
-        if (!clientChat) {
-          this.logger.error(
-            'Client chat not found:',
-            clientChatMessage.clientChatId,
-          );
-          return;
-        }
-        if (
-          clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_SECTOR
-        ) {
-          clientChat.sectorId = clientChatMessage.to;
-          clientChat.agentId = null;
-          clientChat.status = ClientChatStatus.UNASSIGNED;
-        } else {
-          clientChat.agentId = clientChatMessage.to;
-          clientChat.status = ClientChatStatus.ASSIGNED;
-        }
-        await clientChatRepository.save(clientChat);
-        await this.clientChatMessageService.publishChatDeleted(
-          clientChat,
-          clientChatMessage.from,
-        );
-        await this.clientChatMessageService.publishChatCreated(
-          clientChat,
-          clientChatMessage.to,
-        );
-      }
+      this.handleEventMessage(clientChatMessage, workspaceId);
+      return v4();
     }
     const providerDriver = this.getProviderDriver(clientChatMessage.provider);
+    const clientChatRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+        workspaceId,
+        'clientChat',
+        { shouldBypassPermissionChecks: true },
+      );
+    const clientChat = await clientChatRepository.findOne({
+      where: { id: clientChatMessage.clientChatId },
+    });
+    if (!clientChat) throw new Error('Client chat not found');
     const providerMessageId = await providerDriver.sendMessage(
       clientChatMessage,
       workspaceId,
       providerIntegrationId,
+      clientChat,
     );
     this.saveMessage(
       {
@@ -151,7 +124,7 @@ export class ChatMessageManagerService {
     clientChatId: string,
     data: Partial<ClientChatWorkspaceEntity>,
     workspaceId: string,
-  ) {
+  ): Promise<UpdateResult> {
     const clientChatRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
         workspaceId,
@@ -165,13 +138,162 @@ export class ChatMessageManagerService {
     return updatedClientChat;
   }
 
+  async transferService(
+    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
+    workspaceId: string,
+  ): Promise<void> {
+    if (
+      clientChatMessage.event !== ClientChatMessageEvent.TRANSFER_TO_AGENT &&
+      clientChatMessage.event !== ClientChatMessageEvent.TRANSFER_TO_SECTOR
+    )
+      throw new Error('Must be transfer event');
+
+    //from is the agent id or sector id, to is the agent id or sector id
+    const clientChatRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+        workspaceId,
+        'clientChat',
+        { shouldBypassPermissionChecks: true },
+      );
+    const clientChat = await clientChatRepository.findOne({
+      where: { id: clientChatMessage.clientChatId },
+      relations: ['person'],
+    });
+    if (!clientChat)
+      throw new Error('Chat not found ' + clientChatMessage.clientChatId);
+    clientChat.unreadMessagesCount = 1;
+    if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_SECTOR) {
+      //chat disappears from agent who transferred it (published to the agent's sector channel)
+      await this.clientChatMessageService.publishChatDeleted(
+        clientChat,
+        clientChat.sectorId,
+      );
+      //change sector to the new sector
+      clientChat.sectorId = clientChatMessage.to;
+      clientChat.agentId = null;
+      clientChat.status = ClientChatStatus.UNASSIGNED;
+      //chat appears in sector who transferred it (published to the sector channel)
+      await this.clientChatMessageService.publishChatCreated(
+        clientChat,
+        clientChatMessage.to,
+      );
+    }
+    if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {
+      //chat disappears from agent who transferred it (published to the agent's sector channel)
+      await this.clientChatMessageService.publishChatDeleted(
+        clientChat,
+        clientChat.sectorId,
+      );
+      const agent = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<AgentWorkspaceEntity>(
+          workspaceId,
+          'agent',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).findOne({
+        where: { id: clientChatMessage.to },
+      });
+      if (!agent) throw new Error('Agent not found ' + clientChatMessage.to);
+      clientChat.agentId = agent.id;
+      clientChat.status = ClientChatStatus.ASSIGNED;
+      if (agent) {
+        clientChat.sectorId = agent.sectorId;
+      }
+      //chat appears in agent who transferred it (published to the agent's sector channel)
+      await this.clientChatMessageService.publishChatCreated(
+        clientChat,
+        clientChat.sectorId,
+      );
+    }
+    await this.updateChat(clientChat.id, clientChat, workspaceId);
+    const messageRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+        workspaceId,
+        'clientChatMessage',
+        { shouldBypassPermissionChecks: true },
+      );
+    await messageRepository.save({
+      ...clientChatMessage,
+    });
+  }
+
+  async handleEventMessage(
+    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
+    workspaceId: string,
+  ): Promise<void> {
+    //TRANSFER EVENTS
+    if (
+      clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_SECTOR ||
+      clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT
+    ) {
+      this.transferService(clientChatMessage, workspaceId);
+    }
+    if (clientChatMessage.event === ClientChatMessageEvent.END) {
+      const clientChatRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+          workspaceId,
+          'clientChat',
+          { shouldBypassPermissionChecks: true },
+        );
+      const clientChat = await clientChatRepository.findOne({
+        where: { id: clientChatMessage.clientChatId },
+        relations: ['person'],
+      });
+      if (!clientChat) throw new Error('Client chat not found');
+      clientChat.status = ClientChatStatus.FINISHED;
+      await clientChatRepository.save(clientChat);
+      this.clientChatMessageService.publishChatDeleted(
+        clientChat,
+        clientChat.sectorId,
+      );
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).save({
+        ...clientChatMessage,
+      });
+    }
+    if (clientChatMessage.event === ClientChatMessageEvent.START) {
+      const clientChatRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+          workspaceId,
+          'clientChat',
+          { shouldBypassPermissionChecks: true },
+        );
+      const clientChat = await clientChatRepository.findOne({
+        where: { id: clientChatMessage.clientChatId },
+        relations: ['person'],
+      });
+      if (!clientChat) throw new Error('Client chat not found');
+      clientChat.status = ClientChatStatus.ASSIGNED;
+      clientChat.agentId = clientChatMessage.from;
+      clientChat.sectorId = clientChatMessage.to;
+      await clientChatRepository.update(clientChat.id, clientChat);
+      this.clientChatMessageService.publishChatUpdated(
+        clientChat,
+        clientChat.sectorId,
+      );
+      this.clientChatMessageService.publishMessageCreated(
+        {
+          ...clientChatMessage,
+          createdAt: new Date().toISOString(),
+          providerMessageId: v4(),
+        },
+        clientChat.id,
+      );
+    }
+  }
+
   async saveMessage(
     clientChatMessage: Omit<
       ClientChatMessageWorkspaceEntity,
       'createdAt' | 'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
     >,
     workspaceId: string,
-  ) {
+  ): Promise<ClientChatMessageWorkspaceEntity> {
     try {
       const messageRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -179,6 +301,13 @@ export class ChatMessageManagerService {
           'clientChatMessage',
           { shouldBypassPermissionChecks: true },
         );
+      if (clientChatMessage.attachmentUrl) {
+        clientChatMessage.attachmentUrl =
+          clientChatMessage.attachmentUrl.replace(
+            this.environmentService.get('SERVER_URL') + '/files/',
+            '',
+          );
+      }
       const message = await messageRepository.save(clientChatMessage);
 
       const clientChatRepository =
@@ -193,6 +322,27 @@ export class ChatMessageManagerService {
       });
 
       if (!clientChat) throw new Error('Client chat not found');
+      if (clientChat.status === ClientChatStatus.FINISHED) {
+        //add more integrations here in the future
+        const whatsappIntegration = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+            workspaceId,
+            'whatsappIntegration',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { id: clientChat.whatsappIntegrationId ?? '' } });
+
+        if (!whatsappIntegration)
+          throw new Error('Whatsapp integration not found');
+
+        clientChat.status = ClientChatStatus.UNASSIGNED;
+        clientChat.agentId = null;
+        clientChat.sectorId = whatsappIntegration.defaultSectorId;
+        this.clientChatMessageService.publishChatCreated(
+          clientChat,
+          whatsappIntegration.defaultSectorId,
+        );
+      }
       clientChat.unreadMessagesCount =
         message.fromType === ChatMessageFromType.PERSON
           ? clientChat.unreadMessagesCount + 1
@@ -219,7 +369,7 @@ export class ChatMessageManagerService {
     providerMessageId: string,
     data: Partial<ClientChatMessageWorkspaceEntity>,
     workspaceId: string,
-  ) {
+  ): Promise<ClientChatMessageWorkspaceEntity> {
     try {
       const messageRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -232,7 +382,7 @@ export class ChatMessageManagerService {
           providerMessageId,
         },
       });
-      if (!message) return;
+      if (!message) throw new Error('Message not found');
       const updatedMessage = {
         ...message,
         ...data,
@@ -244,9 +394,10 @@ export class ChatMessageManagerService {
         },
         updatedMessage.clientChatId,
       );
-      await messageRepository.save(updatedMessage);
+      const result = await messageRepository.save(updatedMessage);
+      return result;
     } catch (error) {
-      this.logger.error('Error updating message:', error);
+      throw new Error('Error updating message: ' + error);
     }
   }
 

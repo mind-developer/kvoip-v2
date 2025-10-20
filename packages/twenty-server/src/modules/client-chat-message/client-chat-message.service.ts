@@ -83,6 +83,7 @@ export class ClientChatMessageService {
       clientChatEventDate: new Date(),
       clientChat: chat,
     };
+    console.log('publishChatDeleted', channel, eventData);
 
     await this.pubSub.publish(channel, eventData);
   }
