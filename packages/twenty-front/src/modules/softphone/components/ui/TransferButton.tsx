@@ -15,24 +15,23 @@ const TransferButton: React.FC<TransferButtonProps> = ({ type, sendDTMF }) => {
   const theme = useTheme();
 
   const handleTransfer = () => {
-    const extension = window.prompt('Enter the extension to transfer to:');
+    const extension = window.prompt('Digite a extensão para transferir:');
 
     console.log('Extension to transfer:', extension);
     console.log('Type of transfer:', type);
 
-    if (extension) {
-      if (type === 'attended') {
-        sendDTMF(`${extension}`);
-      } else {
-        sendDTMF(`${extension}`);
-      }
+    if (extension && extension.trim()) {
+      const extensionDigits = extension.trim();
+      console.log('Transferindo para extensão:', extensionDigits);
+      
+      // Usar a função de transferência real (SessionManager)
+      sendDTMF(extensionDigits);
       setIsTransferring(true);
     }
   };
 
   const handleCompleteTransfer = () => {
-    // const extension = window.prompt('Enter the extension to transfer to:');
-
+    console.log('Transferência completada');
     setIsTransferring(false);
   };
 
