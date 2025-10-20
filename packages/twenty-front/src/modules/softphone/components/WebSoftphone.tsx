@@ -7,7 +7,16 @@ import DTMFButton from '@/softphone/components/ui/DTMFButton';
 import Keyboard from '@/softphone/components/ui/Keyboard';
 import KeyboardToggleButton from '@/softphone/components/ui/KeyboardToggleButton';
 import StatusIndicator from '@/softphone/components/ui/StatusPill';
-import { SoftphoneStatus } from '@/softphone/constants/SoftphoneStatus';
+import {
+  CALL_TRANSFER_CONFIG,
+  DTMF_CONFIG,
+  REGISTRATION_CONFIG,
+  SESSION_CONFIG,
+  SoftphoneStatus,
+  TELEPHONY_AUDIO_CONFIG,
+  USER_AGENT_CONFIG,
+  WEBRTC_CONFIG
+} from '@/softphone/constants';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
@@ -28,7 +37,8 @@ import {
   SessionManager,
 } from 'sip.js/lib/platform/web';
 import { IconArrowLeft, IconPhone, IconSettings, useIcons } from 'twenty-ui/display';
-import defaultCallState from '../constants/DefaultCallState';
+import defaultCallState from '../constants/defaultCallState';
+import { useTelephonyUserData } from '../hooks/query/useTelephonyUserData';
 import { useAudioDevices } from '../hooks/useAudioDevices';
 import { useCallAudio } from '../hooks/useCallAudio';
 import { useCallStates } from '../hooks/useCallStates';
@@ -36,7 +46,6 @@ import { useDialingTone } from '../hooks/useDialingTone';
 import { useRingTone } from '../hooks/useRingTone';
 import { useSipConfig } from '../hooks/useSipConfig';
 import { useSipRefs } from '../hooks/useSipRefs';
-import { useTelephonyUserData } from '../hooks/useTelephonyUserData';
 import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
 import { SipConfig } from '../types/sipConfig';
@@ -84,7 +93,6 @@ const StyledIncomingNumber = styled.span<{ alignSelf?: string }>`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
-
 
 const StyledTextAndCallButton = styled.div`
   display: flex;
@@ -175,6 +183,10 @@ const WebSoftphone: React.FC = () => {
   const { openModal } = useModal();
   const { getIcon } = useIcons();
   const { t } = useLingui();
+  const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
+  const IconMicrophoneOff = getIcon('IconMicrophoneOff');
+
+  const theme = useTheme();
 
   // Hooks de áudio
   useRingTone(isRinging, isIncomingCall);
@@ -251,7 +263,7 @@ const WebSoftphone: React.FC = () => {
       }
 
       // Criar novo elemento de áudio
-      const audio = new Audio('https://kvoip.com.br/toquedechamada.mp3');
+      const audio = new Audio(TELEPHONY_AUDIO_CONFIG.RINGTONE_URL);
       audioDevices.ringAudioRef.current = audio;
 
       // Configurar o dispositivo de toque
@@ -578,7 +590,7 @@ const WebSoftphone: React.FC = () => {
 
       const userAgent = new UserAgent({
         uri,
-        userAgentString: 'RamalWeb/1.1.11', // Define o UserAgent
+        userAgentString: USER_AGENT_CONFIG.USER_AGENT_STRING,
         transportOptions: {
           server: wsServer,
           traceSip: true,
@@ -588,25 +600,22 @@ const WebSoftphone: React.FC = () => {
         authorizationPassword: updatedConfig.password,
         displayName: updatedConfig.username,
         contactName: updatedConfig.username,
-        noAnswerTimeout: 60,
-        hackIpInContact: false,
-        logLevel: 'error',
+        noAnswerTimeout: USER_AGENT_CONFIG.NO_ANSWER_TIMEOUT,
+        hackIpInContact: USER_AGENT_CONFIG.HACK_IP_IN_CONTACT,
+        logLevel: USER_AGENT_CONFIG.LOG_LEVEL,
         logConnector: console.log,
         sessionDescriptionHandlerFactoryOptions: {
-          constraints: {
-            audio: true,
-            video: false,
-          },
+          constraints: SESSION_CONFIG.MEDIA_CONSTRAINTS,
           peerConnectionOptions: {
             rtcConfiguration: {
-              iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
+              iceServers: WEBRTC_CONFIG.ICE_SERVERS,
             },
           },
           modifiers: [
             (description: RTCSessionDescriptionInit) => {
               description.sdp = description.sdp?.replace(
-                'a=rtpmap:101 telephone-event/8000',
-                'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
+                SESSION_CONFIG.DTMF_CONFIG.RTP_MAP,
+                `${SESSION_CONFIG.DTMF_CONFIG.RTP_MAP}\r\n${SESSION_CONFIG.DTMF_CONFIG.FORMAT_PARAMS}`,
               );
               return Promise.resolve(description);
             },
@@ -690,9 +699,9 @@ const WebSoftphone: React.FC = () => {
         console.log('Transport connected');
         try {
           const registerer = new Registerer(userAgent, {
-            expires: 10, //tempo de registro
-            extraHeaders: ['X-oauth-dazsoft: 1'],
-            regId: 1,
+            expires: REGISTRATION_CONFIG.EXPIRES,
+            extraHeaders: REGISTRATION_CONFIG.EXTRA_HEADERS,
+            regId: REGISTRATION_CONFIG.REG_ID,
           });
 
           sipRefs.registererRef.current = registerer;
@@ -730,7 +739,7 @@ const WebSoftphone: React.FC = () => {
                 console.error('Error renewing registration:', error);
               });
             }
-          }, 270000); // Renew registration every 4.5 minutes (270000 ms) // it was 20000
+          }, REGISTRATION_CONFIG.RENEWAL_INTERVAL);
         } catch (error) {
           console.error('Registration error:', error);
           setCallState((prev) => ({
@@ -798,7 +807,7 @@ const WebSoftphone: React.FC = () => {
     }
 
     console.log('Enviando DTMF:', tone);
-    dtmfSender.insertDTMF(tone, 100);
+    dtmfSender.insertDTMF(tone, DTMF_CONFIG.TONE_DURATION);
   };
 
   const requestMediaPermissions = async () => {
@@ -832,12 +841,9 @@ const WebSoftphone: React.FC = () => {
       }
 
       const inviter = new Inviter(sipRefs.userAgentRef.current, target, {
-        extraHeaders: ['X-oauth-dazsoft: 1'],
+        extraHeaders: SESSION_CONFIG.EXTRA_HEADERS,
         sessionDescriptionHandlerOptions: {
-          constraints: {
-            audio: true,
-            video: false,
-          },
+          constraints: SESSION_CONFIG.MEDIA_CONSTRAINTS,
         },
       });
 
@@ -892,10 +898,7 @@ const WebSoftphone: React.FC = () => {
 
       await sipRefs.invitationRef.current.accept({
         sessionDescriptionHandlerOptions: {
-          constraints: {
-            audio: true,
-            video: false,
-          },
+          constraints: SESSION_CONFIG.MEDIA_CONSTRAINTS,
         },
       });
 
@@ -942,14 +945,14 @@ const WebSoftphone: React.FC = () => {
 
   const transferCall = (to: string) => {
     const sessionManager = new SessionManager(
-      'wss://webrtc.dazsoft.com:8080/ws',
-      { registererOptions: { extraHeaders: ['X-oauth-dazsoft: 1'] } },
+      CALL_TRANSFER_CONFIG.SERVER_URL,
+      { registererOptions: CALL_TRANSFER_CONFIG.REGISTERER_OPTIONS },
     );
 
     if (sipRefs.sessionRef.current)
       sessionManager?.transfer(
         sipRefs.sessionRef.current,
-        `sip:${to}@suite.pabx.digital`,
+        `sip:${to}@${CALL_TRANSFER_CONFIG.TRANSFER_DOMAIN}`,
       );
   };
 
@@ -959,12 +962,6 @@ const WebSoftphone: React.FC = () => {
       currentNumber: prev.currentNumber + key,
     }));
   };
-
-  const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
-  const IconMicrophoneOff = getIcon('IconMicrophoneOff');
-
-
-  const theme = useTheme();
 
   const handleSendDtmf = (key: string) => {
     if (sipRefs.sessionRef.current?.state === SessionState.Established) {

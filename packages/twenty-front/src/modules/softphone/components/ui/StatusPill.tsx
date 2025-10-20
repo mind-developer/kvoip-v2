@@ -1,7 +1,7 @@
 /* @kvoip-woulz proprietary */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { SoftphoneStatus, useSoftphoneStatusTranslations } from '../../constants/SoftphoneStatus';
+import { SoftphoneStatus, useSoftphoneStatusTranslations } from '../../constants/enum/SoftphoneStatus';
 
 const StyledContainer = styled.div`
   display: flex;

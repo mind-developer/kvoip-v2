@@ -1,6 +1,7 @@
 /* @kvoip-woulz proprietary */
 import { useEffect, useState } from 'react';
 
+import { SIP_SERVER_CONFIG } from '../constants';
 import { SipConfig } from '../types/sipConfig';
 
 export const useSipConfig = (telephonyExtension: any) => {
@@ -9,9 +10,9 @@ export const useSipConfig = (telephonyExtension: any) => {
   useEffect(() => {
     if (telephonyExtension) {
       setConfig({
-        domain: 'suite.pabx.digital',
-        proxy: 'webrtc.dazsoft.com:8080',
-        protocol: 'wss://',
+        domain: SIP_SERVER_CONFIG.DOMAIN,
+        proxy: SIP_SERVER_CONFIG.PROXY,
+        protocol: SIP_SERVER_CONFIG.PROTOCOL,
         authorizationHa1: '',
         username: telephonyExtension.usuario_autenticacao,
         password: telephonyExtension.senha_sip,
