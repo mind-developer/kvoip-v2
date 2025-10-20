@@ -150,6 +150,14 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CFOP`,
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        pattern: '^\\d{4}$',
+        mask: '0000',
+        placeholder: '0000',
+        errorMessage: 'Invalid CFOP. Expected format: 0000 (4 digits)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cfop: string;
@@ -160,6 +168,14 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST/CSOSN`,
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        pattern: '^\\d{3}$',
+        mask: '000',
+        placeholder: '000',
+        errorMessage: 'Invalid CST/CSOSN. Expected format: 000 (3 digits)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstIcmsCsosn: string;

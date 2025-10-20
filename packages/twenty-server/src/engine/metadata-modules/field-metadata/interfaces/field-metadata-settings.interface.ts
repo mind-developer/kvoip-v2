@@ -27,8 +27,16 @@ export type FieldMetadataNumberSettings = {
   type?: FieldNumberVariant;
 };
 
+export type FieldMetadataTextValidation = {
+  pattern: string;
+  mask?: string;
+  placeholder?: string;
+  errorMessage?: string;
+};
+
 export type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
+  validation?: FieldMetadataTextValidation;
 };
 
 export type FieldMetadataDateSettings = {
@@ -44,6 +52,7 @@ export type FieldMetadataRelationSettings = {
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
 };
+
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
@@ -71,7 +80,7 @@ export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
+    ? null | AllFieldMetadataSettings
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T]
       : never | null;

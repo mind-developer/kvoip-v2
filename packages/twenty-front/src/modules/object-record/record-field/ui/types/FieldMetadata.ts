@@ -11,6 +11,13 @@ import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 import { type CurrencyCode } from './CurrencyCode';
 
+export type FieldTextValidation = {
+  pattern: string;
+  mask?: string;
+  placeholder?: string;
+  errorMessage?: string;
+};
+
 type BaseFieldMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
@@ -30,6 +37,7 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     displayedMaxRows?: number;
+    validation?: FieldTextValidation;
   };
 };
 

@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
+import { validateTextPattern } from 'src/engine/core-modules/record-transformer/utils/validate-text-pattern.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   type RichTextV2Metadata,
   richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class RecordInputTransformerService {
@@ -43,6 +42,7 @@ export class RecordInputTransformerService {
         await this.transformFieldValue(
           fieldMetadata.type,
           this.stringifySubFields(fieldMetadata.type, value),
+          fieldMetadata, 
         ),
       );
 
@@ -56,7 +56,7 @@ export class RecordInputTransformerService {
     fieldType: FieldMetadataType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fieldMetadata?: any, 
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
@@ -67,6 +67,8 @@ export class RecordInputTransformerService {
         return value || null;
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
+      case FieldMetadataType.TEXT:
+        return this.transformTextValue(value, fieldMetadata);
       case FieldMetadataType.RICH_TEXT:
         throw new Error(
           'Rich text is not supported, please use RICH_TEXT_V2 instead',
@@ -82,6 +84,21 @@ export class RecordInputTransformerService {
       default:
         return value;
     }
+  }
+
+  private transformTextValue(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: any,
+    fieldMetadata?: any,
+  ): string | null {
+    const stringValue = String(value);
+    
+    if (!fieldMetadata?.settings?.validation) {
+      return stringValue;
+    }
+
+    const { pattern, errorMessage } = fieldMetadata.settings.validation;
+    return validateTextPattern(stringValue, pattern, errorMessage);
   }
 
   private async transformRichTextV2Value(
