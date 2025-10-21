@@ -45,6 +45,7 @@ export class TextInputHandler implements NodeHandler {
         attachmentUrl: null,
         event: null,
       };
+      console.log('text input handler sending message', message);
       this.chatMessageManagerService.sendMessage(
         message,
         workspaceId,

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
@@ -10,13 +9,11 @@ import {
 } from 'src/engine/core-modules/chatbot-runner/types/CreateExecutorInput';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import { NodeTypes } from 'src/engine/core-modules/chatbot-runner/types/NodeTypes';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class ChatbotRunnerService {
   executors: Record<string, ExecuteFlow>;
   constructor(
-    @InjectRepository(Workspace)
     private readonly textInputHandler: TextInputHandler,
     private readonly imageInputHandler: ImageInputHandler,
     private readonly fileInputHandler: FileInputHandler,
@@ -57,9 +54,9 @@ class ExecuteFlow {
   currentNodeId: string | undefined;
   chosenInput: string | undefined;
   constructor(private i: ExecutorInput) {
-    // this.currentNodeId = this.i.chatbot.nodes.find(
-    //   (node) => node.data?.nodeStart,
-    // )?.id;
+    this.currentNodeId = this.i.chatbot.nodes.find(
+      (node) => node.data?.nodeStart,
+    )?.id;
   }
 
   public async runFlow(incomingMessage: string) {
@@ -67,9 +64,15 @@ class ExecuteFlow {
       const currentNode = this.i.chatbot.nodes.find(
         (node) => node.id === this.currentNodeId,
       );
-      if (!currentNode || typeof currentNode.type !== 'string') break;
+      if (!currentNode || typeof currentNode.type !== 'string') {
+        console.log('current node not found or type not string');
+        break;
+      }
       const handler = this.i.handlers[currentNode.type];
-      if (!handler) break;
+      if (!handler) {
+        console.log('handler not found for node', currentNode.type);
+        break;
+      }
       const nextNodeId = await handler.process({
         provider: this.i.provider,
         providerIntegrationId: this.i.providerIntegrationId,
@@ -97,10 +100,12 @@ class ExecuteFlow {
         }
       }
       if (!nextNodeId) {
+        console.log('on finish', currentNode.type, this.chosenInput);
         if (
           this.i.onFinish &&
-          ['text', 'image', 'file'].includes(currentNode.type)
+          ['text', 'image', 'file', 'condition'].includes(currentNode.type)
         ) {
+          console.log('on finish', currentNode.type, this.chosenInput);
           this.i.onFinish(currentNode, this.chosenInput);
         }
         break;

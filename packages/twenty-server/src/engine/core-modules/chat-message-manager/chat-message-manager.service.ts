@@ -89,6 +89,7 @@ export class ChatMessageManagerService {
     workspaceId: string,
     providerIntegrationId: string,
   ): Promise<string> {
+    console.log('sending message', clientChatMessage);
     if (clientChatMessage.event) {
       this.handleEventMessage(clientChatMessage, workspaceId);
       return v4();
@@ -272,6 +273,17 @@ export class ChatMessageManagerService {
       clientChat.agentId = clientChatMessage.from;
       clientChat.sectorId = clientChatMessage.to;
       await clientChatRepository.update(clientChat.id, clientChat);
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).save({
+        ...clientChatMessage,
+        createdAt: new Date().toISOString(),
+        providerMessageId: v4(),
+      });
       this.clientChatMessageService.publishChatUpdated(
         clientChat,
         clientChat.sectorId,

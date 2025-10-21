@@ -5,8 +5,6 @@ import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
@@ -35,10 +33,7 @@ export class ConditionalInputHandler implements NodeHandler {
     }
   }
 
-  constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private chatMessageManagerService: ChatMessageManagerService,
-  ) {
+  constructor(private chatMessageManagerService: ChatMessageManagerService) {
     //this will probably cause issues
     this.askedNodes = new Set<string>();
   }
