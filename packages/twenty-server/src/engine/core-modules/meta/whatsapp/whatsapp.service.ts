@@ -244,21 +244,13 @@ export class WhatsAppService {
           return true;
         }
 
-        console.log('saving base event message');
-        this.chatMessageManagerService.saveMessage(
+        this.chatMessageManagerService.sendMessage(
           {
             ...baseEventMessage,
             event: ClientChatMessageEvent.CHATBOT_START,
           },
           workspaceId,
-        );
-
-        this.chatMessageManagerService.updateChat(
-          clientChat.id,
-          {
-            status: ClientChatStatus.CHATBOT,
-          },
-          workspaceId,
+          integrationId,
         );
 
         console.log('getting sectors');
@@ -270,7 +262,6 @@ export class WhatsAppService {
           )
         ).find();
 
-        console.log('creating executor');
         executor = this.ChatbotRunnerService.createExecutor({
           provider: ChatIntegrationProvider.WHATSAPP,
           providerIntegrationId: integrationId,
@@ -285,20 +276,13 @@ export class WhatsAppService {
           onFinish: (_, sectorId: string) => {
             console.log('on finish', sectorId);
             if (sectorId) {
-              this.chatMessageManagerService.saveMessage(
+              this.chatMessageManagerService.sendMessage(
                 {
                   ...baseEventMessage,
                   event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
                 },
                 workspaceId,
-              );
-              this.chatMessageManagerService.updateChat(
-                clientChat.id,
-                {
-                  sectorId: sectorId,
-                  status: ClientChatStatus.UNASSIGNED,
-                },
-                workspaceId,
+                integrationId,
               );
               return;
             }
@@ -309,19 +293,15 @@ export class WhatsAppService {
             //     status: ClientChatStatus.ASSIGNED,
             //   }, workspaceId);
             // }
-            this.chatMessageManagerService.saveMessage(
+            this.chatMessageManagerService.sendMessage(
               {
                 ...baseEventMessage,
                 event: ClientChatMessageEvent.CHATBOT_END,
               },
               workspaceId,
+              integrationId,
             );
             this.ChatbotRunnerService.clearExecutor(clientChat.id);
-            this.chatMessageManagerService.updateChat(
-              clientChat.id,
-              { status: ClientChatStatus.UNASSIGNED },
-              workspaceId,
-            );
           },
         });
         console.log('running flow');
