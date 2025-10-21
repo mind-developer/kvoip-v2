@@ -36,6 +36,7 @@ import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-char
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
@@ -60,6 +61,7 @@ export class InterService {
     private readonly interIntegrationService: InterIntegrationService,
     private readonly interInstanceService: InterInstanceService,
     private readonly fileUploadService: FileUploadService,
+    private readonly fileService: FileService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
@@ -103,6 +105,7 @@ export class InterService {
 
       const bankSlipFileLink = this.getFileLinkFromPath(
         interBillingChargeFilePath,
+        workspaceId,
       );
 
       await this.sendBankSkipFileEmail({
@@ -193,7 +196,10 @@ export class InterService {
         currentInterBankSlipChargeFilePath: bolepixFilePath,
       });
 
-      const bankSlipFileLink = this.getFileLinkFromPath(bolepixFilePath);
+      const bankSlipFileLink = this.getFileLinkFromPath(
+        bolepixFilePath,
+        workspaceId,
+      );
 
       await this.sendBankSkipFileEmail({
         fileLink: bankSlipFileLink,
@@ -438,10 +444,15 @@ export class InterService {
     }
   }
 
-  getFileLinkFromPath(filePath: string) {
+  getFileLinkFromPath(filePath: string, workspaceId: string) {
     const baseUrl = this.twentyConfigService.get('SERVER_URL');
 
-    return `${baseUrl}/files/${filePath}`;
+    const signedPath = this.fileService.signFileUrl({
+      url: filePath,
+      workspaceId,
+    });
+
+    return `${baseUrl}/files/${signedPath}`;
   }
 
   private getAuthHeaders(integration: InterIntegration) {
