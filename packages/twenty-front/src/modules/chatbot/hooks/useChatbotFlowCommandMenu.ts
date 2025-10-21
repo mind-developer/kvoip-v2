@@ -30,26 +30,23 @@ export const useChatbotFlowCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  const openChatbotFlowStepEditCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (chatbotFlowId: string, title: string, icon: IconComponent) => {
-        const pageId = v4();
+  const openChatbotFlowStepEditCommandMenu = ({ set }) => {
+    return (chatbotFlowId: string, title: string, icon: IconComponent) => {
+      const pageId = chatbotFlowId;
 
-        set(
-          chatbotIdComponentState.atomFamily({ instanceId: pageId }),
-          chatbotFlowId,
-        );
+      set(
+        chatbotIdComponentState.atomFamily({ instanceId: pageId }),
+        chatbotFlowId,
+      );
 
-        navigateCommandMenu({
-          page: CommandMenuPages.ChatbotFlowStepEdit,
-          pageTitle: title,
-          pageIcon: icon,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
-  );
+      navigateCommandMenu({
+        page: CommandMenuPages.ChatbotFlowStepEdit,
+        pageTitle: title,
+        pageIcon: icon,
+        pageId,
+      });
+    };
+  };
 
   return {
     openChatbotFlowCommandMenu,

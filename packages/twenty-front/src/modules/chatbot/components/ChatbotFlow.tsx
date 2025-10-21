@@ -14,9 +14,9 @@ import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/Cha
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
 
 import { useSetChatbotFlowState } from '@/chatbot/hooks/useSetChatbotFlowState';
-import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useEffect } from 'react';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useParams } from 'react-router-dom';
 
 const types: NodeTypes = {
   text: TextNode,
@@ -25,32 +25,46 @@ const types: NodeTypes = {
   file: FileNode,
 };
 
-export const ChatbotFlow = ({ chatbotId }: { chatbotId: string }) => {
-  const { record: chatbot } = useFindOneRecord<
-    Omit<ChatbotFlowData, 'id'> & { id: string; __typename: string }
-  >({
-    objectNameSingular: 'chatbot',
-    objectRecordId: chatbotId,
+export const ChatbotFlow = () => {
+  const { chatbotId } = useParams();
+  const { records: chatbot } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Chatbot,
+    filter: {
+      id: {
+        eq: chatbotId,
+      },
+    },
+    recordGqlFields: {
+      id: true,
+      nodes: true,
+      edges: true,
+      viewport: true,
+      status: true,
+    },
   });
   const { setChatbotFlowState } = useSetChatbotFlowState();
-  const status = chatbot?.status ?? 'DEACTIVATED';
+  if (!chatbot[0]) return null;
 
-  useEffect(() => {
-    if (chatbot) setChatbotFlowState(chatbot);
-  }, [chatbot]);
+  setChatbotFlowState({
+    nodes: chatbot[0].nodes,
+    edges: chatbot[0].edges,
+    chatbotId: chatbot[0].id,
+    viewport: chatbot[0].viewport,
+  });
+
+  const status = chatbot[0]?.status ?? 'DEACTIVATED';
 
   const tagProps = chatbotStatusTagProps({
     chatbotStatus: status,
   });
 
-  if (chatbot)
+  if (chatbot[0])
     return (
       <ReactFlowProvider>
         <BotDiagramBase
           nodeTypes={types}
           tagColor={tagProps.color}
           tagText={tagProps.text}
-          chatbotId={chatbot.id}
         />
         <ChatbotFlowDiagramCanvasEditableEffect />
       </ReactFlowProvider>

@@ -2,9 +2,8 @@
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
-import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
@@ -106,14 +105,14 @@ export const ChatbotFlowTextEventForm = ({
   const [title, setTitle] = useState(initialTitle);
   const [text, setText] = useState<string>(initialText);
 
-  const { updateFlow } = useUpdateChatbotFlow();
   const { deleteSelectedNode } = useDeleteSelectedNode();
 
   const chatbotFlow = useGetChatbotFlowState();
-  const saveChatbotFlowState = useSaveChatbotFlowState();
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
+
+  const setChatbotFlowNodes = useSetRecoilState(chatbotFlowNodes);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -154,13 +153,7 @@ export const ChatbotFlowTextEventForm = ({
     const updatedNodes = chatbotFlow.nodes?.map((node) =>
       node.id === selectedNode.id ? updatedNode : node,
     );
-
-    saveChatbotFlowState({
-      chatbotId: chatbotFlow.chatbotId,
-      edges: chatbotFlow.edges,
-      nodes: updatedNodes,
-      viewport: { x: 0, y: 0, zoom: 0 },
-    });
+    setChatbotFlowNodes(updatedNodes);
     setChatbotFlowSelectedNode(updatedNode);
   };
 

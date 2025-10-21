@@ -18,6 +18,9 @@ const StyledChatbotActionMenuContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 export const ChatbotActionMenu = () => {

@@ -3,9 +3,8 @@
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
-import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
@@ -69,17 +68,15 @@ export const ChatbotFlowFileEventForm = ({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { updateFlow } = useUpdateChatbotFlow();
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
-
-  const chatbotFlow = useGetChatbotFlowState();
+  const setChatbotFlowNodes = useSetRecoilState(chatbotFlowNodes);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
 
   const handleSendFile = async (file: File) => {
-    if (!selectedNode || !chatbotFlow) return;
+    if (!selectedNode) return;
 
     setFile(undefined);
 
@@ -96,16 +93,9 @@ export const ChatbotFlowFileEventForm = ({
         },
       };
 
-      const updatedNodes = chatbotFlow.nodes.map((node) =>
-        node.id === selectedNode.id ? updatedNode : node,
+      setChatbotFlowNodes((nodes) =>
+        nodes.map((node) => (node.id === selectedNode.id ? updatedNode : node)),
       );
-
-      updateFlow({
-        chatbotId: chatbotFlow.chatbotId,
-        nodes: updatedNodes,
-        viewport: { x: 0, y: 0, zoom: 0 },
-      });
-
       setChatbotFlowSelectedNode(updatedNode);
     }
   };

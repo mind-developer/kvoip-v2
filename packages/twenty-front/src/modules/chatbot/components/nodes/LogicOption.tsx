@@ -59,7 +59,9 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   showDeleteButton = true,
 }) => {
   const { getIcon } = useIcons();
-  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
     objectNameSingular: CoreObjectNameSingular.Sector,
   });
 

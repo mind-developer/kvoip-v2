@@ -1,7 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
-import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 
@@ -16,7 +14,6 @@ import {
   Connection,
   Controls,
   Edge,
-  Node,
   EdgeChange,
   NodeChange,
   NodeTypes,
@@ -27,7 +24,7 @@ import {
 } from '@xyflow/react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
@@ -35,22 +32,27 @@ import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
-import { useSaveChatbotFlowState } from '@/chatbot/hooks/useSaveChatbotFlowState';
-import { chatbotFlowSelectedNodeState } from '../state/chatbotFlowSelectedNodeState';
+import {
+  initialEdges,
+  initialNodes,
+} from '@/chatbot/flow-templates/mockFlowTemplate';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useParams } from 'react-router-dom';
 import { chatbotFlowEdges, chatbotFlowNodes } from '../state/chatbotFlowState';
 import { GenericNode } from '../types/GenericNode';
-import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
   tagColor: TagColor;
   tagText: string;
-  chatbotId: string;
 };
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
   width: 100%;
+  min-height: 600px;
   position: relative;
 
   /* Below we reset the default styling of Reactflow */
@@ -113,14 +115,18 @@ export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
-  chatbotId,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
+  const { chatbotId } = useParams();
 
-  const nodes = useRecoilValue(chatbotFlowNodes);
-  const edges = useRecoilValue(chatbotFlowEdges);
+  const nodes = useRecoilValue(chatbotFlowNodes) ?? initialNodes;
+  const edges = useRecoilValue(chatbotFlowEdges) ?? initialEdges;
   const setNodes = useSetRecoilState(chatbotFlowNodes);
   const setEdges = useSetRecoilState(chatbotFlowEdges);
+
+  const setChatbotFlowSelectedNode = useSetRecoilState(
+    chatbotFlowSelectedNodeState,
+  );
 
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<{
@@ -138,15 +144,14 @@ export const BotDiagramBase = ({
 
   const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
 
-  const { chatbotFlow } = useValidateChatbotFlow();
   const hasValidatedRef = useRef(false);
 
-  //ideally redo this hook...
-  const { updateFlow } = useUpdateChatbotFlow();
-
-  const saveChatbotFlowState = useSaveChatbotFlowState();
-
-  const chatbotFlowSelectedNode = useRecoilState(chatbotFlowSelectedNodeState);
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Chatbot,
+    recordGqlFields: {
+      id: true,
+    },
+  });
 
   useEffect(() => {
     if (
@@ -155,38 +160,53 @@ export const BotDiagramBase = ({
       chatbotId &&
       !hasValidatedRef.current
     ) {
-      chatbotFlow({ nodes, edges, chatbotId: chatbotId });
       hasValidatedRef.current = true;
     }
   }, [nodes, edges, chatbotId]);
 
-  const saveFlow = useCallback(() => {
+  const handleSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       if (!chatbotId) return;
 
       const newFlow = { ...flow, chatbotId: chatbotId };
-      saveChatbotFlowState(newFlow as ChatbotFlowData);
+      updateOneRecord({
+        idToUpdate: chatbotId,
+        updateOneRecordInput: {
+          nodes: newFlow.nodes,
+          edges: newFlow.edges,
+          viewport: newFlow.viewport,
+        },
+      });
     }
   }, [rfInstance]);
 
   const onNodesChange = useCallback(
-    (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: NodeChange[]) =>
+      setNodes((nds) =>
+        applyNodeChanges(
+          structuredClone(changes),
+          structuredClone(nds ?? initialNodes),
+        ),
+      ),
     [],
   );
 
   const onEdgesChange = useCallback(
     (newEdgesState: EdgeChange[]) =>
-      setEdges((eds) => {
+      setEdges((eds: Edge[]) => {
         const appliedEdgeChanges = applyEdgeChanges(
           structuredClone(newEdgesState),
-          structuredClone(eds),
+          structuredClone(eds ?? initialEdges),
         );
         if (rfInstance) {
-          saveChatbotFlowState({
-            ...rfInstance.toObject(),
-            edges: appliedEdgeChanges,
-            chatbotId,
+          updateOneRecord({
+            idToUpdate: chatbotId ?? '',
+            updateOneRecordInput: {
+              nodes: rfInstance.toObject().nodes,
+              edges: appliedEdgeChanges,
+              viewport: rfInstance.toObject().viewport,
+            },
           });
         }
         return appliedEdgeChanges;
@@ -263,12 +283,20 @@ export const BotDiagramBase = ({
         fitViewOptions={{ padding: 2 }}
         isValidConnection={isValidConnection}
         fitView
-        onClick={() => setIsContextMenuOpen(false)}
+        onClick={() => {
+          setIsContextMenuOpen(false);
+          setChatbotFlowSelectedNode(undefined);
+        }}
         onDragStart={() => setIsContextMenuOpen(false)}
+        onNodeClick={(event, node) => {
+          event.stopPropagation();
+          setChatbotFlowSelectedNode(node);
+          console.log(node);
+        }}
         onContextMenu={handleContextMenu}
       >
         <Controls showZoom={true} />
-        <Background color={theme.border.color.medium} size={2} />
+        <Background bgColor={theme.background.primary} size={2} />
       </ReactFlow>
 
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
@@ -294,7 +322,7 @@ export const BotDiagramBase = ({
           title="Add node"
           onClick={() => chatbotId && openChatbotFlowCommandMenu(chatbotId)}
         />
-        <StyledButton accent="blue" title="Save" onClick={saveFlow} />
+        <StyledButton accent="blue" title="Save" onClick={handleSave} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>
   );

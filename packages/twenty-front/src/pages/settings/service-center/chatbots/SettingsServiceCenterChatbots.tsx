@@ -8,7 +8,12 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus, IconRobot, IconSearch } from '@tabler/icons-react';
+import {
+  IconEaseInOutControlPoints,
+  IconPlus,
+  IconRobot,
+  IconSearch,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tag, type TagColor } from 'twenty-ui/components';
@@ -134,6 +139,21 @@ export default function SettingsServiceCenterChatbots() {
                       <StyledTag
                         color={statusProps.color}
                         text={statusProps.text}
+                      />
+                      <Button
+                        title="Edit flow"
+                        Icon={IconEaseInOutControlPoints}
+                        variant="secondary"
+                        accent="default"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(
+                            getSettingsPath(SettingsPath.ChatbotFlow, {
+                              chatbotId: chatbot.id,
+                            }),
+                          );
+                        }}
                       />
                     </>
                   }

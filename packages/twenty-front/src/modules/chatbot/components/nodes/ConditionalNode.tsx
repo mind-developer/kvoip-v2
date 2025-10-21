@@ -4,6 +4,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { GenericNodeData } from '@/chatbot/types/GenericNode';
 import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
@@ -18,6 +19,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ChatbotFlowConditionalEventForm } from '../actions/ChatbotFlowConditionalEventForm';
 
 const initialState: NewConditionalState = {
@@ -55,6 +57,8 @@ function ConditionalNode({
 
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
+
+  const selectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
 
   const sourceConnections = useNodeConnections({
     id,
@@ -108,6 +112,7 @@ function ConditionalNode({
             thisNode,
           );
         }}
+        isSelected={selectedNode?.id === thisNodeId}
       >
         <Handle
           title={data.title}

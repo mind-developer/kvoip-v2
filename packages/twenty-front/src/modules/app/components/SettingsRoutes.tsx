@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { ChatbotFlow } from '@/chatbot/components/ChatbotFlow';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -579,6 +580,7 @@ export const SettingsRoutes = ({
         path={SettingsPath.ChatbotsEdit}
         element={<SettingsServiceCenterEditChatbot />}
       />
+      <Route path={SettingsPath.ChatbotFlow} element={<ChatbotFlow />} />
       <Route
         path={SettingsPath.ServiceCenterEditSector}
         element={<SettingsServiceCenterEditSector />}

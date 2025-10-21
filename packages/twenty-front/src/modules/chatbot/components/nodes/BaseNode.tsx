@@ -3,13 +3,13 @@
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useId, useState } from 'react';
 import { Label, useIcons } from 'twenty-ui/display';
 import { ThemeColor } from 'twenty-ui/theme';
 
-const StyledBaseNodeWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
   border: 2px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   min-width: 270px;
   display: flex;
@@ -19,6 +19,12 @@ const StyledBaseNodeWrapper = styled.div`
   &:hover {
     border-color: ${({ theme }) => theme.color.blue};
   }
+  ${({ theme, isSelected }) =>
+    isSelected
+      ? `
+    border-color: ${theme.color.blue40};
+  `
+      : ''}
 `;
 
 const StyledHeader = styled.div`
@@ -74,6 +80,7 @@ const BaseNode = ({
   onTitleChange,
   onTitleBlur,
   nodeTypeDescription,
+  isSelected,
 }: {
   icon?: string;
   title: string;
@@ -84,6 +91,7 @@ const BaseNode = ({
   nodeTypeDescription: string;
   onTitleChange: (value: string) => void;
   onTitleBlur: () => void;
+  isSelected: boolean;
 }) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(icon);
@@ -94,17 +102,19 @@ const BaseNode = ({
   );
 
   const [customTitle, setCustomTitle] = useState<string>(title);
+  const id = useId();
 
   return (
     <div>
       {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
-      <StyledBaseNodeWrapper className="nopan">
+      <StyledBaseNodeWrapper className="nopan" isSelected={isSelected}>
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
           <div>
             {title && (
               <StyledTitleInput
                 placeholder={title}
+                instanceId={id}
                 value={customTitle}
                 onEscape={onTitleBlur}
                 onEnter={onTitleBlur}

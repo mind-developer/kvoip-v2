@@ -3,6 +3,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -15,6 +16,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ChatbotFlowImageEventForm } from '../actions/ChatbotFlowImageEventForm';
 
 const StyledDiv = styled.div`
@@ -91,6 +93,8 @@ function ImageNode({
     }
   }, [targetConnections, sourceConnections]);
 
+  const selectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+
   return (
     <BaseNode
       icon={'IconPhoto'}
@@ -100,6 +104,7 @@ function ImageNode({
       onTitleBlur={() => {
         saveDataValue('title', data.title, node);
       }}
+      isSelected={selectedNode?.id === nodeId}
     >
       <Handle
         type="target"

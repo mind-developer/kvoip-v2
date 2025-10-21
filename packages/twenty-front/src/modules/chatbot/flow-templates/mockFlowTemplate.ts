@@ -34,12 +34,6 @@ export const initialNodes: GenericNode[] = [
     },
     position: { x: 150, y: 150 },
   },
-  {
-    id: '3',
-    type: 'text',
-    data: { nodeStart: false },
-    position: { x: 500, y: 300 },
-  },
 ];
 
 export const initialEdges: Edge[] = [
