@@ -100,7 +100,6 @@ class ExecuteFlow {
         }
       }
       if (!nextNodeId) {
-        console.log('on finish', currentNode.type, this.chosenInput);
         if (
           this.i.onFinish &&
           ['text', 'image', 'file', 'condition'].includes(currentNode.type)
