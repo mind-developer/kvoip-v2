@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 import { type CurrencyCode } from './CurrencyCode';
 
+/* @kvoip-woulz proprietary:begin */
 export type FieldTextValidation = {
   pattern: string;
   mask?: string;
@@ -18,6 +19,7 @@ export type FieldTextValidation = {
   errorMessage?: string;
   validateOnType?: boolean;
 };
+/* @kvoip-woulz proprietary:end */
 
 type BaseFieldMetadata = {
   fieldName: string;
@@ -38,7 +40,9 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     displayedMaxRows?: number;
+    /* @kvoip-woulz proprietary:begin */
     validation?: FieldTextValidation;
+    /* @kvoip-woulz proprietary:end */
   };
 };
 

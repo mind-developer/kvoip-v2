@@ -27,17 +27,21 @@ export type FieldMetadataNumberSettings = {
   type?: FieldNumberVariant;
 };
 
+/* @kvoip-woulz proprietary:begin */
 export type FieldMetadataTextValidation = {
-  pattern?: string;         
-  mask?: string;           
-  placeholder?: string;    
-  errorMessage?: string;   
-  validateOnType?: boolean; 
+  pattern?: string;
+  mask?: string;
+  placeholder?: string;
+  errorMessage?: string;
+  validateOnType?: boolean;
 };
+/* @kvoip-woulz proprietary:end */
 
 export type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
+  /* @kvoip-woulz proprietary:begin */
   validation?: FieldMetadataTextValidation;
+  /* @kvoip-woulz proprietary:end */
 };
 
 export type FieldMetadataDateSettings = {

@@ -1,6 +1,7 @@
+/* @kvoip-woulz proprietary */
 import {
-    RecordTransformerException,
-    RecordTransformerExceptionCode,
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,13 +20,14 @@ export const validateTextPattern = (
 
   try {
     const regex = new RegExp(pattern);
-    
+
     if (!regex.test(value)) {
       throw new RecordTransformerException(
         `Text validation failed for value: ${value}`,
         RecordTransformerExceptionCode.INVALID_TEXT_FORMAT,
-        { 
-          userFriendlyMessage: errorMessage || 'Invalid format. Please check the input format.' 
+        {
+          userFriendlyMessage:
+            errorMessage || 'Invalid format. Please check the input format.',
         },
       );
     }
@@ -33,7 +35,7 @@ export const validateTextPattern = (
     if (error instanceof RecordTransformerException) {
       throw error;
     }
-    
+
     console.warn(`Invalid regex pattern provided: ${pattern}`, error);
     return value.trim();
   }

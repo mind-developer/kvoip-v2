@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { z } from 'zod';
 
 export const createTextValidationSchema = (
@@ -21,6 +22,6 @@ export const createTextValidationSchema = (
     );
   } catch (error) {
     console.error('Invalid regex pattern:', error);
-    return z.string(); 
+    return z.string();
   }
 };
