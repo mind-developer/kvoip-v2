@@ -52,4 +52,15 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
+export type {
+  TextValidationPattern,
+  TextValidationPatternKey,
+} from './validationPatterns';
+export {
+  TEXT_VALIDATION_PATTERNS,
+  applyMask,
+  getUnmaskedValue,
+  getMaskLength,
+  isValueComplete,
+} from './validationPatterns';
 export { resolveInput } from './variable-resolver';

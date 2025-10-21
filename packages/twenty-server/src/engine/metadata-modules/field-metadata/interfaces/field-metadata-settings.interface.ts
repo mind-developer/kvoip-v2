@@ -28,10 +28,11 @@ export type FieldMetadataNumberSettings = {
 };
 
 export type FieldMetadataTextValidation = {
-  pattern: string;
-  mask?: string;
-  placeholder?: string;
-  errorMessage?: string;
+  pattern?: string;         
+  mask?: string;           
+  placeholder?: string;    
+  errorMessage?: string;   
+  validateOnType?: boolean; 
 };
 
 export type FieldMetadataTextSettings = {

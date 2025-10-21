@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -151,12 +152,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
     settings: {
-      validation: {
-        pattern: '^\\d{4}$',
-        mask: '0000',
-        placeholder: '0000',
-        errorMessage: 'Invalid CFOP. Expected format: 0000 (4 digits)',
-      },
+      validation: TEXT_VALIDATION_PATTERNS.BR_CFOP,
     },
   })
   @WorkspaceIsNullable()
@@ -169,12 +165,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
     settings: {
-      validation: {
-        pattern: '^\\d{3}$',
-        mask: '000',
-        placeholder: '000',
-        errorMessage: 'Invalid CST/CSOSN. Expected format: 000 (3 digits)',
-      },
+      validation: TEXT_VALIDATION_PATTERNS.BR_CST_CSOSN,
     },
   })
   @WorkspaceIsNullable()

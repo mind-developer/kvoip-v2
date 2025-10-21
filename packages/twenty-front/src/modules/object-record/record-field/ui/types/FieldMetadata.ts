@@ -16,6 +16,7 @@ export type FieldTextValidation = {
   mask?: string;
   placeholder?: string;
   errorMessage?: string;
+  validateOnType?: boolean;
 };
 
 type BaseFieldMetadata = {
