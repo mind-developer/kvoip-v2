@@ -89,7 +89,6 @@ export class ChatMessageManagerService {
     workspaceId: string,
     providerIntegrationId: string,
   ): Promise<string> {
-    console.log('sending message', clientChatMessage);
     if (clientChatMessage.event) {
       this.handleEventMessage(clientChatMessage, workspaceId);
       return v4();
@@ -228,6 +227,36 @@ export class ChatMessageManagerService {
       clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT
     ) {
       this.transferService(clientChatMessage, workspaceId);
+    }
+    if (clientChatMessage.event === ClientChatMessageEvent.CHATBOT_START) {
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+          workspaceId,
+          'clientChat',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).update(clientChatMessage.clientChatId, {
+        status: ClientChatStatus.CHATBOT,
+      });
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).save({
+        ...clientChatMessage,
+        createdAt: new Date().toISOString(),
+        providerMessageId: v4(),
+      });
+      this.clientChatMessageService.publishMessageCreated(
+        {
+          ...clientChatMessage,
+          createdAt: new Date().toISOString(),
+          providerMessageId: v4(),
+        },
+        clientChatMessage.clientChatId,
+      );
     }
     if (clientChatMessage.event === ClientChatMessageEvent.END) {
       const clientChatRepository =
