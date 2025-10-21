@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow';
+import { SettingsServiceCenterTelephonySkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterTelephonySkeletonLoader';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -24,6 +25,9 @@ type ServiceCenterTabContentProps = {
   telephonys: Telephony[];
   searchTerm: string;
   refetch: () => void;
+  disableActions?: boolean;
+  onExtensionSelect?: (telephony: Telephony) => void;
+  loading?: boolean;
 };
 
 const StyledSection = styled(Section)`
@@ -36,6 +40,9 @@ const StyledSection = styled(Section)`
 export const ServiceCenterTabContent = ({
   telephonys,
   searchTerm,
+  disableActions = false,
+  onExtensionSelect,
+  loading = false,
 }: ServiceCenterTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
@@ -83,6 +90,10 @@ export const ServiceCenterTabContent = ({
     return false;
   });
 
+  if (loading) {
+    return <SettingsServiceCenterTelephonySkeletonLoader />;
+  }
+
   return (
     <>
       {filteredTelephonys?.length > 0 ? (
@@ -93,16 +104,19 @@ export const ServiceCenterTabContent = ({
               key={telephony.id}
               telephony={telephony}
               accessory={
-                <IconButton
-                  onClick={() => handleEditTelephony(telephony.id)}
-                  Icon={() => (
-                    <EditTelephonyIcon
-                      size={theme.icon.size.md}
-                      color={theme.font.color.tertiary}
-                    />
-                  )}
-                />
+                !disableActions ? (
+                  <IconButton
+                    onClick={() => handleEditTelephony(telephony.id)}
+                    Icon={() => (
+                      <EditTelephonyIcon
+                        size={theme.icon.size.md}
+                        color={theme.font.color.tertiary}
+                      />
+                    )}
+                  />
+                ) : undefined
               }
+              onClick={disableActions && onExtensionSelect ? () => onExtensionSelect(telephony) : undefined}
             />
           ))}
         </StyledSection>

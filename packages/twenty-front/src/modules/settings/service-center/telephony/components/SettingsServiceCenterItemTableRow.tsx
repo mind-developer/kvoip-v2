@@ -6,13 +6,19 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ clickable?: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
   flex-direction: row;
   margin-bottom: ${({ theme }) => theme.spacing(0)};
   padding: ${({ theme }) => theme.spacing(3)};
+  cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: ${({ theme, clickable }) => clickable ? theme.background.tertiary : theme.background.secondary};
+  }
 
   &:last-child {
     border-bottom: none;
@@ -53,11 +59,13 @@ const StyledTextContent = styled.div`
 type SettingsServiceCenterItemTableRowProps = {
   telephony: Telephony;
   accessory?: React.ReactNode;
+  onClick?: () => void;
 };
 
 export const SettingsServiceCenterItemTableRow = ({
   telephony,
   accessory,
+  onClick,
 }: SettingsServiceCenterItemTableRowProps) => {
   const { t } = useLingui();
 
@@ -70,7 +78,10 @@ export const SettingsServiceCenterItemTableRow = ({
   );
 
   return (
-    <StyledContainer>
+    <StyledContainer 
+      clickable={!!onClick}
+      onClick={onClick}
+    >
       <Avatar
         avatarUrl={member?.avatarUrl}
         placeholderColorSeed={telephony.id}

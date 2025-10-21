@@ -37,7 +37,7 @@ export const useFindAllExternalExtensions = (options?: UseFindAllExternalExtensi
   });
 
   return {
-    extensions: extensionsData?.findAllExternalExtensions,
+    extensions: extensionsData?.findAllExternalExtensions || [],
     loading,
     refetch,
   };

@@ -11,7 +11,6 @@ import { type FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne
 import { type GetTelephonyByMemberHandler } from 'src/modules/telephony/types/GetOne/GetByMember.type';
 import { type GetTelephonyByNumberHandler } from 'src/modules/telephony/types/GetOne/GetByNumber.type';
 import { type UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TelephonyService {
@@ -32,6 +31,7 @@ export class TelephonyService {
     }
 
     const telephonys = await telephonyRepository.find({
+      relations: ['member'],
       order: { createdAt: 'DESC' },
     });
 

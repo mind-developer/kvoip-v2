@@ -7,9 +7,7 @@
 import IncomingCallHeader from '@/softphone/components/dialer/IncomingCallHeader';
 import { SoftphoneStatus } from '@/softphone/constants';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import {
@@ -45,6 +43,7 @@ import { AudioManager } from './audio/AudioManager';
 import { CallControls } from './call/CallControls';
 import { CallTimer } from './call/CallTimer';
 import AudioDevicesModal from './modal/AudioDevicesModal';
+import TransferModal from './modal/TransferModal';
 import { ConnectionStatus } from './status/ConnectionStatus';
 
 const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
@@ -402,6 +401,13 @@ const WebSoftphone: React.FC = () => {
     openModal(modalId);
   };
 
+  const handleOpenTransferModal = () => {
+    const modalId = 'transfer-modal';
+    openModal(modalId);
+  };
+
+  // handleOpenTransferModal();
+
   const getStatus = (callState: CallState): SoftphoneStatus => {
     if (callState.isRegistered) return SoftphoneStatus.Online;
     if (callState.isRegistering) return SoftphoneStatus.Registering;
@@ -508,12 +514,17 @@ const WebSoftphone: React.FC = () => {
               onSetCurrentNumber={(number: string) => setCallState(prev => ({ ...prev, currentNumber: number }))}
               setCallState={setCallState}
               transferCall={transferCall}
+              onOpenTransferModal={handleOpenTransferModal}
             />
           </StyledControlsContainer>
         </StyledContainer>
       </Draggable>
       
       <AudioDevicesModal modalId="audio-devices-modal" />
+      <TransferModal 
+        modalId="transfer-modal" 
+        onTransfer={transferCall}
+      />
     </>
   );
 };

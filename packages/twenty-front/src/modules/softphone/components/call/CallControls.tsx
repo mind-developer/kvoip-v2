@@ -88,6 +88,7 @@ interface CallControlsProps {
   onSetCurrentNumber: (number: string) => void;
   setCallState: React.Dispatch<React.SetStateAction<CallState>>;
   transferCall: (to: string) => void;
+  onOpenTransferModal: () => void;
 }
 
 export const CallControls: React.FC<CallControlsProps> = ({
@@ -108,7 +109,8 @@ export const CallControls: React.FC<CallControlsProps> = ({
   onSetIsSendingDTMF,
   onSetCurrentNumber,
   setCallState,
-  transferCall
+  transferCall,
+  onOpenTransferModal
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -322,11 +324,11 @@ export const CallControls: React.FC<CallControlsProps> = ({
               />
             </div>
 
-            <TransferButton
-              session={session}
-              type="attended"
-              sendDTMF={transferCall}
-            />
+              <TransferButton
+                session={session}
+                type="attended"
+                onOpenTransferModal={onOpenTransferModal}
+              />
 
             <DTMFButton setIsSendingDTMF={onSetIsSendingDTMF} />
           </StyledControlsContainer>
