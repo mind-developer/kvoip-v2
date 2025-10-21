@@ -1,7 +1,9 @@
+import { ChatIntegrationProvider } from '@/types/ChatIntegrationProviders';
 import { ChatMessageType } from '@/types/ChatMessage';
 
 export type ClientChat = {
   id: string;
+  provider: ChatIntegrationProvider;
   providerContactId: string;
   whatsappIntegrationId: string | null;
   messengerIntegrationId: string | null;
