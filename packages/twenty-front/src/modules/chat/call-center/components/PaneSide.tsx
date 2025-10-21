@@ -131,11 +131,8 @@ export const PaneSide = () => {
 
   const renderClientChats = () =>
     activeClientChats.map((chat, index) => {
-      console.log('chat', chat);
       if (chat.status !== activeTabId) return null;
       if (chat.status === ClientChatStatus.FINISHED) return null;
-      console.log('chat.agentId', chat);
-      console.log('agent?.id', agent?.id);
       if (
         chat.status === ClientChatStatus.ASSIGNED &&
         chat.agentId !== agent?.id

@@ -73,8 +73,6 @@ export const ChatAnex = ({ setIsAnexOpen, clientChat }: ChatAnexProps) => {
   const ImageIcon = getIcon('IconCamera');
   const VideoIcon = getIcon('IconVideo');
 
-  console.log('clientChat', clientChat);
-
   const handleSendFile = async (file: File, type: ChatMessageType) => {
     const attachment = await uploadAttachmentFile(file, {
       targetObjectNameSingular: 'person',

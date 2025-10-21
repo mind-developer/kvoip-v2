@@ -64,8 +64,7 @@ export const TransferChatOptionsDropdownContent = () => {
     },
   });
   const workspaceMembersWithAgent = workspaceMembers.filter(
-    (member) =>
-      member.agentId && member.agentId !== workspaceMemberWithAgent?.agent?.id,
+    (member) => member.agentId && member.agentId !== selectedChat?.agentId,
   );
   const { records: sectors } = useFindManyRecords<
     Sector & { __typename: string }

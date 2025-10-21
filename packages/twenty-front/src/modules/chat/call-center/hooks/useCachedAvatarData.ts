@@ -40,7 +40,6 @@ export const useCachedAgentAvatar = (agentId: string) => {
     },
   });
   const agentWithMember = workspaceMemberWithAgent[0];
-  console.log('agentWithMember', agentWithMember);
 
   return {
     record: agentWithMember,

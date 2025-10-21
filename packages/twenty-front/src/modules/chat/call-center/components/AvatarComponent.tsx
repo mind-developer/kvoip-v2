@@ -66,6 +66,9 @@ function PersonAvatar({ personId }: { personId: string }) {
 }
 
 function AgentAvatar({ agentId }: { agentId: string }) {
+  if (!agentId) {
+    return null;
+  }
   const { record: agentWithMember } = useCachedAgentAvatar(agentId);
   return (
     <Avatar

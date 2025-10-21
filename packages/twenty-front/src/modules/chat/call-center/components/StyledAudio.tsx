@@ -38,8 +38,8 @@ const StyledScrubber = styled.input`
   width: 100px;
   &&::-moz-range-thumb,
   &&::-webkit-slider-thumb {
-    height: 15px;
-    width: 15px;
+    height: 5px;
+    width: 5px;
     border-radius: 50%; /* Makes it a circle */
     background-color: ${({ theme }) => theme.font.color.primary};
     border: none;
@@ -59,10 +59,9 @@ const StyledScrubber = styled.input`
 
 const StyledAudio = ({ message }: { message: ClientChatMessage }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [rangeValue, setRangeValue] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioBlob] = useState<Blob | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>();
   const isPending =
@@ -73,8 +72,31 @@ const StyledAudio = ({ message }: { message: ClientChatMessage }) => {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.load();
+      // When loadedmetadata fires, try to set duration from the audio element.
+      // Sometimes, especially with blob/file URLs or quick streams,
+      // browsers (notably Chrome) report audio.duration as Infinity or 0.
+      // The workaround is to seek to a very large currentTime value;
+      // the browser then internally computes and sets .duration to the true value.
+      // After this, ontimeupdate will fire and we can safely set duration.
       audioRef.current.addEventListener('loadedmetadata', () => {
-        if (audioRef.current) setDuration(audioRef.current.duration);
+        if (audioRef.current) {
+          const directDuration = audioRef.current.duration;
+          if (isFinite(directDuration) && directDuration > 0) {
+            setDuration(directDuration);
+          } else {
+            audioRef.current.currentTime = 1e101;
+            audioRef.current.ontimeupdate = function () {
+              if (audioRef.current) {
+                const realDuration = audioRef.current.duration;
+                if (isFinite(realDuration) && realDuration > 0) {
+                  setDuration(realDuration);
+                  audioRef.current.ontimeupdate = null;
+                  audioRef.current.currentTime = 0;
+                }
+              }
+            };
+          }
+        }
       });
       audioRef.current.addEventListener('ended', () => setIsPlaying(false));
       audioRef.current.addEventListener('timeupdate', () => {
@@ -102,16 +124,20 @@ const StyledAudio = ({ message }: { message: ClientChatMessage }) => {
       <StyledScrubber
         type="range"
         min={0}
-        max={100}
-        value={(currentTime / duration) * 100}
-        onDragStart={() => console.log('scrubbing')}
-        onDragEnd={() => console.log('end scrubbing')}
+        max={duration || 1}
+        value={currentTime}
+        step={0.01}
+        aria-valuenow={currentTime}
+        aria-valuemax={duration || 1}
+        aria-valuemin={0}
         onChange={(e) => {
           if (audioRef.current) {
-            audioRef.current.currentTime =
-              duration * (parseInt(e.target.value) / 100);
+            const newTime = Number(e.target.value);
+            audioRef.current.currentTime = newTime;
+            setCurrentTime(newTime);
           }
         }}
+        disabled={isPending || !isFinite(duration)}
       />
       {!isPending && (
         <StyledTime>

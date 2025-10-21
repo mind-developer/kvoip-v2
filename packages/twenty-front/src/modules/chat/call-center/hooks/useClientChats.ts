@@ -2,7 +2,7 @@ import { useClientChatSubscription } from '@/chat/call-center/hooks/useClientCha
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientChat, ClientChatStatus } from 'twenty-shared/types';
 
@@ -40,9 +40,13 @@ export const useClientChats = (sectorId: string) => {
         },
       },
       unreadMessagesCount: true,
+      whatsappIntegrationId: true,
+      messengerIntegrationId: true,
+      telegramIntegrationId: true,
+      provider: true,
     },
     filter: { sectorId: { eq: sectorId } },
-    limit: 5000,
+    limit: 100,
     orderBy: [{ createdAt: 'AscNullsFirst' }],
     onCompleted: (data) => {
       setDbChats(data);
@@ -51,14 +55,14 @@ export const useClientChats = (sectorId: string) => {
     skip: !sectorId,
   });
 
-  useEffect(() => {
-    setDbChats([]);
-  }, [sectorId]);
-
   useClientChatSubscription({
     sectorId: sectorId!,
     onChatCreated: (chat) => {
-      setDbChats((prev) => [...prev, chat]);
+      setDbChats((prev) =>
+        [...prev, chat].filter(
+          (c, index, self) => index === self.findIndex((t) => t.id === c.id),
+        ),
+      );
     },
     onChatUpdated: (chat) => {
       setDbChats((prev) => prev.map((c) => (c.id === chat.id ? chat : c)));

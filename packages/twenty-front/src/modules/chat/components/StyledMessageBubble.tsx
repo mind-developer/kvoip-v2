@@ -83,13 +83,6 @@ const StyledMessageBubbleContainer = styled(motion.div)<{
 `}
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
 
-  @keyframes popup {
-    0% {
-      transform: translateY(25px);
-    }
-    100% {
-      transform: translateY(0);
-    }
   }
 `;
 
@@ -166,7 +159,7 @@ export const StyledMessageBubble = ({
       isPending={isPending}
       initial={{ translateY: 20, opacity: 0 }}
       animate={{
-        translateY: 0,
+        translateY: 4,
         opacity: 1,
         transition: {
           delay: animateDelay,

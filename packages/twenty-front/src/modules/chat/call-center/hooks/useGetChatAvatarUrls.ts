@@ -22,6 +22,5 @@ const useGetChatAvatarUrls = (messages: ClientChatMessage[]) => {
     }
     return null;
   });
-  console.log('avatarUrls', avatarUrls);
   return avatarUrls;
 };

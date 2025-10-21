@@ -1,7 +1,6 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AudioVisualizer } from '@/chat/call-center/components/AudioVisualizer';
 import { AvatarComponent } from '@/chat/call-center/components/AvatarComponent';
@@ -12,6 +11,8 @@ import { PaneChatHeader } from '@/chat/call-center/components/PaneChatHeader';
 import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
+import { useClientChats } from '@/chat/call-center/hooks/useClientChats';
+import { useCurrentWorkspaceMemberWithAgent } from '@/chat/call-center/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useSendClientChatMessage } from '@/chat/call-center/hooks/useSendClientChatMessage';
 import {
   getMessageContent,
@@ -23,7 +24,6 @@ import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
 import { formatDate } from '@/chat/utils/formatDate';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
@@ -39,7 +39,6 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChat,
   ClientChatMessage,
   ClientChatMessageEvent,
   ClientChatStatus,
@@ -48,7 +47,6 @@ import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { WorkspaceMember } from '~/generated/graphql';
 
 const StyledPaneChatContainer = styled.div`
   display: flex;
@@ -355,39 +353,20 @@ export const PaneChat = () => {
   const theme = useTheme();
 
   const { chatId } = useParams() || '';
-  const { record: selectedChat } = useFindOneRecord<
-    ClientChat & { __typename: string }
-  >({
-    objectNameSingular: 'clientChat',
-    objectRecordId: chatId,
-    recordGqlFields: {
-      id: true,
-      providerContactId: true,
-      whatsappIntegrationId: true,
-      messengerIntegrationId: true,
-      telegramIntegrationId: true,
-      status: true,
-      person: true,
-      sector: true,
-      agent: true,
-    },
-    skip: !chatId,
-  });
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'clientChat',
-  });
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { record: currentMember } = useFindOneRecord<
-    WorkspaceMember & { __typename: string; agentId: string }
-  >({
-    objectNameSingular: 'workspaceMember',
-    objectRecordId: currentWorkspaceMember?.id || '',
-    skip: !currentWorkspaceMember?.id,
-  });
+  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
+  const { chats: clientChats } = useClientChats(
+    workspaceMemberWithAgent?.agent?.sectorId || '',
+  );
+  const selectedChat = useMemo(
+    () => clientChats.find((chat) => chat.id === chatId),
+    [clientChats, chatId],
+  );
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const { sendClientChatMessage } = useSendClientChatMessage();
-
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'clientChat',
+  });
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -459,17 +438,38 @@ export const PaneChat = () => {
         chunks.push(event.data);
       };
 
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const audioBlob = new Blob(chunks, {
           type: 'audio/webm',
         });
-        setAudioBlob(audioBlob);
-      };
-
-      recorder.onstop = () => {
         setRecordingState('none');
-        setAudioBlob(null);
         setAudioStream(null);
+        const attachment = await uploadAttachmentFile(
+          new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
+            type: 'audio/webm',
+          }),
+          {
+            targetObjectNameSingular: 'person',
+            id: selectedChat?.person!.id || '',
+          },
+        );
+        sendClientChatMessage({
+          clientChatId: chatId!,
+          from: workspaceMemberWithAgent?.agent?.id || '',
+          fromType: ChatMessageFromType.AGENT,
+          to: selectedChat?.person!.id || '',
+          toType: ChatMessageToType.PERSON,
+          provider: ChatIntegrationProvider.WHATSAPP,
+          type: ChatMessageType.AUDIO,
+          textBody: null,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+          edited: null,
+          attachmentUrl: attachment.attachmentAbsoluteURL,
+          event: null,
+          workspaceId: currentWorkspace?.id ?? '',
+          providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
+        });
       };
 
       recorder.onpause = () => {
@@ -511,6 +511,12 @@ export const PaneChat = () => {
   useEffect(() => {
     if (!selectedChat) return;
     scrollToBottom();
+    updateOneRecord({
+      idToUpdate: selectedChat?.id || '',
+      updateOneRecordInput: {
+        unreadMessagesCount: 0,
+      },
+    });
   }, [selectedChat?.id]);
 
   // Cleanup timeout on unmount
@@ -531,38 +537,21 @@ export const PaneChat = () => {
   const handleSendMessage = async () => {
     if (audioBlob) {
       const attachment = await uploadAttachmentFile(
-        new File([audioBlob], `${Date.now()}.ogg}`, { type: 'audio/ogg' }),
+        new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
+          type: 'audio/webm',
+        }),
         {
           targetObjectNameSingular: 'person',
           id: selectedChat.person!.id,
         },
       );
-      alert(attachment.attachmentAbsoluteURL);
-      const optimisticMessageId = `optimistic-${v4()}`;
-      const optimisticMessage: ClientChatMessage = {
-        clientChatId: chatId!,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        from: currentWorkspaceMember?.id || '',
-        fromType: ChatMessageFromType.AGENT,
-        to: selectedChat.person!.id || '',
-        toType: ChatMessageToType.PERSON,
-        provider: ChatIntegrationProvider.WHATSAPP,
-        providerMessageId: optimisticMessageId,
-        type: ChatMessageType.AUDIO,
-        textBody: null,
-        caption: null,
-        deliveryStatus: ChatMessageDeliveryStatus.PENDING,
-        edited: null,
-        attachmentUrl: attachment.attachmentAbsoluteURL,
-        event: null,
-      };
-      setOptimisticMessages((prev) => [...prev, optimisticMessage]);
+      setMediaRecorder(null);
+      setAudioStream(null);
     } else {
       const optimisticMessageId = `optimistic-${v4()}`;
       const optimisticMessage: Omit<ClientChatMessage, 'providerMessageId'> = {
         clientChatId: chatId!,
-        from: currentWorkspaceMember?.id || '',
+        from: workspaceMemberWithAgent?.agent?.id || '',
         fromType: ChatMessageFromType.AGENT,
         to: selectedChat.person!.id,
         toType: ChatMessageToType.PERSON,
@@ -590,7 +579,7 @@ export const PaneChat = () => {
         ...optimisticMessage,
         workspaceId: currentWorkspace?.id ?? '',
         providerIntegrationId: selectedChat.whatsappIntegrationId ?? '',
-        from: selectedChat.agent.id || '',
+        from: workspaceMemberWithAgent?.agent?.id || '',
       });
     }
     setNewMessage('');
@@ -630,42 +619,40 @@ export const PaneChat = () => {
   ) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      handleSendMessage();
+      if (newMessage.length > 0 || recordingState !== 'none') {
+        handleSendMessage();
+      }
     }
   };
 
   const handleScroll = () => {
-    if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } =
-        chatContainerRef.current;
-      const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
-      setIsAtBottom(isBottom);
-
-      // Show scrollbar when scrolling
-      setIsScrolling(true);
-
-      // Clear existing timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-
-      // Hide scrollbar after 1 second of no scrolling
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-      }, 1000);
-
-      if (isBottom) {
-        setNewMessagesIndicator(false);
-        if (selectedChat?.unreadMessagesCount > 0) {
-          updateOneRecord({
-            idToUpdate: selectedChat?.id || '',
-            updateOneRecordInput: {
-              unreadMessagesCount: 0,
-            },
-          });
-        }
-      }
-    }
+    // if (chatContainerRef.current) {
+    //   const { scrollTop, scrollHeight, clientHeight } =
+    //     chatContainerRef.current;
+    //   const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    //   setIsAtBottom(isBottom);
+    //   // Show scrollbar when scrolling
+    //   setIsScrolling(true);
+    //   // Clear existing timeout
+    //   if (scrollTimeoutRef.current) {
+    //     clearTimeout(scrollTimeoutRef.current);
+    //   }
+    //   // Hide scrollbar after 1 second of no scrolling
+    //   scrollTimeoutRef.current = setTimeout(() => {
+    //     setIsScrolling(false);
+    //   }, 1000);
+    //   if (isBottom) {
+    //     setNewMessagesIndicator(false);
+    //     if (selectedChat?.unreadMessagesCount > 0) {
+    //       updateOneRecord({
+    //         idToUpdate: selectedChat?.id || '',
+    //         updateOneRecordInput: {
+    //           unreadMessagesCount: 0,
+    //         },
+    //       });
+    //     }
+    //   }
+    // }
   };
 
   const scrollToBottom = () => {
@@ -785,7 +772,7 @@ export const PaneChat = () => {
                   />
                 )}
                 onClick={() => {
-                  handleSendMessage();
+                  // handleSendMessage();
                   handleStopRecording();
                 }}
                 variant="primary"
@@ -808,9 +795,9 @@ export const PaneChat = () => {
           onClick={() => {
             sendClientChatMessage({
               clientChatId: selectedChat.id,
-              from: currentMember?.agentId || '',
+              from: workspaceMemberWithAgent?.agent?.id || '',
               fromType: ChatMessageFromType.AGENT,
-              to: selectedChat.sectorId || '',
+              to: workspaceMemberWithAgent?.agent?.sectorId || '',
               toType: ChatMessageToType.SECTOR,
               provider: ChatIntegrationProvider.WHATSAPP,
               type: ChatMessageType.EVENT,

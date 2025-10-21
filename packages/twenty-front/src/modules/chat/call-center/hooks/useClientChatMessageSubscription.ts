@@ -66,7 +66,6 @@ export const useClientChatMessageSubscription = ({
 
   const handleData = useCallback((data: any) => {
     if (!data) {
-      console.log('Data is null or undefined');
       return;
     }
 

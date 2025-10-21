@@ -122,7 +122,6 @@ function TransferToSectorDescription({
 }: {
   message: ClientChatMessage;
 }) {
-  console.log('message', message);
   const { records: agentWorkspaceMembers } = useFindManyRecords<
     WorkspaceMember & { __typename: string }
   >({
@@ -197,7 +196,7 @@ function StartEndDescription({ message }: { message: ClientChatMessage }) {
       avatarUrl: true,
     },
     filter: {
-      id: {
+      agentId: {
         eq: message.from,
       },
     },

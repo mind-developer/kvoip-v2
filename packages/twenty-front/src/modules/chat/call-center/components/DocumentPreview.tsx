@@ -150,8 +150,7 @@ function Header({
   currentDocument: any;
   fromMe: boolean;
 }) {
-  console.log(currentDocument);
-  const { uri, fileName } = currentDocument.documents[0];
+  const { fileName } = currentDocument.documents[0];
   return (
     <StyledHeaderContainer fromMe={fromMe}>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
