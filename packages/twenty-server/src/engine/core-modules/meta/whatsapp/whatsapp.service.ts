@@ -121,7 +121,7 @@ export class WhatsAppService {
           whatsappIntegrationId: integrationId,
           providerContactId,
         },
-        relations: ['agent', 'sector', 'whatsappIntegration'],
+        relations: ['agent', 'sector', 'whatsappIntegration', 'person'],
       });
 
       if (!clientChat) {
@@ -195,9 +195,10 @@ export class WhatsAppService {
       ).findOneBy({ id: integrationId });
 
       if (
-        clientChat.status === ClientChatStatus.UNASSIGNED &&
-        !message.fromMe &&
-        whatsappIntegration?.chatbotId
+        clientChat.status === ClientChatStatus.UNASSIGNED ||
+        (clientChat.status === ClientChatStatus.CHATBOT &&
+          !message.fromMe &&
+          whatsappIntegration?.chatbotId)
       ) {
         const chatbot = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
@@ -205,16 +206,23 @@ export class WhatsAppService {
             'chatbot',
             { shouldBypassPermissionChecks: true },
           )
-        ).findOneBy({ id: whatsappIntegration.chatbotId });
+        ).findOneBy({ id: whatsappIntegration?.chatbotId ?? '' });
+        console.log('initializing chatbot runner with chatbot', chatbot);
 
-        if (!chatbot) return;
-        if (!chatbot.nodes) return;
+        if (!chatbot) {
+          console.log('chatbot not found');
+          return;
+        }
+        if (!chatbot.nodes) {
+          console.log('chatbot has no nodes');
+          return;
+        }
 
         const baseEventMessage: ClientChatMessage = {
           clientChatId: clientChat.id,
           from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
-          to: whatsappIntegration.defaultSectorId,
+          to: whatsappIntegration?.defaultSectorId ?? '',
           toType: ChatMessageToType.SECTOR,
           provider: ChatIntegrationProvider.WHATSAPP,
           providerMessageId: message.id,
@@ -231,10 +239,12 @@ export class WhatsAppService {
 
         let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
         if (executor) {
+          console.log('executor found');
           executor.runFlow(message.textBody ?? '');
           return true;
         }
 
+        console.log('saving base event message');
         this.chatMessageManagerService.saveMessage(
           {
             ...baseEventMessage,
@@ -251,6 +261,7 @@ export class WhatsAppService {
           workspaceId,
         );
 
+        console.log('getting sectors');
         const sectors = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
             workspaceId,
@@ -259,6 +270,7 @@ export class WhatsAppService {
           )
         ).find();
 
+        console.log('creating executor');
         executor = this.ChatbotRunnerService.createExecutor({
           provider: ChatIntegrationProvider.WHATSAPP,
           providerIntegrationId: integrationId,
@@ -271,6 +283,7 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
+            console.log('on finish', sectorId);
             if (sectorId) {
               this.chatMessageManagerService.saveMessage(
                 {
@@ -311,9 +324,11 @@ export class WhatsAppService {
             );
           },
         });
+        console.log('running flow');
         executor.runFlow(message.textBody ?? '');
       }
     } catch (error) {
+      console.log('error', error);
       this.logger.error(error);
     }
   }

@@ -7,7 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
+import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
@@ -39,26 +39,25 @@ import { ClientChatMessageService } from 'src/modules/client-chat-message/client
     MessageQueueModule,
     ClientChatMessageModule,
     FileModule,
+    ChatbotRunnerModule,
   ],
   exports: [WhatsAppService],
   controllers: [WhatsappController],
   providers: [
-    ChatbotRunnerService,
     WhatsAppService,
     GoogleStorageService,
     WhatsappEmmitWaitingStatusJob,
     WhatsappEmmitResolvedchatsJob,
     WhatsappCronCommand,
     ChatMessageManagerService,
-    TextInputHandler,
-    ImageInputHandler,
-    ConditionalInputHandler,
-    FileInputHandler,
     FileService,
     JwtService,
     JwtWrapperService,
     ClientChatMessageService,
-    ChatMessageManagerService,
+    TextInputHandler,
+    ImageInputHandler,
+    ConditionalInputHandler,
+    FileInputHandler,
   ],
 })
 export class MetaModule {}
