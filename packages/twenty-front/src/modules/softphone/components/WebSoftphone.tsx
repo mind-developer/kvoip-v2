@@ -412,7 +412,7 @@ const WebSoftphone: React.FC = () => {
     openModal(modalId);
   };
 
-  //handleOpenTransferModal();
+  handleOpenTransferModal();
 
   const getStatus = (callState: CallState): SoftphoneStatus => {
     if (callState.isRegistered) return SoftphoneStatus.Online;

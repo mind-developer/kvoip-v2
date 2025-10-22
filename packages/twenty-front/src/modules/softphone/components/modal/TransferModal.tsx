@@ -1,12 +1,13 @@
 /* @kvoip-woulz proprietary */
 import { ServiceCenterTabContent } from '@/settings/service-center/telephony/components/SettingsServiceCenterTabContent';
-import { useFindAllTelephonys } from '@/settings/service-center/telephony/hooks/useFindAllTelephony';
+import { useFindAllTelephonysWithPaginate } from '@/settings/service-center/telephony/hooks/useFindAllTelephonysWithPaginate';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { PaginationComponent } from '@/ui/layout/pagination/components/PaginationComponent';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconArrowMerge, IconArrowRight, IconCheck, IconPhone, IconSearch, IconX } from '@tabler/icons-react';
@@ -137,8 +138,15 @@ const TransferModal: React.FC<TransferModalProps> = ({
   const [transferType, setTransferType] = useState<TransferType>('blind');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Buscar telefonia (ramais vinculados aos membros)
-  const { telephonys, loading: telephonyLoading, refetch } = useFindAllTelephonys();
+  // Buscar telefonia (ramais vinculados aos membros) com paginação
+  const { 
+    telephonys, 
+    loading: telephonyLoading, 
+    refetch, 
+    pagination,
+    goToPage,
+    setItemsPerPage 
+  } = useFindAllTelephonysWithPaginate(1, 2);
 
   // Função para lidar com a seleção de uma extensão
   const handleExtensionSelect = (telephony: Telephony) => {
@@ -270,6 +278,17 @@ const TransferModal: React.FC<TransferModalProps> = ({
                 loading={telephonyLoading}
                 markSelectedItem
               />
+              
+              {/* Componente de Paginação */}
+              {pagination.totalPages > 1 && (
+                <PaginationComponent
+                  pagination={pagination}
+                  onPageChange={goToPage}
+                  // onItemsPerPageChange={setItemsPerPage}
+                  // itemsPerPageOptions={[5, 10, 20]}
+                  showTotalItems={false}
+                />
+              )}
             </StyledFormGroup>
           </StyledCard>
         </StyledFormSection>

@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { Logger, UseGuards } from '@nestjs/common';
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
@@ -27,7 +27,7 @@ import { PabxDialingPlanResponseType } from 'src/modules/telephony/types/Create/
 import { PabxTrunkResponseType } from 'src/modules/telephony/types/Create/PabxTrunkResponse.type';
 import { UpdateRoutingRulesResponseType } from 'src/modules/telephony/types/Create/UpdateRoutingRulesResponse.type';
 import { SetupPabxEnvironmentResponseType } from 'src/modules/telephony/types/SetupPabxEnvironmentResponse.type';
-import { TelephonyData } from 'src/modules/telephony/types/Telephony.type';
+import { TelephonyData, TelephonyPaginatedResult } from 'src/modules/telephony/types/Telephony.type';
 import { TelephonyCallFlow } from 'src/modules/telephony/types/TelephonyCallFlow';
 import { TelephonyDialingPlan } from 'src/modules/telephony/types/TelephonyDialingPlan.type';
 import { TelephonyDids } from 'src/modules/telephony/types/TelephonyDids.type';
@@ -333,7 +333,118 @@ export class TelephonyResolver {
     return mappedResult;
   }
 
+  @Query(() => TelephonyPaginatedResult)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async findAllTelephonyIntegrationPaginated(
+    @AuthUser() user: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
+  ): Promise<TelephonyPaginatedResult> {
+    const workspace = await this.workspaceService.findById(workspaceId);
 
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      // If the workspace does not have a PABX company, setup the PABX environment
+      if (this.twentyConfigService.get('NODE_ENV') === 'production') {
+        this.logger.log('Iniciando configuração de telefonia para workspace: ', workspace.id);
+  
+        try {
+          await this.workspaceTelephonyService.setupWorkspaceTelephony(
+            workspace,
+            user,
+            workspace.displayName!,
+          );
+  
+          this.logger.log('Configuração de telefonia concluída com sucesso');
+        } catch (error) {
+          // TODO: implementar classe de exceção para telefonia
+          this.logger.error('Erro na configuração de telefonia:', error);
+          throw error;
+        }
+      } else {
+        throw new Error('Companhia PABX não encontrada');
+      }
+    }
+
+    // Validar parâmetros de paginação
+    if (page < 1) page = 1;
+    if (limit < 1 || limit > 100) limit = 10;
+
+    const result = await this.telephonyService.findAllPaginated({ 
+      workspaceId, 
+      page, 
+      limit 
+    });
+    
+    // Mapear os dados da mesma forma que o método anterior
+    const mappedData: TelephonyData[] = result.data.map((telephony: TelephonyWorkspaceEntity) => {
+      const parsedTelephony: TelephonyData = {
+        id: telephony.id,
+        memberId: telephony.memberId,
+        numberExtension: telephony.numberExtension,
+        extensionName: telephony.extensionName || null,
+        extensionGroup: telephony.extensionGroup || null,
+        type: telephony.type || null,
+        dialingPlan: telephony.dialingPlan || null,
+        areaCode: telephony.areaCode || null,
+        SIPPassword: telephony.SIPPassword || null,
+        callerExternalID: telephony.callerExternalID || null,
+        pullCalls: telephony.pullCalls || null,
+        listenToCalls: telephony.listenToCalls || null,
+        recordCalls: telephony.recordCalls || null,
+        blockExtension: telephony.blockExtension || null,
+        enableMailbox: telephony.enableMailbox || null,
+        emailForMailbox: telephony.emailForMailbox || null,
+        fowardAllCalls: telephony.fowardAllCalls || null,
+        fowardBusyNotAvailable: telephony.fowardBusyNotAvailable || null,
+        fowardOfflineWithoutService: telephony.fowardOfflineWithoutService || null,
+        extensionAllCallsOrOffline: telephony.extensionAllCallsOrOffline || null,
+        externalNumberAllCallsOrOffline: telephony.externalNumberAllCallsOrOffline || null,
+        destinyMailboxAllCallsOrOffline: telephony.destinyMailboxAllCallsOrOffline || null,
+        extensionBusy: telephony.extensionBusy || null,
+        externalNumberBusy: telephony.externalNumberBusy || null,
+        destinyMailboxBusy: telephony.destinyMailboxBusy || null,
+        ramal_id: telephony.ramal_id || null,
+        advancedFowarding1: telephony.advancedFowarding1 || null,
+        advancedFowarding2: telephony.advancedFowarding2 || null,
+        advancedFowarding3: telephony.advancedFowarding3 || null,
+        advancedFowarding4: telephony.advancedFowarding4 || null,
+        advancedFowarding5: telephony.advancedFowarding5 || null,
+        advancedFowarding1Value: telephony.advancedFowarding1Value || null,
+        advancedFowarding2Value: telephony.advancedFowarding2Value || null,
+        advancedFowarding3Value: telephony.advancedFowarding3Value || null,
+        advancedFowarding4Value: telephony.advancedFowarding4Value || null,
+        advancedFowarding5Value: telephony.advancedFowarding5Value || null,
+        createdAt: telephony.createdAt || undefined,
+        updatedAt: telephony.updatedAt || undefined,
+        member: telephony.member ? {
+          id: telephony.member.id,
+          name: telephony.member.name ? {
+            firstName: telephony.member.name.firstName || null,
+            lastName: telephony.member.name.lastName || null,
+          } : null,
+          userEmail: telephony.member.userEmail || null,
+          avatarUrl: telephony.member.avatarUrl || null,
+          userId: telephony.member.userId || null,
+          timeZone: telephony.member.timeZone || null,
+          dateFormat: telephony.member.dateFormat || null,
+          timeFormat: telephony.member.timeFormat || null,
+          calendarStartDay: telephony.member.calendarStartDay?.toString() || null,
+        } : null,
+      };
+      
+      return parsedTelephony;
+    });
+
+    return {
+      data: mappedData,
+      pagination: result.pagination,
+    };
+  }
 
   @Query(() => [TelephonyExtension])
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)

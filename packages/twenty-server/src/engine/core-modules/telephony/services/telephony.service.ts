@@ -38,6 +38,50 @@ export class TelephonyService {
     return telephonys;
   };
 
+  findAllPaginated = async (data: { workspaceId: string; page: number; limit: number }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        data.workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    const { page, limit } = data;
+    const skip = (page - 1) * limit;
+
+    // Buscar total de registros
+    const totalItems = await telephonyRepository.count();
+    
+    // Buscar registros paginados
+    const telephonys = await telephonyRepository.find({
+      relations: ['member'],
+      order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
+    });
+
+    // Calcular informações de paginação
+    const totalPages = Math.ceil(totalItems / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+      data: telephonys,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    };
+  };
+
   createTelephony: CreateTelephonyHandler = async (data, workspaceId) => {
     const telephonyRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(

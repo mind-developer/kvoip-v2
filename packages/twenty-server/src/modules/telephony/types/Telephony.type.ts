@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class TelephonyFullName {
@@ -157,4 +157,34 @@ export class TelephonyData {
 
   @Field(() => String, { nullable: true })
   updatedAt?: string;
+}
+
+@ObjectType()
+export class TelephonyPaginationInfo {
+  @Field(() => Int, { nullable: false })
+  currentPage: number;
+
+  @Field(() => Int, { nullable: false })
+  totalPages: number;
+
+  @Field(() => Int, { nullable: false })
+  totalItems: number;
+
+  @Field(() => Int, { nullable: false })
+  itemsPerPage: number;
+
+  @Field(() => Boolean, { nullable: false })
+  hasNextPage: boolean;
+
+  @Field(() => Boolean, { nullable: false })
+  hasPreviousPage: boolean;
+}
+
+@ObjectType()
+export class TelephonyPaginatedResult {
+  @Field(() => [TelephonyData], { nullable: false })
+  data: TelephonyData[];
+
+  @Field(() => TelephonyPaginationInfo, { nullable: false })
+  pagination: TelephonyPaginationInfo;
 }
