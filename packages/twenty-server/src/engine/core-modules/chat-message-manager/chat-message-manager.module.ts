@@ -6,8 +6,9 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ChatMessageManagerResolver } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.resolver';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ChatMessageManagerSetAbandonedCronJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-set-abandoned.cron.job';
+import { ChatAbandonmentService } from 'src/engine/core-modules/chat-message-manager/services/chat-abandonment.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,12 +29,17 @@ import { ClientChatMessageService } from 'src/modules/client-chat-message/client
   providers: [
     ChatMessageManagerResolver,
     ChatMessageManagerService,
-    GoogleStorageService,
     ClientChatMessageService,
     FileService,
     JwtService,
     JwtWrapperService,
+    ChatMessageManagerSetAbandonedCronJob,
+    ChatAbandonmentService,
   ],
-  exports: [ChatMessageManagerService],
+  exports: [
+    ChatMessageManagerService,
+    ChatMessageManagerSetAbandonedCronJob,
+    ChatAbandonmentService,
+  ],
 })
 export class ChatMessageManagerModule {}

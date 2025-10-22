@@ -7,6 +7,9 @@ import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager
 import { WhatsAppDriver } from 'src/engine/core-modules/chat-message-manager/drivers/whatsapp.driver';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
@@ -29,10 +32,15 @@ import { v4 } from 'uuid';
 @Injectable()
 export class ChatMessageManagerService {
   private readonly logger = new Logger(ChatMessageManagerService.name);
+  private activeCronJobs: Set<string> = new Set();
+  private readonly JOB_NAME = 'ChatMessageManagerSetAbandonedCronJob';
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
     private readonly clientChatMessageService: ClientChatMessageService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @OnDatabaseBatchEvent('clientChat', DatabaseEventAction.UPDATED)
@@ -50,7 +58,10 @@ export class ChatMessageManagerService {
       )
     ).findOneBy({ id: clientChat.personId });
     if (!person) {
-      this.logger.error('Person not found for client chat:', clientChat.id);
+      this.logger.error(
+        'avemesserson not found for client chat:',
+        clientChat.id,
+      );
       return;
     }
     clientChat.person = person;
@@ -286,6 +297,25 @@ export class ChatMessageManagerService {
         ...clientChatMessage,
       });
     }
+    if (clientChatMessage.event === ClientChatMessageEvent.ABANDONED) {
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).save({
+        ...clientChatMessage,
+      });
+      this.clientChatMessageService.publishMessageCreated(
+        {
+          ...clientChatMessage,
+          createdAt: new Date().toISOString(),
+          providerMessageId: v4(),
+        },
+        clientChatMessage.clientChatId,
+      );
+    }
     if (clientChatMessage.event === ClientChatMessageEvent.START) {
       const clientChatRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
@@ -363,6 +393,12 @@ export class ChatMessageManagerService {
       });
 
       if (!clientChat) throw new Error('Client chat not found');
+
+      await this.handleAbandonmentScheduling(
+        clientChatMessage,
+        clientChat,
+        workspaceId,
+      );
       if (clientChat.status === ClientChatStatus.FINISHED) {
         //add more integrations here in the future
         const whatsappIntegration = await (
@@ -439,6 +475,66 @@ export class ChatMessageManagerService {
       return result;
     } catch (error) {
       throw new Error('Error updating message: ' + error);
+    }
+  }
+
+  private async handleAbandonmentScheduling(
+    clientChatMessage: Omit<
+      ClientChatMessageWorkspaceEntity,
+      'createdAt' | 'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
+    >,
+    clientChat: ClientChatWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    this.logger.log(
+      'Handling abandonment scheduling for chat',
+      clientChatMessage.clientChatId,
+    );
+    if (
+      clientChat.status === ClientChatStatus.CHATBOT ||
+      clientChat.status === ClientChatStatus.UNASSIGNED
+    ) {
+      //cancel if any
+      await this.cancelScheduledAbandonment(clientChatMessage.clientChatId);
+      return;
+    }
+    //TODO: get from future clientChatConfig entity
+    const abandonmentInterval = 1;
+    if (clientChatMessage.fromType === ChatMessageFromType.AGENT) {
+      await this.cancelScheduledAbandonment(clientChatMessage.clientChatId);
+      return;
+    }
+    if (clientChatMessage.fromType === ChatMessageFromType.PERSON) {
+      if (this.hasJob(clientChatMessage.clientChatId)) {
+        this.logger.log(
+          `Abandonment job already scheduled for chat ${clientChatMessage.clientChatId}. Skipping...`,
+        );
+        return;
+      }
+      this.logger.log(
+        `Scheduling abandonment for chat ${clientChatMessage.clientChatId}`,
+      );
+      await this.scheduleAbandonment(
+        clientChatMessage.clientChatId,
+        workspaceId,
+        abandonmentInterval,
+      );
+      return;
+    }
+    if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {
+      //last message was transfer, and there already is a job scheduled for this chat.
+      //cancel and reschedule
+      if (this.hasJob(clientChatMessage.clientChatId)) {
+        await this.cancelScheduledAbandonment(clientChatMessage.clientChatId);
+        await this.scheduleAbandonment(
+          clientChatMessage.clientChatId,
+          workspaceId,
+          abandonmentInterval,
+        );
+        return;
+      }
+      //no job scheduled, do nothing
+      return;
     }
   }
 
@@ -528,6 +624,45 @@ export class ChatMessageManagerService {
       });
 
       return true;
-    } catch (error) {}
+    } catch (error) {
+      this.logger.error('Error sending push notification:', error);
+      return false;
+    }
+  }
+
+  async scheduleAbandonment(
+    chatId: string,
+    workspaceId: string,
+    abandonmentInterval: number,
+  ): Promise<void> {
+    await this.messageQueueService.addCron<{
+      chatId: string;
+      workspaceId: string;
+    }>({
+      jobName: this.JOB_NAME,
+      jobId: chatId,
+      data: { chatId, workspaceId },
+      options: {
+        id: chatId,
+        repeat: {
+          every: abandonmentInterval,
+          limit: 1,
+        },
+      },
+    });
+    this.activeCronJobs.add(chatId);
+  }
+
+  async cancelScheduledAbandonment(chatId: string): Promise<void> {
+    console.log('cancelling abandonment for chat', chatId);
+    await this.messageQueueService.removeCron({
+      jobName: this.JOB_NAME,
+      jobId: chatId,
+    });
+    this.activeCronJobs.delete(chatId);
+  }
+
+  hasJob(chatId: string): boolean {
+    return this.activeCronJobs.has(chatId);
   }
 }

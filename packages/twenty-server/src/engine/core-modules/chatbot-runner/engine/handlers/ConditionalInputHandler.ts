@@ -123,7 +123,11 @@ export class ConditionalInputHandler implements NodeHandler {
         );
       }
 
-      return null;
+      // Retorna o primeiro outgoingNodeId disponível ou null se não houver
+      const firstOutgoingNodeId = logic.logicNodeData.find(
+        (d) => d.outgoingNodeId,
+      )?.outgoingNodeId;
+      return firstOutgoingNodeId ?? null;
     }
 
     for (const d of logic.logicNodeData) {
