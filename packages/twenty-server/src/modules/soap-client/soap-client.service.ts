@@ -151,6 +151,7 @@ export class SoapClientService {
     try {
       // Step 1: Create client
       const clienteResult = await this.insereCliente(clienteData);
+      this.logger.log('clienteResult --------------------------------------------------------------', clienteResult);
 
       if (!clienteResult.status) {
         throw new Error(`Failed to create client: ${clienteResult.erro}`);

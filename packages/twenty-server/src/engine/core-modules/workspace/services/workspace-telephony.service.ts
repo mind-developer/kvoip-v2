@@ -8,9 +8,10 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SoapClientService } from 'src/modules/soap-client/soap-client.service';
 import {
-    ListRegionsResponse,
-    Regiao,
+  ListRegionsResponse,
+  Regiao,
 } from 'src/modules/telephony/types/regions.type';
+import { RetornoEstruturaId } from 'src/modules/soap-client/interfaces/return.interface';
 
 @Injectable()
 export class WorkspaceTelephonyService {
@@ -45,7 +46,7 @@ export class WorkspaceTelephonyService {
       const techPrefix = this.generateTechPrefix();
 
       // Configurar cliente SOAP
-      await this.setupSoapClient(user, techPrefix);
+      const { clienteSoapId, contaVoipId, ipDeOrigemId } = await this.setupSoapClient(user, techPrefix);
 
       // Configurar ambiente PABX
       const pabxResult = await this.setupPabxEnvironment(
@@ -53,6 +54,8 @@ export class WorkspaceTelephonyService {
         user,
         workspaceName,
         techPrefix,
+        clienteSoapId!.toString(),
+        ipDeOrigemId!.toString(),
       );
 
       return {
@@ -123,7 +126,7 @@ export class WorkspaceTelephonyService {
       local: 11,
     };
 
-    await this.soapClientService.createCompleteClient(
+    const soapResult = await this.soapClientService.createCompleteClient(
       clienteData,
       contaVoipData,
       ipData,
@@ -132,7 +135,11 @@ export class WorkspaceTelephonyService {
       11,
     );
 
-    this.logger.log('Cliente SOAP configurado com sucesso');
+    return {
+      clienteSoapId: (soapResult.cliente.id as RetornoEstruturaId)?.$value || soapResult.cliente.id,
+      contaVoipId: (soapResult.contaVoip.id as RetornoEstruturaId)?.$value || soapResult.contaVoip.id,
+      ipDeOrigemId: (soapResult.ipDeOrigem.id as RetornoEstruturaId)?.$value || soapResult.ipDeOrigem.id,
+    };
   }
 
   /**
@@ -148,6 +155,8 @@ export class WorkspaceTelephonyService {
     user: User,
     workspaceName: string,
     techPrefix: string,
+    soapClientId: string,
+    ipDeOrigemId: string,
   ) {
     this.logger.log(
       'Configurando ambiente PABX para workspace: ',
@@ -226,12 +235,20 @@ export class WorkspaceTelephonyService {
 
       const dialingPlanId = dialingPlan.plano_discagem_id;
 
+      this.logger.log('dialingPlanId --------------------------------------------------------------', dialingPlanId);
+      this.logger.log('companyId --------------------------------------------------------------', companyId);
+      this.logger.log('trunkAPIId --------------------------------------------------------------', trunkAPIId);
+      this.logger.log('soapClientId --------------------------------------------------------------', JSON.stringify(soapClientId));
+      this.logger.log('ipDeOrigemId --------------------------------------------------------------', JSON.stringify(ipDeOrigemId));
+
       // Atualizar workspace com IDs do PABX
       await this.workspaceRepository.update(workspace.id, {
         id: workspace.id,
         pabxCompanyId: companyId,
         pabxTrunkId: trunkAPIId,
         pabxDialingPlanId: dialingPlanId,
+        softSwitchClientId: soapClientId,
+        originIpId: ipDeOrigemId,
       });
 
       // Configurar regras de roteamento

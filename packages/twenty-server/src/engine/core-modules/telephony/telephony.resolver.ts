@@ -202,7 +202,7 @@ export class TelephonyResolver {
     // Validação 2: Verificar se o número da extensão já existe na API PABX
     const extensionExists = await this.pabxService.checkExtensionExists(
       createTelephonyInput.numberExtension,
-      workspace.pabxCompanyId,
+      Number(workspace.pabxCompanyId),
     );
 
     if (extensionExists) {
@@ -234,6 +234,7 @@ export class TelephonyResolver {
     @AuthUser() user: User,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
   ): Promise<TelephonyData[]> {
+
 
     const workspace = await this.workspaceService.findById(workspaceId);
 
@@ -355,7 +356,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listExtentions({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados;
@@ -390,7 +391,7 @@ export class TelephonyResolver {
     if (updateTelephonyInput.numberExtension && updateTelephonyInput.numberExtension !== telephony.numberExtension) {
       const extensionExists = await this.pabxService.checkExtensionExists(
         updateTelephonyInput.numberExtension,
-        workspace.pabxCompanyId,
+        Number(workspace.pabxCompanyId),
       );
 
       if (extensionExists) {
@@ -457,7 +458,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listExtentions({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
     this.logger.log('extensions ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
 
@@ -482,7 +483,7 @@ export class TelephonyResolver {
 
     const extensions = await this.pabxService.listExtentions({
       numero: extNum,
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados[0];
@@ -548,7 +549,7 @@ export class TelephonyResolver {
 
     const extensions = await this.pabxService.listExtentions({
       numero: extNum,
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     this.logger.log('extensions2 ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
@@ -615,7 +616,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listDialingPlans({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados;
@@ -637,7 +638,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listDids({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados;
@@ -659,7 +660,7 @@ export class TelephonyResolver {
     }
 
     const uras = await this.pabxService.listCampaigns({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     const data = uras.data.dados.map((ura: Campaign) => {
@@ -687,7 +688,7 @@ export class TelephonyResolver {
     }
 
     const callFlows = await this.pabxService.listIntegrationFlows({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     const data = callFlows.data.dados.map((ura: TelephonyCallFlow) => {
@@ -890,7 +891,7 @@ export class TelephonyResolver {
     
     const extension = await this.pabxService.listExtentions({
       numero: numberExtension,
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     if (!extension?.data?.dados) {
@@ -1036,9 +1037,10 @@ export class TelephonyResolver {
       await this.workspaceService.updateWorkspaceById({
         payload: {
           id: input.workspaceId,
-          pabxCompanyId: companyId,
-          pabxTrunkId: trunkAPIId,
-          pabxDialingPlanId: dialingPlanAPIId,
+          pabxCompanyId: companyId.toString(),
+          pabxTrunkId: trunkAPIId.toString(),
+          pabxDialingPlanId: dialingPlanAPIId.toString(),
+          // softSwitchClientId: soapClientId.toString(),
         },
       });
 

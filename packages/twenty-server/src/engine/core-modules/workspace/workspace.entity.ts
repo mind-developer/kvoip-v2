@@ -260,9 +260,9 @@ export class Workspace {
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxCompanyId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxCompanyId?: string | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
@@ -272,11 +272,19 @@ export class Workspace {
   @Column({ type: 'varchar', nullable: true })
   onesignalApiKey?: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxTrunkId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxTrunkId?: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxDialingPlanId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxDialingPlanId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  softSwitchClientId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  originIpId?: string | null;
 }
