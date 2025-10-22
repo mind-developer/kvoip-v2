@@ -426,6 +426,40 @@ export const PaneChat = () => {
     }
   }, [messages]);
 
+  const sendAudioMessage = async (chunks: Blob[]) => {
+    const audioBlob = new Blob(chunks, {
+      type: 'audio/webm',
+    });
+    setRecordingState('none');
+    setAudioStream(null);
+    const attachment = await uploadAttachmentFile(
+      new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
+        type: 'audio/webm',
+      }),
+      {
+        targetObjectNameSingular: 'person',
+        id: selectedChat?.person!.id || '',
+      },
+    );
+    sendClientChatMessage({
+      clientChatId: chatId!,
+      from: workspaceMemberWithAgent?.agent?.id || '',
+      fromType: ChatMessageFromType.AGENT,
+      to: selectedChat?.person!.id || '',
+      toType: ChatMessageToType.PERSON,
+      provider: ChatIntegrationProvider.WHATSAPP,
+      type: ChatMessageType.AUDIO,
+      textBody: null,
+      caption: null,
+      deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+      edited: null,
+      attachmentUrl: attachment.attachmentAbsoluteURL,
+      event: null,
+      workspaceId: currentWorkspace?.id ?? '',
+      providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
+    });
+  };
+
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
@@ -439,37 +473,7 @@ export const PaneChat = () => {
       };
 
       recorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, {
-          type: 'audio/webm',
-        });
-        setRecordingState('none');
-        setAudioStream(null);
-        const attachment = await uploadAttachmentFile(
-          new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
-            type: 'audio/webm',
-          }),
-          {
-            targetObjectNameSingular: 'person',
-            id: selectedChat?.person!.id || '',
-          },
-        );
-        sendClientChatMessage({
-          clientChatId: chatId!,
-          from: workspaceMemberWithAgent?.agent?.id || '',
-          fromType: ChatMessageFromType.AGENT,
-          to: selectedChat?.person!.id || '',
-          toType: ChatMessageToType.PERSON,
-          provider: ChatIntegrationProvider.WHATSAPP,
-          type: ChatMessageType.AUDIO,
-          textBody: null,
-          caption: null,
-          deliveryStatus: ChatMessageDeliveryStatus.PENDING,
-          edited: null,
-          attachmentUrl: attachment.attachmentAbsoluteURL,
-          event: null,
-          workspaceId: currentWorkspace?.id ?? '',
-          providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
-        });
+        await sendAudioMessage(chunks);
       };
 
       recorder.onpause = () => {
@@ -487,24 +491,6 @@ export const PaneChat = () => {
       enqueueErrorSnackBar({
         message: t`Failed to start recording. Check microphone access.`,
       });
-    }
-  };
-
-  const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-    }
-  };
-
-  const handlePauseRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.pause();
-    }
-  };
-
-  const handleResumeRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.resume();
     }
   };
 
@@ -535,18 +521,9 @@ export const PaneChat = () => {
   }
 
   const handleSendMessage = async () => {
-    if (audioBlob) {
-      const attachment = await uploadAttachmentFile(
-        new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
-          type: 'audio/webm',
-        }),
-        {
-          targetObjectNameSingular: 'person',
-          id: selectedChat.person!.id,
-        },
-      );
-      setMediaRecorder(null);
-      setAudioStream(null);
+    if (recordingState !== 'recording' && mediaRecorder) {
+      mediaRecorder && mediaRecorder.stop();
+      return;
     } else {
       const optimisticMessageId = `optimistic-${v4()}`;
       const optimisticMessage: Omit<ClientChatMessage, 'providerMessageId'> = {
@@ -695,7 +672,7 @@ export const PaneChat = () => {
                   setIsAnexOpen(!isAnexOpen);
                   return;
                 }
-                handleStopRecording();
+                mediaRecorder && mediaRecorder.stop();
               }}
             />
           </StyledAnexDiv>
@@ -751,10 +728,10 @@ export const PaneChat = () => {
                       handleStartRecording();
                       break;
                     case 'recording':
-                      handlePauseRecording();
+                      mediaRecorder && mediaRecorder.pause();
                       break;
                     case 'paused':
-                      handleResumeRecording();
+                      mediaRecorder && mediaRecorder.resume();
                       break;
                   }
                 }}
@@ -773,7 +750,7 @@ export const PaneChat = () => {
                 )}
                 onClick={() => {
                   // handleSendMessage();
-                  handleStopRecording();
+                  mediaRecorder && mediaRecorder.stop();
                 }}
                 variant="primary"
                 accent="blue"
@@ -785,10 +762,17 @@ export const PaneChat = () => {
       );
     }
 
-    if (selectedChat.status === ClientChatStatus.UNASSIGNED) {
+    if (
+      selectedChat.status === ClientChatStatus.UNASSIGNED ||
+      selectedChat.status === ClientChatStatus.ABANDONED
+    ) {
       return (
         <StyledButton
-          title="Start Service"
+          title={
+            selectedChat.status === ClientChatStatus.UNASSIGNED
+              ? t`Start Service`
+              : t`Restart abandoned service`
+          }
           variant="primary"
           accent="blue"
           size="medium"
@@ -854,7 +838,7 @@ export const PaneChat = () => {
                         translateY: 0,
                         opacity: 1,
                         transition: {
-                          delay: index * 0.01,
+                          delay: Math.min(index * 0.01, 0.3),
                           type: 'spring',
                           stiffness: 300,
                           damping: 20,
@@ -1000,7 +984,7 @@ export const PaneChat = () => {
                               | ChatMessageFromType.AGENT
                               | ChatMessageFromType.CHATBOT
                           }
-                          animateDelay={index * 0.01}
+                          animateDelay={Math.min(index * 0.01, 0.3)}
                         />
                       </StyledAvatarMessage>
                       <StyledContainer isSystemMessage={isSystemMessage}>
@@ -1009,7 +993,7 @@ export const PaneChat = () => {
                             time={formatDate(message.createdAt ?? '').time}
                             message={message}
                             hasTail={lastOfRow}
-                            animateDelay={index * 0.01}
+                            animateDelay={Math.min(index * 0.01, 0.3)}
                           >
                             {renderedContent}
                           </StyledMessageBubble>

@@ -20,6 +20,7 @@ const StyledPaneSideContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: max-content;
+  min-width: 450px;
   padding: 0 ${({ theme }) => theme.spacing(3)};
 `;
 
@@ -32,7 +33,7 @@ const StyledTabListContainer = styled.div`
   justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  min-width: 350px;
+  min-width: 450px;
 `;
 
 const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`

@@ -45,8 +45,13 @@ export const useClientChats = (sectorId: string) => {
       telegramIntegrationId: true,
       provider: true,
     },
-    filter: { sectorId: { eq: sectorId } },
-    limit: 100,
+    filter: {
+      or: [
+        { status: { eq: ClientChatStatus.ABANDONED } },
+        { sectorId: { eq: sectorId } },
+      ],
+    },
+    limit: 500,
     orderBy: [{ createdAt: 'AscNullsFirst' }],
     onCompleted: (data) => {
       setDbChats(data);

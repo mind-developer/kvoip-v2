@@ -4,9 +4,9 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { IconArrowRight, IconRobot } from '@tabler/icons-react';
+import { IconArrowRight, IconRobot, IconStopwatch } from '@tabler/icons-react';
 import { ClientChatMessage, ClientChatMessageEvent } from 'twenty-shared/types';
-import { Avatar } from 'twenty-ui/display';
+import { Avatar, useIcons } from 'twenty-ui/display';
 import { WorkspaceMember } from '~/generated/graphql';
 
 export default function EventDescription({
@@ -29,6 +29,8 @@ export default function EventDescription({
       return <ChatbotDescription message={message} />;
     case ClientChatMessageEvent.CHATBOT_END:
       return <ChatbotDescription message={message} />;
+    case ClientChatMessageEvent.ABANDONED:
+      return <AbandonedDescription message={message} />;
   }
 }
 
@@ -145,6 +147,8 @@ function TransferToSectorDescription({
       icon: true,
     },
   });
+  const { getIcon } = useIcons();
+  const Icon = getIcon(sector?.icon);
   return (
     <StyledEventDescription>
       <StyledEventDescriptionText variant="bold">
@@ -160,14 +164,19 @@ function TransferToSectorDescription({
         />
         {agentWorkspaceMember?.name?.firstName}{' '}
         {agentWorkspaceMember?.name?.lastName} <IconArrowRight size={13} />{' '}
-        <Avatar
-          avatarUrl={sector?.icon}
-          placeholder={sector?.name}
-          placeholderColorSeed={sector?.name}
-          size="sm"
-          type="rounded"
-        />
+        {<Icon size={13} />}
         {sector?.name}
+      </StyledEventDescriptionText>
+    </StyledEventDescription>
+  );
+}
+
+function AbandonedDescription() {
+  return (
+    <StyledEventDescription>
+      <StyledEventDescriptionText variant="bold">
+        <IconStopwatch size={13} />{' '}
+        {t`Service moved to abandoned due to inactivity from agent`}
       </StyledEventDescriptionText>
     </StyledEventDescription>
   );
