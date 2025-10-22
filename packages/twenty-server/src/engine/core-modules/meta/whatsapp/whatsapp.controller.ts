@@ -112,7 +112,6 @@ export class WhatsappController {
             mediaId,
             integrationId,
             msg.from,
-            msg.type,
             workspaceId,
           )) ?? null;
       }

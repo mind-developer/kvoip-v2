@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 
 import axios from 'axios';
 import { v4 } from 'uuid';
 
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { createRelatedPerson } from 'src/engine/core-modules/meta/whatsapp/utils/createRelatedPerson';
@@ -19,7 +20,6 @@ import { whatsAppMessageToClientChatMessage } from 'src/engine/core-modules/meta
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
-import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -35,22 +35,21 @@ import {
   ClientChatStatus,
 } from 'twenty-shared/types';
 
+@Injectable()
 export class WhatsAppService {
-  private META_API_URL = this.twentyConfigService.get('META_API_URL');
+  private META_API_URL: string;
   protected readonly logger = new Logger(WhatsAppService.name);
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    public readonly googleStorageService: GoogleStorageService,
+    private readonly environmentService: TwentyConfigService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
     private readonly ChatbotRunnerService: ChatbotRunnerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private sendMessageQueue: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSaveMessageQueue)
-    private saveMessageQueue: MessageQueueService,
-    private readonly clientChatMessageService: ClientChatMessageService,
-    private readonly chatMessageManagerService: ChatMessageManagerService,
-  ) {}
+    private readonly fileService: FileService,
+    private readonly fileMetadataService: FileMetadataService,
+  ) {
+    this.META_API_URL = this.environmentService.get('META_API_URL');
+  }
 
   async getWhatsappTemplates(
     integrationId: string,
@@ -314,8 +313,8 @@ export class WhatsAppService {
   }
 
   async sendNotification(externalIds: string[], message: string) {
-    const ONESIGNAL_APPID = this.twentyConfigService.get('ONESIGNAL_APP_ID');
-    const ONESIGNAL_REST_API_KEY = this.twentyConfigService.get(
+    const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
+    const ONESIGNAL_REST_API_KEY = this.environmentService.get(
       'ONESIGNAL_REST_API_KEY',
     );
 
@@ -360,7 +359,6 @@ export class WhatsAppService {
     mediaId: string,
     integrationId: string,
     phoneNumber: string,
-    type: string,
     workspaceId: string,
   ) {
     const whatsappRepository =
@@ -408,18 +406,17 @@ export class WhatsAppService {
 
       const mediaBuffer = Buffer.from(mediaResponse.data, 'binary');
 
-      const file: { originalname: string; buffer: Buffer; mimetype: string } = {
-        originalname: `${phoneNumber}_${v4()}`,
-        buffer: mediaBuffer,
-        mimetype: data.mime_type,
-      };
-
-      const fileUrl = await this.googleStorageService.uploadFileToBucket(
+      const fileUrl = this.fileService.signFileUrl({
+        url: (
+          await this.fileMetadataService.createFile({
+            file: mediaBuffer,
+            filename: `${phoneNumber}_${v4()}`,
+            mimeType: data.mime_type,
+            workspaceId,
+          })
+        ).fullPath,
         workspaceId,
-        type,
-        file,
-        false,
-      );
+      });
 
       return fileUrl;
     } catch (error) {
@@ -427,17 +424,5 @@ export class WhatsAppService {
 
       throw new Error(err);
     }
-  }
-
-  async getWorkspaceWhatsappChatsMapToReassign() {
-    // TODO: Implement
-  }
-
-  async handleChatsWaitingStatus(data: WhatsappEmmitWaitingStatusJobProps) {
-    // TODO: Implement
-  }
-
-  async getWorkspaceWhatsappResolvedChatsMapToReassign() {
-    // TODO: Implement
   }
 }
