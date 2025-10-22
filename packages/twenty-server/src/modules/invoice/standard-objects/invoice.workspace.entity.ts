@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -151,9 +150,6 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CFOP`,
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CFOP,
-    },
   })
   @WorkspaceIsNullable()
   cfop: string;
@@ -164,9 +160,6 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST/CSOSN`,
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CST_CSOSN,
-    },
   })
   @WorkspaceIsNullable()
   cstIcmsCsosn: string;

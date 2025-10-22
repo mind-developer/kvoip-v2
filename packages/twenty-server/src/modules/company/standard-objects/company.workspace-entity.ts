@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -34,8 +33,8 @@ import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspa
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    type FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
@@ -84,9 +83,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Name`,
     description: msg`The company name`,
     icon: 'IconBuildingSkyscraper',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.COMPANY_NAME,
-    },
   })
   name: string;
 
@@ -177,9 +173,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CPF/CNPJ`,
     description: msg`Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID`,
     icon: 'IconFileText',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.CPF_CNPJ,
-    },
   })
   @WorkspaceIsNullable()
   cpfCnpj: string | null;
@@ -190,9 +183,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Municipal Registration`,
     description: msg`Municipal registration of the service provider`,
     icon: 'IconFileText',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.MUNICIPAL_REGISTRATION,
-    },
   })
   @WorkspaceIsNullable()
   inscricaoMunicipal: string | null;
@@ -203,9 +193,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`State Registration`,
     description: msg`State Registration number for tax purposes in Brazil`,
     icon: 'IconFileText',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.STATE_REGISTRATION,
-    },
   })
   @WorkspaceIsNullable()
   inscricaoEstadual: string | null;
@@ -537,9 +524,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CDR Integration ID`,
     description: msg`Unique identifier for CDR integration`,
     icon: 'IconFileText',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.CDR_ID,
-    },
   })
   @WorkspaceIsNullable()
   cdrId: string | null;

@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -31,8 +30,8 @@ import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspac
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    type FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -119,11 +118,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
     type: FieldMetadataType.TEXT,
     label: msg`Job Title`,
-    description: msg`Contact's job title`,
+    description: msg`Contact’s job title`,
     icon: 'IconBriefcase',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.JOB_TITLE,
-    },
   })
   jobTitle: string;
 
@@ -150,11 +146,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.city,
     type: FieldMetadataType.TEXT,
     label: msg`City`,
-    description: msg`Contact's city`,
+    description: msg`Contact’s city`,
     icon: 'IconMap',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.CITY,
-    },
   })
   city: string;
 
@@ -162,11 +155,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: msg`Avatar`,
-    description: msg`Contact's avatar`,
+    description: msg`Contact’s avatar`,
     icon: 'IconFileUpload',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.AVATAR_URL,
-    },
   })
   @WorkspaceIsSystem()
   avatarUrl: string;

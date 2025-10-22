@@ -3,7 +3,6 @@ import { registerEnumType } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
@@ -112,9 +111,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Preferred color scheme`,
     icon: 'IconColorSwatch',
     defaultValue: "'System'",
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.COLOR_SCHEME,
-    },
   })
   @WorkspaceIsSystem()
   colorScheme: string;
@@ -126,9 +122,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Preferred language`,
     icon: 'IconLanguage',
     defaultValue: `'${SOURCE_LOCALE}'`,
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.LOCALE,
-    },
   })
   @WorkspaceIsSystem()
   locale: keyof typeof APP_LOCALES;
@@ -139,9 +132,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Avatar Url`,
     description: msg`Workspace member avatar`,
     icon: 'IconFileUpload',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.AVATAR_URL,
-    },
   })
   @WorkspaceIsSystem()
   avatarUrl: string;
@@ -153,9 +143,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`User Email`,
     description: msg`Related user email address`,
     icon: 'IconMail',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.USER_EMAIL,
-    },
   })
   @WorkspaceIsSystem()
   userEmail: string;
@@ -190,9 +177,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: "'system'",
     description: msg`User time zone`,
     icon: 'IconTimezone',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.TIMEZONE,
-    },
   })
   @WorkspaceIsSystem()
   timeZone: string;
@@ -385,9 +369,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`User Document`,
     description: msg`Associated User Document`,
     icon: 'IconDocument',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.USER_DOCUMENT,
-    },
   })
   @WorkspaceIsNullable()
   @WorkspaceIsUnique()
@@ -411,9 +392,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Agent Id`,
     description: msg`Associated Agent Id`,
     icon: 'IconCircleUsers',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.AGENT_ID,
-    },
   })
   @WorkspaceIsNullable()
   agentId: string | null;
@@ -425,9 +403,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`extensionNumber`,
     description: msg`Associated extensionNumber`,
     icon: 'IconCircleUsers',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.EXTENSION_NUMBER,
-    },
   })
   @WorkspaceIsNullable()
   extensionNumber: string | null;

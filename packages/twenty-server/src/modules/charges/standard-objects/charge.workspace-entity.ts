@@ -2,7 +2,6 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -23,8 +22,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CHARGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
@@ -89,9 +88,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Name`,
     description: msg`Charge product`,
     icon: 'IconReportMoney',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.CHARGE_NAME,
-    },
   })
   @WorkspaceIsNullable()
   name: string;
@@ -132,9 +128,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Request Code`,
     description: msg`Charge request code`,
     icon: 'IconSettings',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
-    },
   })
   @WorkspaceIsNullable()
   requestCode: string;
@@ -175,9 +168,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Tax ID`,
     description: msg`CPF or CNPJ identifier for the charge`,
     icon: 'IconId',
-    settings: {
-      validation: TEXT_VALIDATION_PATTERNS.TAX_ID,
-    },
   })
   @WorkspaceIsNullable()
   taxId: string;
