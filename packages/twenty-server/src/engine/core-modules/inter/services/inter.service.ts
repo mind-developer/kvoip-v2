@@ -13,7 +13,6 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import axios, { AxiosInstance, AxiosResponse, isAxiosError } from 'axios';
-import { isDefined } from 'class-validator';
 import { InterBillingChargeFileEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { JsonContains, MoreThanOrEqual, Repository } from 'typeorm';
@@ -45,6 +44,7 @@ import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-nex
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class InterService {
@@ -380,15 +380,25 @@ export class InterService {
     ].includes(this.twentyConfigService.get('NODE_ENV'));
 
     this.logger.log(`Sengind email to ${userEmail}`);
-    this.emailService.send({
-      from: `${this.twentyConfigService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-      to: userEmail,
-      subject: t`Inter Bilepix Billing Charge ${isSandbox ? `(${interChargeCode})` : ''}`,
-      text,
-      html,
-    });
+
+    const emailsTo = [
+      userEmail,
+      isSandbox
+        ? this.twentyConfigService.get('INTER_SANDBOX_EMAIL_TO')
+        : undefined,
+    ].filter(isDefined);
+
+    for (const emailTo of emailsTo) {
+      this.emailService.send({
+        from: `${this.twentyConfigService.get(
+          'EMAIL_FROM_NAME',
+        )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+        to: emailTo,
+        subject: t`Inter Bilepix Billing Charge ${isSandbox ? `(${interChargeCode})` : ''}`,
+        text,
+        html,
+      });
+    }
   }
 
   async interSandboxPayBill({
