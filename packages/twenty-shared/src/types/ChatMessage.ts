@@ -72,6 +72,7 @@ export enum ClientChatMessageEvent {
 
   START = 'START',
   END = 'END',
+  ABANDONED = 'ABANDONED',
 
   TRANSFER_TO_AGENT = 'TRANSFER_TO_AGENT',
   TRANSFER_TO_SECTOR = 'TRANSFER_TO_SECTOR',
