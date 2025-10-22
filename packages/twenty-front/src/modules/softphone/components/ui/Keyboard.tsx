@@ -8,6 +8,7 @@ const StyledKeyboard = styled.div<{ isVisible: boolean }>`
   grid-gap: ${({ theme }) => theme.spacing(2)};
   justify-items: center;
   margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(5)};
   
   /* Transições suaves */
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};

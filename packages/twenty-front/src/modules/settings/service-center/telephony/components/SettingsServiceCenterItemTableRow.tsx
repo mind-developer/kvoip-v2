@@ -6,15 +6,16 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-const StyledContainer = styled.div<{ clickable?: boolean }>`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledContainer = styled.div<{ clickable?: boolean, isSelected?: boolean }>`
+  background: ${({ theme, isSelected }) => isSelected ? theme.background.tertiary : theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
   flex-direction: row;
   margin-bottom: ${({ theme }) => theme.spacing(0)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
   cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
   transition: background-color 0.2s ease;
+  align-items: center;
 
   &:hover {
     background: ${({ theme, clickable }) => clickable ? theme.background.tertiary : theme.background.secondary};
@@ -32,13 +33,6 @@ const StyledContent = styled.div`
   justify-content: center;
   margin-left: ${({ theme }) => theme.spacing(3)};
   overflow: auto;
-`;
-
-const StyledStatusContainer = styled.div`
-  width: 25%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const StyledEmailText = styled.span`
@@ -60,10 +54,12 @@ type SettingsServiceCenterItemTableRowProps = {
   telephony: Telephony;
   accessory?: React.ReactNode;
   onClick?: () => void;
+  isSelected?: boolean;
 };
 
 export const SettingsServiceCenterItemTableRow = ({
   telephony,
+  isSelected = false,
   accessory,
   onClick,
 }: SettingsServiceCenterItemTableRowProps) => {
@@ -79,6 +75,7 @@ export const SettingsServiceCenterItemTableRow = ({
 
   return (
     <StyledContainer 
+      isSelected={isSelected}
       clickable={!!onClick}
       onClick={onClick}
     >

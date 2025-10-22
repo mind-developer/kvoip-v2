@@ -26,6 +26,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line import/no-duplicates
+import { Button } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { IconPlus } from '@tabler/icons-react';
 
 type SettingsNewTelephonySchemaValues = z.infer<
   typeof SettingsServiceCenterTelephonyFormSchema
@@ -139,28 +142,31 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer links={[]} title="">
+
+      <SubMenuTopBarContainer
+        title={t`Telephony`}
+        actionButton={
+          <Button
+            Icon={IconPlus}
+            title={t`Add Telephony`}
+            accent="blue"
+            size="small"
+            onClick={formConfig.handleSubmit(onSave)}
+            disabled={!canSave}
+          />
+        }
+        links={[
+          {
+            children: t`Extensions`,
+            href: settingsServiceCenterTelephonyPagePath,
+          },
+          { children: t`New` },
+        ]}
+      >
         <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: t`Telephony`,
-                  href: settingsServiceCenterTelephonyPagePath,
-                },
-                { children: t`New` },
-              ]}
-            />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(settingsServiceCenterTelephonyPagePath)}
-              onSave={formConfig.handleSubmit(onSave)}
-            />
-          </SettingsHeaderContainer>
           <SettingsServiceCenterTelephonyAboutForm />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SubMenuTopBarContainer> 
     </FormProvider>
   );
 };

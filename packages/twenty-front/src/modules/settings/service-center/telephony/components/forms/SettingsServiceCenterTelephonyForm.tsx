@@ -242,11 +242,11 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
       type: activeTelephony.type,
       blockExtension: activeTelephony.blockExtension,
       externalNumberAllCallsOrOffline:
-        activeTelephony.externalNumberAllCallsOrOffline,
+      activeTelephony.externalNumberAllCallsOrOffline,
       externalNumberBusy: activeTelephony.externalNumberBusy,
       extensionBusy: activeTelephony.extensionBusy,
       destinyMailBoxAllCallsOrOffline:
-        activeTelephony.destinyMailboxAllCallsOrOffline,
+      activeTelephony.destinyMailboxAllCallsOrOffline,
       destinyMailBoxBusy: activeTelephony.destinyMailboxBusy,
       advancedFowarding1: activeTelephony.advancedFowarding1,
       advancedFowarding2: activeTelephony.advancedFowarding2,

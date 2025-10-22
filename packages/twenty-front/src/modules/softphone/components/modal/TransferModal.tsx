@@ -13,6 +13,7 @@ import { IconArrowMerge, IconArrowRight, IconCheck, IconPhone, IconSearch, IconX
 import React, { useState } from 'react';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { Card } from 'twenty-ui/layout';
 
 interface TransferModalProps {
   modalId: string;
@@ -25,6 +26,13 @@ type TransferType = 'blind' | 'attended';
 
 const StyledTransferModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledCard = styled(Card)`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledContainer = styled.div`
@@ -208,18 +216,25 @@ const TransferModal: React.FC<TransferModalProps> = ({
                 title="Transferência às cegas: Transferência direta"
               >
                 <IconPhone size={16} />
-                {t`Às Cegas`}
+                {t`Blind Transfer`}
               </StyledTransferModeButton>
               <StyledTransferModeButton
-                isSelected={transferType === 'attended'}
-                onClick={() => setTransferType('attended')}
+                // isSelected={transferType === 'attended'}
+                isSelected={false}
+                // onClick={() => setTransferType('attended')}
+                onClick={() => {
+                  enqueueErrorSnackBar({
+                    message: t`Attended is disabled temporarily`,
+                  });
+                }}
                 role="radio"
                 aria-checked={transferType === 'attended'}
-                aria-label="Transferência assistida: Confirma antes de transferir"
-                title="Transferência assistida: Confirma antes de transferir"
+                aria-label="Attended Transfer: Confirm before transferring"
+                title="Attended Transfer: Confirm before transferring"
+                
               >
                 <IconArrowMerge size={16} />
-                {t`Assistida`}
+                {t`Attended Transfer`}
               </StyledTransferModeButton>
             </StyledTransferModeButtonGroup>
           </StyledFormGroup>
@@ -236,24 +251,27 @@ const TransferModal: React.FC<TransferModalProps> = ({
           </StyledFormGroup>
 
           {/* Lista de Extensões */}
-          <StyledFormGroup>
-            <InputLabel>{t`Available Extensions`}</InputLabel>
-            <TextInput
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder={t`Search extensions...`}
-              LeftIcon={IconSearch}
-            />
-            
-            <ServiceCenterTabContent
-              telephonys={telephonys || []}
-              searchTerm={searchTerm}
-              refetch={refetch}
-              disableActions={true}
-              onExtensionSelect={handleExtensionSelect}
-              loading={telephonyLoading}
-            />
-          </StyledFormGroup>
+          <StyledCard>
+            <StyledFormGroup>
+              <InputLabel>{t`Available Extensions`}</InputLabel>
+              <TextInput
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder={t`Search extensions...`}
+                LeftIcon={IconSearch}
+              />
+              
+              <ServiceCenterTabContent
+                telephonys={telephonys || []}
+                searchTerm={searchTerm}
+                refetch={refetch}
+                disableActions={true}
+                onExtensionSelect={handleExtensionSelect}
+                loading={telephonyLoading}
+                markSelectedItem
+              />
+            </StyledFormGroup>
+          </StyledCard>
         </StyledFormSection>
 
         <StyledButtonContainer>

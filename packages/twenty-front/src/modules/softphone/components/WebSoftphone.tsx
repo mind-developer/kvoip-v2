@@ -45,6 +45,7 @@ import { CallTimer } from './call/CallTimer';
 import AudioDevicesModal from './modal/AudioDevicesModal';
 import TransferModal from './modal/TransferModal';
 import { ConnectionStatus } from './status/ConnectionStatus';
+import { Card } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -63,6 +64,11 @@ const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
       : status === SoftphoneStatus.Registering
         ? theme.color.yellow40
         : theme.color.red40};
+`;
+
+const StyledCard = styled(Card)`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
 const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
@@ -406,7 +412,7 @@ const WebSoftphone: React.FC = () => {
     openModal(modalId);
   };
 
-  // handleOpenTransferModal();
+  //handleOpenTransferModal();
 
   const getStatus = (callState: CallState): SoftphoneStatus => {
     if (callState.isRegistered) return SoftphoneStatus.Online;

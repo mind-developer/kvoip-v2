@@ -8,6 +8,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -28,6 +29,7 @@ type ServiceCenterTabContentProps = {
   disableActions?: boolean;
   onExtensionSelect?: (telephony: Telephony) => void;
   loading?: boolean;
+  markSelectedItem?: boolean;
 };
 
 const StyledSection = styled(Section)`
@@ -43,12 +45,14 @@ export const ServiceCenterTabContent = ({
   disableActions = false,
   onExtensionSelect,
   loading = false,
+  markSelectedItem = false,
 }: ServiceCenterTabContentProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const theme = useTheme();
   const EditTelephonyIcon = getIcon('IconEdit');
   const { t } = useLingui();
+  const [selectedItem, setSelectedItem] = useState<Telephony | null>(null);
 
   // Buscar dados dos membros do workspace
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -103,6 +107,7 @@ export const ServiceCenterTabContent = ({
             <SettingsServiceCenterItemTableRow
               key={telephony.id}
               telephony={telephony}
+              isSelected={selectedItem?.id === telephony.id}
               accessory={
                 !disableActions ? (
                   <IconButton
@@ -116,7 +121,10 @@ export const ServiceCenterTabContent = ({
                   />
                 ) : undefined
               }
-              onClick={disableActions && onExtensionSelect ? () => onExtensionSelect(telephony) : undefined}
+              onClick={disableActions && onExtensionSelect ? () => {
+                setSelectedItem(telephony);
+                onExtensionSelect(telephony);
+              } : undefined}
             />
           ))}
         </StyledSection>
