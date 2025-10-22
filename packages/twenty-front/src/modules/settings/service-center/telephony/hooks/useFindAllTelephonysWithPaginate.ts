@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { GET_ALL_TELEPHONYS_PAGINATED } from '@/settings/service-center/telephony/graphql/queries/getAllTelephonysPaginated';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { GET_ALL_TELEPHONYS_PAGINATED } from '@/settings/service-center/telephony/graphql/queries/getAllTelephonysPaginated';
 
 type PaginationParams = {
   page: number;
