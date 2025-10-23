@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
+import { useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { applyMask } from 'twenty-shared/utils';
 
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useState } from 'react';
-import { SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+import { type SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -44,20 +45,87 @@ const StyledAddressGroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) =>
-    theme.spacing(2)}; // Spacing before address group
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 type SettingsIntegrationFocusNfeDatabaseConnectionFormProps = {
   disabled?: boolean;
+  objectMetadataItem?: ObjectMetadataItem;
+};
+
+type MaskedFieldControllerProps = {
+  name: keyof SettingsIntegrationFocusNfeConnectionFormValues;
+  control: any;
+  validation?: any;
+  label: string;
+  disabled?: boolean;
+  uppercase?: boolean;
+};
+
+const MaskedFieldController = ({
+  name,
+  control,
+  validation,
+  label,
+  disabled,
+  uppercase = false,
+}: MaskedFieldControllerProps) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const handleChange = (newValue: string) => {
+          if (!validation?.mask) {
+            onChange(uppercase ? newValue.toUpperCase() : newValue);
+            return;
+          }
+
+          const processedValue = uppercase
+            ? newValue.toUpperCase()
+            : newValue;
+          const masked = applyMask(processedValue, validation.mask);
+
+          onChange(masked);
+        };
+
+        return (
+          <TextInput
+            label={label}
+            value={value || ''}
+            onChange={handleChange}
+            disabled={disabled}
+            placeholder={
+              validation?.placeholder || `Enter ${label.toLowerCase()}`
+            }
+            fullWidth
+            error={error?.message}
+          />
+        );
+      }}
+    />
+  );
 };
 
 export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   disabled,
+  objectMetadataItem,
 }: SettingsIntegrationFocusNfeDatabaseConnectionFormProps) => {
   const { control } =
     useFormContext<SettingsIntegrationFocusNfeConnectionFormValues>();
   const [showingMasked, setShowingMasked] = useState(true);
+
+  const fieldValidations = useMemo(() => {
+    if (!objectMetadataItem) return {};
+
+    const validationMap: Record<string, any> = {};
+    objectMetadataItem.fields.forEach((field) => {
+      if (field.settings?.validation) {
+        validationMap[field.name] = field.settings.validation;
+      }
+    });
+    return validationMap;
+  }, [objectMetadataItem]);
 
   const taxRegimeOptions = [
     { value: '', label: 'Select a tax regime' },
@@ -66,9 +134,6 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
     { value: 'lucro_real', label: 'Lucro Real' },
   ];
 
-  // TODO: Add masks for CNPJ, CPF, CEP, IE, CNAE if available/needed
-  // For now, they are simple text inputs.
-
   return (
     <StyledFormContainer>
       <StyledRow>
@@ -76,51 +141,48 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
           <Controller
             name="name"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 label="Integration name"
-                value={value as string}
+                value={value}
                 onChange={onChange}
                 type="text"
                 disabled={disabled}
                 placeholder="Focus Nfe"
                 fullWidth
+                error={error?.message}
               />
             )}
           />
         </StyledHalfWidthInput>
       </StyledRow>
+
       <StyledRow>
         <StyledHalfWidthInput>
           <Controller
             name="token"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 label="Token"
                 value={showingMasked && value ? '********' : value}
                 onChange={onChange}
-                onFocus={() => {
-                  if (showingMasked) {
-                    setShowingMasked(false);
-                  }
-                }}
-                onBlur={() => {
-                  if (!showingMasked) {
-                    setShowingMasked(true);
-                  }
-                }}
+                onFocus={() => setShowingMasked(false)}
+                onBlur={() => setShowingMasked(true)}
                 fullWidth
                 type="text"
                 disabled={disabled}
                 placeholder="************************"
+                error={error?.message}
               />
             )}
           />
         </StyledHalfWidthInput>
       </StyledRow>
+
       <StyledFormContainer>
         <StyledFormTitle>Issuer data</StyledFormTitle>
+
         <StyledFormFieldContainer>
           <Controller
             name="companyName"
@@ -140,105 +202,66 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
 
         <StyledRow>
           <StyledFormFieldContainer width="50%">
-            <Controller
+            <MaskedFieldController
               name="cnpj"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  label="CNPJ"
-                  {...field}
-                  disabled={disabled}
-                  placeholder="99.999.999/9999-99"
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+              validation={fieldValidations.cnpj}
+              label="CNPJ"
+              disabled={disabled}
             />
           </StyledFormFieldContainer>
+
           <StyledFormFieldContainer width="50%">
-            <Controller
+            <MaskedFieldController
               name="cpf"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  label="CPF"
-                  {...field}
-                  disabled={disabled}
-                  placeholder="999.999.999-99"
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+              validation={fieldValidations.cpf}
+              label="CPF"
+              disabled={disabled}
             />
           </StyledFormFieldContainer>
         </StyledRow>
 
         <StyledRow>
           <StyledFormFieldContainer width="50%">
-            <Controller
+            <MaskedFieldController
               name="ie"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  label="IE"
-                  {...field}
-                  disabled={disabled}
-                  placeholder="Add number"
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+              validation={fieldValidations.ie}
+              label="IE"
+              disabled={disabled}
             />
           </StyledFormFieldContainer>
+
           <StyledFormFieldContainer width="50%">
-            <Controller
+            <MaskedFieldController
               name="inscricaoMunicipal"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  label="Inscrição Municipal"
-                  {...field}
-                  disabled={disabled}
-                  placeholder="Inscrição Municipal"
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+              validation={fieldValidations.inscricaoMunicipal}
+              label="Inscrição Municipal"
+              disabled={disabled}
             />
           </StyledFormFieldContainer>
         </StyledRow>
+
         <StyledFormFieldContainer>
-          <Controller
+          <MaskedFieldController
             name="cnaeCode"
             control={control}
-            render={({ field, fieldState: { error } }) => (
-              <TextInput
-                label="CNAE Code"
-                {...field}
-                disabled={disabled}
-                placeholder="****-*/ **"
-                fullWidth
-                error={error?.message}
-              />
-            )}
+            validation={fieldValidations.cnaeCode}
+            label="CNAE Code"
+            disabled={disabled}
           />
         </StyledFormFieldContainer>
+
         <StyledAddressGroupContainer>
-          {/* <StyledFormTitle>Address</StyledFormTitle> No separate title in image for address group */}
           <StyledFormFieldContainer>
-            <Controller
+            <MaskedFieldController
               name="cep"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  label="CEP"
-                  {...field}
-                  disabled={disabled}
-                  placeholder="99.999-999"
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+              validation={fieldValidations.cep}
+              label="CEP"
+              disabled={disabled}
             />
           </StyledFormFieldContainer>
 
@@ -259,6 +282,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
+
             <StyledFormFieldContainer width="20%">
               <Controller
                 name="number"
@@ -278,9 +302,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
           </StyledRow>
 
           <StyledRow>
-            <StyledFormFieldContainer width="calc(45% - (${({ theme }) => theme.spacing(4)} / 3 * 2))">
-              {' '}
-              {/* Adjust for gap */}
+            <StyledFormFieldContainer width="45%">
               <Controller
                 name="neighborhood"
                 control={control}
@@ -296,9 +318,8 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
-            <StyledFormFieldContainer width="calc(45% - (${({ theme }) => theme.spacing(4)} / 3 * 2))">
-              {' '}
-              {/* Adjust for gap */}
+
+            <StyledFormFieldContainer width="45%">
               <Controller
                 name="city"
                 control={control}
@@ -314,22 +335,15 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
-            <StyledFormFieldContainer width="calc(10% - (${({ theme }) => theme.spacing(4)} / 3 * 1))">
-              {' '}
-              {/* Adjust for gap */}
-              <Controller
+
+            <StyledFormFieldContainer width="10%">
+              <MaskedFieldController
                 name="state"
                 control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <TextInput
-                    label="State"
-                    {...field}
-                    disabled={disabled}
-                    placeholder="UF"
-                    fullWidth
-                    error={error?.message}
-                  />
-                )}
+                validation={fieldValidations.state}
+                label="State"
+                disabled={disabled}
+                uppercase
               />
             </StyledFormFieldContainer>
           </StyledRow>
@@ -339,7 +353,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
           <Controller
             name="taxRegime"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <Select
                 dropdownId={field.name}
                 label="Tax regime"

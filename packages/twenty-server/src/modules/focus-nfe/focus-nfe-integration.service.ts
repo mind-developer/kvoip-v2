@@ -8,7 +8,9 @@ import {
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CreateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/create-focus-nfe-integration.input';
 import { UpdateFocusNfeIntegrationInput } from 'src/modules/focus-nfe/dtos/update-focus-nfe-integration.input';
@@ -26,6 +28,8 @@ export class FocusNFeIntegrationService {
   constructor(
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async encryptText(text: string): Promise<string> {
@@ -70,25 +74,26 @@ export class FocusNFeIntegrationService {
       throw new Error('FocusNFe repository not found');
     }
 
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(createInput.taxRegime);
+    const validatedInput = await this.validateInput(createInput, workspaceId);
+
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
 
     const createdFocusNfeIntegration = focusNFeRepository.create({
-      ...createInput,
-      token: await this.encryptText(createInput.token),
+      ...validatedInput,
+      token: await this.encryptText(validatedInput.token),
       taxRegime: taxRegimeEnum,
     });
 
-    const createdIntegration = await focusNFeRepository.save(
+    const createdIntegration: FocusNFeWorkspaceEntity = await focusNFeRepository.save(
       createdFocusNfeIntegration,
-    );
+    ) as FocusNFeWorkspaceEntity;
 
     if (!createdIntegration.cnpj && !createdIntegration.cpf) {
       throw new Error('FocusNFe repository not found');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const validateDocument = (createdIntegration.cnpj ??
-      createdIntegration.cpf)!;
+      createdIntegration.cpf)!
 
     await this.subscriptionWebhook(
       'nfse',
@@ -163,30 +168,34 @@ export class FocusNFeIntegrationService {
       throw new Error('Focus NFe integration not found');
     }
 
-    if (updateInput.token) {
-      updateInput.token = await this.encryptText(updateInput.token);
+    const validatedInput = await this.validateInput(updateInput, workspaceId);
+
+    if (validatedInput.token) {
+      validatedInput.token = await this.encryptText(validatedInput.token);
     }
 
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(updateInput.taxRegime);
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
 
     const updatedFocusNfeIntegration = {
       ...focusNfeIntegration,
-      ...updateInput,
+      ...validatedInput,
       taxRegime: taxRegimeEnum,
     };
 
     if (focusNfeIntegration.token !== updatedFocusNfeIntegration.token) {
-      // TODO: Delete previous webhook and then register again (create delete method)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const validateDocument = (updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf)!;
+      
       await this.subscriptionWebhook(
         'nfse',
-        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        validateDocument,
         updatedFocusNfeIntegration.token,
         workspaceId,
         updatedFocusNfeIntegration.id,
       );
       await this.subscriptionWebhook(
         'nfcom', 
-        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        validateDocument,
         updatedFocusNfeIntegration.token,
         workspaceId,
         updatedFocusNfeIntegration.id,
@@ -248,6 +257,44 @@ export class FocusNFeIntegrationService {
     }
 
     await focusNFeRepository.save(integration);
+  }
+
+  private async validateInput(
+    input: CreateFocusNfeIntegrationInput | UpdateFocusNfeIntegrationInput,
+    workspaceId: string,
+  ): Promise<Record<string, any>> {
+    const objectMetadata = await this.objectMetadataService.findOneWithinWorkspace(
+      workspaceId,
+      {
+        where: { nameSingular: 'focusNFe' },
+        relations: ['fields'],
+      },
+    );
+
+    if (!objectMetadata) {
+      throw new Error('FocusNFe object metadata not found');
+    }
+
+    const fieldIdByName: Record<string, string> = {};
+    const fieldsById: Record<string, any> = {};
+    const fieldIdByJoinColumnName: Record<string, string> = {};
+
+    objectMetadata.fields.forEach((field) => {
+      fieldIdByName[field.name] = field.id;
+      fieldsById[field.id] = field;
+    });
+
+    const transformedInput = await this.recordInputTransformerService.process({
+      recordInput: input,
+      objectMetadataMapItem: {
+        ...objectMetadata,
+        fieldIdByName,
+        fieldsById,
+        fieldIdByJoinColumnName,
+      },
+    });
+
+    return transformedInput;
   }
 
   private async subscriptionWebhook(

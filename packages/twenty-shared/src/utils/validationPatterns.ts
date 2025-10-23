@@ -60,6 +60,20 @@ export const TEXT_VALIDATION_PATTERNS = {
     errorMessage: 'Invalid Phone. Format: (00) 00000-0000',
   } as TextValidationPattern,
 
+  BR_STATE: {
+    pattern: '^[A-Z]{2}$',
+    mask: 'AA',
+    placeholder: 'SP',
+    errorMessage: 'Invalid State. Format: 2 uppercase letters (e.g., SP, RJ, MG)',
+  } as TextValidationPattern,
+
+  BR_CNAE: {
+    pattern: '^\\d{4}-\\d{1}/\\d{2}$',
+    mask: '0000-0/00',
+    placeholder: '0000-0/00',
+    errorMessage: 'Invalid CNAE Code. Format: 0000-0/00',
+  } as TextValidationPattern,
+
   CUSTOM_CODE_EXAMPLE: {
     pattern: '^\\d{3}\\.\\d{2}\\.[A-Za-z0-9]{3}$',
     mask: '000.00.###',
