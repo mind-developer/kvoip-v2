@@ -174,6 +174,12 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
       },
     });
 
+  /* @kvoip-woulz proprietary:begin */
+  useEffect(() => {
+    formConfig.clearErrors();
+  }, [dynamicFormSchema, formConfig]);
+  /* @kvoip-woulz proprietary:end */
+
   const canSave = formConfig.formState.isValid;
 
   const handleUpdate = async () => {
