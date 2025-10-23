@@ -32,7 +32,7 @@ import { v4 } from 'uuid';
 @Injectable()
 export class ChatMessageManagerService {
   private readonly logger = new Logger(ChatMessageManagerService.name);
-  private activeCronJobs: Set<string> = new Set();
+  private activeCronJobs: string[] = [];
   private readonly JOB_NAME = 'ChatMessageManagerSetAbandonedCronJob';
 
   constructor(
@@ -91,7 +91,7 @@ export class ChatMessageManagerService {
     clientChat.person = person;
     this.clientChatMessageService.publishChatCreated(
       clientChat,
-      clientChat.sectorId!,
+      clientChat.sectorId,
     );
   }
 
@@ -99,7 +99,7 @@ export class ChatMessageManagerService {
     clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
     workspaceId: string,
     providerIntegrationId: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     if (clientChatMessage.event) {
       this.handleEventMessage(clientChatMessage, workspaceId);
       return v4();
@@ -114,7 +114,10 @@ export class ChatMessageManagerService {
     const clientChat = await clientChatRepository.findOne({
       where: { id: clientChatMessage.clientChatId },
     });
-    if (!clientChat) throw new Error('Client chat not found');
+    if (!clientChat) {
+      this.logger.error('Client chat not found');
+      return null;
+    }
     const providerMessageId = await providerDriver.sendMessage(
       clientChatMessage,
       workspaceId,
@@ -135,18 +138,23 @@ export class ChatMessageManagerService {
     clientChatId: string,
     data: Partial<ClientChatWorkspaceEntity>,
     workspaceId: string,
-  ): Promise<UpdateResult> {
-    const clientChatRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
-        workspaceId,
-        'clientChat',
-        { shouldBypassPermissionChecks: true },
+  ): Promise<UpdateResult | null> {
+    try {
+      const clientChatRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
+          workspaceId,
+          'clientChat',
+          { shouldBypassPermissionChecks: true },
+        );
+      const updatedClientChat = await clientChatRepository.update(
+        clientChatId,
+        data,
       );
-    const updatedClientChat = await clientChatRepository.update(
-      clientChatId,
-      data,
-    );
-    return updatedClientChat;
+      return updatedClientChat;
+    } catch (error) {
+      this.logger.error('Error updating chat:', error);
+      return null;
+    }
   }
 
   async transferService(
@@ -156,8 +164,10 @@ export class ChatMessageManagerService {
     if (
       clientChatMessage.event !== ClientChatMessageEvent.TRANSFER_TO_AGENT &&
       clientChatMessage.event !== ClientChatMessageEvent.TRANSFER_TO_SECTOR
-    )
-      throw new Error('Must be transfer event');
+    ) {
+      this.logger.error('Must be transfer event');
+      return;
+    }
 
     //from is the agent id or sector id, to is the agent id or sector id
     const clientChatRepository =
@@ -170,8 +180,10 @@ export class ChatMessageManagerService {
       where: { id: clientChatMessage.clientChatId },
       relations: ['person'],
     });
-    if (!clientChat)
-      throw new Error('Chat not found ' + clientChatMessage.clientChatId);
+    if (!clientChat) {
+      this.logger.error('Chat not found ' + clientChatMessage.clientChatId);
+      return;
+    }
     clientChat.unreadMessagesCount = 1;
     if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_SECTOR) {
       //chat disappears from agent who transferred it (published to the agent's sector channel)
@@ -204,8 +216,8 @@ export class ChatMessageManagerService {
       ).findOne({
         where: { id: clientChatMessage.to },
       });
-      if (!agent) throw new Error('Agent not found ' + clientChatMessage.to);
-      clientChat.agentId = agent.id;
+      if (!agent) this.logger.error('Agent not found ' + clientChatMessage.to);
+      clientChat.agentId = agent?.id ?? null;
       clientChat.status = ClientChatStatus.ASSIGNED;
       if (agent) {
         clientChat.sectorId = agent.sectorId;
@@ -280,7 +292,10 @@ export class ChatMessageManagerService {
         where: { id: clientChatMessage.clientChatId },
         relations: ['person'],
       });
-      if (!clientChat) throw new Error('Client chat not found');
+      if (!clientChat) {
+        this.logger.error('Client chat not found');
+        return;
+      }
       clientChat.status = ClientChatStatus.FINISHED;
       await clientChatRepository.save(clientChat);
       this.clientChatMessageService.publishChatDeleted(
@@ -327,7 +342,10 @@ export class ChatMessageManagerService {
         where: { id: clientChatMessage.clientChatId },
         relations: ['person'],
       });
-      if (!clientChat) throw new Error('Client chat not found');
+      if (!clientChat) {
+        this.logger.error('Client chat not found');
+        return;
+      }
       clientChat.status = ClientChatStatus.ASSIGNED;
       clientChat.agentId = clientChatMessage.from;
       clientChat.sectorId = clientChatMessage.to;
@@ -364,7 +382,7 @@ export class ChatMessageManagerService {
       'createdAt' | 'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
     >,
     workspaceId: string,
-  ): Promise<ClientChatMessageWorkspaceEntity> {
+  ): Promise<ClientChatMessageWorkspaceEntity | null> {
     try {
       const messageRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -389,16 +407,32 @@ export class ChatMessageManagerService {
         );
       const clientChat = await clientChatRepository.findOne({
         where: { id: message.clientChatId },
-        relations: ['person'],
+        relations: ['person', 'sector'],
       });
 
-      if (!clientChat) throw new Error('Client chat not found');
+      if (!clientChat) {
+        this.logger.error('Client chat not found');
+        return null;
+      }
 
-      await this.handleAbandonmentScheduling(
-        clientChatMessage,
-        clientChat,
-        workspaceId,
-      );
+      if (clientChat.sector.abandonmentInterval) {
+        await this.handleAbandonmentScheduling(
+          clientChatMessage,
+          clientChat,
+          workspaceId,
+          clientChat.sector.abandonmentInterval,
+        );
+      }
+      if (clientChat.status === ClientChatStatus.ABANDONED) {
+        this.updateChat(
+          clientChat.id,
+          {
+            status: ClientChatStatus.ASSIGNED,
+          },
+          workspaceId,
+        );
+        return message;
+      }
       if (clientChat.status === ClientChatStatus.FINISHED) {
         //add more integrations here in the future
         const whatsappIntegration = await (
@@ -409,9 +443,10 @@ export class ChatMessageManagerService {
           )
         ).findOne({ where: { id: clientChat.whatsappIntegrationId ?? '' } });
 
-        if (!whatsappIntegration)
-          throw new Error('Whatsapp integration not found');
-
+        if (!whatsappIntegration) {
+          this.logger.error('Whatsapp integration not found');
+          return null;
+        }
         clientChat.status = ClientChatStatus.UNASSIGNED;
         clientChat.agentId = null;
         clientChat.sectorId = whatsappIntegration.defaultSectorId;
@@ -433,12 +468,12 @@ export class ChatMessageManagerService {
 
       this.clientChatMessageService.publishMessageCreated(
         message,
-        message.clientChatId,
+        clientChat.id,
       );
       return message;
     } catch (error) {
       this.logger.error('Error saving message:', error);
-      throw error;
+      return null;
     }
   }
 
@@ -446,7 +481,7 @@ export class ChatMessageManagerService {
     providerMessageId: string,
     data: Partial<ClientChatMessageWorkspaceEntity>,
     workspaceId: string,
-  ): Promise<ClientChatMessageWorkspaceEntity> {
+  ): Promise<ClientChatMessageWorkspaceEntity | null> {
     try {
       const messageRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -459,7 +494,10 @@ export class ChatMessageManagerService {
           providerMessageId,
         },
       });
-      if (!message) throw new Error('Message not found');
+      if (!message) {
+        this.logger.error('Message not found');
+        return null;
+      }
       const updatedMessage = {
         ...message,
         ...data,
@@ -474,7 +512,8 @@ export class ChatMessageManagerService {
       const result = await messageRepository.save(updatedMessage);
       return result;
     } catch (error) {
-      throw new Error('Error updating message: ' + error);
+      this.logger.error('Error updating message:', error);
+      return null;
     }
   }
 
@@ -485,6 +524,7 @@ export class ChatMessageManagerService {
     >,
     clientChat: ClientChatWorkspaceEntity,
     workspaceId: string,
+    abandonmentInterval: number,
   ): Promise<void> {
     this.logger.log(
       'Handling abandonment scheduling for chat',
@@ -499,8 +539,10 @@ export class ChatMessageManagerService {
       return;
     }
     //TODO: get from future clientChatConfig entity
-    const abandonmentInterval = 1;
-    if (clientChatMessage.fromType === ChatMessageFromType.AGENT) {
+    if (
+      clientChatMessage.fromType === ChatMessageFromType.AGENT &&
+      clientChatMessage.event === null
+    ) {
       await this.cancelScheduledAbandonment(clientChatMessage.clientChatId);
       return;
     }
@@ -643,26 +685,37 @@ export class ChatMessageManagerService {
       jobId: chatId,
       data: { chatId, workspaceId },
       options: {
-        id: chatId,
         repeat: {
-          every: abandonmentInterval,
-          limit: 1,
+          pattern: `*/${abandonmentInterval} * * * *`,
         },
       },
     });
-    this.activeCronJobs.add(chatId);
+    this.addJobToActiveCronJobs(chatId);
   }
 
   async cancelScheduledAbandonment(chatId: string): Promise<void> {
-    console.log('cancelling abandonment for chat', chatId);
+    this.logger.log('cancelling scheduled abandonment for chat', chatId);
     await this.messageQueueService.removeCron({
       jobName: this.JOB_NAME,
       jobId: chatId,
     });
-    this.activeCronJobs.delete(chatId);
+    this.removeJobFromActiveCronJobs(chatId);
   }
 
   hasJob(chatId: string): boolean {
-    return this.activeCronJobs.has(chatId);
+    return this.activeCronJobs.includes(chatId);
+  }
+
+  addJobToActiveCronJobs(chatId: string): boolean {
+    this.activeCronJobs.push(chatId);
+    this.logger.log('added chat ID to active cron jobs', chatId);
+    this.logger.log('active cron jobs', JSON.stringify(this.activeCronJobs));
+    return true;
+  }
+  removeJobFromActiveCronJobs(chatId: string): boolean {
+    this.activeCronJobs = this.activeCronJobs.filter((id) => id !== chatId);
+    this.logger.log('removing chat ID from active cron jobs', chatId);
+    this.logger.log('active cron jobs', JSON.stringify(this.activeCronJobs));
+    return true;
   }
 }
