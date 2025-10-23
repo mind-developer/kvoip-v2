@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import React, { useCallback, useEffect } from 'react';
-import { TELEPHONY_AUDIO_CONFIG } from '../../constants';
+import { AUDIO_CONFIG } from '../../constants';
 import { useAudioDevices } from '../../hooks/useAudioDevices';
 import { CallState } from '../../types/callState';
 import { CallStatus } from '../../types/callStatusEnum';
@@ -38,7 +38,7 @@ export const AudioManager: React.FC<AudioManagerProps> = ({
       }
 
       // Criar novo elemento de áudio
-      const audio = new Audio(TELEPHONY_AUDIO_CONFIG.RINGTONE_URL);
+      const audio = new Audio(AUDIO_CONFIG.RINGTONE_URL);
       audioDevices.ringAudioRef.current = audio;
 
       // Configurar o dispositivo de toque
@@ -56,7 +56,7 @@ export const AudioManager: React.FC<AudioManagerProps> = ({
 
   // Função para parar o toque
   const stopRingtone = useCallback(() => {
-    console.log('AudioManager: stopRingtone chamado');
+    // console.log('AudioManager: stopRingtone chamado');
     if (audioDevices.ringAudioRef.current) {
       console.log('AudioManager: parando ringtone...');
       audioDevices.ringAudioRef.current.pause();
@@ -64,7 +64,7 @@ export const AudioManager: React.FC<AudioManagerProps> = ({
       audioDevices.ringAudioRef.current = null;
       console.log('AudioManager: ringtone parado');
     } else {
-      console.log('AudioManager: nenhum ringtone para parar');
+      // console.log('AudioManager: nenhum ringtone para parar');
     }
   }, [audioDevices]);
 
@@ -85,15 +85,15 @@ export const AudioManager: React.FC<AudioManagerProps> = ({
 
   // Atualizar o estado da chamada
   useEffect(() => {
-    console.log('AudioManager: callStatus mudou para:', callState.callStatus);
+    // console.log('AudioManager: callStatus mudou para:', callState.callStatus);
     if (callState.callStatus === CallStatus.INCOMING_CALL) {
-      console.log('AudioManager: iniciando ringtone');
+      // console.log('AudioManager: iniciando ringtone');
       playRingtone();
     } else if (callState.callStatus === CallStatus.CONNECTED) {
-      console.log('AudioManager: configurando áudio da chamada');
+      // console.log('AudioManager: configurando áudio da chamada');
       setupCallAudio();
     } else if (callState.callStatus === CallStatus.NONE) {
-      console.log('AudioManager: parando ringtone (status NONE)');
+      // console.log('AudioManager: parando ringtone (status NONE)');
       stopRingtone();
     }
   }, [callState.callStatus, playRingtone, setupCallAudio, stopRingtone]);

@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { SipConfig } from '../types/sipConfig';
-import { SIP_SERVER_CONFIG } from './sip';
+import { SIP_SERVER_CONFIG } from './constants';
 
 const defaultConfig: SipConfig = {
   username: '',

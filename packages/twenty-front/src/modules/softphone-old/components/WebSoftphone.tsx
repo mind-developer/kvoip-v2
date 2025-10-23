@@ -5,7 +5,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
-import Keyboard from '@/softphone/components/Keyboard';
 import DTMFButton from '@/softphone/components/ui/DTMFButton';
 import StatusIndicator from '@/softphone/components/ui/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -40,6 +39,7 @@ import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import HoldButton from './HoldButton';
 import TransferButton from './TransferButton';
+import Keyboard from '@/softphone-old/components/Keyboard';
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -194,7 +194,7 @@ const WebSoftphone: React.FC = () => {
 
   // const { telephonyExtensions, loading } = useFindAllPABX();
   const { telephonyExtension } = useGetUserSoftfone({
-    extNum: workspaceMember?.extensionNumber ?? undefined,
+    extNum: workspaceMember?.extensionNumber ?? "1000",
   });
 
   useEffect(() => {

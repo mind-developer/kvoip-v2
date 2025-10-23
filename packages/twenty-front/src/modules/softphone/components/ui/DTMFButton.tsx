@@ -1,5 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { useTheme } from '@emotion/react';
+import { IconDialpad } from '@tabler/icons-react';
 import { useIcons } from 'twenty-ui/display';
 
 const DTMFButton = ({
@@ -11,13 +12,9 @@ const DTMFButton = ({
 
   const theme = useTheme();
 
-  const IconDialpad = getIcon('IconDialpad');
-
   return (
     <IconDialpad
-      onClick={() => {
-        setIsSendingDTMF(true);
-      }}
+      onClick={() => setIsSendingDTMF(true)}
       size={theme.icon.size.lg}
       stroke={theme.icon.stroke.sm}
       color={theme.font.color.secondary}

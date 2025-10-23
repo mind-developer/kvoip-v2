@@ -9,7 +9,6 @@ import {
 import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
 import {
   CALL_TRANSFER_CONFIG,
-  DTMF_CONFIG,
   SESSION_CONFIG
 } from '../constants';
 import { CallState } from '../types/callState';
@@ -27,7 +26,7 @@ interface UseSipManagerProps {
 export const useSipManager = ({ config, setCallState, sipRefs }: UseSipManagerProps) => {
   const audioDevices = useAudioDevices();
   
-  console.log('useSipManager - sipRefs recebidas:', sipRefs);
+  // console.log('useSipManager - sipRefs recebidas:', sipRefs);
 
   const setupRemoteMedia = useCallback(async (session: Session) => {
     const sessionDescriptionHandler = session.sessionDescriptionHandler as
@@ -204,7 +203,7 @@ export const useSipManager = ({ config, setCallState, sipRefs }: UseSipManagerPr
     }
 
     console.log('Enviando DTMF:', tone);
-    dtmfSender.insertDTMF(tone, DTMF_CONFIG.TONE_DURATION);
+    dtmfSender.insertDTMF(tone, SESSION_CONFIG.DTMF_CONFIG.TONE_DURATION);
   }, [sipRefs.sessionRef]);
 
   const handleCall = useCallback(async (currentNumber: string) => {

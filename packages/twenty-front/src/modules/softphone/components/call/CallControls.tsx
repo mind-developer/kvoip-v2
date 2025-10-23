@@ -26,7 +26,6 @@ const StyledDefaultContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
 
@@ -118,17 +117,17 @@ export const CallControls: React.FC<CallControlsProps> = ({
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
 
   // Debug logs
-  console.log('CallControls render - callState:', {
-    isRegistered: callState.isRegistered,
-    isInCall: callState.isInCall,
-    callStatus: callState.callStatus,
-    currentNumber: callState.currentNumber
-  });
-  console.log('CallControls render - UI state:', {
-    isKeyboardExpanded,
-    isSendingDTMF,
-    currentNumber
-  });
+  // console.log('CallControls render - callState:', {
+  //   isRegistered: callState.isRegistered,
+  //   isInCall: callState.isInCall,
+  //   callStatus: callState.callStatus,
+  //   currentNumber: callState.currentNumber
+  // });
+  // console.log('CallControls render - UI state:', {
+  //   isKeyboardExpanded,
+  //   isSendingDTMF,
+  //   currentNumber
+  // });
 
   // Chamada recebida
   if (callState.incomingCall && !callState.isInCall) {
@@ -178,17 +177,17 @@ export const CallControls: React.FC<CallControlsProps> = ({
               !callState.callStatus &&
               !isKeyboardExpanded;
             
-            console.log('Should show call button:', shouldShowCallButton, {
-              isRegistered: callState.isRegistered,
-              isInCall: callState.isInCall,
-              callStatus: callState.callStatus,
-              isKeyboardExpanded
-            });
+            // console.log('Should show call button:', shouldShowCallButton, {
+            //   isRegistered: callState.isRegistered,
+            //   isInCall: callState.isInCall,
+            //   callStatus: callState.callStatus,
+            //   isKeyboardExpanded
+            // });
             
             return shouldShowCallButton && (
               <IconPhone
                 onClick={() => {
-                  console.log('Botão de chamada clicado!');
+                  // console.log('Botão de chamada clicado!');
                   onCall();
                 }}
                 size={theme.icon.size.lg}
@@ -207,11 +206,23 @@ export const CallControls: React.FC<CallControlsProps> = ({
           {/* Input DTMF */}
           {isSendingDTMF && (
             <TextInput
-              placeholder={t`Dial the phone number`}
+              placeholder={t`Dial the phone number (DTMF)`}
               fullWidth
               value={dtmf}
-              onChange={(e) => {
-                onSendDtmf(e);
+              // onChange={(e) => {
+              //   onSendDtmf(e);
+              // }}
+              onKeyDown={(e) => {
+                e.preventDefault();
+
+                onSendDtmf(e.key);
+                // if (e.key === 'Backspace') {
+                //   // Prevenir o comportamento padrão do backspace
+                //   e.preventDefault();
+                //   // Remover o último caractere do dtmf sem enviar DTMF
+                //   const newDtmf = dtmf.slice(0, -1);
+                //   onSendDtmf(newDtmf);
+                // }
               }}
               RightIcon={() => (
                 <KeyboardToggleButton

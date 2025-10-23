@@ -1,8 +1,8 @@
 /* @kvoip-woulz proprietary */
-// Constantes de configuração e conexão SIP
+// Arquivo unificado de constantes SIP e telefonia
 
 /**
- * Configurações padrão do servidor SIP
+ * Configurações do servidor SIP
  */
 export const SIP_SERVER_CONFIG = {
   /** Domínio padrão do servidor SIP */
@@ -87,3 +87,50 @@ export const WEBRTC_CONFIG = {
     { urls: [SIP_SERVER_CONFIG.STUN_SERVER] }
   ],
 } as const;
+
+/**
+ * Configurações de transferência de chamada
+ */
+export const CALL_TRANSFER_CONFIG = {
+  /** URL do servidor para transferência */
+  SERVER_URL: 'wss://webrtc.dazsoft.com:8080/ws',
+  
+  /** Opções do registrador para transferência */
+  REGISTERER_OPTIONS: {
+    extraHeaders: ['X-oauth-dazsoft: 1'] as string[],
+  },
+  
+  /** Domínio para transferência */
+  TRANSFER_DOMAIN: 'suite.pabx.digital',
+} as const;
+
+/**
+ * Configurações de áudio para telefonia
+ */
+export const AUDIO_CONFIG = {
+  /** URL do arquivo de toque de chamada */
+  RINGTONE_URL: 'https://kvoip.com.br/toquedechamada.mp3',
+  
+  /** Configurações de áudio para WebRTC */
+  AUDIO_CONSTRAINTS: {
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true,
+  },
+} as const;
+
+/**
+ * Configurações de posicionamento do softphone
+ */
+export const SOFTPHONE_POSITION_CONFIG = {
+  /** Posição padrão do softphone */
+  BOTTOM: '80px',
+  RIGHT: '40px',
+} as const;
+
+/**
+ * Teclas permitidas para DTMF
+ */
+export const DTMF_KEYS = [
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'
+] as const;

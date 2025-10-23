@@ -11,22 +11,23 @@ import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import {
-    Registerer,
-    RegistererState,
-    SessionState,
-    UserAgent
+  Registerer,
+  RegistererState,
+  SessionState,
+  UserAgent
 } from 'sip.js';
 import { SessionManager } from 'sip.js/lib/platform/web';
 import {
-    CALL_TRANSFER_CONFIG,
-    REGISTRATION_CONFIG,
-    SESSION_CONFIG,
-    USER_AGENT_CONFIG,
-    WEBRTC_CONFIG
+  CALL_TRANSFER_CONFIG,
+  DTMF_KEYS,
+  REGISTRATION_CONFIG,
+  SESSION_CONFIG,
+  SOFTPHONE_POSITION_CONFIG,
+  USER_AGENT_CONFIG,
+  WEBRTC_CONFIG
 } from '../constants';
 import defaultCallState from '../constants/defaultCallState';
 import { useTelephonyUserData } from '../hooks/query/useTelephonyUserData';
-import { useAudioDevices } from '../hooks/useAudioDevices';
 import { useCallAudio } from '../hooks/useCallAudio';
 import { useCallStates } from '../hooks/useCallStates';
 import { useCallTimer } from '../hooks/useCallTimer';
@@ -45,10 +46,9 @@ import { CallTimer } from './call/CallTimer';
 import AudioDevicesModal from './modal/AudioDevicesModal';
 import TransferModal from './modal/TransferModal';
 import { ConnectionStatus } from './status/ConnectionStatus';
-import { Card } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${({ theme }) => theme.background.tertiary}; 
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(3)};
@@ -66,16 +66,11 @@ const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
         : theme.color.red40};
 `;
 
-const StyledCard = styled(Card)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
-
 const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
   align-items: center;
   display: flex;
   flex-direction: ${({ column }) => (column ? 'column' : 'row')};
-  gap: ${({ theme, gap }) => theme.spacing(gap || 1)};
+  // gap: ${({ theme, gap }) => theme.spacing(gap || 1)};
 `;
 
 const WebSoftphone: React.FC = () => {
@@ -89,12 +84,11 @@ const WebSoftphone: React.FC = () => {
   const { telephonyExtension } = useTelephonyUserData();
   const { config, setConfig } = useSipConfig(telephonyExtension);
   const { isRinging, isIncomingCall, isActiveCall } = useCallStates(callState);
-  const audioDevices = useAudioDevices();
   const sipRefs = useSipRefs();
   const { startTimer } = useCallTimer(callState);
   
   // Debug: verificar se as referências estão sendo criadas
-  console.log('sipRefs criadas:', sipRefs);
+  // console.log('sipRefs criadas:', sipRefs);
   
   // Hooks de gerenciamento
   const sipManager = useSipManager({ config, setCallState, sipRefs });
@@ -111,7 +105,6 @@ const WebSoftphone: React.FC = () => {
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const [ringingTime, setRingingTime] = useState<string>('00:00');
 
-  // Configurar timers
   useEffect(
     () => startTimer(callState.callStartTime, setElapsedTime, sipRefs.timerRef),
     [callState.callStartTime, startTimer, sipRefs.timerRef],
@@ -124,7 +117,7 @@ const WebSoftphone: React.FC = () => {
   );
 
   const updateConfigWithHa1 = async () => {
-    console.log('updateConfigWithHa1 chamado com config:', config);
+    // console.log('updateConfigWithHa1 chamado com config:', config);
     const authorizationHa1 = await generateAuthorizationHa1(
       config?.username || '',
       config?.password || '',
@@ -134,7 +127,7 @@ const WebSoftphone: React.FC = () => {
       ...config,
       authorizationHa1,
     };
-    console.log('Config atualizada:', updatedConfig);
+    // console.log('Config atualizada:', updatedConfig);
     setConfig(updatedConfig);
     initializeSIP(updatedConfig);
   };
@@ -164,7 +157,7 @@ const WebSoftphone: React.FC = () => {
         throw new Error('Missing required configuration');
       }
 
-      console.log('Initializing SIP connection...', { updatedConfig });
+      // console.log('Initializing SIP connection...', { updatedConfig });
       setCallState((prev) => ({ ...prev, isRegistering: true }));
 
       const uri = UserAgent.makeURI(
@@ -213,22 +206,22 @@ const WebSoftphone: React.FC = () => {
 
       // Manter o UserAgent na referência
       sipRefs.userAgentRef.current = userAgent;
-      console.log('UserAgent criado e salvo na referência:', sipRefs.userAgentRef.current);
+      // console.log('UserAgent criado e salvo na referência:', sipRefs.userAgentRef.current);
 
       // Evento para encerrar a conexão quando a página for fechada ou recarregada
       window.addEventListener('beforeunload', () => {
         if (sipRefs.userAgentRef.current) {
           sipRefs.userAgentRef.current.stop();
-          console.log('Conexão SIP encerrada.');
+          // console.log('Conexão SIP encerrada.');
         }
       });
 
       userAgent.delegate = {
         onInvite: (invitation) => {
-          console.log('Incoming call received');
+          // console.log('Incoming call received');
 
           if (sipRefs.sessionRef.current || sipRefs.invitationRef.current) {
-            console.log('Session state:', sipRefs.sessionRef.current?.state);
+            // console.log('Session state:', sipRefs.sessionRef.current?.state);
             sipManager.cleanupSession();
           }
 
@@ -244,7 +237,7 @@ const WebSoftphone: React.FC = () => {
 
           invitation.delegate = {
             onCancel: () => {
-              console.log('Call cancelled by remote party');
+              // console.log('Call cancelled by remote party');
               if (sipRefs.sessionRef.current && sipRefs.sessionRef.current.state !== SessionState.Established) {
                 sipManager.cleanupSession();
               }
@@ -252,7 +245,7 @@ const WebSoftphone: React.FC = () => {
           };
 
           invitation.stateChange.addListener((state: SessionState) => {
-            console.log('Incoming call state changed:', state);
+            // console.log('Incoming call state changed:', state);
             
             if (state === SessionState.Establishing) {
               setCallState((prev) => ({
@@ -271,9 +264,9 @@ const WebSoftphone: React.FC = () => {
                 callStartTime: Date.now(),
                 ringingStartTime: null,
               }));
-              console.log('Incoming call accepted:', sipRefs.invitationRef.current);
+              // console.log('Incoming call accepted:', sipRefs.invitationRef.current);
             } else if (state === SessionState.Terminated) {
-              console.log('Call terminated with reason:', invitation);
+              // console.log('Call terminated with reason:', invitation);
               if (!sipRefs.sessionRef.current || sipRefs.sessionRef.current.state !== SessionState.Established) {
                 sipManager.cleanupSession();
               }
@@ -283,7 +276,7 @@ const WebSoftphone: React.FC = () => {
       };
 
       userAgent.transport.onConnect = async () => {
-        console.log('Transport connected');
+        // console.log('Transport connected');
         try {
           const registerer = new Registerer(userAgent, {
             expires: REGISTRATION_CONFIG.EXPIRES,
@@ -294,7 +287,7 @@ const WebSoftphone: React.FC = () => {
           sipRefs.registererRef.current = registerer;
 
           registerer.stateChange.addListener((newState: RegistererState) => {
-            console.log('Registerer state changed:', newState);
+            // console.log('Registerer state changed:', newState);
             switch (newState) {
               case RegistererState.Registered:
                 setCallState((prev) => ({
@@ -317,7 +310,7 @@ const WebSoftphone: React.FC = () => {
           });
 
           await registerer.register();
-          console.log('Registration request sent');
+          // console.log('Registration request sent');
 
           // Set interval to renew registration
           sipRefs.registerIntervalRef.current = window.setInterval(() => {
@@ -338,7 +331,7 @@ const WebSoftphone: React.FC = () => {
       };
 
       userAgent.transport.onDisconnect = (error?: Error) => {
-        console.log('Transport disconnected', error);
+        // console.log('Transport disconnected', error);
         setCallState((prev) => ({
           ...prev,
           isRegistered: false,
@@ -348,8 +341,8 @@ const WebSoftphone: React.FC = () => {
       };
 
       await userAgent.start();
-      console.log('UserAgent started');
-      console.log('UserAgent na referência após start:', sipRefs.userAgentRef.current);
+      // console.log('UserAgent started');
+      // console.log('UserAgent na referência após start:', sipRefs.userAgentRef.current);
     } catch (error) {
       console.error('SIP initialization error:', error);
       setCallState((prev) => ({
@@ -363,13 +356,14 @@ const WebSoftphone: React.FC = () => {
   const requestMediaPermissions = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('Media permissions granted');
+      // console.log('Media permissions granted');
     } catch (error) {
       console.error('Media permissions error:', error);
     }
   };
 
   const handleKeyboardClick = (key: string) => {
+    console.log('handleKeyboardClick chamado com key:', key);
     setCallState((prev) => ({
       ...prev,
       currentNumber: prev.currentNumber + key,
@@ -377,16 +371,35 @@ const WebSoftphone: React.FC = () => {
   };
 
   const handleSendDtmf = (key: string) => {
+    console.log('handleSendDtmf chamado com key:', key);
+
     if (sipRefs.sessionRef.current?.state === SessionState.Established) {
+
+      // Tratar backspace - apenas atualizar o estado sem enviar DTMF
+      if (key === 'Backspace' || key === 'backspace') {
+        setDtmf(prevDtmf => prevDtmf.slice(0, -1));
+        return;
+      }
+
+      const keysAllowed = DTMF_KEYS;
+
+      if (!keysAllowed.includes(key as any)) {
+        return;
+      }
+
+      // Para outras teclas, adicionar ao dtmf e enviar DTMF
       const keyTrimmedLastChar = key.trim()[key.length - 1];
+
       console.log('Sending DTMF tone from app:', keyTrimmedLastChar);
-      setDtmf(dtmf + keyTrimmedLastChar);
+
+      setDtmf(prevDtmf => prevDtmf + keyTrimmedLastChar);
+
       sipManager.sendDTMF(keyTrimmedLastChar);
     }
   };
 
   const transferCall = (to: string) => {
-    console.log('Transferindo chamada para:', to);
+    // console.log('Transferindo chamada para:', to);
     const sessionManager = new SessionManager(
       CALL_TRANSFER_CONFIG.SERVER_URL,
       { registererOptions: CALL_TRANSFER_CONFIG.REGISTERER_OPTIONS },
@@ -412,7 +425,7 @@ const WebSoftphone: React.FC = () => {
     openModal(modalId);
   };
 
-  handleOpenTransferModal();
+  //handleOpenTransferModal();
 
   const getStatus = (callState: CallState): SoftphoneStatus => {
     if (callState.isRegistered) return SoftphoneStatus.Online;
@@ -422,7 +435,7 @@ const WebSoftphone: React.FC = () => {
 
   // Inicializar SIP quando config estiver disponível
   useEffect(() => {
-    console.log('useEffect de inicialização executado com config:', config);
+    // console.log('useEffect de inicialização executado com config:', config);
     if (config?.username && config?.password && config?.domain) {
       console.log('Configuração válida, chamando updateConfigWithHa1');
       updateConfigWithHa1();
@@ -468,8 +481,8 @@ const WebSoftphone: React.FC = () => {
           style={{ 
             pointerEvents: 'auto',
             position: 'absolute',
-            bottom: '80px',
-            right: '40px'
+            bottom: SOFTPHONE_POSITION_CONFIG.BOTTOM,
+            right: SOFTPHONE_POSITION_CONFIG.RIGHT
           }}
         >
           <AudioManager 
@@ -506,7 +519,7 @@ const WebSoftphone: React.FC = () => {
               currentNumber={callState.currentNumber}
               session={sipRefs.sessionRef.current}
               onCall={() => {
-                console.log('Tentando fazer chamada para:', callState.currentNumber);
+                // console.log('Tentando fazer chamada para:', callState.currentNumber);
                 sipManager.handleCall(callState.currentNumber);
               }}
               onAccept={sipManager.handleAcceptCall}
