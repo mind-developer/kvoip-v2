@@ -22,6 +22,12 @@ const sectorMetadataFormSchema = z.object({
       value: z.string(),
     }),
   ),
+  abandonmentInterval: z
+    .number()
+    .min(1, 'Abandonment interval must be at least 10 minutes')
+    .max(60, 'Abandonment interval must be less than 60 minutes')
+    .default(10)
+    .optional(),
 });
 
 export const SettingsSectorFormSchema = sectorMetadataFormSchema.pick({

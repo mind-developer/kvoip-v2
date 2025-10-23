@@ -6,6 +6,7 @@ export interface Sector {
   icon: string;
   name: string;
   topics: SectorTopic[];
+  abandonmentInterval: number;
   createdAt: string;
   updatedAt: string;
   workspace: {

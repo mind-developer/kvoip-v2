@@ -1,16 +1,11 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { type NewSectorFormValues } from '@/settings/service-center/sectors/validation-schemas/newSectorFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Label } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledFormContainer = styled.div`
@@ -30,13 +25,6 @@ const StyledSection = styled(Section)`
 export const SettingsServiceCenterNewSectorForm = () => {
   const { t } = useLingui();
   const form = useFormContext<NewSectorFormValues>();
-
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    recordGqlFields: { id: true, name: true, agent: true },
-  });
-
-  const agents = workspaceMembers.filter((wm) => wm.agentId);
 
   return (
     <SettingsPageContainer>
@@ -72,42 +60,31 @@ export const SettingsServiceCenterNewSectorForm = () => {
           />
         </StyledFormContainer>
       </Section>
-      {agents.length > 0 && (
-        <StyledSection>
-          <H2Title
-            title={t`Add agents`}
-            description={t`Choose agents for this sector. You can add more agents later.`}
-          />
-          <Controller
-            name="agentIds"
-            control={form.control}
-            render={({ field }) => (
-              <FormMultiSelectFieldInput
-                label={t`Agents`}
-                options={
-                  workspaceMembers
-                    .filter((wm) => wm.agent)
-                    .map((wm) => ({
-                      label: wm.name.firstName + ' ' + wm.name.lastName,
-                      value: wm.agent.id,
-                    })) as SelectOption[]
+      <StyledSection>
+        <H2Title
+          title={t`Abandonment Interval`}
+          description={t`Chats will be moved to the "Abandoned" inbox after this interval if a client hasn't been answered yet.`}
+        />
+        <Controller
+          name="abandonmentInterval"
+          control={form.control}
+          render={({ field }) => (
+            <TextInput
+              value={field.value}
+              onChange={(value) => {
+                const numberValue = Number(value);
+                if (numberValue > 60) {
+                  return;
                 }
-                defaultValue={field.value}
-                onChange={(value) => {
-                  const agentIds = Array.isArray(value)
-                    ? value
-                    : typeof value === 'string'
-                      ? [value]
-                      : [];
-                  field.onChange(agentIds);
-                }}
-                readonly={false}
-                placeholder={t`Select agents`}
-              />
-            )}
-          />
-        </StyledSection>
-      )}
+                field.onChange(numberValue);
+              }}
+              label={t`Interval in minutes (max. 60)`}
+              minLength={2}
+              maxLength={2}
+            />
+          )}
+        />
+      </StyledSection>
       {/* <Section>
         <H2Title
           title={t`Templates`}

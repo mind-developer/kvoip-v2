@@ -45,7 +45,7 @@ export const useNewSectorForm = () => {
     defaultValues: {
       name: '',
       icon: 'IconIdBadge2',
-      agentIds: [],
+      abandonmentInterval: 10,
     },
     resolver: zodResolver(newSectorFormSchema),
   });
@@ -65,21 +65,10 @@ export const useNewSectorForm = () => {
     const createdSector = await createOneRecord({
       name: data.name,
       icon: data.icon,
+      abandonmentInterval: data.abandonmentInterval,
     });
 
     if (createdSector.id) {
-      // Update agents with the new sector
-      if (data.agentIds && data.agentIds.length > 0) {
-        await Promise.all(
-          data.agentIds.map((agentId) =>
-            updateAgent({
-              idToUpdate: agentId,
-              updateOneRecordInput: { sectorId: createdSector.id },
-            }),
-          ),
-        );
-      }
-
       navigate(getSettingsPath(SettingsPath.ServiceCenterSectors));
       enqueueInfoSnackBar({
         message: t`Sector ${createdSector.name} created`,
