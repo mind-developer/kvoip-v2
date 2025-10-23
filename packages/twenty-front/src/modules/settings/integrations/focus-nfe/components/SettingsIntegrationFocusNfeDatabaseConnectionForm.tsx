@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { applyMask } from 'twenty-shared/utils';
 
@@ -62,6 +62,7 @@ type MaskedFieldControllerProps = {
   uppercase?: boolean;
 };
 
+/* @kvoip-woulz proprietary:begin */
 const MaskedFieldController = ({
   name,
   control,
@@ -70,30 +71,84 @@ const MaskedFieldController = ({
   disabled,
   uppercase = false,
 }: MaskedFieldControllerProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const cursorPosRef = useRef<number>(0);
+
   return (
     <Controller
       name={name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const updateCursorPosition = () => {
+          if (inputRef.current) {
+            cursorPosRef.current = inputRef.current.selectionStart || 0;
+          }
+        };
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          if (inputRef.current && validation?.mask) {
+            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+          }
+        }, [value]);
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          const inputElement = inputRef.current;
+          if (!inputElement) return;
+
+          const handleClick = () => updateCursorPosition();
+          const handleMouseUp = () => updateCursorPosition();
+          const handlePaste = () => {
+            // For paste, update cursor position after a short delay
+            setTimeout(() => updateCursorPosition(), 0);
+          };
+
+          inputElement.addEventListener('click', handleClick);
+          inputElement.addEventListener('mouseup', handleMouseUp);
+          inputElement.addEventListener('paste', handlePaste);
+
+          return () => {
+            inputElement.removeEventListener('click', handleClick);
+            inputElement.removeEventListener('mouseup', handleMouseUp);
+            inputElement.removeEventListener('paste', handlePaste);
+          };
+        }, []);
+
+        const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+          updateCursorPosition();
+        };
+
         const handleChange = (newValue: string) => {
           if (!validation?.mask) {
             onChange(uppercase ? newValue.toUpperCase() : newValue);
             return;
           }
 
+          const previousLength = (value || '').length;
           const processedValue = uppercase
             ? newValue.toUpperCase()
             : newValue;
           const masked = applyMask(processedValue, validation.mask);
+          const newLength = masked.length;
+
+          if (newLength > previousLength) {
+            setCursorPosition(cursorPosRef.current + (newLength - previousLength));
+          } else {
+            setCursorPosition(cursorPosRef.current);
+          }
 
           onChange(masked);
         };
 
         return (
           <TextInput
+            ref={inputRef}
             label={label}
             value={value || ''}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder={
               validation?.placeholder || `Enter ${label.toLowerCase()}`
@@ -106,6 +161,7 @@ const MaskedFieldController = ({
     />
   );
 };
+/* @kvoip-woulz proprietary:end */
 
 export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   disabled,
