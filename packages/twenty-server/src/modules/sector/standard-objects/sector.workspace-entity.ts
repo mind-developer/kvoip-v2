@@ -81,6 +81,14 @@ export class SectorWorkspaceEntity extends BaseWorkspaceEntity {
   })
   chats: Relation<ClientChatWorkspaceEntity[]> | null;
 
+  @WorkspaceField({
+    standardId: SECTOR_FIELD_IDS.abandonmentInterval,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Abandonment Interval`,
+    description: msg`Abandonment interval in minutes`,
+  })
+  abandonmentInterval: number;
+
   @WorkspaceRelation({
     standardId: SECTOR_FIELD_IDS.whatsappIntegrations,
     type: RelationType.ONE_TO_MANY,

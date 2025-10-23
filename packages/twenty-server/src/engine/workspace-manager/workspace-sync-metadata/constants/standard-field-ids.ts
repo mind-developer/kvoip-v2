@@ -362,6 +362,7 @@ export const SECTOR_FIELD_IDS = {
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
   chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
   whatsappIntegrations: 'f12979a9-a1a3-4091-b536-0d4345d58f70',
+  abandonmentInterval: '3d3f4bd0-1f85-4b09-a5c5-e646f2d2a51f',
 } as const;
 
 export const AGENT_FIELD_IDS = {
@@ -943,6 +944,11 @@ export const TELEPHONY_STANDARD_FIELD_IDS = {
   advancedFowarding5Value: '21991b1d-2583-4732-bd88-ce339ab6fdf5',
   searchVector: 'cbeba309-6b50-4d4c-9b4a-1ae4b6af2a58',
 };
+
+export const CLIENT_CHAT_CONFIG_STANDARD_FIELD_IDS = {
+  abandonmentInterval: '2f307b17-e423-4ff6-a3ea-bd83e47f0942',
+  sectors: '3a2b308d-a2a8-402b-a9d7-7c008cddb310',
+} as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
