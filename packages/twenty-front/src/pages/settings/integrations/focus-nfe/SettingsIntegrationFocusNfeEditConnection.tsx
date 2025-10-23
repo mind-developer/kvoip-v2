@@ -10,7 +10,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui/display';
@@ -19,23 +19,82 @@ import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+/* @kvoip-woulz proprietary:begin */
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
 
+// Create form schema dynamically based on field metadata
+const createFocusNfeEditFormSchema = (objectMetadataItem?: ObjectMetadataItem) => {
+  if (!objectMetadataItem) {
+    return z.object({
+      id: z.string(),
+      name: z.string().min(1, 'Name is required'),
+      token: z.string().optional(),
+      companyName: z.string().min(1, 'Company name is required'),
+      cnpj: z.string(),
+      cpf: z.string().optional().nullable(),
+      ie: z.string(),
+      inscricaoMunicipal: z.string(),
+      cnaeCode: z.string().optional(),
+      cep: z.string(),
+      street: z.string(),
+      number: z.string(),
+      neighborhood: z.string(),
+      city: z.string().min(1, 'City is required'),
+      state: z.string(),
+      taxRegime: z.string(),
+    });
+  }
+
+  const getFieldValidationSchema = (fieldName: string) => {
+    const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
+    const validation = field?.settings?.validation;
+    
+    if (validation?.pattern) {
+      return createTextValidationSchema(validation.pattern, validation.errorMessage);
+    }
+    return z.string();
+  };
+
+  return z.object({
+    id: z.string(),
+    name: z.string().min(1, 'Name is required'),
+    token: z.string().optional(),
+    companyName: z.string().min(1, 'Company name is required'),
+    cnpj: getFieldValidationSchema('cnpj'),
+    cpf: getFieldValidationSchema('cpf').optional().nullable(),
+    ie: getFieldValidationSchema('ie'),
+    inscricaoMunicipal: getFieldValidationSchema('inscricaoMunicipal'),
+    cnaeCode: getFieldValidationSchema('cnaeCode').optional(),
+    cep: getFieldValidationSchema('cep'),
+    street: z.string(),
+    number: z.string(),
+    neighborhood: z.string(),
+    city: z.string().min(1, 'City is required'),
+    state: getFieldValidationSchema('state'),
+    taxRegime: z.string(),
+  });
+};
+/* @kvoip-woulz proprietary:end */
+
+// Static schema for type inference
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   token: z.string().optional(),
   companyName: z.string().min(1),
-  cnpj: z.string().min(14),
+  cnpj: z.string(),
   cpf: z.string().optional().nullable(),
-  ie: z.string().min(1),
+  ie: z.string(),
   inscricaoMunicipal: z.string(),
-  cnaeCode: z.string(),
-  cep: z.string().min(1),
+  cnaeCode: z.string().optional(),
+  cep: z.string(),
   street: z.string(),
   number: z.string(),
   neighborhood: z.string(),
   city: z.string().min(1),
-  state: z.string().min(1),
+  state: z.string(),
   taxRegime: z.string(),
 });
 
@@ -67,6 +126,19 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
 
   const isIntegrationAvailable = !!integration;
 
+  /* @kvoip-woulz proprietary:begin */
+  // Get FocusNFe object metadata for dynamic validation
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: 'focusNFe',
+  });
+
+  // Create dynamic form schema based on field metadata
+  const dynamicFormSchema = useMemo(
+    () => createFocusNfeEditFormSchema(objectMetadataItem),
+    [objectMetadataItem],
+  );
+  /* @kvoip-woulz proprietary:end */
+
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
@@ -79,7 +151,9 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
   const formConfig =
     useForm<SettingsEditIntegrationFocusNfeConnectionFormValues>({
       mode: 'onChange',
-      resolver: zodResolver(settingsIntegrationFocusNfeConnectionFormSchema),
+      /* @kvoip-woulz proprietary:begin */
+      resolver: zodResolver(dynamicFormSchema),
+      /* @kvoip-woulz proprietary:end */
       defaultValues: {
         id: activeConnection?.id,
         name: activeConnection?.name,
@@ -169,7 +243,11 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
               title=""
               description="Edit the information to connect your integration"
             />
-            <SettingsIntegrationFocusNfeDatabaseConnectionForm />
+            {/* @kvoip-woulz proprietary:begin */}
+            <SettingsIntegrationFocusNfeDatabaseConnectionForm
+              objectMetadataItem={objectMetadataItem}
+            />
+            {/* @kvoip-woulz proprietary:end */}
           </Section>
         </FormProvider>
       </SettingsPageContainer>
