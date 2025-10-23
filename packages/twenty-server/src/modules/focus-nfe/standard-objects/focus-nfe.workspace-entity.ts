@@ -157,7 +157,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CNPJ`,
     description: msg`CNPJ`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CNPJ,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CNPJ,
+        errorMessage: msg`Invalid CNPJ format. Expected: 00.000.000/0000-00`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -172,7 +175,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CPF`,
     description: msg`CPF`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CPF,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CPF,
+        errorMessage: msg`Invalid CPF format. Expected: 000.000.000-00`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -187,7 +193,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`IE`,
     description: msg`Inscrição estadual`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_STATE_REGISTRATION,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_STATE_REGISTRATION,
+        errorMessage: msg`Invalid State Registration format. Expected: 000.000.000.000`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -202,7 +211,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Inscrição Municipal`,
     description: msg`Inscrição municipal`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_MUNICIPAL_REGISTRATION,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_MUNICIPAL_REGISTRATION,
+        errorMessage: msg`Invalid Municipal Registration format. Expected: 00000000-0`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -217,7 +229,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CNAE Code`,
     description: msg`CNAE Code`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CNAE,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CNAE,
+        errorMessage: msg`Invalid CNAE format. Expected: 0000-0/00`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -232,7 +247,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CEP`,
     description: msg`CEP`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_CEP,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CEP,
+        errorMessage: msg`Invalid CEP format. Expected: 00000-000`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
@@ -287,7 +305,10 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`State`,
     description: msg`State`,
     settings: {
-      validation: TEXT_VALIDATION_PATTERNS.BR_STATE,
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_STATE,
+        errorMessage: msg`Invalid state code. Expected: 2 uppercase letters (e.g., SP, RJ, MG)`.toString(),
+      },
     },
   })
   /* @kvoip-woulz proprietary:end */
