@@ -1,3 +1,12 @@
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 /* @kvoip-woulz proprietary:begin */
@@ -11,7 +20,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { StyledInput } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 /* @kvoip-woulz proprietary:end */
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 /* @kvoip-woulz proprietary:begin */
 import { applyMask } from '../../../../../../../../../twenty-shared/src/utils/validationPatterns';
@@ -29,182 +37,218 @@ export const TextFieldInput = () => {
 
   /* @kvoip-woulz proprietary:begin */
   const inputRef = useRef<HTMLInputElement>(null);
-  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
   const [isFieldInError, setIsFieldInError] = useRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const validationSettings = fieldDefinition?.metadata?.settings?.validation;
-  const hasMask = !!validationSettings?.mask;
-  const hasPattern = !!validationSettings?.pattern;
+  const validationPattern =
+    fieldDefinition?.metadata?.settings?.validation?.pattern;
+  const validationMask = fieldDefinition?.metadata?.settings?.validation?.mask;
+  const validationErrorMessage =
+    fieldDefinition?.metadata?.settings?.validation?.errorMessage;
+  const validationPlaceholder =
+    fieldDefinition?.metadata?.settings?.validation?.placeholder;
+
+  const hasMask = !!validationMask;
+  const hasPattern = !!validationPattern;
 
   const validationSchema = useMemo(() => {
-    if (!hasPattern) {
+    if (!hasPattern || !validationPattern) {
       return null;
     }
 
     return createTextValidationSchema(
-      validationSettings?.pattern,
-      validationSettings?.errorMessage,
+      validationPattern,
+      validationErrorMessage,
     );
-  }, [hasPattern, validationSettings]);
+  }, [hasPattern, validationPattern, validationErrorMessage]);
+
+  const placeholder = useMemo(
+    () => validationPlaceholder || fieldDefinition.metadata.placeHolder,
+    [validationPlaceholder, fieldDefinition.metadata.placeHolder],
+  );
+
+  const validateValue = useCallback(
+    (value: string): boolean => {
+      if (!validationSchema) {
+        return true;
+      }
+
+      if (!value || value.trim() === '') {
+        return true;
+      }
+
+      try {
+        validationSchema.parse(value);
+        return true;
+      } catch (error: any) {
+        return false;
+      }
+    },
+    [validationSchema],
+  );
 
   useEffect(() => {
-    if (inputRef.current && hasMask) {
+    if (inputRef.current && cursorPosition !== null && hasMask) {
       inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+      setCursorPosition(null);
     }
-  }, [draftValue, hasMask]);
-
-  const validateValue = (value: string): boolean => {
-    if (!validationSchema) {
-      return true;
-    }
-
-    if (!value || value.trim() === '') {
-      return true;
-    }
-
-    try {
-      validationSchema.parse(value);
-      return true;
-    } catch (error: any) {
-      return false;
-    }
-  };
+  }, [draftValue, cursorPosition, hasMask]);
   /* @kvoip-woulz proprietary:end */
 
-  const handleEnter = (newText: string) => {
-    /* @kvoip-woulz proprietary:begin */
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  /* @kvoip-woulz proprietary:begin */
+  const handleEnter = useCallback(
+    (newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
 
-    if (isValid) {
       onEnter?.({
         newValue: trimmedValue,
-        skipPersist: false,
+        skipPersist: !isValid,
       });
-    }
-    /* @kvoip-woulz proprietary:end */
-  };
+    },
+    [onEnter, validateValue],
+  );
 
-  const handleEscape = (newText: string) => {
-    onEscape?.({ newValue: newText.trim() });
-  };
+  const handleEscape = useCallback(
+    (newText: string) => {
+      onEscape?.({ newValue: newText.trim() });
+    },
+    [onEscape],
+  );
 
-  const handleClickOutside = (
-    event: MouseEvent | TouchEvent,
-    newText: string,
-  ) => {
-    /* @kvoip-woulz proprietary:begin */
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  const handleClickOutside = useCallback(
+    (event: MouseEvent | TouchEvent, newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
 
-    onClickOutside?.({
-      newValue: trimmedValue,
-      event,
-      skipPersist: !isValid,
-    });
-    /* @kvoip-woulz proprietary:end */
-  };
+      onClickOutside?.({
+        newValue: trimmedValue,
+        event,
+        skipPersist: !isValid,
+      });
+    },
+    [onClickOutside, validateValue],
+  );
 
-  const handleTab = (newText: string) => {
-    /* @kvoip-woulz proprietary:begin */
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  const handleTab = useCallback(
+    (newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
 
-    if (isValid) {
       onTab?.({
         newValue: trimmedValue,
-        skipPersist: false,
+        skipPersist: !isValid,
       });
-    }
-    /* @kvoip-woulz proprietary:end */
-  };
+    },
+    [onTab, validateValue],
+  );
 
-  const handleShiftTab = (newText: string) => {
-    /* @kvoip-woulz proprietary:begin */
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  const handleShiftTab = useCallback(
+    (newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
 
-    if (isValid) {
       onShiftTab?.({
         newValue: trimmedValue,
-        skipPersist: false,
+        skipPersist: !isValid,
       });
-    }
-    /* @kvoip-woulz proprietary:end */
-  };
+    },
+    [onShiftTab, validateValue],
+  );
 
-  const handleChange = (
-    /* @kvoip-woulz proprietary:begin */
-    newValueOrEvent: string | React.ChangeEvent<HTMLInputElement>,
-    /* @kvoip-woulz proprietary:end */
-  ) => {
-    /* @kvoip-woulz proprietary:begin */
-    let newValue: string;
-    let currentCursorPos = 0;
+  const handleChange = useCallback(
+    (newValueOrEvent: string | React.ChangeEvent<HTMLInputElement>) => {
+      let newValue: string;
+      let currentCursorPos = 0;
 
-    if (typeof newValueOrEvent === 'string') {
-      newValue = newValueOrEvent;
-    } else {
-      newValue = newValueOrEvent.target.value;
-      currentCursorPos = newValueOrEvent.target.selectionStart || 0;
-    }
-
-    if (hasMask && validationSettings?.mask) {
-      const previousLength = (draftValue || '').length;
-      newValue = applyMask(newValue, validationSettings.mask);
-      const newLength = newValue.length;
-
-      if (newLength > previousLength) {
-        setCursorPosition(currentCursorPos + (newLength - previousLength));
+      if (typeof newValueOrEvent === 'string') {
+        newValue = newValueOrEvent;
       } else {
-        setCursorPosition(currentCursorPos);
+        newValue = newValueOrEvent.target.value;
+        currentCursorPos = newValueOrEvent.target.selectionStart || 0;
       }
-    }
 
-    setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
+      if (hasMask && validationMask) {
+        const previousValue = draftValue || '';
+        const previousLength = previousValue.length;
 
-    if (validationSchema) {
-      const isValid = validateValue(newValue);
-      setIsFieldInError(!isValid && newValue.trim() !== '');
-    } else {
-      setIsFieldInError(false);
-    }
-    /* @kvoip-woulz proprietary:end */
-  };
+        const maskedValue = applyMask(newValue, validationMask);
+        const newLength = maskedValue.length;
 
-  /* @kvoip-woulz proprietary:begin */
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const value = e.currentTarget.value;
+        let newCursorPos = currentCursorPos;
 
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleEnter(value);
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleEscape(value);
-    } else if (e.key === 'Tab' && !e.shiftKey) {
-      e.preventDefault();
-      handleTab(value);
-    } else if (e.key === 'Tab' && e.shiftKey) {
-      e.preventDefault();
-      handleShiftTab(value);
-    }
-  };
+        const lengthDiff = newLength - previousLength;
+        const inputDiff = newValue.length - previousValue.length;
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (!relatedTarget) {
-      handleClickOutside(new MouseEvent('click') as any, e.target.value);
-    }
-  };
+        if (lengthDiff > inputDiff) {
+          newCursorPos = currentCursorPos + (lengthDiff - inputDiff);
+        } else if (lengthDiff < 0) {
+          newCursorPos = Math.max(0, currentCursorPos);
+        } else {
+          newCursorPos = currentCursorPos + lengthDiff;
+        }
 
-  const placeholder =
-    validationSettings?.placeholder || fieldDefinition.metadata.placeHolder;
+        newCursorPos = Math.min(newCursorPos, maskedValue.length);
 
-  if (hasMask && validationSettings?.mask) {
+        newValue = maskedValue;
+        setCursorPosition(newCursorPos);
+      }
+
+      setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
+
+      if (validationSchema) {
+        const isValid = validateValue(newValue);
+        setIsFieldInError(!isValid && newValue.trim() !== '');
+      } else {
+        setIsFieldInError(false);
+      }
+    },
+    [
+      hasMask,
+      validationMask,
+      draftValue,
+      setDraftValue,
+      validationSchema,
+      validateValue,
+      setIsFieldInError,
+    ],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      const value = e.currentTarget.value;
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleEnter(value);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        handleEscape(value);
+      } else if (e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        handleTab(value);
+      } else if (e.key === 'Tab' && e.shiftKey) {
+        e.preventDefault();
+        handleShiftTab(value);
+      }
+    },
+    [handleEnter, handleEscape, handleTab, handleShiftTab],
+  );
+
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const relatedTarget = e.relatedTarget as HTMLElement;
+      if (!relatedTarget) {
+        handleClickOutside(new MouseEvent('click') as any, e.target.value);
+      }
+    },
+    [handleClickOutside],
+  );
+
+  if (hasMask && validationMask) {
     return (
       <FieldInputContainer>
         <StyledInput

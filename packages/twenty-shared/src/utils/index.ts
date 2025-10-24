@@ -53,8 +53,8 @@ export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
 export type {
-  TextValidationPattern,
   TextValidationPatternKey,
+  TextValidationPattern,
 } from './validationPatterns';
 export {
   TEXT_VALIDATION_PATTERNS,
@@ -62,5 +62,6 @@ export {
   getUnmaskedValue,
   getMaskLength,
   isValueComplete,
+  clearMaskCache,
 } from './validationPatterns';
 export { resolveInput } from './variable-resolver';

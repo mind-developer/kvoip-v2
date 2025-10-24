@@ -8,6 +8,10 @@
  * - 'a' = Optional letter (a-z, A-Z)
  * - Any other character = Fixed character (literal)
  */
+export type TextValidationPatternKey = keyof typeof TEXT_VALIDATION_PATTERNS;
+
+const maskCache = new Map<string, Map<string, string>>();
+const MAX_CACHE_SIZE = 100;
 
 export interface TextValidationPattern {
   pattern?: string;
@@ -68,6 +72,8 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   BR_CFOP: {
+    pattern: '^\\d{4}$',
+    mask: '0000',
     placeholder: '0000',
     errorMessage: 'Invalid CFOP. Expected format: 0000 (4 digits)',
   } as TextValidationPattern,
@@ -80,19 +86,11 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   JOB_TITLE: {
-    pattern: '^[a-zA-Z\\s\\-\\.,]{2,100}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter job title',
-    errorMessage:
-      'Invalid job title. Must be 2-100 characters, letters, spaces, hyphens, periods, and commas only',
   } as TextValidationPattern,
 
   CITY: {
-    pattern: '^[a-zA-Z\\s\\-\\.,]{2,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter city name',
-    errorMessage:
-      'Invalid city name. Must be 2-50 characters, letters, spaces, hyphens, periods, and commas only',
   } as TextValidationPattern,
 
   AVATAR_URL: {
@@ -102,11 +100,7 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   PRODUCT_NAME: {
-    pattern: '^[a-zA-Z0-9\\s\\-\\.,]{2,100}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter product name',
-    errorMessage:
-      'Invalid product name. Must be 2-100 characters, alphanumeric, spaces, hyphens, periods, and commas only',
   } as TextValidationPattern,
 
   UNIT_OF_MEASURE: {
@@ -176,13 +170,6 @@ export const TEXT_VALIDATION_PATTERNS = {
       'Invalid classification. Must be 1-100 characters, alphanumeric, spaces, hyphens, periods, and commas only',
   } as TextValidationPattern,
 
-  COLOR_SCHEME: {
-    pattern: '^(System|Light|Dark)$',
-    mask: 'System',
-    placeholder: 'System',
-    errorMessage: 'Invalid color scheme. Must be System, Light, or Dark',
-  } as TextValidationPattern,
-
   LOCALE: {
     pattern: '^[a-z]{2}(-[A-Z]{2})?$',
     mask: 'en-US',
@@ -192,7 +179,6 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   USER_EMAIL: {
     pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-    mask: 'user@example.com',
     placeholder: 'user@example.com',
     errorMessage: 'Invalid email format. Expected format: user@example.com',
   } as TextValidationPattern,
@@ -214,11 +200,7 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   AGENT_ID: {
-    pattern: '^[a-zA-Z0-9\\-_]{3,20}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAA',
     placeholder: 'agent-123',
-    errorMessage:
-      'Invalid agent ID. Must be 3-20 characters, alphanumeric, hyphens, and underscores only',
   } as TextValidationPattern,
 
   EXTENSION_NUMBER: {
@@ -229,11 +211,7 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   COMPANY_NAME: {
-    pattern: '^[a-zA-Z0-9\\s\\-\\.,&]{2,100}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter company name',
-    errorMessage:
-      'Invalid company name. Must be 2-100 characters, alphanumeric, spaces, hyphens, periods, commas, and ampersands only',
   } as TextValidationPattern,
 
   CPF_CNPJ: {
@@ -411,10 +389,18 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 } as const;
 
-export type TextValidationPatternKey = keyof typeof TEXT_VALIDATION_PATTERNS;
-
 export const applyMask = (value: string, mask: string): string => {
   if (!value || !mask) return value;
+
+  if (!maskCache.has(mask)) {
+    maskCache.set(mask, new Map());
+  }
+
+  const maskSpecificCache = maskCache.get(mask)!;
+
+  if (maskSpecificCache.has(value)) {
+    return maskSpecificCache.get(value)!;
+  }
 
   let maskedValue = '';
   let valueIndex = 0;
@@ -443,6 +429,13 @@ export const applyMask = (value: string, mask: string): string => {
       }
     }
   }
+
+  if (maskSpecificCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = maskSpecificCache.keys().next().value!;
+    maskSpecificCache.delete(firstKey);
+  }
+
+  maskSpecificCache.set(value, maskedValue);
 
   return maskedValue;
 };
@@ -502,4 +495,8 @@ export const isValueComplete = (value: string, mask: string): boolean => {
     .filter((char) => ['0', 'A', '#'].includes(char)).length;
 
   return unmasked.length >= requiredLength;
+};
+
+export const clearMaskCache = (): void => {
+  maskCache.clear();
 };
