@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import {
   useCallback,
   useContext,
@@ -25,6 +26,44 @@ import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndef
 import { applyMask } from '../../../../../../../../../twenty-shared/src/utils/validationPatterns';
 /* @kvoip-woulz proprietary:end */
 import { useTextField } from '../../hooks/useTextField';
+
+/* @kvoip-woulz proprietary:begin */
+const ErrorText = styled.span`
+  color: ${({ theme }) => theme.color.red};
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  animation: slideDown 0.2s ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledInputWithError = styled(StyledInput)<{ hasError?: boolean }>`
+  border-color: ${({ theme, hasError }) =>
+    hasError ? theme.color.red : theme.border.color.medium};
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: ${({ theme, hasError }) =>
+      hasError ? theme.color.red : theme.color.blue};
+  }
+`;
+/* @kvoip-woulz proprietary:end */
 
 export const TextFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
@@ -251,16 +290,22 @@ export const TextFieldInput = () => {
   if (hasMask && validationMask) {
     return (
       <FieldInputContainer>
-        <StyledInput
-          ref={inputRef}
-          type="text"
-          placeholder={placeholder}
-          value={draftValue ?? ''}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          onBlur={handleBlur}
-          autoFocus
-        />
+        <InputWrapper>
+          <StyledInputWithError
+            ref={inputRef}
+            type="text"
+            placeholder={placeholder}
+            value={draftValue ?? ''}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+            autoFocus
+            hasError={isFieldInError}
+          />
+          {isFieldInError && validationErrorMessage && (
+            <ErrorText>{validationErrorMessage}</ErrorText>
+          )}
+        </InputWrapper>
       </FieldInputContainer>
     );
   }
