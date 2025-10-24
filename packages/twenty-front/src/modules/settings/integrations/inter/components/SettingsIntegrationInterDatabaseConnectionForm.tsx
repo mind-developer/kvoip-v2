@@ -1,6 +1,12 @@
 /* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
+/* @kvoip-woulz proprietary:begin */
+import { useEffect, useRef, useState } from 'react';
+/* @kvoip-woulz proprietary:end */
 import { Controller, useFormContext } from 'react-hook-form';
+/* @kvoip-woulz proprietary:begin */
+import { applyMask } from 'twenty-shared/utils';
+/* @kvoip-woulz proprietary:end */
 
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -32,6 +38,111 @@ type SettingsIntegrationInterDatabaseConnectionFormProps = {
   disabled?: boolean;
 };
 
+/* @kvoip-woulz proprietary:begin */
+type MaskedFieldControllerProps = {
+  name: keyof SettingsIntegrationInterConnectionFormValues;
+  control: any;
+  mask?: string;
+  label: string;
+  disabled?: boolean;
+  placeholder?: string;
+};
+
+const MaskedFieldController = ({
+  name,
+  control,
+  mask,
+  label,
+  disabled,
+  placeholder,
+}: MaskedFieldControllerProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const cursorPosRef = useRef<number>(0);
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const updateCursorPosition = () => {
+          if (inputRef.current) {
+            cursorPosRef.current = inputRef.current.selectionStart || 0;
+          }
+        };
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          if (inputRef.current && mask) {
+            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+          }
+        }, [value]);
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          const inputElement = inputRef.current;
+          if (!inputElement) return;
+
+          const handleClick = () => updateCursorPosition();
+          const handleMouseUp = () => updateCursorPosition();
+          const handlePaste = () => {
+            // For paste, update cursor position after a short delay
+            setTimeout(() => updateCursorPosition(), 0);
+          };
+
+          inputElement.addEventListener('click', handleClick);
+          inputElement.addEventListener('mouseup', handleMouseUp);
+          inputElement.addEventListener('paste', handlePaste);
+
+          return () => {
+            inputElement.removeEventListener('click', handleClick);
+            inputElement.removeEventListener('mouseup', handleMouseUp);
+            inputElement.removeEventListener('paste', handlePaste);
+          };
+        }, []);
+
+        const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+          updateCursorPosition();
+        };
+
+        const handleChange = (newValue: string) => {
+          if (!mask) {
+            onChange(newValue);
+            return;
+          }
+
+          const previousLength = (value || '').length;
+          const masked = applyMask(newValue, mask);
+          const newLength = masked.length;
+
+          if (newLength > previousLength) {
+            setCursorPosition(cursorPosRef.current + (newLength - previousLength));
+          } else {
+            setCursorPosition(cursorPosRef.current);
+          }
+
+          onChange(masked);
+        };
+
+        return (
+          <TextInput
+            ref={inputRef}
+            label={label}
+            value={value || ''}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder={placeholder || `Enter ${label.toLowerCase()}`}
+            fullWidth
+            error={error?.message}
+          />
+        );
+      }}
+    />
+  );
+};
+/* @kvoip-woulz proprietary:end */
+
 export const SettingsIntegrationInterDatabaseConnectionForm = ({
   disabled,
 }: SettingsIntegrationInterDatabaseConnectionFormProps) => {
@@ -60,21 +171,16 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
 
       <StyledRow>
         <StyledHalfWidthInput>
-          <Controller
+          {/* @kvoip-woulz proprietary:begin */}
+          <MaskedFieldController
             name="currentAccount"
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label="Current account"
-                value={value as string}
-                onChange={onChange}
-                type="text"
-                disabled={disabled}
-                placeholder="********-**"
-                fullWidth
-              />
-            )}
+            mask="99999999-99"
+            label="Current account"
+            disabled={disabled}
+            placeholder="00000000-00"
           />
+          {/* @kvoip-woulz proprietary:end */}
         </StyledHalfWidthInput>
 
         <StyledHalfWidthInput>

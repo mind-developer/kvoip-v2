@@ -17,16 +17,19 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+/* @kvoip-woulz proprietary:begin */
+// Validation schema with pattern validation for Inter-specific fields
 export const settingsIntegrationInterConnectionFormSchema = z.object({
-  integrationName: z.string().min(1),
-  clientId: z.string(),
-  clientSecret: z.string(),
+  integrationName: z.string().min(1, 'Integration name is required'),
+  clientId: z.string().min(1, 'Client ID is required'),
+  clientSecret: z.string().min(1, 'Client Secret is required'),
   currentAccount: z.string(),
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),
   expirationDate: z.coerce.date().optional(),
 });
+/* @kvoip-woulz proprietary:end */
 
 export type SettingsIntegrationInterConnectionFormValues = z.infer<
   typeof settingsIntegrationInterConnectionFormSchema
