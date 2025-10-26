@@ -37,7 +37,6 @@ export const ChatbotActionMenu = () => {
         selectableItemIdArray={selectableItemIdArray}
         focusId="cb-cm"
         selectableListInstanceId="=cb-cm"
-        hotkeyScope=""
       >
         <Label>Add a node</Label>
         <SelectableListItem itemId="add-text-node">

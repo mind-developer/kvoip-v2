@@ -123,6 +123,7 @@ export const ChatbotFlowConditionalEventForm = ({
     >
       <StyledStepBody>
         <TextArea
+          textAreaId="conditional-event-form-text-area"
           label={`Message body (${text.length}/4000)`}
           placeholder="Insert text to be sent"
           value={text}

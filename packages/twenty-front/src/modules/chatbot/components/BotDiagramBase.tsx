@@ -1,6 +1,4 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
-
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 
 import { useTheme } from '@emotion/react';
@@ -28,7 +26,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
-import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
@@ -141,8 +138,6 @@ export const BotDiagramBase = ({
     GenericNode,
     Edge
   > | null>(null);
-
-  const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
 
   const hasValidatedRef = useRef(false);
 
@@ -291,7 +286,6 @@ export const BotDiagramBase = ({
         onNodeClick={(event, node) => {
           event.stopPropagation();
           setChatbotFlowSelectedNode(node);
-          console.log(node);
         }}
         onContextMenu={handleContextMenu}
       >
@@ -316,12 +310,6 @@ export const BotDiagramBase = ({
       )}
 
       <StyledButtonContainer>
-        <StyledButton
-          accent="default"
-          Icon={IconPlus}
-          title="Add node"
-          onClick={() => chatbotId && openChatbotFlowCommandMenu(chatbotId)}
-        />
         <StyledButton accent="blue" title="Save" onClick={handleSave} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>

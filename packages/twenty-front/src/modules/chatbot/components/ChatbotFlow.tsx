@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { NodeTypes, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -9,7 +7,6 @@ import ImageNode from '@/chatbot/components/nodes/ImageNode';
 import TextNode from '@/chatbot/components/nodes/TextNode';
 
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
-import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
 
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
 
@@ -66,7 +63,6 @@ export const ChatbotFlow = () => {
           tagColor={tagProps.color}
           tagText={tagProps.text}
         />
-        <ChatbotFlowDiagramCanvasEditableEffect />
       </ReactFlowProvider>
     );
 };

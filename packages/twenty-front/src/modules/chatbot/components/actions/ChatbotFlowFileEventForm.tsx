@@ -1,11 +1,13 @@
 /* eslint-disable @nx/workspace-no-state-useref */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { renameFile } from '@/chatbot/utils/renameFile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useRef, useState } from 'react';
@@ -68,28 +70,32 @@ export const ChatbotFlowFileEventForm = ({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
   const setChatbotFlowNodes = useSetRecoilState(chatbotFlowNodes);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const chatbotFlow = useGetChatbotFlowState();
 
   const handleSendFile = async (file: File) => {
     if (!selectedNode) return;
 
     setFile(undefined);
 
-    const url = await uploadFileToBucket({ file, type: 'document' });
+    const attachment = await uploadAttachmentFile(file, {
+      targetObjectNameSingular: CoreObjectNameSingular.Chatbot,
+      id: chatbotFlow?.chatbotId,
+    });
 
-    if (url && selectedNode) {
-      setFile(url);
+    if (attachment && selectedNode) {
+      setFile(attachment.attachmentAbsoluteURL);
 
       const updatedNode = {
         ...selectedNode,
         data: {
           ...selectedNode.data,
-          fileUrl: url,
+          fileUrl: attachment.attachmentAbsoluteURL,
         },
       };
 
