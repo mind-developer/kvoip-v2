@@ -15,6 +15,16 @@ export type ChatMessage = {
   attachmentUrl: string | null; //done
   createdAt?: string; // ISO string timestamp
   updatedAt?: string; // ISO string timestamp
+  reactions: Reaction[] | null;
+  repliesTo: string | null;
+};
+
+export type Reaction = {
+  reaction: string;
+  from: string;
+  fromType: ChatMessageFromType;
+  to: string;
+  toType: ChatMessageToType;
 };
 
 export type InternalChatMessage = Omit<

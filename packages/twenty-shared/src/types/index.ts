@@ -14,6 +14,7 @@ export { ClientChatStatus } from './Chat';
 export { ChatIntegrationProvider } from './ChatIntegrationProviders';
 export type {
   ChatMessage,
+  Reaction,
   InternalChatMessage,
   ClientChatMessage,
 } from './ChatMessage';

@@ -46,6 +46,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
   invoice: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
+  chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -667,6 +668,10 @@ export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
   deliveryStatus: '1374f720-eea1-43a4-8f8e-79bbdb53aa0f',
   edited: '30005416-0c21-4557-98c7-c9d75b5b5ca8',
   attachmentUrl: 'ac734b13-92c2-4edd-8a44-04b5e5a4c81f',
+  reactions: '115bc5b9-bd49-4be2-bf22-57776537405d',
+  repliesTo: '31b13032-f501-42c1-abca-826ba323ba5e',
+  templateId: 'fde7fd83-0271-4950-b1c9-49338d42b1f8',
+  templateLanguageCode: 'c50d95f9-4366-4948-84f5-acef072a6a74',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
@@ -834,6 +839,7 @@ export const CHATBOT_STANDARD_FIELD_IDS = {
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
   whatsappIntegrations: 'fa8546ab-020d-46ef-8182-39186104fce2',
+  attachments: '35c7ff99-7fde-42a6-a325-0e2d29afb600',
 } as const;
 
 export const WHATSAPP_STANDARD_FIELD_IDS = {

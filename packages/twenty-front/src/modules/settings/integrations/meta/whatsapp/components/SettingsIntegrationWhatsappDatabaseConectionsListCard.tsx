@@ -5,14 +5,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useState } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useState } from 'react';
 import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
@@ -25,23 +23,9 @@ enum ChangeType {
   DisableWhatsapp = 'DISABLE_WHATSAPP',
 }
 
-const StyledDatabaseLogoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledDatabaseLogo = styled.img`
   height: 100%;
   width: 16px;
-`;
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -111,14 +95,6 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const whatsappIntegrations = useFindManyRecords<
     WhatsappIntegration & { __typename: string }
   >({ objectNameSingular: 'whatsappIntegration' }).records;
-
-  // const { whatsappIntegrations = [], refetchWhatsapp } =
-  //   useFindAllWhatsappIntegrations();
-  // const { toggleWhatsappIntegrationDisable } = useToggleWhatsappIntegration();
-
-  // useEffect(() => {
-  //   refetchWhatsapp();
-  // }, [refetchWhatsapp]);
 
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);

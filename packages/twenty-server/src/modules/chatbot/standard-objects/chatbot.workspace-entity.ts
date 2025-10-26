@@ -10,6 +10,7 @@ import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { Relation } from 'typeorm';
 
@@ -72,4 +73,13 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'chatbot',
   })
   whatsappIntegrations: Relation<WhatsappIntegrationWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.attachments,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Attachments`,
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    inverseSideFieldKey: 'chatbot',
+  })
+  attachments: Relation<AttachmentWorkspaceEntity[]> | null;
 }
