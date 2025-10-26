@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
@@ -6,6 +7,7 @@ import {
   ChatMessageToType,
   ChatMessageType,
   ClientChatMessageEvent,
+  Reaction,
 } from 'twenty-shared/types';
 
 @InputType()
@@ -40,4 +42,8 @@ export class SendClientChatMessageInput {
   providerIntegrationId: string;
   @Field(() => String)
   workspaceId: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  reactions: Reaction[] | null;
+  @Field(() => String, { nullable: true })
+  repliesTo: string | null;
 }

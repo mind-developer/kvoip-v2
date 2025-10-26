@@ -64,4 +64,49 @@ export class WhatsAppDriver implements ChatProviderDriver {
       throw new InternalServerErrorException('Failed to send message');
     }
   }
+
+  // async sendWhatsAppTemplate(
+  //   input: SendWhatsAppTemplateInput,
+  //   workspaceId: string,
+  // ) {
+  //   const integration = await (
+  //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+  //       workspaceId,
+  //       'whatsapp',
+  //     )
+  //   ).findOne({ where: { id: input.integrationId } });
+
+  //   if (!integration) {
+  //     throw new Error('WhatsApp integration not found');
+  //   }
+
+  //   const fields: any = {
+  //     messaging_product: 'whatsapp',
+  //     recipient_type: 'individual',
+  //     to: input.to,
+  //     type: 'template',
+  //     template: {
+  //       name: input.templateName,
+  //       language: {
+  //         code: input.language,
+  //       },
+  //     },
+  //   };
+
+  //   const url = `${this.META_API_URL}/${integration.phoneId}/messages`;
+  //   const headers = {
+  //     Authorization: `Bearer ${integration.accessToken}`,
+  //     'Content-Type': 'application/json',
+  //   };
+
+  //   try {
+  //     await axios.post(url, fields, { headers });
+  //     return true;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       'Failed to send template message',
+  //       error.message,
+  //     );
+  //   }
+  // }
 }
