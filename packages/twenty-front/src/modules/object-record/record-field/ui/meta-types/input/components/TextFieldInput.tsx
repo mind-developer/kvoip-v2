@@ -1,13 +1,18 @@
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
-import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import {
+  FieldInputEventContext,
+  type FieldInputEvent,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+/* @kvoip-woulz proprietary:begin */
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
+import { useMaskedInput } from '@/ui/input/hooks/useMaskedInput';
+/* @kvoip-woulz proprietary:end */
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
-import { useMaskedInput } from '@/ui/input/hooks/useMaskedInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { StyledInput } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
@@ -15,23 +20,13 @@ import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndef
 import { useTextField } from '../../hooks/useTextField';
 import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
+/* @kvoip-woulz proprietary:begin */
 const ErrorText = styled.span`
   color: ${({ theme }) => theme.color.red};
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(1)};
   display: block;
-  animation: slideDown 0.2s ease-out;
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  animation: slideDown ${({ theme }) => theme.animation.duration.normal};
 `;
 
 const InputWrapper = styled.div`
@@ -50,6 +45,7 @@ const StyledInputWithError = styled(StyledInput)<{ hasError?: boolean }>`
       hasError ? theme.color.red : theme.color.blue};
   }
 `;
+/* @kvoip-woulz proprietary:end */
 
 export const TextFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
@@ -60,6 +56,7 @@ export const TextFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
+  /* @kvoip-woulz proprietary:begin */
   const [isFieldInError, setIsFieldInError] = useRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
@@ -98,15 +95,20 @@ export const TextFieldInput = () => {
     }
   };
 
-  const handleEnter = (newText: string) => {
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  // Factory for creating validated text handlers (enter, tab, shift+tab)
+  const createValidatedTextHandler = (handler?: FieldInputEvent) => {
+    return (newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
 
-    onEnter?.({
-      newValue: trimmedValue,
-      skipPersist: !isValid,
-    });
+      handler?.({
+        newValue: trimmedValue,
+        skipPersist: !isValid,
+      });
+    };
   };
+
+  const handleEnter = createValidatedTextHandler(onEnter);
 
   const handleEscape = (newText: string) => {
     onEscape?.({ newValue: newText.trim() });
@@ -126,25 +128,9 @@ export const TextFieldInput = () => {
     });
   };
 
-  const handleTab = (newText: string) => {
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
+  const handleTab = createValidatedTextHandler(onTab);
 
-    onTab?.({
-      newValue: trimmedValue,
-      skipPersist: !isValid,
-    });
-  };
-
-  const handleShiftTab = (newText: string) => {
-    const trimmedValue = newText.trim();
-    const isValid = validateValue(trimmedValue);
-
-    onShiftTab?.({
-      newValue: trimmedValue,
-      skipPersist: !isValid,
-    });
-  };
+  const handleShiftTab = createValidatedTextHandler(onShiftTab);
 
   const {
     inputRef,
@@ -164,6 +150,7 @@ export const TextFieldInput = () => {
       }
     },
   });
+  /* @kvoip-woulz proprietary:end */
 
   useRegisterInputEvents({
     focusId: instanceId,
@@ -176,6 +163,7 @@ export const TextFieldInput = () => {
     onShiftTab: handleShiftTab,
   });
 
+  /* @kvoip-woulz proprietary:begin */
   const handleChange = (
     newValueOrEvent: string | React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -227,6 +215,7 @@ export const TextFieldInput = () => {
       </FieldInputContainer>
     );
   }
+  /* @kvoip-woulz proprietary:end */
 
   return (
     <FieldInputContainer>
