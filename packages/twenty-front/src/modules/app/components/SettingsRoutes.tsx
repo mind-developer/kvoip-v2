@@ -20,21 +20,7 @@ import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
-import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
-import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/agents/SettingsServiceCenterAgents';
-import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/agents/SettingsServiceCenterEditAgent';
-import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/agents/SettingsServiceCenterNewAgent';
-import SettingsServiceCenterChatbots from '~/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots';
-import SettingsServiceCenterCreateChatbot from '~/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot';
-import { SettingsServiceCenterEditChatbot } from '~/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot';
-import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/sectors/SettingsServiceCenterEditSector';
-import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/sectors/SettingsServiceCenterNewSector';
-import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/sectors/SettingsServiceCenterSectors';
-import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel';
-import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/service-level/SettingsServiceCenterServiceLevel';
-import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension';
-import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephony';
-import { SettingsTelephonyEdit } from '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit';
+// Service Center components will be lazy loaded below
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -445,6 +431,127 @@ const SettingsRoleAddObjectLevel = lazy(() =>
   ),
 );
 
+// Service Center lazy imports
+const SettingsServiceCenter = lazy(() =>
+  import('~/pages/settings/service-center/SettingsServiceCenter').then(
+    (module) => ({
+      default: module.SettingsServiceCenter,
+    }),
+  ),
+);
+
+const SettingsServiceCenterAgents = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterAgents'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterAgents,
+  })),
+);
+
+const SettingsServiceCenterEditAgent = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterEditAgent'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditAgent,
+  })),
+);
+
+const SettingsServiceCenterNewAgent = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterNewAgent'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewAgent,
+  })),
+);
+
+const SettingsServiceCenterChatbots = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots'
+  ).then((module) => ({
+    default: module.default,
+  })),
+);
+
+const SettingsServiceCenterCreateChatbot = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot'
+  ).then((module) => ({
+    default: module.default,
+  })),
+);
+
+const SettingsServiceCenterEditChatbot = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditChatbot,
+  })),
+);
+
+const SettingsServiceCenterEditSector = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterEditSector'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditSector,
+  })),
+);
+
+const SettingsServiceCenterNewSector = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterNewSector'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewSector,
+  })),
+);
+
+const SettingsServiceCenterSectors = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterSectors'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterSectors,
+  })),
+);
+
+const SettingsServiceCenterEditServiceLevel = lazy(() =>
+  import(
+    '~/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditServiceLevel,
+  })),
+);
+
+const SettingsServiceCenterServiceLevel = lazy(() =>
+  import(
+    '~/pages/settings/service-center/service-level/SettingsServiceCenterServiceLevel'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterServiceLevel,
+  })),
+);
+
+const SettingsServiceCenterNewTelephonyExtension = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewTelephonyExtension,
+  })),
+);
+
+const SettingsServiceCenterTelephony = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephony'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterTelephony,
+  })),
+);
+
+const SettingsTelephonyEdit = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit'
+  ).then((module) => ({
+    default: module.SettingsTelephonyEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
@@ -547,18 +654,6 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterEditAgent}
         element={<SettingsServiceCenterEditAgent />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
-        path={SettingsPath.EditTelephony}
-        element={<SettingsTelephonyEdit />}
       />
       <Route
         path={SettingsPath.ServiceCenterSectors}
