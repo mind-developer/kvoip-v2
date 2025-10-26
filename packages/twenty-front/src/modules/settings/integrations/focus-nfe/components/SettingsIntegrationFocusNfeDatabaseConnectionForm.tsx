@@ -1,14 +1,11 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-/* @kvoip-woulz proprietary:begin */
-import { useMaskedInput } from '@/ui/input/hooks/useMaskedInput';
-/* @kvoip-woulz proprietary:end */
 import { type SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 
 const StyledFormContainer = styled.div`
@@ -55,58 +52,16 @@ type SettingsIntegrationFocusNfeDatabaseConnectionFormProps = {
   objectMetadataItem?: ObjectMetadataItem;
 };
 
-type MaskedFieldControllerProps = {
-  name: keyof SettingsIntegrationFocusNfeConnectionFormValues;
-  control: any;
-  validation?: any;
-  label: string;
-  disabled?: boolean;
-  uppercase?: boolean;
-};
+// Helper function to get field validation - no useMemo needed
+const getFieldValidation = (
+  objectMetadataItem: ObjectMetadataItem | undefined,
+  fieldName: string,
+) => {
+  if (!objectMetadataItem) return undefined;
 
-/* @kvoip-woulz proprietary:begin */
-const MaskedFieldController = ({
-  name,
-  control,
-  validation,
-  label,
-  disabled,
-  uppercase = false,
-}: MaskedFieldControllerProps) => {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const { inputRef, handleChange, handleKeyDown, displayValue } =
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          useMaskedInput({
-            value,
-            mask: validation?.mask,
-            uppercase,
-            onChange,
-          });
-
-        return (
-          <TextInput
-            ref={inputRef}
-            label={label}
-            value={displayValue}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            disabled={disabled}
-            placeholder={
-              validation?.placeholder || `Enter ${label.toLowerCase()}`
-            }
-            fullWidth
-            error={error?.message}
-          />
-        );
-      }}
-    />
-  );
+  const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
+  return field?.settings?.validation;
 };
-/* @kvoip-woulz proprietary:end */
 
 export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   disabled,
@@ -115,18 +70,6 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   const { control } =
     useFormContext<SettingsIntegrationFocusNfeConnectionFormValues>();
   const [showingMasked, setShowingMasked] = useState(true);
-
-  const fieldValidations = useMemo(() => {
-    if (!objectMetadataItem) return {};
-
-    const validationMap: Record<string, any> = {};
-    objectMetadataItem.fields.forEach((field) => {
-      if (field.settings?.validation) {
-        validationMap[field.name] = field.settings.validation;
-      }
-    });
-    return validationMap;
-  }, [objectMetadataItem]);
 
   const taxRegimeOptions = [
     { value: '', label: 'Select a tax regime' },
@@ -203,66 +146,176 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
 
         <StyledRow>
           <StyledFormFieldContainer width="50%">
-            <MaskedFieldController
+            <Controller
               name="cnpj"
               control={control}
-              validation={fieldValidations.cnpj}
-              label="CNPJ"
-              disabled={disabled}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => {
+                const validation = getFieldValidation(
+                  objectMetadataItem,
+                  'cnpj',
+                );
+
+                return (
+                  <MaskedTextInput
+                    label="CNPJ"
+                    value={value}
+                    onChange={onChange}
+                    mask={validation?.mask}
+                    placeholder={validation?.placeholder || 'Enter CNPJ'}
+                    disabled={disabled}
+                    fullWidth
+                    error={error?.message}
+                  />
+                );
+              }}
             />
           </StyledFormFieldContainer>
 
           <StyledFormFieldContainer width="50%">
-            <MaskedFieldController
+            <Controller
               name="cpf"
               control={control}
-              validation={fieldValidations.cpf}
-              label="CPF"
-              disabled={disabled}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => {
+                const validation = getFieldValidation(
+                  objectMetadataItem,
+                  'cpf',
+                );
+
+                return (
+                  <MaskedTextInput
+                    label="CPF"
+                    value={value}
+                    onChange={onChange}
+                    mask={validation?.mask}
+                    placeholder={validation?.placeholder || 'Enter CPF'}
+                    disabled={disabled}
+                    fullWidth
+                    error={error?.message}
+                  />
+                );
+              }}
             />
           </StyledFormFieldContainer>
         </StyledRow>
 
         <StyledRow>
           <StyledFormFieldContainer width="50%">
-            <MaskedFieldController
+            <Controller
               name="ie"
               control={control}
-              validation={fieldValidations.ie}
-              label="IE"
-              disabled={disabled}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => {
+                const validation = getFieldValidation(objectMetadataItem, 'ie');
+
+                return (
+                  <MaskedTextInput
+                    label="IE"
+                    value={value}
+                    onChange={onChange}
+                    mask={validation?.mask}
+                    placeholder={validation?.placeholder || 'Enter IE'}
+                    disabled={disabled}
+                    fullWidth
+                    error={error?.message}
+                  />
+                );
+              }}
             />
           </StyledFormFieldContainer>
 
           <StyledFormFieldContainer width="50%">
-            <MaskedFieldController
+            <Controller
               name="inscricaoMunicipal"
               control={control}
-              validation={fieldValidations.inscricaoMunicipal}
-              label="Inscrição Municipal"
-              disabled={disabled}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => {
+                const validation = getFieldValidation(
+                  objectMetadataItem,
+                  'inscricaoMunicipal',
+                );
+
+                return (
+                  <MaskedTextInput
+                    label="Inscrição Municipal"
+                    value={value}
+                    onChange={onChange}
+                    mask={validation?.mask}
+                    placeholder={
+                      validation?.placeholder || 'Enter Municipal Registration'
+                    }
+                    disabled={disabled}
+                    fullWidth
+                    error={error?.message}
+                  />
+                );
+              }}
             />
           </StyledFormFieldContainer>
         </StyledRow>
 
         <StyledFormFieldContainer>
-          <MaskedFieldController
+          <Controller
             name="cnaeCode"
             control={control}
-            validation={fieldValidations.cnaeCode}
-            label="CNAE Code"
-            disabled={disabled}
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
+              const validation = getFieldValidation(
+                objectMetadataItem,
+                'cnaeCode',
+              );
+
+              return (
+                <MaskedTextInput
+                  label="CNAE Code"
+                  value={value}
+                  onChange={onChange}
+                  mask={validation?.mask}
+                  placeholder={validation?.placeholder || 'Enter CNAE Code'}
+                  disabled={disabled}
+                  fullWidth
+                  error={error?.message}
+                />
+              );
+            }}
           />
         </StyledFormFieldContainer>
 
         <StyledAddressGroupContainer>
           <StyledFormFieldContainer>
-            <MaskedFieldController
+            <Controller
               name="cep"
               control={control}
-              validation={fieldValidations.cep}
-              label="CEP"
-              disabled={disabled}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => {
+                const validation = getFieldValidation(
+                  objectMetadataItem,
+                  'cep',
+                );
+
+                return (
+                  <MaskedTextInput
+                    label="CEP"
+                    value={value}
+                    onChange={onChange}
+                    mask={validation?.mask}
+                    placeholder={validation?.placeholder || 'Enter CEP'}
+                    disabled={disabled}
+                    fullWidth
+                    error={error?.message}
+                  />
+                );
+              }}
             />
           </StyledFormFieldContainer>
 
@@ -338,13 +391,32 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             </StyledFormFieldContainer>
 
             <StyledFormFieldContainer width="10%">
-              <MaskedFieldController
+              <Controller
                 name="state"
                 control={control}
-                validation={fieldValidations.state}
-                label="State"
-                disabled={disabled}
-                uppercase
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => {
+                  const validation = getFieldValidation(
+                    objectMetadataItem,
+                    'state',
+                  );
+
+                  return (
+                    <MaskedTextInput
+                      label="State"
+                      value={value}
+                      onChange={onChange}
+                      mask={validation?.mask}
+                      placeholder={validation?.placeholder || 'UF'}
+                      disabled={disabled}
+                      uppercase
+                      fullWidth
+                      error={error?.message}
+                    />
+                  );
+                }}
               />
             </StyledFormFieldContainer>
           </StyledRow>
