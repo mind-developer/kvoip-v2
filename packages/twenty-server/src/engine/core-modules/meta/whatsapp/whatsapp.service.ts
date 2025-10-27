@@ -9,6 +9,7 @@ import axios from 'axios';
 import { v4 } from 'uuid';
 
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
 import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -30,7 +31,6 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChatMessage,
   ClientChatMessageEvent,
   ClientChatStatus,
 } from 'twenty-shared/types';
@@ -217,7 +217,7 @@ export class WhatsAppService {
           return;
         }
 
-        const baseEventMessage: ClientChatMessage = {
+        const baseEventMessage: ClientChatMessageNoBaseFields = {
           clientChatId: clientChat.id,
           from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
@@ -231,9 +231,11 @@ export class WhatsAppService {
           deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
           edited: false,
           attachmentUrl: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: 'now',
           event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
         };
 
         let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);

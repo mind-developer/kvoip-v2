@@ -370,7 +370,6 @@ export const AGENT_FIELD_IDS = {
   isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
   isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
   sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
-  inboxTargets: '4be771fa-a3b4-4947-8ebd-50b73000f3bd',
   workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
   timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
   chats: 'e6ce11d2-d479-4147-aa02-8a31885638c2',

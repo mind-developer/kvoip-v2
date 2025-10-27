@@ -29,6 +29,7 @@ export class ClientChatMessageService {
     };
 
     await this.pubSub.publish(channel, eventData);
+    await this.pubSub.publish('client-chat-admin', eventData);
   }
 
   async publishChatCreated(
@@ -43,6 +44,7 @@ export class ClientChatMessageService {
     };
 
     await this.pubSub.publish(channel, eventData);
+    await this.pubSub.publish('client-chat-admin', eventData);
   }
 
   async publishMessageUpdated(
@@ -57,6 +59,7 @@ export class ClientChatMessageService {
     };
 
     await this.pubSub.publish(channel, eventData);
+    await this.pubSub.publish('client-chat-admin', eventData);
   }
 
   async publishChatUpdated(
@@ -71,6 +74,7 @@ export class ClientChatMessageService {
     };
 
     await this.pubSub.publish(channel, eventData);
+    await this.pubSub.publish('client-chat-admin', eventData);
   }
 
   async publishChatDeleted(
@@ -83,8 +87,8 @@ export class ClientChatMessageService {
       clientChatEventDate: new Date(),
       clientChat: chat,
     };
-    console.log('publishChatDeleted', channel, eventData);
 
     await this.pubSub.publish(channel, eventData);
+    await this.pubSub.publish('client-chat-admin', eventData);
   }
 }

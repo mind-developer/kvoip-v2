@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import {
   NodeHandler,
   ProcessParams,
@@ -9,7 +10,6 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChatMessage,
 } from 'twenty-shared/types';
 
 @Injectable()
@@ -30,21 +30,26 @@ export class TextInputHandler implements NodeHandler {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (text) {
       const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
-      const message: Omit<ClientChatMessage, 'providerMessageId'> = {
-        clientChatId: clientChat.id,
-        from: chatbotName,
-        fromType: ChatMessageFromType.CHATBOT,
-        to: clientChat.person.id,
-        toType: ChatMessageToType.PERSON,
-        provider: provider,
-        type: ChatMessageType.TEXT,
-        textBody: formattedText,
-        caption: null,
-        deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
-        edited: false,
-        attachmentUrl: null,
-        event: null,
-      };
+      const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
+        {
+          clientChatId: clientChat.id,
+          from: chatbotName,
+          fromType: ChatMessageFromType.CHATBOT,
+          to: clientChat.person.id,
+          toType: ChatMessageToType.PERSON,
+          provider: provider,
+          type: ChatMessageType.TEXT,
+          textBody: formattedText,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: null,
+          event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
+        };
       console.log('text input handler sending message', message);
       this.chatMessageManagerService.sendMessage(
         message,

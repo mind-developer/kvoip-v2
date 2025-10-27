@@ -46,4 +46,8 @@ export class SendClientChatMessageInput {
   reactions: Reaction[] | null;
   @Field(() => String, { nullable: true })
   repliesTo: string | null;
+  @Field(() => String, { nullable: true })
+  templateId: string | null;
+  @Field(() => String, { nullable: true })
+  templateLanguage: string | null;
 }

@@ -220,6 +220,9 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   chatbot: Relation<ChatbotWorkspaceEntity> | null;
 
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string | null;
+
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({

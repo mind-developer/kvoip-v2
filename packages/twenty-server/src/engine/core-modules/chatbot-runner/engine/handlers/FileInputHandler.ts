@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import {
   NodeHandler,
   ProcessParams,
@@ -9,7 +10,6 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChatMessage,
 } from 'twenty-shared/types';
 
 @Injectable()
@@ -30,21 +30,26 @@ export class FileInputHandler implements NodeHandler {
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (file) {
-      const message: Omit<ClientChatMessage, 'providerMessageId'> = {
-        clientChatId: clientChat.id,
-        from: chatbotName,
-        fromType: ChatMessageFromType.CHATBOT,
-        to: clientChat.providerContactId,
-        toType: ChatMessageToType.PERSON,
-        provider: provider,
-        type: ChatMessageType.DOCUMENT,
-        textBody: null,
-        caption: (node.data?.caption as string) ?? null,
-        deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
-        edited: false,
-        attachmentUrl: file,
-        event: null,
-      };
+      const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
+        {
+          clientChatId: clientChat.id,
+          from: chatbotName,
+          fromType: ChatMessageFromType.CHATBOT,
+          to: clientChat.providerContactId,
+          toType: ChatMessageToType.PERSON,
+          provider: provider,
+          type: ChatMessageType.DOCUMENT,
+          textBody: null,
+          caption: (node.data?.caption as string) ?? null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: file,
+          event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
+        };
       this.chatMessageManagerService.sendMessage(
         message,
         workspaceId,

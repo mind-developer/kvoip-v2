@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import {
   NodeHandler,
@@ -10,7 +11,6 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChatMessage,
 } from 'twenty-shared/types';
 
 @Injectable()
@@ -61,7 +61,10 @@ export class ConditionalInputHandler implements NodeHandler {
     if (!this.askedNodes.has(nodeId)) {
       this.askedNodes.add(nodeId);
       if (prompt) {
-        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        const message: Omit<
+          ClientChatMessageNoBaseFields,
+          'providerMessageId'
+        > = {
           type: ChatMessageType.TEXT,
           textBody: prompt,
           clientChatId: clientChat.id,
@@ -75,6 +78,10 @@ export class ConditionalInputHandler implements NodeHandler {
           edited: false,
           attachmentUrl: null,
           event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
         };
         this.chatMessageManagerService.sendMessage(
           message,
@@ -101,7 +108,10 @@ export class ConditionalInputHandler implements NodeHandler {
         .join('\n');
 
       if (optionsList) {
-        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        const message: Omit<
+          ClientChatMessageNoBaseFields,
+          'providerMessageId'
+        > = {
           type: ChatMessageType.TEXT,
           textBody: optionsList,
           clientChatId: clientChat.id,
@@ -115,6 +125,10 @@ export class ConditionalInputHandler implements NodeHandler {
           edited: false,
           attachmentUrl: null,
           event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
         };
         this.chatMessageManagerService.sendMessage(
           message,

@@ -7,6 +7,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 @Processor({ queueName: MessageQueue.cronQueue, scope: Scope.DEFAULT })
 export class ChatMessageManagerSetAbandonedCronJob {
+  private hasRunOnce = false;
   private readonly logger = new Logger(
     ChatMessageManagerSetAbandonedCronJob.name,
   );
@@ -20,6 +21,13 @@ export class ChatMessageManagerSetAbandonedCronJob {
     workspaceId,
     clientChat,
   }: ChatMessageManagerSetAbandonedCronJobData) {
+    if (!this.hasRunOnce) {
+      this.hasRunOnce = true;
+      this.logger.warn(
+        'skipping first run of chat message manager set abandoned cron job',
+      );
+      return;
+    }
     this.chatMessageManagerService.executeAbandonment(
       chatId,
       workspaceId,
