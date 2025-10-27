@@ -25,7 +25,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
 
 // Create form schema dynamically based on field metadata
-const createFocusNfeEditFormSchema = (objectMetadataItem?: ObjectMetadataItem) => {
+const createFocusNfeEditFormSchema = (
+  objectMetadataItem?: ObjectMetadataItem,
+) => {
   if (!objectMetadataItem) {
     return z.object({
       id: z.string(),
@@ -49,31 +51,39 @@ const createFocusNfeEditFormSchema = (objectMetadataItem?: ObjectMetadataItem) =
 
   const getFieldValidationSchema = (fieldName: string) => {
     const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
-    const validation = field?.settings?.validation;
-    
-    if (validation?.pattern) {
-      return createTextValidationSchema(validation.pattern, validation.errorMessage);
+
+    if (!field) {
+      return z.string();
     }
-    return z.string();
+
+    const validation = field.settings?.validation;
+    const isRequired = !field.isNullable;
+
+    return createTextValidationSchema(
+      validation?.pattern,
+      validation?.errorMessage ||
+        (isRequired ? `${field.label} is required` : undefined),
+      isRequired,
+    );
   };
 
   return z.object({
     id: z.string(),
-    name: z.string().min(1, 'Name is required'),
-    token: z.string().optional(),
-    companyName: z.string().min(1, 'Company name is required'),
+    name: getFieldValidationSchema('name'),
+    token: z.string().optional(), // Token is optional on edit
+    companyName: getFieldValidationSchema('companyName'),
     cnpj: getFieldValidationSchema('cnpj'),
     cpf: getFieldValidationSchema('cpf').optional().nullable(),
     ie: getFieldValidationSchema('ie'),
     inscricaoMunicipal: getFieldValidationSchema('inscricaoMunicipal'),
     cnaeCode: getFieldValidationSchema('cnaeCode').optional(),
     cep: getFieldValidationSchema('cep'),
-    street: z.string(),
-    number: z.string(),
-    neighborhood: z.string(),
-    city: z.string().min(1, 'City is required'),
+    street: getFieldValidationSchema('street'),
+    number: getFieldValidationSchema('number'),
+    neighborhood: getFieldValidationSchema('neighborhood'),
+    city: getFieldValidationSchema('city'),
     state: getFieldValidationSchema('state'),
-    taxRegime: z.string(),
+    taxRegime: getFieldValidationSchema('taxRegime'),
   });
 };
 /* @kvoip-woulz proprietary:end */
@@ -84,17 +94,17 @@ export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   name: z.string().min(1),
   token: z.string().optional(),
   companyName: z.string().min(1),
-  cnpj: z.string(),
+  cnpj: z.string().min(14),
   cpf: z.string().optional().nullable(),
-  ie: z.string(),
+  ie: z.string().min(1),
   inscricaoMunicipal: z.string(),
-  cnaeCode: z.string().optional(),
-  cep: z.string(),
+  cnaeCode: z.string(),
+  cep: z.string().min(1),
   street: z.string(),
   number: z.string(),
   neighborhood: z.string(),
   city: z.string().min(1),
-  state: z.string(),
+  state: z.string().min(1),
   taxRegime: z.string(),
 });
 
@@ -249,11 +259,11 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
               title=""
               description="Edit the information to connect your integration"
             />
-            {/* @kvoip-woulz proprietary:begin */}
             <SettingsIntegrationFocusNfeDatabaseConnectionForm
+              /* @kvoip-woulz proprietary:begin */
               objectMetadataItem={objectMetadataItem}
+              /* @kvoip-woulz proprietary:end */
             />
-            {/* @kvoip-woulz proprietary:end */}
           </Section>
         </FormProvider>
       </SettingsPageContainer>

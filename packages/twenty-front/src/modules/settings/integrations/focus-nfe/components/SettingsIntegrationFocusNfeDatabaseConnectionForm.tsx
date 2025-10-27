@@ -1,12 +1,16 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useState } from 'react';
+/* @kvoip-woulz proprietary:begin */
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { type SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+/* @kvoip-woulz proprietary:end */
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -44,15 +48,18 @@ const StyledAddressGroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) =>
+    theme.spacing(2)}; // Spacing before address group
 `;
 
+/* @kvoip-woulz proprietary:begin */
 type SettingsIntegrationFocusNfeDatabaseConnectionFormProps = {
   disabled?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
 };
+/* @kvoip-woulz proprietary:end */
 
-// Helper function to get field validation - no useMemo needed
+/* @kvoip-woulz proprietary:begin */
 const getFieldValidation = (
   objectMetadataItem: ObjectMetadataItem | undefined,
   fieldName: string,
@@ -62,10 +69,11 @@ const getFieldValidation = (
   const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
   return field?.settings?.validation;
 };
+/* @kvoip-woulz proprietary:end */
 
 export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   disabled,
-  objectMetadataItem,
+  objectMetadataItem, // @kvoip-woulz proprietary
 }: SettingsIntegrationFocusNfeDatabaseConnectionFormProps) => {
   const { control } =
     useFormContext<SettingsIntegrationFocusNfeConnectionFormValues>();
@@ -78,6 +86,9 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
     { value: 'lucro_real', label: 'Lucro Real' },
   ];
 
+  // TODO: Add masks for CNPJ, CPF, CEP, IE, CNAE if available/needed
+  // For now, they are simple text inputs.
+
   return (
     <StyledFormContainer>
       <StyledRow>
@@ -85,48 +96,51 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
           <Controller
             name="name"
             control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={(
+              { field: { onChange, value }, fieldState: { error } }, //@kvoip-woulz proprietary
+            ) => (
               <TextInput
                 label="Integration name"
-                value={value}
+                value={value as string}
                 onChange={onChange}
                 type="text"
                 disabled={disabled}
                 placeholder="Focus Nfe"
                 fullWidth
-                error={error?.message}
+                error={error?.message} // @kvoip-woulz proprietary
               />
             )}
           />
         </StyledHalfWidthInput>
       </StyledRow>
-
       <StyledRow>
         <StyledHalfWidthInput>
           <Controller
             name="token"
             control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={(
+              { field: { onChange, value }, fieldState: { error } }, // @kvoip-woulz proprietary
+            ) => (
               <TextInput
                 label="Token"
                 value={showingMasked && value ? '********' : value}
                 onChange={onChange}
+                /* @kvoip-woulz proprietary:begin */
                 onFocus={() => setShowingMasked(false)}
                 onBlur={() => setShowingMasked(true)}
+                /* @kvoip-woulz proprietary:end */
                 fullWidth
                 type="text"
                 disabled={disabled}
                 placeholder="************************"
-                error={error?.message}
+                error={error?.message} // @kvoip-woulz proprietary
               />
             )}
           />
         </StyledHalfWidthInput>
       </StyledRow>
-
       <StyledFormContainer>
         <StyledFormTitle>Issuer data</StyledFormTitle>
-
         <StyledFormFieldContainer>
           <Controller
             name="companyName"
@@ -149,6 +163,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             <Controller
               name="cnpj"
               control={control}
+              /* @kvoip-woulz proprietary:begin */
               render={({
                 field: { onChange, value },
                 fieldState: { error },
@@ -171,13 +186,14 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                   />
                 );
               }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledFormFieldContainer>
-
           <StyledFormFieldContainer width="50%">
             <Controller
               name="cpf"
               control={control}
+              /* @kvoip-woulz proprietary:begin */
               render={({
                 field: { onChange, value },
                 fieldState: { error },
@@ -200,6 +216,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                   />
                 );
               }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledFormFieldContainer>
         </StyledRow>
@@ -209,6 +226,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             <Controller
               name="ie"
               control={control}
+              /* @kvoip-woulz proprietary:begin */
               render={({
                 field: { onChange, value },
                 fieldState: { error },
@@ -228,13 +246,14 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                   />
                 );
               }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledFormFieldContainer>
-
           <StyledFormFieldContainer width="50%">
             <Controller
               name="inscricaoMunicipal"
               control={control}
+              /* @kvoip-woulz proprietary:begin */
               render={({
                 field: { onChange, value },
                 fieldState: { error },
@@ -259,14 +278,15 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                   />
                 );
               }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledFormFieldContainer>
         </StyledRow>
-
         <StyledFormFieldContainer>
           <Controller
             name="cnaeCode"
             control={control}
+            /* @kvoip-woulz proprietary:begin */
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               const validation = getFieldValidation(
                 objectMetadataItem,
@@ -286,14 +306,16 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 />
               );
             }}
+            /* @kvoip-woulz proprietary:end */
           />
         </StyledFormFieldContainer>
-
         <StyledAddressGroupContainer>
+          {/* <StyledFormTitle>Address</StyledFormTitle> No separate title in image for address group */}
           <StyledFormFieldContainer>
             <Controller
               name="cep"
               control={control}
+              /* @kvoip-woulz proprietary:begin */
               render={({
                 field: { onChange, value },
                 fieldState: { error },
@@ -316,6 +338,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                   />
                 );
               }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledFormFieldContainer>
 
@@ -336,7 +359,6 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
-
             <StyledFormFieldContainer width="20%">
               <Controller
                 name="number"
@@ -356,7 +378,9 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
           </StyledRow>
 
           <StyledRow>
-            <StyledFormFieldContainer width="45%">
+            <StyledFormFieldContainer width="calc(45% - (${({ theme }) => theme.spacing(4)} / 3 * 2))">
+              {' '}
+              {/* Adjust for gap */}
               <Controller
                 name="neighborhood"
                 control={control}
@@ -372,8 +396,9 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
-
-            <StyledFormFieldContainer width="45%">
+            <StyledFormFieldContainer width="calc(45% - (${({ theme }) => theme.spacing(4)} / 3 * 2))">
+              {' '}
+              {/* Adjust for gap */}
               <Controller
                 name="city"
                 control={control}
@@ -389,7 +414,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 )}
               />
             </StyledFormFieldContainer>
-
+            /* @kvoip-woulz proprietary:begin */
             <StyledFormFieldContainer width="10%">
               <Controller
                 name="state"
@@ -419,6 +444,7 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
                 }}
               />
             </StyledFormFieldContainer>
+            /* @kvoip-woulz proprietary:end */
           </StyledRow>
         </StyledAddressGroupContainer>
 

@@ -1,6 +1,8 @@
+// @kvoip-woulz proprietary:begin
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
+// @kvoip-woulz proprietary:end
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm';
@@ -23,53 +25,58 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const createFocusNfeFormSchema = (objectMetadataItem?: ObjectMetadataItem) => {
   if (!objectMetadataItem) {
     return z.object({
-      name: z.string().min(1, 'Name is required'),
-      token: z.string().min(1, 'Token is required'),
-      companyName: z.string().min(1, 'Company name is required'),
-      cnpj: z.string(),
+      name: z.string().min(1),
+      token: z.string(),
+      companyName: z.string().min(1),
+      cnpj: z.string().min(14),
       cpf: z.string().optional(),
-      ie: z.string(),
+      ie: z.string().min(1),
       inscricaoMunicipal: z.string(),
-      cnaeCode: z.string().optional(),
-      cep: z.string(),
+      cnaeCode: z.string(),
+      cep: z.string().min(1),
       street: z.string(),
       number: z.string(),
       neighborhood: z.string(),
-      city: z.string().min(1, 'City is required'),
-      state: z.string(),
+      city: z.string().min(1),
+      state: z.string().min(1),
       taxRegime: z.string(),
     });
   }
-
+  // @kvoip-woulz proprietary:begin
   const getFieldValidationSchema = (fieldName: string) => {
     const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
-    const validation = field?.settings?.validation;
 
-    if (validation?.pattern) {
-      return createTextValidationSchema(
-        validation.pattern,
-        validation.errorMessage,
-      );
+    if (!field) {
+      return z.string();
     }
-    return z.string();
+
+    const validation = field.settings?.validation;
+    const isRequired = !field.isNullable;
+
+    return createTextValidationSchema(
+      validation?.pattern,
+      validation?.errorMessage ||
+        (isRequired ? `${field.label} is required` : undefined),
+      isRequired,
+    );
   };
 
   return z.object({
-    name: z.string().min(1, 'Name is required'),
-    token: z.string().min(1, 'Token is required'),
-    companyName: z.string().min(1, 'Company name is required'),
+    name: getFieldValidationSchema('name'),
+    token: getFieldValidationSchema('token'),
+    companyName: getFieldValidationSchema('companyName'),
     cnpj: getFieldValidationSchema('cnpj'),
     cpf: getFieldValidationSchema('cpf').optional(),
     ie: getFieldValidationSchema('ie'),
     inscricaoMunicipal: getFieldValidationSchema('inscricaoMunicipal'),
     cnaeCode: getFieldValidationSchema('cnaeCode').optional(),
     cep: getFieldValidationSchema('cep'),
-    street: z.string(),
-    number: z.string(),
-    neighborhood: z.string(),
-    city: z.string().min(1, 'City is required'),
+    street: getFieldValidationSchema('street'),
+    number: getFieldValidationSchema('number'),
+    neighborhood: getFieldValidationSchema('neighborhood'),
+    city: getFieldValidationSchema('city'),
     state: getFieldValidationSchema('state'),
-    taxRegime: z.string(),
+    taxRegime: getFieldValidationSchema('taxRegime'),
   });
 };
 
@@ -90,7 +97,7 @@ export type SettingsIntegrationFocusNfeConnectionFormValues = {
   state: string;
   taxRegime: string;
 };
-
+// @kvoip-woulz proprietary:end
 export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
@@ -99,8 +106,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  const { createFocusNfeIntegration, loading } =
-    useCreateFocusNfeIntegration();
+  const { createFocusNfeIntegration, loading } = useCreateFocusNfeIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -108,7 +114,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
   );
 
   const isIntegrationAvailable = !!integration;
-
+  // @kvoip-woulz proprietary:begin
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: 'focusNFe',
   });
@@ -118,16 +124,15 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
     [objectMetadataItem],
   );
 
-  const formConfig =
-    useForm<SettingsIntegrationFocusNfeConnectionFormValues>({
-      mode: 'onChange',
-      resolver: zodResolver(dynamicFormSchema),
-    });
+  const formConfig = useForm<SettingsIntegrationFocusNfeConnectionFormValues>({
+    mode: 'onChange',
+    resolver: zodResolver(dynamicFormSchema),
+  });
 
   useEffect(() => {
     formConfig.clearErrors();
   }, [dynamicFormSchema, formConfig]);
-
+  // @kvoip-woulz proprietary:end
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
@@ -195,11 +200,14 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
       }
     >
       <SettingsPageContainer>
-        <FormProvider {...formConfig}>
+        <FormProvider
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...formConfig}
+        >
           <Section>
             <H2Title
               title="Connect a new integration"
-              description="Provide a name and an API key to connect this workspace"
+              description="Provide a name and an API to connect this workspace"
             />
             <Info
               text={'Read how to retrieve the API key'}
@@ -208,7 +216,9 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
             />
             <SettingsIntegrationFocusNfeDatabaseConnectionForm
               disabled={loading}
+              /* @kvoip-woulz proprietary:begin */
               objectMetadataItem={objectMetadataItem}
+              /* @kvoip-woulz proprietary:end */
             />
           </Section>
         </FormProvider>

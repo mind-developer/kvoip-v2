@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { validateTextPattern } from 'src/engine/core-modules/record-transformer/utils/validate-text-pattern.util';
+import { validateTextPattern } from 'src/engine/core-modules/record-transformer/utils/validate-text-pattern.util'; // @kvoip-woulz proprietary
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   type RichTextV2Metadata,
@@ -37,14 +37,16 @@ export class RecordInputTransformerService {
         continue;
       }
 
+      /* @kvoip-woulz proprietary:begin */
       const transformedValue = this.parseSubFields(
         fieldMetadata.type,
         await this.transformFieldValue(
           fieldMetadata.type,
           this.stringifySubFields(fieldMetadata.type, value),
-          fieldMetadata, 
+          fieldMetadata,
         ),
       );
+      /* @kvoip-woulz proprietary:end */
 
       transformedEntries = { ...transformedEntries, [key]: transformedValue };
     }
@@ -52,12 +54,14 @@ export class RecordInputTransformerService {
     return transformedEntries;
   }
 
+  /* @kvoip-woulz proprietary:begin */
   private async transformFieldValue(
     fieldType: FieldMetadataType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    fieldMetadata?: any, 
+    fieldMetadata?: any,
   ): Promise<any> {
+    /* @kvoip-woulz proprietary:end */
     if (!isDefined(value)) {
       return value;
     }
@@ -67,8 +71,10 @@ export class RecordInputTransformerService {
         return value || null;
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
+      /* @kvoip-woulz proprietary:begin */
       case FieldMetadataType.TEXT:
         return this.transformTextValue(value, fieldMetadata);
+      /* @kvoip-woulz proprietary:end */
       case FieldMetadataType.RICH_TEXT:
         throw new Error(
           'Rich text is not supported, please use RICH_TEXT_V2 instead',
@@ -86,13 +92,14 @@ export class RecordInputTransformerService {
     }
   }
 
+  /* @kvoip-woulz proprietary:begin */
   private transformTextValue(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadata?: any,
   ): string | null {
     const stringValue = String(value);
-    
+
     if (!fieldMetadata?.settings?.validation) {
       return stringValue;
     }
@@ -100,6 +107,7 @@ export class RecordInputTransformerService {
     const { pattern, errorMessage } = fieldMetadata.settings.validation;
     return validateTextPattern(stringValue, pattern, errorMessage);
   }
+  /* @kvoip-woulz proprietary:end */
 
   private async transformRichTextV2Value(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

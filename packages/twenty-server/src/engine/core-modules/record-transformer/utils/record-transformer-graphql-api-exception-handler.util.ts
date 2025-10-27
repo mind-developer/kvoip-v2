@@ -17,7 +17,7 @@ export const recordTransformerGraphqlApiExceptionHandler = (
     case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE:
     case RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE:
     case RecordTransformerExceptionCode.INVALID_URL:
-    case RecordTransformerExceptionCode.INVALID_TEXT_FORMAT: 
+    case RecordTransformerExceptionCode.INVALID_TEXT_FORMAT: // @kvoip-woulz proprietary
       throw new UserInputError(error);
     default: {
       assertUnreachable(error.code);

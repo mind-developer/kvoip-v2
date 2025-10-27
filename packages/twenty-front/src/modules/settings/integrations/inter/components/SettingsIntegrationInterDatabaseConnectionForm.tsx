@@ -101,9 +101,13 @@ const MaskedFieldController = ({
           };
         }, []);
 
-        const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        /* @kvoip-woulz proprietary:begin */
+        const handleKeyDown = (
+          event: React.KeyboardEvent<HTMLInputElement>,
+        ) => {
           updateCursorPosition();
         };
+        /* @kvoip-woulz proprietary:end */
 
         const handleChange = (newValue: string) => {
           if (!mask) {
@@ -116,7 +120,9 @@ const MaskedFieldController = ({
           const newLength = masked.length;
 
           if (newLength > previousLength) {
-            setCursorPosition(cursorPosRef.current + (newLength - previousLength));
+            setCursorPosition(
+              cursorPosRef.current + (newLength - previousLength),
+            );
           } else {
             setCursorPosition(cursorPosRef.current);
           }
