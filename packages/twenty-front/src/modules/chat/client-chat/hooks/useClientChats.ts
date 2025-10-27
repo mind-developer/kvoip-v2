@@ -1,23 +1,39 @@
 import { useClientChatSubscription } from '@/chat/client-chat/hooks/useClientChatSubscription';
+import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ClientChat, ClientChatStatus } from 'twenty-shared/types';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
-export const useClientChats = (
-  sectorId: string,
-  showNotifications: boolean = true,
-) => {
+export const useClientChats = (showNotifications: boolean = false) => {
   const { t } = useLingui();
   const { chatId: openChat } = useParams();
   const [dbChats, setDbChats] = useState<ClientChat[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { enqueueInfoSnackBar } = useSnackBar();
+
+  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+    activeTabIdComponentState,
+    'chat-navigation-drawer-tabs',
+  );
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
+
+  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
+  const isAdmin = workspaceMemberWithAgent?.agent.isAdmin;
+
   useFindManyRecords<ClientChat & { __typename: string; id: string }>({
     objectNameSingular: 'clientChat',
     recordGqlFields: {
@@ -34,6 +50,7 @@ export const useClientChats = (
       sector: {
         name: true,
         id: true,
+        icon: true,
       },
       agentId: true,
       person: {
@@ -46,6 +63,10 @@ export const useClientChats = (
       },
       unreadMessagesCount: true,
       whatsappIntegrationId: true,
+      whatsappIntegration: {
+        id: true,
+        apiType: true,
+      },
       messengerIntegrationId: true,
       telegramIntegrationId: true,
       provider: true,
@@ -53,7 +74,9 @@ export const useClientChats = (
     filter: {
       or: [
         { status: { eq: ClientChatStatus.ABANDONED } },
-        { sectorId: { eq: sectorId } },
+        ...(workspaceMemberWithAgent?.agent?.isAdmin
+          ? sectors?.map((sector) => ({ sectorId: { eq: sector.id } })) || []
+          : [{ sectorId: { eq: workspaceMemberWithAgent?.agent?.sectorId } }]),
       ],
     },
     limit: 500,
@@ -62,33 +85,43 @@ export const useClientChats = (
       setDbChats(data);
       setLoading(false);
     },
-    skip: !sectorId,
+    skip: !sectors || sectors.length === 0,
   });
 
   useClientChatSubscription({
-    sectorId: sectorId!,
+    sectorId: isAdmin
+      ? 'admin'
+      : (workspaceMemberWithAgent?.agent?.sectorId ?? ''),
     onChatCreated: (chat) => {
-      setDbChats((prev) =>
-        [...prev, chat].filter(
-          (c, index, self) => index === self.findIndex((t) => t.id === c.id),
-        ),
-      );
+      setDbChats((prev: ClientChat[]) => [
+        ...prev.filter((c: ClientChat) => c.id !== chat.id),
+        chat,
+      ]);
     },
     onChatUpdated: (chat) => {
-      setDbChats((prev) => prev.map((c) => (c.id === chat.id ? chat : c)));
+      if (chat.id === openChat && activeTabId !== chat.status) {
+        setActiveTabId(chat.status);
+      }
+      setDbChats((prev: ClientChat[]) =>
+        prev.map((c: ClientChat) => (c.id === chat.id ? chat : c)),
+      );
     },
     onChatDeleted: (chat) => {
-      setDbChats((prev) => prev.filter((c) => c.id !== chat.id));
+      setDbChats((prev: ClientChat[]) =>
+        prev.filter((c: ClientChat) => c.id !== chat.id),
+      );
       if (chat.status === ClientChatStatus.FINISHED && showNotifications) {
         enqueueInfoSnackBar({
-          message: t`Chat ended`,
+          message: t`Service finished`,
         });
       }
       if (openChat === chat.id) navigate(getAppPath(AppPath.ClientChatCenter));
     },
   });
+
   return {
     chats: dbChats,
+    sectors,
     loading,
   };
 };

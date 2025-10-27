@@ -91,7 +91,7 @@ const EventWrapper = ({
   );
 };
 
-const StyledEventDescription = styled.p`
+const StyledEventDescription = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -101,7 +101,7 @@ const StyledEventDescription = styled.p`
   margin: 0;
 `;
 
-const StyledEventDescriptionText = styled.p<{ variant?: 'bold' }>`
+const StyledEventDescriptionText = styled.div<{ variant?: 'bold' }>`
   text-align: center;
   display: flex;
   align-items: center;

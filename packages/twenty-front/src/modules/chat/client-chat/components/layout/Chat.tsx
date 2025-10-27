@@ -5,7 +5,6 @@ import { UploadMediaPopup } from '@/chat/client-chat/components/input/UploadMedi
 import { ChatHeader } from '@/chat/client-chat/components/layout/ChatHeader';
 import AudioMessage from '@/chat/client-chat/components/message/AudioMessage';
 import { CachedAvatarComponent } from '@/chat/client-chat/components/message/CachedAvatarComponent';
-import DocumentMessage from '@/chat/client-chat/components/message/DocumentMessage';
 import EventMessage from '@/chat/client-chat/components/message/EventMessage';
 import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
@@ -22,7 +21,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
@@ -36,12 +35,7 @@ import {
   ClientChatMessageEvent,
   ClientChatStatus,
 } from 'twenty-shared/types';
-import {
-  IconChevronDown,
-  IconPlayerPause,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -58,7 +52,7 @@ const StyledPaneChatContainer = styled.div`
     theme.name === 'dark' ? 'black' : theme.background.primary};
 `;
 
-const StyledChatContainer = styled.div<{ isScrolling: boolean }>`
+const StyledChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0)};
@@ -288,39 +282,15 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   width: 100%;
 `;
 
-const StyledNewMessagesButton = styled.button`
-  position: fixed;
-  bottom: ${({ theme }) => theme.spacing(20)};
-  right: ${({ theme }) => theme.spacing(6)};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) =>
-    theme.name === 'dark'
-      ? 'rgba(255, 255, 255, 0.15)'
-      : 'rgba(0, 0, 0, 0.15)'};
-  backdrop-filter: blur(10px);
-  color: ${({ theme }) => theme.font.color.primary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.xxl};
-  min-height: 32px;
-  min-width: 32px;
-  cursor: pointer;
-  z-index: 2;
-`;
-
 export const Chat = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
   const { chatId } = useParams() || '';
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const { chats: clientChats } = useClientChats(
-    workspaceMemberWithAgent?.agent?.sectorId || '',
-  );
-  const selectedChat = useMemo(
-    () => clientChats.find((chat: ClientChat) => chat.id === chatId),
-    [chatId, clientChats],
+  const { chats: clientChats } = useClientChats();
+  const selectedChat = clientChats.find(
+    (chat: ClientChat) => chat.id === chatId,
   );
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
@@ -346,13 +316,7 @@ export const Chat = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
-
-  const [isAtBottom, setIsAtBottom] = useState(true);
-  const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [showJumpToBottom, setShowJumpToBottom] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { getIcon } = useIcons();
 
@@ -371,9 +335,7 @@ export const Chat = () => {
     null,
   );
 
-  const messages = useMemo(() => {
-    return [...dbMessages, ...optimisticMessages];
-  }, [dbMessages, optimisticMessages, chatId, clientChats]);
+  const messages = [...dbMessages, ...optimisticMessages];
 
   useEffect(() => {
     setOptimisticMessages([]);
@@ -381,15 +343,15 @@ export const Chat = () => {
 
   useEffect(() => {
     if (messages?.length > 0) setLastMessage(messages[messages.length - 1]);
-    // Only auto-scroll when new messages arrive and user is at bottom
-    if (isAtBottom && chatContainerRef.current) {
+  }, [messages]);
+
+  // Scroll to bottom when selected chat changes
+  useEffect(() => {
+    if (chatContainerRef.current && selectedChat?.id) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
-      setShowJumpToBottom(false);
-    } else if (!isAtBottom && selectedChat?.unreadMessagesCount) {
-      setNewMessagesIndicator(true);
     }
-  }, [messages]);
+  }, [selectedChat?.id]);
 
   const sendAudioMessage = async (chunks: Blob[]) => {
     const audioBlob = new Blob(chunks, {
@@ -463,7 +425,6 @@ export const Chat = () => {
 
   useEffect(() => {
     if (!selectedChat) return;
-    scrollToBottom();
     updateOneRecord({
       idToUpdate: selectedChat?.id || '',
       updateOneRecordInput: {
@@ -471,55 +432,6 @@ export const Chat = () => {
       },
     });
   }, [selectedChat?.id]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Handle scroll detection
-  useEffect(() => {
-    const chatContainer = chatContainerRef.current;
-    if (!chatContainer) {
-      return;
-    }
-
-    // Check initial scroll position
-    const { scrollTop, scrollHeight, clientHeight } = chatContainer;
-    const initialDistanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    const initialIsNearBottom = initialDistanceFromBottom < 100;
-
-    setIsAtBottom(initialIsNearBottom);
-    setShowJumpToBottom(!initialIsNearBottom && messages.length > 0);
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-      const isNearBottom = distanceFromBottom < 100;
-
-      setIsAtBottom(isNearBottom);
-      setShowJumpToBottom(!isNearBottom && messages.length > 0);
-
-      // Show scrolling state briefly
-      setIsScrolling(true);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
-
-    chatContainer.addEventListener('scroll', handleScroll);
-
-    return () => {
-      chatContainer.removeEventListener('scroll', handleScroll);
-    };
-  }, [messages.length]);
 
   const UploadMediaIcon = getIcon('IconPaperclip');
 
@@ -556,8 +468,6 @@ export const Chat = () => {
         {
           ...optimisticMessage,
           providerMessageId: optimisticMessageId,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
         },
       ]);
 
@@ -602,23 +512,8 @@ export const Chat = () => {
     }
   };
 
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-      setIsAtBottom(true);
-      setNewMessagesIndicator(false);
-      setShowJumpToBottom(false);
-      updateOneRecord({
-        idToUpdate: selectedChat?.id || '',
-        updateOneRecordInput: {
-          unreadMessagesCount: 0,
-        },
-      });
-    }
-  };
-
   const renderButtons = () => {
+    if (!selectedChat) return null;
     const IconMicrophone = getIcon('IconMicrophone');
     const IconArrowUp = getIcon('IconArrowUp');
 
@@ -780,11 +675,10 @@ export const Chat = () => {
         />
       );
     }
-
     return null;
   };
 
-  if (selectedChat)
+  if (selectedChat) {
     return (
       <>
         <StyledPaneChatContainer>
@@ -798,7 +692,7 @@ export const Chat = () => {
             personId={selectedChat.person?.id || ''}
             showCloseOptions={selectedChat.status === ClientChatStatus.ASSIGNED}
           />
-          <StyledChatContainer ref={chatContainerRef} isScrolling={isScrolling}>
+          <StyledChatContainer ref={chatContainerRef}>
             {(messages ?? []).map(
               (message: ClientChatMessage, index: number) => {
                 const isSystemMessage =
@@ -814,14 +708,15 @@ export const Chat = () => {
                         translateY: 0,
                         opacity: 1,
                         transition: {
-                          delay: index * 0.01,
+                          animateDelay: index * 0.01,
+                          // delay: index * 0.01,
                           type: 'spring',
                           stiffness: 300,
                           damping: 20,
                           mass: 0.8,
                         },
                       }}
-                      key={message.providerMessageId}
+                      key={message.providerMessageId || `event-${index}`}
                     >
                       <div
                         style={{
@@ -849,7 +744,7 @@ export const Chat = () => {
                   case ChatMessageType.IMAGE:
                     renderedContent = (
                       <StyledImageContainer
-                        key={index}
+                        key={message.providerMessageId || `image-${index}`}
                         isSystemMessage={isSystemMessage}
                       >
                         <ImageMessage
@@ -868,23 +763,26 @@ export const Chat = () => {
                     break;
                   case ChatMessageType.AUDIO:
                     renderedContent = (
-                      <AudioMessage key={index} message={message} />
+                      <AudioMessage
+                        key={message.providerMessageId || `audio-${index}`}
+                        message={message}
+                      />
                     );
                     break;
                   case ChatMessageType.DOCUMENT: {
                     renderedContent = (
                       <StyledDocumentContainer
-                        key={index}
+                        key={message.providerMessageId || `document-${index}`}
                         isSystemMessage={isSystemMessage}
                       >
-                        <DocumentMessage
+                        {/* <DocumentMessage
                           fromMe={isSystemMessage}
                           documentUrl={
                             REACT_APP_SERVER_BASE_URL +
                             '/files/' +
                             message.attachmentUrl
                           }
-                        />
+                        /> */}
                       </StyledDocumentContainer>
                     );
                     break;
@@ -893,12 +791,15 @@ export const Chat = () => {
                     renderedContent = (
                       <StyledVideo
                         isSystemMessage={isSystemMessage}
-                        key={index}
+                        key={message.providerMessageId || `video-${index}`}
                         controls
                       >
                         {validVideoTypes.map((type) => (
                           <source
-                            key={type}
+                            key={
+                              (message.providerMessageId || `video-${index}`) +
+                              type
+                            }
                             src={
                               REACT_APP_SERVER_BASE_URL +
                               '/files/' +
@@ -913,7 +814,7 @@ export const Chat = () => {
                   default:
                     renderedContent = (
                       <StyledMessage
-                        key={index}
+                        key={message.providerMessageId || `text-${index}`}
                         isSystemMessage={isSystemMessage}
                       >
                         {message.fromType === ChatMessageFromType.AGENT
@@ -930,50 +831,46 @@ export const Chat = () => {
                 const lastOfRow = messages[index + 1]?.from !== message.from;
 
                 return (
-                  <>
-                    <StyledMessageContainer
-                      key={message.providerMessageId}
-                      fromMe={isSystemMessage}
-                    >
-                      <StyledAvatarMessage
-                        style={{ opacity: lastOfRow ? 1 : 0 }}
-                      >
-                        <CachedAvatarComponent
-                          senderId={message.from}
-                          senderType={
-                            message.fromType as
-                              | ChatMessageFromType.PERSON
-                              | ChatMessageFromType.AGENT
-                              | ChatMessageFromType.CHATBOT
-                          }
-                          animateDelay={index * 0.01}
-                        />
-                      </StyledAvatarMessage>
-                      <StyledContainer isSystemMessage={isSystemMessage}>
-                        <StyledMessageItem isSystemMessage={isSystemMessage}>
-                          <MessageBubble
-                            time={message.createdAt ?? ''}
-                            message={message}
-                            hasTail={lastOfRow}
-                            animateDelay={index * 0.01}
-                          >
-                            {renderedContent}
-                          </MessageBubble>
-                          <StyledNameAndTimeContainer
-                            isSystemMessage={isSystemMessage}
-                          >
-                            {isMessageOlderThan24Hours(
-                              message.createdAt ?? '',
-                            ) ?? (
-                              <StyledDateContainer>
-                                {message.createdAt ?? ''}
-                              </StyledDateContainer>
-                            )}
-                          </StyledNameAndTimeContainer>
-                        </StyledMessageItem>
-                      </StyledContainer>
-                    </StyledMessageContainer>
-                  </>
+                  <StyledMessageContainer
+                    key={message.providerMessageId || `message-${index}`}
+                    fromMe={isSystemMessage}
+                  >
+                    <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
+                      <CachedAvatarComponent
+                        senderId={message.from}
+                        senderType={
+                          message.fromType as
+                            | ChatMessageFromType.PERSON
+                            | ChatMessageFromType.AGENT
+                            | ChatMessageFromType.CHATBOT
+                        }
+                        animateDelay={0}
+                      />
+                    </StyledAvatarMessage>
+                    <StyledContainer isSystemMessage={isSystemMessage}>
+                      <StyledMessageItem isSystemMessage={isSystemMessage}>
+                        <MessageBubble
+                          time={message.createdAt ?? ''}
+                          message={message}
+                          hasTail={lastOfRow}
+                          animateDelay={0}
+                        >
+                          {renderedContent}
+                        </MessageBubble>
+                        <StyledNameAndTimeContainer
+                          isSystemMessage={isSystemMessage}
+                        >
+                          {isMessageOlderThan24Hours(
+                            message.createdAt ?? '',
+                          ) ?? (
+                            <StyledDateContainer>
+                              {message.createdAt ?? ''}
+                            </StyledDateContainer>
+                          )}
+                        </StyledNameAndTimeContainer>
+                      </StyledMessageItem>
+                    </StyledContainer>
+                  </StyledMessageContainer>
                 );
               },
             )}
@@ -988,19 +885,7 @@ export const Chat = () => {
             </StyledModalOverlay>
           )}
         </StyledPaneChatContainer>
-        {(newMessagesIndicator || showJumpToBottom) && (
-          <StyledNewMessagesButton onClick={scrollToBottom}>
-            {newMessagesIndicator ? (
-              'Jump to last message'
-            ) : (
-              <IconChevronDown
-                color={theme.font.color.primary}
-                style={{ pointerEvents: 'none' }}
-                size={14}
-              />
-            )}
-          </StyledNewMessagesButton>
-        )}
       </>
     );
+  }
 };

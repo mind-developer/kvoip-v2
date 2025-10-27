@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ClientChatMessage } from 'twenty-shared/types';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { beautifyExactDateTime } from '~/utils/date-utils';
 
 export const useClientChatMessages = (chatId: string) => {
   const { locale } = useRecoilValue(dateLocaleState);
@@ -40,10 +41,10 @@ export const useClientChatMessages = (chatId: string) => {
         ...prev,
         {
           ...message,
-          createdAt: formatInTimeZone(
-            new Date(message.createdAt ?? ''),
-            timeZone,
-            timeFormat,
+          createdAt: beautifyExactDateTime(
+            new Date(
+              message.createdAt?.replace(' ', 'T').replace(' ', '') ?? '',
+            ),
           ),
         },
       ]);

@@ -6,6 +6,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { IconMessage2Plus, IconSortDescending2 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -141,44 +142,18 @@ export const ChatNavigationDrawerHeader = ({
           />
         </StyledDiv>
         <StyledActionsContainer>
-          {/* <StyledIconButton
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            variant="secondary"
-            size="medium"
-            Icon={(props) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconSearch {...props} />
-            )}
-          /> */}
           <StyledIconButton
             onClick={() => alert('not implemented')}
             variant="secondary"
-            // accent="blue"
             size="medium"
-            Icon={(props) => (
-              <IconSortDescending
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...props}
-              />
-            )}
+            Icon={(props) => <IconSortDescending2 {...props} />}
           />
           <StyledIconButton
             onClick={() => alert('not implemented')}
             variant="secondary"
             size="medium"
-            Icon={(props) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <IconEdit {...props} />
-            )}
+            Icon={(props) => <IconMessage2Plus {...props} />}
           />
-          {/* {isStartChatOpen && (
-            <StartChat
-              isStartChatOpen={isStartChatOpen}
-              setIsStartChatOpen={setIsStartChatOpen}
-              onPhoneUpdate={handlePhoneUpdate}
-              onIntegrationUpdate={handleSelectedIntegrationId}
-            />
-          )} */}
         </StyledActionsContainer>
       </StyledPaneHeaderContainer>
 

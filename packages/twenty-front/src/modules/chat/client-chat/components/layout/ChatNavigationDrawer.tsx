@@ -3,6 +3,9 @@ import { ChatNavigationDrawerHeader } from '@/chat/client-chat/components/layout
 import { ChatNavigationDrawerTabs } from '@/chat/client-chat/components/layout/ChatNavigationDrawerTabs';
 import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -15,6 +18,7 @@ import {
   ClientChat,
   ClientChatStatus,
 } from 'twenty-shared/types';
+import { WorkspaceMember } from '~/generated/graphql';
 
 const StyledPaneSideContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -58,8 +62,41 @@ export const ChatNavigationDrawer = () => {
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
 
   const agent = workspaceMemberWithAgent?.agent;
-
-  const { chats: clientChats } = useClientChats(agent?.sectorId || '', false);
+  const { records: workspaceMembers } = useFindManyRecords<
+    WorkspaceMember & {
+      __typename: string;
+      agent: {
+        id: string;
+        sector: { id: string; name: string; icon: string };
+      };
+    }
+  >({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    recordGqlFields: {
+      id: true,
+      name: true,
+      agent: {
+        id: true,
+        sector: true,
+        sectorId: true,
+        isAdmin: true,
+      },
+      agentId: true,
+      avatarUrl: true,
+    },
+  });
+  const { records: sectors } = useFindManyRecords<Sector>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    recordGqlFields: {
+      id: true,
+      name: true,
+      icon: true,
+    },
+  });
+  const workspaceMembersWithAgent = workspaceMembers.filter(
+    (member) => member.agent.id,
+  );
+  const { chats: clientChats } = useClientChats(false);
 
   const [filteredClientChats, setFilteredClientChats] = useState<ClientChat[]>(
     [],
@@ -79,12 +116,6 @@ export const ChatNavigationDrawer = () => {
       ),
     );
   }, [searchInput, clientChats]);
-  if (
-    !workspaceMemberWithAgent ||
-    !workspaceMemberWithAgent?.agent ||
-    !workspaceMemberWithAgent.agent.sectorId
-  )
-    return null;
 
   const getChatMessagePreview = (chat: ClientChat) => {
     switch (chat.lastMessageType) {
@@ -105,7 +136,7 @@ export const ChatNavigationDrawer = () => {
   const tabs: SingleTabProps[] = [
     {
       id: ClientChatStatus.ASSIGNED,
-      title: 'Mine',
+      title: agent?.isAdmin ? 'Assigned' : 'Mine',
       incomingMessages: clientChats.filter(
         (chat) =>
           chat.status === ClientChatStatus.ASSIGNED &&
@@ -136,32 +167,66 @@ export const ChatNavigationDrawer = () => {
     },
   ];
 
-  const renderClientChats = () =>
-    filteredClientChats.map((chat, index) => {
-      if (chat.status !== activeTabId) return null;
-      if (chat.status === ClientChatStatus.FINISHED) return null;
+  const renderClientChats = () => {
+    if (!workspaceMemberWithAgent) {
+      return null;
+    }
+
+    return filteredClientChats.map((chat, index) => {
+      if (chat.status !== activeTabId && activeTabId !== 'all') {
+        return null;
+      }
+      if (chat.status === ClientChatStatus.FINISHED) {
+        return null;
+      }
       if (
         chat.status === ClientChatStatus.ASSIGNED &&
-        chat.agentId !== agent?.id
-      )
+        chat.agentId !== workspaceMemberWithAgent?.agent?.id &&
+        !workspaceMemberWithAgent?.agent?.isAdmin
+      ) {
         return null;
+      }
+
       const person = chat.person;
-      const clientName = person?.name?.firstName + ' ' + person?.name?.lastName;
+      const clientName =
+        (person?.name?.firstName || '') + ' ' + (person?.name?.lastName || '');
+      const isAdmin = agent?.isAdmin;
+      const chatAgent = workspaceMembersWithAgent.find(
+        (member) => member.agent?.id === chat.agent?.id,
+      );
+      const agentName =
+        chatAgent && isAdmin
+          ? (chatAgent?.name?.firstName || '') +
+            ' ' +
+            (chatAgent?.name?.lastName || '')
+          : undefined;
+      const agentAvatarUrl =
+        chatAgent && isAdmin ? (chatAgent?.avatarUrl ?? undefined) : undefined;
+
+      const cardSector = sectors.find((sector) => sector.id === chat.sectorId);
+
+      const sectorName = cardSector?.name;
+      const sectorIcon = cardSector?.icon;
 
       return (
         <ChatCard
           key={index + chat.id}
           name={clientName}
-          avatarUrl={person?.avatarUrl || ''}
+          personAvatarUrl={person?.avatarUrl || ''}
+          agentAvatarUrl={isAdmin ? agentAvatarUrl : undefined}
+          agentName={isAdmin ? agentName : undefined}
           lastMessagePreview={
             getChatMessagePreview(chat) || t`Click to open chat`
           }
           isSelected={openChatId === chat.id}
           chatId={chat.id}
           unreadMessagesCount={chat.unreadMessagesCount ?? 0}
+          sectorName={sectorName}
+          sectorIcon={sectorIcon}
         />
       );
     });
+  };
 
   return (
     <StyledPaneSideContainer>
@@ -173,7 +238,7 @@ export const ChatNavigationDrawer = () => {
         <ChatNavigationDrawerTabs loading={false} tabs={tabs} />
       </StyledTabListContainer>
       <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
-        <>{renderClientChats()}</>
+        {renderClientChats()}
       </StyledChatsContainer>
     </StyledPaneSideContainer>
   );

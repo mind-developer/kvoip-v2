@@ -1,7 +1,8 @@
 import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from 'twenty-ui/display';
+import { AvatarChip, Tag } from 'twenty-ui/components';
+import { Avatar, useIcons } from 'twenty-ui/display';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -24,6 +25,7 @@ const StyledContentContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   overflow: hidden;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledUserName = styled.p`
@@ -31,7 +33,9 @@ const StyledUserName = styled.p`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 600;
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledLastMessagePreview = styled.p`
@@ -49,6 +53,7 @@ const StyledDateAndUnreadMessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  align-self: center;
   justify-content: space-between;
 `;
 
@@ -67,51 +72,77 @@ const StyledUnreadMessages = styled.div`
 `;
 
 const StyledContainer = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 const StyledDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
 const StyledContainerPills = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledTag = styled(Tag)`
+  width: 90px;
+  padding: 0;
+  margin-bottom: -5px;
+`;
+
+const StyledTagsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 type ChatCardProps = {
   chatId: string;
   name: string;
-  avatarUrl: string;
   lastMessagePreview: string;
   isSelected?: boolean;
   unreadMessagesCount: number;
+  sectorName?: string;
+  sectorIcon?: string;
+  personAvatarUrl: string;
+  agentAvatarUrl?: string;
+  agentName?: string;
 };
 
 export const ChatCard = ({
   chatId,
   name,
-  avatarUrl,
+  personAvatarUrl,
+  agentAvatarUrl,
+  agentName,
   lastMessagePreview,
   isSelected,
   unreadMessagesCount,
+  sectorName,
+  sectorIcon,
 }: ChatCardProps) => {
   const navigate = useNavigate();
+  const { getIcon } = useIcons();
+  const Icon = getIcon(sectorIcon);
   return (
     <StyledChatCard
       onClick={() => navigate(getAppPath(AppPath.ClientChat, { chatId }))}
       isSelected={isSelected}
     >
       <Avatar
-        avatarUrl={avatarUrl}
+        avatarUrl={personAvatarUrl}
         placeholderColorSeed={name}
         placeholder={name}
         type={'rounded'}
         size="xl"
       />
       <StyledContentContainer>
-        <StyledContainerPills></StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
             <StyledUserName>{name}</StyledUserName>
@@ -119,11 +150,44 @@ export const ChatCard = ({
               {lastMessagePreview}
             </StyledLastMessagePreview>
           </StyledDiv>
-          <StyledDateAndUnreadMessagesContainer>
-            {unreadMessagesCount > 0 && (
-              <StyledUnreadMessages>{unreadMessagesCount}</StyledUnreadMessages>
-            )}
-          </StyledDateAndUnreadMessagesContainer>
+          <StyledContainerPills>
+            <StyledTagsContainer>
+              {agentName && (
+                <StyledTag
+                  text={agentName}
+                  color="transparent"
+                  variant="solid"
+                  weight="medium"
+                  Icon={() => {
+                    return (
+                      <AvatarChip
+                        avatarUrl={agentAvatarUrl}
+                        placeholderColorSeed={agentName}
+                        placeholder={agentName}
+                        avatarType="rounded"
+                      />
+                    );
+                  }}
+                />
+              )}
+              {sectorName && (
+                <StyledTag
+                  Icon={Icon}
+                  text={sectorName}
+                  color="transparent"
+                  variant="solid"
+                  weight="medium"
+                />
+              )}
+            </StyledTagsContainer>
+            <StyledDateAndUnreadMessagesContainer>
+              {unreadMessagesCount > 0 && (
+                <StyledUnreadMessages>
+                  {unreadMessagesCount}
+                </StyledUnreadMessages>
+              )}
+            </StyledDateAndUnreadMessagesContainer>
+          </StyledContainerPills>
         </StyledContainer>
       </StyledContentContainer>
     </StyledChatCard>

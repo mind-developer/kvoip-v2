@@ -8,6 +8,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { IconBrandMeta, IconDeviceMobileMessage } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
@@ -73,6 +74,7 @@ const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   padding: 3px ${({ theme }) => theme.spacing(1)};
   width: max-content;
   margin-right: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
 
   & img {
     height: 10px;
@@ -103,10 +105,7 @@ export const ChatHeader = ({
   const { sendClientChatMessage } = useSendClientChatMessage();
   const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const { chats: clientChats } = useClientChats(
-    workspaceMemberWithAgent?.agent?.sectorId || '',
-    false,
-  );
+  const { chats: clientChats } = useClientChats();
   const selectedChat = clientChats.find(
     (chat: ClientChat) => chat.id === chatId,
   );
@@ -131,6 +130,16 @@ export const ChatHeader = ({
             >
               {name}
             </StyledChatTitle>
+            {selectedChat?.whatsappIntegration?.apiType && (
+              <StyledIntegrationCard>
+                {selectedChat?.whatsappIntegration?.apiType === 'MetaAPI' ? (
+                  <IconBrandMeta size={10} />
+                ) : (
+                  <IconDeviceMobileMessage size={10} />
+                )}
+                WhatsApp ({selectedChat?.whatsappIntegration?.apiType})
+              </StyledIntegrationCard>
+            )}
           </StyledDiv>
           <StyledActionsContainer>
             {showCloseOptions && (
