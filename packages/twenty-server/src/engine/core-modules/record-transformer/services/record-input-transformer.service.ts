@@ -37,6 +37,7 @@ export class RecordInputTransformerService {
         continue;
       }
 
+      /* @kvoip-woulz proprietary:begin */
       const transformedValue = this.parseSubFields(
         fieldMetadata.type,
         await this.transformFieldValue(
@@ -45,6 +46,7 @@ export class RecordInputTransformerService {
           fieldMetadata, // @kvoip-woulz proprietary
         ),
       );
+      /* @kvoip-woulz proprietary:end */
 
       transformedEntries = { ...transformedEntries, [key]: transformedValue };
     }
@@ -52,12 +54,14 @@ export class RecordInputTransformerService {
     return transformedEntries;
   }
 
+  /* @kvoip-woulz proprietary:begin */
   private async transformFieldValue(
     fieldType: FieldMetadataType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadata?: any, // @kvoip-woulz proprietary
   ): Promise<any> {
+    /* @kvoip-woulz proprietary:end */
     if (!isDefined(value)) {
       return value;
     }
@@ -68,8 +72,10 @@ export class RecordInputTransformerService {
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
       /* @kvoip-woulz proprietary:begin */
+      /* @kvoip-woulz proprietary:begin */
       case FieldMetadataType.TEXT:
         return this.transformTextValue(value, fieldMetadata);
+      /* @kvoip-woulz proprietary:end */
       /* @kvoip-woulz proprietary:end */
       case FieldMetadataType.RICH_TEXT:
         throw new Error(
@@ -89,6 +95,7 @@ export class RecordInputTransformerService {
   }
 
   /* @kvoip-woulz proprietary:begin */
+  /* @kvoip-woulz proprietary:begin */
   private transformTextValue(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
@@ -102,6 +109,7 @@ export class RecordInputTransformerService {
     const { pattern, errorMessage } = fieldMetadata.settings.validation;
     return validateTextPattern(stringValue, pattern, errorMessage);
   }
+  /* @kvoip-woulz proprietary:end */
   /* @kvoip-woulz proprietary:end */
 
   private async transformRichTextV2Value(

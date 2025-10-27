@@ -10,6 +10,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
 import { useMaskedInput } from '@/ui/input/hooks/useMaskedInput';
+import { useLingui } from '@lingui/react/macro';
+import { resolveDynamicMask } from 'twenty-shared/utils';
 /* @kvoip-woulz proprietary:end */
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
@@ -21,15 +23,15 @@ import { useTextField } from '../../hooks/useTextField';
 import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
 
 /* @kvoip-woulz proprietary:begin */
-const ErrorText = styled.span`
+const StyledErrorText = styled.span`
+  animation: slideDown ${({ theme }) => theme.animation.duration.normal};
   color: ${({ theme }) => theme.color.red};
+  display: block;
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-top: ${({ theme }) => theme.spacing(1)};
-  display: block;
-  animation: slideDown ${({ theme }) => theme.animation.duration.normal};
 `;
 
-const InputWrapper = styled.div`
+const StyledInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -57,6 +59,7 @@ export const TextFieldInput = () => {
   );
 
   /* @kvoip-woulz proprietary:begin */
+  const { i18n } = useLingui();
   const [isFieldInError, setIsFieldInError] = useRecoilComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
@@ -64,10 +67,19 @@ export const TextFieldInput = () => {
   const validationSettings = fieldDefinition?.metadata?.settings?.validation;
   const validationPattern = validationSettings?.pattern;
   const validationMask = validationSettings?.mask;
-  const validationErrorMessage = validationSettings?.errorMessage;
+  const validationDynamicMaskRaw = validationSettings?.dynamicMask;
+  const validationErrorMessageRaw = validationSettings?.errorMessage;
   const validationPlaceholder = validationSettings?.placeholder;
 
-  const hasMask = !!validationMask;
+  const validationErrorMessage = validationErrorMessageRaw
+    ? i18n._(validationErrorMessageRaw as any)
+    : undefined;
+
+  const validationDynamicMask = validationDynamicMaskRaw
+    ? resolveDynamicMask(validationDynamicMaskRaw)
+    : undefined;
+
+  const hasMask = !!(validationMask || validationDynamicMask);
   const hasPattern = !!validationPattern;
 
   const validationSchema =
@@ -95,7 +107,6 @@ export const TextFieldInput = () => {
     }
   };
 
-  // Factory for creating validated text handlers (enter, tab, shift+tab)
   const createValidatedTextHandler = (handler?: FieldInputEvent) => {
     return (newText: string) => {
       const trimmedValue = newText.trim();
@@ -139,12 +150,13 @@ export const TextFieldInput = () => {
   } = useMaskedInput({
     value: draftValue,
     mask: validationMask,
+    dynamicMask: validationDynamicMask,
     onChange: (newValue: string) => {
       setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
 
-      if (validationSchema) {
+      if (validationSchema !== null) {
         const isValid = validateValue(newValue);
-        setIsFieldInError(!isValid && newValue.trim() !== '');
+        setIsFieldInError(!isValid && newValue.trim().length > 0);
       } else {
         setIsFieldInError(false);
       }
@@ -172,31 +184,31 @@ export const TextFieldInput = () => {
         ? newValueOrEvent
         : newValueOrEvent.target.value;
 
-    if (hasMask && validationMask) {
+    if (hasMask) {
       handleMaskedChange(newValue);
       return;
     }
 
     setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
 
-    if (validationSchema) {
+    if (validationSchema !== null) {
       const isValid = validateValue(newValue);
-      setIsFieldInError(!isValid && newValue.trim() !== '');
+      setIsFieldInError(!isValid && newValue.trim().length > 0);
     } else {
       setIsFieldInError(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (hasMask && validationMask) {
+    if (hasMask) {
       handleMaskedKeyDown(e);
     }
   };
 
-  if (hasMask && validationMask) {
+  if (hasMask) {
     return (
       <FieldInputContainer>
-        <InputWrapper>
+        <StyledInputWrapper>
           <StyledInputWithError
             id={instanceId}
             ref={inputRef}
@@ -209,9 +221,9 @@ export const TextFieldInput = () => {
             hasError={isFieldInError}
           />
           {isFieldInError && validationErrorMessage && (
-            <ErrorText>{validationErrorMessage}</ErrorText>
+            <StyledErrorText>{validationErrorMessage}</StyledErrorText>
           )}
-        </InputWrapper>
+        </StyledInputWrapper>
       </FieldInputContainer>
     );
   }

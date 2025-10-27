@@ -5,6 +5,7 @@ import { applyMask } from 'twenty-shared/utils';
 export type UseMaskedInputProps = {
   value: string | undefined;
   mask?: string;
+  dynamicMask?: (value: string) => string;
   uppercase?: boolean;
   onChange: (value: string) => void;
 };
@@ -19,6 +20,7 @@ export type UseMaskedInputReturn = {
 export const useMaskedInput = ({
   value,
   mask,
+  dynamicMask,
   uppercase = false,
   onChange,
 }: UseMaskedInputProps): UseMaskedInputReturn => {
@@ -26,16 +28,18 @@ export const useMaskedInput = ({
   const [cursorPosition, setCursorPosition] = useState<number | null>(null);
   const [lastCursorPos, setLastCursorPos] = useState<number>(0);
 
+  const hasMask = !!(mask || dynamicMask);
+
   useEffect(() => {
-    if (inputRef.current && cursorPosition !== null && mask) {
+    if (inputRef.current && cursorPosition !== null && hasMask === true) {
       inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
       setCursorPosition(null);
     }
-  }, [value, cursorPosition, mask]);
+  }, [value, cursorPosition, hasMask]);
 
   useEffect(() => {
     const inputElement = inputRef.current;
-    if (!inputElement || !mask) return;
+    if (!inputElement || hasMask === false) return;
 
     const updateCursorPosition = () => {
       setLastCursorPos(inputElement.selectionStart || 0);
@@ -50,10 +54,10 @@ export const useMaskedInput = ({
       inputElement.removeEventListener('keyup', updateCursorPosition);
       inputElement.removeEventListener('paste', updateCursorPosition);
     };
-  }, [mask]);
+  }, [hasMask]);
 
   const handleChange = (newValue: string) => {
-    if (!mask) {
+    if (!hasMask) {
       onChange(uppercase ? newValue.toUpperCase() : newValue);
       return;
     }
@@ -62,7 +66,10 @@ export const useMaskedInput = ({
     const previousLength = previousValue.length;
 
     const processedValue = uppercase ? newValue.toUpperCase() : newValue;
-    const maskedValue = applyMask(processedValue, mask);
+
+    const activeMask = dynamicMask ? dynamicMask(processedValue) : mask!;
+
+    const maskedValue = applyMask(processedValue, activeMask);
     const newLength = maskedValue.length;
 
     const lengthDiff = newLength - previousLength;
@@ -80,8 +87,8 @@ export const useMaskedInput = ({
     onChange(maskedValue);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputRef.current) {
+  const handleKeyDown = (_event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (inputRef.current !== null) {
       setLastCursorPos(inputRef.current.selectionStart || 0);
     }
   };

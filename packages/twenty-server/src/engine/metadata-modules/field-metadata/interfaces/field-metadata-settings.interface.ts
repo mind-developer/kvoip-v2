@@ -27,12 +27,23 @@ export type FieldMetadataNumberSettings = {
   type?: FieldNumberVariant;
 };
 
-/* @kvoip-woulz proprietary:begin */
+import type { MessageDescriptor } from '@lingui/core'; // @kvoip-woulz proprietary
+
 export type FieldMetadataTextValidation = {
   pattern?: string;
   mask?: string;
+  dynamicMask?: string;
   placeholder?: string;
   errorMessage?: string;
+  validateOnType?: boolean;
+};
+/* @kvoip-woulz proprietary:begin */
+export type FieldMetadataTextValidationInput = {
+  pattern?: string;
+  mask?: string;
+  dynamicMask?: string;
+  placeholder?: string;
+  errorMessage?: string | MessageDescriptor;
   validateOnType?: boolean;
 };
 /* @kvoip-woulz proprietary:end */
@@ -43,6 +54,13 @@ export type FieldMetadataTextSettings = {
   validation?: FieldMetadataTextValidation;
   /* @kvoip-woulz proprietary:end */
 };
+
+/* @kvoip-woulz proprietary:begin */
+export type FieldMetadataTextSettingsInput = {
+  displayedMaxRows?: number;
+  validation?: FieldMetadataTextValidationInput;
+};
+/* @kvoip-woulz proprietary:end */
 
 export type FieldMetadataDateSettings = {
   displayFormat?: DateDisplayFormat;
@@ -78,8 +96,26 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
 };
 
+/* @kvoip-woulz proprietary:begin */
+type FieldMetadataSettingsInputMapping = {
+  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettingsInput | null;
+  [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+};
+/* @kvoip-woulz proprietary:end */
+
 export type AllFieldMetadataSettings =
   FieldMetadataSettingsMapping[keyof FieldMetadataSettingsMapping];
+
+/* @kvoip-woulz proprietary:begin */
+export type AllFieldMetadataSettingsInput =
+  FieldMetadataSettingsInputMapping[keyof FieldMetadataSettingsInputMapping];
+/* @kvoip-woulz proprietary:end */
 
 export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
@@ -89,3 +125,14 @@ export type FieldMetadataSettings<
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T]
       : never | null;
+
+/* @kvoip-woulz proprietary:begin */
+export type FieldMetadataSettingsInput<
+  T extends FieldMetadataType = FieldMetadataType,
+> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? null | AllFieldMetadataSettingsInput
+    : T extends keyof FieldMetadataSettingsInputMapping
+      ? FieldMetadataSettingsInputMapping[T]
+      : never | null;
+/* @kvoip-woulz proprietary:end */

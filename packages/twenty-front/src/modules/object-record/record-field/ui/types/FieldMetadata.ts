@@ -15,6 +15,7 @@ import { type CurrencyCode } from './CurrencyCode';
 export type FieldTextValidation = {
   pattern: string;
   mask?: string;
+  dynamicMask?: string;
   placeholder?: string;
   errorMessage?: string;
   validateOnType?: boolean;
