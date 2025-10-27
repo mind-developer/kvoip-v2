@@ -26,17 +26,39 @@ export class TraceableController {
           ? rawPlatform[0]
           : '';
 
+    const requestIp = this.extractClientIp(req);
+
     const { traceable, notFoundUrl } =
       await this.traceableService.handleLinkAccess({
         workspaceId,
         traceableId,
         userAgent: req.headers['user-agent'] || '',
-        userIp: req.ip || '',
+        userIp: requestIp,
         platform,
       });
 
     const finalUrl = traceable?.generatedUrl?.primaryLinkUrl;
 
     return res.redirect(302, finalUrl ?? (notFoundUrl as string));
+  }
+
+  private extractClientIp(req: Request): string {
+    // Check X-Forwarded-For header (set by proxies/load balancers)
+    const forwardedFor = req.headers['x-forwarded-for'];
+    if (forwardedFor) {
+      const ips = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
+      // Take the first IP in the chain (the original client)
+      const clientIp = ips.split(',')[0].trim();
+      if (clientIp) return clientIp;
+    }
+
+    // Check X-Real-IP header (set by nginx and similar proxies)
+    const realIp = req.headers['x-real-ip'];
+    if (realIp) {
+      return Array.isArray(realIp) ? realIp[0] : realIp;
+    }
+
+    // Fallback to req.ip (may be ::1 or 127.0.0.1 on localhost)
+    return req.ip || '';
   }
 }
