@@ -12,6 +12,11 @@ export type ClientChat = {
   agent: {
     id: string;
   };
+  sector: {
+    id: string;
+    name: string;
+    icon: string;
+  } | null;
   sectorId: string | null;
   personId: string;
   person: {
@@ -21,6 +26,10 @@ export type ClientChat = {
       firstName: string;
       lastName: string;
     } | null;
+  };
+  whatsappIntegration?: {
+    id: string;
+    apiType: string;
   };
   lastMessageType: ChatMessageType;
   lastMessageDate: Date;
