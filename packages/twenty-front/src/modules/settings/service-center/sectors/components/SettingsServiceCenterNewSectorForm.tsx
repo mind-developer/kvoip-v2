@@ -61,58 +61,32 @@ export const SettingsServiceCenterNewSectorForm = () => {
         </StyledFormContainer>
       </Section>
       <StyledSection>
-        <H2Title
-          title={t`Abandonment Interval`}
-          description={t`Chats will be moved to the "Abandoned" inbox after this interval if a client hasn't been answered yet.`}
-        />
-        <Controller
-          name="abandonmentInterval"
-          control={form.control}
-          render={({ field }) => (
-            <TextInput
-              value={field.value}
-              onChange={(value) => {
-                const numberValue = Number(value);
-                if (numberValue > 60) {
-                  return;
-                }
-                field.onChange(numberValue);
-              }}
-              label={t`Interval in minutes (max. 60)`}
-              minLength={2}
-              maxLength={2}
-            />
-          )}
-        />
-      </StyledSection>
-      {/* <Section>
-        <H2Title
-          title={t`Templates`}
-          description={t`Choose a template for this sector`}
-        />
         <StyledFormContainer>
-          {sectorTemplates.map((template) => (
-            <StyledTag
-              key={template.name}
-              text={template.name}
-              Icon={getIcon(template.iconName)}
-              color={getColorFromTemplateName(template.name)}
-              onClick={() => {
-                form.setValue('icon', template.iconName, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
-                form.setValue('name', template.name, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
-              }}
-            />
-          ))}
+          <H2Title
+            title={t`Abandonment Interval`}
+            description={t`Chats will be moved to the "Abandoned" inbox after this interval if a client hasn't been answered yet.`}
+          />
+          <Controller
+            name="abandonmentInterval"
+            control={form.control}
+            render={({ field }) => (
+              <TextInput
+                value={field.value}
+                onChange={(value) => {
+                  const numberValue = Number(value);
+                  if (numberValue > 60) {
+                    return;
+                  }
+                  field.onChange(numberValue);
+                }}
+                label={t`Interval in minutes (max. 60)`}
+                minLength={2}
+                maxLength={2}
+              />
+            )}
+          />
         </StyledFormContainer>
-      </Section> */}
+      </StyledSection>
     </SettingsPageContainer>
   );
 };

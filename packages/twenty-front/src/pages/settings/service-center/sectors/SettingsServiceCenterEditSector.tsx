@@ -85,6 +85,8 @@ export const SettingsServiceCenterEditSector = () => {
           id: formValues.id,
           icon: formValues.icon || activeSector.icon,
           name: formValues.name || activeSector.name,
+          abandonmentInterval:
+            formValues.abandonmentInterval || activeSector.abandonmentInterval,
         };
 
         await updateOneRecord({
