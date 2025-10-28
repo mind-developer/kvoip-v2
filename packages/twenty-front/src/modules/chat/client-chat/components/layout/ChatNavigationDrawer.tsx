@@ -11,7 +11,7 @@ import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   ChatMessageType,
@@ -94,26 +94,21 @@ export const ChatNavigationDrawer = () => {
     },
   });
   const workspaceMembersWithAgent = workspaceMembers.filter(
-    (member) => member.agent.id,
+    (member) => member.agent?.id,
   );
   const { chats: clientChats } = useClientChats(false);
 
-  const [filteredClientChats, setFilteredClientChats] = useState<ClientChat[]>(
-    [],
-  );
   const [searchInput, setSearchInput] = useState<string>('');
 
-  useEffect(() => {
-    setFilteredClientChats(
-      clientChats.filter((chat) =>
-        (
-          (chat.person?.name?.firstName ?? '') +
-          ' ' +
-          (chat.person?.name?.lastName ?? '')
-        )
-          .toLowerCase()
-          .includes(searchInput.toLowerCase()),
-      ),
+  const filteredClientChats = useMemo(() => {
+    return clientChats.filter((chat) =>
+      (
+        (chat.person?.name?.firstName ?? '') +
+        ' ' +
+        (chat.person?.name?.lastName ?? '')
+      )
+        .toLowerCase()
+        .includes(searchInput.toLowerCase()),
     );
   }, [searchInput, clientChats]);
 
@@ -167,43 +162,48 @@ export const ChatNavigationDrawer = () => {
     },
   ];
 
-  const renderClientChats = () => {
+  const renderClientChats = useMemo(() => {
     if (!workspaceMemberWithAgent) {
       return null;
     }
 
     return filteredClientChats.map((chat, index) => {
-      if (chat.status !== activeTabId && activeTabId !== 'all') {
+      const currentUserIsAdmin = agent?.isAdmin;
+      if (chat.status !== activeTabId) {
         return null;
       }
-      if (chat.status === ClientChatStatus.FINISHED) {
+      if (chat.status === ClientChatStatus.FINISHED && !currentUserIsAdmin) {
         return null;
       }
       if (
         chat.status === ClientChatStatus.ASSIGNED &&
         chat.agentId !== workspaceMemberWithAgent?.agent?.id &&
-        !workspaceMemberWithAgent?.agent?.isAdmin
+        !currentUserIsAdmin
       ) {
         return null;
       }
 
       const person = chat.person;
-      const clientName =
+      const personName =
         (person?.name?.firstName || '') + ' ' + (person?.name?.lastName || '');
-      const isAdmin = agent?.isAdmin;
+
       const chatAgent = workspaceMembersWithAgent.find(
         (member) => member.agent?.id === chat.agent?.id,
       );
       const agentName =
-        chatAgent && isAdmin
+        chatAgent && currentUserIsAdmin
           ? (chatAgent?.name?.firstName || '') +
             ' ' +
             (chatAgent?.name?.lastName || '')
           : undefined;
       const agentAvatarUrl =
-        chatAgent && isAdmin ? (chatAgent?.avatarUrl ?? undefined) : undefined;
+        chatAgent && currentUserIsAdmin
+          ? (chatAgent?.avatarUrl ?? undefined)
+          : undefined;
 
-      const cardSector = sectors.find((sector) => sector.id === chat.sectorId);
+      const cardSector = sectors.find(
+        (sector) => sector.id === chat.sector?.id,
+      );
 
       const sectorName = cardSector?.name;
       const sectorIcon = cardSector?.icon;
@@ -211,10 +211,10 @@ export const ChatNavigationDrawer = () => {
       return (
         <ChatCard
           key={index + chat.id}
-          name={clientName}
+          name={personName}
           personAvatarUrl={person?.avatarUrl || ''}
-          agentAvatarUrl={isAdmin ? agentAvatarUrl : undefined}
-          agentName={isAdmin ? agentName : undefined}
+          agentAvatarUrl={currentUserIsAdmin ? agentAvatarUrl : undefined}
+          agentName={currentUserIsAdmin ? agentName : undefined}
           lastMessagePreview={
             getChatMessagePreview(chat) || t`Click to open chat`
           }
@@ -226,7 +226,7 @@ export const ChatNavigationDrawer = () => {
         />
       );
     });
-  };
+  }, [filteredClientChats, openChatId, agent?.isAdmin, activeTabId]);
 
   return (
     <StyledPaneSideContainer>
@@ -238,7 +238,7 @@ export const ChatNavigationDrawer = () => {
         <ChatNavigationDrawerTabs loading={false} tabs={tabs} />
       </StyledTabListContainer>
       <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
-        {renderClientChats()}
+        {renderClientChats}
       </StyledChatsContainer>
     </StyledPaneSideContainer>
   );

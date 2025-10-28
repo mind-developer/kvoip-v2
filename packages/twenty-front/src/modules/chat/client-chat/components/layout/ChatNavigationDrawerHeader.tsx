@@ -154,6 +154,14 @@ export const ChatNavigationDrawerHeader = ({
             size="medium"
             Icon={(props) => <IconMessage2Plus {...props} />}
           />
+          {/* {isStartChatOpen && (
+            <StartChat
+              isStartChatOpen={isStartChatOpen}
+              setIsStartChatOpen={setIsStartChatOpen}
+              onPhoneUpdate={handlePhoneUpdate}
+              onIntegrationUpdate={handleSelectedIntegrationId}
+            />
+          )} */}
         </StyledActionsContainer>
       </StyledPaneHeaderContainer>
 

@@ -64,7 +64,7 @@ const StyledMessageBubble = styled(motion.div)<{
       fromMe
         ? theme.name === 'dark'
           ? '#274238'
-          : '#D9FDD3'
+          : '#bdffcc'
         : theme.background.quaternary
     };
     border-bottom-${fromMe ? 'left' : 'right'}-radius: 15px;

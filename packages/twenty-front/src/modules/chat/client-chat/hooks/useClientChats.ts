@@ -32,7 +32,7 @@ export const useClientChats = (showNotifications: boolean = false) => {
   });
 
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const isAdmin = workspaceMemberWithAgent?.agent.isAdmin;
+  const isAdmin = workspaceMemberWithAgent?.agent?.isAdmin;
 
   useFindManyRecords<ClientChat & { __typename: string; id: string }>({
     objectNameSingular: 'clientChat',
@@ -52,6 +52,7 @@ export const useClientChats = (showNotifications: boolean = false) => {
         id: true,
         icon: true,
       },
+      sectorId: true,
       agentId: true,
       person: {
         id: true,
@@ -98,9 +99,16 @@ export const useClientChats = (showNotifications: boolean = false) => {
         chat,
       ]);
     },
+    onError: (error) => {
+      console.error('Error onClientChatSubscription', error);
+    },
     onChatUpdated: (chat) => {
-      if (chat.id === openChat && activeTabId !== chat.status) {
-        setActiveTabId(chat.status);
+      if (showNotifications) {
+        if (chat.id === openChat) {
+          setActiveTabId(
+            chat.status === ClientChatStatus.ASSIGNED ? 'mine' : chat.status,
+          );
+        }
       }
       setDbChats((prev: ClientChat[]) =>
         prev.map((c: ClientChat) => (c.id === chat.id ? chat : c)),
@@ -115,7 +123,12 @@ export const useClientChats = (showNotifications: boolean = false) => {
           message: t`Service finished`,
         });
       }
-      if (openChat === chat.id) navigate(getAppPath(AppPath.ClientChatCenter));
+      if (openChat === chat.id) {
+        navigate(getAppPath(AppPath.ClientChatCenter));
+        enqueueInfoSnackBar({
+          message: t`You no longer have access to this chat`,
+        });
+      }
     },
   });
 

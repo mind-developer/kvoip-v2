@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TransferChatDropdown } from '@/chat/client-chat/components/layout/TransferChatDropdown';
 import { CHAT_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatHeaderModalId';
 import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
@@ -10,7 +9,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconBrandMeta, IconDeviceMobileMessage } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
@@ -103,7 +101,6 @@ export const ChatHeader = ({
   const { toggleModal } = useModal();
 
   const { sendClientChatMessage } = useSendClientChatMessage();
-  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
   const { chats: clientChats } = useClientChats();
   const selectedChat = clientChats.find(
@@ -184,16 +181,9 @@ export const ChatHeader = ({
               toType: ChatMessageToType.SECTOR,
               provider: ChatIntegrationProvider.WHATSAPP,
               type: ChatMessageType.EVENT,
-              textBody: null,
-              caption: null,
               deliveryStatus: ChatMessageDeliveryStatus.SENT,
-              edited: null,
-              attachmentUrl: null,
               event: ClientChatMessageEvent.END,
-              workspaceId: workspaceId || '',
               providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
-              reactions: null,
-              repliesTo: null,
             });
           }}
           confirmButtonText={'Close'}

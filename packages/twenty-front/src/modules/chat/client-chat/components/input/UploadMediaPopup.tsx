@@ -2,6 +2,7 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction } from 'react';
@@ -77,8 +78,11 @@ export const UploadMediaPopup = ({
   const VideoIcon = getIcon('IconVideo');
 
   const handleSendFile = async (file: File, type: ChatMessageType) => {
+    if (!clientChat.person.id) {
+      return;
+    }
     const attachment = await uploadAttachmentFile(file, {
-      targetObjectNameSingular: 'person',
+      targetObjectNameSingular: CoreObjectNameSingular.Person,
       id: clientChat.person.id,
     });
 
@@ -87,24 +91,17 @@ export const UploadMediaPopup = ({
         clientChatId: clientChat.id,
         attachmentUrl: attachment.attachmentAbsoluteURL,
         type: type,
-        caption: null,
         from: clientChat.agent.id || '',
         fromType: ChatMessageFromType.AGENT,
         to: clientChat.person.id,
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         deliveryStatus: ChatMessageDeliveryStatus.PENDING,
-        edited: null,
-        event: null,
-        reactions: null,
-        repliesTo: null,
-        workspaceId: workspaceId || '',
         providerIntegrationId:
           clientChat.whatsappIntegrationId ||
           clientChat.messengerIntegrationId ||
           clientChat.telegramIntegrationId ||
           '',
-        textBody: null,
       });
       setIsUploadMediaPopupOpen(false);
     }

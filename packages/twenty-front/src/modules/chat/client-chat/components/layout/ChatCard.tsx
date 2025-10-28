@@ -92,13 +92,18 @@ const StyledContainerPills = styled.div`
 
 const StyledTag = styled(Tag)`
   width: 90px;
-  padding: 0;
-  margin-bottom: -5px;
+  padding: ${({ theme }) => theme.spacing(0.3)};
+  & > div {
+    margin: 0;
+  }
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledTagsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 

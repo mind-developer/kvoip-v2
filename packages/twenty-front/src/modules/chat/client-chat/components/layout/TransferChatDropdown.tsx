@@ -1,28 +1,26 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useParams } from 'react-router-dom';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 // eslint-disable-next-line no-restricted-imports
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
-import { AppPath } from '@/types/AppPath';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { useLingui } from '@lingui/react/macro';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChat,
   ClientChatMessageEvent,
+  ClientChatStatus,
 } from 'twenty-shared/types';
 import {
   Avatar,
@@ -40,7 +38,6 @@ import {
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 import { WorkspaceMember } from '~/generated/graphql';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 import { useSendClientChatMessage } from '../../hooks/useSendClientChatMessage';
 
 type TransferChatOptionsMenu = 'agents' | 'sectors';
@@ -141,11 +138,10 @@ const TransferChatOption = ({
 };
 
 const TransferChatDropdownContent = () => {
+  const { t } = useLingui();
   const { toggleDropdown } = useToggleDropdown();
-  const { sendClientChatMessage } = useSendClientChatMessage();
+  const { sendClientChatMessage, loading } = useSendClientChatMessage();
   const { chatId } = useParams();
-  const navigate = useNavigate();
-  const workspace = useRecoilValue(currentWorkspaceState);
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
   const { chats, sectors } = useClientChats();
   const selectedChat = chats.find((chat) => chat.id === chatId);
@@ -177,6 +173,18 @@ const TransferChatDropdownContent = () => {
     setCurrentMenu(option);
   };
 
+  const filteredWorkspaceMembersWithAgent = workspaceMembersWithAgent.filter(
+    (member: any) =>
+      member.agentId !== selectedChat?.agentId &&
+      member.agentId !== workspaceMemberWithAgent?.agent.id,
+  );
+
+  const filteredSectors = sectors.filter(
+    (sector) =>
+      sector.id !== selectedChat?.sectorId ||
+      selectedChat.status === ClientChatStatus.ASSIGNED,
+  );
+
   const handleTransferToAgent = (member: any) => {
     if (!selectedChat?.id || !workspaceMemberWithAgent?.agent?.id) return;
 
@@ -194,7 +202,6 @@ const TransferChatDropdownContent = () => {
       edited: null,
       attachmentUrl: null,
       event: ClientChatMessageEvent.TRANSFER_TO_AGENT,
-      workspaceId: workspace?.id ?? '',
       providerIntegrationId:
         selectedChat?.whatsappIntegrationId ??
         selectedChat?.messengerIntegrationId ??
@@ -204,7 +211,6 @@ const TransferChatDropdownContent = () => {
       repliesTo: null,
     });
     toggleDropdown();
-    navigate(getAppPath(AppPath.ClientChatCenter));
   };
 
   const handleTransferToSector = (sector: Sector) => {
@@ -224,7 +230,6 @@ const TransferChatDropdownContent = () => {
       edited: null,
       attachmentUrl: null,
       event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
-      workspaceId: workspace?.id ?? '',
       providerIntegrationId:
         selectedChat?.whatsappIntegrationId ??
         selectedChat?.messengerIntegrationId ??
@@ -233,7 +238,6 @@ const TransferChatDropdownContent = () => {
       reactions: null,
       repliesTo: null,
     });
-    navigate(getAppPath(AppPath.ClientChatCenter));
   };
 
   return (
@@ -262,16 +266,20 @@ const TransferChatDropdownContent = () => {
           >
             Agents
           </DropdownMenuHeader>
-          {workspaceMembersWithAgent
-            .filter((member: any) => member.agentId !== selectedChat?.agentId)
-            .map((member: any) => (
-              <TransferChatOption
-                key={member.agentId}
-                hasAvatar={true}
-                agent={member}
-                onClick={() => handleTransferToAgent(member)}
-              />
-            ))}
+          {filteredWorkspaceMembersWithAgent.map((member: any) => (
+            <TransferChatOption
+              key={member.agentId}
+              hasAvatar={true}
+              agent={member}
+              onClick={() => handleTransferToAgent(member)}
+            />
+          ))}
+          {filteredWorkspaceMembersWithAgent.length === 0 && (
+            <TransferChatOption
+              LeftIcon={loading ? 'IconLoader2' : 'IconX'}
+              text={t`${loading ? 'Loading...' : 'No agents transferable'}`}
+            />
+          )}
         </>
       )}
       {currentMenu === 'sectors' && (
@@ -282,16 +290,20 @@ const TransferChatDropdownContent = () => {
           >
             Sectors
           </DropdownMenuHeader>
-          {sectors
-            .filter((sector) => sector.id !== selectedChat?.sectorId)
-            .map((sector) => (
-              <TransferChatOption
-                key={sector.id}
-                text={sector.name}
-                LeftIcon={sector.icon}
-                onClick={() => handleTransferToSector(sector)}
-              />
-            ))}
+          {filteredSectors.map((sector) => (
+            <TransferChatOption
+              key={sector.id}
+              text={sector.name}
+              LeftIcon={sector.icon}
+              onClick={() => handleTransferToSector(sector)}
+            />
+          ))}
+          {filteredSectors.length === 0 && (
+            <TransferChatOption
+              LeftIcon={loading ? 'IconLoader2' : 'IconX'}
+              text={t`${loading ? 'Loading...' : 'No sectors transferable'}`}
+            />
+          )}
         </>
       )}
     </>
@@ -301,11 +313,7 @@ const TransferChatDropdownContent = () => {
 export const TRANSFER_CHAT_OPTIONS_DROPDOWN_ID =
   'transfer-chat-options-dropdown-id';
 
-export const TransferChatDropdown = ({
-  selectedChat,
-}: {
-  selectedChat: ClientChat;
-}) => {
+export const TransferChatDropdown = () => {
   const { getIcon } = useIcons();
   const IconArrowForwardUp = getIcon('IconArrowForwardUp');
 

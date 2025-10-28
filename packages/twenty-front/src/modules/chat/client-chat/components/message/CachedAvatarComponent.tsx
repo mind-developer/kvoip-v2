@@ -1,4 +1,7 @@
+import { Person } from '@/people/types/Person';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { ChatMessageFromType } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/display';
 import {
@@ -55,7 +58,20 @@ export const CachedAvatarComponent = ({
 };
 
 function PersonAvatar({ personId }: { personId: string }) {
-  const { record: person } = useCachedPersonAvatar(personId);
+  const { findOneRecord, loading, error } = useCachedPersonAvatar(personId);
+  const [person, setPerson] = useState<Person | null>(null);
+  useEffect(() => {
+    findOneRecord({
+      objectRecordId: personId,
+      onCompleted: (person) => setPerson(person),
+    });
+  }, [personId]);
+  if (loading) {
+    return <Avatar placeholder="Loading..." type="rounded" />;
+  }
+  if (error) {
+    return <Avatar placeholder="Error loading avatar" type="rounded" />;
+  }
   return (
     <Avatar
       avatarUrl={person?.avatarUrl}
@@ -66,22 +82,36 @@ function PersonAvatar({ personId }: { personId: string }) {
 }
 
 function AgentAvatar({ agentId }: { agentId: string }) {
-  if (!agentId) {
-    return null;
-  }
-  const { record: agentWithMember } = useCachedAgentAvatar(agentId);
+  const { findManyRecordsLazy } = useCachedAgentAvatar(agentId);
+  const [agent, setAgent] = useState<WorkspaceMember | null>(null);
+  useEffect(() => {
+    findManyRecordsLazy().then((result) => {
+      if (result.records[0]) {
+        setAgent(result.records[0] as WorkspaceMember);
+      }
+    });
+  }, [agentId]);
   return (
     <Avatar
-      avatarUrl={agentWithMember?.avatarUrl}
-      placeholder={
-        agentWithMember?.name?.firstName + ' ' + agentWithMember?.name?.lastName
-      }
+      avatarUrl={agent?.avatarUrl}
+      placeholder={agent?.name?.firstName + ' ' + agent?.name?.lastName}
       type="rounded"
     />
   );
 }
 
 function ChatbotAvatar({ chatbotId }: { chatbotId: string }) {
-  const { record: chatbot } = useCachedChatbotAvatar(chatbotId);
+  const { findOneRecord, loading, error } = useCachedChatbotAvatar(chatbotId);
+  const [chatbot, setChatbot] = useState<{
+    name: string;
+    __typename: string;
+    id: string;
+  } | null>(null);
+  useEffect(() => {
+    findOneRecord({
+      objectRecordId: chatbotId,
+      onCompleted: (chatbot) => setChatbot(chatbot),
+    });
+  }, [chatbotId]);
   return <Avatar placeholder={chatbot?.name} type="rounded" />;
 }
