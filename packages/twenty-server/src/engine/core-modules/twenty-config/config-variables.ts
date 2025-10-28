@@ -1489,6 +1489,15 @@ export class ConfigVariables {
   INTER_SECRET_CERT_PATH: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'The e-mail address to send the invoices to for sandbox test.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_SANDBOX_EMAIL_TO?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Kvoip admin invite hash',
     isSensitive: true,
