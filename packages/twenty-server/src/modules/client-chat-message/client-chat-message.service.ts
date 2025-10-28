@@ -20,75 +20,93 @@ export class ClientChatMessageService {
       'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
     >,
     chatId: string,
+    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    const channel = `client-message-${chatId}`;
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.CREATED,
       clientChatMessageEventDate: new Date(),
       clientChatMessage: message,
     };
 
-    await this.pubSub.publish(channel, eventData);
-    await this.pubSub.publish('client-chat-admin', eventData);
+    if (publishTo === 'sector' || publishTo === 'all') {
+      await this.pubSub.publish(`client-message-${chatId}`, eventData);
+    }
+    if (publishTo === 'admin' || publishTo === 'all') {
+      await this.pubSub.publish('client-chat-admin', eventData);
+    }
   }
 
   async publishChatCreated(
     chat: ClientChatWorkspaceEntity,
     sectorId: string,
+    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    const channel = `client-chat-${sectorId}`;
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.CREATED,
       clientChatEventDate: new Date(),
       clientChat: chat,
     };
 
-    await this.pubSub.publish(channel, eventData);
-    await this.pubSub.publish('client-chat-admin', eventData);
+    if (publishTo === 'sector' || publishTo === 'all') {
+      await this.pubSub.publish(`client-chat-${sectorId}`, eventData);
+    }
+    if (publishTo === 'admin' || publishTo === 'all') {
+      await this.pubSub.publish('client-chat-admin', eventData);
+    }
   }
 
   async publishMessageUpdated(
     message: ClientChatMessageWorkspaceEntity,
     chatId: string,
+    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    const channel = `client-message-${chatId}`;
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.UPDATED,
       clientChatMessageEventDate: new Date(),
       clientChatMessage: message,
     };
+    if (publishTo === 'sector' || publishTo === 'all') {
+      await this.pubSub.publish(`client-message-${chatId}`, eventData);
+    }
 
-    await this.pubSub.publish(channel, eventData);
-    await this.pubSub.publish('client-chat-admin', eventData);
+    if (publishTo === 'admin' || publishTo === 'all') {
+      await this.pubSub.publish('client-chat-admin', eventData);
+    }
   }
 
   async publishChatUpdated(
     chat: ClientChatWorkspaceEntity,
     sectorId: string,
+    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    const channel = `client-chat-${sectorId}`;
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.UPDATED,
       clientChatEventDate: new Date(),
       clientChat: chat,
     };
-
-    await this.pubSub.publish(channel, eventData);
-    await this.pubSub.publish('client-chat-admin', eventData);
+    if (publishTo === 'sector' || publishTo === 'all') {
+      await this.pubSub.publish(`client-chat-${sectorId}`, eventData);
+    }
+    if (publishTo === 'admin' || publishTo === 'all') {
+      await this.pubSub.publish('client-chat-admin', eventData);
+    }
   }
 
   async publishChatDeleted(
     chat: ClientChatWorkspaceEntity,
     sectorId: string,
+    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    const channel = `client-chat-${sectorId}`;
     const eventData: ClientChatEventDTO = {
       event: ClientChatEvent.DELETED,
       clientChatEventDate: new Date(),
       clientChat: chat,
     };
-
-    await this.pubSub.publish(channel, eventData);
-    await this.pubSub.publish('client-chat-admin', eventData);
+    if (publishTo === 'sector' || publishTo === 'all') {
+      await this.pubSub.publish(`client-chat-${sectorId}`, eventData);
+    }
+    if (publishTo === 'admin' || publishTo === 'all') {
+      await this.pubSub.publish('client-chat-admin', eventData);
+    }
   }
 }
