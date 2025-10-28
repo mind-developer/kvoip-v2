@@ -52,4 +52,19 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
+export type {
+  TextValidationPatternKey,
+  DynamicMaskFunction,
+  TextValidationPattern,
+} from './validationPatterns';
+export {
+  DYNAMIC_MASK_REGISTRY,
+  resolveDynamicMask,
+  TEXT_VALIDATION_PATTERNS,
+  applyMask,
+  getUnmaskedValue,
+  getMaskLength,
+  isValueComplete,
+  clearMaskCache,
+} from './validationPatterns';
 export { resolveInput } from './variable-resolver';

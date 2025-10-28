@@ -1,29 +1,125 @@
-import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
-
-import { useTextField } from '../../hooks/useTextField';
-
-import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-
-import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import styled from '@emotion/styled';
 import { useContext } from 'react';
+
+import {
+  FieldInputEventContext,
+  type FieldInputEvent,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+/* @kvoip-woulz proprietary:begin */
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
+import { useMaskedInput } from '@/ui/input/hooks/useMaskedInput';
+import { useLingui } from '@lingui/react/macro';
+import { resolveDynamicMask } from 'twenty-shared/utils';
+/* @kvoip-woulz proprietary:end */
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { StyledInput } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
+import { useTextField } from '../../hooks/useTextField';
+import { useRegisterInputEvents } from '../hooks/useRegisterInputEvents';
+
+/* @kvoip-woulz proprietary:begin */
+const StyledErrorText = styled.span`
+  animation: slideDown ${({ theme }) => theme.animation.duration.normal};
+  color: ${({ theme }) => theme.color.red};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledInputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledInputWithError = styled(StyledInput)<{ hasError?: boolean }>`
+  border-color: ${({ theme, hasError }) =>
+    hasError ? theme.color.red : theme.border.color.medium};
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: ${({ theme, hasError }) =>
+      hasError ? theme.color.red : theme.color.blue};
+  }
+`;
+/* @kvoip-woulz proprietary:end */
 
 export const TextFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
-
   const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
     FieldInputEventContext,
   );
-
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
-  const handleEnter = (newText: string) => {
-    onEnter?.({ newValue: newText.trim() });
+  /* @kvoip-woulz proprietary:begin */
+  const { i18n } = useLingui();
+  const [isFieldInError, setIsFieldInError] = useRecoilComponentState(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const validationSettings = fieldDefinition?.metadata?.settings?.validation;
+  const validationPattern = validationSettings?.pattern;
+  const validationMask = validationSettings?.mask;
+  const validationDynamicMaskRaw = validationSettings?.dynamicMask;
+  const validationErrorMessageRaw = validationSettings?.errorMessage;
+  const validationPlaceholder = validationSettings?.placeholder;
+
+  const validationErrorMessage = validationErrorMessageRaw
+    ? i18n._(validationErrorMessageRaw as any)
+    : undefined;
+
+  const validationDynamicMask = validationDynamicMaskRaw
+    ? resolveDynamicMask(validationDynamicMaskRaw)
+    : undefined;
+
+  const hasMask = !!(validationMask || validationDynamicMask);
+  const hasPattern = !!validationPattern;
+
+  const validationSchema =
+    hasPattern && validationPattern
+      ? createTextValidationSchema(validationPattern, validationErrorMessage)
+      : null;
+
+  const placeholder =
+    validationPlaceholder || fieldDefinition.metadata.placeHolder;
+
+  const validateValue = (value: string): boolean => {
+    if (!validationSchema) {
+      return true;
+    }
+
+    if (!value || value.trim() === '') {
+      return true;
+    }
+
+    try {
+      validationSchema.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
   };
+
+  const createValidatedTextHandler = (handler?: FieldInputEvent) => {
+    return (newText: string) => {
+      const trimmedValue = newText.trim();
+      const isValid = validateValue(trimmedValue);
+
+      handler?.({
+        newValue: trimmedValue,
+        skipPersist: !isValid,
+      });
+    };
+  };
+
+  const handleEnter = createValidatedTextHandler(onEnter);
 
   const handleEscape = (newText: string) => {
     onEscape?.({ newValue: newText.trim() });
@@ -33,29 +129,111 @@ export const TextFieldInput = () => {
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
+    const trimmedValue = newText.trim();
+    const isValid = validateValue(trimmedValue);
+
     onClickOutside?.({
-      newValue: newText.trim(),
+      newValue: trimmedValue,
       event,
+      skipPersist: !isValid,
     });
   };
 
-  const handleTab = (newText: string) => {
-    onTab?.({ newValue: newText.trim() });
+  const handleTab = createValidatedTextHandler(onTab);
+
+  const handleShiftTab = createValidatedTextHandler(onShiftTab);
+
+  const {
+    inputRef,
+    handleChange: handleMaskedChange,
+    handleKeyDown: handleMaskedKeyDown,
+  } = useMaskedInput({
+    value: draftValue,
+    mask: validationMask,
+    dynamicMask: validationDynamicMask,
+    onChange: (newValue: string) => {
+      setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
+
+      if (validationSchema !== null) {
+        const isValid = validateValue(newValue);
+        setIsFieldInError(!isValid && newValue.trim().length > 0);
+      } else {
+        setIsFieldInError(false);
+      }
+    },
+  });
+  /* @kvoip-woulz proprietary:end */
+
+  useRegisterInputEvents({
+    focusId: instanceId,
+    inputRef,
+    inputValue: draftValue ?? '',
+    onEnter: handleEnter,
+    onEscape: handleEscape,
+    onClickOutside: handleClickOutside,
+    onTab: handleTab,
+    onShiftTab: handleShiftTab,
+  });
+
+  /* @kvoip-woulz proprietary:begin */
+  const handleChange = (
+    newValueOrEvent: string | React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newValue =
+      typeof newValueOrEvent === 'string'
+        ? newValueOrEvent
+        : newValueOrEvent.target.value;
+
+    if (hasMask) {
+      handleMaskedChange(newValue);
+      return;
+    }
+
+    setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newValue));
+
+    if (validationSchema !== null) {
+      const isValid = validateValue(newValue);
+      setIsFieldInError(!isValid && newValue.trim().length > 0);
+    } else {
+      setIsFieldInError(false);
+    }
   };
 
-  const handleShiftTab = (newText: string) => {
-    onShiftTab?.({ newValue: newText.trim() });
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (hasMask) {
+      handleMaskedKeyDown(e);
+    }
   };
 
-  const handleChange = (newText: string) => {
-    setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newText));
-  };
+  if (hasMask) {
+    return (
+      <FieldInputContainer>
+        <StyledInputWrapper>
+          <StyledInputWithError
+            id={instanceId}
+            ref={inputRef}
+            type="text"
+            placeholder={placeholder}
+            value={draftValue ?? ''}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            hasError={isFieldInError}
+          />
+          {isFieldInError && validationErrorMessage && (
+            <StyledErrorText>{validationErrorMessage}</StyledErrorText>
+          )}
+        </StyledInputWrapper>
+      </FieldInputContainer>
+    );
+  }
+  /* @kvoip-woulz proprietary:end */
 
   return (
     <FieldInputContainer>
       <TextAreaInput
         instanceId={instanceId}
-        placeholder={fieldDefinition.metadata.placeHolder}
+        placeholder={placeholder}
         autoFocus
         value={draftValue ?? ''}
         onClickOutside={handleClickOutside}

@@ -1,7 +1,9 @@
+/* @kvoip-woulz proprietary */
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -21,8 +23,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { FOCUS_NFE_STANDARD_FIELD_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 
@@ -152,6 +154,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`CNPJ`,
     description: msg`CNPJ`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CNPJ,
+        errorMessage: msg`Invalid CNPJ format. Expected format: 00.000.000/0000-00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
@@ -162,6 +170,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`CPF`,
     description: msg`CPF`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CPF,
+        errorMessage: msg`Invalid CPF format. Expected format: 000.000.000-00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
@@ -172,6 +186,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`IE`,
     description: msg`Inscrição estadual`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_STATE_REGISTRATION,
+        errorMessage: msg`Invalid State Registration (IE) format`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
@@ -182,6 +202,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Inscrição Municipal`,
     description: msg`Inscrição municipal`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_MUNICIPAL_REGISTRATION,
+        errorMessage: msg`Invalid Municipal Registration format`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
@@ -192,6 +218,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`CNAE Code`,
     description: msg`CNAE Code`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CNAE,
+        errorMessage: msg`Invalid CNAE code format. Expected format: 0000-0/00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
@@ -202,6 +234,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`CEP`,
     description: msg`CEP`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CEP,
+        errorMessage: msg`Invalid CEP format. Expected format: 00000-000`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: false })
@@ -252,6 +290,12 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`State`,
     description: msg`State`,
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_STATE,
+        errorMessage: msg`Invalid state code. Expected 2-letter state code (e.g., SP, RJ)`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: false })
