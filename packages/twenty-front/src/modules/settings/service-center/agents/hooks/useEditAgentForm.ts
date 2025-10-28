@@ -39,6 +39,7 @@ export const useEditAgentForm = (activeWorkspaceMember?: WorkspaceMember) => {
     defaultValues: {
       workspaceMemberId: activeWorkspaceMember?.id,
       sectorId: agent?.sectorId || '',
+      isAdmin: agent?.isAdmin || false,
     },
     resolver: zodResolver(agentFormSchema),
   });
@@ -48,6 +49,7 @@ export const useEditAgentForm = (activeWorkspaceMember?: WorkspaceMember) => {
       form.reset({
         workspaceMemberId: activeWorkspaceMember.id,
         sectorId: agent?.sectorId || '',
+        isAdmin: agent?.isAdmin || false,
       });
     }
   }, [activeWorkspaceMember, agent, form]);
@@ -59,6 +61,7 @@ export const useEditAgentForm = (activeWorkspaceMember?: WorkspaceMember) => {
       idToUpdate: activeWorkspaceMember.agentId,
       updateOneRecordInput: {
         sectorId: data.sectorId,
+        isAdmin: data.isAdmin,
       },
     });
 

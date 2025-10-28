@@ -32,6 +32,7 @@ export const useNewAgentForm = () => {
     defaultValues: {
       workspaceMemberId: '',
       sectorId: '',
+      isAdmin: false,
     },
     resolver: zodResolver(agentFormSchema),
   });
@@ -39,6 +40,7 @@ export const useNewAgentForm = () => {
   const onSubmit = async (data: AgentFormValues) => {
     const createdAgent = await createOneAgent({
       sectorId: data.sectorId,
+      isAdmin: data.isAdmin,
     });
 
     await updateOneRecord({
