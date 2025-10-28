@@ -77,17 +77,31 @@ export class GeolocationApiService {
     return false;
   }
 
+  /**
+   * Checks if an IP address is a private (non-routable) IP address.
+   *
+   * Private IP addresses are defined in RFC 1918 for IPv4 and RFC 4193 for IPv6.
+   * These addresses are reserved for use in private networks (home, office, corporate LANs)
+   * and are NOT routable on the public internet.
+   *
+   * RFC 1918 Private IPv4 Address Ranges:
+   * - 10.0.0.0/8        (10.0.0.0 - 10.255.255.255)     - 16.7 million addresses
+   * - 172.16.0.0/12     (172.16.0.0 - 172.31.255.255)   - 1 million addresses
+   * - 192.168.0.0/16    (192.168.0.0 - 192.168.255.255) - 65,536 addresses
+   *
+   * RFC 4193 Private IPv6 Address Range:
+   * - fc00::/7          (Unique Local Addresses)
+   *
+   * @param ip - The IP address to check
+   * @returns true if the IP is a private address, false otherwise
+   */
   private isPrivateIp(ip: string): boolean {
     if (!ip) return false;
 
-    // Private IPv4 ranges (RFC 1918)
-    // 192.168.0.0/16
     if (ip.startsWith('192.168.')) return true;
 
-    // 10.0.0.0/8
     if (ip.startsWith('10.')) return true;
 
-    // 172.16.0.0/12 (172.16.0.0 - 172.31.255.255)
     if (
       ip.startsWith('172.16.') ||
       ip.startsWith('172.17.') ||

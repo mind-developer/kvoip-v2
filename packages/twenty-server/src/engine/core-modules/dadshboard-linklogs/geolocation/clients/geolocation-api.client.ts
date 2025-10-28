@@ -5,6 +5,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+// TODO: Add full response from the API
 export type GeolocationResponse = {
   country: string | null;
   regionName: string | null;
