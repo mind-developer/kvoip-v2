@@ -39,6 +39,7 @@ import { useSipRefs } from '../hooks/useSipRefs';
 import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
 import { SipConfig } from '../types/sipConfig';
+import { createDtmfSdpModifier } from '../utils';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import { AudioManager } from './audio/AudioManager';
 import { CallControls } from './call/CallControls';
@@ -192,15 +193,7 @@ const WebSoftphone: React.FC = () => {
               iceServers: WEBRTC_CONFIG.ICE_SERVERS,
             },
           },
-          modifiers: [
-            (description: RTCSessionDescriptionInit) => {
-              description.sdp = description.sdp?.replace(
-                SESSION_CONFIG.DTMF_CONFIG.RTP_MAP,
-                `${SESSION_CONFIG.DTMF_CONFIG.RTP_MAP}\r\n${SESSION_CONFIG.DTMF_CONFIG.FORMAT_PARAMS}`,
-              );
-              return Promise.resolve(description);
-            },
-          ],
+          modifiers: [createDtmfSdpModifier()],
         },
       });
 

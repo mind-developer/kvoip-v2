@@ -75,6 +75,15 @@ export const SESSION_CONFIG = {
     
     /** Parâmetros de formato para eventos telefônicos */
     FORMAT_PARAMS: 'a=fmtp:101 0-15',
+    
+    /** Payload ID para eventos telefônicos */
+    PAYLOAD_ID: 101,
+    
+    /** Código para eventos telefônicos */
+    TELEPHONE_EVENT_CODEC: 'telephone-event/8000',
+    
+    /** Parâmetros de formato para eventos telefônicos */
+    FORMAT_PARAMS_VALUE: '0-15',
   },
 } as const;
 
@@ -126,6 +135,29 @@ export const SOFTPHONE_POSITION_CONFIG = {
   /** Posição padrão do softphone */
   BOTTOM: '80px',
   RIGHT: '40px',
+} as const;
+
+/**
+ * Configurações para modificadores SDP
+ */
+export const SDP_MODIFIER_CONFIG = {
+  /** Regex para linha m=audio */
+  M_AUDIO_REGEX: /^(m=audio [^\r\n]+)/m,
+  
+  /** Regex para payload 101 na linha m=audio */
+  PAYLOAD_101_REGEX: /\s101(\s|$)/,
+  
+  /** Regex para rtpmap existente */
+  RTPMAP_REGEX: /(a=rtpmap:\d+ [^\r\n]+)/g,
+  
+  /** Regex para rtpmap específico do telephone-event */
+  RTPMAP_101_REGEX: /a=rtpmap:101 telephone-event\/8000/,
+  
+  /** Regex para fmtp específico do telephone-event */
+  FMTP_101_REGEX: /a=fmtp:101/,
+  
+  /** Quebra de linha padrão SDP */
+  LINE_BREAK: '\r\n',
 } as const;
 
 /**

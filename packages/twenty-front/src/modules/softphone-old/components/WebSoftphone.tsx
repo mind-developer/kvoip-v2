@@ -5,8 +5,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
-import DTMFButton from '@/softphone/components/ui/DTMFButton';
-import StatusIndicator from '@/softphone/components/ui/StatusPill';
+import DTMFButton from '@/softphone-old/components/DTMFButton';
+import Keyboard from '@/softphone-old/components/Keyboard';
+import StatusIndicator from '@/softphone-old/components/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
@@ -39,7 +40,6 @@ import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import HoldButton from './HoldButton';
 import TransferButton from './TransferButton';
-import Keyboard from '@/softphone-old/components/Keyboard';
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -399,8 +399,19 @@ const WebSoftphone: React.FC = () => {
         .find((sender) => sender.track?.kind === 'audio')?.dtmf;
       if (!dtmfSender) {
         console.error('DTMF sender not available');
+      } else {
+        console.log('✅ DTMF sender encontrado:', {
+          canInsertDTMF: dtmfSender.canInsertDTMF,
+          toneBuffer: dtmfSender.toneBuffer
+        });
       }
     }
+
+    // Aguardar um pouco e verificar novamente o DTMF
+    setTimeout(() => {
+      console.log('🔍 Verificando DTMF após setup...');
+      debugDTMFConfiguration();
+    }, 1000);
   };
 
   const initializeSIP = async (updatedConfig: SipConfig | undefined) => {
@@ -454,10 +465,73 @@ const WebSoftphone: React.FC = () => {
           },
           modifiers: [
             (description: RTCSessionDescriptionInit) => {
-              description.sdp = description.sdp?.replace(
-                'a=rtpmap:101 telephone-event/8000',
-                'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
-              );
+              if (description.sdp) {
+                console.log('🔧 Modificando SDP para DTMF...');
+                console.log('📄 SDP Original:', description.sdp);
+                
+                try {
+                  let sdp = description.sdp;
+
+                  // 1) Garantir que o payload 101 esteja listado na linha m=audio PRIMEIRO
+                  sdp = sdp.replace(/^(m=audio [^\r\n]+)/m, (line) => {
+                    if (/\s101(\s|$)/.test(line)) {
+                      console.log('✅ Payload 101 já presente na linha m=audio:', line);
+                      return line;
+                    } else {
+                      console.log('✅ Adicionando payload 101 na linha m=audio:', line);
+                      return `${line} 101`;
+                    }
+                  });
+
+                  // 2) Garantir rtpmap e fmtp para telephone-event (payload 101)
+                  // Encontrar a seção de mídia e adicionar após os atributos existentes
+                  if (!sdp.includes('a=rtpmap:101 telephone-event/8000')) {
+                    // Procurar por uma linha a=rtpmap existente para inserir após ela
+                    const rtpmapRegex = /(a=rtpmap:\d+ [^\r\n]+)/g;
+                    const rtpmapMatches = [...sdp.matchAll(rtpmapRegex)];
+                    
+                    if (rtpmapMatches.length > 0) {
+                      // Inserir após a última linha a=rtpmap
+                      const lastMatch = rtpmapMatches[rtpmapMatches.length - 1];
+                      const insertPoint = lastMatch.index! + lastMatch[0].length;
+                      sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                      console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após:', lastMatch[0]);
+                    } else {
+                      // Se não há a=rtpmap, adicionar após a linha m=audio
+                      const mAudioMatch = sdp.match(/^(m=audio [^\r\n]+)/m);
+                      if (mAudioMatch) {
+                        const insertPoint = mAudioMatch.index! + mAudioMatch[0].length;
+                        sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                        console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após m=audio');
+                      }
+                    }
+                  } else {
+                    console.log('✅ rtpmap:101 telephone-event/8000 já existe');
+                  }
+                  
+                  if (!sdp.includes('a=fmtp:101')) {
+                    // Adicionar fmtp após o rtpmap:101
+                    const rtpmap101Match = sdp.match(/a=rtpmap:101 telephone-event\/8000/);
+                    if (rtpmap101Match) {
+                      const insertPoint = rtpmap101Match.index! + rtpmap101Match[0].length;
+                      sdp = sdp.slice(0, insertPoint) + '\r\na=fmtp:101 0-15' + sdp.slice(insertPoint);
+                      console.log('✅ Adicionado fmtp:101 0-15 após rtpmap:101');
+                    } else {
+                      sdp += '\r\na=fmtp:101 0-15';
+                      console.log('✅ Adicionado fmtp:101 0-15 no final');
+                    }
+                  } else {
+                    console.log('✅ fmtp:101 0-15 já existe');
+                  }
+
+                  description.sdp = sdp;
+                  console.log('📄 SDP Modificado:', description.sdp);
+                  console.log('🔧 SDP modificado com sucesso para DTMF');
+                } catch (error) {
+                  console.error('❌ Erro ao modificar SDP:', error);
+                  console.log('📄 SDP Original mantido:', description.sdp);
+                }
+              }
               return Promise.resolve(description);
             },
           ],
@@ -609,40 +683,218 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
-  const sendDTMF = (tone: string) => {
+  const sendDTMF = async (tone: string) => {
     if (
       !sessionRef.current ||
       sessionRef.current.state !== SessionState.Established
     ) {
+      console.log('Não é possível enviar DTMF: chamada não está ativa');
       return;
     }
 
     const sessionDescriptionHandler = sessionRef.current
       .sessionDescriptionHandler as SessionDescriptionHandler | undefined;
-    if (
-      !sessionDescriptionHandler ||
-      !('peerConnection' in sessionDescriptionHandler)
-    ) {
+    
+    if (!sessionDescriptionHandler) {
       console.error('Session description handler não encontrado');
+      return;
+    }
+
+    // Método direto: usar insertDTMF no RTCDTMFSender
+    console.log('🎯 Tentando enviar DTMF diretamente via RTCDTMFSender...');
+    
+    const peerConnection = sessionDescriptionHandler.peerConnection;
+    if (!peerConnection) {
+      console.error('❌ PeerConnection não disponível');
+      return;
+    }
+
+    const audioSenders = peerConnection.getSenders().filter(sender => sender.track?.kind === 'audio');
+    console.log(`📊 Audio senders encontrados: ${audioSenders.length}`);
+    
+    for (let i = 0; i < audioSenders.length; i++) {
+      const sender = audioSenders[i];
+      console.log(`🔍 Verificando sender ${i}:`, {
+        hasDTMF: !!sender.dtmf,
+        canInsertDTMF: sender.dtmf?.canInsertDTMF,
+        trackEnabled: sender.track?.enabled
+      });
+
+      if (sender.dtmf) {
+        try {
+          console.log(`🎯 Tentando insertDTMF no sender ${i}...`);
+          sender.dtmf.insertDTMF(tone, 200, 70);
+          console.log(`✅ DTMF enviado com sucesso via sender ${i}: ${tone}`);
+          return; // Sucesso, sair da função
+        } catch (error) {
+          console.error(`❌ Erro no sender ${i}:`, error);
+          // Continuar para o próximo sender
+        }
+      }
+    }
+
+    // Se chegou aqui, nenhum sender funcionou
+    console.log('❌ Nenhum sender de DTMF funcionou - tentando criar novo sender...');
+    
+    // Tentar criar um novo sender com DTMF
+    try {
+      console.log('🔄 Tentando criar novo sender com DTMF...');
+      const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Adicionar o stream ao peer connection
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
+      
+      console.log('✅ Novo sender criado, verificando DTMF...');
+      
+      // Aguardar um pouco e verificar novamente
+      setTimeout(() => {
+        console.log('🔍 Verificando DTMF após criação de novo sender...');
+        sendDTMF(tone); // Tentar novamente
+      }, 1000);
+      
+    } catch (error) {
+      console.error('❌ Erro ao criar novo sender:', error);
+      debugDTMFConfiguration();
+    }
+  };
+
+  // Função para tentar forçar a criação do DTMF sender
+  const forceDTMFSenderCreation = async () => {
+    if (!sessionRef.current) return;
+
+    const sessionDescriptionHandler = sessionRef.current
+      .sessionDescriptionHandler as SessionDescriptionHandler | undefined;
+    
+    if (!sessionDescriptionHandler || !('peerConnection' in sessionDescriptionHandler)) {
+      console.log('❌ Não é possível forçar DTMF: SessionDescriptionHandler não encontrado');
       return;
     }
 
     const peerConnection = sessionDescriptionHandler.peerConnection;
     if (!peerConnection) {
-      console.error('PeerConnection não disponível');
+      console.log('❌ Não é possível forçar DTMF: PeerConnection não disponível');
       return;
     }
 
-    const dtmfSender = peerConnection
-      .getSenders()
-      .find((sender) => sender.track?.kind === 'audio')?.dtmf;
+    try {
+      // Tentar criar um novo sender com DTMF
+      const audioSenders = peerConnection.getSenders().filter(sender => sender.track?.kind === 'audio');
+      
+      if (audioSenders.length > 0) {
+        const audioSender = audioSenders[0];
+        console.log('🔧 Audio sender encontrado:', {
+          track: audioSender.track?.kind,
+          enabled: audioSender.track?.enabled,
+          hasDTMF: !!audioSender.dtmf
+        });
 
+        // Verificar se o track está habilitado
+        if (audioSender.track && !audioSender.track.enabled) {
+          console.log('🔧 Habilitando track de áudio...');
+          audioSender.track.enabled = true;
+        }
+
+        // Aguardar um pouco e verificar novamente
+        setTimeout(() => {
+          console.log('🔍 Verificando DTMF após tentativa de correção...');
+          debugDTMFConfiguration();
+        }, 500);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao tentar forçar DTMF sender:', error);
+    }
+  };
+
+
+  // Função para verificar se DTMF está disponível
+  const isDTMFAvailable = (): boolean => {
+    if (!sessionRef.current || sessionRef.current.state !== SessionState.Established) {
+      console.log('❌ Session não está estabelecida');
+      return false;
+    }
+
+    const sessionDescriptionHandler = sessionRef.current
+      .sessionDescriptionHandler as SessionDescriptionHandler | undefined;
+    
+    if (!sessionDescriptionHandler || !('peerConnection' in sessionDescriptionHandler)) {
+      console.log('❌ SessionDescriptionHandler não encontrado');
+      return false;
+    }
+
+    const peerConnection = sessionDescriptionHandler.peerConnection;
+    if (!peerConnection) {
+      console.log('❌ PeerConnection não disponível');
+      return false;
+    }
+
+    const audioSenders = peerConnection.getSenders().filter(sender => sender.track?.kind === 'audio');
+    console.log(`📊 Audio senders encontrados: ${audioSenders.length}`);
+    
+    const dtmfSender = audioSenders.find(sender => sender.dtmf)?.dtmf;
+    
     if (!dtmfSender) {
-      console.error('DTMF sender não disponível');
+      console.log('❌ DTMF sender não encontrado');
+      return false;
+    }
+
+    const canInsert = dtmfSender.canInsertDTMF;
+    console.log(`📊 DTMF canInsertDTMF: ${canInsert}`);
+    
+    return canInsert;
+  };
+
+  // Função para debug da configuração DTMF
+  const debugDTMFConfiguration = () => {
+    if (!sessionRef.current) return;
+
+    const sessionDescriptionHandler = sessionRef.current
+      .sessionDescriptionHandler as SessionDescriptionHandler | undefined;
+    
+    if (!sessionDescriptionHandler || !('peerConnection' in sessionDescriptionHandler)) {
+      console.log('❌ Debug: SessionDescriptionHandler não encontrado');
       return;
     }
 
-    dtmfSender.insertDTMF(tone, 100);
+    const peerConnection = sessionDescriptionHandler.peerConnection;
+    if (!peerConnection) {
+      console.log('❌ Debug: PeerConnection não disponível');
+      return;
+    }
+
+    console.log('🔍 === DEBUG DTMF CONFIGURATION ===');
+    
+    // Verificar senders de áudio
+    const senders = peerConnection.getSenders();
+    console.log(`📊 Total senders: ${senders.length}`);
+    
+    senders.forEach((sender, index) => {
+      console.log(`📊 Sender ${index}:`, {
+        kind: sender.track?.kind,
+        enabled: sender.track?.enabled,
+        hasDTMF: !!sender.dtmf,
+        canInsertDTMF: sender.dtmf?.canInsertDTMF
+      });
+    });
+
+    // Verificar configuração SDP local
+    if (peerConnection.localDescription) {
+      const localSdp = peerConnection.localDescription.sdp;
+      console.log('📊 SDP Local contém telephone-event:', localSdp.includes('telephone-event'));
+      console.log('📊 SDP Local contém rtpmap:101:', localSdp.includes('rtpmap:101'));
+      console.log('📊 SDP Local contém fmtp:101:', localSdp.includes('fmtp:101'));
+    }
+
+    // Verificar configuração SDP remoto
+    if (peerConnection.remoteDescription) {
+      const remoteSdp = peerConnection.remoteDescription.sdp;
+      console.log('📊 SDP Remoto contém telephone-event:', remoteSdp.includes('telephone-event'));
+      console.log('📊 SDP Remoto contém rtpmap:101:', remoteSdp.includes('rtpmap:101'));
+      console.log('📊 SDP Remoto contém fmtp:101:', remoteSdp.includes('fmtp:101'));
+    }
+
+    console.log('🔍 === FIM DEBUG ===');
   };
 
   const requestMediaPermissions = async () => {
@@ -682,6 +934,69 @@ const WebSoftphone: React.FC = () => {
             video: false,
           },
         },
+        sessionDescriptionHandlerModifiers: [
+          (description: RTCSessionDescriptionInit) => {
+            if (description.sdp) {
+              console.log('🔧 Modificando SDP para DTMF (handleCall)...');
+              try {
+                let sdp = description.sdp;
+
+                // 1) Garantir que o payload 101 esteja listado na linha m=audio PRIMEIRO
+                sdp = sdp.replace(/^(m=audio [^\r\n]+)/m, (line) => {
+                  if (/\s101(\s|$)/.test(line)) {
+                    console.log('✅ Payload 101 já presente na linha m=audio:', line);
+                    return line;
+                  } else {
+                    console.log('✅ Adicionando payload 101 na linha m=audio:', line);
+                    return `${line} 101`;
+                  }
+                });
+
+                // 2) Garantir rtpmap e fmtp para telephone-event (payload 101)
+                if (!sdp.includes('a=rtpmap:101 telephone-event/8000')) {
+                  const rtpmapRegex = /(a=rtpmap:\d+ [^\r\n]+)/g;
+                  const rtpmapMatches = [...sdp.matchAll(rtpmapRegex)];
+                  
+                  if (rtpmapMatches.length > 0) {
+                    const lastMatch = rtpmapMatches[rtpmapMatches.length - 1];
+                    const insertPoint = lastMatch.index! + lastMatch[0].length;
+                    sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                    console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após:', lastMatch[0]);
+                  } else {
+                    const mAudioMatch = sdp.match(/^(m=audio [^\r\n]+)/m);
+                    if (mAudioMatch) {
+                      const insertPoint = mAudioMatch.index! + mAudioMatch[0].length;
+                      sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                      console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após m=audio');
+                    }
+                  }
+                } else {
+                  console.log('✅ rtpmap:101 telephone-event/8000 já existe');
+                }
+                
+                if (!sdp.includes('a=fmtp:101')) {
+                  const rtpmap101Match = sdp.match(/a=rtpmap:101 telephone-event\/8000/);
+                  if (rtpmap101Match) {
+                    const insertPoint = rtpmap101Match.index! + rtpmap101Match[0].length;
+                    sdp = sdp.slice(0, insertPoint) + '\r\na=fmtp:101 0-15' + sdp.slice(insertPoint);
+                    console.log('✅ Adicionado fmtp:101 0-15 após rtpmap:101');
+                  } else {
+                    sdp += '\r\na=fmtp:101 0-15';
+                    console.log('✅ Adicionado fmtp:101 0-15 no final');
+                  }
+                } else {
+                  console.log('✅ fmtp:101 0-15 já existe');
+                }
+
+                description.sdp = sdp;
+                console.log('🔧 SDP modificado com sucesso para DTMF (handleCall)');
+              } catch (error) {
+                console.error('❌ Erro ao modificar SDP (handleCall):', error);
+              }
+            }
+            return Promise.resolve(description);
+          },
+        ],
       });
 
       sessionRef.current = inviter;
@@ -735,6 +1050,69 @@ const WebSoftphone: React.FC = () => {
             video: false,
           },
         },
+        sessionDescriptionHandlerModifiers: [
+          (description: RTCSessionDescriptionInit) => {
+            if (description.sdp) {
+              console.log('🔧 Modificando SDP para DTMF (handleAcceptCall)...');
+              try {
+                let sdp = description.sdp;
+
+                // 1) Garantir que o payload 101 esteja listado na linha m=audio PRIMEIRO
+                sdp = sdp.replace(/^(m=audio [^\r\n]+)/m, (line) => {
+                  if (/\s101(\s|$)/.test(line)) {
+                    console.log('✅ Payload 101 já presente na linha m=audio:', line);
+                    return line;
+                  } else {
+                    console.log('✅ Adicionando payload 101 na linha m=audio:', line);
+                    return `${line} 101`;
+                  }
+                });
+
+                // 2) Garantir rtpmap e fmtp para telephone-event (payload 101)
+                if (!sdp.includes('a=rtpmap:101 telephone-event/8000')) {
+                  const rtpmapRegex = /(a=rtpmap:\d+ [^\r\n]+)/g;
+                  const rtpmapMatches = [...sdp.matchAll(rtpmapRegex)];
+                  
+                  if (rtpmapMatches.length > 0) {
+                    const lastMatch = rtpmapMatches[rtpmapMatches.length - 1];
+                    const insertPoint = lastMatch.index! + lastMatch[0].length;
+                    sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                    console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após:', lastMatch[0]);
+                  } else {
+                    const mAudioMatch = sdp.match(/^(m=audio [^\r\n]+)/m);
+                    if (mAudioMatch) {
+                      const insertPoint = mAudioMatch.index! + mAudioMatch[0].length;
+                      sdp = sdp.slice(0, insertPoint) + '\r\na=rtpmap:101 telephone-event/8000' + sdp.slice(insertPoint);
+                      console.log('✅ Adicionado rtpmap:101 telephone-event/8000 após m=audio');
+                    }
+                  }
+                } else {
+                  console.log('✅ rtpmap:101 telephone-event/8000 já existe');
+                }
+                
+                if (!sdp.includes('a=fmtp:101')) {
+                  const rtpmap101Match = sdp.match(/a=rtpmap:101 telephone-event\/8000/);
+                  if (rtpmap101Match) {
+                    const insertPoint = rtpmap101Match.index! + rtpmap101Match[0].length;
+                    sdp = sdp.slice(0, insertPoint) + '\r\na=fmtp:101 0-15' + sdp.slice(insertPoint);
+                    console.log('✅ Adicionado fmtp:101 0-15 após rtpmap:101');
+                  } else {
+                    sdp += '\r\na=fmtp:101 0-15';
+                    console.log('✅ Adicionado fmtp:101 0-15 no final');
+                  }
+                } else {
+                  console.log('✅ fmtp:101 0-15 já existe');
+                }
+
+                description.sdp = sdp;
+                console.log('🔧 SDP modificado com sucesso para DTMF (handleAcceptCall)');
+              } catch (error) {
+                console.error('❌ Erro ao modificar SDP (handleAcceptCall):', error);
+              }
+            }
+            return Promise.resolve(description);
+          },
+        ],
       });
 
       setupRemoteMedia(invitationRef.current);
