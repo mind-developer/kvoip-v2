@@ -35,6 +35,8 @@ export type InternalChatMessage = Omit<
 export type ClientChatMessage = ChatMessage & {
   clientChatId: string;
   event: ClientChatMessageEvent | null;
+  templateId: string | null;
+  templateLanguage: string | null;
 };
 
 export enum ChatMessageFromType {
