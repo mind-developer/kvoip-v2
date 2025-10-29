@@ -1519,13 +1519,13 @@ export class ConfigVariables {
   KVOIP_ADMIN_INVITE_HASH: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
-    description: 'Last RPS number used for NF-Se issuance',
+    group: ConfigVariablesGroup.ServerConfig,
+    description: '',
+    isSensitive: false,
     type: ConfigVariableType.NUMBER,
   })
-  @CastToPositiveNumber()
   @IsOptional()
-  LAST_NUMBER_RPS?: number;
+  LAST_NUMBER_RPS: number = 1000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
