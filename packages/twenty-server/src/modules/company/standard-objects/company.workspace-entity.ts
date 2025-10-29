@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -83,6 +84,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Name`,
     description: msg`The company name`,
     icon: 'IconBuildingSkyscraper',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.COMPANY_NAME,
+        errorMessage: msg`Add a company name`,
+      },
+    },
   })
   name: string;
 
@@ -173,6 +180,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CPF/CNPJ`,
     description: msg`Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID`,
     icon: 'IconFileText',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CPF_CNPJ,
+        errorMessage: msg`Use the format: 000.000.000-00 or 00.000.000/0000-00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cpfCnpj: string | null;
@@ -183,6 +196,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Municipal Registration`,
     description: msg`Municipal registration of the service provider`,
     icon: 'IconFileText',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.MUNICIPAL_REGISTRATION,
+        errorMessage: msg`Use the format: 00000000-0`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   inscricaoMunicipal: string | null;
@@ -193,6 +212,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`State Registration`,
     description: msg`State Registration number for tax purposes in Brazil`,
     icon: 'IconFileText',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.STATE_REGISTRATION,
+        errorMessage: msg`Use the format: 000.000.000.000`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   inscricaoEstadual: string | null;
@@ -524,6 +549,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CDR Integration ID`,
     description: msg`Unique identifier for CDR integration`,
     icon: 'IconFileText',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CDR_ID,
+        errorMessage: msg`Use the format: xxx-000-xxx`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cdrId: string | null;

@@ -82,7 +82,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.TOTAL_AMOUNT,
-        errorMessage: 'Enter a valid amount (e.g., 1000.00)',
+        errorMessage: msg`Enter a valid amount (e.g., 1000.00)`,
       },
     },
   })
@@ -150,7 +150,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.NCM,
-        errorMessage: 'Use the format: 0000.00.00',
+        errorMessage: msg`Use the format: 0000.00.00`,
       },
     },
   })
@@ -166,7 +166,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_CFOP,
-        errorMessage: 'Use the format: 0000',
+        errorMessage: msg`Use the format: 0000`,
       },
     },
   })
@@ -182,7 +182,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.CSTICMSCSOSN,
-        errorMessage: 'Use the format: 000 or 0000)',
+        errorMessage: msg`Use the format: 000 or 0000)`,
       },
     },
   })
@@ -198,7 +198,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.UNIT_OF_MEASURE,
-        errorMessage: 'Example: kg, unit, liter',
+        errorMessage: msg`Example: kg, unit, liter`,
       },
     },
   })
@@ -285,7 +285,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.SERVICE_LIST_ITEM,
-        errorMessage: 'Use the format: 00.00)',
+        errorMessage: msg`Use the format: 00.00)`,
       },
     },
   })
@@ -322,7 +322,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.SUBSCRIBER_CODE,
-        errorMessage: 'Enter a valid subscriber code (3-20 characters)',
+        errorMessage: msg`Enter a valid subscriber code (3-20 characters)`,
       },
     },
   })
@@ -338,7 +338,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.NUM_SUBSCRIBER_AGREEMENT,
-        errorMessage: 'Enter a valid agreement number (3-20 characters)',
+        errorMessage: msg`Enter a valid agreement number (3-20 characters)`,
       },
     },
   })
@@ -364,7 +364,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.COMMERCIAL_UNIT,
-        errorMessage: 'Exemple: UN, KG, LT',
+        errorMessage: msg`Exemple: UN, KG, LT`,
       },
     },
   })
@@ -390,7 +390,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.ISSUE_DATE,
-        errorMessage: 'Use format: DD/MM/YYYY)',
+        errorMessage: msg`Use format: DD/MM/YYYY)`,
       },
     },
   })
@@ -407,7 +407,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.RPS_NUMBER,
-        errorMessage: 'Follow the format: XXX-000',
+        errorMessage: msg`Follow the format: XXX-000`,
       },
     },
   })
