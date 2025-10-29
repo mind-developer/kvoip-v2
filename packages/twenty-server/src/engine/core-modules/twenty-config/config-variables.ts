@@ -1517,6 +1517,15 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   KVOIP_ADMIN_INVITE_HASH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Last RPS number used for NF-Se issuance',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  LAST_NUMBER_RPS?: number;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
