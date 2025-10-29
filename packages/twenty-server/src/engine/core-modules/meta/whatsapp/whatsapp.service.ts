@@ -212,7 +212,7 @@ export class WhatsAppService {
           console.log('chatbot not found');
           return;
         }
-        if (!chatbot.nodes) {
+        if (!chatbot.flowNodes) {
           console.log('chatbot has no nodes');
           return;
         }

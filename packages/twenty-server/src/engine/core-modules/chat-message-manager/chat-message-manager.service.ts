@@ -139,6 +139,11 @@ export class ChatMessageManagerService {
       this.logger.error('Client chat not found');
       return null;
     }
+    if (clientChat.status !== ClientChatStatus.ASSIGNED) {
+      this.logger.error('Client chat not assigned');
+      return null;
+    }
+
     const providerMessageId = await providerDriver.sendMessage(
       clientChatMessage,
       workspaceId,
@@ -245,7 +250,7 @@ export class ChatMessageManagerService {
         clientChatMessage.to,
         'sector',
       );
-      await this.updateChat(clientChat.id, clientChat, workspaceId, 'admin');
+      await this.updateChat(clientChat.id, clientChat, workspaceId);
       return;
     }
     if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {

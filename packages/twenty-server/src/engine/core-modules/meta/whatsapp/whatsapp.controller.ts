@@ -46,6 +46,14 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
+    console.log(
+      'WEBHOOK VERIFICATION',
+      JSON.stringify(
+        { workspaceId, id, mode, challenge, verifyToken },
+        null,
+        2,
+      ),
+    );
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -77,19 +85,22 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
-    const statuses = body.entry[0]?.changes[0]?.statuses ?? null;
+    const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
+    console.log(body.entry[0].changes[0].value);
 
     if (statuses) {
-      try {
-        await this.chatMessageManagerService.updateMessage(
-          statuses[0].id,
-          {
-            deliveryStatus: statuses[0].status?.toUpperCase() ?? null,
-          },
-          workspaceId,
-        );
-      } catch (error) {
-        this.logger.error('Error updating message:', error);
+      for (const status of statuses) {
+        try {
+          await this.chatMessageManagerService.updateMessage(
+            status.id,
+            {
+              deliveryStatus: status.status?.toUpperCase() ?? null,
+            },
+            workspaceId,
+          );
+        } catch (error) {
+          this.logger.error('Error updating message:', error);
+        }
       }
       return true;
     }

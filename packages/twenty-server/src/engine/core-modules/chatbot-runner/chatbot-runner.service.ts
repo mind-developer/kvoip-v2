@@ -54,14 +54,14 @@ class ExecuteFlow {
   currentNodeId: string | undefined;
   chosenInput: string | undefined;
   constructor(private i: ExecutorInput) {
-    this.currentNodeId = this.i.chatbot.nodes.find(
+    this.currentNodeId = this.i.chatbot.flowNodes.find(
       (node) => node.data?.nodeStart,
     )?.id;
   }
 
   public async runFlow(incomingMessage: string) {
     while (this.currentNodeId) {
-      const currentNode = this.i.chatbot.nodes.find(
+      const currentNode = this.i.chatbot.flowNodes.find(
         (node) => node.id === this.currentNodeId,
       );
       if (!currentNode || typeof currentNode.type !== 'string') {

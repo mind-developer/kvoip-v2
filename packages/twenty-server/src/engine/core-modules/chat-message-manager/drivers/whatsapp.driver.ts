@@ -50,7 +50,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
     try {
       if (apiType === 'MetaAPI') {
         const response = await axios.post(metaUrl, fields, { headers });
-        return response.data.messages.id;
+        return response.data.messages[0].id;
       }
       const primaryAddressingMode = fields.to
         .split('&')[0]
@@ -58,7 +58,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
       fields.to = primaryAddressingMode;
 
       const response = await axios.post(baileysUrl, { fields });
-      console.log('response', response.data.messages[0].id);
       return response.data.messages[0].id;
     } catch (error) {
       throw new InternalServerErrorException('Failed to send message');
