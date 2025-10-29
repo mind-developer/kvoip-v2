@@ -1,7 +1,7 @@
 import { ChatCard } from '@/chat/client-chat/components/layout/ChatCard';
 import { ChatNavigationDrawerHeader } from '@/chat/client-chat/components/layout/ChatNavigationDrawerHeader';
 import { ChatNavigationDrawerTabs } from '@/chat/client-chat/components/layout/ChatNavigationDrawerTabs';
-import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
+import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -96,21 +96,26 @@ export const ChatNavigationDrawer = () => {
   const workspaceMembersWithAgent = workspaceMembers.filter(
     (member) => member.agent?.id,
   );
-  const { chats: clientChats } = useClientChats(false);
+  const { chats: clientChats } = useClientChatsContext();
 
   const [searchInput, setSearchInput] = useState<string>('');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const onSortClick = () => {
+    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  };
 
   const filteredClientChats = useMemo(() => {
-    return clientChats.filter((chat) =>
-      (
+    const filteredChats = clientChats.filter(
+      (chat) =>
         (chat.person?.name?.firstName ?? '') +
         ' ' +
         (chat.person?.name?.lastName ?? '')
-      )
-        .toLowerCase()
-        .includes(searchInput.toLowerCase()),
+          .toLowerCase()
+          .includes(searchInput.toLowerCase()),
     );
-  }, [searchInput, clientChats]);
+    return sortDirection === 'asc' ? filteredChats : filteredChats.reverse();
+  }, [searchInput, clientChats, sortDirection]);
 
   const getChatMessagePreview = (chat: ClientChat) => {
     switch (chat.lastMessageType) {
@@ -128,6 +133,7 @@ export const ChatNavigationDrawer = () => {
         return t`Click to open chat`;
     }
   };
+
   const tabs: SingleTabProps[] = [
     {
       id: ClientChatStatus.ASSIGNED,
@@ -221,8 +227,8 @@ export const ChatNavigationDrawer = () => {
           isSelected={openChatId === chat.id}
           chatId={chat.id}
           unreadMessagesCount={chat.unreadMessagesCount ?? 0}
-          sectorName={sectorName}
-          sectorIcon={sectorIcon}
+          sectorName={currentUserIsAdmin ? sectorName : undefined}
+          sectorIcon={currentUserIsAdmin ? sectorIcon : undefined}
         />
       );
     });
@@ -233,6 +239,8 @@ export const ChatNavigationDrawer = () => {
       <ChatNavigationDrawerHeader
         searchInput={searchInput}
         setSearchInput={setSearchInput}
+        onSortClick={onSortClick}
+        sortDirection={sortDirection}
       />
       <StyledTabListContainer>
         <ChatNavigationDrawerTabs loading={false} tabs={tabs} />

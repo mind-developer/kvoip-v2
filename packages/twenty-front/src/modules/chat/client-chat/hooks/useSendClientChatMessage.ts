@@ -84,7 +84,7 @@ export const useSendClientChatMessage = () => {
       nulledInput.fromType === ChatMessageFromType.AGENT
     ) {
       if (nulledInput.textBody) {
-        nulledInput.textBody = `*${workspaceMemberName}*:\n${nulledInput.textBody}`;
+        nulledInput.textBody = `${workspaceMemberName}:\n${nulledInput.textBody}`;
       }
     }
     await sendClientChatMessageMutation({

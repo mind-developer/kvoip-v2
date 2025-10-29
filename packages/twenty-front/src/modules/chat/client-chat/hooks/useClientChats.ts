@@ -21,7 +21,7 @@ export const useClientChats = (showNotifications: boolean = false) => {
   const navigate = useNavigate();
   const { enqueueInfoSnackBar } = useSnackBar();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const [_, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     'chat-navigation-drawer-tabs',
   );
@@ -105,9 +105,7 @@ export const useClientChats = (showNotifications: boolean = false) => {
     onChatUpdated: (chat) => {
       if (showNotifications) {
         if (chat.id === openChat) {
-          setActiveTabId(
-            chat.status === ClientChatStatus.ASSIGNED ? 'mine' : chat.status,
-          );
+          setActiveTabId(chat.status);
         }
       }
       setDbChats((prev: ClientChat[]) =>
@@ -128,6 +126,7 @@ export const useClientChats = (showNotifications: boolean = false) => {
         enqueueInfoSnackBar({
           message: t`You no longer have access to this chat`,
         });
+        setActiveTabId(ClientChatStatus.UNASSIGNED);
       }
     },
   });

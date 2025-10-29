@@ -6,7 +6,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconMessage2Plus, IconSortDescending2 } from '@tabler/icons-react';
+import { IconMessage2Plus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -54,13 +54,6 @@ const StyledModalHeader = styled(Modal.Header)`
     0;
 `;
 
-const StyledModalContent = styled(Modal.Content)`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  padding: ${({ theme }) => theme.spacing(4)};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledDiv = styled.div`
   display: flex;
   align-items: center;
@@ -75,11 +68,17 @@ const StyledH1Title = styled(H1Title)`
 export const ChatNavigationDrawerHeader = ({
   searchInput,
   setSearchInput,
+  onSortClick,
+  sortDirection,
 }: {
   searchInput: string;
   setSearchInput: (input: string) => void;
+  onSortClick: () => void;
+  sortDirection: 'asc' | 'desc';
 }) => {
   const { getIcon } = useIcons();
+  const IconSortDescending = getIcon('IconSortDescending');
+  const IconSortAscending = getIcon('IconSortAscending');
   const { openModal } = useModal();
 
   const { t } = useLingui();
@@ -114,7 +113,6 @@ export const ChatNavigationDrawerHeader = ({
 
   const IconSearch = getIcon('IconSearch');
   const IconEdit = getIcon('IconEdit');
-  const IconSortDescending = getIcon('IconSortDescending');
 
   openModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
 
@@ -143,10 +141,12 @@ export const ChatNavigationDrawerHeader = ({
         </StyledDiv>
         <StyledActionsContainer>
           <StyledIconButton
-            onClick={() => alert('not implemented')}
+            onClick={() => onSortClick()}
             variant="secondary"
             size="medium"
-            Icon={(props) => <IconSortDescending2 {...props} />}
+            Icon={
+              sortDirection === 'asc' ? IconSortAscending : IconSortDescending
+            }
           />
           <StyledIconButton
             onClick={() => alert('not implemented')}

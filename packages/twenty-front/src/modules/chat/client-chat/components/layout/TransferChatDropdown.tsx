@@ -1,16 +1,15 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-// eslint-disable-next-line no-restricted-imports
-import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
+import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -143,8 +142,11 @@ const TransferChatDropdownContent = () => {
   const { sendClientChatMessage, loading } = useSendClientChatMessage();
   const { chatId } = useParams();
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const { chats, sectors } = useClientChats();
-  const selectedChat = chats.find((chat) => chat.id === chatId);
+  const { chats, sectors } = useClientChatsContext();
+  const selectedChat = useMemo(
+    () => chats.find((chat) => chat.id === chatId),
+    [chats, chatId],
+  );
 
   const { records: workspaceMembers } = useFindManyRecords<
     WorkspaceMember & { __typename: string; agentId: string }

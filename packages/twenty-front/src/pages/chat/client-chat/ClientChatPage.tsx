@@ -2,6 +2,8 @@ import { useDynamicOneSignal } from '@/app/hooks/useDynamicOneSignal';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Chat } from '@/chat/client-chat/components/layout/Chat';
 import { ChatNavigationDrawer } from '@/chat/client-chat/components/layout/ChatNavigationDrawer';
+import { ClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
+import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
@@ -14,7 +16,7 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
+  overflow: hidden;
 `;
 
 export const ClientChatPage = () => {
@@ -22,14 +24,18 @@ export const ClientChatPage = () => {
   const onesignalAppId = currentWorkspace?.onesignalAppId ?? undefined;
   useDynamicOneSignal({ onesignalAppId });
 
+  const { chats, sectors, loading } = useClientChats(true);
+
   return (
     <PageContainer>
       <PageHeader Icon={IconBrandWechat} title="Chat" />
       <PageBody>
-        <StyledMainContainer>
-          <ChatNavigationDrawer />
-          <Chat />
-        </StyledMainContainer>
+        <ClientChatsContext.Provider value={{ chats, sectors, loading }}>
+          <StyledMainContainer>
+            <ChatNavigationDrawer />
+            <Chat />
+          </StyledMainContainer>
+        </ClientChatsContext.Provider>
       </PageBody>
     </PageContainer>
   );

@@ -3,8 +3,8 @@ import { ChatMessageInput } from '@/chat/client-chat/components/input/ChatMessag
 import { ChatHeader } from '@/chat/client-chat/components/layout/ChatHeader';
 import { ChatMessageRenderer } from '@/chat/client-chat/components/message/ChatMessageRenderer';
 import { MODAL_IMAGE_POPUP } from '@/chat/client-chat/constants/modalImagePopup';
+import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useClientChatMessages } from '@/chat/client-chat/hooks/useClientChatMessages';
-import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
@@ -139,7 +139,7 @@ const StyledModalImage = styled.img`
 export const Chat = () => {
   const { t } = useLingui();
   const { chatId } = useParams() || '';
-  const { chats: clientChats } = useClientChats();
+  const { chats: clientChats } = useClientChatsContext();
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const [messageInput, setMessageInput] = useState<string>('');
 
@@ -379,7 +379,7 @@ export const Chat = () => {
           index={index}
           isLastOfRow={lastOfRow}
           onImageClick={handleImageClick}
-          animateDelay={0}
+          animateDelay={(index * 0.05) / (dbMessages.length * 0.5)}
         />
       );
     });

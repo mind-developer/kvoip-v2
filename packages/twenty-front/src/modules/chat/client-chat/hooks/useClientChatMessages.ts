@@ -16,7 +16,7 @@ export const useClientChatMessages = (chatId: string) => {
   useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
     objectNameSingular: 'clientChatMessage',
     filter: { clientChatId: { eq: chatId } },
-    limit: 5000,
+    limit: 1000,
     orderBy: [{ createdAt: 'AscNullsFirst' }],
     onCompleted: (data) => {
       setDbMessages(

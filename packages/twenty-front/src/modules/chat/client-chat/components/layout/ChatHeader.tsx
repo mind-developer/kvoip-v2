@@ -1,6 +1,6 @@
 import { TransferChatDropdown } from '@/chat/client-chat/components/layout/TransferChatDropdown';
 import { CHAT_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatHeaderModalId';
-import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
+import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -102,7 +102,7 @@ export const ChatHeader = ({
 
   const { sendClientChatMessage } = useSendClientChatMessage();
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const { chats: clientChats } = useClientChats();
+  const { chats: clientChats } = useClientChatsContext();
   const selectedChat = clientChats.find(
     (chat: ClientChat) => chat.id === chatId,
   );

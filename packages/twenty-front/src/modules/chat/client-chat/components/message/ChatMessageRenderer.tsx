@@ -10,7 +10,6 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import {
-  ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageType,
   ClientChatMessage,
@@ -130,11 +129,7 @@ export const ChatMessageRenderer = memo(
     if (message.event) {
       return (
         <StyledMessageEvent
-          initial={
-            message.deliveryStatus === ChatMessageDeliveryStatus.PENDING
-              ? { translateY: 20, opacity: 0 }
-              : { translateY: 0, opacity: 1 }
-          }
+          initial={{ translateY: 20, opacity: 0 }}
           animate={{
             translateY: 0,
             opacity: 1,

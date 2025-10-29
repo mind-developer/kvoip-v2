@@ -72,6 +72,7 @@ const StyledEventWrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const EventWrapper = ({

@@ -1,12 +1,10 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
@@ -68,7 +66,6 @@ export const UploadMediaPopup = ({
 }: UploadMediaPopupProps) => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { sendClientChatMessage } = useSendClientChatMessage();
-  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
 
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -91,9 +88,9 @@ export const UploadMediaPopup = ({
         clientChatId: clientChat.id,
         attachmentUrl: attachment.attachmentAbsoluteURL,
         type: type,
-        from: clientChat.agent.id || '',
+        from: clientChat.agentId || '',
         fromType: ChatMessageFromType.AGENT,
-        to: clientChat.person.id,
+        to: clientChat.personId,
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         deliveryStatus: ChatMessageDeliveryStatus.PENDING,
