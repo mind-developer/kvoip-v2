@@ -1287,18 +1287,29 @@ export class ConfigVariables {
   @IsOptional()
   FOCUS_NFE_BASE_URL: string;
 
-  @IsString()
-  @IsOptional()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Geo location production api url',
+    type: ConfigVariableType.STRING,
+  })
+  @IsNotEmpty()
+  @ValidateIf((env) => env.NODE_ENV === NodeEnvironment.PRODUCTION)
   GEOLOCATION_API_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
-    description: 'Last number rps issued',
-    type: ConfigVariableType.NUMBER,
+    description: 'Geo location test api url',
+    type: ConfigVariableType.STRING,
   })
-  @CastToPositiveNumber()
   @IsOptional()
-  LAST_NUMBER_RPS: number;
+  GEOLOCATION_TEST_API_URL: string = 'http://ip-api.com';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Geo location ip used for testing',
+    type: ConfigVariableType.STRING,
+  })
+  GEOLOCATION_TEST_IP: string = '198.51.100.42';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
@@ -1487,6 +1498,15 @@ export class ConfigVariables {
   @IsNotEmpty()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   INTER_SECRET_CERT_PATH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'The e-mail address to send the invoices to for sandbox test.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_SANDBOX_EMAIL_TO?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
