@@ -216,6 +216,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconChat',
     inverseSideTarget: () => ChatbotWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   chatbot: Relation<ChatbotWorkspaceEntity> | null;
