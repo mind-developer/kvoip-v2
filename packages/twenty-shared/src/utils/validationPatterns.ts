@@ -41,8 +41,14 @@ const CPF_CNPJ_MASK = createDigitBasedMask([
   { maxDigits: 14, mask: '00.000.000/0000-00' },
 ]);
 
+const CST_CSOSN_MASK = createDigitBasedMask([
+  { maxDigits: 3, mask: '000' },
+  { maxDigits: 4, mask: '0000' },
+]);
+
 export const DYNAMIC_MASK_REGISTRY: Record<string, DynamicMaskFunction> = {
   CPF_CNPJ_MASK: CPF_CNPJ_MASK,
+  CST_CSOSN_MASK: CST_CSOSN_MASK,
 } as const;
 
 export const resolveDynamicMask = (
@@ -117,9 +123,9 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   BR_CST_CSOSN: {
-    pattern: '^\\d{3}$',
-    mask: '000',
-    placeholder: '000',
+    pattern: '^\\d{3,4}$',
+    dynamicMask: 'CST_CSOSN_MASK',
+    placeholder: '000 or 0000',
   } as TextValidationPattern,
 
   JOB_TITLE: {
@@ -176,9 +182,9 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   SERVICE_LIST_ITEM: {
-    pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-    placeholder: 'Enter service list code',
+    pattern: '^\\d{1,2}\\.\\d{2}$',
+    mask: '00.00',
+    placeholder: '01.02',
   } as TextValidationPattern,
 
   MUNICIPAL_TAX_CODE: {
@@ -259,6 +265,38 @@ export const TEXT_VALIDATION_PATTERNS = {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{2,100}$',
     mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter charge name',
+  } as TextValidationPattern,
+
+  TOTAL_AMOUNT: {
+    pattern: '^\\d{1,10}(\\.\\d{1,2})?$',
+    placeholder: '1000.00',
+  } as TextValidationPattern,
+
+  CSTICMSCSOSN: {
+    pattern: '^\\d{3,4}$',
+    dynamicMask: 'CST_CSOSN_MASK',
+    placeholder: '000 or 0000',
+  } as TextValidationPattern,
+
+  SUBSCRIBER_CODE: {
+    pattern: '^[a-zA-Z0-9\\-]{3,20}$',
+    placeholder: '1234567890',
+  } as TextValidationPattern,
+
+  NUM_SUBSCRIBER_AGREEMENT: {
+    pattern: '^[a-zA-Z0-9\\-]{3,20}$',
+    placeholder: '1234567890',
+  } as TextValidationPattern,
+
+  ISSUE_DATE: {
+    pattern: '^\\d{2}/\\d{2}/\\d{4}$',
+    mask: '00/00/0000',
+    placeholder: 'DD/MM/YYYY',
+  } as TextValidationPattern,
+
+  RPS_NUMBER: {
+    pattern: '^[a-zA-Z0-9\\-]{1,20}$',
+    placeholder: 'RPS-123',
   } as TextValidationPattern,
 
   REQUEST_CODE: {

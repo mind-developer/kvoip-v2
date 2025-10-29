@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -78,6 +79,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Total Amount`,
     description: msg`Total amount`,
     icon: 'IconTag',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.TOTAL_AMOUNT,
+        errorMessage: 'Enter a valid amount (e.g., 1000.00)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   totalAmount: string | null;
@@ -140,6 +147,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NCM`,
     description: msg`Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12`,
     icon: 'IconBarcode',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.NCM,
+        errorMessage: 'Use the format: 0000.00.00',
+      },
+    },
   })
   @WorkspaceIsNullable()
   ncm: string;
@@ -150,6 +163,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CFOP`,
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.BR_CFOP,
+        errorMessage: 'Use the format: 0000',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cfop: string;
@@ -160,6 +179,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST/CSOSN`,
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CSTICMSCSOSN,
+        errorMessage: 'Use the format: 000 or 0000)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstIcmsCsosn: string;
@@ -170,6 +195,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Unit`,
     description: msg`Product unit of measure (e.g., kg, unit, liter)`,
     icon: 'IconSettings',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.UNIT_OF_MEASURE,
+        errorMessage: 'Example: kg, unit, liter',
+      },
+    },
   })
   @WorkspaceIsNullable()
   unitOfMeasure: string;
@@ -251,6 +282,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Service List Item`,
     description: msg`Inform the service list code, usually according to Law Complement 116/2003.`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.SERVICE_LIST_ITEM,
+        errorMessage: 'Use the format: 00.00)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   serviceListItem: string;
@@ -282,6 +319,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Subscriber Code`,
     description: msg`Subscriber code`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.SUBSCRIBER_CODE,
+        errorMessage: 'Enter a valid subscriber code (3-20 characters)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   subscriberCode: string;
@@ -292,6 +335,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Subscriber Agreement Number`,
     description: msg`Subscriber agreement number`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.NUM_SUBSCRIBER_AGREEMENT,
+        errorMessage: 'Enter a valid agreement number (3-20 characters)',
+      },
+    },
   })
   @WorkspaceIsNullable()
   numSubscriberAgreement: string;
@@ -312,6 +361,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Commercial Unit`,
     description: msg`Commercial unit. Example: UN`,
     icon: 'IconBox',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.COMMERCIAL_UNIT,
+        errorMessage: 'Exemple: UN, KG, LT',
+      },
+    },
   })
   @WorkspaceIsNullable()
   unit: string;
@@ -332,6 +387,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Issue Date`,
     description: msg`Issue date of the invoice`,
     icon: 'IconHierarchy2',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.ISSUE_DATE,
+        errorMessage: 'Use format: DD/MM/YYYY)',
+      },
+    },
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
@@ -343,6 +404,12 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`RPS Number`,
     description: msg`RPS number`,
     icon: 'IconHierarchy2',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.RPS_NUMBER,
+        errorMessage: 'Follow the format: XXX-000',
+      },
+    },
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
