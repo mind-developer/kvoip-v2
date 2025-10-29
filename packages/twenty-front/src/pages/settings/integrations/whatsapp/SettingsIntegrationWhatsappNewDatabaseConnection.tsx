@@ -17,11 +17,13 @@ import axios from 'axios';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { useLingui } from '@lingui/react/macro';
+import { v4 } from 'uuid';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -57,6 +59,7 @@ export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
 >;
 
 export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const tokenPair = useRecoilValue(tokenPairState);
@@ -76,11 +79,12 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const [qrCodeError, setQrCodeError] = useState<string | null>(null);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState(false);
 
-  const { createOneRecord } = useCreateOneRecord<
-    WhatsappIntegration & { __typename: string }
-  >({
+  const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: 'whatsappIntegration',
     recordGqlFields: { id: true },
+  });
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: 'whatsappIntegration',
   });
 
   const { records: sectors } = useFindManyRecords<
@@ -237,7 +241,10 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      const integration: WhatsappIntegration = await createOneRecord({
+      const newIntegrationId = v4();
+      const verifyToken = v4();
+      await createOneRecord({
+        id: newIntegrationId,
         name: formValues.name,
         phoneId: formValues.phoneId || '',
         businessAccountId: formValues.businessAccountId || '',
@@ -248,16 +255,24 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         paused: false,
         sla: 30,
         defaultSectorId: formValues.sectorId || '',
+        verifyToken,
       });
 
-      await axios.post(
-        `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
-        {
-          webhook: `https://${process.env.NEXT_PUBLIC_APP_URL}/whatsapp/webhook/${workspaceId}/${integration.id}/`,
-          workspaceID: workspaceId,
-          canalID: integration.id,
-        },
-      );
+      try {
+        await axios.post(
+          `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+          {
+            webhook: `https://${process.env.NEXT_PUBLIC_APP_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+            workspaceID: workspaceId,
+            canalID: newIntegrationId,
+          },
+        );
+      } catch (error) {
+        enqueueErrorSnackBar({
+          message: t`Failed to create session`,
+        });
+        await deleteOneRecord(newIntegrationId);
+      }
 
       if (formValues.apiType === 'Baileys') {
         setIntegrationName(formValues.name);
@@ -271,14 +286,35 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         }
         // Buscar o valor do QR code
         await fetchQrCodeWithRetry(formValues.name);
-        validateBaileysSession(formValues.name, integration.id);
+        validateBaileysSession(formValues.name, newIntegrationId);
       } else {
+        try {
+          await axios.post(
+            `https://graph.facebook.com/v22.0/${formValues.appId}/subscriptions`,
+            {
+              access_token: `${formValues.appId}|${formValues.appKey}`,
+              object: 'whatsapp_business_account',
+              callback_url: `https://sublanceolate-georgie-blindly.ngrok-free.dev/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+              verify_token: verifyToken,
+              fields: 'messages',
+            },
+            {
+              headers: {
+                contentType: 'application/json',
+              },
+            },
+          );
+        } catch (error) {
+          enqueueErrorSnackBar({
+            message: t`Failed to subscribe to business account`,
+          });
+          await deleteOneRecord(newIntegrationId);
+        }
         navigate(SettingsPath.IntegrationWhatsappDatabase);
       }
     } catch (error) {
-      // TODO: Add proper error message
       enqueueErrorSnackBar({
-        message: (error as Error).message,
+        message: t`Failed to create integration`,
       });
     }
   };
