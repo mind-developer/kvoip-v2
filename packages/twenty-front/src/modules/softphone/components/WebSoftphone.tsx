@@ -106,6 +106,19 @@ const WebSoftphone: React.FC = () => {
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const [ringingTime, setRingingTime] = useState<string>('00:00');
 
+  // Efeito para gerenciar transição automática do teclado quando chamada é estabelecida
+  useEffect(() => {
+    if (callState.isInCall && isKeyboardExpanded && !isSendingDTMF) {
+      // Quando uma chamada é estabelecida e o teclado está aberto,
+      // automaticamente muda para modo DTMF
+      setIsSendingDTMF(true);
+    } else if (!callState.isInCall && isSendingDTMF) {
+      // Quando a chamada termina, volta para o modo normal
+      setIsSendingDTMF(false);
+      setIsKeyboardExpanded(false);
+    }
+  }, [callState.isInCall, isKeyboardExpanded, isSendingDTMF]);
+
   useEffect(
     () => startTimer(callState.callStartTime, setElapsedTime, sipRefs.timerRef),
     [callState.callStartTime, startTimer, sipRefs.timerRef],
@@ -521,7 +534,21 @@ const WebSoftphone: React.FC = () => {
               onMute={sipManager.handleMute}
               onKeyboardClick={handleKeyboardClick}
               onSendDtmf={handleSendDtmf}
-              onToggleKeyboard={() => setIsKeyboardExpanded(!isKeyboardExpanded)}
+              onToggleKeyboard={() => {
+                if (callState.isInCall && !isSendingDTMF) {
+                  // Se estiver em uma chamada e não estiver no modo DTMF,
+                  // ativar o modo DTMF ao abrir o teclado
+                  setIsSendingDTMF(true);
+                  setIsKeyboardExpanded(true);
+                } else if (callState.isInCall && isSendingDTMF) {
+                  // Se estiver em uma chamada e no modo DTMF,
+                  // apenas fechar o teclado
+                  setIsKeyboardExpanded(!isKeyboardExpanded);
+                } else {
+                  // Para chamadas não estabelecidas, comportamento normal
+                  setIsKeyboardExpanded(!isKeyboardExpanded);
+                }
+              }}
               onSetIsSendingDTMF={setIsSendingDTMF}
               onSetCurrentNumber={(number: string) => setCallState(prev => ({ ...prev, currentNumber: number }))}
               setCallState={setCallState}
