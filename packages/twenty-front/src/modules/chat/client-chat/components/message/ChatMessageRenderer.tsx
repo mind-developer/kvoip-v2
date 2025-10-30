@@ -4,7 +4,7 @@ import DocumentMessage from '@/chat/client-chat/components/message/DocumentMessa
 import EventMessage from '@/chat/client-chat/components/message/EventMessage';
 import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
-import { validVideoTypes } from '@/chat/types/FileTypes';
+import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -78,12 +78,7 @@ const StyledMessage = styled.div<{ isSystemMessage: boolean }>`
   text-align: left;
 `;
 
-const StyledVideo = styled.video<{ isSystemMessage: boolean }>`
-  display: block;
-  margin-left: ${({ isSystemMessage }) => (isSystemMessage ? 'auto' : '0')};
-  margin-right: ${({ isSystemMessage }) => (isSystemMessage ? 'auto' : '0')};
-  width: 150px;
-`;
+// Removed inline StyledVideo in favor of dedicated VideoMessage component
 
 const StyledImageContainer = styled.div<{ isSystemMessage: boolean }>`
   display: flex;
@@ -212,21 +207,10 @@ export const ChatMessageRenderer = memo(
       }
       case ChatMessageType.VIDEO:
         renderedContent = (
-          <StyledVideo
-            isSystemMessage={message.fromType !== ChatMessageFromType.PERSON}
+          <VideoMessage
             key={message.providerMessageId || `video-${index}`}
-            controls
-          >
-            {validVideoTypes.map((type) => (
-              <source
-                key={(message.providerMessageId || `video-${index}`) + type}
-                src={
-                  REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl
-                }
-                type={type}
-              />
-            ))}
-          </StyledVideo>
+            message={message}
+          />
         );
         break;
       default:

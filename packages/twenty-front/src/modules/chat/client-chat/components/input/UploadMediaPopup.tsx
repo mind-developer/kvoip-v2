@@ -90,7 +90,7 @@ export const UploadMediaPopup = ({
         type: type,
         from: clientChat.agentId || '',
         fromType: ChatMessageFromType.AGENT,
-        to: clientChat.personId,
+        to: clientChat.personId ?? clientChat.person?.id ?? '',
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         deliveryStatus: ChatMessageDeliveryStatus.PENDING,

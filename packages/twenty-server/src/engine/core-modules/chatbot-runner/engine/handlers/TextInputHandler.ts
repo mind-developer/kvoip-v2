@@ -49,6 +49,7 @@ export class TextInputHandler implements NodeHandler {
           repliesTo: null,
           templateId: null,
           templateLanguage: null,
+          templateName: null,
         };
       console.log('text input handler sending message', message);
       this.chatMessageManagerService.sendMessage(

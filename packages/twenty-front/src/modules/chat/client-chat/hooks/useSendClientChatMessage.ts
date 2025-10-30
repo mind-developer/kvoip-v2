@@ -78,6 +78,7 @@ export const useSendClientChatMessage = () => {
       providerIntegrationId: input.providerIntegrationId ?? null,
       templateId: input.templateId ?? null,
       templateLanguage: input.templateLanguage ?? null,
+      templateName: input.templateName ?? null,
     };
     if (
       nulledInput.type === ChatMessageType.TEXT &&

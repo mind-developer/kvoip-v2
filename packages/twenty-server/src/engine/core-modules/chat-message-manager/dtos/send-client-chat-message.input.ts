@@ -50,4 +50,6 @@ export class SendClientChatMessageInput {
   templateId: string | null;
   @Field(() => String, { nullable: true })
   templateLanguage: string | null;
+  @Field(() => String, { nullable: true })
+  templateName: string | null;
 }

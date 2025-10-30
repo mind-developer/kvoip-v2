@@ -82,6 +82,7 @@ export class ConditionalInputHandler implements NodeHandler {
           repliesTo: null,
           templateId: null,
           templateLanguage: null,
+          templateName: null,
         };
         this.chatMessageManagerService.sendMessage(
           message,
@@ -129,6 +130,7 @@ export class ConditionalInputHandler implements NodeHandler {
           repliesTo: null,
           templateId: null,
           templateLanguage: null,
+          templateName: null,
         };
         this.chatMessageManagerService.sendMessage(
           message,

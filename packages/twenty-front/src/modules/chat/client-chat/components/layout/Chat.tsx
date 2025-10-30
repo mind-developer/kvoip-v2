@@ -231,6 +231,7 @@ export const Chat = () => {
         deliveryStatus: ChatMessageDeliveryStatus.PENDING,
         attachmentUrl: attachment.attachmentAbsoluteURL,
         providerIntegrationId: selectedChat?.whatsappIntegrationId ?? '',
+        textBody: null,
       });
     },
     [selectedChat, chatId, workspaceMemberWithAgent],
@@ -282,15 +283,18 @@ export const Chat = () => {
   const handleSendMessage = useCallback(async () => {
     if (!chatContainerRef.current) return;
 
-    if (recordingState !== 'recording' && mediaRecorder) {
+    if (recordingState === 'recording' && mediaRecorder) {
       mediaRecorder && mediaRecorder.stop();
       return;
     } else {
+      if (!messageInput) {
+        return;
+      }
       const messageBase = {
         clientChatId: chatId!,
         from: workspaceMemberWithAgent?.agent?.id || '',
         fromType: ChatMessageFromType.AGENT,
-        to: selectedChat?.person?.id || '',
+        to: selectedChat?.person?.id ?? selectedChat?.personId ?? '',
         toType: ChatMessageToType.PERSON,
         provider: ChatIntegrationProvider.WHATSAPP,
         type: ChatMessageType.TEXT,

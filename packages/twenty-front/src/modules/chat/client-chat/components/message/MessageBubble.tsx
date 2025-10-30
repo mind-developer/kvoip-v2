@@ -1,11 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconCheck,
-  IconChecks,
-  IconClock,
-  IconTrash,
-} from '@tabler/icons-react';
+import { IconCheck, IconChecks, IconClock, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import {
@@ -22,8 +17,10 @@ const StyledMessageBubble = styled(motion.div)<{
   fromMe: boolean;
   hasTail: boolean;
   isPending: boolean;
+  isFailed: boolean;
 }>`
-  ${({ type }) => (type === ChatMessageType.IMAGE ? 'max-width: 200px;' : '')}
+  ${({ type }) => (type === ChatMessageType.IMAGE ? 'max-width: 240px;' : '')}
+  ${({ type }) => (type === ChatMessageType.VIDEO ? 'max-width: 300px;' : '')}
   position: relative;
 
   background: ${({ fromMe, theme }) =>
@@ -34,8 +31,8 @@ const StyledMessageBubble = styled(motion.div)<{
       : theme.background.quaternary};
   color: ${({ theme }) => theme.font.color.primary};
 
-  padding: ${({ theme, type }) =>
-    `${theme.spacing(1)} ${theme.spacing(type !== ChatMessageType.IMAGE && type !== ChatMessageType.DOCUMENT ? 3 : 1)}`};
+  padding: ${({ theme, type, isFailed }) =>
+    `${theme.spacing(1)} ${theme.spacing(type !== ChatMessageType.IMAGE && type !== ChatMessageType.DOCUMENT && type !== ChatMessageType.VIDEO && !isFailed ? 3 : 1)}`};
   border-radius: ${({ messageText }) =>
     messageText.length < 30 ? '15px' : '15px'};
   word-wrap: break-word;
@@ -100,7 +97,8 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
   z-index: 3;
   ${(props) =>
     props.messageType === ChatMessageType.IMAGE ||
-    props.messageType === ChatMessageType.DOCUMENT
+    props.messageType === ChatMessageType.DOCUMENT ||
+    props.messageType === ChatMessageType.VIDEO
       ? `
     position: absolute;
     right: 13px;
@@ -109,6 +107,16 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
       : ''}
 `;
 
+const StyledFailedMessage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: 11px;
+  // margin-top: ${({ theme }) => theme.spacing(3)};
+  opacity: 0.5;
+  margin-left: ${({ theme }) => theme.spacing(3)};
+`;
 export const MessageBubble = ({
   children,
   message,
@@ -144,37 +152,40 @@ export const MessageBubble = ({
       StatusIcon = IconChecks;
       break;
     case ChatMessageDeliveryStatus.FAILED:
-      StatusIcon = IconTrash;
+      StatusIcon = IconX;
       break;
   }
 
   return (
-    <StyledMessageBubble
-      messageText={message.textBody || ''}
-      type={message.type}
-      fromMe={fromMe}
-      hasTail={hasTail}
-      isPending={isPending}
-      initial={{ translateY: 20, opacity: 0 }}
-      animate={{
-        translateY: 4,
-        opacity: 1,
-        transition: {
-          delay: animateDelay,
-          type: 'spring',
-          stiffness: 300,
-          damping: 20,
-          mass: 0.8,
-        },
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {children} <>{customButton}</>
-      </div>
-      <StyledTime messageType={message.type}>
-        {time}
-        {fromMe && <StatusIcon size={14} color={statusColor} />}
-      </StyledTime>
-    </StyledMessageBubble>
+    <>
+      <StyledMessageBubble
+        messageText={message.textBody || ''}
+        type={message.type}
+        fromMe={fromMe}
+        hasTail={hasTail}
+        isPending={isPending}
+        initial={{ translateY: 20, opacity: 0 }}
+        animate={{
+          translateY: 4,
+          opacity: 1,
+          transition: {
+            delay: animateDelay,
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            mass: 0.8,
+          },
+        }}
+        isFailed={message.deliveryStatus === ChatMessageDeliveryStatus.FAILED}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {children} <>{customButton}</>
+        </div>
+        <StyledTime messageType={message.type}>
+          {time}
+          {fromMe && <StatusIcon size={14} color={statusColor} />}
+        </StyledTime>
+      </StyledMessageBubble>
+    </>
   );
 };
