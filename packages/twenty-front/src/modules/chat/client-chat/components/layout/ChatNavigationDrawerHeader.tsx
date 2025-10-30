@@ -2,21 +2,13 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconMessage2Plus } from '@tabler/icons-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import {
-  Avatar,
-  H1Title,
-  H1TitleFontColor,
-  IconX,
-  useIcons,
-} from 'twenty-ui/display';
+import { Avatar, H1Title, H1TitleFontColor, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -39,21 +31,6 @@ const StyledIconButton = styled(IconButton)`
   height: 24px;
   min-width: 24px;
 `;
-
-const StyledModal = styled(Modal)`
-  padding: 0;
-  width: 560px;
-`;
-
-const StyledModalHeader = styled(Modal.Header)`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(12)};
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)}
-    0;
-`;
-
 const StyledDiv = styled.div`
   display: flex;
   align-items: center;
@@ -85,36 +62,7 @@ export const ChatNavigationDrawerHeader = ({
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [integrationId, setIntegrationId] = useState<string | null>(null);
-  // const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-  const sendTemplateMessage = (
-    templateName: string,
-    message: string,
-    language: string,
-  ) => {
-    const sendTemplateInput = {
-      integrationId: integrationId,
-      to: `+${phoneNumber}`,
-      from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-      templateName,
-      language,
-      message,
-      agent: {
-        name: `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-        id: currentWorkspaceMember?.agent?.id,
-      },
-      type: 'template',
-    };
-
-    // sendWhatsappTemplateMessage(sendTemplateInput);
-  };
-
   const IconSearch = getIcon('IconSearch');
-  const IconEdit = getIcon('IconEdit');
-
-  openModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
 
   const navigate = useNavigate();
 
@@ -149,40 +97,16 @@ export const ChatNavigationDrawerHeader = ({
             }
           />
           <StyledIconButton
-            onClick={() => alert('not implemented')}
+            onClick={() => {
+              openModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
+            }}
             variant="secondary"
             size="medium"
             Icon={(props) => <IconMessage2Plus {...props} />}
           />
-          {/* {isStartChatOpen && (
-            <StartChat
-              isStartChatOpen={isStartChatOpen}
-              setIsStartChatOpen={setIsStartChatOpen}
-              onPhoneUpdate={handlePhoneUpdate}
-              onIntegrationUpdate={handleSelectedIntegrationId}
-            />
-          )} */}
         </StyledActionsContainer>
       </StyledPaneHeaderContainer>
 
-      {phoneNumber !== null && (
-        <StyledModal modalId={CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID}>
-          <StyledModalHeader>
-            <StyledH1Title
-              title={'Choose a template to send'}
-              fontColor={H1TitleFontColor.Primary}
-            />
-            <IconButton
-              Icon={IconX}
-              size="medium"
-              variant="tertiary"
-              onClick={() => {
-                alert('not implemented');
-              }}
-            />
-          </StyledModalHeader>
-        </StyledModal>
-      )}
       <TextInput
         LeftIcon={IconSearch}
         placeholder={t`Search chats`}

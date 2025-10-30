@@ -2,6 +2,7 @@ import { useDynamicOneSignal } from '@/app/hooks/useDynamicOneSignal';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Chat } from '@/chat/client-chat/components/layout/Chat';
 import { ChatNavigationDrawer } from '@/chat/client-chat/components/layout/ChatNavigationDrawer';
+import { SendTemplateModal } from '@/chat/client-chat/components/layout/SendTemplateModal';
 import { ClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useClientChats } from '@/chat/client-chat/hooks/useClientChats';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
@@ -37,6 +38,7 @@ export const ClientChatPage = () => {
           </StyledMainContainer>
         </ClientChatsContext.Provider>
       </PageBody>
+      <SendTemplateModal />
     </PageContainer>
   );
 };

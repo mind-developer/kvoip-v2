@@ -20,13 +20,14 @@ import {
 } from 'twenty-shared/types';
 import { WorkspaceMember } from '~/generated/graphql';
 
-const StyledPaneSideContainer = styled.div`
+const StyledChatNavigationDrawerContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
   min-height: max-content;
   min-width: 450px;
   padding: 0 ${({ theme }) => theme.spacing(3)};
+  overflow-y: scroll;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -235,7 +236,7 @@ export const ChatNavigationDrawer = () => {
   }, [filteredClientChats, openChatId, agent?.isAdmin, activeTabId]);
 
   return (
-    <StyledPaneSideContainer>
+    <StyledChatNavigationDrawerContainer>
       <ChatNavigationDrawerHeader
         searchInput={searchInput}
         setSearchInput={setSearchInput}
@@ -248,6 +249,6 @@ export const ChatNavigationDrawer = () => {
       <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
         {renderClientChats}
       </StyledChatsContainer>
-    </StyledPaneSideContainer>
+    </StyledChatNavigationDrawerContainer>
   );
 };

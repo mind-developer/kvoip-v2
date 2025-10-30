@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_WHATSAPP_TEMPLATES = gql`
-  query GetWhatsappTemplates($integrationId: String!) {
-    getWhatsappTemplates(integrationId: $integrationId) {
+  query GetWhatsappTemplates($input: GetWhatsappTemplatesInput!) {
+    getWhatsappTemplates(input: $input) {
       templates {
         id
         status
