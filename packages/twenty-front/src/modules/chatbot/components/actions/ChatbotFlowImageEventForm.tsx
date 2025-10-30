@@ -6,7 +6,7 @@ import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import styled from '@emotion/styled';
-import { Node } from '@xyflow/react';
+import { type Node } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 
 type ChatbotFlowImageEventFormProps = {

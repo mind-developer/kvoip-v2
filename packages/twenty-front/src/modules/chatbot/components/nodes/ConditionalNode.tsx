@@ -5,13 +5,13 @@
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
-import { GenericNodeData } from '@/chatbot/types/GenericNode';
-import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import { type GenericNodeData } from '@/chatbot/types/GenericNode';
+import { type NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -58,7 +58,7 @@ function ConditionalNode({
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
 
-  const selectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
 
   const sourceConnections = useNodeConnections({
     id,
@@ -66,7 +66,6 @@ function ConditionalNode({
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
       setLogicState(data.logic);
     }

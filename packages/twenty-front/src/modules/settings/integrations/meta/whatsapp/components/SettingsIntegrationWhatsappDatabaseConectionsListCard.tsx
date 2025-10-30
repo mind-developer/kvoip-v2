@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';

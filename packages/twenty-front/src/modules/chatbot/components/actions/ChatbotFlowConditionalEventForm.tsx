@@ -4,10 +4,10 @@ import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/Chat
 import { LogicOption } from '@/chatbot/components/nodes/LogicOption';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { GenericNode } from '@/chatbot/types/GenericNode';
+import { type GenericNode } from '@/chatbot/types/GenericNode';
 import {
-  NewConditionalState,
-  NewLogicNodeData,
+  type NewConditionalState,
+  type NewLogicNodeData,
 } from '@/chatbot/types/LogicNodeDataType';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';

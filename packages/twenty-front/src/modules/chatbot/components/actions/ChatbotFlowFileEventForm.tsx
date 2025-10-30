@@ -9,7 +9,7 @@ import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
-import { Node } from '@xyflow/react';
+import { type Node } from '@xyflow/react';
 import { useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { H3Title, Label } from 'twenty-ui/display';

@@ -5,40 +5,40 @@ import styled from '@emotion/styled';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
   ChatMessageType,
-  ClientChat,
-  ClientChatMessage,
+  type ClientChat,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 const StyledInputContainer = styled.div`
-  display: flex;
   align-items: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.xxl};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.xxl};
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInput = styled.textarea`
-  width: 100%;
-  min-height: 32px;
-  max-height: 120px;
   background: transparent;
   border: none;
-  outline: none;
-  resize: none;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-family: ${({ theme }) => theme.font.family};
   color: ${({ theme }) => theme.font.color.primary};
-  overflow-y: auto;
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.md};
   line-height: 32px;
+  max-height: 120px;
+  min-height: 32px;
+  outline: none;
+  overflow-y: auto;
+  resize: none;
+  width: 100%;
 `;
 
 const StyledDiv = styled.div`
+  align-items: center;
   bottom: ${({ theme }) => theme.spacing(3.5)};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  align-items: center;
 `;
 
 const StyledUploadMediaDiv = styled.div`
@@ -48,14 +48,14 @@ const StyledUploadMediaDiv = styled.div`
 `;
 
 const StyledIconButton = styled(IconButton)`
+  align-items: center;
   border-radius: 50%;
   cursor: pointer;
-  height: 24px;
-  width: 24px;
-  padding: 0;
   display: flex;
-  align-items: center;
+  height: 24px;
   justify-content: center;
+  padding: 0;
+  width: 24px;
 `;
 
 type ChatMessageInputProps = {

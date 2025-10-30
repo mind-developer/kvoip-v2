@@ -3,7 +3,10 @@ import {
   useCachedChatbotAvatar,
   useCachedPersonAvatar,
 } from '@/chat/client-chat/hooks/useCachedAvatarData';
-import { ChatMessageFromType, ClientChatMessage } from 'twenty-shared/types';
+import {
+  ChatMessageFromType,
+  type ClientChatMessage,
+} from 'twenty-shared/types';
 
 const useGetChatAvatarUrls = (messages: ClientChatMessage[]) => {
   const participants = messages.map((message) => ({

@@ -1,6 +1,6 @@
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { createContext, useContext } from 'react';
-import { ClientChat } from 'twenty-shared/types';
+import { type ClientChat } from 'twenty-shared/types';
 
 type ClientChatsContextValue = {
   chats: ClientChat[];

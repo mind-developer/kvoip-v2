@@ -1,5 +1,6 @@
-import { CreateFinancialClosingInput } from "@/settings/financial-closing/types/CreateFinancialClosingInput";
+import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
 
-export interface UpdateFinancialClosingInput extends CreateFinancialClosingInput {
+export interface UpdateFinancialClosingInput
+  extends CreateFinancialClosingInput {
   id: string;
 }

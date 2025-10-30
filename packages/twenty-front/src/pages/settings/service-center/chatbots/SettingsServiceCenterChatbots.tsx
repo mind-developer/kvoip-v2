@@ -56,8 +56,8 @@ const StyledSettingsCard = styled(SettingsCard)`
 `;
 
 const StyledTag = styled(Tag)`
-  min-width: ${({ theme }) => theme.spacing(10)};
   justify-content: center;
+  min-width: ${({ theme }) => theme.spacing(10)};
 `;
 
 const StyledTextInput = styled(TextInput)`

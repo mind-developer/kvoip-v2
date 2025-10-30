@@ -21,7 +21,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { z } from 'zod';
@@ -142,7 +142,6 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
-    // eslint-disable-next-line no-sparse-arrays
   }, [integration, navigateApp, isIntegrationAvailable]);
 
   if (!isIntegrationAvailable) return null;

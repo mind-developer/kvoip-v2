@@ -1,11 +1,9 @@
-/* eslint-disable @nx/workspace-component-props-naming */
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode, useId, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 import { Label, useIcons } from 'twenty-ui/display';
-import { ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
   border: 2px solid ${({ theme }) => theme.border.color.medium};

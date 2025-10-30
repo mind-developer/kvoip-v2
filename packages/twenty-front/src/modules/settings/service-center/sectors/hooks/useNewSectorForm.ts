@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import {
   newSectorFormSchema,
   type NewSectorFormValues,

@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable unused-imports/no-unused-vars */
+
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
@@ -10,9 +9,9 @@ import { Card, CardFooter } from 'twenty-ui/layout';
 
 import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks/useFindAllInterIntegrations';
 import { useToggleInterIntegration } from '@/settings/integrations/inter/hooks/useToggleInterIntegrationDisable';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { useEffect } from 'react';
-// eslint-disable-next-line no-restricted-imports
+
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { IconPencil, IconPlus, IconPointFilled } from '@tabler/icons-react';
 

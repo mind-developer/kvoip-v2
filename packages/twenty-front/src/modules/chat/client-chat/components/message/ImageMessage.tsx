@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 import {
   ChatMessageDeliveryStatus,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledImageContainer = styled.div<{ isPending: boolean }>`
-  display: flex;
   align-items: center;
-  gap: 5px;
-  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
-  overflow: hidden;
   border-radius: ${({ theme }) => theme.spacing(3)};
+  display: flex;
+  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
+  gap: 5px;
+  overflow: hidden;
 `;
 const StyledImageImg = styled.img<{ isPending: boolean }>`
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')};

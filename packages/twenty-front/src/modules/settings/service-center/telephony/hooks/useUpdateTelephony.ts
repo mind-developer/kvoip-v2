@@ -1,6 +1,5 @@
 import { UPDATE_TELEPHONY } from '@/settings/service-center/telephony/graphql/mutations/updateAgent';
-import { UpdateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { type UpdateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 

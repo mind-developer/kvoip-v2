@@ -2,7 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useRecoilValue } from 'recoil';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 
 export const useCurrentWorkspaceMemberWithAgent = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

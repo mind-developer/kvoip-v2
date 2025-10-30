@@ -9,15 +9,15 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
   Background,
-  Connection,
+  type Connection,
   Controls,
-  Edge,
-  EdgeChange,
-  NodeChange,
-  NodeTypes,
-  OnConnect,
+  type Edge,
+  type EdgeChange,
+  type NodeChange,
+  type NodeTypes,
+  type OnConnect,
   ReactFlow,
-  ReactFlowInstance,
+  type ReactFlowInstance,
   useReactFlow,
 } from '@xyflow/react';
 
@@ -25,7 +25,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, TagColor } from 'twenty-ui/components';
+import { Tag, type TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
@@ -38,7 +38,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useParams } from 'react-router-dom';
 import { chatbotFlowEdges, chatbotFlowNodes } from '../state/chatbotFlowState';
-import { GenericNode } from '../types/GenericNode';
+import { type GenericNode } from '../types/GenericNode';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;

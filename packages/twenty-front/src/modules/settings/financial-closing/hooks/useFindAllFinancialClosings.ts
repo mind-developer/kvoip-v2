@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_FINANCIAL_CLOSINGS } from '@/settings/financial-closing/graphql/query/financialClosingByWorkspace';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type UseFindAllFinancialClosingsReturn = {

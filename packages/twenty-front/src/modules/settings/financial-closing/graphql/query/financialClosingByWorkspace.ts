@@ -16,5 +16,5 @@ export const GET_ALL_FINANCIAL_CLOSINGS = gql`
       createdAt
       updatedAt
     }
-  } 
+  }
 `;

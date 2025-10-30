@@ -1,7 +1,7 @@
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { createClient } from 'graphql-sse';
 import { useEffect, useMemo } from 'react';
-import { ClientChat } from 'twenty-shared/types';
+import { type ClientChat } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ON_CLIENT_CHAT_EVENT } from '../graphql/subscriptions/onClientChatEvent';
 

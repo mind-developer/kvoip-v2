@@ -14,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 
 import {
-  GetCurrentUserQuery,
+  type GetCurrentUserQuery,
   SubscriptionStatus,
   useGetCurrentUserLazyQuery,
 } from '~/generated-metadata/graphql';
@@ -46,7 +46,6 @@ export const PaymentSuccess = () => {
     setIsLoading(true);
 
     try {
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isDefined(subscriptionStatus)) {
         navigate(AppPath.CreateWorkspace);
         setIsLoading(false);
@@ -58,7 +57,6 @@ export const PaymentSuccess = () => {
       const refreshedSubscriptionStatus =
         currentUser?.currentWorkspace?.currentBillingSubscription?.status;
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (
         isDefined(refreshedSubscriptionStatus) &&
         isDefined(currentUser) &&
@@ -102,7 +100,6 @@ export const PaymentSuccess = () => {
       const refreshedSubscriptionStatus =
         data.currentUser.currentWorkspace?.currentBillingSubscription?.status;
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isDefined(refreshedSubscriptionStatus)) {
         await navigateWithSubscriptionCheck();
       }

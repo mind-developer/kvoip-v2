@@ -5,9 +5,9 @@ import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsCo
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -15,10 +15,10 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   ChatMessageType,
-  ClientChat,
+  type ClientChat,
   ClientChatStatus,
 } from 'twenty-shared/types';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 
 const StyledChatNavigationDrawerContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};

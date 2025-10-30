@@ -12,7 +12,7 @@ import { memo } from 'react';
 import {
   ChatMessageFromType,
   ChatMessageType,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -38,8 +38,8 @@ const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
 `;
 
 const StyledAvatarMessage = styled.div`
-  z-index: 1;
   align-self: flex-end;
+  z-index: 1;
 `;
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`

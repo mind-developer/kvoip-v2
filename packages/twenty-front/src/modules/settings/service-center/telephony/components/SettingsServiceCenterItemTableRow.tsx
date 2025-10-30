@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 

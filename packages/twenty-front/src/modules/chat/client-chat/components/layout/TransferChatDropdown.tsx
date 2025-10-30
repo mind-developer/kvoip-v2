@@ -6,7 +6,7 @@ import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsCo
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -32,11 +32,11 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import {
   MenuItem,
-  MenuItemAccent,
+  type MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 import { useSendClientChatMessage } from '../../hooks/useSendClientChatMessage';
 
 type TransferChatOptionsMenu = 'agents' | 'sectors';

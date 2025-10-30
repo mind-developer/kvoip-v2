@@ -1,7 +1,7 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';

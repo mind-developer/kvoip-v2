@@ -1,4 +1,4 @@
-import { TagColor } from 'twenty-ui/components';
+import { type TagColor } from 'twenty-ui/components';
 import { MAIN_COLORS } from 'twenty-ui/theme';
 
 export const getColorFromTemplateName = (templateName: string): TagColor => {

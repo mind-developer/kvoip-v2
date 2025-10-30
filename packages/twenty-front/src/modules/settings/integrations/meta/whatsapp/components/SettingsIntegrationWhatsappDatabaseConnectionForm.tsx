@@ -2,7 +2,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Select } from '@/ui/input/components/Select';
 import {
   IconBrandMeta,
@@ -10,9 +10,9 @@ import {
   IconUserScan,
 } from '@tabler/icons-react';
 import { useEffect } from 'react';
-import { IconComponent, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
-import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
+import { type IconComponent, useIcons } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { type SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
   display: flex;

@@ -22,8 +22,8 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChat,
-  ClientChatMessage,
+  type ClientChat,
+  type ClientChatMessage,
   ClientChatMessageEvent,
   ClientChatStatus,
 } from 'twenty-shared/types';
@@ -31,15 +31,15 @@ import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
 const StyledChatContainer = styled.div`
+  background-color: ${({ theme }) =>
+    theme.name === 'dark' ? 'black' : theme.background.primary};
   display: flex;
   flex-direction: column;
   flex-grow: 0;
+  gap: ${({ theme }) => theme.spacing(0)};
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
-  gap: ${({ theme }) => theme.spacing(0)};
   width: 100%;
-  background-color: ${({ theme }) =>
-    theme.name === 'dark' ? 'black' : theme.background.primary};
 `;
 
 const StyledMessagesContainer = styled.div`

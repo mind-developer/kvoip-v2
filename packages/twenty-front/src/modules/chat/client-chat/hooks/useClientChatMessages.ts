@@ -4,7 +4,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ClientChatMessage } from 'twenty-shared/types';
+import { type ClientChatMessage } from 'twenty-shared/types';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 

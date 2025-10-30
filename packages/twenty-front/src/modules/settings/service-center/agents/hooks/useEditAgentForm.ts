@@ -6,7 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import {
   agentFormSchema,
   type AgentFormValues,
@@ -14,7 +14,7 @@ import {
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEffect } from 'react';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useEditAgentForm = (activeWorkspaceMember?: WorkspaceMember) => {

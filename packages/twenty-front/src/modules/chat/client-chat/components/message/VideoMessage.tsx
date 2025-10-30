@@ -5,18 +5,18 @@ import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
 } from '@tabler/icons-react';
-import { LegacyRef, useEffect, useRef, useState } from 'react';
+import { type LegacyRef, useEffect, useRef, useState } from 'react';
 import {
   ChatMessageDeliveryStatus,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledVideoWrapper = styled.div<{ isPending: boolean }>`
-  position: relative;
   display: inline-block;
+  position: relative;
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
 `;
 
@@ -58,10 +58,10 @@ const StyledScrubber = styled.input`
 `;
 
 const StyledVideo = styled.video`
-  max-width: 240px;
-  width: 300px;
   border-radius: ${({ theme }) => theme.spacing(3)};
+  max-width: 240px;
   overflow: hidden;
+  width: 300px;
 `;
 
 const StyledOverlay = styled.div`

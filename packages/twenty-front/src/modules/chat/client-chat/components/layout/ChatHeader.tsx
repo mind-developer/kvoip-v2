@@ -15,18 +15,18 @@ import {
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChat,
+  type ClientChat,
   ClientChatMessageEvent,
 } from 'twenty-shared/types';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 const StyledChatHeader = styled.div`
-  display: flex;
   align-items: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(2)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledChatTitle = styled.p`
@@ -44,8 +44,8 @@ const StyledChatTitle = styled.p`
 `;
 
 const StyledDiv = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 `;
 
 const StyledActionsContainer = styled.div`

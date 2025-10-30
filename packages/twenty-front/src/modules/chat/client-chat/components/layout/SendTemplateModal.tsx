@@ -2,11 +2,11 @@ import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/const
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useGetWhatsappTemplates } from '@/chat/client-chat/hooks/useGetWhatsappTemplates';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
-import { WhatsAppTemplate } from '@/chat/types/WhatsAppTemplate';
+import { type WhatsAppTemplate } from '@/chat/types/WhatsAppTemplate';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Person } from '@/people/types/Person';
+import { type Person } from '@/people/types/Person';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -33,11 +33,11 @@ import { Card, CardContent } from 'twenty-ui/layout';
 import { v4 } from 'uuid';
 
 const StyledTemplateListContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
 `;
 
 const StyledHeader = styled.div`

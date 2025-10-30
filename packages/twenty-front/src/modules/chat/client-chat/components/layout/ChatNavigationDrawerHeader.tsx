@@ -32,10 +32,10 @@ const StyledIconButton = styled(IconButton)`
   min-width: 24px;
 `;
 const StyledDiv = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
 `;
 
 const StyledH1Title = styled(H1Title)`

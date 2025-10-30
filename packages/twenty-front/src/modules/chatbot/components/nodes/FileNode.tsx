@@ -7,8 +7,8 @@ import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -85,7 +85,7 @@ function FileNode({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetConnections, sourceConnections]);
 
-  const selectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
 
   return (
     <BaseNode

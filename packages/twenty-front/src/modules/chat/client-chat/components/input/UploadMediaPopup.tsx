@@ -4,14 +4,14 @@ import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClient
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dispatch, SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChat,
+  type ClientChat,
 } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 

@@ -8,7 +8,7 @@ import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageType,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 
 export const useSendClientChatMessage = () => {

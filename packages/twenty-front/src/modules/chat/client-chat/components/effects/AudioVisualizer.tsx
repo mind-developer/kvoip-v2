@@ -16,8 +16,8 @@ type AudioVisualizerProps = {
 };
 
 const Canvas = styled.canvas<{ width: number; height: number }>`
-  width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
+  width: ${({ width }) => width}px;
 `;
 
 export const AudioVisualizer = ({

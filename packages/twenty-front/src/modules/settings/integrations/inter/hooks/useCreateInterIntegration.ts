@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CREATE_INTER_INTEGRATION } from '@/settings/integrations/inter/graphql/mutation/createInterIntegration';
-import { CreateInterIntegrationInput } from '@/settings/integrations/inter/types/CreateInterIntegrationInput';
+import { type CreateInterIntegrationInput } from '@/settings/integrations/inter/types/CreateInterIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';

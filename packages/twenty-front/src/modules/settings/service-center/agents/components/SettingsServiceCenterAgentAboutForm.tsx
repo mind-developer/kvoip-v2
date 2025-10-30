@@ -2,15 +2,15 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type AgentFormValues } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { AvatarChip } from 'twenty-ui/components';
 import { H2Title, Label, useIcons } from 'twenty-ui/display';
-import { SelectOption, Toggle } from 'twenty-ui/input';
+import { type SelectOption, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledForm = styled.div`

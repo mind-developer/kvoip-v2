@@ -1,4 +1,4 @@
-import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { BillingPlanKey } from '~/generated/graphql';

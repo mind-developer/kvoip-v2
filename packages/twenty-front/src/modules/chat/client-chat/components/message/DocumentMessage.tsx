@@ -117,22 +117,22 @@ function DocumentMessage({
 export default React.memo(DocumentMessage);
 
 const StyledHeaderContainer = styled.div<{ fromMe: boolean }>`
-  width: 100%;
-  display: flex;
-  gap: 10;
   align-items: center;
-  justify-content: space-between;
-  bottom: 0;
-  padding: 5px 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
   background: ${({ fromMe, theme }) =>
     fromMe
       ? theme.name === 'dark'
         ? '#274238'
         : '#D9FDD3'
       : theme.background.quaternary} !important;
+  bottom: 0;
+  box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  gap: 10;
+  justify-content: space-between;
+  padding: 5px 10px;
+  padding-bottom: 10px;
+  width: 100%;
 `;
 
 const StyledFileName = styled.p`

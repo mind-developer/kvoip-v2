@@ -1,13 +1,16 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight, IconRobot, IconZzz } from '@tabler/icons-react';
-import { ClientChatMessage, ClientChatMessageEvent } from 'twenty-shared/types';
+import {
+  type ClientChatMessage,
+  ClientChatMessageEvent,
+} from 'twenty-shared/types';
 import { Avatar, useIcons } from 'twenty-ui/display';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 
 export default function EventMessage({
   message,

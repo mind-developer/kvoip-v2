@@ -1,13 +1,12 @@
 import { SettingsFinancialClosingTableRow } from '@/settings/financial-closing/components/SettingsFinancialClosingTableRow';
 import { useDeleteFinancialClosing } from '@/settings/financial-closing/hooks/useDeleteFinancialClosing';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
-import { useDeleteSector } from '@/settings/service-center/sectors/hooks/useDeleteSector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconArchive, IconClock, IconTextSize } from '@tabler/icons-react';
+import { IconClock } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -41,7 +40,7 @@ export const SettingsFinancialClosings = ({
   refetchFinancialClosings,
   loading,
   isRightDrawer = false,
-}: FinancialClosingsProps) => {
+}: SettingsFinancialClosingsProps) => {
   const { t } = useLingui();
   const navigate = useNavigate();
   const isMobile = useIsMobile() || isRightDrawer;
@@ -57,12 +56,11 @@ export const SettingsFinancialClosings = ({
   };
 
   const handleFinancialClosingExecutions = (id: string) => {
-    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
-      ':financialClosingId',
-      id,
-    );
+    const path = getSettingsPath(
+      SettingsPath.FinancialClosingExecutions,
+    ).replace(':financialClosingId', id);
     navigate(path);
-  }
+  };
 
   return (
     <StyledShowServiceCenterTabs isMobile={isMobile}>
@@ -79,7 +77,9 @@ export const SettingsFinancialClosings = ({
                     subtitle: t`Are you sure you want to delete this financial closing? This action cannot be undone.`,
                   }}
                   scopeKey={financialClosing.name}
-                  onEdit={() => { handleEditFinancialClosing(financialClosing.id) }}
+                  onEdit={() => {
+                    handleEditFinancialClosing(financialClosing.id);
+                  }}
                   onDelete={async () => {
                     await deleteFinancialClosingById(financialClosing.id);
                     refetchFinancialClosings();
@@ -88,7 +88,9 @@ export const SettingsFinancialClosings = ({
                     {
                       text: t`Execution History`,
                       icon: IconClock,
-                      onClick: () => { handleFinancialClosingExecutions(financialClosing.id) },
+                      onClick: () => {
+                        handleFinancialClosingExecutions(financialClosing.id);
+                      },
                     },
                   ]}
                 />

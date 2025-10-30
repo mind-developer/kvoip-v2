@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import {
   agentFormSchema,
   type AgentFormValues,
 } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useNewAgentForm = () => {

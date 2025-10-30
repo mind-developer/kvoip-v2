@@ -11,7 +11,7 @@ import {
   SettingsFinancialClosingForm,
 } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useCreateFinancialClosing } from '@/settings/financial-closing/hooks/useCreateFinancialClosing';
-import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
+import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';

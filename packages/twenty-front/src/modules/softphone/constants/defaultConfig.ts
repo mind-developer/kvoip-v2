@@ -1,4 +1,4 @@
-import { SipConfig } from '../types/sipConfig';
+import { type SipConfig } from '../types/sipConfig';
 
 const defaultConfig: SipConfig = {
   username: '',

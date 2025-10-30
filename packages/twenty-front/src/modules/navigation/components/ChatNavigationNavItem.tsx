@@ -1,6 +1,6 @@
 import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { Theme, useTheme } from '@emotion/react';
+import { type Theme, useTheme } from '@emotion/react';
 // eslint-disable-next-line no-restricted-imports
 import { IconMessageCircle } from '@tabler/icons-react';
 import { useLocation } from 'react-router-dom';

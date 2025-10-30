@@ -2,7 +2,7 @@ import { useClientChatSubscription } from '@/chat/client-chat/hooks/useClientCha
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -10,7 +10,7 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClientChat, ClientChatStatus } from 'twenty-shared/types';
+import { type ClientChat, ClientChatStatus } from 'twenty-shared/types';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useClientChats = (showNotifications: boolean = false) => {

@@ -7,7 +7,7 @@ import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
-import { Node } from '@xyflow/react';
+import { type Node } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { Label } from 'twenty-ui/display';

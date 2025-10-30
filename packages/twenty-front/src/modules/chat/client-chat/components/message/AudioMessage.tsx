@@ -3,10 +3,10 @@ import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
 } from '@tabler/icons-react';
-import { LegacyRef, useEffect, useRef, useState } from 'react';
+import { type LegacyRef, useEffect, useRef, useState } from 'react';
 import {
   ChatMessageDeliveryStatus,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

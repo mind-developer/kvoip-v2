@@ -5,7 +5,6 @@ import { AvatarChip, Tag } from 'twenty-ui/components';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
 
 const StyledChatCard = styled.div<{ isSelected?: boolean }>`
@@ -29,13 +28,13 @@ const StyledContentContainer = styled.div`
 `;
 
 const StyledUserName = styled.p`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 600;
-  margin: 0;
-  display: flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin: 0;
 `;
 
 const StyledLastMessagePreview = styled.p`

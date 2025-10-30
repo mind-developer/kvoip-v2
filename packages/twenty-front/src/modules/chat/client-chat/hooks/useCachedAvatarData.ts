@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
-import { Person } from '@/people/types/Person';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Person } from '@/people/types/Person';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 // Hook específico para Person Avatar com cache do Apollo
 export const useCachedPersonAvatar = (personId: string) => {

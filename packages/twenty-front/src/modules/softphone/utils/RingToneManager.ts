@@ -18,7 +18,7 @@ class RingToneManager {
     const playSequence = () => {
       this.audio.currentTime = 0;
       this.audio.play().catch(console.error);
-      
+
       setTimeout(() => {
         this.audio.pause();
       }, 2000);
@@ -33,12 +33,12 @@ class RingToneManager {
 
   stop() {
     if (!this.isPlaying) return;
-    
+
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
     }
-    
+
     this.audio.pause();
     this.audio.currentTime = 0;
     this.isPlaying = false;

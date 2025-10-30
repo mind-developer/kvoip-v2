@@ -16,7 +16,7 @@ import {
   SettingsSectorFormSchema,
   SettingsServiceCenterSectorAboutForm,
 } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

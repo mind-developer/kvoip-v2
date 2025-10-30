@@ -1,4 +1,8 @@
-const generateAuthorizationHa1 = async (username: string, password: string, domain: string): Promise<string> => {
+const generateAuthorizationHa1 = async (
+  username: string,
+  password: string,
+  domain: string,
+): Promise<string> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(`${username}:${domain}:${password}`);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);

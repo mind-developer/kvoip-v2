@@ -9,7 +9,7 @@ import DTMFButton from '@/softphone/components/DTMFButton';
 import Keyboard from '@/softphone/components/Keyboard';
 import StatusIndicator from '@/softphone/components/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -17,25 +17,25 @@ import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRecoilValue } from 'recoil';
 import {
-  Invitation,
+  type Invitation,
   Inviter,
   Registerer,
   RegistererState,
-  Session,
+  type Session,
   SessionState,
   UserAgent,
 } from 'sip.js';
 import {
-  SessionDescriptionHandler,
+  type SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
 import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
-import { CallState } from '../types/callState';
+import { type CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
-import { SipConfig } from '../types/sipConfig';
+import { type SipConfig } from '../types/sipConfig';
 import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import HoldButton from './HoldButton';
@@ -208,7 +208,6 @@ const WebSoftphone: React.FC = () => {
         password: telephonyExtension.senha_sip,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [telephonyExtension]);
 
   useEffect(() => {

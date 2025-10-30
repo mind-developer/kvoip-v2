@@ -1,4 +1,4 @@
-import { NodeTypes, ReactFlowProvider } from '@xyflow/react';
+import { type NodeTypes, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import ConditionalNode from '@/chatbot/components/nodes/ConditionalNode';

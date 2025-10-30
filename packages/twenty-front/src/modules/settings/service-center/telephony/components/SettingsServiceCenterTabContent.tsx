@@ -1,5 +1,5 @@
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { type Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

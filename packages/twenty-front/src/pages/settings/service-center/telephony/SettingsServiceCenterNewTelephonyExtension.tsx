@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
+import { type z } from 'zod';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -12,7 +12,7 @@ import {
   SettingsServiceCenterTelephonyFormSchema,
 } from '@/settings/service-center/telephony/components/forms/SettingsServiceCenterTelephonyForm';
 import { useCreateTelephony } from '@/settings/service-center/telephony/hooks/useCreateTelephony';
-import { CreateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { type CreateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import {
   checkPassword,
   generatePassword,
@@ -23,7 +23,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-// eslint-disable-next-line import/no-duplicates
 
 type SettingsNewTelephonySchemaValues = z.infer<
   typeof SettingsServiceCenterTelephonyFormSchema

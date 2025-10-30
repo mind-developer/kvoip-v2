@@ -7,8 +7,8 @@ import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelecte
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -93,7 +93,7 @@ function ImageNode({
     }
   }, [targetConnections, sourceConnections]);
 
-  const selectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
 
   return (
     <BaseNode

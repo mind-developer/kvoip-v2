@@ -1,6 +1,6 @@
 import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
-import { XYPosition, useReactFlow } from '@xyflow/react';
-import { GenericNode, GenericNodeData } from '../types/GenericNode';
+import { type XYPosition, useReactFlow } from '@xyflow/react';
+import { type GenericNode, type GenericNodeData } from '../types/GenericNode';
 
 export const useHandleNodeValue = () => {
   const chatbotFlow = useGetChatbotFlowState();

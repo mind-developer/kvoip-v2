@@ -1,5 +1,5 @@
-import { Person } from '@/people/types/Person';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Person } from '@/people/types/Person';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ChatMessageFromType } from 'twenty-shared/types';

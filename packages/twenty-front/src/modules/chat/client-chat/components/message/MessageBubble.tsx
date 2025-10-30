@@ -2,12 +2,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconChecks, IconClock, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageType,
-  ClientChatMessage,
+  type ClientChatMessage,
 } from 'twenty-shared/types';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 

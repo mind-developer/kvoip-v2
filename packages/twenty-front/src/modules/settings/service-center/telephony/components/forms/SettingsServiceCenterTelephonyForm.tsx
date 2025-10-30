@@ -11,10 +11,10 @@ import {
 import { useFindAllDialingPlans } from '@/settings/service-center/telephony/hooks/useFindAllDialingPlans';
 import { useFindAllDids } from '@/settings/service-center/telephony/hooks/useFindAllDids';
 import { useFindAllPABX } from '@/settings/service-center/telephony/hooks/useFindAllPABX';
-import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { type Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
