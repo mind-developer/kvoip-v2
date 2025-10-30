@@ -23,10 +23,28 @@ export const groupPlatformsOverTime = (
     return { data: [], sourceKeyColors: {} };
   }
 
-  const parsedLogs = linkLogs.map((log) => ({
-    ...log,
-    createdAt: fromUnixTime(Number(log.createdAt) / 1000),
-  }));
+  const parsedLogs = linkLogs
+    .map((log) => {
+      const timestamp = Number(log.createdAt);
+
+      // Validate timestamp before parsing
+      if (!isDefined(log.createdAt) || isNaN(timestamp) || timestamp <= 0) {
+        return null;
+      }
+
+      const parsedDate = fromUnixTime(timestamp / 1000);
+
+      // Validate that the parsed date is valid
+      if (isNaN(parsedDate.getTime())) {
+        return null;
+      }
+
+      return {
+        ...log,
+        createdAt: parsedDate,
+      };
+    })
+    .filter((log): log is NonNullable<typeof log> => isDefined(log));
 
   const groupedData: Record<string, PlatformGroupedData> = {};
   const sourceKeyColors: PlatformChartData['sourceKeyColors'] = {};

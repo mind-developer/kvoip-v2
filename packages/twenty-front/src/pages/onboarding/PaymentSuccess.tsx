@@ -1,6 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSubscriptionStatusCard } from '@/onboarding/components/OnboarindPaymentStatusCard';
 import { AppPath } from '@/types/AppPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { subscriptionStatusState } from '@/workspace/states/subscriptionStatusState';
@@ -14,6 +15,7 @@ import { Loader } from 'twenty-ui/feedback';
 
 import {
   GetCurrentUserQuery,
+  SubscriptionStatus,
   useGetCurrentUserLazyQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -36,6 +38,8 @@ export const PaymentSuccess = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const { enqueueInfoSnackBar, enqueueErrorSnackBar } = useSnackBar();
+
   const navigateWithSubscriptionCheck = async () => {
     if (isLoading) return;
 
@@ -45,6 +49,7 @@ export const PaymentSuccess = () => {
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isDefined(subscriptionStatus)) {
         navigate(AppPath.CreateWorkspace);
+        setIsLoading(false);
         return;
       }
 
@@ -54,23 +59,43 @@ export const PaymentSuccess = () => {
         currentUser?.currentWorkspace?.currentBillingSubscription?.status;
 
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-      if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
+      if (
+        isDefined(refreshedSubscriptionStatus) &&
+        isDefined(currentUser) &&
+        refreshedSubscriptionStatus === SubscriptionStatus.Active
+      ) {
         setCurrentUser(currentUser);
         navigate(AppPath.CreateWorkspace);
+        setIsLoading(false);
         return;
       }
 
       throw new Error(
         "We're waiting for a confirmation from our payment provider.\n" +
           'Please try again in a few seconds, sorry.',
+        { cause: 'PaymentSuccess' },
       );
     } catch (error) {
       setIsLoading(false);
+      if (error instanceof Error) {
+        if (error.cause === 'PaymentSuccess') {
+          enqueueInfoSnackBar({
+            message: error.message,
+          });
+        } else {
+          enqueueErrorSnackBar({
+            message: 'Unexpected error while checking subscription status.',
+            options: {
+              detailedMessage: error.message,
+            },
+          });
+        }
+      }
       throw error;
     }
   };
 
-  const { loading, refetch } = useQuery<GetCurrentUserQuery>(GET_CURRENT_USER, {
+  const { loading } = useQuery<GetCurrentUserQuery>(GET_CURRENT_USER, {
     fetchPolicy: 'no-cache',
     pollInterval: 10000, // Poll every 10 seconds
     onCompleted: async (data) => {
@@ -92,7 +117,8 @@ export const PaymentSuccess = () => {
         </StyledLoaderContainer>
       ) : (
         <OnboardingSubscriptionStatusCard
-          {...{ navigateWithSubscriptionCheck, refetch }}
+          navigateWithSubscriptionCheck={navigateWithSubscriptionCheck}
+          isLoading={isLoading}
         />
       )}
     </Modal.Content>
