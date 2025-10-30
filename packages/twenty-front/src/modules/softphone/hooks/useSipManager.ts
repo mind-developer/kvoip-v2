@@ -14,6 +14,7 @@ import {
 import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
 import { SipConfig } from '../types/sipConfig';
+import { createDtmfSdpModifier } from '../utils';
 import { useAudioDevices } from './useAudioDevices';
 import { useSipRefs } from './useSipRefs';
 
@@ -80,7 +81,11 @@ export const useSipManager = ({ config, setCallState, sipRefs }: UseSipManagerPr
           await audioSender.replaceTrack(audioTrack);
           console.log('Microfone configurado com sucesso:', audioDevices.selectedMicDevice);
         } else {
-          console.error('Nenhum sender de áudio encontrado');
+          // Em algumas sequências (principalmente após a primeira chamada), o sender de áudio
+          // pode não existir ainda. Criamos um novo sender para garantir suporte a DTMF.
+          console.warn('Nenhum sender de áudio encontrado. Adicionando track para criar sender...');
+          peerConnection.addTrack(audioTrack, stream);
+          console.log('Novo sender de áudio criado via addTrack');
         }
       }
     } catch (error) {
@@ -239,6 +244,7 @@ export const useSipManager = ({ config, setCallState, sipRefs }: UseSipManagerPr
         sessionDescriptionHandlerOptions: {
           constraints: SESSION_CONFIG.MEDIA_CONSTRAINTS,
         },
+        sessionDescriptionHandlerModifiers: [createDtmfSdpModifier()],
       });
 
       sipRefs.sessionRef.current = inviter;
@@ -294,6 +300,7 @@ export const useSipManager = ({ config, setCallState, sipRefs }: UseSipManagerPr
         sessionDescriptionHandlerOptions: {
           constraints: SESSION_CONFIG.MEDIA_CONSTRAINTS,
         },
+        sessionDescriptionHandlerModifiers: [createDtmfSdpModifier()],
       });
 
       setupRemoteMedia(sipRefs.invitationRef.current);
