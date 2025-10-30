@@ -157,7 +157,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_CNPJ,
-        errorMessage: msg`Invalid CNPJ format. Expected format: 00.000.000/0000-00`,
+        errorMessage: msg`Use the format: 00.000.000/0000-00`,
       },
     },
   })
@@ -173,7 +173,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_CPF,
-        errorMessage: msg`Invalid CPF format. Expected format: 000.000.000-00`,
+        errorMessage: msg`Use the format: 000.000.000-00`,
       },
     },
   })
@@ -189,7 +189,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_STATE_REGISTRATION,
-        errorMessage: msg`Invalid State Registration (IE) format`,
+        errorMessage: msg`Use the format: 000.000.000.000`,
       },
     },
   })
@@ -205,7 +205,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_MUNICIPAL_REGISTRATION,
-        errorMessage: msg`Invalid Municipal Registration format`,
+        errorMessage: msg`Use the format: 00000000-0`,
       },
     },
   })
@@ -221,7 +221,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_CNAE,
-        errorMessage: msg`Invalid CNAE code format. Expected format: 0000-0/00`,
+        errorMessage: msg`Use the format: 0000-0/00`,
       },
     },
   })
@@ -237,7 +237,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_CEP,
-        errorMessage: msg`Invalid CEP format. Expected format: 00000-000`,
+        errorMessage: msg`Use the format: 00000-000`,
       },
     },
   })
@@ -293,7 +293,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_STATE,
-        errorMessage: msg`Invalid state code. Expected 2-letter state code (e.g., SP, RJ)`,
+        errorMessage: msg`Use two letters (e.g., SP, RJ, MG)`,
       },
     },
   })

@@ -36,13 +36,31 @@ const createDigitBasedMask = (
   };
 };
 
+const createLetterMask = (maxLength: number): string => {
+  return 'A'.repeat(maxLength);
+};
+
+const createDigitMask = (maxLength: number): string => {
+  return '0'.repeat(maxLength);
+};
+
+const createAlphanumericMask = (maxLength: number): string => {
+  return '#'.repeat(maxLength);
+};
+
 const CPF_CNPJ_MASK = createDigitBasedMask([
   { maxDigits: 11, mask: '000.000.000-00' },
   { maxDigits: 14, mask: '00.000.000/0000-00' },
 ]);
 
+const CST_CSOSN_MASK = createDigitBasedMask([
+  { maxDigits: 3, mask: '000' },
+  { maxDigits: 4, mask: '0000' },
+]);
+
 export const DYNAMIC_MASK_REGISTRY: Record<string, DynamicMaskFunction> = {
   CPF_CNPJ_MASK: CPF_CNPJ_MASK,
+  CST_CSOSN_MASK: CST_CSOSN_MASK,
 } as const;
 
 export const resolveDynamicMask = (
@@ -94,7 +112,7 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   BR_STATE: {
     pattern: '^[A-Z]{2}$',
-    mask: 'AA',
+    mask: createLetterMask(2),
     placeholder: 'SP',
   } as TextValidationPattern,
 
@@ -112,14 +130,14 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   BR_CFOP: {
     pattern: '^\\d{4}$',
-    mask: '0000',
+    mask: createDigitMask(4),
     placeholder: '0000',
   } as TextValidationPattern,
 
   BR_CST_CSOSN: {
-    pattern: '^\\d{3}$',
-    mask: '000',
-    placeholder: '000',
+    pattern: '^\\d{3,4}$',
+    dynamicMask: 'CST_CSOSN_MASK',
+    placeholder: '000 or 0000',
   } as TextValidationPattern,
 
   JOB_TITLE: {
@@ -141,7 +159,7 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   UNIT_OF_MEASURE: {
     pattern: '^[a-zA-Z]{1,10}$',
-    mask: 'AAAAAAAAAA',
+    mask: createLetterMask(10),
     placeholder: 'kg, unit, liter',
   } as TextValidationPattern,
 
@@ -153,7 +171,7 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   CFOP: {
     pattern: '^\\d{4}$',
-    mask: '0000',
+    mask: createDigitMask(4),
     placeholder: '0000',
   } as TextValidationPattern,
 
@@ -165,37 +183,34 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   COMMERCIAL_UNIT: {
     pattern: '^[A-Z]{2,10}$',
-    mask: 'AAAAAAAAAA',
+    mask: createLetterMask(10),
     placeholder: 'UN, KG, LT',
   } as TextValidationPattern,
 
   CST_PIS_COFINS: {
     pattern: '^\\d{2}$',
-    mask: '00',
+    mask: createDigitMask(2),
     placeholder: '00',
   } as TextValidationPattern,
 
   SERVICE_LIST_ITEM: {
-    pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-    placeholder: 'Enter service list code',
+    pattern: '^\\d{1,2}\\.\\d{2}$',
+    mask: '00.00',
+    placeholder: '01.02',
   } as TextValidationPattern,
 
   MUNICIPAL_TAX_CODE: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter municipal tax code',
   } as TextValidationPattern,
 
   CLASSIFICATION: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,100}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter classification',
   } as TextValidationPattern,
 
   LOCALE: {
     pattern: '^[a-z]{2}(-[A-Z]{2})?$',
-    mask: 'en-US',
     placeholder: 'en-US',
   } as TextValidationPattern,
 
@@ -206,7 +221,6 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   TIMEZONE: {
     pattern: '^[a-zA-Z_/]+$',
-    mask: 'America/Sao_Paulo',
     placeholder: 'America/Sao_Paulo',
   } as TextValidationPattern,
 
@@ -223,7 +237,7 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   EXTENSION_NUMBER: {
     pattern: '^\\d{3,6}$',
-    mask: '000000',
+    mask: createDigitMask(6),
     placeholder: '123456',
   } as TextValidationPattern,
 
@@ -257,13 +271,44 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   CHARGE_NAME: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{2,100}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter charge name',
+  } as TextValidationPattern,
+
+  TOTAL_AMOUNT: {
+    pattern: '^\\d{1,10}(\\.\\d{1,2})?$',
+    placeholder: '1000.00',
+  } as TextValidationPattern,
+
+  CSTICMSCSOSN: {
+    pattern: '^\\d{3,4}$',
+    dynamicMask: 'CST_CSOSN_MASK',
+    placeholder: '000 or 0000',
+  } as TextValidationPattern,
+
+  SUBSCRIBER_CODE: {
+    pattern: '^[a-zA-Z0-9\\-]{3,20}$',
+    placeholder: '1234567890',
+  } as TextValidationPattern,
+
+  NUM_SUBSCRIBER_AGREEMENT: {
+    pattern: '^[a-zA-Z0-9\\-]{3,20}$',
+    placeholder: '1234567890',
+  } as TextValidationPattern,
+
+  ISSUE_DATE: {
+    pattern: '^\\d{2}/\\d{2}/\\d{4}$',
+    mask: '00/00/0000',
+    placeholder: 'DD/MM/YYYY',
+  } as TextValidationPattern,
+
+  RPS_NUMBER: {
+    pattern: '^[a-zA-Z0-9\\-]{1,20}$',
+    placeholder: 'RPS-123',
   } as TextValidationPattern,
 
   REQUEST_CODE: {
     pattern: '^[a-zA-Z0-9\\-_]{3,20}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAA',
+    mask: createAlphanumericMask(20),
     placeholder: 'REQ-123',
   } as TextValidationPattern,
 
@@ -276,92 +321,88 @@ export const TEXT_VALIDATION_PATTERNS = {
 
   TELEPHONY_MEMBER_ID: {
     pattern: '^[a-zA-Z0-9\\-_]{3,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'member-123',
   } as TextValidationPattern,
 
   TELEPHONY_EXTENSION_NUMBER: {
     pattern: '^\\d{3,6}$',
-    mask: '000000',
+    mask: createDigitMask(6),
     placeholder: '123456',
   } as TextValidationPattern,
 
   TELEPHONY_EXTENSION_NAME: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter extension name',
   } as TextValidationPattern,
 
   TELEPHONY_EXTENSION_GROUP: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter extension group',
   } as TextValidationPattern,
 
   TELEPHONY_TYPE: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,30}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter type',
   } as TextValidationPattern,
 
   TELEPHONY_DIALING_PLAN: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter dialing plan',
   } as TextValidationPattern,
 
   TELEPHONY_AREA_CODE: {
     pattern: '^\\d{2,4}$',
-    mask: '0000',
+    mask: createDigitMask(4),
     placeholder: '11',
   } as TextValidationPattern,
 
   TELEPHONY_SIP_PASSWORD: {
     pattern: '^[a-zA-Z0-9\\-_]{6,20}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAA',
+    mask: createAlphanumericMask(20),
     placeholder: 'Enter SIP password',
   } as TextValidationPattern,
 
   TELEPHONY_CALLER_EXTERNAL_ID: {
     pattern: '^[a-zA-Z0-9\\-_]{3,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'caller-123',
   } as TextValidationPattern,
 
   TELEPHONY_PULL_CALLS: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter pull calls configuration',
   } as TextValidationPattern,
 
   TELEPHONY_EMAIL_FOR_MAILBOX: {
     pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-    mask: 'user@example.com',
     placeholder: 'user@example.com',
   } as TextValidationPattern,
 
   TELEPHONY_FORWARD_NUMBER: {
     pattern: '^\\d{3,15}$',
-    mask: '000000000000000',
+    mask: createDigitMask(15),
     placeholder: '1234567890',
   } as TextValidationPattern,
 
   TELEPHONY_RAMAL_ID: {
     pattern: '^[a-zA-Z0-9\\-_]{3,20}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAA',
+    mask: createAlphanumericMask(20),
     placeholder: 'ramal-123',
   } as TextValidationPattern,
 
   TELEPHONY_ADVANCED_FORWARDING: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter forwarding configuration',
   } as TextValidationPattern,
 
   TELEPHONY_ADVANCED_FORWARDING_VALUE: {
     pattern: '^[a-zA-Z0-9\\s\\-\\.,]{1,50}$',
-    mask: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     placeholder: 'Enter forwarding value',
+  } as TextValidationPattern,
+
+  BR_INTER_ACCOUNT: {
+    pattern: '^\\d{8}-\\d{2}$',
+    mask: '00000000-00',
+    placeholder: '00000000-00',
   } as TextValidationPattern,
 } as const;
 
@@ -422,15 +463,15 @@ const isMaskPlaceholder = (char: string): boolean => {
 
 const isValidCharForMask = (char: string, maskChar: string): boolean => {
   switch (maskChar) {
-    case '0': // Required digit
+    case '0':
       return /\d/.test(char);
-    case '9': // Optional digit
+    case '9':
       return /\d/.test(char);
-    case '#': // Any character
+    case '#':
       return /[a-zA-Z0-9]/.test(char);
-    case 'A': // Required letter
+    case 'A':
       return /[a-zA-Z]/.test(char);
-    case 'a': // Optional letter
+    case 'a':
       return /[a-zA-Z]/.test(char);
     default:
       return false;

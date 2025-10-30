@@ -407,13 +407,19 @@ export class FocusNFeService {
 
     const latestNumeroRps = Number(latestNFSe?.rpsNumber);
 
-    if (LAST_NUMBER_RPS > latestNumeroRps) {
+    /* @kvoip-woulz proprietary:begin */
+    if (
+      LAST_NUMBER_RPS !== undefined &&
+      typeof LAST_NUMBER_RPS === 'number' &&
+      LAST_NUMBER_RPS > latestNumeroRps
+    ) {
       return {
         id: '0',
         rpsNumber: LAST_NUMBER_RPS,
         issueDate: getCurrentFormattedDate(),
       };
     }
+    /* @kvoip-woulz proprietary:end */
 
     return {
       id: latestNFSe.id,

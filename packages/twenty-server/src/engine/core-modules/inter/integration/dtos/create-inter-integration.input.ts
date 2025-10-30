@@ -1,6 +1,6 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
 @InputType()
 export class CreateInterIntegrationInput {
@@ -32,6 +32,11 @@ export class CreateInterIntegrationInput {
   @Field()
   @IsString()
   @IsNotEmpty()
+  /* @kvoip-woulz proprietary:begin */
+  @Matches(/^\d{8}-\d{2}$/, {
+    message: 'Current account must be in the format: 00000000-00',
+  })
+  /* @kvoip-woulz proprietary:end */
   currentAccount: string;
 
   @Field({ defaultValue: 'active' })
