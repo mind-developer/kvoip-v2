@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  Optional,
-} from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -12,18 +7,11 @@ import { randomUUID } from 'crypto';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
-import axios, { AxiosInstance, AxiosResponse, isAxiosError } from 'axios';
 import { InterBillingChargeFileEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { JsonContains, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import {
-  InterChargeErrorResponse,
-  InterChargeRequest,
-  InterChargeResponse,
-  InterGetChargePDFResponse,
-} from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
 import {
   BillingException,
@@ -36,10 +24,9 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
-import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
+import { InterApiClientService } from 'src/engine/core-modules/inter/services/inter-api-client.service';
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -49,24 +36,20 @@ import { isDefined } from 'twenty-shared/utils';
 @Injectable()
 export class InterService {
   private readonly logger = new Logger(InterService.name);
-  private readonly interInstance: AxiosInstance;
 
   constructor(
     @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(BillingCharge)
     private readonly billingChargeRepository: Repository<BillingCharge>,
-    // TODO: Check if this breaks anything
     @Optional()
     private readonly interIntegrationService: InterIntegrationService,
-    private readonly interInstanceService: InterInstanceService,
+    private readonly interApiClient: InterApiClientService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
-  ) {
-    this.interInstance = this.interInstanceService.getInterAxiosInstance();
-  }
+  ) {}
 
   async createBolepixCharge({
     customer,
@@ -118,131 +101,83 @@ export class InterService {
       return bankSlipFileLink;
     }
 
-    try {
-      // TODO: Move this to a inter service to handle token call, session recriation and other inter related operations.
-      const token = await this.interInstanceService.getOauthToken();
+    const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
 
-      const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
+    const dueDate = getNextBusinessDays(5);
 
-      const dueDate = getNextBusinessDays(5);
+    // TODO: Check if there already a pending payment for the current workspace
+    //  before creating another charge since it will fail anyways if that's the case.
+    const response = await this.interApiClient.createCharge({
+      seuNumero: chargeCode,
+      // TODO: Add a number prop in the billing price entity
+      valorNominal: getPriceFromStripeDecimal(planPrice).toString(),
+      dataVencimento: dueDate,
+      numDiasAgenda: '5',
+      pagador: {
+        cpfCnpj: document,
+        tipoPessoa: legalEntity,
+        nome: name,
+        endereco: address,
+        cidade: city,
+        uf: stateUnity,
+        cep,
+      },
+    });
 
-      // TODO: Check if there aready a pending payment for the curent workspace before creating another charge since it will fail anyways if that's the case.
-      const response = await this.interInstance.post<
-        InterChargeResponse,
-        AxiosResponse<InterChargeResponse, InterChargeRequest>,
-        InterChargeRequest
-      >(
-        '/cobranca/v3/cobrancas',
-        {
-          seuNumero: chargeCode,
-          // TODO: Add a number prop in the billing price entity
-          valorNominal: getPriceFromStripeDecimal(planPrice).toString(),
-          dataVencimento: dueDate,
-          numDiasAgenda: '5',
-          pagador: {
-            cpfCnpj: document,
-            tipoPessoa: legalEntity,
-            nome: name,
-            endereco: address,
-            cidade: city,
-            uf: stateUnity,
-            cep,
-          },
+    const interChargeCode = response.codigoSolicitacao;
+    /* @kvoip-woulz proprietary:end */
+
+    assert(
+      isDefined(interChargeCode),
+      `Failed to get payment charge id from Inter, got: ${interChargeCode}`,
+    );
+
+    // TODO: We should move this part to the queue system given at this point
+    // the charge is already created and we are just getting the PDF and saving it to the database.
+    this.logger.log(
+      `Bolepix code for workspace: ${workspaceId}: ${interChargeCode}`,
+    );
+
+    const bolepixFilePath = await this.getChargePdf({
+      interChargeId: interChargeCode,
+      workspaceId,
+    });
+
+    await this.billingChargeRepository.upsert(
+      {
+        chargeCode,
+        dueDate,
+        interBillingChargeFilePath: bolepixFilePath,
+        metadata: {
+          planKey,
+          workspaceId,
+          interChargeCode,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      },
+      {
+        conflictPaths: ['chargeCode'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
-      const interChargeCode = response.data.codigoSolicitacao;
+    await this.billingCustomerRepository.update(customer.id, {
+      interBillingChargeId: chargeCode,
+      currentInterBankSlipChargeFilePath: bolepixFilePath,
+    });
 
-      assert(
-        isDefined(interChargeCode),
-        `Failed to get payment charge id from Inter, got: ${interChargeCode}`,
-      );
+    const bankSlipFileLink = this.getFileLinkFromPath(
+      bolepixFilePath,
+      workspaceId,
+    );
 
-      // TODO: We should move this to the queue system
-      this.logger.log(
-        `Bolepix code for workspace: ${workspaceId}: ${interChargeCode}`,
-      );
+    await this.sendBankSkipFileEmail({
+      fileLink: bankSlipFileLink,
+      userEmail,
+      locale,
+      interChargeCode,
+    });
 
-      const bolepixFilePath = await this.getChargePdf({
-        interChargeId: interChargeCode,
-        workspaceId,
-      });
-
-      await this.billingChargeRepository.upsert(
-        {
-          chargeCode,
-          dueDate,
-          interBillingChargeFilePath: bolepixFilePath,
-          metadata: {
-            planKey,
-            workspaceId,
-            interChargeCode,
-          },
-        },
-        {
-          conflictPaths: ['chargeCode'],
-          skipUpdateIfNoValuesChanged: true,
-        },
-      );
-
-      await this.billingCustomerRepository.update(customer.id, {
-        interBillingChargeId: chargeCode,
-        currentInterBankSlipChargeFilePath: bolepixFilePath,
-      });
-
-      const bankSlipFileLink = this.getFileLinkFromPath(
-        bolepixFilePath,
-        workspaceId,
-      );
-
-      await this.sendBankSkipFileEmail({
-        fileLink: bankSlipFileLink,
-        userEmail,
-        locale,
-        interChargeCode,
-      });
-
-      return bankSlipFileLink;
-    } catch (e) {
-      // TODO: Create exception filter for inter API Errors
-      const isInterApiError = isAxiosError<InterChargeErrorResponse>(e);
-
-      if (isInterApiError) {
-        this.logger.error(
-          'Inter Charge Response data: ',
-          e.response?.data ?? e,
-        );
-
-        if (e.response?.data.violacoes) {
-          this.logger.error(e.response?.data.violacoes?.toString());
-
-          (e as unknown as BaseGraphQLError).extensions =
-            e.response?.data.violacoes;
-        }
-
-        throw new InternalServerErrorException(
-          e.response?.data.title || 'Failed to create Bolepix billing',
-          {
-            description: e.response?.data.detail || 'No details provided',
-          },
-        );
-      }
-
-      this.logger.error('Unexpected error creating Bolepix billing');
-
-      throw new InternalServerErrorException(
-        'Failed to create Bolepix billing',
-        {
-          description: e?.message || 'No error message provided',
-        },
-      );
-    }
+    return bankSlipFileLink;
   }
 
   async getChargePdf({
@@ -252,23 +187,13 @@ export class InterService {
     workspaceId: string;
     interChargeId: string;
   }): Promise<string> {
-    const token = await this.interInstanceService.getOauthToken();
-
-    const response = await this.interInstance.get<InterGetChargePDFResponse>(
-      `/cobranca/v3/cobrancas/${interChargeId}/pdf`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    const pdfBase64 = await this.interApiClient.getChargePdf(interChargeId);
 
     const fileFolder = FileFolder.BillingSubscriptionBill;
 
     // TODO: Check if there is are any existing files for this workspace and remove them before uploading a new one
     const { files } = await this.fileUploadService.uploadFile({
-      file: Buffer.from(response.data.pdf, 'base64'),
+      file: Buffer.from(pdfBase64, 'base64'),
       filename: `bolepix-${interChargeId}-${workspaceId}.pdf`,
       mimeType: 'application/pdf',
       fileFolder,
@@ -280,18 +205,8 @@ export class InterService {
     return files[0].path;
   }
 
-  async getAccountBalance(integration: InterIntegration) {
-    try {
-      const response = await axios.get('https://api.inter.com.br/v1/balance', {
-        headers: this.getAuthHeaders(integration),
-      });
-
-      return response.data;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to get balance from Inter',
-      );
-    }
+  async getAccountBalance(_integration: InterIntegration) {
+    return await this.interApiClient.getAccountBalance();
   }
 
   async getAccountInfo(integrationId: string) {
@@ -302,17 +217,7 @@ export class InterService {
       throw new Error('Integration not found');
     }
 
-    try {
-      const response = await axios.get('https://api.inter.com.br/v1/account', {
-        headers: this.getAuthHeaders(integration),
-      });
-
-      return response.data;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to get account info from Inter',
-      );
-    }
+    return await this.interApiClient.getAccountInfo();
   }
 
   async syncData(integrationId: string) {
@@ -323,12 +228,8 @@ export class InterService {
       throw new Error('Integration not found');
     }
 
-    try {
-      // Implemente a lógica de sincronização com o Banco Inter
-      return true;
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to sync with Inter');
-    }
+    // Implemente a lógica de sincronização com o Banco Inter
+    return true;
   }
 
   async validateCustomerChargeData(customer: BillingCustomer) {
@@ -406,52 +307,22 @@ export class InterService {
   }: {
     interChargeCode: string;
   }): Promise<{ success: boolean }> {
-    try {
-      const isSandbox = [
-        NodeEnvironment.DEVELOPMENT,
-        NodeEnvironment.TEST,
-      ].includes(this.twentyConfigService.get('NODE_ENV'));
+    const isSandbox = [
+      NodeEnvironment.DEVELOPMENT,
+      NodeEnvironment.TEST,
+    ].includes(this.twentyConfigService.get('NODE_ENV'));
 
-      if (!isSandbox) {
-        throw new Error(
-          'This endpoint is only available in development/test mode',
-        );
-      }
-
-      const token = await this.interInstanceService.getOauthToken();
-
-      await this.interInstance.post(
-        `/cobranca/v3/cobrancas/${interChargeCode}/pagar`,
-        {
-          pagarCom: 'BOLETO',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      return {
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Boleto payment failed for inter charge ${interChargeCode}`,
-        error,
-      );
-
-      if (isAxiosError(error)) {
-        throw new InternalServerErrorException(
-          `Inter API error: ${error.response?.data?.message || error.message}`,
-        );
-      }
-
-      throw new InternalServerErrorException(
-        'Unexpected error paying billing charge',
+    if (!isSandbox) {
+      throw new Error(
+        'This endpoint is only available in development/test mode',
       );
     }
+
+    await this.interApiClient.payCharge(interChargeCode);
+
+    return {
+      success: true,
+    };
   }
 
   getFileLinkFromPath(filePath: string, workspaceId: string) {
@@ -463,13 +334,5 @@ export class InterService {
     });
 
     return `${baseUrl}/files/${signedPath}`;
-  }
-
-  private getAuthHeaders(integration: InterIntegration) {
-    return {
-      'x-inter-client-id': integration.clientId,
-      'x-inter-client-secret': integration.clientSecret,
-      'Content-Type': 'application/json',
-    };
   }
 }
