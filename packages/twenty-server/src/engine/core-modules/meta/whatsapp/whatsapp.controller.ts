@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/meta/whatsapp/utils/mediaUtils';
 
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { v4 } from 'uuid';
@@ -28,6 +29,7 @@ import { v4 } from 'uuid';
 @Controller('whatsapp')
 export class WhatsappController {
   protected readonly logger = new Logger(WhatsappController.name);
+  private SERVER_URL: string;
 
   constructor(
     private twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -35,7 +37,10 @@ export class WhatsappController {
     private readonly fileMetadataService: FileMetadataService,
     private readonly fileService: FileService,
     private readonly chatMessageManagerService: ChatMessageManagerService,
-  ) {}
+    private readonly environmentService: TwentyConfigService,
+  ) {
+    this.SERVER_URL = this.environmentService.get('SERVER_URL');
+  }
 
   @Get('/webhook/:workspaceId/:id')
   @UseGuards(PublicEndpointGuard)
@@ -86,7 +91,10 @@ export class WhatsappController {
   ) {
     const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
     const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
-    console.log(body.entry[0].changes[0].value);
+    console.log(
+      'body',
+      JSON.stringify(body.entry[0].changes[0].value, null, 2),
+    );
 
     if (statuses) {
       for (const status of statuses) {
@@ -120,7 +128,7 @@ export class WhatsappController {
       if (mediaId) {
         fileUrl =
           (await this.whatsappService.downloadMedia(
-            mediaId,
+            mediaId.id,
             integrationId,
             msg.from,
             workspaceId,

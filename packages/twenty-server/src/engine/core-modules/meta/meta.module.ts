@@ -13,6 +13,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
+import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,6 +40,7 @@ import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-
   controllers: [WhatsappController],
   providers: [
     WhatsAppService,
+    WhatsappResolver,
     ChatMessageManagerService,
     JwtService,
     JwtWrapperService,

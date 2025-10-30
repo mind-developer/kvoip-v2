@@ -33,6 +33,7 @@ export const whatsAppMessageToClientChatMessage = (
     repliesTo: null,
     templateId: null,
     templateLanguage: null,
+    templateName: null,
     // If message is not coming from the client, this means the chat is assigned to an agent
     // (since you can't send messages unless you are assigned to a chat),
     // which is who sent it

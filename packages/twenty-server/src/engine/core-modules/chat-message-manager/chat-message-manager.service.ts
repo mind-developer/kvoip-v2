@@ -139,6 +139,17 @@ export class ChatMessageManagerService {
       this.logger.error('Client chat not found');
       return null;
     }
+    if (clientChatMessage.type === ChatMessageType.TEMPLATE) {
+      await this.getProviderDriver(
+        clientChatMessage.provider,
+      ).sendTemplateMessage(
+        clientChatMessage,
+        workspaceId,
+        providerIntegrationId,
+        clientChat,
+      );
+      return v4();
+    }
     if (clientChat.status !== ClientChatStatus.ASSIGNED) {
       this.logger.error('Client chat not assigned');
       return null;
@@ -613,6 +624,7 @@ export class ChatMessageManagerService {
         repliesTo: null,
         templateId: null,
         templateLanguage: null,
+        templateName: null,
       },
       workspaceId,
       clientChat.whatsappIntegrationId ?? '',

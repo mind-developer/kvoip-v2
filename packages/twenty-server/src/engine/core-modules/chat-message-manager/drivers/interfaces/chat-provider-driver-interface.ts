@@ -11,4 +11,10 @@ export interface ChatProviderDriver {
     providerIntegrationId: string,
     clientChat: ClientChatWorkspaceEntity,
   ): Promise<ProviderMessageId>;
+  sendTemplateMessage(
+    clientChatMessage: Omit<ClientChatMessage, 'providerMessageId'>,
+    workspaceId: string,
+    providerIntegrationId: string,
+    clientChat: ClientChatWorkspaceEntity,
+  ): Promise<ProviderMessageId>;
 }

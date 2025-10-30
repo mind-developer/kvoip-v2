@@ -60,18 +60,36 @@ export const processBase64Media = async (
   }
 };
 
-export const extractMediaId = (msg: any): string | undefined => {
+export const extractMediaId = (
+  msg: any,
+): { id: string; mimeType: string; fileExtension: string } | undefined => {
   const msgType = msg.type.toUpperCase();
 
   switch (msgType) {
     case 'IMAGE':
-      return msg.image.id;
+      return {
+        id: msg.image.id,
+        mimeType: msg.image.mime_type || 'image/jpeg',
+        fileExtension: '.jpg',
+      };
     case 'AUDIO':
-      return msg.audio.id;
+      return {
+        id: msg.audio.id,
+        mimeType: msg.audio.mime_type || 'audio/mpeg',
+        fileExtension: '.mp3',
+      };
     case 'DOCUMENT':
-      return msg.document.id;
+      return {
+        id: msg.document.id,
+        mimeType: msg.document.mime_type || 'application/pdf',
+        fileExtension: '.pdf',
+      };
     case 'VIDEO':
-      return msg.video.id;
+      return {
+        id: msg.video.id,
+        mimeType: msg.video.mime_type || 'video/mp4',
+        fileExtension: '.mp4',
+      };
     default:
       return undefined;
   }

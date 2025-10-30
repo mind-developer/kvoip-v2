@@ -236,6 +236,7 @@ export class WhatsAppService {
           repliesTo: null,
           templateId: null,
           templateLanguage: null,
+          templateName: null,
         };
 
         let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
@@ -398,6 +399,27 @@ export class WhatsAppService {
 
       data.url = data.url.replace(/\\/g, '');
       data.mime_type = data.mime_type.replace(/\\/g, '');
+      let ext = '';
+      switch (data.mime_type) {
+        case 'image/jpeg':
+          ext = '.jpg';
+          break;
+        case 'image/png':
+          ext = '.png';
+          break;
+        case 'application/pdf':
+          ext = '.pdf';
+          break;
+        case 'audio/mpeg':
+          ext = '.mp3';
+          break;
+        case 'video/mp4':
+          ext = '.mp4';
+          break;
+        default:
+          ext = '.bin';
+          break;
+      }
 
       const mediaResponse = await axios.get(data.url, {
         headers: {
@@ -412,7 +434,7 @@ export class WhatsAppService {
         url: (
           await this.fileMetadataService.createFile({
             file: mediaBuffer,
-            filename: `${phoneNumber}_${v4()}`,
+            filename: `${phoneNumber}_${v4()}${ext}`,
             mimeType: data.mime_type,
             workspaceId,
           })
@@ -420,7 +442,7 @@ export class WhatsAppService {
         workspaceId,
       });
 
-      return fileUrl;
+      return this.environmentService.get('SERVER_URL') + '/files/' + fileUrl;
     } catch (error) {
       const err = `Error downloading media: ${error.message}`;
 
