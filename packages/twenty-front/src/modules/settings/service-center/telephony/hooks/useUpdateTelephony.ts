@@ -37,9 +37,10 @@ export const useUpdateTelephony = (): UseEditTelephonyReturn => {
       });
     } catch (err) {
       // TODO: Add proper error message
-      enqueueErrorSnackBar({
-        message: (error as Error).message,
-      });
+      // enqueueErrorSnackBar({
+      //   message: (error as Error).message,
+      // });
+      throw err;
     }
   };
 

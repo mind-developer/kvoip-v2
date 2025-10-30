@@ -2279,7 +2279,7 @@ msgstr "Defina o que será visível para outros utilizadores no seu espaço de t
 #. js-lingui-id: HNlEFZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
-msgstr "eliminar"
+msgstr "excluir"
 
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2299,12 +2299,12 @@ msgstr "eliminar"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
-msgstr "Eliminar"
+msgstr "Excluir"
 
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Delete {objectLabelPlural}"
-msgstr "Eliminar {objectLabelPlural}"
+msgstr "Excluir {objectLabelPlural}"
 
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2312,12 +2312,12 @@ msgstr "Eliminar {objectLabelPlural}"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
-msgstr "Eliminar conta"
+msgstr "Excluir conta"
 
 #. js-lingui-id: gAz0S5
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
-msgstr "Eliminar conta e todos os dados associados"
+msgstr "Excluir conta e todos os dados associados"
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -2329,7 +2329,7 @@ msgstr "Excluir Agente"
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
-msgstr "Eliminar chave API"
+msgstr "Excluir chave API"
 
 #. js-lingui-id: YLfVFw
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
@@ -2349,7 +2349,7 @@ msgstr ""
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
-msgstr "Eliminar registos"
+msgstr "Excluir registos"
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2359,7 +2359,7 @@ msgstr "Excluir registros em todos os objetos"
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Delete role"
-msgstr "Eliminar função"
+msgstr "Excluir função"
 
 #. js-lingui-id: v41A6S
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
@@ -2374,17 +2374,17 @@ msgstr "Excluir este agente"
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
-msgstr "Eliminar esta integração"
+msgstr "Excluir esta integração"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Delete this role and assign a new role to its members"
-msgstr "Eliminar esta função e atribuir uma nova função aos seus membros"
+msgstr "Excluir esta função e atribuir uma nova função aos seus membros"
 
 #. js-lingui-id: KSOhjo
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete this webhook"
-msgstr "Eliminar este webhook"
+msgstr "Excluir este webhook"
 
 #. js-lingui-id: jPvFKE
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -2399,28 +2399,28 @@ msgstr "Excluir vista"
 #. js-lingui-id: snMaH4
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete webhook"
-msgstr "Eliminar webhook"
+msgstr "Excluir webhook"
 
 #. js-lingui-id: UA2IpC
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
-msgstr "Eliminar workflow"
+msgstr "Excluir workflow"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflows"
-msgstr "Eliminar workflows"
+msgstr "Excluir workflows"
 
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr "Eliminar espaço de trabalho"
+msgstr "Excluir espaço de trabalho"
 
 #. js-lingui-id: mk2Ygs
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr "Eliminar todo o seu espaço de trabalho"
+msgstr "Excluir todo o seu espaço de trabalho"
 
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2996,7 +2996,7 @@ msgstr "Erro ao copiar para a área de transferência"
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key."
-msgstr "Erro ao eliminar a chave API."
+msgstr "Erro ao Excluir a chave API."
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5720,7 +5720,7 @@ msgstr "Digite \"{confirmationValue}\" para confirmar que deseja excluir esta ch
 #. js-lingui-id: GbtYRD
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
-msgstr "Digite \"sim\" para confirmar que deseja eliminar este webhook."
+msgstr "Digite \"sim\" para confirmar que deseja Excluir este webhook."
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7338,17 +7338,17 @@ msgstr "Terceiro"
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente este utilizador e removê-lo-á de todas as suas atribuições."
+msgstr "Esta ação não pode ser desfeita. Isto Excluirá permanentemente este utilizador e removê-lo-á de todas as suas atribuições."
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
-msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente o seu agente.<0/>Por favor, digite o nome do agente para confirmar."
+msgstr "Esta ação não pode ser desfeita. Isto Excluirá permanentemente o seu agente.<0/>Por favor, digite o nome do agente para confirmar."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
-msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente todo o seu espaço de trabalho. <0/> Por favor, digite o seu e-mail para confirmar."
+msgstr "Esta ação não pode ser desfeita. Isto Excluirá permanentemente todo o seu espaço de trabalho. <0/> Por favor, digite o seu e-mail para confirmar."
 
 #. js-lingui-id: igSFzI
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx

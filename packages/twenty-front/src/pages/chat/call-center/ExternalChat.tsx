@@ -8,6 +8,7 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import styled from '@emotion/styled';
 // eslint-disable-next-line no-restricted-imports
 import { IconBrandWechat } from '@tabler/icons-react';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const StyledMainContainer = styled.div`
@@ -21,6 +22,9 @@ export const CallCenter = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const onesignalAppId = currentWorkspace?.onesignalAppId ?? undefined;
   useDynamicOneSignal({ onesignalAppId });
+
+  // Get chatId from URL params
+  const { chatId } = useParams<{ chatId: string }>();
 
   return (
     <PageContainer>

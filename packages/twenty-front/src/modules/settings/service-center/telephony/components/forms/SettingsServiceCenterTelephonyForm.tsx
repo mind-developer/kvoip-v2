@@ -3,10 +3,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   areaCodeOptions,
   dontFowardOptions,
-  extensionGroupOptions,
   fowardAllCallsOptions,
   pullCallsOptions,
-  typeOptions,
+  typeOptions
 } from '@/settings/service-center/telephony/components/forms/options';
 import { useFindAllDialingPlans } from '@/settings/service-center/telephony/hooks/useFindAllDialingPlans';
 import { useFindAllDids } from '@/settings/service-center/telephony/hooks/useFindAllDids';
@@ -243,11 +242,11 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
       type: activeTelephony.type,
       blockExtension: activeTelephony.blockExtension,
       externalNumberAllCallsOrOffline:
-        activeTelephony.externalNumberAllCallsOrOffline,
+      activeTelephony.externalNumberAllCallsOrOffline,
       externalNumberBusy: activeTelephony.externalNumberBusy,
       extensionBusy: activeTelephony.extensionBusy,
       destinyMailBoxAllCallsOrOffline:
-        activeTelephony.destinyMailboxAllCallsOrOffline,
+      activeTelephony.destinyMailboxAllCallsOrOffline,
       destinyMailBoxBusy: activeTelephony.destinyMailboxBusy,
       advancedFowarding1: activeTelephony.advancedFowarding1,
       advancedFowarding2: activeTelephony.advancedFowarding2,
@@ -534,6 +533,7 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <TextInput
                 fullWidth
+                disabled={!!activeTelephony}
                 value={value}
                 onChange={(val) => {
                   onChange(val);
@@ -565,7 +565,8 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
             )}
           />
         </Section>
-        <Section>
+        {/* Removido devido a não haver meios na api para manipular os grupos de ramais */}
+        {/* <Section>
           <Controller
             control={control}
             name="extensionGroup"
@@ -582,7 +583,7 @@ export const SettingsServiceCenterTelephonyAboutForm = ({
               />
             )}
           />
-        </Section>
+        </Section> */}
         <Section>
           <Controller
             control={control}

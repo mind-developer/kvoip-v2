@@ -1,11 +1,18 @@
-import { MessageStatus } from '@/chat/call-center/types/MessageStatus';
+import {
+  getMessageContent,
+  getMessageDisplayType,
+  isMessageFromAgent,
+} from '@/chat/call-center/utils/clientChatMessageHelpers';
 import { MessageType } from '@/chat/types/MessageType';
-import { IMessage } from '@/chat/types/WhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChecks, IconClock, IconTrash } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
+import {
+  ChatMessageDeliveryStatus,
+  ClientChatMessage,
+} from 'twenty-shared/types';
 import { IconCheck } from 'twenty-ui/display';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../call-center/constants/ATTEMPTING_MESSAGE_KEYFRAMES';
 
@@ -14,11 +21,10 @@ const StyledMessageBubbleContainer = styled(motion.div)<{
   messageType: string;
   fromMe: boolean;
   hasTail: boolean;
-  status: MessageStatus;
+  isPending: boolean;
 }>`
   ${({ messageType }) => (messageType === 'image' ? 'max-width: 200px;' : '')}
   position: relative;
-  align-self: ${({ fromMe }) => (fromMe ? 'flex-end' : 'flex-start')};
 
   background: ${({ fromMe, theme }) =>
     fromMe
@@ -71,8 +77,7 @@ const StyledMessageBubbleContainer = styled(motion.div)<{
     border-bottom-${fromMe ? 'left' : 'right'}-radius: 5px;
   }
 `}
-  ${({ status }) =>
-    status === 'attempting' ? ATTEMPTING_MESSAGE_KEYFRAMES : ''}
+  ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
 
   @keyframes popup {
     0% {
@@ -115,38 +120,44 @@ export const StyledMessageBubble = ({
   customButton,
 }: {
   children: ReactNode;
-  message: IMessage;
+  message: ClientChatMessage;
   time: string;
   hasTail: boolean;
   customButton?: ReactNode;
 }) => {
   const theme = useTheme();
+  const fromMe = isMessageFromAgent(message);
+  const messageContent = getMessageContent(message);
+  const messageType = getMessageDisplayType(message);
+  const isPending =
+    message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
 
   let StatusIcon = IconCheck;
   let statusColor = theme.background.invertedPrimary;
 
-  switch (message.status) {
-    case 'attempting':
+  switch (message.deliveryStatus) {
+    case ChatMessageDeliveryStatus.PENDING:
       StatusIcon = IconClock;
       break;
-    case 'read':
+    case ChatMessageDeliveryStatus.READ:
       statusColor = theme.name === 'dark' ? '#08a5e9' : '#1B8BF7';
       StatusIcon = IconChecks;
       break;
-    case 'delivered':
+    case ChatMessageDeliveryStatus.DELIVERED:
       StatusIcon = IconChecks;
       break;
-    case 'deleted':
+    case ChatMessageDeliveryStatus.FAILED:
       StatusIcon = IconTrash;
+      break;
   }
 
   return (
     <StyledMessageBubbleContainer
-      messageText={message.message ?? ''}
-      messageType={message.type}
-      fromMe={message.fromMe}
+      messageText={messageContent}
+      messageType={messageType}
+      fromMe={fromMe}
       hasTail={hasTail}
-      status={message.status}
+      isPending={isPending}
       initial={{ translateY: 10 }}
       animate={{
         translateY: 0,
@@ -160,11 +171,9 @@ export const StyledMessageBubble = ({
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {children} <>{customButton}</>
       </div>
-      <StyledTime messageType={message.type as MessageType}>
+      <StyledTime messageType={messageType}>
         {time}
-        {message.fromMe && message.status === 'attempting' && (
-          <StatusIcon size={12} color={statusColor} />
-        )}
+        {fromMe && <StatusIcon size={14} color={statusColor} />}
       </StyledTime>
     </StyledMessageBubbleContainer>
   );

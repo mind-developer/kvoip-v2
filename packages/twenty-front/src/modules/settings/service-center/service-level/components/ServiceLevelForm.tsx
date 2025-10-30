@@ -1,4 +1,3 @@
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/FindWhatsappIntegrationInput';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useEffect } from 'react';
@@ -30,7 +29,6 @@ export const ServiceLevelForm = ({ activeSla }: ServiceLevelFormProps) => {
   const { control, reset } =
     useFormContext<SettingsServiceCenterSLAFormSchemaValues>();
 
-  const { refetchWhatsapp } = useFindAllWhatsappIntegrations();
   // const { refetchMessenger } = useGetAllMessengerIntegrations();
 
   useEffect(() => {
@@ -39,12 +37,6 @@ export const ServiceLevelForm = ({ activeSla }: ServiceLevelFormProps) => {
       reset({ sla: activeSla.sla });
     }
   }, [activeSla, reset]);
-
-  useEffect(() => {
-    refetchWhatsapp();
-    // refetchMessenger();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Section>

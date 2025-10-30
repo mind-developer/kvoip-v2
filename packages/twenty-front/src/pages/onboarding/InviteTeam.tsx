@@ -104,15 +104,15 @@ export const InviteTeam = () => {
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
-      return 'tim@apple.com';
+      return 'fulano@example.com';
     }
     if (emailIndex === 1) {
-      return 'phil@apple.com';
+      return 'ciclano@example.com';
     }
     if (emailIndex === 2) {
-      return 'jony@apple.com';
+      return 'beltrano@example.com';
     }
-    return 'craig@apple.com';
+    return 'outro@example.com';
   };
 
   const copyInviteLink = () => {

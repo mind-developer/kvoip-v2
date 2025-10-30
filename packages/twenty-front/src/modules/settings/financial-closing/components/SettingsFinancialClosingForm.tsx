@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';

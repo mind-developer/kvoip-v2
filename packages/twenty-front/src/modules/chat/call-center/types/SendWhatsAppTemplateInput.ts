@@ -9,4 +9,5 @@ export interface SendWhatsAppTemplateInput {
     name: string;
     id: string | undefined;
   };
+  type: string;
 }

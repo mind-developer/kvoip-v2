@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Theme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 

@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { CallState } from "../types/callState";
 import { CallStatus } from "../types/callStatusEnum";
 

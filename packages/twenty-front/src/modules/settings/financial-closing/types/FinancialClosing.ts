@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export interface FinancialClosing {
   id: string;
   name: string;

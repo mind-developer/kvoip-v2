@@ -1519,6 +1519,25 @@ export class ConfigVariables {
   KVOIP_ADMIN_INVITE_HASH: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Softphone soap username.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_USERNAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Soap password.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_PASSWORD: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: '',
     isSensitive: false,

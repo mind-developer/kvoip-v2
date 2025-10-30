@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { gql } from '@apollo/client';
 
 export const UPDATE_FINANCIAL_CLOSING = gql`

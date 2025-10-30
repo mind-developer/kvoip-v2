@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export interface CreateFinancialClosingInput {
   name: string;
   lastDayMonth: boolean;

@@ -3,6 +3,7 @@ import { type RATING_VALUES } from '@/object-record/record-field/ui/meta-types/c
 import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
+  ChatIntegrationProvider,
   ConnectedAccountProvider,
   type AllowedAddressSubField,
 } from 'twenty-shared/types';
@@ -297,6 +298,7 @@ const FieldActorSourceSchema = z.union([
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
   z.literal('WEBHOOK'),
+  z.literal('CHAT'),
 ]);
 
 export const FieldActorValueSchema = z.object({
@@ -306,6 +308,7 @@ export const FieldActorValueSchema = z.object({
   context: z
     .object({
       provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+      chatProvider: z.nativeEnum(ChatIntegrationProvider).optional(),
     })
     .nullable(),
 });

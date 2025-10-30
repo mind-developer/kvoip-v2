@@ -1,18 +1,14 @@
 import { Logger } from '@nestjs/common';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { SaveChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
-import { ChatIntegrationProviders } from 'src/engine/core-modules/chat-message-manager/types/integrationProviders';
-import { SaveChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
+import { SaveClientChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
+import { SaveClientChatMessageJobData } from 'src/engine/core-modules/chat-message-manager/types/saveChatMessageJobData';
 import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  SendWhatsAppMessageInput,
-  SendWhatsAppTemplateInput,
-} from 'src/engine/core-modules/meta/whatsapp/dtos/send-whatsapp-message.input';
+import { ChatMessageType } from 'twenty-shared/types';
 
 @Processor(MessageQueue.chatMessageManagerSendMessageQueue)
 export class SendChatMessageJob {
@@ -25,41 +21,30 @@ export class SendChatMessageJob {
 
   @Process(SendChatMessageJob.name)
   async handle(data: SendChatMessageQueueData): Promise<void> {
-    await this[data.chatType](data);
+    await this[data.clientChatMessage.provider](data);
   }
 
-  async whatsApp(data: SendChatMessageQueueData) {
-    console.log('sending', data.sendMessageInput.message);
-    const d: [
-      Omit<SendWhatsAppMessageInput | SendWhatsAppTemplateInput, 'personId'>,
-      string,
-    ] = [data.sendMessageInput, data.workspaceId];
-    switch (data.sendMessageInput.type) {
-      case 'template':
-        const template =
-          await this.chatMessageManagerService.sendWhatsAppTemplate(
-            ...(d as [SendWhatsAppTemplateInput, string]),
-          );
+  async whatsapp(data: SendChatMessageQueueData) {
+    switch (data.clientChatMessage.type) {
+      case ChatMessageType.TEMPLATE:
+        //TODO: IMPLEMENT
         break;
       //more cases here in the future if needed
       default:
         const response =
-          await this.chatMessageManagerService.sendWhatsAppMessage(...d);
+          await this.chatMessageManagerService.sendWhatsAppMessage(
+            data.clientChatMessage,
+            data.providerIntegrationId,
+            data.workspaceId,
+          );
         if (response) {
           //message id is returned in response object
-          this.logger.log(
-            '(sendWhatsAppMessage): Sent message: ',
-            JSON.stringify(data.sendMessageInput),
-          );
-          this.saveMessageQueue.add<SaveChatMessageJobData>(
-            SaveChatMessageJob.name,
+          this.saveMessageQueue.add<SaveClientChatMessageJobData>(
+            SaveClientChatMessageJob.name,
             {
-              chatType: ChatIntegrationProviders.WhatsApp,
-              saveMessageInput: {
-                ...data.sendMessageInput,
-                id: response.messages[0]?.id ?? null,
-                fromMe: !!data.sendMessageInput.fromMe,
-                recipientPpUrl: null,
+              chatMessage: {
+                ...data.clientChatMessage,
+                providerMessageId: response.id,
               },
               workspaceId: data.workspaceId,
             },
@@ -67,5 +52,11 @@ export class SendChatMessageJob {
         }
     }
     return true;
+  }
+  async messenger(data: SendChatMessageQueueData) {
+    //TODO: IMPLEMENT
+  }
+  async telegram(data: SendChatMessageQueueData) {
+    //TODO: IMPLEMENT
   }
 }

@@ -18,6 +18,7 @@ type SettingsNavigationCardProps = {
 const StyledCard = styled(Card)`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledCardContent = styled(CardContent)`

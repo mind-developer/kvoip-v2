@@ -1,5 +1,4 @@
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { SettingsServiceCenterSectorTopicSelect } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorTopicSelect';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -28,7 +27,6 @@ const sectorMetadataFormSchema = z.object({
 export const SettingsSectorFormSchema = sectorMetadataFormSchema.pick({
   icon: true,
   name: true,
-  topics: true,
 });
 
 export type SettingsSectorFormSchemaValues = z.infer<
@@ -65,8 +63,6 @@ export const SettingsServiceCenterSectorAboutForm = ({
   disableNameEdit,
   activeSector,
 }: SettingsServiceCenterSectorAboutFormProps) => {
-  // const { t } = useTranslation();
-
   const { control, reset } = useFormContext<SettingsSectorFormSchemaValues>();
 
   useEffect(() => {
@@ -74,10 +70,8 @@ export const SettingsServiceCenterSectorAboutForm = ({
     if (activeSector) {
       reset({
         id: activeSector.id ?? '',
-        icon: activeSector.icon ?? 'IconListNumbers',
+        icon: activeSector.icon ?? 'IconBadge',
         name: activeSector.name ?? '',
-        topics: activeSector.topics ?? [],
-        workspaceId: activeSector.workspace.id ?? '',
       });
     }
   }, [activeSector, reset]);
@@ -116,9 +110,6 @@ export const SettingsServiceCenterSectorAboutForm = ({
             )}
           />
         </StyledInputsContainer>
-      </Section>
-      <Section>
-        <SettingsServiceCenterSectorTopicSelect />
       </Section>
     </>
   );

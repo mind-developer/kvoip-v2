@@ -1,57 +1,74 @@
 class RingToneManager {
-  private audio: HTMLAudioElement;
   private callAudio: HTMLAudioElement;
   private interval: ReturnType<typeof setTimeout> | null = null;
   private isPlaying = false;
+  private selectedRingDevice: string = '';
+  private lastDeviceId: string = '';
 
   constructor() {
-    this.audio = new Audio('https://kvoip.com.br/ring.mp3');
     this.callAudio = new Audio('https://kvoip.com.br/toquedechamada.mp3');
-    this.audio.load();
     this.callAudio.load();
-  }
-
-  start() {
-    if (this.isPlaying) return;
-    this.isPlaying = true;
-
-    const playSequence = () => {
-      this.audio.currentTime = 0;
-      this.audio.play().catch(console.error);
-      
-      setTimeout(() => {
-        this.audio.pause();
-      }, 2000);
-    };
-
-    // Primeira execução imediata
-    playSequence();
-
-    // Configura o intervalo para repetir o padrão a cada 3 segundos (2s tocando + 1s pausa)
-    this.interval = setInterval(playSequence, 3000);
-  }
-
-  stop() {
-    if (!this.isPlaying) return;
     
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    // Carregar dispositivo de toque salvo
+    const savedRingDevice = localStorage.getItem('phone_ring_device');
+    if (savedRingDevice) {
+      this.selectedRingDevice = savedRingDevice;
+      this.lastDeviceId = savedRingDevice;
+      this.configureAudioDevice();
     }
-    
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.isPlaying = false;
+  }
+
+  public setRingDevice(deviceId: string) {
+    // Só configura se o dispositivo for diferente do atual
+    if (deviceId !== this.lastDeviceId) {
+      console.log('Configurando novo dispositivo de toque:', deviceId);
+      this.selectedRingDevice = deviceId;
+      this.lastDeviceId = deviceId;
+      this.configureAudioDevice();
+    }
+  }
+
+  private async configureAudioDevice() {
+    if (this.selectedRingDevice && 'setSinkId' in this.callAudio) {
+      try {
+        await (this.callAudio as any).setSinkId(this.selectedRingDevice);
+        console.log('Dispositivo de toque configurado com sucesso:', this.selectedRingDevice);
+      } catch (error) {
+        console.error('Erro ao configurar dispositivo de toque:', error);
+      }
+    }
   }
 
   startCallTone() {
+    if (this.isPlaying) {
+      console.log('Toque já está tocando');
+      return;
+    }
+
+    console.log('Iniciando toque de chamada no dispositivo:', this.selectedRingDevice);
+    if (!this.selectedRingDevice) {
+      console.warn('Nenhum dispositivo de toque selecionado');
+      return;
+    }
+
+    this.isPlaying = true;
     this.callAudio.currentTime = 0;
-    this.callAudio.play().catch(console.error);
+    this.callAudio.play().catch(error => {
+      console.error('Erro ao tocar o toque de chamada:', error);
+      this.isPlaying = false;
+    });
   }
 
   stopCallTone() {
+    if (!this.isPlaying) {
+      console.log('Toque já está parado');
+      return;
+    }
+
+    console.log('Parando toque de chamada');
     this.callAudio.pause();
     this.callAudio.currentTime = 0;
+    this.isPlaying = false;
   }
 }
 

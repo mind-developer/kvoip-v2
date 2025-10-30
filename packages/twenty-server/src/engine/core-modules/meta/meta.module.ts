@@ -1,33 +1,26 @@
 /* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
-import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
-import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
-import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
+import { ChatbotRunnerService } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.service';
+import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
+import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
+import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
+import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
-import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
-import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsappCronCommand } from 'src/engine/core-modules/meta/whatsapp/cron/command/whatsapp.cron.command';
 import { WhatsappEmmitResolvedchatsJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
 import { WhatsappEmmitWaitingStatusJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
-import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
-import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
-import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
-import { Sector } from 'src/engine/core-modules/sector/sector.entity';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
@@ -35,14 +28,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([
-          WhatsappIntegration,
-          Workspace,
-          Inbox,
-          Sector,
-          WorkspaceAgent,
-          ChatbotFlow,
-        ]),
+        NestjsQueryTypeOrmModule.forFeature([Workspace]),
         TypeORMModule,
       ],
     }),
@@ -52,14 +38,9 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
   exports: [WhatsAppService],
   controllers: [WhatsappController],
   providers: [
-    ChatbotFlowService,
-    WhatsappIntegrationService,
-    WhatsappIntegrationResolver,
-    InboxService,
+    ChatbotRunnerService,
     WhatsAppService,
-    WhatsappResolver,
     GoogleStorageService,
-    FirebaseService,
     WhatsappEmmitWaitingStatusJob,
     WhatsappEmmitResolvedchatsJob,
     WhatsappCronCommand,
@@ -68,6 +49,9 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     ImageInputHandler,
     ConditionalInputHandler,
     FileInputHandler,
+    FileService,
+    JwtService,
+    JwtWrapperService,
   ],
 })
 export class MetaModule {}

@@ -12,12 +12,12 @@ import { Dispatch, SetStateAction } from 'react';
 export type CallCenterContextType = {
   selectedChatId: string | null;
   setSelectedChatId: Dispatch<SetStateAction<string | null>>;
-  sortChats: () => void;
+  // sortChats: () => void; // removido - ordenação agora é feita pelo useClientChatWithPerson
   selectedChat: WhatsappDocument | undefined; // | FacebookDocument
   setSelectedChat: Dispatch<SetStateAction<WhatsappDocument | undefined>>;
   TAB_LIST_COMPONENT_ID: string;
   activeTabId: string | null;
-  whatsappChats: WhatsappDocument[];
+  // whatsappChats: WhatsappDocument[]; // removido - agora usando useClientChatWithPerson no PaneSide
   whatsappIntegrations: FindWhatsappIntegration[];
   activeWhatsappIntegrations: FindWhatsappIntegration[];
   startService: () => void;

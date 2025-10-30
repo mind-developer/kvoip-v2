@@ -89,7 +89,15 @@ export const useCreateAppRouter = (
             }
           />
           <Route
-            path={AppPath.ExternalChat}
+            path={AppPath.CallCenter}
+            element={
+              <CallCenterProvider>
+                <CallCenter />
+              </CallCenterProvider>
+            }
+          />
+          <Route
+            path={AppPath.CallCenterChat}
             element={
               <CallCenterProvider>
                 <CallCenter />
