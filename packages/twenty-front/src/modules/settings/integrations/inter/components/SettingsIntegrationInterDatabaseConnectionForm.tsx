@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
-import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
@@ -95,15 +94,14 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
               const validation = getFieldValidation('currentAccount');
 
               return (
-                <MaskedTextInput
+                <TextInput
                   label="Current account"
-                  value={value}
+                  value={value as string}
                   onChange={onChange}
-                  mask={validation?.mask}
-                  placeholder={validation?.placeholder || '00000000-00'}
+                  type="text"
                   disabled={disabled}
+                  placeholder="********-**"
                   fullWidth
-                  error={error?.message}
                 />
               );
             }}
