@@ -174,6 +174,15 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
   repliesTo: string | null;
 
   @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.templateName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Template Name`,
+    description: msg`The name of the template that was used to send the message`,
+  })
+  @WorkspaceIsNullable()
+  templateName: string | null;
+
+  @WorkspaceField({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.templateId,
     type: FieldMetadataType.TEXT,
     label: msg`Template Id`,

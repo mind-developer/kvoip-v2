@@ -671,6 +671,7 @@ export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
   repliesTo: '31b13032-f501-42c1-abca-826ba323ba5e',
   templateId: 'fde7fd83-0271-4950-b1c9-49338d42b1f8',
   templateLanguageCode: 'c50d95f9-4366-4948-84f5-acef072a6a74',
+  templateName: '7073b2e6-6076-4657-a0dc-318100b48fd6',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {

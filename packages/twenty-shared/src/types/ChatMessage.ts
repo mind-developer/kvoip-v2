@@ -37,6 +37,7 @@ export type ClientChatMessage = ChatMessage & {
   event: ClientChatMessageEvent | null;
   templateId: string | null;
   templateLanguage: string | null;
+  templateName: string | null;
 };
 
 export enum ChatMessageFromType {
