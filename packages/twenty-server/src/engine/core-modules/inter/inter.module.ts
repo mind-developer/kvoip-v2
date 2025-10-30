@@ -38,7 +38,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([InterIntegration, Workspace]),
-        WorkspaceModule,
       ],
     }),
     HttpModule,

@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -15,7 +15,6 @@ import { FinancialClosingResolver } from 'src/engine/core-modules/financial-clos
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 
@@ -31,7 +30,6 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
         TypeORMModule,
       ],
     }),
-    forwardRef(() => WorkspaceModule),
     FileModule,
     FileUploadModule,
   ],

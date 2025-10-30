@@ -35,8 +35,7 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
-import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -45,6 +44,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 @Module({
   imports: [
+    InterModule,
     FeatureFlagModule,
     StripeModule,
     FileUploadModule,
@@ -85,8 +85,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
     CheckExpiredSubscriptionsCronCommand,
-    InterInstanceService,
-    InterService,
     KvoipAdminService,
   ],
   exports: [
