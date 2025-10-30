@@ -36,6 +36,11 @@ export class UpdateInterIntegrationInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  currentAccount?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   status: string;
 
   @Field(() => Date, { nullable: true })
