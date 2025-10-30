@@ -50,7 +50,7 @@ export const useEndSubscriptionTrialPeriod = () => {
       });
     } catch {
       enqueueErrorSnackBar({
-        message: t`Error while ending trial period. Please contact Twenty team.`,
+        message: t`Error while ending trial period. Please contact Woulz team.`,
       });
     } finally {
       setIsLoading(false);

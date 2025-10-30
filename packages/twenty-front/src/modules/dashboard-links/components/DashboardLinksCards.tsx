@@ -8,12 +8,6 @@ import {
   IconBrandTwitter,
 } from '@tabler/icons-react';
 
-type CardData = {
-  icon: React.ReactNode;
-  name: string;
-  value: number;
-};
-
 const CardsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};

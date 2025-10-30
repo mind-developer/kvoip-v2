@@ -10,8 +10,9 @@ import { transformDatabaseUserToOwner } from 'src/engine/core-modules/kvoip-admi
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { OwnerWorkspaceEntity } from 'src/modules/workspaces/standard-objects/owner.workspace-entity';
-import { TenantWorkspaceEntity } from 'src/modules/workspaces/standard-objects/tenant.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { OwnerWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/owner.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 
 @Injectable()
 export class TenantService {
@@ -35,7 +36,8 @@ export class TenantService {
   async handleWorkspaceUpsert(workspace: Workspace) {
     const adminWorkspace = await this.kvoipAdminWorkspaceExists();
 
-    if (!isDefined(adminWorkspace)) return;
+    if (!isDefined(adminWorkspace))
+      throw new Error('Kvoip admin workspace not found');
 
     const existingWorkspace = await this.workspaceRepository.findOneBy([
       {
@@ -46,10 +48,12 @@ export class TenantService {
       },
     ]);
 
-    if (!isDefined(existingWorkspace)) return;
-
     // Prevent upserting the admin workspace tenant
-    if (existingWorkspace.id === adminWorkspace.id) return;
+    if (
+      isDefined(existingWorkspace) &&
+      existingWorkspace.id === adminWorkspace.id
+    )
+      throw new Error('Current workspace is kvoip admin workspace.');
 
     const tenantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
@@ -90,12 +94,19 @@ export class TenantService {
         },
       });
 
-      if (isDefined(existingUser)) {
+      if (isDefined(existingUser) && isDefined(existingWorkspace)) {
         await this.handleUserUpsert({
           user: existingUser,
           workspaceId: existingWorkspace.id,
         });
       }
+    }
+
+    if (isDefined(workspace.displayName)) {
+      await this.handleTenantCompanyUpsert({
+        workspaceId: workspace.id,
+        workspaceName: workspace.displayName,
+      });
     }
   }
 
@@ -179,6 +190,73 @@ export class TenantService {
 
     if (isDefined(tenantToDelete)) {
       await tenantRepository.delete(tenantToDelete.id);
+    }
+  }
+
+  async handleTenantCompanyUpsert({
+    workspaceId,
+    workspaceName,
+  }: {
+    workspaceId: string;
+    workspaceName?: string | null;
+  }) {
+    const adminWorkspace = await this.kvoipAdminWorkspaceExists();
+
+    if (!isDefined(adminWorkspace)) return;
+
+    const tenantRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TenantWorkspaceEntity>(
+        adminWorkspace.id,
+        'tenant',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const tenant = await tenantRepository.findOne({
+      where: {
+        coreWorkspaceId: workspaceId,
+      },
+    });
+
+    if (!isDefined(tenant)) return;
+
+    if (!isDefined(workspaceName) || workspaceName === '') return;
+
+    const companyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CompanyWorkspaceEntity>(
+        adminWorkspace.id,
+        'company',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const existingCompany = tenant.companyId
+      ? await companyRepository.findOne({
+          where: {
+            id: tenant.companyId,
+          },
+        })
+      : null;
+
+    const companyData: Partial<CompanyWorkspaceEntity> = {
+      name: workspaceName,
+      emails: existingCompany?.emails || {
+        primaryEmail: '',
+        additionalEmails: null,
+      },
+    };
+
+    const company = await companyRepository.save({
+      ...existingCompany,
+      ...companyData,
+    });
+
+    if (tenant.companyId !== company.id) {
+      await tenantRepository.update(tenant.id, {
+        companyId: company.id,
+      });
     }
   }
 

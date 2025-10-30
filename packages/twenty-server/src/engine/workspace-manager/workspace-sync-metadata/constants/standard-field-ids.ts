@@ -166,6 +166,8 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   product: 'fbae06bc-d776-48b6-8978-f733f0f66045',
   inscricaoMunicipal: '19b7778f-fcea-4300-b134-30e9604657af',
   emails: '1c69a407-3c72-4b9c-9c22-d9c9081bb226',
+  notaFiscal: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
+  tenants: '5eca6f7c-4d68-4bb1-9945-0420d9fe72d5',
   invoices: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
   companyFinancialClosingExecutions: '22c5ce2b-375b-45ea-81e6-8f379098cc41',
 } as const;
@@ -485,6 +487,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+  tenant: '30303030-390e-4271-8f14-03957ae27f6e',
   sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
   agent: '45194ac8-73e8-4e76-85f9-a1e8f7a4cd1e',
 } as const;
@@ -649,6 +652,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
+  tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
   chats: '2f828aa3-a5b0-4fcf-85a9-fe90989b1367',
 } as const;
 

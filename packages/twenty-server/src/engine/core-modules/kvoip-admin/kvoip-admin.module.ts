@@ -1,5 +1,7 @@
-import { Module } from '@nestjs/common';
+import { type DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -7,6 +9,8 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CreateKvoipAdminWorkspaceCommand } from 'src/engine/core-modules/kvoip-admin/commands/create-kvoip-admin-workspace.command';
 import { CreateKvoipAdminWorkspaceCommandService } from 'src/engine/core-modules/kvoip-admin/commands/services/create-kvoip-admin-workspace-command.service';
+import { DevOnlyModule } from 'src/engine/core-modules/kvoip-admin/dev-only/dev-only.module';
+import { KvoipAdminRootResolver } from 'src/engine/core-modules/kvoip-admin/kvoip-admin.resolver';
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { KvoipAdminStandardObjectModule } from 'src/engine/core-modules/kvoip-admin/standard-objects/kvoip-admin-standard-object.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -19,6 +23,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -28,12 +33,13 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Workspace,
+      BillingSubscription,
+      FeatureFlag,
+      ObjectMetadataEntity,
+      RoleEntity,
       User,
       UserWorkspace,
-      ObjectMetadataEntity,
-      FeatureFlag,
-      BillingSubscription,
+      Workspace,
     ]),
     TypeORMModule,
     WorkspaceModule,
@@ -49,12 +55,35 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceSyncMetadataModule,
     ObjectPermissionModule,
     KvoipAdminStandardObjectModule,
+    ...KvoipAdminModule.getConditionalModules(),
   ],
   providers: [
     CreateKvoipAdminWorkspaceCommand,
     CreateKvoipAdminWorkspaceCommandService,
     KvoipAdminService,
+    ...(KvoipAdminModule.isSandbox() ? [KvoipAdminRootResolver] : []),
   ],
   exports: [KvoipAdminService],
 })
-export class KvoipAdminModule {}
+export class KvoipAdminModule {
+  private static isSandbox(): boolean {
+    const nodeEnv = process.env.NODE_ENV as NodeEnvironment;
+
+    return [NodeEnvironment.DEVELOPMENT, NodeEnvironment.TEST].includes(
+      nodeEnv,
+    );
+  }
+
+  private static getConditionalModules(): Array<
+    DynamicModule | typeof DevOnlyModule
+  > {
+    const modules: Array<DynamicModule | typeof DevOnlyModule> = [];
+
+    // Only load DevOnlyModule in development/test
+    if (this.isSandbox()) {
+      modules.push(DevOnlyModule);
+    }
+
+    return modules;
+  }
+}

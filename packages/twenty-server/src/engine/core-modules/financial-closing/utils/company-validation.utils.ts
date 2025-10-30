@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { BadRequestException } from '@nestjs/common';
 import { isValidBrazilianState } from 'src/engine/core-modules/financial-closing/constants/nf-constants';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
@@ -53,12 +54,12 @@ export class CompanyValidationUtils {
       // Para campos de endereço
       if (parentField === 'address') {
         const addressLabels: Record<string, string> = {
-          'addressNumber': 'Número',
-          'addressStreet1': 'Rua',
-          'addressStreet2': 'Complemento',
-          'addressCity': 'Cidade',
-          'addressState': 'Estado',
-          'addressPostcode': 'CEP'
+          'addressNumber': msg`Number`.toString(),
+          'addressStreet1': msg`Street`.toString(),
+          'addressStreet2': msg`Complemento`.toString(),
+          'addressCity': msg`Cidade`.toString(),
+          'addressState': msg`Estado`.toString(),
+          'addressPostcode': msg`CEP`.toString()
         };
         return `${addressLabels[childField] || childField}`;
       }
@@ -66,7 +67,7 @@ export class CompanyValidationUtils {
       // Para campos de email
       if (parentField === 'emails') {
         const emailLabels: Record<string, string> = {
-          'primaryEmail': 'Email'
+          'primaryEmail': msg`Email`.toString()
         };
         return `${emailLabels[childField] || childField}`;
       }
@@ -79,7 +80,7 @@ export class CompanyValidationUtils {
     if (missingFields.length > 0) {
       const missingFieldLabels = missingFields.map(field => getFieldLabel(field));
       throw new Error(
-        `Empresa está com campos obrigatórios ausentes: ${missingFieldLabels.join(', ')}`
+        msg`Company is missing required fields` + ': ' + missingFieldLabels.join(', ')
       );
     }
   }
@@ -91,7 +92,7 @@ export class CompanyValidationUtils {
   static validateCep(cep: string): void {
     if (cep.replace(/\D/g, '').length !== 8) {
       throw new Error(
-        `O campo CEP da empresa está incorreto, deve possuir 8 números e de preferência sem caracteres especiais`
+        msg`The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters`.toString()
       );
     }
   }
@@ -103,7 +104,7 @@ export class CompanyValidationUtils {
   static validateState(state: string): void {
     if (!isValidBrazilianState(state)) {
       throw new Error(
-        `O Estado da empresa está incorreto, deve ser um estado válido do Brasil (SP, RJ, MG, etc.)`
+        msg`The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)`.toString()
       );
     }
   }
@@ -123,28 +124,28 @@ export class CompanyValidationUtils {
     // Verificar se pelo menos um percentual está preenchido
     if (percentNfcom <= 0 && percentNfse <= 0) {
       throw new Error(
-        `Pelo menos um percentual de NF deve ser preenchido para a empresa (percentNfcom ou percentNfse)`
+        msg`At least one NF percentage must be filled for the company (percentNfcom or percentNfse)`.toString()
       );
     }
 
     // Verificar se os percentuais são números válidos
     if (isNaN(percentNfcom) || isNaN(percentNfse)) {
       throw new Error(
-        `Os percentuais de NF da empresa devem ser números válidos`
+        msg`The company's NF percentages must be valid numbers`.toString()
       );
     }
 
     // Verificar se os percentuais estão no range válido (0-100)
     if (percentNfcom < 0 || percentNfcom > 100 || percentNfse < 0 || percentNfse > 100) {
       throw new Error(
-        `Os percentuais de NF da empresa devem estar entre 0 e 100`
+        msg`The company's NF percentages must be between 0 and 100`.toString()
       );
     }
 
     // Verificar se a soma não excede 100%
     if (totalPercent > 100) {
       throw new Error(
-        `A soma dos percentuais de NF da empresa não pode exceder 100%. Atual: ${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`
+        msg`The sum of the company's NF percentages cannot exceed 100%. Current: ` + `${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`.toString()
       );
     }
   }

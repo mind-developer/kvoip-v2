@@ -1,6 +1,5 @@
-// src/modules/dashboard-links/components/ui/DashboardLinksPageContainer.tsx
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 const StyledPageContainer = styled.div`
   display: flex;

@@ -14,6 +14,7 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
@@ -37,6 +38,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async executeFromSteps({
@@ -208,6 +210,10 @@ export class WorkflowExecutorWorkspaceService {
   }
 
   private sendWorkflowNodeRunEvent(workspaceId: string) {
+    if (!this.twentyConfigService.get('IS_BILLING_WORKFLOW_ENABLED')) {
+      return;
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [
@@ -221,6 +227,10 @@ export class WorkflowExecutorWorkspaceService {
   }
 
   private async canBillWorkflowNodeExecution(workspaceId: string) {
+    if (!this.twentyConfigService.get('IS_BILLING_WORKFLOW_ENABLED')) {
+      return true;
+    }
+
     return (
       !this.billingService.isBillingEnabled() ||
       (await this.billingService.canBillMeteredProduct(

@@ -18,9 +18,11 @@ import { Relation } from 'typeorm';
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.whatsappIntegration,
   namePlural: 'whatsappIntegrations',
-  labelSingular: msg`WhatsApp Integration`,
+  labelSingular: msg`Whatsapp Integration`,
   labelPlural: msg`Whatsapp Integrations`,
-  description: msg`A Whatsapp integration`,
+  description: msg`A whatsapp integration`,
+  icon: 'IconBrandWhatsapp',
+  labelIdentifierStandardId: WHATSAPP_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 export class WhatsappIntegrationWorkspaceEntity extends BaseWorkspaceEntity {

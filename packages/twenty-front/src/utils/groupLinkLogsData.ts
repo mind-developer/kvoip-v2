@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
-import { LinkLogsWorkspaceEntity } from '~/generated/graphql';
-import { LinkglogsGroupedData, LinklogsChartData } from '~/types/LinkLogs';
+import { type LinkLogsWorkspaceEntity } from '~/generated/graphql';
+import {
+  type LinkglogsGroupedData,
+  type LinklogsChartData,
+} from '~/types/LinkLogs';
 import { getRandomHexColor } from '~/utils/get-hex-random-collor';
 
 export const groupLinkLogsData = (
@@ -29,6 +32,7 @@ export const groupLinkLogsData = (
       },
     };
 
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(log?.utmSource))
       sourceKeyColors = {
         ...sourceKeyColors,
