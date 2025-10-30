@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 import { Relation } from 'typeorm';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
@@ -78,6 +79,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Product Name`,
     description: msg`Product name`,
     icon: 'IconClipboardList',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.PRODUCT_NAME,
+        errorMessage: msg`Add a product name`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   name: string;
@@ -119,6 +126,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Unit`,
     description: msg`Product unit of measure (e.g., kg, unit, liter)`,
     icon: 'IconSettings',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.UNIT_OF_MEASURE,
+        errorMessage: msg`Add a unit of measure`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   unitOfMeasure: string;
@@ -155,6 +168,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NCM`,
     description: msg`Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12`,
     icon: 'IconBarcode',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.NCM,
+        errorMessage: msg`Use the format: 0000.00.00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   ncm: string;
@@ -165,6 +184,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CFOP`,
     description: msg`Fiscal Operation Code. Example: 5102`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CFOP,
+        errorMessage: msg`Use the format: 0000`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cfop: string;
@@ -175,6 +200,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CEST`,
     description: msg`Tributary Substitution Code. Example: 28.038.00`,
     icon: 'IconFileCode',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CEST,
+        errorMessage: msg`Use the format: 00.000.00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cest: string;
@@ -185,6 +216,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Commercial Unit`,
     description: msg`Commercial unit. Example: UN`,
     icon: 'IconBox',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.COMMERCIAL_UNIT,
+        errorMessage: msg`Add a commercial unit`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   unit: string;
@@ -205,6 +242,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST ICMS/CSOSN`,
     description: msg`Tributary Situation Code or CSOSN. Example: 102`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CSTICMSCSOSN,
+        errorMessage: msg`Use the format: 000 or 0000`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstIcmsCsosn: string;
@@ -215,6 +258,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST PIS`,
     description: msg`CST of PIS. Example: 01`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CST_PIS_COFINS,
+        errorMessage: msg`Use the format: 00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstPis: string;
@@ -225,6 +274,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`CST COFINS`,
     description: msg`CST of COFINS. Example: 01`,
     icon: 'IconReceiptTax',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CST_PIS_COFINS,
+        errorMessage: msg`Use the format: 00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   cstCofins: string;
@@ -296,6 +351,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Service List Item`,
     description: msg`Inform the service list code, usually according to Law Complement 116/2003.`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.SERVICE_LIST_ITEM,
+        errorMessage: msg`Use the format: 00.00`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   serviceListItem: string;
@@ -306,6 +367,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Municipal Tax Code`,
     description: msg`Inform the municipal tax code according to the table of each city (there is no standard).`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.MUNICIPAL_TAX_CODE,
+        errorMessage: msg`Add a municipal tax code`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   municipalTaxCode: string;
@@ -316,6 +383,12 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Classification`,
     description: msg`Product classification`,
     icon: 'IconNotes',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.CLASSIFICATION,
+        errorMessage: msg`Add a product classification`,
+      },
+    },
   })
   @WorkspaceIsNullable()
   classification: string;

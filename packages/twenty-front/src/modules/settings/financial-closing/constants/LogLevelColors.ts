@@ -1,4 +1,5 @@
-import { type Theme } from '@emotion/react';
+/* @kvoip-woulz proprietary */
+import { Theme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
 export type LogLevel = 'ERROR' | 'WARN' | 'WARNING' | 'INFO' | 'DEBUG';

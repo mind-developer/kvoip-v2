@@ -1,14 +1,23 @@
+/* @kvoip-woulz proprietary */
 import { SettingsFinancialClosingTableRow } from '@/settings/financial-closing/components/SettingsFinancialClosingTableRow';
 import { useDeleteFinancialClosing } from '@/settings/financial-closing/hooks/useDeleteFinancialClosing';
 import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconClock } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Section } from 'twenty-ui/layout';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Section,
+} from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
@@ -44,6 +53,7 @@ export const SettingsFinancialClosings = ({
   const { t } = useLingui();
   const navigate = useNavigate();
   const isMobile = useIsMobile() || isRightDrawer;
+  const theme = useTheme();
 
   const { deleteFinancialClosingById } = useDeleteFinancialClosing();
 
@@ -64,7 +74,7 @@ export const SettingsFinancialClosings = ({
 
   return (
     <StyledShowServiceCenterTabs isMobile={isMobile}>
-      {financialClosings?.length > 0 && (
+      {financialClosings?.length > 0 ? (
         <StyledSection>
           {financialClosings.map((financialClosing) => (
             <SettingsFinancialClosingTableRow
@@ -98,6 +108,22 @@ export const SettingsFinancialClosings = ({
             />
           ))}
         </StyledSection>
+      ) : (
+        <Section>
+          <div style={{ marginTop: theme.spacing(10) }}>
+            <AnimatedPlaceholderEmptyContainer>
+              <AnimatedPlaceholder type="noRecord" />
+              <AnimatedPlaceholderEmptyTextContainer>
+                <AnimatedPlaceholderEmptyTitle>
+                  {t`No financial closings found`}
+                </AnimatedPlaceholderEmptyTitle>
+                <AnimatedPlaceholderEmptySubTitle>
+                  {t`Create a financial closing to get started`}
+                </AnimatedPlaceholderEmptySubTitle>
+              </AnimatedPlaceholderEmptyTextContainer>
+            </AnimatedPlaceholderEmptyContainer>
+          </div>
+        </Section>
       )}
     </StyledShowServiceCenterTabs>
   );

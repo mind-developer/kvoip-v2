@@ -1,7 +1,12 @@
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
+import {
+  TEXT_VALIDATION_PATTERNS,
+  type TextValidationPattern,
+} from 'twenty-shared/utils';
 
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
+import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
@@ -31,6 +36,27 @@ type SettingsIntegrationInterDatabaseConnectionFormProps = {
   disabled?: boolean;
 };
 
+/* @kvoip-woulz proprietary:begin */
+const INTER_FIELD_VALIDATIONS: Record<
+  string,
+  { validation: TextValidationPattern }
+> = {
+  currentAccount: {
+    validation: TEXT_VALIDATION_PATTERNS.BR_INTER_ACCOUNT,
+  },
+};
+
+const getFieldValidation = (
+  fieldName: string,
+): TextValidationPattern | undefined => {
+  const validation = INTER_FIELD_VALIDATIONS[fieldName]?.validation;
+  if (fieldName === 'currentAccount' && validation) {
+    console.log('Inter currentAccount validation:', validation);
+  }
+  return validation;
+};
+/* @kvoip-woulz proprietary:end */
+
 export const SettingsIntegrationInterDatabaseConnectionForm = ({
   disabled,
 }: SettingsIntegrationInterDatabaseConnectionFormProps) => {
@@ -43,7 +69,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
         <Controller
           name="integrationName"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <TextInput
               label="Integration name"
               value={value as string}
@@ -52,6 +78,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
               disabled={disabled}
               placeholder="Banco Inter"
               fullWidth
+              error={error?.message}
             />
           )}
         />
@@ -62,17 +89,22 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           <Controller
             name="currentAccount"
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label="Current account"
-                value={value as string}
-                onChange={onChange}
-                type="text"
-                disabled={disabled}
-                placeholder="********-**"
-                fullWidth
-              />
-            )}
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
+              const validation = getFieldValidation('currentAccount');
+
+              return (
+                <MaskedTextInput
+                  label="Current account"
+                  value={value}
+                  onChange={onChange}
+                  mask={validation?.mask}
+                  placeholder={validation?.placeholder || '00000000-00'}
+                  disabled={disabled}
+                  fullWidth
+                  error={error?.message}
+                />
+              );
+            }}
           />
         </StyledHalfWidthInput>
 
@@ -105,7 +137,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           <Controller
             name="clientId"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 label="Client ID"
                 value={value as string}
@@ -114,6 +146,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
                 type="text"
                 disabled={disabled}
                 placeholder="********_****_****_****_****"
+                error={error?.message}
               />
             )}
           />
@@ -123,7 +156,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           <Controller
             name="clientSecret"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 autoComplete="new-password"
                 label="Client Secret"
@@ -133,6 +166,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
                 type="text"
                 disabled={disabled}
                 placeholder="********_****_****_****_****"
+                error={error?.message}
               />
             )}
           />

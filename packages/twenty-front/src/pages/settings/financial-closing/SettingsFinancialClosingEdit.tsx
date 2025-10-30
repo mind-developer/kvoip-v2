@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
+/* @kvoip-woulz proprietary */
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';

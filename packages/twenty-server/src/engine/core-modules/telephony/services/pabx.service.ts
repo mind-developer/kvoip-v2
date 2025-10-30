@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Injectable, Logger } from '@nestjs/common';
 
 import https from 'https';
@@ -82,7 +83,6 @@ export class PabxService implements PabxServiceInterface {
           data: { ...(args ?? undefined) },
         },
       );
-
       return listExtentionsResponse;
     };
 
@@ -268,6 +268,47 @@ export class PabxService implements PabxServiceInterface {
     } catch (error) {
       this.logger.error(
         `Failed to list regions: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  };
+
+  /**
+   * Verifica se um ramal já existe na API PABX
+   * @param extensionNumber - Número da extensão a ser verificada
+   * @returns Promise<boolean> - true se o ramal já existe, false caso contrário
+   */
+  checkExtensionExists: (extensionNumber: string, cliente_id: number) => Promise<boolean> = async (
+    extensionNumber,
+    cliente_id
+  ) => {
+    try {
+      this.logger.log(`Checking if extension ${extensionNumber} already exists in PABX`);
+      
+      const response = await this.listExtentions({
+        numero: extensionNumber,
+        cliente_id: cliente_id,
+      });
+
+      this.logger.log('response ------------------------------------------------', JSON.stringify(response.data.dados, null, 2));
+
+      if (response.data && response.data.dados) {
+
+        const existingExtension = response.data.dados.find(
+          (ramal: any) => ramal.numero === extensionNumber
+        );
+        
+        const exists = !!existingExtension;
+        this.logger.log(`Extension ${extensionNumber} exists in PABX: ${exists}`);
+        
+        return exists;
+      }
+      
+      return false;
+    } catch (error) {
+      this.logger.error(
+        `Failed to check if extension exists: ${error.message}`,
         error.stack,
       );
       throw error;

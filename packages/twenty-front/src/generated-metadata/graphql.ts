@@ -3150,7 +3150,7 @@ export enum PermissionFlagType {
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
   WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
 }
 
 export enum PermissionsOnAllObjectRecords {

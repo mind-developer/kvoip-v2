@@ -1,11 +1,10 @@
+/* @kvoip-woulz proprietary */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { type z } from 'zod';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsServiceCenterTelephonyAboutForm,
@@ -20,9 +19,12 @@ import {
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+// eslint-disable-next-line import/no-duplicates
+import { IconPlus } from '@tabler/icons-react';
+import { Button } from 'twenty-ui/input';
 
 type SettingsNewTelephonySchemaValues = z.infer<
   typeof SettingsServiceCenterTelephonyFormSchema
@@ -30,8 +32,9 @@ type SettingsNewTelephonySchemaValues = z.infer<
 
 export const SettingsServiceCenterNewTelephonyExtension = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createTelephony } = useCreateTelephony();
+  const { createTelephony, data } = useCreateTelephony();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const formConfig = useForm<SettingsNewTelephonySchemaValues>({
@@ -81,7 +84,8 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
         dialingPlan: formValue.dialingPlan,
         enableMailbox: formValue.enableMailbox,
         emailForMailbox: formValue.emailForMailbox || '',
-        extensionGroup: formValue.extensionGroup || '',
+        // extensionGroup: formValue.extensionGroup || '',
+        extensionGroup: '', // Valor padrão - campo removido do formulário
         fowardAllCalls: formValue.fowardAllCalls || '',
         fowardBusyNotAvailable: formValue.fowardBusyNotAvailable || '',
         fowardOfflineWithoutService:
@@ -119,7 +123,10 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
         );
 
       await createTelephony(telephonyData);
-      navigate(settingsServiceCenterTelephonyPagePath);
+
+      if (data) {
+        navigate(settingsServiceCenterTelephonyPagePath);
+      }
     } catch (err) {
       // TODO: Add proper error message
       enqueueErrorSnackBar({
@@ -131,29 +138,27 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer links={[]} title="">
-        <SettingsPageContainer
-        // style={{
-        //   gap: theme.spacing(4.5),
-        // }}
-        >
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Telephony',
-                  href: settingsServiceCenterTelephonyPagePath,
-                },
-                { children: 'New' },
-              ]}
-            />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(settingsServiceCenterTelephonyPagePath)}
-              onSave={formConfig.handleSubmit(onSave)}
-            />
-          </SettingsHeaderContainer>
+      <SubMenuTopBarContainer
+        title={t`Telephony`}
+        actionButton={
+          <Button
+            Icon={IconPlus}
+            title={t`Add Telephony`}
+            accent="blue"
+            size="small"
+            onClick={formConfig.handleSubmit(onSave)}
+            disabled={!canSave}
+          />
+        }
+        links={[
+          {
+            children: t`Extensions`,
+            href: settingsServiceCenterTelephonyPagePath,
+          },
+          { children: t`New` },
+        ]}
+      >
+        <SettingsPageContainer>
           <SettingsServiceCenterTelephonyAboutForm />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

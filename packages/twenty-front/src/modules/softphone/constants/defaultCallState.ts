@@ -1,4 +1,5 @@
-import { type CallState } from '../types/callState';
+/* @kvoip-woulz proprietary */
+import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
 
 const defaultCallState: CallState = {

@@ -1,9 +1,10 @@
+/* @kvoip-woulz proprietary */
 import {
   getLogLevelBackgroundColor,
   getLogLevelBorderColor,
   getLogLevelTagColor,
 } from '@/settings/financial-closing/constants/LogLevelColors';
-import { type FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
+import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';

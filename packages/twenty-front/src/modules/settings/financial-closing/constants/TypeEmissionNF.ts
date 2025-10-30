@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { useLingui } from '@lingui/react/macro';
 
 export enum TypeEmissionNFEnum {

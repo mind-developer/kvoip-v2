@@ -39,6 +39,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
@@ -404,16 +405,20 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('agent')
   agentId: string | null;
 
-  // kvoip changes
-  @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.extensionNumber,
-    type: FieldMetadataType.TEXT,
-    label: msg`extensionNumber`,
-    description: msg`Associated extensionNumber`,
-    icon: 'IconCircleUsers',
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.telephonies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Telephonies`,
+    description: msg`Reference to the telephonies`,
+    icon: 'IconHeadset',
+    inverseSideTarget: () => TelephonyWorkspaceEntity,
+    inverseSideFieldKey: 'member',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  extensionNumber: string | null;
+  telephonies: Relation<
+    TelephonyWorkspaceEntity[]
+  >;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,

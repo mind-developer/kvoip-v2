@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export interface FinancialClosingExecution {
   __typename: 'FinancialClosingExecution';
   id: string;

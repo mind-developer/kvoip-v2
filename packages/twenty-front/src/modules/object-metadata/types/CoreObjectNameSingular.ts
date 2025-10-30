@@ -50,4 +50,5 @@ export enum CoreObjectNameSingular {
   Agent = 'agent',
   ClientChat = 'clientChat',
   WhatsappIntegration = 'whatsappIntegration',
+  Telephony = 'telephony',
 }

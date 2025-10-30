@@ -1,9 +1,12 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+/* @kvoip-woulz proprietary */
+import { Logger, UseGuards } from '@nestjs/common';
+import { Args, ID, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceTelephonyService } from 'src/engine/core-modules/workspace/services/workspace-telephony.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -24,6 +27,7 @@ import { PabxDialingPlanResponseType } from 'src/modules/telephony/types/Create/
 import { PabxTrunkResponseType } from 'src/modules/telephony/types/Create/PabxTrunkResponse.type';
 import { UpdateRoutingRulesResponseType } from 'src/modules/telephony/types/Create/UpdateRoutingRulesResponse.type';
 import { SetupPabxEnvironmentResponseType } from 'src/modules/telephony/types/SetupPabxEnvironmentResponse.type';
+import { TelephonyData, TelephonyPaginatedResult } from 'src/modules/telephony/types/Telephony.type';
 import { TelephonyCallFlow } from 'src/modules/telephony/types/TelephonyCallFlow';
 import { TelephonyDialingPlan } from 'src/modules/telephony/types/TelephonyDialingPlan.type';
 import { TelephonyDids } from 'src/modules/telephony/types/TelephonyDids.type';
@@ -31,10 +35,13 @@ import { TelephonyExtension } from 'src/modules/telephony/types/TelephonyExtensi
 
 @Resolver(() => TelephonyWorkspaceEntity)
 export class TelephonyResolver {
+  private readonly logger = new Logger(TelephonyResolver.name);
   constructor(
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
     private readonly workspaceService: WorkspaceService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceTelephonyService: WorkspaceTelephonyService,
   ) {}
 
   async getRamalBody(
@@ -163,6 +170,7 @@ export class TelephonyResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('createTelephonyInput') createTelephonyInput: CreateTelephonyInput,
   ): Promise<TelephonyWorkspaceEntity | undefined> {
+
     if (!userId) {
       throw new Error('User id not found');
     }
@@ -171,10 +179,35 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
+    if (!workspace.pabxCompanyId) {
+      // TODO: adicionar chamada para criação de empresa
+      throw new Error('PABX company not found');
+    }
+
+    // Validação 1: Verificar se o membro já possui um ramal na tabela telephony
+    const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
+      createTelephonyInput.memberId,
+      workspace.id,
+    );
+
+    if (memberHasTelephony) {
+      throw new Error('Este membro já possui um ramal de telefonia. Não é possível criar duplicatas.');
+    }
+
     const ramalBody = await this.getRamalBody(
       createTelephonyInput,
       workspace.id,
     );
+
+    // Validação 2: Verificar se o número da extensão já existe na API PABX
+    const extensionExists = await this.pabxService.checkExtensionExists(
+      createTelephonyInput.numberExtension,
+      Number(workspace.pabxCompanyId),
+    );
+
+    if (extensionExists) {
+      throw new Error(`O número de extensão ${createTelephonyInput.numberExtension} já está em uso no sistema PABX.`);
+    }
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
@@ -188,12 +221,6 @@ export class TelephonyResolver {
           workspace.id,
         );
 
-        await this.telephonyService.setExtensionNumberInWorkspaceMember(
-          workspace.id,
-          createTelephonyInput.memberId,
-          createTelephonyInput.numberExtension,
-        );
-
         return result;
       }
     } catch (error) {
@@ -201,17 +228,249 @@ export class TelephonyResolver {
     }
   }
 
-  @Query(() => [TelephonyWorkspaceEntity])
+  @Query(() => [TelephonyData])
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async findAllTelephonyIntegration(
+    @AuthUser() user: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyData[]> {
+
+
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+
+      // If the workspace does not have a PABX company, setup the PABX environment
+      if (this.twentyConfigService.get('NODE_ENV') === 'production') {
+        this.logger.log('Iniciando configuração de telefonia para workspace: ', workspace.id);
+  
+        try {
+          await this.workspaceTelephonyService.setupWorkspaceTelephony(
+            workspace,
+            user,
+            workspace.displayName!,
+          );
+  
+          this.logger.log('Configuração de telefonia concluída com sucesso');
+        } catch (error) {
+  
+          // TODO: implementar classe de exceção para telefonia
+  
+          this.logger.error('Erro na configuração de telefonia:', error);
+          throw error;
+        }
+      } else {
+        throw new Error('Companhia PABX não encontrada');
+      }
+    }
+
+    const result = await this.telephonyService.findAll({ workspaceId });
+    
+    // TODO: Por algum motivo passar a entidade da erro na relação do member, necessario rever e alterar esse mapemaento
+    const mappedResult: TelephonyData[] = result.map((telephony: TelephonyWorkspaceEntity) => {
+      const parsedTelephony: TelephonyData = {
+        id: telephony.id,
+        memberId: telephony.memberId,
+        numberExtension: telephony.numberExtension,
+        extensionName: telephony.extensionName || null,
+        extensionGroup: telephony.extensionGroup || null,
+        type: telephony.type || null,
+        dialingPlan: telephony.dialingPlan || null,
+        areaCode: telephony.areaCode || null,
+        SIPPassword: telephony.SIPPassword || null,
+        callerExternalID: telephony.callerExternalID || null,
+        pullCalls: telephony.pullCalls || null,
+        listenToCalls: telephony.listenToCalls || null,
+        recordCalls: telephony.recordCalls || null,
+        blockExtension: telephony.blockExtension || null,
+        enableMailbox: telephony.enableMailbox || null,
+        emailForMailbox: telephony.emailForMailbox || null,
+        fowardAllCalls: telephony.fowardAllCalls || null,
+        fowardBusyNotAvailable: telephony.fowardBusyNotAvailable || null,
+        fowardOfflineWithoutService: telephony.fowardOfflineWithoutService || null,
+        extensionAllCallsOrOffline: telephony.extensionAllCallsOrOffline || null,
+        externalNumberAllCallsOrOffline: telephony.externalNumberAllCallsOrOffline || null,
+        destinyMailboxAllCallsOrOffline: telephony.destinyMailboxAllCallsOrOffline || null,
+        extensionBusy: telephony.extensionBusy || null,
+        externalNumberBusy: telephony.externalNumberBusy || null,
+        destinyMailboxBusy: telephony.destinyMailboxBusy || null,
+        ramal_id: telephony.ramal_id || null,
+        advancedFowarding1: telephony.advancedFowarding1 || null,
+        advancedFowarding2: telephony.advancedFowarding2 || null,
+        advancedFowarding3: telephony.advancedFowarding3 || null,
+        advancedFowarding4: telephony.advancedFowarding4 || null,
+        advancedFowarding5: telephony.advancedFowarding5 || null,
+        advancedFowarding1Value: telephony.advancedFowarding1Value || null,
+        advancedFowarding2Value: telephony.advancedFowarding2Value || null,
+        advancedFowarding3Value: telephony.advancedFowarding3Value || null,
+        advancedFowarding4Value: telephony.advancedFowarding4Value || null,
+        advancedFowarding5Value: telephony.advancedFowarding5Value || null,
+        createdAt: telephony.createdAt || undefined,
+        updatedAt: telephony.updatedAt || undefined,
+        member: telephony.member ? {
+          id: telephony.member.id,
+          name: telephony.member.name ? {
+            firstName: telephony.member.name.firstName || null,
+            lastName: telephony.member.name.lastName || null,
+          } : null,
+          userEmail: telephony.member.userEmail || null,
+          avatarUrl: telephony.member.avatarUrl || null,
+          userId: telephony.member.userId || null,
+          timeZone: telephony.member.timeZone || null,
+          dateFormat: telephony.member.dateFormat || null,
+          timeFormat: telephony.member.timeFormat || null,
+          calendarStartDay: telephony.member.calendarStartDay?.toString() || null,
+        } : null,
+      };
+      
+      return parsedTelephony;
+    });
+
+    return mappedResult;
+  }
+
+  @Query(() => TelephonyPaginatedResult)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async findAllTelephonyIntegrationPaginated(
+    @AuthUser() user: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
+  ): Promise<TelephonyPaginatedResult> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      // If the workspace does not have a PABX company, setup the PABX environment
+      if (this.twentyConfigService.get('NODE_ENV') === 'production') {
+        this.logger.log('Iniciando configuração de telefonia para workspace: ', workspace.id);
+  
+        try {
+          await this.workspaceTelephonyService.setupWorkspaceTelephony(
+            workspace,
+            user,
+            workspace.displayName!,
+          );
+  
+          this.logger.log('Configuração de telefonia concluída com sucesso');
+        } catch (error) {
+          // TODO: implementar classe de exceção para telefonia
+          this.logger.error('Erro na configuração de telefonia:', error);
+          throw error;
+        }
+      } else {
+        throw new Error('Companhia PABX não encontrada');
+      }
+    }
+
+    // Validar parâmetros de paginação
+    if (page < 1) page = 1;
+    if (limit < 1 || limit > 100) limit = 10;
+
+    const result = await this.telephonyService.findAllPaginated({ 
+      workspaceId, 
+      page, 
+      limit 
+    });
+    
+    // Mapear os dados da mesma forma que o método anterior
+    const mappedData: TelephonyData[] = result.data.map((telephony: TelephonyWorkspaceEntity) => {
+      const parsedTelephony: TelephonyData = {
+        id: telephony.id,
+        memberId: telephony.memberId,
+        numberExtension: telephony.numberExtension,
+        extensionName: telephony.extensionName || null,
+        extensionGroup: telephony.extensionGroup || null,
+        type: telephony.type || null,
+        dialingPlan: telephony.dialingPlan || null,
+        areaCode: telephony.areaCode || null,
+        SIPPassword: telephony.SIPPassword || null,
+        callerExternalID: telephony.callerExternalID || null,
+        pullCalls: telephony.pullCalls || null,
+        listenToCalls: telephony.listenToCalls || null,
+        recordCalls: telephony.recordCalls || null,
+        blockExtension: telephony.blockExtension || null,
+        enableMailbox: telephony.enableMailbox || null,
+        emailForMailbox: telephony.emailForMailbox || null,
+        fowardAllCalls: telephony.fowardAllCalls || null,
+        fowardBusyNotAvailable: telephony.fowardBusyNotAvailable || null,
+        fowardOfflineWithoutService: telephony.fowardOfflineWithoutService || null,
+        extensionAllCallsOrOffline: telephony.extensionAllCallsOrOffline || null,
+        externalNumberAllCallsOrOffline: telephony.externalNumberAllCallsOrOffline || null,
+        destinyMailboxAllCallsOrOffline: telephony.destinyMailboxAllCallsOrOffline || null,
+        extensionBusy: telephony.extensionBusy || null,
+        externalNumberBusy: telephony.externalNumberBusy || null,
+        destinyMailboxBusy: telephony.destinyMailboxBusy || null,
+        ramal_id: telephony.ramal_id || null,
+        advancedFowarding1: telephony.advancedFowarding1 || null,
+        advancedFowarding2: telephony.advancedFowarding2 || null,
+        advancedFowarding3: telephony.advancedFowarding3 || null,
+        advancedFowarding4: telephony.advancedFowarding4 || null,
+        advancedFowarding5: telephony.advancedFowarding5 || null,
+        advancedFowarding1Value: telephony.advancedFowarding1Value || null,
+        advancedFowarding2Value: telephony.advancedFowarding2Value || null,
+        advancedFowarding3Value: telephony.advancedFowarding3Value || null,
+        advancedFowarding4Value: telephony.advancedFowarding4Value || null,
+        advancedFowarding5Value: telephony.advancedFowarding5Value || null,
+        createdAt: telephony.createdAt || undefined,
+        updatedAt: telephony.updatedAt || undefined,
+        member: telephony.member ? {
+          id: telephony.member.id,
+          name: telephony.member.name ? {
+            firstName: telephony.member.name.firstName || null,
+            lastName: telephony.member.name.lastName || null,
+          } : null,
+          userEmail: telephony.member.userEmail || null,
+          avatarUrl: telephony.member.avatarUrl || null,
+          userId: telephony.member.userId || null,
+          timeZone: telephony.member.timeZone || null,
+          dateFormat: telephony.member.dateFormat || null,
+          timeFormat: telephony.member.timeFormat || null,
+          calendarStartDay: telephony.member.calendarStartDay?.toString() || null,
+        } : null,
+      };
+      
+      return parsedTelephony;
+    });
+
+    return {
+      data: mappedData,
+      pagination: result.pagination,
+    };
+  }
+
+  @Query(() => [TelephonyExtension])
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async findAllExternalExtensions(
     @AuthUser() { id: userId }: User,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
-  ): Promise<TelephonyWorkspaceEntity[]> {
+  ): Promise<TelephonyExtension[]> {
     if (!userId) {
       throw new Error('User id not found');
     }
 
-    return await this.telephonyService.findAll({ workspaceId });
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('Companhia PABX não encontrada');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      cliente_id: Number(workspace.pabxCompanyId),
+    });
+
+    return extensions.data.dados;
   }
 
   @Mutation(() => TelephonyWorkspaceEntity)
@@ -235,6 +494,35 @@ export class TelephonyResolver {
       throw new Error('Telephony not found');
     }
 
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    // Validação 2: Se o número da extensão está sendo alterado, verificar se já existe na API PABX
+    if (updateTelephonyInput.numberExtension && updateTelephonyInput.numberExtension !== telephony.numberExtension) {
+      const extensionExists = await this.pabxService.checkExtensionExists(
+        updateTelephonyInput.numberExtension,
+        Number(workspace.pabxCompanyId),
+      );
+
+      if (extensionExists) {
+        throw new Error(`O número de extensão ${updateTelephonyInput.numberExtension} já está em uso no sistema PABX.`);
+      }
+    }
+
+    // Validação 1: Se o memberId está sendo alterado, verificar se o novo membro já possui um ramal
+    if (updateTelephonyInput.memberId && updateTelephonyInput.memberId !== telephony.memberId) {
+      const memberHasTelephony = await this.telephonyService.checkMemberHasTelephony(
+        updateTelephonyInput.memberId,
+        workspace.id,
+        id,
+      );
+
+      if (memberHasTelephony) {
+        throw new Error('O novo membro já possui um ramal de telefonia. Não é possível atribuir duplicatas.');
+      }
+    }
+
     try {
       const ramalBody = {
         dados: {
@@ -243,18 +531,12 @@ export class TelephonyResolver {
           ramal_id: telephony.ramal_id,
         },
       };
-
+      
       const updatedRamal = await this.pabxService.updateExtention(ramalBody);
 
       if (!updatedRamal) {
         throw new Error('Error updating ramal');
       }
-
-      await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        workspace.id,
-        telephony.memberId,
-        updateTelephonyInput.numberExtension || telephony.numberExtension,
-      );
 
       const result = await this.telephonyService.updateTelephony({
         id,
@@ -287,8 +569,9 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listExtentions({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
+    this.logger.log('extensions ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
 
     return extensions.data.dados;
   }
@@ -311,10 +594,121 @@ export class TelephonyResolver {
 
     const extensions = await this.pabxService.listExtentions({
       numero: extNum,
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados[0];
+  }
+
+  @Query(() => TelephonyWorkspaceEntity, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async getTelephonyByMember(
+    @AuthUser() { id: userId }: User,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('memberId', { type: () => ID }) memberId: string,
+  ): Promise<TelephonyWorkspaceEntity | null> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!workspaceId) {
+      throw new Error('Workspace id not found');
+    }
+
+    if (!memberId) {
+      throw new Error('Member id not found');
+    }
+
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    try {
+      const telephony = await this.telephonyService.getTelephonyByMember({
+        memberId,
+        workspaceId,
+      });
+
+      return telephony;
+    } catch (error) {
+      this.logger.error('Error getting telephony by member:', error);
+      throw new Error(`Failed to get telephony for member: ${error.message}`);
+    }
+  }
+
+  @Query(() => TelephonyExtension, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async getExternalExtension(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('extNum', { type: () => String, nullable: true }) extNum?: string,
+  ): Promise<TelephonyExtension | null> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!extNum) {
+      return null;
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      numero: extNum,
+      cliente_id: Number(workspace.pabxCompanyId),
+    });
+
+    this.logger.log('extensions2 ------------------------------------------------', JSON.stringify(extensions.data.dados, null, 2));
+
+    if (!extensions?.data?.dados || extensions.data.dados.length === 0) {
+      this.logger.log('No extensions found or empty array');
+      return null;
+    }
+
+    const extension = extensions.data.dados[0];
+    this.logger.log('Returning extension:', JSON.stringify(extension, null, 2));
+    this.logger.log('Extension type:', typeof extension);
+    this.logger.log('Extension keys:', Object.keys(extension || {}));
+    
+    // Mapear explicitamente os dados da API para o tipo GraphQL
+    const mappedExtension = {
+      ramal_id: extension.ramal_id,
+      cliente_id: extension.cliente_id,
+      nome: extension.nome,
+      tipo: extension.tipo,
+      usuario_autenticacao: extension.usuario_autenticacao,
+      numero: extension.numero,
+      senha_sip: extension.senha_sip,
+      senha_web: extension.senha_web,
+      caller_id_externo: extension.caller_id_externo,
+      grupo_ramais: extension.grupo_ramais,
+      centro_custo: extension.centro_custo,
+      plano_discagem_id: extension.plano_discagem_id,
+      grupo_musica_espera: extension.grupo_musica_espera,
+      puxar_chamadas: extension.puxar_chamadas,
+      habilitar_timers: extension.habilitar_timers,
+      habilitar_blf: extension.habilitar_blf,
+      escutar_chamadas: extension.escutar_chamadas,
+      gravar_chamadas: extension.gravar_chamadas,
+      bloquear_ramal: extension.bloquear_ramal,
+      codigo_incorporacao: extension.codigo_incorporacao,
+      codigo_area: extension.codigo_area,
+      habilitar_dupla_autenticacao: extension.habilitar_dupla_autenticacao,
+      dupla_autenticacao_ip_permitido: extension.dupla_autenticacao_ip_permitido,
+      dupla_autenticacao_mascara: extension.dupla_autenticacao_mascara,
+      encaminhar_todas_chamadas: extension.encaminhar_todas_chamadas,
+      encaminhar_offline_sem_atendimento: extension.encaminhar_offline_sem_atendimento,
+      encaminhar_ocupado_indisponivel: extension.encaminhar_ocupado_indisponivel,
+    };
+    
+    this.logger.log('Mapped extension:', JSON.stringify(mappedExtension, null, 2));
+    
+    return mappedExtension;
   }
 
   @Query(() => [TelephonyDialingPlan], { nullable: true })
@@ -333,7 +727,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listDialingPlans({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados;
@@ -355,7 +749,7 @@ export class TelephonyResolver {
     }
 
     const extensions = await this.pabxService.listDids({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     return extensions.data.dados;
@@ -377,7 +771,7 @@ export class TelephonyResolver {
     }
 
     const uras = await this.pabxService.listCampaigns({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     const data = uras.data.dados.map((ura: Campaign) => {
@@ -405,7 +799,7 @@ export class TelephonyResolver {
     }
 
     const callFlows = await this.pabxService.listIntegrationFlows({
-      cliente_id: workspace.pabxCompanyId,
+      cliente_id: Number(workspace.pabxCompanyId),
     });
 
     const data = callFlows.data.dados.map((ura: TelephonyCallFlow) => {
@@ -422,18 +816,18 @@ export class TelephonyResolver {
   async deleteTelephonyIntegration(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args('telephonyId', { type: () => ID }) telephonyId: string,
+    @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
     if (!userId) {
       throw new Error('User id not found');
     }
 
-    if (!telephonyId) {
+    if (!id) {
       throw new Error('Agent id not found');
     }
 
     const telephonyToDelete = await this.telephonyService.findOne({
-      id: telephonyId,
+      id: id,
       workspaceId: workspace.id,
     });
 
@@ -441,13 +835,8 @@ export class TelephonyResolver {
       throw new Error('Telephony not found');
     }
 
-    await this.telephonyService.removeAgentIdInWorkspaceMember(
-      workspace.id,
-      telephonyToDelete.memberId,
-    );
-
     const result = await this.telephonyService.delete({
-      id: telephonyId,
+      id: id,
       workspaceId: workspace.id,
     });
 
@@ -595,6 +984,103 @@ export class TelephonyResolver {
     }
   }
 
+  @Mutation(() => TelephonyWorkspaceEntity, { name: 'linkMemberToExtension' })
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async linkMemberToExtension(
+    @AuthUser() { id: userId }: User,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('numberExtension', { type: () => String }) numberExtension: string,
+    @Args('memberId', { type: () => ID }) memberId: string,
+  ): Promise<TelephonyWorkspaceEntity> {
+    if (!userId) {
+      throw new Error('Usuário não encontrado');
+    }
+
+    if (!workspace.id || !workspace.pabxCompanyId) {
+      throw new Error('Workspace não encontrado ou PABX não configurado');
+    }
+    
+    const extension = await this.pabxService.listExtentions({
+      numero: numberExtension,
+      cliente_id: Number(workspace.pabxCompanyId),
+    });
+
+    if (!extension?.data?.dados) {
+      throw new Error('Ramal não encontrado');
+    }
+
+    const extensionData = Array.isArray(extension.data.dados) ? extension.data.dados[0] : extension.data.dados;
+
+    const telephonyByMember = await this.telephonyService.getTelephonyByMember({
+      memberId: memberId,
+      workspaceId: workspace.id
+    });
+
+    const telephonyByNumber = await this.telephonyService.getTelephonyByNumber({
+      numberExtension: extensionData.numero,
+      workspaceId: workspace.id
+    });
+
+    if (telephonyByMember) {
+
+      if (telephonyByNumber) {
+        // Situação onde o usuario não esta efetuando modificações em um ramal que ele ja possui
+        if (telephonyByMember.id == telephonyByNumber.id) {
+          return telephonyByMember;
+        }
+      }
+
+      // Deleta o registro antigo do member, para alocar o novo ramal
+      await this.telephonyService.delete({
+        id: telephonyByMember.id,
+        workspaceId: workspace.id
+      });
+    }
+    
+    if (telephonyByNumber) {
+      // Atualiza o member no telefone existente
+      await this.telephonyService.updateTelephony({
+        id: telephonyByNumber.id,
+        workspaceId: workspace.id,
+        data: {
+          memberId: memberId,
+        }
+      });
+
+      return telephonyByNumber;
+
+    } else {
+      // Criar registro na tabela telephony
+      const telephonyData = {
+        memberId,
+        ramal_id: extensionData.numero,
+        extensionName: extensionData.nome,
+        numberExtension: extensionData.numero,
+        type: extensionData.tipo,
+        SIPPassword: extensionData.senha_sip,
+        callerExternalID: extensionData.caller_id_externo,
+        dialingPlan: extensionData.plano_discagem_id,
+        areaCode: extensionData.codigo_area,
+        pullCalls: extensionData.puxar_chamadas,
+        listenToCalls: extensionData.escutar_chamadas === '1',
+        recordCalls: extensionData.gravar_chamadas === '1',
+        blockExtension: extensionData.bloquear_ramal === '1',
+        enableMailbox: false,
+        emailForMailbox: '',
+        fowardAllCalls: extensionData.encaminhar_todas_chamadas?.encaminhamento_tipo?.toString() || '0',
+        fowardOfflineWithoutService: extensionData.encaminhar_offline_sem_atendimento?.encaminhamento_tipo?.toString() || '0',
+        fowardBusyNotAvailable: extensionData.encaminhar_ocupado_indisponivel?.encaminhamento_tipo?.toString() || '0',
+      };
+
+      const result = await this.telephonyService.createTelephony(
+        telephonyData,
+        workspace.id,
+      );
+
+      return (result);
+    }
+  }
+
   @Mutation(() => SetupPabxEnvironmentResponseType, {
     name: 'setupPabxEnvironment',
   })
@@ -662,9 +1148,10 @@ export class TelephonyResolver {
       await this.workspaceService.updateWorkspaceById({
         payload: {
           id: input.workspaceId,
-          pabxCompanyId: companyId,
-          pabxTrunkId: trunkAPIId,
-          pabxDialingPlanId: dialingPlanAPIId,
+          pabxCompanyId: companyId.toString(),
+          pabxTrunkId: trunkAPIId.toString(),
+          pabxDialingPlanId: dialingPlanAPIId.toString(),
+          // softSwitchClientId: soapClientId.toString(),
         },
       });
 

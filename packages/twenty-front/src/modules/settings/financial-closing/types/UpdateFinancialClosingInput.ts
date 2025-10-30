@@ -1,4 +1,5 @@
-import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
+/* @kvoip-woulz proprietary */
+import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
 
 export interface UpdateFinancialClosingInput
   extends CreateFinancialClosingInput {

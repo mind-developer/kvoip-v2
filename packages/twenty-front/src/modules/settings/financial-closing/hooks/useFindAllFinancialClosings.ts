@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 

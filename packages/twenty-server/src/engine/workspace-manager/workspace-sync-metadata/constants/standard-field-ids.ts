@@ -653,6 +653,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
   tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
+  tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
   chats: '2f828aa3-a5b0-4fcf-85a9-fe90989b1367',
 } as const;
 
@@ -892,7 +893,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   agent: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
-  extensionNumber: '0271a0fa-20de-45e1-9908-b198bd1e7b99',
+  telephonies: '2e371500-a9e7-4fcd-ac16-660efa2462c3',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
 } as const;
 
@@ -917,7 +918,7 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
 
 export const TELEPHONY_STANDARD_FIELD_IDS = {
   name: '31f61bb0-d981-454f-9703-64d5fbee9d2c',
-  memberId: '469eb1cb-72d3-4f94-b0cd-dd9a05c6c84a',
+  member: '8a80a5a6-9728-4e83-9c16-c7cafce38006',
   numberExtension: '28680674-5024-496a-b554-20ab12f1a02c',
   extensionName: 'bfbc7a80-0260-4e92-be5c-fee6f699e226',
   extensionGroup: '5f86fbba-8fa9-487c-b247-b225b3cfc143',

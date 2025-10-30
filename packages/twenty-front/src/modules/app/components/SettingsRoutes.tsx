@@ -20,7 +20,7 @@ import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
-// Service Center components will be lazy loaded below
+import { SettingsServiceCenterLinkTelephonyExtension } from '~/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -640,10 +640,6 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterTelephony />}
       />
       <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
         path={SettingsPath.EditTelephony}
         element={<SettingsTelephonyEdit />}
       />
@@ -654,6 +650,18 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterEditAgent}
         element={<SettingsServiceCenterEditAgent />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewTelephonyExtension}
+        element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterLinkTelephonyExtension}
+        element={<SettingsServiceCenterLinkTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.EditTelephony}
+        element={<SettingsTelephonyEdit />}
       />
       <Route
         path={SettingsPath.ServiceCenterSectors}

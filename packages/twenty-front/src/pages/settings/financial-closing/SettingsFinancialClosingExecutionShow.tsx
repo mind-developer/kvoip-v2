@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 
@@ -45,8 +46,7 @@ const StyledFormSectionLogs = styled(Section)`
 
 export const SettingsFinancialClosingExecutionShow = () => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const navigate = useNavigate();
+
   const { financialClosingExecutionId } = useParams<{
     financialClosingExecutionId: string;
   }>();
