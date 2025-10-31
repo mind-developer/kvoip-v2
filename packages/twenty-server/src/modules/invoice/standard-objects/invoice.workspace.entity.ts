@@ -182,7 +182,7 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.CSTICMSCSOSN,
-        errorMessage: msg`Use the format: 000 or 0000)`,
+        errorMessage: msg`Use the format: (000 or 0000)`,
       },
     },
   })

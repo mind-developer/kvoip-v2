@@ -74,7 +74,7 @@ export class FinancialClosingNFService {
     this.logger.log(`focusNFe: ${JSON.stringify(focusNFe, null, 2)}`);
 
     if (!focusNFe) {
-      throw new Error(msg`No Focus NFe integration found`.toString());
+      throw new Error(`Não foi encontrada integração com a Focus NFe`);
     }
 
     const invoiceRepository =
@@ -163,7 +163,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            msg`Invoice emission request` + ' (' + getNfTypeLabel(NfType.NFCOM) + ')' + msg`issued, waiting for processing`.toString(),
+            `Solicitação de emissão de nota fiscal` + ' (' + getNfTypeLabel(NfType.NFCOM) + ')' + `emitida, aguardando processamento`,
             'info',
           );
         }
@@ -247,7 +247,7 @@ export class FinancialClosingNFService {
           await addCompanyFinancialClosingExecutionLog(
             companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            msg`Invoice emission request` + ' (' + getNfTypeLabel(NfType.NFSE) + ')' + msg`issued, waiting for processing`.toString(),
+            `Solicitação de emissão de nota fiscal` + ' (' + getNfTypeLabel(NfType.NFSE) + ')' + `emitida, aguardando processamento`,
             'info',
           );
         }
@@ -256,7 +256,7 @@ export class FinancialClosingNFService {
         nfse.nfStatus = NfStatus.CANCELLED;
         await invoiceRepository.save(nfse);
           
-        throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || msg`No return`.toString()}`);
+        throw new Error(`(${getNfTypeLabel(NfType.NFSE)}): ${issueResult?.error || `Não foi possível emitir a nota fiscal`}`);
       }
     }
 
@@ -268,13 +268,13 @@ export class FinancialClosingNFService {
   ): string {
     if (!emitterState) {
       throw new Error(
-        msg`Emitter state is required to define the CFOP. (Configure in the FocusNFE integration)`.toString(),
+        `Estado do emissor é obrigatório para definir o CFOP. (Configure na integração com a FocusNFe)`,
       );
     }
 
     if (!clientState) {
       throw new Error(
-        msg`Company state is required to define the CFOP. (Configure in the company registration)`.toString(),
+        `Estado da empresa é obrigatório para definir o CFOP. (Configure na empresa)`,
       );
     }
 
