@@ -115,9 +115,7 @@ export const SendTemplateModal = (): React.ReactNode => {
   );
 
   useEffect(() => {
-    if (isModalOpen) {
-      refetch();
-    }
+    refetch();
   }, [isModalOpen, refetch]);
 
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
@@ -217,9 +215,6 @@ export const SendTemplateModal = (): React.ReactNode => {
 
   const onClose = useCallback(() => {
     closeModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
-    setSelectedPhoneNumber(null);
-    setSelectedIntegrationId('');
-    setSelectedTemplateId(null);
   }, [closeModal]);
 
   const integrationTabs = useMemo(
