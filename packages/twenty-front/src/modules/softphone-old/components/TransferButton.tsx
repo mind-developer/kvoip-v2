@@ -1,7 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { useTheme } from '@emotion/react';
 import React, { useState } from 'react';
-import { Session } from 'sip.js';
+import { type Session } from 'sip.js';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowRight, IconCheck } from 'twenty-ui/display';
 

@@ -1,5 +1,5 @@
-import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberTimeFormatEnum,

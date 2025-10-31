@@ -6,14 +6,14 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ServiceCenterTabContent } from '@/settings/service-center/agents/components/ServiceCenterTabContent';
 import { ServiceCenterTabList } from '@/settings/service-center/agents/components/ServiceCenterTabList';
 import { SettingsServiceCenterFilterDropdown } from '@/settings/service-center/agents/components/SettingsServiceCenterFilterDropdown';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { Sector } from '~/generated/graphql';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Sector } from '~/generated/graphql';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;

@@ -18,7 +18,6 @@ import { useCreateCheckoutSession } from '~/pages/settings/integrations/stripe/h
 import { useFindAllStripeIntegrations } from '~/pages/settings/integrations/stripe/hooks/useFindAllStripeIntegrations';
 import { useRemoveStripeIntegration } from '~/pages/settings/integrations/stripe/hooks/useRemoveStripeIntegrations';
 
-// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledIsActiveContainer = styled.div`
   width: 65%;
   height: 25px;

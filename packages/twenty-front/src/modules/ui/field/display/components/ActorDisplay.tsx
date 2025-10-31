@@ -1,9 +1,11 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { IconBrandWhatsapp, IconMessageCircle } from '@tabler/icons-react';
-import { ChatIntegrationProvider } from 'twenty-shared/types';
+import {
+  ChatIntegrationProvider,
+  ConnectedAccountProvider,
+} from 'twenty-shared/types';
 
 import { useMemo } from 'react';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   IconApi,

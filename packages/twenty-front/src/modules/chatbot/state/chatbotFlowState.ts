@@ -2,8 +2,8 @@ import {
   initialEdges,
   initialNodes,
 } from '@/chatbot/flow-templates/mockFlowTemplate';
-import { GenericNode } from '@/chatbot/types/GenericNode';
-import { Edge, XYPosition } from '@xyflow/react';
+import { type GenericNode } from '@/chatbot/types/GenericNode';
+import { type Edge, type XYPosition } from '@xyflow/react';
 import { createState } from 'twenty-ui/utilities';
 
 export const chatbotFlowNodes = createState<GenericNode[]>({

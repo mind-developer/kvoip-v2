@@ -466,11 +466,30 @@ export type ClientAiModelConfig = {
   provider: ModelProvider;
 };
 
-export type Component = {
-  __typename?: 'Component';
-  format?: Maybe<Scalars['String']>;
-  text?: Maybe<Scalars['String']>;
-  type: Scalars['String'];
+export enum ClientChatEvent {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  UPDATED = 'UPDATED'
+}
+
+export type ClientChatEventDto = {
+  __typename?: 'ClientChatEventDTO';
+  clientChat: Scalars['JSON'];
+  clientChatEventDate: Scalars['DateTime'];
+  event: ClientChatEvent;
+};
+
+export enum ClientMessageEvent {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  UPDATED = 'UPDATED'
+}
+
+export type ClientMessageEventDto = {
+  __typename?: 'ClientMessageEventDTO';
+  clientChatMessage: Scalars['JSON'];
+  clientChatMessageEventDate: Scalars['DateTime'];
+  event: ClientMessageEvent;
 };
 
 export type ComputeStepOutputSchemaInput = {
@@ -1677,21 +1696,11 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
-export type MessageAgent = {
-  id: Scalars['String'];
-  name: Scalars['String'];
-};
-
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
 }
-
-export type MessageSector = {
-  id: Scalars['String'];
-  name: Scalars['String'];
-};
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
@@ -1817,9 +1826,6 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   saveStripeAccountId: StripeIntegration;
   sendInvitations: SendInvitationsOutput;
-  sendWhatsAppEventMessage: Scalars['Boolean'];
-  sendWhatsAppMessage: Scalars['Boolean'];
-  sendWhatsAppTemplate: Scalars['Boolean'];
   setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
@@ -1864,7 +1870,6 @@ export type Mutation = {
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateTelephonyIntegration: TelephonyWorkspaceEntity;
   updateWebhook?: Maybe<Webhook>;
-  updateWhatsAppMessageData: Scalars['Boolean'];
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -2447,21 +2452,6 @@ export type MutationSendInvitationsArgs = {
 };
 
 
-export type MutationSendWhatsAppEventMessageArgs = {
-  sendWhatsAppEventMessageInput: SendWhatsAppEventMessageInput;
-};
-
-
-export type MutationSendWhatsAppMessageArgs = {
-  sendWhatsAppMessageInput: SendWhatsAppMessageInput;
-};
-
-
-export type MutationSendWhatsAppTemplateArgs = {
-  sendWhatsAppTemplateInput: SendWhatsAppTemplateInput;
-};
-
-
 export type MutationSetupPabxEnvironmentArgs = {
   input: SetupPabxEnvironmentInput;
 };
@@ -2677,11 +2667,6 @@ export type MutationUpdateWebhookArgs = {
 };
 
 
-export type MutationUpdateWhatsAppMessageDataArgs = {
-  updateWhatsAppMessageInput: UpdateWhatsAppMessageDataInput;
-};
-
-
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
@@ -2894,6 +2879,14 @@ export type ObjectStandardOverrides = {
   labelPlural?: Maybe<Scalars['String']>;
   labelSingular?: Maybe<Scalars['String']>;
   translations?: Maybe<Scalars['JSON']>;
+};
+
+export type OnChatEventInput = {
+  sectorId: Scalars['String'];
+};
+
+export type OnChatMessageEventInput = {
+  chatId: Scalars['String'];
 };
 
 export type OnDbEventDto = {
@@ -3209,7 +3202,6 @@ export type Query = {
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   getUserSoftfone?: Maybe<TelephonyExtension>;
-  getWhatsappTemplates: WhatsappTemplatesResponse;
   index: Index;
   indexMetadatas: IndexConnection;
   interIntegrationById?: Maybe<InterIntegration>;
@@ -3540,11 +3532,6 @@ export type QueryGetUserSoftfoneArgs = {
 };
 
 
-export type QueryGetWhatsappTemplatesArgs = {
-  integrationId: Scalars['String'];
-};
-
-
 export type QueryInterIntegrationByIdArgs = {
   integrationId: Scalars['String'];
 };
@@ -3768,43 +3755,6 @@ export type SendInvitationsOutput = {
   success: Scalars['Boolean'];
 };
 
-export type SendWhatsAppEventMessageInput = {
-  agent?: InputMaybe<MessageAgent>;
-  eventStatus: Scalars['String'];
-  from: Scalars['String'];
-  fromMe?: InputMaybe<Scalars['Boolean']>;
-  integrationId: Scalars['String'];
-  message?: InputMaybe<Scalars['String']>;
-  personId: Scalars['String'];
-  sector?: InputMaybe<MessageSector>;
-  status: Scalars['String'];
-  to: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type SendWhatsAppMessageInput = {
-  fileId?: InputMaybe<Scalars['String']>;
-  from: Scalars['String'];
-  fromMe?: InputMaybe<Scalars['Boolean']>;
-  integrationId: Scalars['String'];
-  message?: InputMaybe<Scalars['String']>;
-  personId: Scalars['String'];
-  to: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type SendWhatsAppTemplateInput = {
-  agent?: InputMaybe<MessageAgent>;
-  from: Scalars['String'];
-  integrationId: Scalars['String'];
-  language: Scalars['String'];
-  message: Scalars['String'];
-  personId: Scalars['String'];
-  templateName: Scalars['String'];
-  to: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']>;
@@ -3932,7 +3882,19 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  onClientChatEvent: ClientChatEventDto;
+  onClientMessageEvent: ClientMessageEventDto;
   onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnClientChatEventArgs = {
+  input: OnChatEventInput;
+};
+
+
+export type SubscriptionOnClientMessageEventArgs = {
+  input: OnChatMessageEventInput;
 };
 
 
@@ -4092,17 +4054,6 @@ export type TelephonyWorkspaceEntity = {
   recordCalls?: Maybe<Scalars['Boolean']>;
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-};
-
-export type Template = {
-  __typename?: 'Template';
-  category: Scalars['String'];
-  components: Array<Component>;
-  id: Scalars['String'];
-  language: Scalars['String'];
-  name: Scalars['String'];
-  parameter_format: Scalars['String'];
-  status: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -4504,16 +4455,6 @@ export type UpdateWebhookDto = {
   targetUrl?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateWhatsAppMessageDataInput = {
-  clientPhoneNumber: Scalars['String'];
-  deleted: Scalars['Boolean'];
-  edited: Scalars['Boolean'];
-  id: Scalars['String'];
-  integrationId: Scalars['String'];
-  message: Scalars['String'];
-  status: Scalars['String'];
-};
-
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -4719,11 +4660,6 @@ export type Webhook = {
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
-};
-
-export type WhatsappTemplatesResponse = {
-  __typename?: 'WhatsappTemplatesResponse';
-  templates: Array<Template>;
 };
 
 export type WorkerQueueMetrics = {

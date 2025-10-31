@@ -2,7 +2,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { CREATE_TELEPHONY } from '../graphql/mutations/createTelephony';
-import { CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
+import { type CreateTelephonyInput } from '../types/SettingsServiceCenterTelephony';
 
 interface UserCreateTelephonyReturn {
   createTelephony: (inputTelephony: CreateTelephonyInput) => Promise<void>;

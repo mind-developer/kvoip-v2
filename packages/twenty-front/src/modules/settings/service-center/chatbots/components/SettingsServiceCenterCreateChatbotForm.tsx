@@ -4,13 +4,13 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { ChatbotStatus } from '@/service-center/types/ChatbotStatus';
 import { type IWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/WhatsappIntegration';
-import { ChatbotFormValues } from '@/settings/service-center/chatbots/validation-schemas/chatbotFormSchema';
+import { type ChatbotFormValues } from '@/settings/service-center/chatbots/validation-schemas/chatbotFormSchema';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledInfoForm = styled.div`
@@ -21,9 +21,9 @@ const StyledInfoForm = styled.div`
 `;
 
 const StyledFormRow = styled.div`
-  width: 100%;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledSection = styled(Section)`

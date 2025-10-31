@@ -146,7 +146,6 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
-    // eslint-disable-next-line no-sparse-arrays
   }, [integration, navigateApp, isIntegrationAvailable]);
 
   if (!isIntegrationAvailable) return null;

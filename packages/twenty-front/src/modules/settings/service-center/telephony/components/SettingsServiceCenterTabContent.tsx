@@ -18,7 +18,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  Section
+  Section,
 } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -69,28 +69,30 @@ export const ServiceCenterTabContent = ({
   };
 
   // Filtrar telefonia baseado no termo de busca
-  const filteredTelephonys = telephonys.filter(telephony => {
+  const filteredTelephonys = telephonys.filter((telephony) => {
     if (!searchTerm) return true;
-    
+
     const searchLower = searchTerm.toLowerCase();
-    
+
     // Buscar nos campos da telefonia
-    const telephonyMatch = (
+    const telephonyMatch =
       telephony.extensionName?.toLowerCase().includes(searchLower) ||
       telephony.numberExtension?.toLowerCase().includes(searchLower) ||
-      telephony.type?.toLowerCase().includes(searchLower)
-    );
-    
+      telephony.type?.toLowerCase().includes(searchLower);
+
     // Se já encontrou na telefonia, retorna true
     if (telephonyMatch) return true;
-    
+
     // Buscar no nome do usuário vinculado
-    const linkedMember = workspaceMembers.find(member => member.id === telephony.memberId);
+    const linkedMember = workspaceMembers.find(
+      (member) => member.id === telephony.memberId,
+    );
     if (linkedMember) {
-      const memberName = `${linkedMember.name.firstName} ${linkedMember.name.lastName}`.toLowerCase();
+      const memberName =
+        `${linkedMember.name.firstName} ${linkedMember.name.lastName}`.toLowerCase();
       return memberName.includes(searchLower);
     }
-    
+
     return false;
   });
 
@@ -101,7 +103,6 @@ export const ServiceCenterTabContent = ({
   return (
     <>
       {filteredTelephonys?.length > 0 ? (
-          
         <StyledSection>
           {filteredTelephonys?.map((telephony) => (
             <SettingsServiceCenterItemTableRow
@@ -121,26 +122,32 @@ export const ServiceCenterTabContent = ({
                   />
                 ) : undefined
               }
-              onClick={disableActions && onExtensionSelect ? () => {
-                setSelectedItem(telephony);
-                onExtensionSelect(telephony);
-              } : undefined}
+              onClick={
+                disableActions && onExtensionSelect
+                  ? () => {
+                      setSelectedItem(telephony);
+                      onExtensionSelect(telephony);
+                    }
+                  : undefined
+              }
             />
           ))}
         </StyledSection>
-
       ) : (
-
         <Section>
           <div style={{ marginTop: theme.spacing(10) }}>
             <AnimatedPlaceholderEmptyContainer>
               <AnimatedPlaceholder type="noRecord" />
               <AnimatedPlaceholderEmptyTextContainer>
                 <AnimatedPlaceholderEmptyTitle>
-                  {searchTerm ? t`No operators found for "${searchTerm}"` : t`No members with extensions found`}
+                  {searchTerm
+                    ? t`No operators found for "${searchTerm}"`
+                    : t`No members with extensions found`}
                 </AnimatedPlaceholderEmptyTitle>
                 <AnimatedPlaceholderEmptySubTitle>
-                  {searchTerm ? t`Try a different search term` : t`Create an extension for a member to get started`}
+                  {searchTerm
+                    ? t`Try a different search term`
+                    : t`Create an extension for a member to get started`}
                 </AnimatedPlaceholderEmptySubTitle>
               </AnimatedPlaceholderEmptyTextContainer>
             </AnimatedPlaceholderEmptyContainer>

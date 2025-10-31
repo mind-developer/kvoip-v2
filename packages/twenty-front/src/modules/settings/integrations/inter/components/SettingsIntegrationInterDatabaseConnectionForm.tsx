@@ -1,5 +1,3 @@
-/* @kvoip-woulz proprietary */
-/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 import {
@@ -10,7 +8,7 @@ import {
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
 import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
+import { type SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
 const StyledFormContainer = styled.div`
   display: flex;

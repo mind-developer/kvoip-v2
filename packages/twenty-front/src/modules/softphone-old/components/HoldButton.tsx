@@ -3,11 +3,11 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useTheme } from '@emotion/react';
 import React from 'react';
-import { Session, SessionState } from 'sip.js';
-import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
+import { type Session, SessionState } from 'sip.js';
+import { type SessionDescriptionHandler } from 'sip.js/lib/platform/web';
 import { useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { CallState } from '../types/callState';
+import { type CallState } from '../types/callState';
 
 interface HoldButtonProps {
   session: Session | null;

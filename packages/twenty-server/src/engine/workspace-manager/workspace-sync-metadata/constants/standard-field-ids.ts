@@ -46,6 +46,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
   invoice: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
+  chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -363,13 +364,14 @@ export const SECTOR_FIELD_IDS = {
   agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
   timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
   chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
+  whatsappIntegrations: 'f12979a9-a1a3-4091-b536-0d4345d58f70',
+  abandonmentInterval: '3d3f4bd0-1f85-4b09-a5c5-e646f2d2a51f',
 } as const;
 
 export const AGENT_FIELD_IDS = {
   isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
   isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
   sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
-  inboxTargets: '4be771fa-a3b4-4947-8ebd-50b73000f3bd',
   workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
   timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
   chats: 'e6ce11d2-d479-4147-aa02-8a31885638c2',
@@ -485,9 +487,9 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
+  tenant: '30303030-390e-4271-8f14-03957ae27f6e',
   sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
   agent: '45194ac8-73e8-4e76-85f9-a1e8f7a4cd1e',
-  tenant: '30303030-390e-4271-8f14-03957ae27f6e',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -669,6 +671,11 @@ export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
   deliveryStatus: '1374f720-eea1-43a4-8f8e-79bbdb53aa0f',
   edited: '30005416-0c21-4557-98c7-c9d75b5b5ca8',
   attachmentUrl: 'ac734b13-92c2-4edd-8a44-04b5e5a4c81f',
+  reactions: '115bc5b9-bd49-4be2-bf22-57776537405d',
+  repliesTo: '31b13032-f501-42c1-abca-826ba323ba5e',
+  templateId: 'fde7fd83-0271-4950-b1c9-49338d42b1f8',
+  templateLanguageCode: 'c50d95f9-4366-4948-84f5-acef072a6a74',
+  templateName: '7073b2e6-6076-4657-a0dc-318100b48fd6',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
@@ -818,6 +825,10 @@ export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
   person: '81157d97-44b6-432e-aa2b-065b1eefb548',
   status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
   clientChatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
+  lastMessageType: 'c391a517-1514-450b-9751-6239c4c18d62',
+  lastMessageDate: 'dde154dd-bfbc-49bd-a127-c71aa5e34b41',
+  lastMessagePreview: '5ebec8ba-14a7-4ac3-91f5-45bbfd27907a',
+  unreadMessagesCount: '8f2e9c1a-3b4d-4e5f-9a8b-2c3d4e5f6a7b',
 } as const;
 
 export const CHATBOT_STANDARD_FIELD_IDS = {
@@ -832,6 +843,7 @@ export const CHATBOT_STANDARD_FIELD_IDS = {
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
   whatsappIntegrations: 'fa8546ab-020d-46ef-8182-39186104fce2',
+  attachments: '35c7ff99-7fde-42a6-a325-0e2d29afb600',
 } as const;
 
 export const WHATSAPP_STANDARD_FIELD_IDS = {
@@ -847,7 +859,7 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
   apiType: '0f112edf-794d-4e0d-b054-b7a5a72f15cd',
-  inbox: '84b0151b-547b-4b14-a9ad-263968e2868d',
+  defaultSector: '84b0151b-547b-4b14-a9ad-263968e2868d',
   clientChats: 'ee41e808-1b6f-4593-a421-87a85118506e',
 } as const;
 
@@ -942,6 +954,11 @@ export const TELEPHONY_STANDARD_FIELD_IDS = {
   advancedFowarding5Value: '21991b1d-2583-4732-bd88-ce339ab6fdf5',
   searchVector: 'cbeba309-6b50-4d4c-9b4a-1ae4b6af2a58',
 };
+
+export const CLIENT_CHAT_CONFIG_STANDARD_FIELD_IDS = {
+  abandonmentInterval: '2f307b17-e423-4ff6-a3ea-bd83e47f0942',
+  sectors: '3a2b308d-a2a8-402b-a9d7-7c008cddb310',
+} as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,

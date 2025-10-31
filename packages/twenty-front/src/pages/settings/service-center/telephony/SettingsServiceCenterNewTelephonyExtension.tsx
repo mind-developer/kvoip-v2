@@ -2,18 +2,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
+import { type z } from 'zod';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsServiceCenterTelephonyAboutForm,
   SettingsServiceCenterTelephonyFormSchema,
 } from '@/settings/service-center/telephony/components/forms/SettingsServiceCenterTelephonyForm';
 import { useCreateTelephony } from '@/settings/service-center/telephony/hooks/useCreateTelephony';
-import { CreateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { type CreateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import {
   checkPassword,
   generatePassword,
@@ -21,14 +19,12 @@ import {
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line import/no-duplicates
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { IconPlus } from '@tabler/icons-react';
+import { Button } from 'twenty-ui/input';
 
 type SettingsNewTelephonySchemaValues = z.infer<
   typeof SettingsServiceCenterTelephonyFormSchema
@@ -127,7 +123,7 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
         );
 
       await createTelephony(telephonyData);
-      
+
       if (data) {
         navigate(settingsServiceCenterTelephonyPagePath);
       }
@@ -142,7 +138,6 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-
       <SubMenuTopBarContainer
         title={t`Telephony`}
         actionButton={
@@ -166,7 +161,7 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
         <SettingsPageContainer>
           <SettingsServiceCenterTelephonyAboutForm />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer> 
+      </SubMenuTopBarContainer>
     </FormProvider>
   );
 };

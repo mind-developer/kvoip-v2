@@ -2,14 +2,15 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type AgentFormValues } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { AvatarChip } from 'twenty-ui/components';
-import { H2Title, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { H2Title, Label, useIcons } from 'twenty-ui/display';
+import { type SelectOption, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledForm = styled.div`
@@ -22,7 +23,7 @@ const StyledFormRow = styled(Section)`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 type SettingsServiceCenterAgentAboutFormProps = {
@@ -32,6 +33,7 @@ type SettingsServiceCenterAgentAboutFormProps = {
 export default function SettingsServiceCenterAgentAboutForm({
   isEditMode = false,
 }: SettingsServiceCenterAgentAboutFormProps) {
+  const theme = useTheme();
   const form = useFormContext<AgentFormValues>();
   const { getIcon } = useIcons();
 
@@ -129,6 +131,23 @@ export default function SettingsServiceCenterAgentAboutForm({
                     field.onChange(value);
                   }}
                 />
+              )}
+            />
+          </StyledFormRow>
+          <StyledFormRow>
+            <Controller
+              name="isAdmin"
+              control={form.control}
+              render={({ field }) => (
+                <div>
+                  <Label
+                    style={{ marginBottom: theme.spacing(1) }}
+                  >{t`Is Admin`}</Label>
+                  <Toggle
+                    value={field.value ?? false}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                </div>
               )}
             />
           </StyledFormRow>

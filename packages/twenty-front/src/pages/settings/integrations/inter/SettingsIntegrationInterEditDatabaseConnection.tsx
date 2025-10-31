@@ -1,5 +1,5 @@
 /* @kvoip-woulz proprietary */
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';

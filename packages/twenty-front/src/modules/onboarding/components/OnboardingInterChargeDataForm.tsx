@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { HandleCheckoutSessionFn } from '@/billing/hooks/useHandleCheckoutSession';
+import { type HandleCheckoutSessionFn } from '@/billing/hooks/useHandleCheckoutSession';
 import { INTER_STATE_UNITY_OPTIONS } from '@/onboarding/constants/OnboardingInterChargeDataStateUnityOptions';
-import { InterCharteDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
+import { type InterCharteDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
 import { useInterCustomerTypeOptions } from '@/onboarding/hooks/useInterCustomerTypeOptions';
 import {
   OnboardingPlanStep,

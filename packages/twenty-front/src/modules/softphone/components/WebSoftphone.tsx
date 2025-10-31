@@ -10,12 +10,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
-import {
-  Registerer,
-  RegistererState,
-  SessionState,
-  UserAgent
-} from 'sip.js';
+import { Registerer, RegistererState, SessionState, UserAgent } from 'sip.js';
 import { SessionManager } from 'sip.js/lib/platform/web';
 import {
   CALL_TRANSFER_CONFIG,
@@ -24,7 +19,7 @@ import {
   SESSION_CONFIG,
   SOFTPHONE_POSITION_CONFIG,
   USER_AGENT_CONFIG,
-  WEBRTC_CONFIG
+  WEBRTC_CONFIG,
 } from '../constants';
 import defaultCallState from '../constants/defaultCallState';
 import { useTelephonyUserData } from '../hooks/query/useTelephonyUserData';
@@ -49,7 +44,7 @@ import TransferModal from './modal/TransferModal';
 import { ConnectionStatus } from './status/ConnectionStatus';
 
 const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
-  background-color: ${({ theme }) => theme.background.tertiary}; 
+  background-color: ${({ theme }) => theme.background.tertiary};
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(3)};
@@ -58,13 +53,14 @@ const StyledContainer = styled.div<{ status: SoftphoneStatus }>`
   cursor: grab;
   gap: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  
-  box-shadow: 0 0 5px 0 ${({ status, theme }) =>
-    status === SoftphoneStatus.Online
-      ? theme.color.green40
-      : status === SoftphoneStatus.Registering
-        ? theme.color.yellow40
-        : theme.color.red40};
+
+  box-shadow: 0 0 5px 0
+    ${({ status, theme }) =>
+      status === SoftphoneStatus.Online
+        ? theme.color.green40
+        : status === SoftphoneStatus.Registering
+          ? theme.color.yellow40
+          : theme.color.red40};
 `;
 
 const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
@@ -80,20 +76,20 @@ const WebSoftphone: React.FC = () => {
   const [isKeyboardExpanded, setIsKeyboardExpanded] = useState(false);
   const [isSendingDTMF, setIsSendingDTMF] = useState(false);
   const [dtmf, setDtmf] = useState('');
-  
+
   // Hooks customizados
   const { telephonyExtension } = useTelephonyUserData();
   const { config, setConfig } = useSipConfig(telephonyExtension);
   const { isRinging, isIncomingCall, isActiveCall } = useCallStates(callState);
   const sipRefs = useSipRefs();
   const { startTimer } = useCallTimer(callState);
-  
+
   // Debug: verificar se as referências estão sendo criadas
   // console.log('sipRefs criadas:', sipRefs);
-  
+
   // Hooks de gerenciamento
   const sipManager = useSipManager({ config, setCallState, sipRefs });
-  
+
   // Hooks de UI
   const { openModal } = useModal();
 
@@ -126,7 +122,11 @@ const WebSoftphone: React.FC = () => {
 
   useEffect(
     () =>
-      startTimer(callState.ringingStartTime, setRingingTime, sipRefs.ringingTimerRef),
+      startTimer(
+        callState.ringingStartTime,
+        setRingingTime,
+        sipRefs.ringingTimerRef,
+      ),
     [callState.ringingStartTime, startTimer, sipRefs.ringingTimerRef],
   );
 
@@ -244,15 +244,18 @@ const WebSoftphone: React.FC = () => {
           invitation.delegate = {
             onCancel: () => {
               // console.log('Call cancelled by remote party');
-              if (sipRefs.sessionRef.current && sipRefs.sessionRef.current.state !== SessionState.Established) {
+              if (
+                sipRefs.sessionRef.current &&
+                sipRefs.sessionRef.current.state !== SessionState.Established
+              ) {
                 sipManager.cleanupSession();
               }
-            }
+            },
           };
 
           invitation.stateChange.addListener((state: SessionState) => {
             // console.log('Incoming call state changed:', state);
-            
+
             if (state === SessionState.Establishing) {
               setCallState((prev) => ({
                 ...prev,
@@ -273,7 +276,10 @@ const WebSoftphone: React.FC = () => {
               // console.log('Incoming call accepted:', sipRefs.invitationRef.current);
             } else if (state === SessionState.Terminated) {
               // console.log('Call terminated with reason:', invitation);
-              if (!sipRefs.sessionRef.current || sipRefs.sessionRef.current.state !== SessionState.Established) {
+              if (
+                !sipRefs.sessionRef.current ||
+                sipRefs.sessionRef.current.state !== SessionState.Established
+              ) {
                 sipManager.cleanupSession();
               }
             }
@@ -380,10 +386,9 @@ const WebSoftphone: React.FC = () => {
     console.log('handleSendDtmf chamado com key:', key);
 
     if (sipRefs.sessionRef.current?.state === SessionState.Established) {
-
       // Tratar backspace - apenas atualizar o estado sem enviar DTMF
       if (key === 'Backspace' || key === 'backspace') {
-        setDtmf(prevDtmf => prevDtmf.slice(0, -1));
+        setDtmf((prevDtmf) => prevDtmf.slice(0, -1));
         return;
       }
 
@@ -398,7 +403,7 @@ const WebSoftphone: React.FC = () => {
 
       console.log('Sending DTMF tone from app:', keyTrimmedLastChar);
 
-      setDtmf(prevDtmf => prevDtmf + keyTrimmedLastChar);
+      setDtmf((prevDtmf) => prevDtmf + keyTrimmedLastChar);
 
       sipManager.sendDTMF(keyTrimmedLastChar);
     }
@@ -406,10 +411,9 @@ const WebSoftphone: React.FC = () => {
 
   const transferCall = (to: string) => {
     // console.log('Transferindo chamada para:', to);
-    const sessionManager = new SessionManager(
-      CALL_TRANSFER_CONFIG.SERVER_URL,
-      { registererOptions: CALL_TRANSFER_CONFIG.REGISTERER_OPTIONS },
-    );
+    const sessionManager = new SessionManager(CALL_TRANSFER_CONFIG.SERVER_URL, {
+      registererOptions: CALL_TRANSFER_CONFIG.REGISTERER_OPTIONS,
+    });
 
     if (sipRefs.sessionRef.current) {
       sessionManager?.transfer(
@@ -449,7 +453,7 @@ const WebSoftphone: React.FC = () => {
       console.log('Configuração inválida:', {
         username: config?.username,
         password: config?.password,
-        domain: config?.domain
+        domain: config?.domain,
       });
     }
     return () => {
@@ -484,14 +488,14 @@ const WebSoftphone: React.FC = () => {
           onMouseUp={(e) => {
             e.stopPropagation();
           }}
-          style={{ 
+          style={{
             pointerEvents: 'auto',
             position: 'absolute',
             bottom: SOFTPHONE_POSITION_CONFIG.BOTTOM,
-            right: SOFTPHONE_POSITION_CONFIG.RIGHT
+            right: SOFTPHONE_POSITION_CONFIG.RIGHT,
           }}
         >
-          <AudioManager 
+          <AudioManager
             callState={callState}
             remoteAudioRef={sipRefs.remoteAudioRef}
           />
@@ -505,7 +509,7 @@ const WebSoftphone: React.FC = () => {
                 extension={config?.username}
                 onOpenSettings={handleOpenAudioDevicesModal}
               />
-              
+
               <CallTimer
                 callState={callState}
                 elapsedTime={elapsedTime}
@@ -550,7 +554,9 @@ const WebSoftphone: React.FC = () => {
                 }
               }}
               onSetIsSendingDTMF={setIsSendingDTMF}
-              onSetCurrentNumber={(number: string) => setCallState(prev => ({ ...prev, currentNumber: number }))}
+              onSetCurrentNumber={(number: string) =>
+                setCallState((prev) => ({ ...prev, currentNumber: number }))
+              }
               setCallState={setCallState}
               transferCall={transferCall}
               onOpenTransferModal={handleOpenTransferModal}
@@ -558,12 +564,9 @@ const WebSoftphone: React.FC = () => {
           </StyledControlsContainer>
         </StyledContainer>
       </Draggable>
-      
+
       <AudioDevicesModal modalId="audio-devices-modal" />
-      <TransferModal 
-        modalId="transfer-modal" 
-        onTransfer={transferCall}
-      />
+      <TransferModal modalId="transfer-modal" onTransfer={transferCall} />
     </>
   );
 };

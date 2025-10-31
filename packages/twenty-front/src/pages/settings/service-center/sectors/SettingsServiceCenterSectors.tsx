@@ -4,15 +4,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Agent } from 'http';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, IconPlus, IconSearch, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -48,41 +47,32 @@ export const SettingsServiceCenterSectors = () => {
     objectNameSingular: CoreObjectNameSingular.Sector,
     recordGqlFields: { id: true, icon: true, name: true, agents: true },
   });
-  const { records: agents } = useFindManyRecords<
-    Agent & { id: string; __typename: string }
-  >({
-    objectNameSingular: CoreObjectNameSingular.Agent,
-  });
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
 
-  const [filteredSectors, setFilteredSectors] = useState<Sector[]>(sectors);
+  const { records: workspaceMembersWithAgent } =
+    useFindManyRecords<WorkspaceMember>({
+      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      recordGqlFields: { agent: true, name: true, avatarUrl: true },
+      filter: {
+        agentId: {
+          is: 'NOT_NULL',
+        },
+      },
+    });
 
-  function filterSectors({ name }: { name: string }) {
-    const searchFiltered = sectors.filter((sector) =>
-      sector.name.toLowerCase().includes(name.toLowerCase()),
-    );
-    //add more filters
-    const filtered = searchFiltered;
-    return filtered;
-  }
   const [searchBySectorName, setSearchBySectorName] = useState('');
 
-  function getSectorStatus(sectorId: string): string {
-    const agentIdsForSector = agents
-      .filter((agent) => agent.sectorId === sectorId)
-      .map((agent) => agent.id);
-    const agentNames = workspaceMembers
-      .filter((member) =>
-        member.agentId ? agentIdsForSector.includes(member.agentId) : false,
-      )
-      .map(
-        (member) =>
-          member.name.firstName + ' ' + member.name.lastName.slice(0, 1) + '.',
-      );
+  const filteredSectors = useMemo(() => {
+    return sectors.filter((sector) =>
+      sector.name.toLowerCase().includes(searchBySectorName.toLowerCase()),
+    );
+  }, [sectors, searchBySectorName]);
 
-    const truncated = truncateList(agentNames, 5, 'No agents assigned');
+  function getSectorStatus(sectorId: string): string {
+    const agentIdsForSector = workspaceMembersWithAgent
+      .filter((member) => member.agent?.sectorId === sectorId)
+      .map((member) => member.name.firstName + ' ' + member.name.lastName);
+    console.log('agentIdsForSector', agentIdsForSector);
+    const truncated = truncateList(agentIdsForSector, 5, 'No agents assigned');
     return truncated;
   }
 
@@ -117,7 +107,6 @@ export const SettingsServiceCenterSectors = () => {
           />
           <StyledTextInput
             onChange={(s) => {
-              setFilteredSectors(filterSectors({ name: s }));
               setSearchBySectorName(s);
             }}
             value={searchBySectorName}
