@@ -59,13 +59,20 @@ export class WhatsappController {
         2,
       ),
     );
-    const integration = await (
+    const whatsappIntegrationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'whatsappIntegration',
         { shouldBypassPermissionChecks: true },
-      )
-    ).findOneBy({ id });
+      );
+    const integration = await whatsappIntegrationRepository.findOne({
+      where: { id },
+    });
+    const whatsappIntegrations = await whatsappIntegrationRepository.find();
+    console.log(
+      'whatsappIntegrations',
+      JSON.stringify(whatsappIntegrations, null, 2),
+    );
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {

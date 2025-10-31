@@ -25,6 +25,10 @@ import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { z } from 'zod';
+import {
+  REACT_APP_META_WEBHOOK_URL,
+  REACT_APP_SERVER_BASE_URL,
+} from '~/config';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -257,20 +261,22 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         verifyToken,
       });
 
-      try {
-        await axios.post(
-          `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
-          {
-            webhook: `https://${process.env.NEXT_PUBLIC_APP_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
-            workspaceID: workspaceId,
-            canalID: newIntegrationId,
-          },
-        );
-      } catch (error) {
-        enqueueErrorSnackBar({
-          message: t`Failed to create session`,
-        });
-        await deleteOneRecord(newIntegrationId);
+      if (formValues.apiType === 'Baileys') {
+        try {
+          await axios.post(
+            `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+            {
+              webhook: `https://${REACT_APP_SERVER_BASE_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+              workspaceID: workspaceId,
+              canalID: newIntegrationId,
+            },
+          );
+        } catch (error) {
+          enqueueErrorSnackBar({
+            message: t`Failed to create session`,
+          });
+          await deleteOneRecord(newIntegrationId);
+        }
       }
 
       if (formValues.apiType === 'Baileys') {
@@ -293,7 +299,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
             {
               access_token: `${formValues.appId}|${formValues.appKey}`,
               object: 'whatsapp_business_account',
-              callback_url: `https://sublanceolate-georgie-blindly.ngrok-free.dev/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+              callback_url: `${REACT_APP_META_WEBHOOK_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
               verify_token: verifyToken,
               fields: 'messages',
             },
