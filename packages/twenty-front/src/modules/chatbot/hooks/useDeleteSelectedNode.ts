@@ -1,10 +1,14 @@
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import {
+  chatbotFlowEdges,
+  chatbotFlowNodes,
+} from '@/chatbot/state/chatbotFlowState';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 export const useDeleteSelectedNode = () => {
-  const chatbotFlowNodes = useRecoilValue(chatbotFlowNodes);
-  const chatbotFlowEdges = useRecoilValue(chatbotFlowEdges);
+  const nodes = useRecoilValue(chatbotFlowNodes);
+  const edges = useRecoilValue(chatbotFlowEdges);
   const setSelectedNode = useSetRecoilState(chatbotFlowSelectedNodeState);
   const setChatbotFlowNodes = useSetRecoilState(chatbotFlowNodes);
   const setChatbotFlowEdges = useSetRecoilState(chatbotFlowEdges);
