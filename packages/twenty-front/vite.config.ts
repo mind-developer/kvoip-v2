@@ -30,6 +30,7 @@ export default defineConfig(({ command, mode }) => {
     SSL_KEY_PATH,
     REACT_APP_PORT,
     REACT_APP_CHATBOT_BASE_URL,
+    REACT_APP_META_WEBHOOK_URL,
     REACT_APP_STRIPE_PUBLISHABLE_KEY,
     REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -277,6 +278,7 @@ export default defineConfig(({ command, mode }) => {
       _env_: {
         REACT_APP_SERVER_BASE_URL,
         REACT_APP_CHATBOT_BASE_URL,
+        REACT_APP_META_WEBHOOK_URL,
         REACT_APP_STRIPE_PUBLISHABLE_KEY,
         REACT_APP_FIREBASE_API_KEY,
         REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -288,6 +290,7 @@ export default defineConfig(({ command, mode }) => {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
         REACT_APP_CHATBOT_BASE_URL,
+        REACT_APP_META_WEBHOOK_URL,
         REACT_APP_STRIPE_PUBLISHABLE_KEY,
         REACT_APP_FIREBASE_API_KEY,
         REACT_APP_FIREBASE_AUTH_DOMAIN,

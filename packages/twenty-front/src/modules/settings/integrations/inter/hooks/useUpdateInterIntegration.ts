@@ -1,5 +1,5 @@
 import { UPDATE_INTER_INTEGRATION } from '@/settings/integrations/inter/graphql/mutation/updateInterIntegration';
-import { UpdateInterIntegrationInput } from '@/settings/integrations/inter/types/UpdateInterIntegrationInput';
+import { type UpdateInterIntegrationInput } from '@/settings/integrations/inter/types/UpdateInterIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';

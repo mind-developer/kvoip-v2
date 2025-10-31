@@ -10,21 +10,37 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
+import {
+  extractBase64MediaInfo,
+  extractMediaId,
+  processBase64Media,
+} from 'src/engine/core-modules/meta/whatsapp/utils/mediaUtils';
 
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ChatMessageType } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 @Controller('whatsapp')
 export class WhatsappController {
   protected readonly logger = new Logger(WhatsappController.name);
+  private SERVER_URL: string;
 
   constructor(
     private twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly whatsappService: WhatsAppService,
-  ) {}
+    private readonly fileMetadataService: FileMetadataService,
+    private readonly fileService: FileService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
+    private readonly environmentService: TwentyConfigService,
+  ) {
+    this.SERVER_URL = this.environmentService.get('SERVER_URL');
+  }
 
   @Get('/webhook/:workspaceId/:id')
   @UseGuards(PublicEndpointGuard)
@@ -35,13 +51,28 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    const integration = await (
+    console.log(
+      'WEBHOOK VERIFICATION',
+      JSON.stringify(
+        { workspaceId, id, mode, challenge, verifyToken },
+        null,
+        2,
+      ),
+    );
+    const whatsappIntegrationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'whatsappIntegration',
         { shouldBypassPermissionChecks: true },
-      )
-    ).findOneBy({ id });
+      );
+    const integration = await whatsappIntegrationRepository.findOne({
+      where: { id },
+    });
+    const whatsappIntegrations = await whatsappIntegrationRepository.find();
+    console.log(
+      'whatsappIntegrations',
+      JSON.stringify(whatsappIntegrations, null, 2),
+    );
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {
@@ -65,144 +96,98 @@ export class WhatsappController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
-    if (body.entry[0].changes[0].statuses) {
-      this.whatsappService.updateMessage(
-        body.entry[0].changes[0].statuses[0].id,
-        {
-          deliveryStatus:
-            body.entry[0].changes[0].statuses[0].status?.toUpperCase() ?? null,
-        },
-        workspaceId,
-      );
-      return true;
-    }
+    const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
+    const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
+    console.log(
+      'body',
+      JSON.stringify(body.entry[0].changes[0].value, null, 2),
+    );
 
-    const isReceiving = body.entry[0].changes[0].value.messages;
-    const messages = body.entry[0].changes[0].value.messages;
-
-    for (const msg of messages) {
-      let mediaId: string | undefined;
-      let fileUrl;
-
-      msg.type = msg.type.toUpperCase();
-      switch (msg.type) {
-        case ChatMessageType.IMAGE:
-          mediaId = msg.image.id;
-          break;
-        case ChatMessageType.AUDIO:
-          mediaId = msg.audio.id;
-          break;
-        case ChatMessageType.DOCUMENT:
-          mediaId = msg.document.id;
-          break;
-        case ChatMessageType.VIDEO:
-          mediaId = msg.video.id;
-          break;
-        default:
-          mediaId = undefined;
-          break;
-      }
-
-      if (isReceiving) {
-        this.logger.log('IS RECEIVING');
-        // Novo fluxo: verifica se é mídia e se existe base64
-        let isBase64Media = false;
-        let base64String = '';
-        let mimeType = '';
-        let fileName = '';
-
-        if (
-          ['image', 'video', 'audio', 'document'].includes(msg.type) &&
-          msg.type &&
-          msg.type.base64
-        ) {
-          isBase64Media = true;
-          base64String = messages[messages.type].base64;
-          mimeType = msg[msg.type].mime_type || 'application/octet-stream';
-          fileName = `${msg.from}_${Date.now()}`;
-        }
-
-        if (isBase64Media) {
-          try {
-            this.logger.log('Recebendo mídia em base64');
-            // Remove prefixo se existir
-            if (base64String.startsWith('data:')) {
-              base64String = base64String.split(',')[1];
-              this.logger.log('Prefixo data: removido do base64');
-            }
-            const buffer = Buffer.from(base64String, 'base64');
-
-            this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
-            // Gera extensão correta
-            let ext = '';
-
-            if (mimeType && mimeType.includes('/')) {
-              ext =
-                '.' +
-                mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
-            }
-            const fileNameWithExt = `${msg.from}_${Date.now()}${ext}`;
-
-            this.logger.log(
-              `Nome do arquivo gerado para upload: ${fileNameWithExt}`,
-            );
-            this.logger.log(
-              `Diretório do bucket: workspaceId=${workspaceId}, tipo=${msg.type}`,
-            );
-            const file = {
-              originalname: fileNameWithExt,
-              buffer,
-              mimetype: mimeType,
-            };
-
-            fileUrl =
-              await this.whatsappService.googleStorageService.uploadFileToBucket(
-                workspaceId,
-                msg.type,
-                file,
-                false,
-              );
-            this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
-          } catch (err) {
-            this.logger.error('Erro ao salvar mídia base64:', err);
-            throw new HttpException(
-              'Erro ao salvar mídia base64: ' + (err?.message || err),
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-          }
-        } else if (mediaId) {
-          // Fluxo normal: baixa a mídia
-          fileUrl = await this.whatsappService.downloadMedia(
-            mediaId,
-            integrationId,
-            msg.from,
-            msg.type,
+    if (statuses) {
+      for (const status of statuses) {
+        try {
+          await this.chatMessageManagerService.updateMessage(
+            status.id,
+            {
+              deliveryStatus: status.status?.toUpperCase() ?? null,
+            },
             workspaceId,
           );
+        } catch (error) {
+          this.logger.error('Error updating message:', error);
         }
-
-        const message: FormattedWhatsAppMessage = {
-          id: msg.id,
-          fromPhoneNumber: msg.from,
-          toPhoneNumber: msg.to,
-          fromMe: !!msg.fromMe,
-          senderAvatarUrl:
-            body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
-          contactName:
-            body.entry[0].changes[0].value.contacts[0].profile.name ?? null,
-          textBody: msg.text.body,
-          fileUrl: mediaId || isBase64Media ? (fileUrl ?? null) : null,
-          caption: null,
-          type: msg.type,
-          deliveryStatus: msg.status,
-        };
-
-        await this.whatsappService.saveMessage(
-          message,
-          integrationId,
-          workspaceId,
-        );
       }
+      return true;
+    }
+    if (!messages) {
+      throw new Error('No messages found');
+    }
+
+    for (const msg of messages) {
+      msg.type = msg.type.toUpperCase();
+
+      const mediaId = extractMediaId(msg);
+      const { isBase64Media, base64String, mimeType } =
+        extractBase64MediaInfo(msg);
+
+      let fileUrl: string | null = null;
+
+      if (mediaId) {
+        fileUrl =
+          (await this.whatsappService.downloadMedia(
+            mediaId.id,
+            integrationId,
+            msg.from,
+            workspaceId,
+          )) ?? null;
+      }
+
+      if (isBase64Media) {
+        const buffer = await processBase64Media(
+          base64String,
+          mimeType,
+          workspaceId,
+          this.fileMetadataService,
+          this.fileService,
+        );
+        let ext = mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
+        ext = '.' + ext;
+
+        fileUrl = this.fileService.signFileUrl({
+          url: (
+            await this.fileMetadataService.createFile({
+              file: Buffer.from(buffer),
+              filename: v4() + ext,
+              mimeType,
+              workspaceId,
+            })
+          ).fullPath,
+          workspaceId,
+        });
+      }
+
+      const message: FormattedWhatsAppMessage = {
+        id: msg.id,
+        remoteJid: msg.from,
+        fromMe: !!msg.fromMe,
+        senderAvatarUrl:
+          body.entry[0].changes[0].value?.contacts[0]?.profile?.ppUrl,
+        contactName:
+          body.entry[0].changes[0].value?.contacts[0]?.profile?.name ?? null,
+        textBody: msg.text?.body ?? null,
+        attachmentUrl: mediaId || isBase64Media ? (fileUrl ?? null) : null,
+        caption: null,
+        type: msg.type,
+        deliveryStatus: msg.status,
+        senderPhoneNumber:
+          body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+      };
+
+      await this.whatsappService.saveMessage(
+        message,
+        integrationId,
+        workspaceId,
+      );
     }
   }
 }

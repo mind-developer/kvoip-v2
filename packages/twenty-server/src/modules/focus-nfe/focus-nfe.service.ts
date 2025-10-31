@@ -6,7 +6,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 
 import { compareDesc } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FocusNFeResponse } from 'src/modules/focus-nfe/types/FocusNFeResponse.type';
@@ -399,10 +398,7 @@ export class FocusNFeService {
     const latestNFSe = invoiceIssued
       .filter((nf) => nf.issueDate)
       .sort((a, b) =>
-        compareDesc(
-          toZonedTime(new Date(a.issueDate || ''), 'America/Sao_Paulo'),
-          toZonedTime(new Date(b.issueDate || ''), 'America/Sao_Paulo'),
-        ),
+        compareDesc(new Date(a.issueDate || ''), new Date(b.issueDate || '')),
       )[0];
 
     const latestNumeroRps = Number(latestNFSe?.rpsNumber);

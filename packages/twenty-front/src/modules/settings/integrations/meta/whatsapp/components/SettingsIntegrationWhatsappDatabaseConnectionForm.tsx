@@ -2,10 +2,17 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Select } from '@/ui/input/components/Select';
+import {
+  IconBrandMeta,
+  IconDeviceMobileMessage,
+  IconUserScan,
+} from '@tabler/icons-react';
 import { useEffect } from 'react';
-import { SelectOption } from 'twenty-ui/input';
-import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
+import { type IconComponent, useIcons } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { type SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -15,20 +22,30 @@ const StyledInputsContainer = styled.div`
 
 type SettingsIntegrationWhatsappDatabaseConnectionFormProps = {
   disabled?: boolean;
+  sectors?: (Omit<Sector, 'icon'> & {
+    __typename: string;
+    icon: string;
+  })[];
 };
 
 const apiTypeOptions: SelectOption<string>[] = [
   {
+    Icon: IconDeviceMobileMessage,
     label: 'Baileys',
     value: 'Baileys',
   },
   {
+    Icon: IconBrandMeta,
     label: 'MetaAPI',
     value: 'MetaAPI',
   },
 ];
 
 const getFormFields = (
+  sectors: (Omit<Sector, 'icon'> & {
+    __typename: string;
+    icon: IconComponent;
+  })[] = [],
 ): {
   name: keyof SettingsIntegrationWhatsappConnectionFormValues;
   label: string;
@@ -39,7 +56,31 @@ const getFormFields = (
   showForBaileys?: boolean;
   showForMetaAPI?: boolean;
 }[] => {
+  const sectorOptions: SelectOption[] =
+    sectors.length > 0
+      ? sectors.map((sector) => ({
+          Icon: sector.icon,
+          label: sector.name,
+          value: sector.id,
+        }))
+      : [
+          {
+            Icon: IconUserScan,
+            label: 'No sectors available',
+            value: 'no-sectors',
+            disabled: true,
+          },
+        ];
   return [
+    {
+      name: 'sectorId',
+      label: 'Default sector (members will receive all new messages)',
+      placeholder: 'Select a sector',
+      isSelect: true,
+      options: sectorOptions,
+      showForBaileys: true,
+      showForMetaAPI: true,
+    },
     {
       name: 'apiType',
       label: 'API Type',
@@ -102,27 +143,42 @@ const getFormFields = (
 
 export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
   disabled,
+  sectors = [],
 }: SettingsIntegrationWhatsappDatabaseConnectionFormProps) => {
+  const { getIcon } = useIcons();
   const { control, watch, setValue } =
     useFormContext<SettingsIntegrationWhatsappConnectionFormValues>();
   const selectedApiType = watch('apiType');
-  const formFields = getFormFields();
-  //
-  // Auto-preenchimento dos campos ocultos para Baileys
+  const formFields = getFormFields(
+    sectors.map((sector) => ({
+      ...sector,
+      icon: getIcon(sector.icon),
+    })),
+  );
   useEffect(() => {
     if (selectedApiType === 'Baileys') {
-      setValue('phoneId', 'Baileys');
-      setValue('businessAccountId', 'Baileys');
-      setValue('accessToken', 'Baileys');
-      setValue('appId', 'Baileys');
-      setValue('appKey', 'Baileys');
+      setValue('phoneId', '');
+      setValue('businessAccountId', '');
+      setValue('accessToken', '');
+      setValue('appId', '');
+      setValue('appKey', '');
     }
   }, [selectedApiType, setValue]);
+
+  // Set default sector when sectors are loaded
+  useEffect(() => {
+    if (sectors.length > 0) {
+      const currentSectorId = watch('sectorId');
+      if (!currentSectorId || currentSectorId === '') {
+        setValue('sectorId', sectors[0].id);
+      }
+    }
+  }, [sectors, setValue, watch]);
 
   if (!formFields) return null;
 
   const visibleFields = formFields.filter((field) => {
-    if (!selectedApiType) return true; // Mostrar todos se nenhum tipo selecionado
+    if (!selectedApiType) return true;
     if (selectedApiType === 'Baileys') return field.showForBaileys;
     if (selectedApiType === 'MetaAPI') return field.showForMetaAPI;
     return true;
@@ -144,7 +200,7 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
                     value={value}
                     onChange={onChange}
                     options={options}
-                    dropdownId={`tipo-api-select-${name}`}
+                    dropdownId={`api-type-select-${name}`}
                     fullWidth
                     disabled={disabled}
                   />

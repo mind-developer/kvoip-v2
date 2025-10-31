@@ -8,7 +8,7 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CompanyFinancialClosingExecutionDetailsCard } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard';
 import { CompanyFinancialClosingExecutionLogsList } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList';
-import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
+import { type CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -37,59 +37,65 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { companyFinancialClosingExecutionId } = useParams<{ companyFinancialClosingExecutionId: string }>();
+  const { companyFinancialClosingExecutionId } = useParams<{
+    companyFinancialClosingExecutionId: string;
+  }>();
 
   // Buscar metadata do objeto Company para incluir na query
-  const { objectMetadataItem: companyObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
+  const { objectMetadataItem: companyObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Company,
+    });
 
-  const { objectMetadataItem: executionObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.FinancialClosingExecution,
-  });
+  const { objectMetadataItem: executionObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.FinancialClosingExecution,
+    });
 
-  const { objectMetadataItem: companyExecutionObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.CompanyFinancialClosingExecution,
-  });
+  const { objectMetadataItem: companyExecutionObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular:
+        CoreObjectNameSingular.CompanyFinancialClosingExecution,
+    });
 
-  const { record: execution, loading: executionLoading } = useFindOneRecord<CompanyFinancialClosingExecution>({
-    objectNameSingular: CoreObjectNameSingular.CompanyFinancialClosingExecution,
-    objectRecordId: companyFinancialClosingExecutionId,
-    recordGqlFields: {
-      ...generateDepthOneWithoutRelationsRecordGqlFields({
-        objectMetadataItem: companyExecutionObjectMetadataItem,
-      }),
-      financialClosingExecutionId: true,
-      company: generateDepthOneRecordGqlFields({
-        objectMetadataItem: companyObjectMetadataItem,
-      }),
-      financialClosingExecution: generateDepthOneRecordGqlFields({
-        objectMetadataItem: executionObjectMetadataItem,
-      }),
-      charge: {
-        id: true,
+  const { record: execution, loading: executionLoading } =
+    useFindOneRecord<CompanyFinancialClosingExecution>({
+      objectNameSingular:
+        CoreObjectNameSingular.CompanyFinancialClosingExecution,
+      objectRecordId: companyFinancialClosingExecutionId,
+      recordGqlFields: {
+        ...generateDepthOneWithoutRelationsRecordGqlFields({
+          objectMetadataItem: companyExecutionObjectMetadataItem,
+        }),
+        financialClosingExecutionId: true,
+        company: generateDepthOneRecordGqlFields({
+          objectMetadataItem: companyObjectMetadataItem,
+        }),
+        financialClosingExecution: generateDepthOneRecordGqlFields({
+          objectMetadataItem: executionObjectMetadataItem,
+        }),
+        charge: {
+          id: true,
+        },
+        invoices: {
+          id: true,
+          nfStatus: true,
+          nfType: true,
+        },
       },
-      invoices: {
-        id: true,
-        nfStatus: true,
-        nfType: true,
-      },
-    },
-  });
+    });
 
   const getFinancialClosingExecutionsViewPath = (id: string) => {
-    const path = getSettingsPath(SettingsPath.FinancialClosingExecutions).replace(
-      ':financialClosingId',
-      id,
-    );
+    const path = getSettingsPath(
+      SettingsPath.FinancialClosingExecutions,
+    ).replace(':financialClosingId', id);
     return path;
   };
 
   const getFinancialClosingExecutionViewPath = (id: string) => {
-    const path = getSettingsPath(SettingsPath.FinancialClosingExecution).replace(
-      ':financialClosingExecutionId',
-      id,
-    );
+    const path = getSettingsPath(
+      SettingsPath.FinancialClosingExecution,
+    ).replace(':financialClosingExecutionId', id);
     return path;
   };
 
@@ -99,7 +105,7 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
         title={t`Details of Company Execution`}
         links={[
           {
-            children: t`Financial Closings`,  
+            children: t`Financial Closings`,
             href: getSettingsPath(SettingsPath.FinancialClosing),
           },
           { children: t`Executions` },
@@ -141,18 +147,23 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={ t`Details of Execution` + ` - ${execution.company?.name}`}
+      title={t`Details of Execution` + ` - ${execution.company?.name}`}
       links={[
         {
           children: t`Financial Closings`,
           href: getSettingsPath(SettingsPath.FinancialClosing),
         },
-        { children: t`Executions`,
-          href: getFinancialClosingExecutionsViewPath(execution.financialClosingExecution?.financialClosingId || ''),
+        {
+          children: t`Executions`,
+          href: getFinancialClosingExecutionsViewPath(
+            execution.financialClosingExecution?.financialClosingId || '',
+          ),
         },
-        { 
+        {
           children: t`Details`,
-          href: getFinancialClosingExecutionViewPath(execution.financialClosingExecutionId),
+          href: getFinancialClosingExecutionViewPath(
+            execution.financialClosingExecutionId,
+          ),
         },
         { children: t`Company Execution` },
       ]}
@@ -164,17 +175,19 @@ export const SettingsCompanyFinancialClosingExecutionShow = () => {
               title={t`Information of Execution`}
               description={t`Details of the execution of the company in the financial closing`}
             />
-            
-            <CompanyFinancialClosingExecutionDetailsCard execution={execution} />
+
+            <CompanyFinancialClosingExecutionDetailsCard
+              execution={execution}
+            />
           </StyledFormSection>
-          
+
           {execution.logs && execution.logs.length > 0 && (
             <StyledFormSectionLogs>
               <H2Title
                 title={t`Logs of Execution`}
                 description={t`Detailed history of the execution of the company`}
               />
-              
+
               <CompanyFinancialClosingExecutionLogsList logs={execution.logs} />
             </StyledFormSectionLogs>
           )}

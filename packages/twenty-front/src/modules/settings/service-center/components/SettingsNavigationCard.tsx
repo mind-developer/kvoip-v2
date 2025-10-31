@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Pill } from 'twenty-ui/components';
-import { IconChevronRight, IconComponent } from 'twenty-ui/display';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsNavigationCardProps = {

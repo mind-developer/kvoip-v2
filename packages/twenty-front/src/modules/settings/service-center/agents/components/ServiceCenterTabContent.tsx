@@ -1,7 +1,7 @@
 import { SettingsServiceCenterFieldActionDropdown } from '@/settings/service-center/agents/components/SettingsServiceCenterFieldActionDropdown';
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/agents/components/SettingsServiceCenterItemTableRow';
 import { useToggleAgentStatus } from '@/settings/service-center/agents/hooks/useToggleAgentStatus';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';

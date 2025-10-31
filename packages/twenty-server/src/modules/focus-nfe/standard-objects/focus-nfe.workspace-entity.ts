@@ -205,7 +205,7 @@ export class FocusNFeWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.BR_MUNICIPAL_REGISTRATION,
-        errorMessage: msg`Use the format: 00000000-0`,
+        errorMessage: msg`Use the format: 0000000-0`,
       },
     },
   })

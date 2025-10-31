@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { type WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

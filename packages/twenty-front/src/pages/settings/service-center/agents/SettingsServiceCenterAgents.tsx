@@ -2,8 +2,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
-import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -23,7 +23,7 @@ import {
   Section,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { WorkspaceMember } from '~/generated/graphql';
+import { type WorkspaceMember } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledSettingsCard = styled(SettingsCard)`
@@ -31,8 +31,8 @@ const StyledSettingsCard = styled(SettingsCard)`
 `;
 
 const StyledTextInput = styled(TextInput)`
-  width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
 `;
 
 export const SettingsServiceCenterAgents = () => {

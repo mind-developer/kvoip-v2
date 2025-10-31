@@ -1,5 +1,5 @@
 /* @kvoip-woulz proprietary */
-import { useLingui } from "@lingui/react/macro";
+import { useLingui } from '@lingui/react/macro';
 
 export type SelectOption<T = string> = {
   label: string;
@@ -16,7 +16,9 @@ export enum FinancialClosingExecutionStatus {
 export const useFinancialClosingExecutionStatusTranslations = () => {
   const { t } = useLingui();
 
-  const getFinancialClosingExecutionStatusLabel = (value: FinancialClosingExecutionStatus | string): string => {
+  const getFinancialClosingExecutionStatusLabel = (
+    value: FinancialClosingExecutionStatus | string,
+  ): string => {
     switch (value) {
       case FinancialClosingExecutionStatus.Success:
         return t`Success`;
@@ -29,11 +31,12 @@ export const useFinancialClosingExecutionStatusTranslations = () => {
     }
   };
 
-  const getFinancialClosingExecutionStatusOptions = (): SelectOption<FinancialClosingExecutionStatus>[] => [
-    { label: t`Success`, value: FinancialClosingExecutionStatus.Success },
-    { label: t`Error`, value: FinancialClosingExecutionStatus.Error },
-    { label: t`Pending`, value: FinancialClosingExecutionStatus.Pending },
-  ];
+  const getFinancialClosingExecutionStatusOptions =
+    (): SelectOption<FinancialClosingExecutionStatus>[] => [
+      { label: t`Success`, value: FinancialClosingExecutionStatus.Success },
+      { label: t`Error`, value: FinancialClosingExecutionStatus.Error },
+      { label: t`Pending`, value: FinancialClosingExecutionStatus.Pending },
+    ];
 
   return {
     getFinancialClosingExecutionStatusLabel,
@@ -41,8 +44,9 @@ export const useFinancialClosingExecutionStatusTranslations = () => {
   };
 };
 
-
-export function getFinancialClosingExecutionStatusColor(status: string): 'green' | 'red' | 'blue' | 'yellow' | 'gray' {
+export function getFinancialClosingExecutionStatusColor(
+  status: string,
+): 'green' | 'red' | 'blue' | 'yellow' | 'gray' {
   switch (status?.toUpperCase()) {
     case FinancialClosingExecutionStatus.Success:
       return 'green';

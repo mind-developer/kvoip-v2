@@ -21,6 +21,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
@@ -215,6 +216,21 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('agent')
   agentId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.chatbot,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Chatbot`,
+    description: msg`Event chatbot`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ChatbotWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  chatbot: Relation<ChatbotWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.support,

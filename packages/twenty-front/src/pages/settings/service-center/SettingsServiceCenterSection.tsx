@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { SettingsNavigationCard } from '@/settings/service-center/components/SettingsNavigationCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-// eslint-disable-next-line no-restricted-imports
+
 import { useLingui } from '@lingui/react/macro';
 import {
   IconIdBadge2,

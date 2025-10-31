@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/feedback';
+import { type GetCurrentUserQueryResult } from '~/generated-metadata/graphql';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -33,12 +33,12 @@ const StyledButtonContainer = styled.div`
 
 type OnboardingSubscriptionStatusCardProps = {
   navigateWithSubscriptionCheck: () => Promise<void>;
-  isLoading: boolean;
+  refetch: GetCurrentUserQueryResult['refetch'];
 };
 
 export const OnboardingSubscriptionStatusCard = ({
+  refetch,
   navigateWithSubscriptionCheck,
-  isLoading,
 }: OnboardingSubscriptionStatusCardProps) => {
   const subscriptionStatus = useRecoilValue(subscriptionStatusState);
 
@@ -48,17 +48,6 @@ export const OnboardingSubscriptionStatusCard = ({
 
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
-
-  const handleButtonClick = async () => {
-    if (isOnRetryCooldown) return;
-
-    setIsOnRetryCooldown(true);
-    setTimeout(() => {
-      setIsOnRetryCooldown(false);
-    }, 30000); // Disable for 30 seconds
-
-    await navigateWithSubscriptionCheck();
-  };
 
   return (
     <>
@@ -81,9 +70,18 @@ export const OnboardingSubscriptionStatusCard = ({
         <MainButton
           title={isDefined(subscriptionStatus) ? 'Start' : 'Reload'}
           width={200}
-          disabled={isOnRetryCooldown || isLoading}
-          onClick={handleButtonClick}
-          Icon={() => (isLoading ? <Loader /> : null)}
+          disabled={isOnRetryCooldown}
+          onClick={
+            isDefined(subscriptionStatus)
+              ? navigateWithSubscriptionCheck
+              : async () => {
+                  setIsOnRetryCooldown(true);
+                  setTimeout(() => {
+                    setIsOnRetryCooldown(false);
+                  }, 30000); // Disable for 30 seconds
+                  await refetch();
+                }
+          }
         />
       </StyledButtonContainer>
     </>

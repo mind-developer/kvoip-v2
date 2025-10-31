@@ -4,13 +4,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { GenericNodeData } from '@/chatbot/types/GenericNode';
-import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { type GenericNodeData } from '@/chatbot/types/GenericNode';
+import { type NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -18,6 +19,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ChatbotFlowConditionalEventForm } from '../actions/ChatbotFlowConditionalEventForm';
 
 const initialState: NewConditionalState = {
@@ -56,13 +58,14 @@ function ConditionalNode({
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
 
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+
   const sourceConnections = useNodeConnections({
     id,
     handleType: 'source',
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
       setLogicState(data.logic);
     }
@@ -108,6 +111,7 @@ function ConditionalNode({
             thisNode,
           );
         }}
+        isSelected={selectedNode?.id === thisNodeId}
       >
         <Handle
           title={data.title}

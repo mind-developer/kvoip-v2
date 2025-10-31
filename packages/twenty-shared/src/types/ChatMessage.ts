@@ -15,12 +15,17 @@ export type ChatMessage = {
   attachmentUrl: string | null; //done
   createdAt?: string; // ISO string timestamp
   updatedAt?: string; // ISO string timestamp
+  reactions: Reaction[] | null;
+  repliesTo: string | null;
 };
 
-// export type ClientChatMessage = ChatMessage & {
-//   fromType: Omit<ChatMessageFromType, 'WORKSPACE_MEMBER'>;
-//   toType: Omit<ChatMessageToType, 'WORKSPACE_MEMBER'>;
-// };
+export type Reaction = {
+  reaction: string;
+  from: string;
+  fromType: ChatMessageFromType;
+  to: string;
+  toType: ChatMessageToType;
+};
 
 export type InternalChatMessage = Omit<
   ChatMessage,
@@ -29,28 +34,26 @@ export type InternalChatMessage = Omit<
 
 export type ClientChatMessage = ChatMessage & {
   clientChatId: string;
-  fromType: ClientChatMessageFromType;
-  toType: ClientChatMessageToType;
   event: ClientChatMessageEvent | null;
+  templateId: string | null;
+  templateLanguage: string | null;
+  templateName: string | null;
 };
 
 export enum ChatMessageFromType {
+  //a client sent a message
   PERSON = 'PERSON',
+  //an agent sent a message
   AGENT = 'AGENT',
+  //a sector sent a message
   SECTOR = 'SECTOR',
+  //a workspace member sent a message (internal chats only)
   WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
+  //a chatbot sent a message
   CHATBOT = 'CHATBOT',
+  //a message was sent directly through the integration (e.g. WhatsApp on mobile, Telegram, etc.)
+  PROVIDER_INTEGRATION = 'PROVIDER_INTEGRATION',
 }
-
-export type ClientChatMessageFromType = Exclude<
-  ChatMessageFromType,
-  ChatMessageFromType.WORKSPACE_MEMBER
->;
-
-export type ClientChatMessageToType = Exclude<
-  ChatMessageToType,
-  ChatMessageToType.WORKSPACE_MEMBER
->;
 
 export enum ChatMessageToType {
   PERSON = 'PERSON',
@@ -82,6 +85,7 @@ export enum ClientChatMessageEvent {
 
   START = 'START',
   END = 'END',
+  ABANDONED = 'ABANDONED',
 
   TRANSFER_TO_AGENT = 'TRANSFER_TO_AGENT',
   TRANSFER_TO_SECTOR = 'TRANSFER_TO_SECTOR',
