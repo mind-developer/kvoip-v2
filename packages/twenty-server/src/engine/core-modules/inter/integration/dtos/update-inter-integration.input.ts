@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString, Matches } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateInterIntegrationInput {
@@ -18,15 +18,10 @@ export class UpdateInterIntegrationInput {
   @IsOptional()
   clientId: string;
 
-  /* @kvoip-woulz proprietary:begin */
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  @Matches(/^\d{8}-\d{2}$/, {
-    message: 'Current account must be in the format: 00000000-00',
-  })
   currentAccount: string;
-  /* @kvoip-woulz proprietary:end */
 
   @Field({ nullable: true })
   @IsString()
