@@ -1,13 +1,10 @@
 import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
-import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useGetWhatsappTemplates } from '@/chat/client-chat/hooks/useGetWhatsappTemplates';
-import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
+import { useSendTemplateMessage } from '@/chat/client-chat/hooks/useSendTemplateMessage';
 import { type WhatsAppTemplate } from '@/chat/types/WhatsAppTemplate';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { type Person } from '@/people/types/Person';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -19,18 +16,10 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconBrandMeta, IconX } from '@tabler/icons-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ChatIntegrationProvider,
-  ChatMessageFromType,
-  ChatMessageToType,
-  ChatMessageType,
-  ClientChatStatus,
-} from 'twenty-shared/types';
 import { Tag } from 'twenty-ui/components';
 import { H2Title } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
-import { v4 } from 'uuid';
 
 const StyledTemplateListContainer = styled.div`
   align-items: center;
@@ -49,8 +38,12 @@ const StyledFooter = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledCountrySelect = styled(CountrySelect)`
+  max-width: 50px;
 `;
 
 export const SendTemplateModal = (): React.ReactNode => {
@@ -84,29 +77,33 @@ export const SendTemplateModal = (): React.ReactNode => {
   }, [selectedIntegrationId]);
 
   const { closeModal } = useModal();
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
-    null,
+  const [selectedCountryName, setSelectedCountryName] = useState<string | null>(
+    'Brazil',
   );
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<
+    string | number | null
+  >(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     null,
   );
 
-  const { sendClientChatMessage } = useSendClientChatMessage();
-  const { createOneRecord: createOnePerson } = useCreateOneRecord<Person>({
-    objectNameSingular: 'person',
-  });
-  const { deleteOneRecord: deleteOnePerson } = useDeleteOneRecord({
-    objectNameSingular: 'person',
-  });
-  const { deleteOneRecord: deleteOneClientChat } = useDeleteOneRecord({
-    objectNameSingular: 'clientChat',
-  });
-  const { createOneRecord: createOneClientChat } = useCreateOneRecord({
-    objectNameSingular: 'clientChat',
-  });
-
   const { templates, refetch } = useGetWhatsappTemplates(
     selectedIntegrationId ?? '',
+  );
+
+  const selectedTemplate = useMemo(
+    () =>
+      templates.find(
+        (template: WhatsAppTemplate) => template.id === selectedTemplateId,
+      ) ?? null,
+    [templates, selectedTemplateId],
+  );
+
+  const { sendTemplateMessage } = useSendTemplateMessage(
+    selectedPhoneNumber?.toString() ?? null,
+    selectedIntegrationId,
+    selectedTemplateId,
+    selectedTemplate,
   );
 
   const isModalOpen = useRecoilComponentValue(
@@ -118,96 +115,27 @@ export const SendTemplateModal = (): React.ReactNode => {
     refetch();
   }, [isModalOpen, refetch]);
 
-  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const agentId = workspaceMemberWithAgent?.agent?.id;
-
-  const selectedTemplate = useMemo(
-    () =>
-      templates.find(
-        (template: WhatsAppTemplate) => template.id === selectedTemplateId,
-      ) ?? null,
-    [templates, selectedTemplateId],
-  );
-
-  const handleSendTemplate = useCallback(() => {
-    let clientChatId: string = v4();
-    let personId: string = v4();
-    createOnePerson({
-      id: personId,
-      name: {
-        firstName: selectedPhoneNumber + '(Chat)',
-        lastName: '',
-      },
-      phones: {
-        primaryPhoneNumber: selectedPhoneNumber ?? '',
-        primaryPhoneCallingCode: '',
-        primaryPhoneCountryCode: 'BR',
-        additionalPhones: [],
-      },
-    })
-      .then((person) => {
-        personId = person.id;
-        createOneClientChat({
-          id: clientChatId,
-          personId: person.id,
-          //todo: get provider from integration
-          providerContactId: selectedPhoneNumber ?? '',
-          whatsappIntegrationId: selectedIntegrationId ?? '',
-          lastMessageDate: new Date(),
-          lastMessageType: ChatMessageType.TEMPLATE,
-          lastMessagePreview: null,
-          unreadMessagesCount: 0,
-          status: ClientChatStatus.ASSIGNED,
-          agentId,
-        })
-          .then((clientChat) => {
-            clientChatId = clientChat.id;
-            if (!agentId) {
-              return;
-            }
-            sendClientChatMessage({
-              clientChatId: clientChat.id,
-              fromType: ChatMessageFromType.AGENT,
-              from: agentId ?? '',
-              to: personId ?? '',
-              provider: ChatIntegrationProvider.WHATSAPP,
-              toType: ChatMessageToType.PERSON,
-              type: ChatMessageType.TEMPLATE,
-              providerIntegrationId: selectedIntegrationId ?? '',
-              templateId: selectedTemplateId ?? '',
-              templateLanguage: selectedTemplate?.language ?? null,
-              templateName: selectedTemplate?.name ?? null,
-            });
-            closeModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
-          })
-          .catch((error) => {
-            console.error(error);
-            deleteOnePerson(personId);
-            deleteOneClientChat(clientChatId);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        deleteOnePerson(personId);
-        deleteOneClientChat(clientChatId);
-      })
-      .finally(() => {
+  const handleSendTemplate = useCallback(async () => {
+    if (!selectedPhoneNumber || !selectedIntegrationId || !selectedTemplateId) {
+      return;
+    }
+    await sendTemplateMessage({
+      selectedPhoneNumber: selectedPhoneNumber.toString(),
+      selectedIntegrationId,
+      selectedTemplateId,
+      selectedTemplate,
+      onSuccess: () => {
         setSelectedPhoneNumber(null);
         setSelectedIntegrationId('');
         setSelectedTemplateId(null);
-      });
+      },
+    });
   }, [
-    agentId,
-    closeModal,
-    createOneClientChat,
-    createOnePerson,
-    deleteOneClientChat,
-    deleteOnePerson,
     selectedIntegrationId,
     selectedPhoneNumber,
     selectedTemplate,
     selectedTemplateId,
-    sendClientChatMessage,
+    sendTemplateMessage,
     setSelectedIntegrationId,
     setSelectedPhoneNumber,
     setSelectedTemplateId,
@@ -257,15 +185,21 @@ export const SendTemplateModal = (): React.ReactNode => {
         />
       </StyledTemplateListContainer>
       <StyledFooter>
-        <TextInput
-          fullWidth
-          placeholder="Phone number"
-          type="tel"
-          value={selectedPhoneNumber ?? ''}
-          onChange={(text) => setSelectedPhoneNumber(text)}
+        <StyledCountrySelect
+          label="Country"
+          selectedCountryName={selectedCountryName ?? 'BR'}
+          onChange={(countryName) => setSelectedCountryName(countryName)}
+        />
+        <FormNumberFieldInput
+          label="Phone Number"
+          defaultValue={selectedPhoneNumber ?? ''}
+          onChange={(phoneNumber) => setSelectedPhoneNumber(phoneNumber)}
+          readonly={false}
         />
         <Button
-          disabled={!selectedPhoneNumber || !selectedTemplateId}
+          disabled={
+            !selectedPhoneNumber || !selectedTemplateId || !selectedCountryName
+          }
           onClick={handleSendTemplate}
           title="Send"
         />
