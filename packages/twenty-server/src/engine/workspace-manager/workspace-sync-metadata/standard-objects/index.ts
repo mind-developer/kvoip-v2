@@ -2,6 +2,7 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 
 import { KVOIP_ADMIN_OBJECT_METADATA_DEFINITIONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-object-metadata-definitions.constant';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -9,6 +10,9 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -31,6 +35,7 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
@@ -99,6 +104,11 @@ export const baseStandardObjectMetadataDefinitions = [
   InvoiceWorkspaceEntity,
   WhatsappIntegrationWorkspaceEntity,
   TelephonyWorkspaceEntity,
+  ChatbotWorkspaceEntity,
+  SectorWorkspaceEntity,
+  AgentWorkspaceEntity,
+  ClientChatWorkspaceEntity,
+  ClientChatMessageWorkspaceEntity,
 ];
 
 /**
