@@ -34,6 +34,7 @@ import {
   initialNodes,
 } from '@/chatbot/flow-templates/mockFlowTemplate';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { isChatbotActionMenuOpenState } from '@/chatbot/state/isChatbotActionMenuOpen';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useParams } from 'react-router-dom';
@@ -125,8 +126,11 @@ export const BotDiagramBase = ({
     chatbotFlowSelectedNodeState,
   );
 
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{
+  const isChatbotActionMenuOpen = useRecoilValue(isChatbotActionMenuOpenState);
+  const setIsChatbotActionMenuOpen = useSetRecoilState(
+    isChatbotActionMenuOpenState,
+  );
+  const [chatbotActionMenuPosition, setChatbotActionMenuPosition] = useState<{
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
@@ -168,8 +172,11 @@ export const BotDiagramBase = ({
       updateOneRecord({
         idToUpdate: chatbotId,
         updateOneRecordInput: {
-          nodes: newFlow.nodes,
-          edges: newFlow.edges,
+          flowNodes: newFlow.nodes.map((node) => {
+            const { selected, ...rest } = node;
+            return rest;
+          }),
+          flowEdges: newFlow.edges,
           viewport: newFlow.viewport,
         },
       });
@@ -242,8 +249,8 @@ export const BotDiagramBase = ({
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setContextMenuPosition({ x: e.clientX, y: e.clientY });
-    setIsContextMenuOpen((prev) => !prev);
+    setChatbotActionMenuPosition({ x: e.clientX, y: e.clientY });
+    setIsChatbotActionMenuOpen(true);
   };
 
   useEffect(() => {
@@ -279,10 +286,10 @@ export const BotDiagramBase = ({
         isValidConnection={isValidConnection}
         fitView
         onClick={() => {
-          setIsContextMenuOpen(false);
+          setIsChatbotActionMenuOpen(false);
           setChatbotFlowSelectedNode(undefined);
         }}
-        onDragStart={() => setIsContextMenuOpen(false)}
+        onDragStart={() => setIsChatbotActionMenuOpen(false)}
         onNodeClick={(event, node) => {
           event.stopPropagation();
           setChatbotFlowSelectedNode(node);
@@ -297,12 +304,13 @@ export const BotDiagramBase = ({
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
 
-      {isContextMenuOpen && (
+      {isChatbotActionMenuOpen && (
         <div
           style={{
-            position: 'relative',
-            top: contextMenuPosition.y,
-            left: contextMenuPosition.x,
+            position: 'fixed',
+            top: chatbotActionMenuPosition.y,
+            left: chatbotActionMenuPosition.x,
+            zIndex: 1000,
           }}
         >
           <ChatbotActionMenu />
