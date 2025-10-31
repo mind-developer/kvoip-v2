@@ -68,11 +68,6 @@ export class WhatsappController {
     const integration = await whatsappIntegrationRepository.findOne({
       where: { id },
     });
-    const whatsappIntegrations = await whatsappIntegrationRepository.find();
-    console.log(
-      'whatsappIntegrations',
-      JSON.stringify(whatsappIntegrations, null, 2),
-    );
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {
@@ -80,7 +75,10 @@ export class WhatsappController {
 
         return challenge;
       } else {
-        throw new HttpException('Verification failed', HttpStatus.FORBIDDEN);
+        throw new HttpException(
+          'Verification failed',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
 
@@ -98,10 +96,6 @@ export class WhatsappController {
   ) {
     const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
     const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
-    console.log(
-      'body',
-      JSON.stringify(body.entry[0].changes[0].value, null, 2),
-    );
 
     if (statuses) {
       for (const status of statuses) {

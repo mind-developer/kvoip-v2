@@ -239,10 +239,11 @@ export class WhatsAppService {
           templateName: null,
         };
 
-        let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
+        const executorKey = clientChat.id;
+        let executor = this.ChatbotRunnerService.getExecutor(executorKey);
         if (executor) {
           console.log('executor found');
-          executor.runFlow(message.textBody ?? '');
+          await executor.runFlow(message.textBody ?? '');
           return true;
         }
 
@@ -276,7 +277,7 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
-            console.log('on finish', sectorId);
+            const executorKey = clientChat.id;
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
                 {
@@ -303,11 +304,10 @@ export class WhatsAppService {
               workspaceId,
               integrationId,
             );
-            this.ChatbotRunnerService.clearExecutor(clientChat.id);
           },
         });
-        console.log('running flow');
-        executor.runFlow(message.textBody ?? '');
+        this.ChatbotRunnerService.clearExecutor(executorKey);
+        await executor.runFlow(message.textBody ?? '');
       }
     } catch (error) {
       console.log('error', error);

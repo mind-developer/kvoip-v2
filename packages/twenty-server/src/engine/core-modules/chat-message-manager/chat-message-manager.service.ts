@@ -150,7 +150,10 @@ export class ChatMessageManagerService {
       );
       return v4();
     }
-    if (clientChat.status !== ClientChatStatus.ASSIGNED) {
+    if (
+      clientChat.status !== ClientChatStatus.ASSIGNED &&
+      clientChat.status !== ClientChatStatus.CHATBOT
+    ) {
       this.logger.error('Client chat not assigned');
       return null;
     }
@@ -262,6 +265,10 @@ export class ChatMessageManagerService {
         'sector',
       );
       await this.updateChat(clientChat.id, clientChat, workspaceId);
+      await this.saveMessage(
+        { ...clientChatMessage, providerMessageId: v4() },
+        workspaceId,
+      );
       return;
     }
     if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {
@@ -299,6 +306,10 @@ export class ChatMessageManagerService {
         clientChat.sectorId,
         'sector',
       );
+      await this.saveMessage(
+        { ...clientChatMessage, providerMessageId: v4() },
+        workspaceId,
+      );
       return;
     }
     await this.updateChat(clientChat.id, clientChat, workspaceId, 'admin');
@@ -314,10 +325,6 @@ export class ChatMessageManagerService {
       clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT
     ) {
       await this.transferService(clientChatMessage, workspaceId);
-      await this.saveMessage(
-        { ...clientChatMessage, providerMessageId: v4() },
-        workspaceId,
-      );
       return;
     } else if (
       clientChatMessage.event === ClientChatMessageEvent.CHATBOT_START
@@ -688,8 +695,11 @@ export class ChatMessageManagerService {
       await this.cancelScheduledAbandonment(jobData.chatId);
       return;
     }
-    //TODO: get from future clientChatConfig entity
     if (clientChatMessage.fromType === ChatMessageFromType.AGENT) {
+      await this.cancelScheduledAbandonment(jobData.chatId);
+      return;
+    }
+    if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
       await this.cancelScheduledAbandonment(jobData.chatId);
       return;
     }

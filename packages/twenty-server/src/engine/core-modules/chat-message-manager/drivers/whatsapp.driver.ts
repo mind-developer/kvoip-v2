@@ -12,9 +12,10 @@ import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager
 import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
-import { ClientChatMessage } from 'twenty-shared/types';
+import { ChatMessageType, ClientChatMessage } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class WhatsAppDriver implements ChatProviderDriver {
@@ -255,6 +256,36 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (!integration) {
       throw new Error('WhatsApp integration not found');
     }
+
+    const templates = await axios.get(
+      `${this.META_API_URL}/${integration.businessAccountId}/message_templates`,
+      {
+        headers: {
+          Authorization: `Bearer ${integration.accessToken}`,
+        },
+      },
+    );
+
+    const template = templates.data.data.find(
+      (template: any) => template.name === clientChatMessage.templateName,
+    );
+
+    if (!template) {
+      throw new Error('Template not found');
+    }
+
+    await (
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+        workspaceId,
+        'clientChatMessage',
+      )
+    ).save({
+      ...clientChatMessage,
+      textBody: template.components
+        .map((component: any) => component.text)
+        .join(' '),
+      type: ChatMessageType.TEXT,
+    });
 
     const fields: any = {
       messaging_product: 'whatsapp',
