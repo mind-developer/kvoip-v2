@@ -2,7 +2,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm';
-import { useCreateWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,6 +17,8 @@ import axios from 'axios';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -30,7 +31,7 @@ export const settingsIntegrationWhatsappConnectionFormSchema = z.object({
   accessToken: z.string(),
   appId: z.string(),
   appKey: z.string(),
-  tipoApi: z.string().min(1, 'Selecione um tipo de API'),
+  apiType: z.string().min(1, 'Selecione um tipo de API'),
 });
 
 export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
@@ -40,8 +41,8 @@ export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
 export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const tokenPair = useRecoilValue(tokenPairState);
+  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
@@ -57,7 +58,12 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const [qrCodeError, setQrCodeError] = useState<string | null>(null);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState(false);
 
-  const { createWhatsappIntegration } = useCreateWhatsappIntegration();
+  const { createOneRecord } = useCreateOneRecord<
+    WhatsappIntegration & { __typename: string }
+  >({
+    objectNameSingular: 'whatsappIntegration',
+    recordGqlFields: { id: true },
+  });
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -117,7 +123,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     mode: 'onTouched',
     resolver: zodResolver(settingsIntegrationWhatsappConnectionFormSchema),
     defaultValues: {
-      tipoApi: 'MetaAPI',
+      apiType: 'MetaAPI',
     },
   });
 
@@ -205,17 +211,27 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      const integration = await createWhatsappIntegration({
+      const integration: WhatsappIntegration = await createOneRecord({
         name: formValues.name,
         phoneId: formValues.phoneId,
         businessAccountId: formValues.businessAccountId,
         accessToken: formValues.accessToken,
         appId: formValues.appId,
         appKey: formValues.appKey,
-        tipoApi: formValues.tipoApi,
+        apiType: formValues.apiType,
+        paused: false,
+        sla: 30,
       });
+      await axios.post(
+        `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+        {
+          webhook: `https://${process.env.NEXT_PUBLIC_APP_URL}/whatsapp/webhook/${workspaceId}/${integration.id}/`,
+          workspaceID: workspaceId,
+          canalID: integration.id,
+        },
+      );
 
-      if (formValues.tipoApi === 'Baileys') {
+      if (formValues.apiType === 'Baileys') {
         setIntegrationName(formValues.name);
         setShowQrCode(true);
         setQrCodeValue(null);

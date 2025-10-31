@@ -11,7 +11,6 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import WebSoftphone from '@/softphone/components/WebSoftphone';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -21,6 +20,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
+import WebSoftphone from '@/softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -59,10 +59,18 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledWebSoftphoneContainer = styled.div`
-  position: absolute;
-  bottom: 100px;
-  right: 20px;
-  z-index: 100;
+  position: fixed;       
+  top: 0;
+  left: 0;
+  width: 100vw;         
+  height: 100vh; 
+  pointer-events: none;
+  z-index: 30; /* Abaixo do modal (40) e dropdowns (50) */
+  
+  /* Permitir eventos de clique no WebSoftphone e seus modais */
+  > * {
+    pointer-events: auto;
+  }
 `;
 
 export const DefaultLayout = () => {
@@ -142,11 +150,17 @@ export const DefaultLayout = () => {
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
+
+      {/* @kvoip-woulz proprietary:begin */}
+
       {!isOnboarding && (
         <StyledWebSoftphoneContainer>
           <WebSoftphone />
         </StyledWebSoftphoneContainer>
       )}
+
+      {/* @kvoip-woulz proprietary:end */}
+
     </>
   );
 };

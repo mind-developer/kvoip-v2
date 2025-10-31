@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -13,18 +14,19 @@ export const SettingsServiceCenter = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Service Center' },
+        {
+          children: 'Service Center',
+        },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={''}
+            title={'General'}
             description={'Manage all agents and sectors here.'}
           />
-
           <SettingsServiceCenterSection />
         </Section>
       </SettingsPageContainer>

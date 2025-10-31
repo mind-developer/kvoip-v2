@@ -8,30 +8,40 @@ import StyledAudio from '@/chat/call-center/components/StyledAudio';
 import { AvatarComponent } from '@/chat/call-center/components/UserInfoChat';
 import { MODAL_IMAGE_POPUP } from '@/chat/call-center/constants/MODAL_IMAGE_POPUP';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
+import { useClientChatMessages } from '@/chat/call-center/hooks/useClientChatMessages';
+import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import {
+  getMessageContent,
+  getMessageDisplayType,
+  isMessageFromAgent,
+} from '@/chat/call-center/utils/clientChatMessageHelpers';
 import StyledImage from '@/chat/components/StyledImage';
 import { StyledMessageBubble } from '@/chat/components/StyledMessageBubble';
 import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
-import { TDateFirestore } from '@/chat/types/chat';
 import { validVideoTypes } from '@/chat/types/FileTypes';
 import { MessageType } from '@/chat/types/MessageType';
-import { IMessage, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
-import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { Person } from '@/people/types/Person';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import {
+  ChatIntegrationProvider,
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ClientChatMessage,
+  ClientChatStatus,
+} from 'twenty-shared/types';
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
@@ -58,6 +68,7 @@ const StyledChatContainer = styled.div`
   margin-inline: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
+  padding-right: ${({ theme }) => theme.spacing(1.5)};
 `;
 
 const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
@@ -72,9 +83,8 @@ const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
 `;
 
 const StyledAvatarMessage = styled.div`
-  align-self: flex-end;
-  /* max-height: 20%; */
   z-index: 1;
+  align-self: flex-end;
 `;
 
 const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
@@ -82,10 +92,9 @@ const StyledMessageItem = styled.div<{ isSystemMessage: boolean }>`
   flex-direction: column;
   align-items: ${({ isSystemMessage }) =>
     isSystemMessage ? 'flex-end' : 'flex-start'};
-  gap: ${({ theme }) => theme.spacing(1.5)};
+  justify-content: baseline;
   width: auto;
   max-width: 70%;
-  margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
@@ -147,7 +156,7 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.textarea`
-  width: 100%;
+  /* width: 100%; */
   background: transparent;
   border: none;
   outline: none;
@@ -331,20 +340,20 @@ const StyledUnreadMarker = styled.div`
 `;
 
 export const PaneChat = () => {
-  const {
-    selectedChat,
-    setSelectedChat,
-    startService,
-    setStartChatNumber,
-    setStartChatIntegrationId,
-  } = useContext(CallCenterContext) as CallCenterContextType;
-  const [lastFromClient, setLastFromClient] = useState<IMessage | null>(null);
+  const { chatId } = useParams() || '';
+  const { chats } = useClientChatsWithPerson();
+  const selectedChat = chats.find((chat) => chat.id === chatId);
+  const { startService, setStartChatNumber, setStartChatIntegrationId } =
+    useContext(CallCenterContext) as CallCenterContextType;
+
+  const [lastFromClient, setLastFromClient] =
+    useState<ClientChatMessage | null>(null);
 
   const [newMessage, setNewMessage] = useState<string>('');
   const [isAnexOpen, setIsAnexOpen] = useState<boolean>(false);
   const theme = useTheme();
   const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
-const { t } = useLingui();
+  const { t } = useLingui();
   const [recordingState, setRecordingState] = useState<
     'none' | 'recording' | 'paused'
   >('none');
@@ -363,47 +372,67 @@ const { t } = useLingui();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { updateOneRecord } = useUpdateOneRecord<Person>({
-    objectNameSingular: CoreObjectNameSingular.Person,
-  });
-
   const { getIcon } = useIcons();
 
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
   // const { messengerSendMessage } = useMessengerSendMessage();
 
+  // Mensagens otimistas adicionadas localmente antes da confirmação do servidor
+  const [optimisticMessages, setOptimisticMessages] = useState<
+    ClientChatMessage[]
+  >([]);
+
+  // Usar o hook para buscar mensagens do banco de dados
+  const { messages: dbMessages, loading: loadingMessages } =
+    useClientChatMessages(chatId!);
+
+  const [lastMessage, setLastMessage] = useState<ClientChatMessage>(
+    dbMessages[dbMessages.length - 1],
+  );
+
+  // Combinar mensagens do banco de dados com mensagens otimistas
+  const messages = useMemo(() => {
+    const combined = [...dbMessages, ...optimisticMessages];
+    // Remover duplicatas baseado no providerMessageId
+    const uniqueMessages = combined.filter(
+      (msg, index, self) =>
+        index ===
+        self.findIndex((m) => m.providerMessageId === msg.providerMessageId),
+    );
+    // Ordenar por data não é necessário pois virão em ordem do banco
+    return uniqueMessages;
+  }, [dbMessages, optimisticMessages]);
+
   useEffect(() => {
+    if (messages?.length > 0) setLastMessage(messages[messages.length - 1]);
+    console.log(lastMessage);
     if (isAtBottom && chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     } else if (!isAtBottom) {
       setNewMessagesIndicator(true);
     }
-    const clientMessages = selectedChat?.messages.filter(
-      (message) => !message.fromMe,
+    const clientMessages = messages.filter(
+      (message) => !isMessageFromAgent(message),
     );
-    if (clientMessages)
+    if (clientMessages.length > 0)
       setLastFromClient(clientMessages[clientMessages.length - 1]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat?.messages]);
+  }, [messages]);
 
   const onSendMessage = async (type: MessageType) => {
     if (!selectedChat) return;
 
-    // const identifier = isWhatsappDocument(selectedChat)
-    //   ? `+${selectedChat.client.phone}`
-    //   : selectedChat.client.id;
-
-    const identifier = `${selectedChat.client.phone}`;
+    const identifier = `${selectedChat.person?.phone}`;
 
     const sendMessageInputBase = {
-      integrationId: selectedChat.integrationId,
+      integrationId: selectedChat.whatsappIntegrationId,
       to: `${identifier}`,
       type,
       from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
       fromMe: true,
-      personId: selectedChat.personId,
+      personId: selectedChat.person!.id,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -446,7 +475,7 @@ const { t } = useLingui();
           newMessage.trim(),
       };
 
-      sendWhatsappMessage(sendMessageInput);
+      // sendWhatsappMessage(sendMessageInput);
       setNewMessage('');
     } else if (type === MessageType.AUDIO) {
       if (!audioBlob) {
@@ -470,7 +499,7 @@ const { t } = useLingui();
           fileId: urlStorage,
         };
 
-        sendWhatsappMessage(sendMessageInput);
+        // sendWhatsappMessage(sendMessageInput);
       } catch (error) {
         throw new Error('Failed to send audio message');
       }
@@ -581,57 +610,70 @@ const { t } = useLingui();
   }
 
   const handleSendMessage = () => {
+    if (audioBlob) {
+      // Adicionar mensagem otimista
+      const optimisticMessageId = `optimistic-${v4()}`;
+      const optimisticMessage: ClientChatMessage = {
+        clientChatId: chatId!,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        from: currentWorkspaceMember?.id || '',
+        fromType: ChatMessageFromType.AGENT,
+        to: selectedChat.person!.phone || '',
+        toType: ChatMessageToType.PERSON,
+        provider: ChatIntegrationProvider.WHATSAPP,
+        providerMessageId: optimisticMessageId,
+        type: ChatMessageType.AUDIO,
+        textBody: null,
+        caption: null,
+        deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+        edited: null,
+        attachmentUrl: null,
+        event: null,
+      };
 
-    if (isWhatsappDocument(selectedChat)) {
-      if (audioBlob) {
-        setSelectedChat((prev) => {
-          if (prev)
-            return {
-              ...prev,
-              messages: [
-                ...prev.messages,
-                {
-                  type: 'audio',
-                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-                  message: '',
-                  fromMe: true,
-                  status: 'attempting',
-                  id: null,
-                  createdAt: {
-                    seconds: Date.now() / 1000,
-                    nanoseconds: Date.now() * 1000,
-                  },
-                },
-              ],
-            };
-        });
-        onSendMessage(MessageType.AUDIO);
-      } else {
-        setSelectedChat((prev) => {
-          if (prev)
-            return {
-              ...prev,
-              messages: [
-                ...prev.messages,
-                {
-                  type: 'text',
-                  message: newMessage,
-                  from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
-                  fromMe: true,
-                  status: 'attempting',
-                  id: null,
-                  createdAt: {
-                    seconds: Date.now() / 1000,
-                    nanoseconds: Date.now() * 1000,
-                  },
-                },
-              ],
-            };
-        });
-        onSendMessage(MessageType.TEXT);
-      }
+      setOptimisticMessages((prev) => [...prev, optimisticMessage]);
+
+      onSendMessage(MessageType.AUDIO);
+
+      // Limpar mensagens otimistas após um tempo (elas serão substituídas pelas mensagens reais do servidor)
+      setTimeout(() => {
+        setOptimisticMessages((prev) =>
+          prev.filter((msg) => msg.providerMessageId !== optimisticMessageId),
+        );
+      }, 5000);
     } else {
-      onSendMessage(MessageType.FB_RESPONSE);
+      // Adicionar mensagem otimista
+      const optimisticMessageId = `optimistic-${v4()}`;
+      const optimisticMessage: ClientChatMessage = {
+        clientChatId: chatId!,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        from: currentWorkspaceMember?.id || '',
+        fromType: ChatMessageFromType.AGENT,
+        to: selectedChat.providerContactId,
+        toType: ChatMessageToType.PERSON,
+        provider: ChatIntegrationProvider.WHATSAPP,
+        providerMessageId: optimisticMessageId,
+        type: ChatMessageType.TEXT,
+        textBody: newMessage,
+        caption: null,
+        deliveryStatus: ChatMessageDeliveryStatus.PENDING,
+        edited: null,
+        attachmentUrl: null,
+        event: null,
+      };
+
+      setOptimisticMessages((prev) => [...prev, optimisticMessage]);
+
+      onSendMessage(MessageType.TEXT);
+
+      // Limpar mensagens otimistas após um tempo
+      setTimeout(() => {
+        setOptimisticMessages((prev) =>
+          prev.filter((msg) => msg.providerMessageId !== optimisticMessageId),
+        );
+      }, 5000);
     }
   };
 
@@ -653,16 +695,16 @@ const { t } = useLingui();
     setModalImageSrc(null);
   };
 
-  const isMessageOlderThan24Hours = (date: TDateFirestore) => {
-    const createdAt = new Date(date.seconds * 1000);
+  const isMessageOlderThan24Hours = (date: string) => {
+    const createdAt = new Date(date);
     const now = new Date().getTime();
     const diffInMilliseconds = now - createdAt.getTime();
     return diffInMilliseconds > 86400000;
   };
 
-  const showStartConversationButton = isMessageOlderThan24Hours(
-    selectedChat.lastMessage.createdAt,
-  );
+  const showStartConversationButton = lastMessage?.createdAt
+    ? isMessageOlderThan24Hours(lastMessage.createdAt)
+    : false;
 
   const handleInputKeyDown = (
     event: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -699,7 +741,7 @@ const { t } = useLingui();
     const IconMicrophone = getIcon('IconMicrophone');
     const IconArrowUp = getIcon('IconArrowUp');
 
-    if (isWhatsappDocument(selectedChat) && showStartConversationButton) {
+    if (showStartConversationButton) {
       return (
         <StyledButton
           title="Restart conversation using a template"
@@ -707,22 +749,22 @@ const { t } = useLingui();
           accent="blue"
           size="medium"
           onClick={() => {
-            setStartChatNumber(`+${selectedChat.client.phone}`);
-            setStartChatIntegrationId(selectedChat.integrationId);
+            setStartChatNumber(`+${selectedChat.providerContactId}`);
+            setStartChatIntegrationId(selectedChat.whatsappIntegrationId);
           }}
         />
       );
     }
 
     if (
-      selectedChat.agent !== 'empty' &&
-      selectedChat.status !== statusEnum.Resolved
+      !selectedChat.agentId &&
+      selectedChat.status !== ClientChatStatus.RESOLVED
     ) {
       return (
         <StyledInputContainer>
           <StyledAnexDiv>
             <StyledIconButton
-              disabled={selectedChat.lastMessage.type === 'template'}
+              disabled={lastMessage.type === ChatMessageType.TEMPLATE}
               Icon={recordingState === 'none' ? AnexIcon : IconTrash}
               accent={recordingState === 'none' ? 'default' : 'danger'}
               variant="tertiary"
@@ -767,7 +809,7 @@ const { t } = useLingui();
           )}
           {recordingState === 'none' && (
             <StyledInput
-              disabled={selectedChat.lastMessage.type === 'template'}
+              disabled={lastMessage.type === ChatMessageType.TEMPLATE}
               className="new-message-input"
               placeholder="Message"
               onInput={handleInputChange}
@@ -801,7 +843,7 @@ const { t } = useLingui();
             )}
             {(newMessage.length > 0 || recordingState !== 'none') && (
               <StyledIconButton
-                disabled={selectedChat.lastMessage.type === 'template'}
+                disabled={lastMessage.type === ChatMessageType.TEMPLATE}
                 Icon={(props) => (
                   <IconArrowUp
                     {...props}
@@ -823,7 +865,7 @@ const { t } = useLingui();
       );
     }
 
-    if (selectedChat.status !== statusEnum.Resolved) {
+    if (selectedChat.status !== ClientChatStatus.RESOLVED) {
       return (
         <StyledButton
           title="Start Service"
@@ -838,159 +880,170 @@ const { t } = useLingui();
     return <></>;
   };
 
-  return (
-    <>
-      <StyledPaneChatContainer>
-        <PaneChatHeader />
-        <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
-          {selectedChat.messages.map((message: IMessage, index: number) => {
-            const isSystemMessage = message.fromMe;
+  if (lastMessage && selectedChat)
+    return (
+      <>
+        <StyledPaneChatContainer>
+          <PaneChatHeader chat={selectedChat} />
+          <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
+            {messages.map((message: ClientChatMessage, index: number) => {
+              const isSystemMessage = isMessageFromAgent(message);
+              const messageDisplayType = getMessageDisplayType(message);
+              const messageContent = getMessageContent(message);
 
-            const validMessageType =
-              message.type === MessageType.STARTED ||
-              message.type === MessageType.TRANSFER ||
-              message.type === MessageType.END ||
-              message.type === MessageType.ONHOLD;
+              const validMessageType =
+                messageDisplayType === MessageType.STARTED ||
+                messageDisplayType === MessageType.TRANSFER ||
+                messageDisplayType === MessageType.END ||
+                messageDisplayType === MessageType.ONHOLD;
 
-            let messageContent;
+              let renderedContent;
 
-            if (validMessageType)
-              return (
-                <StyledMessageEvent>
-                  <IconExclamationCircleFilled size={13} /> {message.message}
-                </StyledMessageEvent>
-              );
-
-            switch (message.type) {
-              case MessageType.IMAGE:
-                messageContent = (
-                  <StyledImageContainer
-                    key={index}
-                    isSystemMessage={isSystemMessage}
-                  >
-                    <StyledImage
-                      message={message}
-                      onClick={() => {
-                        setModalImageSrc(message.message);
-                        setIsModalOpen(true);
-                      }}
-                    />
-                  </StyledImageContainer>
+              if (validMessageType)
+                return (
+                  <StyledMessageEvent key={message.providerMessageId}>
+                    <IconExclamationCircleFilled size={13} /> {messageContent}
+                  </StyledMessageEvent>
                 );
-                break;
-              case MessageType.AUDIO:
-                messageContent = <StyledAudio key={index} message={message} />;
-                break;
-              case MessageType.DOCUMENT: {
-                const msg = message?.message
-                  ? message.message.split('/').pop()?.split('?')[0]
-                  : null;
-                messageContent = (
-                  <StyledDocumentContainer
-                    key={index}
-                    isSystemMessage={isSystemMessage}
-                  >
-                    <DocumentPreview fromMe={message.fromMe} documentUrl={message.message} />
-                  </StyledDocumentContainer>
-                );
-                break;
-              }
-              case MessageType.VIDEO:
-                messageContent = (
-                  <StyledVideo
-                    isSystemMessage={isSystemMessage}
-                    key={index}
-                    controls
-                  >
-                    {validVideoTypes.map((type) => (
-                      <source src={message.message} type={type} />
-                    ))}
-                  </StyledVideo>
-                );
-                break;
-              default:
-                messageContent = (
-                  <StyledMessage key={index} isSystemMessage={isSystemMessage}>
-                    {formatMessageContent(
-                      isSystemMessage
-                        ? //first line will be member name, which is redundant since we already show it in the avatar
-                          message.message
-                            .replace(`*#${message.from.replace('_', '')}*`, '')
-                            .trim()
-                        : message.message,
-                    )}
-                  </StyledMessage>
-                );
-                break;
-            }
 
-            const unreadIndex =
-              selectedChat.messages.length - selectedChat.unreadMessages;
-            const showUnreadMarker = index === unreadIndex;
-            const lastOfRow =
-              selectedChat.messages[index + 1]?.from !== message.from;
-
-            return (
-              <>
-                {showUnreadMarker && (
-                  <StyledUnreadMarker>New Messages</StyledUnreadMarker>
-                )}
-
-                <StyledMessageContainer key={index} fromMe={isSystemMessage}>
-                  <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
-                    <AvatarComponent
-                      message={message}
-                      selectedChat={selectedChat}
-                      currentWorkspaceMember={currentWorkspaceMember}
-                    />
-                  </StyledAvatarMessage>
-                  <StyledContainer
-                    key={index}
-                    isSystemMessage={isSystemMessage}
-                  >
-                    <StyledMessageItem
+              switch (messageDisplayType) {
+                case MessageType.IMAGE:
+                  renderedContent = (
+                    <StyledImageContainer
                       key={index}
                       isSystemMessage={isSystemMessage}
                     >
-                      <StyledMessageBubble
-                        key={index}
-                        time={formatDate(message.createdAt).time}
+                      <StyledImage
                         message={message}
-                        hasTail={lastOfRow}
-                      >
-                        {messageContent}
-                      </StyledMessageBubble>
-                      <StyledNameAndTimeContainer
-                        isSystemMessage={isSystemMessage}
-                      >
-                        {isMessageOlderThan24Hours(message.createdAt) ?? (
-                          <StyledDateContainer>
-                            {formatDate(message.createdAt).date}
-                          </StyledDateContainer>
-                        )}
-                      </StyledNameAndTimeContainer>
-                    </StyledMessageItem>
-                  </StyledContainer>
-                </StyledMessageContainer>
-              </>
-            );
-          })}
-        </StyledChatContainer>
-        {renderButtons()}
-        {isModalOpen && modalImageSrc && (
-          <StyledModalOverlay onClick={closeModal}>
-            <StyledModalImage
-              src={modalImageSrc}
-              onClick={(ev) => ev.stopPropagation()}
-            />
-          </StyledModalOverlay>
+                        onClick={() => {
+                          setModalImageSrc(messageContent);
+                          setIsModalOpen(true);
+                        }}
+                      />
+                    </StyledImageContainer>
+                  );
+                  break;
+                case MessageType.AUDIO:
+                  renderedContent = (
+                    <StyledAudio key={index} message={message} />
+                  );
+                  break;
+                case MessageType.DOCUMENT: {
+                  const fileName = messageContent
+                    ? messageContent.split('/').pop()?.split('?')[0]
+                    : null;
+                  renderedContent = (
+                    <StyledDocumentContainer
+                      key={index}
+                      isSystemMessage={isSystemMessage}
+                    >
+                      <DocumentPreview
+                        fromMe={isSystemMessage}
+                        documentUrl={messageContent}
+                      />
+                    </StyledDocumentContainer>
+                  );
+                  break;
+                }
+                case MessageType.VIDEO:
+                  renderedContent = (
+                    <StyledVideo
+                      isSystemMessage={isSystemMessage}
+                      key={index}
+                      controls
+                    >
+                      {validVideoTypes.map((type) => (
+                        <source key={type} src={messageContent} type={type} />
+                      ))}
+                    </StyledVideo>
+                  );
+                  break;
+                default:
+                  renderedContent = (
+                    <StyledMessage
+                      key={index}
+                      isSystemMessage={isSystemMessage}
+                    >
+                      {formatMessageContent(
+                        isSystemMessage
+                          ? // Remover o nome do membro da primeira linha se presente
+                            messageContent
+                              .replace(
+                                `*#${message.from.replace('_', '')}*`,
+                                '',
+                              )
+                              .trim()
+                          : messageContent,
+                      )}
+                    </StyledMessage>
+                  );
+                  break;
+              }
+
+              // const unreadIndex =
+              //   messages.length - (selectedChat?.unreadMessages || 0);
+              // const showUnreadMarker = index === unreadIndex;
+              const lastOfRow = messages[index + 1]?.from !== message.from;
+
+              return (
+                <>
+                  {/* {showUnreadMarker && (
+                    <StyledUnreadMarker key={`unread-${index}`}>
+                      New Messages
+                    </StyledUnreadMarker>
+                  )} */}
+
+                  <StyledMessageContainer
+                    key={message.providerMessageId}
+                    fromMe={isSystemMessage}
+                  >
+                    <StyledAvatarMessage style={{ opacity: lastOfRow ? 1 : 0 }}>
+                      <AvatarComponent
+                        message={message}
+                        selectedChat={selectedChat}
+                        currentWorkspaceMember={currentWorkspaceMember!}
+                      />
+                    </StyledAvatarMessage>
+                    <StyledContainer isSystemMessage={isSystemMessage}>
+                      <StyledMessageItem isSystemMessage={isSystemMessage}>
+                        <StyledMessageBubble
+                          time={formatDate(message.createdAt).time}
+                          message={message}
+                          hasTail={lastOfRow}
+                        >
+                          {renderedContent}
+                        </StyledMessageBubble>
+                        <StyledNameAndTimeContainer
+                          isSystemMessage={isSystemMessage}
+                        >
+                          {isMessageOlderThan24Hours(message.createdAt) ?? (
+                            <StyledDateContainer>
+                              {formatDate(message.createdAt).time}
+                            </StyledDateContainer>
+                          )}
+                        </StyledNameAndTimeContainer>
+                      </StyledMessageItem>
+                    </StyledContainer>
+                  </StyledMessageContainer>
+                </>
+              );
+            })}
+          </StyledChatContainer>
+          {renderButtons()}
+          {isModalOpen && modalImageSrc && (
+            <StyledModalOverlay onClick={closeModal}>
+              <StyledModalImage
+                src={modalImageSrc}
+                onClick={(ev) => ev.stopPropagation()}
+              />
+            </StyledModalOverlay>
+          )}
+        </StyledPaneChatContainer>
+        {newMessagesIndicator && (
+          <StyledNewMessagesButton onClick={scrollToBottom}>
+            More recent
+          </StyledNewMessagesButton>
         )}
-      </StyledPaneChatContainer>
-      {newMessagesIndicator && (
-        <StyledNewMessagesButton onClick={scrollToBottom}>
-          More recent
-        </StyledNewMessagesButton>
-      )}
-    </>
-  );
+      </>
+    );
 };

@@ -1,8 +1,10 @@
 export interface CreateAgentInput {
   isAdmin: boolean;
   isActive?: boolean;
-  memberId: string;
-  sectorIds: string[];
-  inboxesIds: string[];
-  workspaceId: string;
+  sectorId: string;
 }
+
+type InboxTarget = {
+  inboxId: string;
+  agentId: string;
+};

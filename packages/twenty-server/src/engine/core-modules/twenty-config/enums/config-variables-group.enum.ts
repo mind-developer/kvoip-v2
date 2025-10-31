@@ -19,4 +19,8 @@ export enum ConfigVariablesGroup {
   AnalyticsConfig = 'audit-config',
   TokensDuration = 'tokens-duration',
   TwoFactorAuthentication = 'two-factor-authentication',
+
+  /* @kvoip-woulz proprietary:begin */
+  TelephonyConfig = 'telephony-config',
+  /* @kvoip-woulz proprietary:end */
 }

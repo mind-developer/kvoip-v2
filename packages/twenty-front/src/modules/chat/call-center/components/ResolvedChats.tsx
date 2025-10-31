@@ -1,10 +1,10 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatCell } from '@/chat/call-center/components/ChatCell';
-import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
-import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { statusEnum } from '@/chat/types/WhatsappDocument';
+import { useClientChatsWithPerson } from '@/chat/call-center/hooks/useClientChatsWithPerson';
 import styled from '@emotion/styled';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ClientChatStatus } from 'twenty-shared/types';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -25,18 +25,15 @@ const StyledExpandDiv = styled.div`
 `;
 
 export const ResolvedChats = () => {
-  const {
-    selectedChatId,
-    setSelectedChatId,
-    whatsappChats /*, messengerChats*/,
-  } = useContext(CallCenterContext) as CallCenterContextType;
+  const { chats: clientChats } = useClientChatsWithPerson();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const { chatId: openChatId } = useParams();
 
-  const allChats = [...whatsappChats]; // ...messengerChats,
-  const resolvedChats = allChats.filter((chat: any) => {
-    if (chat.status === statusEnum.Resolved && chat.isVisible) return true;
-    return false;
-  });
+  // Filtrar chats resolvidos
+  const resolvedChats = clientChats.filter(
+    (chat) => chat.status === ClientChatStatus.RESOLVED,
+  );
 
   if (resolvedChats.length > 0)
     return (
@@ -50,19 +47,21 @@ export const ResolvedChats = () => {
         {isExpanded && (
           <StyledExpandDiv>
             <StyledSeparator />
-            {resolvedChats.map((chat: any) => {
-              const chatId =
-                chat.integrationId +
-                (chat.client.phone
-                  ? `_${chat.client.phone}`
-                  : `_${chat.client.id}`);
+            {resolvedChats.map((chat) => {
+              const person = chat.person;
+              const clientName = person
+                ? `${person.firstName || ''} ${person.lastName || ''}`.trim() ||
+                  'Cliente'
+                : `Cliente ${chat.providerContactId}`;
 
               return (
                 <ChatCell
                   key={chat.id}
                   chat={chat}
-                  isSelected={selectedChatId === chatId}
-                  onSelect={() => setSelectedChatId(chatId)}
+                  isSelected={openChatId === chat.id}
+                  onSelect={() => {
+                    navigate(`/chat/call-center/${chat.id}`);
+                  }}
                 />
               );
             })}

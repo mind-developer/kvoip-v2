@@ -1,5 +1,6 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -51,7 +52,10 @@ export const SectorPill = ({
   // const { transferService } = useContext(
   //   CallCenterContext,
   // ) as CallCenterContextType;
-  const { sectors } = useFindAllSectors();
+
+  const { records: sectors } = useFindManyRecords<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+  });
 
   const [selectedOption, setSelectedOption] = useState<string>('Select');
 

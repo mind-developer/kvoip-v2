@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -41,8 +42,8 @@ export const SettingsFinancialClosingNew = () => {
       name: '',
       lastDayMonth: false,
       time: '00:00',
-      day: undefined, // Campo obrigatório - precisa ser preenchido
-      billingModelIds: [], // Campo obrigatório - precisa ser preenchido
+      day: undefined, 
+      billingModelIds: [],
       workspaceId: currentWorkspace?.id,
     },
   });

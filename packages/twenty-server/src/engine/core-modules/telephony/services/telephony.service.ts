@@ -1,4 +1,6 @@
+/* @kvoip-woulz proprietary */
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Not } from 'typeorm';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
@@ -6,8 +8,9 @@ import { type CreateTelephonyHandler } from 'src/modules/telephony/types/Create'
 import { type DeleteTelephonyHandler } from 'src/modules/telephony/types/Delete';
 import { type GetAllTelephonyHandler } from 'src/modules/telephony/types/GetAll';
 import { type FindOneTelephonyHandler } from 'src/modules/telephony/types/GetOne/FindOne.type';
+import { type GetTelephonyByMemberHandler } from 'src/modules/telephony/types/GetOne/GetByMember.type';
+import { type GetTelephonyByNumberHandler } from 'src/modules/telephony/types/GetOne/GetByNumber.type';
 import { type UpdateTelephonyHandler } from 'src/modules/telephony/types/Update';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TelephonyService {
@@ -28,10 +31,55 @@ export class TelephonyService {
     }
 
     const telephonys = await telephonyRepository.find({
+      relations: ['member'],
       order: { createdAt: 'DESC' },
     });
 
     return telephonys;
+  };
+
+  findAllPaginated = async (data: { workspaceId: string; page: number; limit: number }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        data.workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    const { page, limit } = data;
+    const skip = (page - 1) * limit;
+
+    // Buscar total de registros
+    const totalItems = await telephonyRepository.count();
+    
+    // Buscar registros paginados
+    const telephonys = await telephonyRepository.find({
+      relations: ['member'],
+      order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
+    });
+
+    // Calcular informações de paginação
+    const totalPages = Math.ceil(totalItems / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+      data: telephonys,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    };
   };
 
   createTelephony: CreateTelephonyHandler = async (data, workspaceId) => {
@@ -73,6 +121,40 @@ export class TelephonyService {
 
     return await telephonyRepository.findOne({
       where: { id },
+    });
+  };
+
+  getTelephonyByMember: GetTelephonyByMemberHandler = async ({ memberId, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    return await telephonyRepository.findOne({
+      where: { memberId },
+    });
+  };
+
+  getTelephonyByNumber: GetTelephonyByNumberHandler = async ({ numberExtension, workspaceId }) => {
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
+        workspaceId,
+        'telephony',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
+    }
+
+    return await telephonyRepository.findOne({
+      where: { numberExtension },
     });
   };
 
@@ -129,60 +211,46 @@ export class TelephonyService {
     return affected ? true : false;
   };
 
-  setExtensionNumberInWorkspaceMember = async (
-    workspaceId: string,
-    memberId: string,
-    extensionNumber: string,
+  /**
+   * Verifica se um membro já possui um ramal na tabela telephony
+   * @param memberId - ID do membro a ser verificado
+   * @param workspaceId - ID do workspace
+   * @param excludeId - ID do registro a ser excluído da verificação (opcional, para updates)
+   * @returns Promise<boolean> - true se o membro já possui um ramal, false caso contrário
+   */
+  checkMemberHasTelephony: (memberId: string, workspaceId: string, excludeId?: string) => Promise<boolean> = async (
+    memberId,
+    workspaceId,
+    excludeId,
   ) => {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+    const telephonyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TelephonyWorkspaceEntity>(
         workspaceId,
-        'workspaceMember',
+        'telephony',
         { shouldBypassPermissionChecks: true },
       );
 
-    if (!workspaceMemberRepository) {
-      throw new Error('Workspace member repository not found');
+    if (!telephonyRepository) {
+      throw new Error('Telephony repository not found');
     }
 
-    const member = await workspaceMemberRepository.findOne({
-      where: { id: memberId },
-    });
-
-    if (!member) {
-      throw new BadRequestException(`Workspace member ${memberId} not found`);
+    let existingTelephony;
+    
+    if (excludeId) {
+      // Se excludeId for fornecido, exclui esse registro da verificação usando Not()
+      existingTelephony = await telephonyRepository.findOne({
+        where: { 
+          memberId,
+          id: Not(excludeId),
+        },
+      });
+    } else {
+      // Busca normal sem exclusão
+      existingTelephony = await telephonyRepository.findOne({
+        where: { memberId },
+      });
     }
 
-    member.extensionNumber = extensionNumber;
-
-    return await workspaceMemberRepository.save(member);
-  };
-
-  removeAgentIdInWorkspaceMember = async (
-    workspaceId: string,
-    memberId: string,
-  ) => {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    if (!workspaceMemberRepository) {
-      throw new Error('Workspace member repository not found');
-    }
-
-    const member = await workspaceMemberRepository.findOne({
-      where: { id: memberId },
-    });
-
-    if (!member) {
-      throw new BadRequestException(`Workspace member ${memberId} not found`);
-    }
-
-    member.extensionNumber = '';
-
-    return await workspaceMemberRepository.save(member);
+    return !!existingTelephony;
   };
 }

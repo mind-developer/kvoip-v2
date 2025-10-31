@@ -3,15 +3,23 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledContainer = styled.div<{ clickable?: boolean, isSelected?: boolean }>`
+  background: ${({ theme, isSelected }) => isSelected ? theme.background.tertiary : theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
   flex-direction: row;
   margin-bottom: ${({ theme }) => theme.spacing(0)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
+  transition: background-color 0.2s ease;
+  align-items: center;
+
+  &:hover {
+    background: ${({ theme, clickable }) => clickable ? theme.background.tertiary : theme.background.secondary};
+  }
 
   &:last-child {
     border-bottom: none;
@@ -27,35 +35,36 @@ const StyledContent = styled.div`
   overflow: auto;
 `;
 
-const StyledStatusContainer = styled.div`
-  width: 25%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const StyledEmailText = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 const StyledExtensionText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledExtensionContentText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledTextContent = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
 `;
 
 type SettingsServiceCenterItemTableRowProps = {
   telephony: Telephony;
   accessory?: React.ReactNode;
+  onClick?: () => void;
+  isSelected?: boolean;
 };
 
 export const SettingsServiceCenterItemTableRow = ({
   telephony,
+  isSelected = false,
   accessory,
+  onClick,
 }: SettingsServiceCenterItemTableRowProps) => {
+  const { t } = useLingui();
+
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -65,7 +74,11 @@ export const SettingsServiceCenterItemTableRow = ({
   );
 
   return (
-    <StyledContainer>
+    <StyledContainer 
+      isSelected={isSelected}
+      clickable={!!onClick}
+      onClick={onClick}
+    >
       <Avatar
         avatarUrl={member?.avatarUrl}
         placeholderColorSeed={telephony.id}
@@ -79,15 +92,13 @@ export const SettingsServiceCenterItemTableRow = ({
         />
         <StyledEmailText>{member?.userEmail}</StyledEmailText>
       </StyledContent>
-      <StyledStatusContainer>
-        <div>
-          <StyledExtensionText>Ramal: </StyledExtensionText>
-          <StyledExtensionContentText>
-            {telephony.numberExtension}
-          </StyledExtensionContentText>
-        </div>
+        <StyledTextContent>
+          <StyledExtensionText> {t`Extension`}: </StyledExtensionText>
+          <OverflowingTextWithTooltip
+            text={telephony.numberExtension}
+          />
+        </StyledTextContent>
         {accessory}
-      </StyledStatusContainer>
     </StyledContainer>
   );
 };
