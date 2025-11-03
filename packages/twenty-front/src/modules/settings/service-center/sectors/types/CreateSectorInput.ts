@@ -1,4 +1,4 @@
-import { SectorTopic } from '@/settings/service-center/sectors/types/SectorTopic';
+import { type SectorTopic } from '@/settings/service-center/sectors/types/SectorTopic';
 
 export interface CreateSectorInput {
   icon: string;

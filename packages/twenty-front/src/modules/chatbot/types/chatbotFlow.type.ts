@@ -1,6 +1,6 @@
-import { Edge } from '@xyflow/react';
-import { ChatbotStatus } from '~/generated/graphql';
-import { GenericNode } from './GenericNode';
+import { type Edge } from '@xyflow/react';
+import { type ChatbotStatus } from '~/generated/graphql';
+import { type GenericNode } from './GenericNode';
 
 export type ChatbotFlowData = {
   id?: string;

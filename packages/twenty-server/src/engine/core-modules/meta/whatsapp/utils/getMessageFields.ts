@@ -1,13 +1,15 @@
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { ChatMessageType, ClientChatMessage } from 'twenty-shared/types';
 
-export function getMessageFields(
+export async function getMessageFields(
   input: Omit<ClientChatMessage, 'providerMessageId'>,
+  clientChat: ClientChatWorkspaceEntity,
 ) {
   const fields: any = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
-    to: input.to,
+    to: clientChat.providerContactId,
     type: input.type,
   };
 
@@ -40,5 +42,6 @@ export function getMessageFields(
     default:
       throw new InternalServerError('Invalid message type: ' + input.type);
   }
+  fields.type = fields.type.toLowerCase();
   return fields;
 }

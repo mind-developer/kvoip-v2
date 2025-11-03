@@ -14,11 +14,12 @@ import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-obje
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
   ChatMessageType,
   ClientChatMessageEvent,
-  ClientChatMessageFromType,
-  ClientChatMessageToType,
   FieldMetadataType,
+  Reaction,
   RelationType,
 } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -59,7 +60,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`From Type`,
     description: msg`The from type of the client chat message`,
   })
-  fromType: ClientChatMessageFromType;
+  fromType: ChatMessageFromType;
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.to,
@@ -75,7 +76,7 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`To Type`,
     description: msg`The to type of the client chat message`,
   })
-  toType: ClientChatMessageToType;
+  toType: ChatMessageToType;
 
   @WorkspaceField({
     standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.provider,
@@ -153,4 +154,49 @@ export class ClientChatMessageWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   event: ClientChatMessageEvent | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.reactions,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Reaction`,
+    description: msg`The reaction of the chat message`,
+  })
+  @WorkspaceIsNullable()
+  reactions: Reaction[] | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.repliesTo,
+    type: FieldMetadataType.TEXT,
+    label: msg`Replies To`,
+    description: msg`Id of the client chat message that this message replies to`,
+  })
+  @WorkspaceIsNullable()
+  repliesTo: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.templateName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Template Name`,
+    description: msg`The name of the template that was used to send the message`,
+  })
+  @WorkspaceIsNullable()
+  templateName: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.templateId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Template Id`,
+    description: msg`The name of the template that was used to send the message`,
+  })
+  @WorkspaceIsNullable()
+  templateId: string | null;
+
+  @WorkspaceField({
+    standardId: CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS.templateLanguageCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Template Language`,
+    description: msg`The language code of the template that was used to send the message`,
+  })
+  @WorkspaceIsNullable()
+  templateLanguage: string | null;
 }

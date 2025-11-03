@@ -4,7 +4,7 @@ import {
   chatbotFlowNodes,
   chatbotFlowViewport,
 } from '@/chatbot/state/chatbotFlowState';
-import { ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
+import { type ChatbotFlowData } from '@/chatbot/types/chatbotFlow.type';
 import { useSetRecoilState } from 'recoil';
 
 export function useSetChatbotFlowState() {

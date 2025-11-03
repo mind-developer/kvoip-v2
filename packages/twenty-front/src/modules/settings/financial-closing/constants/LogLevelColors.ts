@@ -4,7 +4,9 @@ import { useLingui } from '@lingui/react/macro';
 
 export type LogLevel = 'ERROR' | 'WARN' | 'WARNING' | 'INFO' | 'DEBUG';
 
-export const getLogLevelTagColor = (level: string): 'green' | 'red' | 'blue' | 'orange' | 'gray' => {
+export const getLogLevelTagColor = (
+  level: string,
+): 'green' | 'red' | 'blue' | 'orange' | 'gray' => {
   switch (level?.toUpperCase()) {
     case 'ERROR':
       return 'red';
@@ -36,7 +38,10 @@ export const getLogLevelBorderColor = (level: string, theme: Theme): string => {
   }
 };
 
-export const getLogLevelBackgroundColor = (level: string, theme: Theme): string => {
+export const getLogLevelBackgroundColor = (
+  level: string,
+  theme: Theme,
+): string => {
   switch (level?.toUpperCase()) {
     case 'ERROR':
       return theme.color.red20;
@@ -69,7 +74,9 @@ export const getLogLevelTextColor = (level: string, theme: Theme): string => {
 };
 
 // Funções para cores de status de execução
-export const getExecutionStatusTagColor = (isCompleted: boolean): 'green' | 'red' => {
+export const getExecutionStatusTagColor = (
+  isCompleted: boolean,
+): 'green' | 'red' => {
   return isCompleted ? 'green' : 'red';
 };
 

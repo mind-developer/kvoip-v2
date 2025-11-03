@@ -1,5 +1,6 @@
+import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { Theme, useTheme } from '@emotion/react';
+import { type Theme, useTheme } from '@emotion/react';
 // eslint-disable-next-line no-restricted-imports
 import { IconMessageCircle } from '@tabler/icons-react';
 import { useLocation } from 'react-router-dom';
@@ -23,31 +24,31 @@ export const ChatNavigationNavItem = () => {
   const { pathname, search } = useLocation();
   const currentPathWithSearch = pathname + search;
 
-  const navigationPath = '/chat';
-
   const chatsPath = [
     {
       id: 'internalChat',
       label: 'Internal Chat',
-      path: `${navigationPath}/internal`,
+      path: AppPath.InternalChatCenter,
       Icon: IconBriefcase,
     },
     {
-      id: 'callCenter',
-      label: 'Call Center',
-      path: `${navigationPath}/call-center`,
+      id: 'clientChat',
+      label: 'Client Chat',
+      path: AppPath.ClientChatCenter,
       Icon: IconHeadphones,
     },
   ];
 
-  const shouldSubItemsBeDisplayed = pathname.startsWith(navigationPath);
+  const shouldSubItemsBeDisplayed = pathname.startsWith(
+    AppPath.ClientChatCenter,
+  );
 
   return (
     <>
       <NavigationDrawerItem
         label="Chat"
-        to={`${navigationPath}/call-center`}
-        active={pathname.startsWith(navigationPath)}
+        to={AppPath.ClientChatCenter}
+        active={pathname.startsWith(AppPath.ClientChatCenter)}
         Icon={IconMessageCircle}
       />
       {/* <AnimatePresence>

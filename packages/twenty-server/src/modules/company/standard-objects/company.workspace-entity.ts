@@ -199,7 +199,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     settings: {
       validation: {
         ...TEXT_VALIDATION_PATTERNS.MUNICIPAL_REGISTRATION,
-        errorMessage: msg`Use the format: 00000000-0`,
+        errorMessage: msg`Use the format: 0000000-0`,
       },
     },
   })

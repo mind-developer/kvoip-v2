@@ -8,7 +8,7 @@ class RingToneManager {
   constructor() {
     this.callAudio = new Audio('https://kvoip.com.br/toquedechamada.mp3');
     this.callAudio.load();
-    
+
     // Carregar dispositivo de toque salvo
     const savedRingDevice = localStorage.getItem('phone_ring_device');
     if (savedRingDevice) {
@@ -32,7 +32,10 @@ class RingToneManager {
     if (this.selectedRingDevice && 'setSinkId' in this.callAudio) {
       try {
         await (this.callAudio as any).setSinkId(this.selectedRingDevice);
-        console.log('Dispositivo de toque configurado com sucesso:', this.selectedRingDevice);
+        console.log(
+          'Dispositivo de toque configurado com sucesso:',
+          this.selectedRingDevice,
+        );
       } catch (error) {
         console.error('Erro ao configurar dispositivo de toque:', error);
       }
@@ -45,7 +48,10 @@ class RingToneManager {
       return;
     }
 
-    console.log('Iniciando toque de chamada no dispositivo:', this.selectedRingDevice);
+    console.log(
+      'Iniciando toque de chamada no dispositivo:',
+      this.selectedRingDevice,
+    );
     if (!this.selectedRingDevice) {
       console.warn('Nenhum dispositivo de toque selecionado');
       return;
@@ -53,7 +59,7 @@ class RingToneManager {
 
     this.isPlaying = true;
     this.callAudio.currentTime = 0;
-    this.callAudio.play().catch(error => {
+    this.callAudio.play().catch((error) => {
       console.error('Erro ao tocar o toque de chamada:', error);
       this.isPlaying = false;
     });

@@ -1,8 +1,8 @@
-import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import {
-  BillingPriceLicensedDto,
-  SubscriptionInterval,
+  type BillingPriceLicensedDto,
+  type SubscriptionInterval,
 } from '~/generated/graphql';
 
 export const geProductPrice = (

@@ -1,4 +1,4 @@
-import { CallStatus } from './callStatusEnum';
+import { type CallStatus } from './callStatusEnum';
 
 export interface CallState {
   isRegistered: boolean;

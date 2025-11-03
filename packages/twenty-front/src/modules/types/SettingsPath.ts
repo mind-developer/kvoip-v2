@@ -36,7 +36,7 @@ export enum SettingsPath {
   Chatbots = 'chatbots/',
   ChatbotsCreate = 'chatbots/create',
   ChatbotsEdit = 'chatbots/:chatbotSlug/edit',
-  ChatbotFlow = 'chatbots/flow/:id',
+  ChatbotFlow = 'chatbots/flow/:chatbotId',
 
   FinancialClosing = 'financial-closing',
   FinancialClosingNew = 'financial-closing/new',

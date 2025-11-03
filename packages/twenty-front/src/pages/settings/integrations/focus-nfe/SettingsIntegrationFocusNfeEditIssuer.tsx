@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeIssuerForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuerForm';

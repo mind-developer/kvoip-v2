@@ -48,6 +48,7 @@ export enum CoreObjectNameSingular {
   CompanyFinancialClosingExecution = 'companyFinancialClosingExecution',
   Sector = 'sector',
   Agent = 'agent',
+  ClientChat = 'clientChat',
   WhatsappIntegration = 'whatsappIntegration',
   Telephony = 'telephony',
 }

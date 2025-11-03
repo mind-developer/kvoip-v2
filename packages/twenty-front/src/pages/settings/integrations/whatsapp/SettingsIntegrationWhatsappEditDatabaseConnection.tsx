@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { type WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';

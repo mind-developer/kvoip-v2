@@ -1223,10 +1223,6 @@ export class ConfigVariables {
 
   @IsString()
   @IsOptional()
-  META_WEBHOOK_URL: string;
-
-  @IsString()
-  @IsOptional()
   WEBHOOK_URL: string;
 
   // Onesignal

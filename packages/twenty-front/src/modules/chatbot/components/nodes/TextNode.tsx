@@ -1,11 +1,12 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { TextArea } from '@/ui/input/components/TextArea';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -13,6 +14,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 const TextNode = ({
   id,
@@ -80,6 +82,8 @@ const TextNode = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetConnections, sourceConnections]);
 
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+
   return (
     <BaseNode
       icon={'IconTextSize'}
@@ -90,6 +94,7 @@ const TextNode = ({
       onTitleBlur={() => {
         saveDataValue('title', titleValue, node);
       }}
+      isSelected={selectedNode?.id === nodeId}
     >
       {!data.nodeStart && (
         <Handle
@@ -101,6 +106,7 @@ const TextNode = ({
       )}
       <>
         <TextArea
+          textAreaId="text-node-text-area"
           label="Message body"
           placeholder="Text message to be sent"
           value={textValue}
@@ -109,13 +115,13 @@ const TextNode = ({
             saveDataValue('text', textValue, node);
           }}
         />
+        <Handle
+          type="source"
+          position={Position.Right}
+          isConnectable={isConnectable}
+          style={{ height: 10, width: 10 }}
+        />
       </>
-      <Handle
-        type="source"
-        position={Position.Right}
-        isConnectable={isConnectable}
-        style={{ height: 10, width: 10 }}
-      />
     </BaseNode>
   );
 };

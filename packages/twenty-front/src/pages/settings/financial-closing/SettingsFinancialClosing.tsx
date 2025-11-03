@@ -26,9 +26,7 @@ export const SettingsFinancialClosing = () => {
     <SubMenuTopBarContainer
       title={t`Financial Closings`}
       actionButton={
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.FinancialClosingNew)}
-        >
+        <UndecoratedLink to={getSettingsPath(SettingsPath.FinancialClosingNew)}>
           <Button
             Icon={IconPlus}
             title={t`Add Financial Closing`}
@@ -45,8 +43,14 @@ export const SettingsFinancialClosing = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="" description={t`Manage all financial closings here.`} />
-          <SettingsFinancialClosings financialClosings={financialClosings} refetchFinancialClosings={refetch} />
+          <H2Title
+            title=""
+            description={t`Manage all financial closings here.`}
+          />
+          <SettingsFinancialClosings
+            financialClosings={financialClosings}
+            refetchFinancialClosings={refetch}
+          />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

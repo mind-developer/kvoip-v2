@@ -2,12 +2,13 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { StyledOption } from '@/chatbot/components/ui/StyledOption';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -15,6 +16,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { ChatbotFlowFileEventForm } from '../actions/ChatbotFlowFileEventForm';
 
@@ -83,6 +85,8 @@ function FileNode({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetConnections, sourceConnections]);
 
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+
   return (
     <BaseNode
       onTitleBlur={() => {}}
@@ -90,6 +94,7 @@ function FileNode({
       icon={'IconFileImport'}
       title={data.title ?? 'Node title'}
       nodeTypeDescription="File node"
+      isSelected={selectedNode?.id === nodeId}
     >
       <Handle
         type="target"

@@ -2,7 +2,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 
 import { SelectStatusPillItem } from '@/settings/integrations/meta/components/SettingsStatusPillItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

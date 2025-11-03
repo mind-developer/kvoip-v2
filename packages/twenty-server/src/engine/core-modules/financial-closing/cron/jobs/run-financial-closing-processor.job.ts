@@ -78,7 +78,7 @@ export class RunFinancialClosingJobProcessor {
       );
 
     let newExecutionLog = financialClosingExecutionsRepository.create({
-      name: msg`Execution of financial closing` + ' ' + financialClosing.id,
+      name: `Execução do fechamento financeiro` + ': ' + financialClosing.id,
       executedAt: new Date(),
       billingModelIds: financialClosing.billingModelIds,
       financialClosingId: financialClosing.id,
@@ -95,7 +95,7 @@ export class RunFinancialClosingJobProcessor {
       newExecutionLog,
       financialClosingExecutionsRepository,
       'info',
-      msg`Starting closing execution` + ' ' + financialClosing.id,
+      `Início da execução do fechamento financeiro` + ': ' + financialClosing.id,
     );
 
     try {
@@ -127,7 +127,7 @@ export class RunFinancialClosingJobProcessor {
       for (const company of companies) {
         let newCompanyExecution =
           companyFinancialClosingExecutionsRepository.create({
-            name: msg`Closing execution` + ' ' + financialClosing.id + ' - ' + company.name,
+            name: `Execução do fechamento financeiro` + ' ' + financialClosing.id + ' - ' + company.name,
             executedAt: new Date(),
             financialClosingExecutionId: newExecutionLog.id,
             companyId: company.id,
@@ -177,7 +177,7 @@ export class RunFinancialClosingJobProcessor {
             newExecutionLog,
             financialClosingExecutionsRepository,
             'warn',
-            msg`Error to generate charge for the company` + ' ' + company.name + ' (' + company.id + ')',
+            `Erro ao gerar a cobrança para a empresa` + ' ' + company.name + ' (' + company.id + ')',
           );
         }
       }
@@ -236,7 +236,7 @@ export class RunFinancialClosingJobProcessor {
         newExecutionLog,
         financialClosingExecutionsRepository,
         'error',
-        msg`Fatal error in closing execution` + ': ' + error.message,
+        `Erro fatal na execução do fechamento financeiro` + ': ' + error.message,
         {
           status: FinancialClosingExecutionStatusEnum.ERROR,
         },

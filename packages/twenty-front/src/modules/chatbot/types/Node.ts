@@ -1,8 +1,8 @@
 import {
-  nodeActionSchema,
-  otherNodeActionSchema,
+  type nodeActionSchema,
+  type otherNodeActionSchema,
 } from '@/chatbot/validation-schemas/nodeSchema';
-import { z } from 'zod';
+import { type z } from 'zod';
 
 export type NodeAction = z.infer<typeof nodeActionSchema>;
 export type NodeActionType = NodeAction['type'];

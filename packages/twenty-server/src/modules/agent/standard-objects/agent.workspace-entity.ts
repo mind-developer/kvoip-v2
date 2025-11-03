@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -12,7 +13,7 @@ import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-obje
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
 @WorkspaceEntity({
@@ -35,11 +36,20 @@ export class AgentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'agents',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @WorkspaceIsNullable()
-  sector: Relation<SectorWorkspaceEntity | null>;
+  sector: Relation<SectorWorkspaceEntity>;
 
   @WorkspaceJoinColumn('sector')
-  sectorId: string | null;
+  sectorId: string;
+
+  @WorkspaceField({
+    standardId: AGENT_FIELD_IDS.isAdmin,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Is Admin`,
+    description: msg`If the agent is an admin, it can access all sectors`,
+    icon: 'IconShieldLock',
+    defaultValue: false,
+  })
+  isAdmin: boolean;
 
   @WorkspaceRelation({
     standardId: AGENT_FIELD_IDS.workspaceMember,

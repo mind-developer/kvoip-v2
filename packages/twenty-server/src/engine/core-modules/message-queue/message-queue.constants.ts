@@ -20,7 +20,5 @@ export enum MessageQueue {
   chargeQueue = 'charge-queue',
   serverlessFunctionQueue = 'serverless-function-queue',
   triggerQueue = 'trigger-queue',
-  chatMessageManagerSendMessageQueue = 'chat-message-manager-send-message-queue',
-  chatMessageManagerSaveMessageQueue = 'chat-message-manager-save-message-queue',
   financialClosingQueue = 'financial-closing-queue',
 }

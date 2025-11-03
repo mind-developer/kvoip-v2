@@ -2,7 +2,7 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
@@ -52,13 +52,20 @@ const StyledInputsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  overflow: visible;
+  padding-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledSectionDateInputs = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(24)};
   width: 100%;
+  overflow: visible;
+`;
+
+const StyledSectionWrapper = styled.div`
+  overflow: visible;
 `;
 
 export const SettingsFinancialClosingForm = ({
@@ -87,8 +94,9 @@ export const SettingsFinancialClosingForm = ({
   }, [activeFinancialClosing, reset]);
 
   return (
-    <Section>
-      <StyledInputsContainer>
+    <StyledSectionWrapper>
+      <Section>
+        <StyledInputsContainer>
         <Controller
           name="name"
           control={control}
@@ -147,7 +155,7 @@ export const SettingsFinancialClosingForm = ({
                 label={t`Closing Day`}
                 options={[
                   { label: t`Select the day...`, value: null },
-                  ...Array.from({ length: 30 }, (_, i) => ({
+                  ...Array.from({ length: 31 }, (_, i) => ({
                     label: String(i + 1),
                     value: i + 1,
                   })),
@@ -175,7 +183,8 @@ export const SettingsFinancialClosingForm = ({
             </div>
           )}
         /> */}
-      </StyledInputsContainer>
-    </Section>
+        </StyledInputsContainer>
+      </Section>
+    </StyledSectionWrapper>
   );
 };

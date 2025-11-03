@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 export enum TypeEmissionNFEnum {
   NOTHING = 'NOTHING',
   AFTER = 'AFTER',
-  BEFORE = 'BEFORE'
+  BEFORE = 'BEFORE',
 }
 
 type TypeEmissionNFMetadata = {
@@ -17,7 +17,9 @@ type TypeEmissionNFMetadata = {
 export const useTypeEmissionNFTranslations = () => {
   const { t } = useLingui();
 
-  const getTypeEmissionNFLabel = (value: TypeEmissionNFEnum | string): string => {
+  const getTypeEmissionNFLabel = (
+    value: TypeEmissionNFEnum | string,
+  ): string => {
     switch (value) {
       case TypeEmissionNFEnum.NOTHING:
         return t`Do not emit invoice`;
@@ -30,7 +32,10 @@ export const useTypeEmissionNFTranslations = () => {
     }
   };
 
-  const getTypeEmissionNFMetadata = (): Record<TypeEmissionNFEnum, TypeEmissionNFMetadata> => ({
+  const getTypeEmissionNFMetadata = (): Record<
+    TypeEmissionNFEnum,
+    TypeEmissionNFMetadata
+  > => ({
     [TypeEmissionNFEnum.NOTHING]: {
       label: t`Do not emit invoice`,
       color: 'red',
@@ -67,9 +72,10 @@ export const useTypeEmissionNFTranslations = () => {
   };
 };
 
-
 // Utilitário: Pega a cor pelo valor
-export function getTypeEmissionNFColor(value: TypeEmissionNFEnum | string): 'red' | 'purple' | 'blue' | 'green' | 'orange' | 'gray' {
+export function getTypeEmissionNFColor(
+  value: TypeEmissionNFEnum | string,
+): 'red' | 'purple' | 'blue' | 'green' | 'orange' | 'gray' {
   switch (value) {
     case TypeEmissionNFEnum.NOTHING:
       return 'red';

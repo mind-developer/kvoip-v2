@@ -1,4 +1,4 @@
-import { FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/FindWhatsappIntegrationInput';
+import { type FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/FindWhatsappIntegrationInput';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';

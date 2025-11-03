@@ -11,7 +11,7 @@ import { useRecoilState } from 'recoil';
 import {
   BillingPaymentProviders,
   type BillingPlanKey,
-  InterCreateChargeDto,
+  type InterCreateChargeDto,
   type SubscriptionInterval,
   useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
@@ -73,7 +73,7 @@ export const useHandleCheckoutSession = ({
     setIsSubmitting(false);
     if (!data?.checkoutSession.url) {
       enqueueErrorSnackBar({
-        message: t`Checkout session error. Please retry or contact Woulz team`,
+        message: t`Checkout session error. Please retry or contact Twenty team`,
       });
       return;
     }
