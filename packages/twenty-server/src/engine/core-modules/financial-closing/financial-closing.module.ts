@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -14,12 +14,13 @@ import { FinancialClosing } from 'src/engine/core-modules/financial-closing/fina
 import { FinancialClosingResolver } from 'src/engine/core-modules/financial-closing/financial-closing.resolver';
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
 
 @Module({
   imports: [
+    forwardRef(() => InterModule),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([
@@ -46,7 +47,6 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
     FinancialClosingResolver,
     RunFinancialClosingJobProcessor,
     RunCompanyFinancialClosingJobProcessor,
-    InterApiService,
   ],
 })
 export class FinancialClosingModule {}

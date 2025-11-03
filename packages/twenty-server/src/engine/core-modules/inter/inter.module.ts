@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -13,6 +13,9 @@ import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
 import { InterApiExceptionFilter } from 'src/engine/core-modules/inter/exceptions/inter-api-exception.filter';
 import { InterIntegrationWebhookController } from 'src/engine/core-modules/inter/integration/inter-integration-webhook.controller';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
@@ -23,31 +26,32 @@ import { InterApiClientService } from 'src/engine/core-modules/inter/services/in
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { InterWebhookService } from 'src/engine/core-modules/inter/services/inter-webhook.service';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 
 @Module({
   imports: [
-    FileUploadModule,
-    FileModule,
-    EmailModule,
-    FinancialClosingModule,
-    FileModule,
     CacheStorageModule,
+    EmailModule,
+    FileModule,
+    FileUploadModule,
+    forwardRef(() => FinancialClosingModule),
+    HttpModule,
+    MessageQueueModule,
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        NestjsQueryTypeOrmModule.forFeature([InterIntegration, Workspace]),
+      ],
+    }),
     TypeOrmModule.forFeature([
       InterIntegration,
       Workspace,
       BillingCustomer,
       BillingCharge,
     ]),
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        NestjsQueryTypeOrmModule.forFeature([InterIntegration, Workspace]),
-      ],
-    }),
-    HttpModule,
   ],
   controllers: [InterIntegrationWebhookController],
   providers: [
+    InterApiService,
     InterIntegrationResolver,
     InterIntegrationService,
     InterService,
@@ -68,6 +72,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     InterInstanceService,
     InterWebhookService,
     InterApiClientService,
+    InterApiService,
   ],
 })
 export class InterModule {}

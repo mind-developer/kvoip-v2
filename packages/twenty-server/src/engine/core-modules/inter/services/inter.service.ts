@@ -24,11 +24,16 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
+import { ProcessBolepixChargeJobData } from 'src/engine/core-modules/inter/jobs/process-bolepix-charge.job';
 import { InterApiClientService } from 'src/engine/core-modules/inter/services/inter-api-client.service';
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,6 +54,8 @@ export class InterService {
     private readonly fileService: FileService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async createBolepixCharge({
@@ -125,29 +132,20 @@ export class InterService {
     });
 
     const interChargeCode = response.codigoSolicitacao;
-    /* @kvoip-woulz proprietary:end */
 
     assert(
       isDefined(interChargeCode),
       `Failed to get payment charge id from Inter, got: ${interChargeCode}`,
     );
 
-    // TODO: We should move this part to the queue system given at this point
-    // the charge is already created and we are just getting the PDF and saving it to the database.
     this.logger.log(
       `Bolepix code for workspace: ${workspaceId}: ${interChargeCode}`,
     );
-
-    const bolepixFilePath = await this.getChargePdf({
-      interChargeId: interChargeCode,
-      workspaceId,
-    });
 
     await this.billingChargeRepository.upsert(
       {
         chargeCode,
         dueDate,
-        interBillingChargeFilePath: bolepixFilePath,
         metadata: {
           planKey,
           workspaceId,
@@ -162,32 +160,57 @@ export class InterService {
 
     await this.billingCustomerRepository.update(customer.id, {
       interBillingChargeId: chargeCode,
-      currentInterBankSlipChargeFilePath: bolepixFilePath,
     });
 
-    const bankSlipFileLink = this.getFileLinkFromPath(
-      bolepixFilePath,
+    const jobData: ProcessBolepixChargeJobData = {
+      interChargeCode,
       workspaceId,
-    );
-
-    await this.sendBankSkipFileEmail({
-      fileLink: bankSlipFileLink,
+      chargeCode,
       userEmail,
       locale,
-      interChargeCode,
-    });
+    };
 
-    return bankSlipFileLink;
+    await this.messageQueueService.add('ProcessBolepixChargeJob', jobData);
+
+    this.logger.log(
+      `Enqueued bolepix processing job for workspace: ${workspaceId}, charge: ${interChargeCode}`,
+    );
+
+    return interChargeCode;
+  }
+
+  /**
+   * Loads a workspace integration by ID
+   * @param integrationId Integration ID
+   * @returns InterIntegration or null if not found
+   */
+  async loadWorkspaceIntegration(
+    integrationId: string,
+  ): Promise<InterIntegration | null> {
+    if (!this.interIntegrationService) {
+      this.logger.warn(
+        'InterIntegrationService not available, skipping integration load',
+      );
+
+      return null;
+    }
+
+    return await this.interIntegrationService.findById(integrationId);
   }
 
   async getChargePdf({
     interChargeId,
     workspaceId,
+    integration,
   }: {
     workspaceId: string;
     interChargeId: string;
+    integration?: InterIntegration;
   }): Promise<string> {
-    const pdfBase64 = await this.interApiClient.getChargePdf(interChargeId);
+    const pdfBase64 = await this.interApiClient.getChargePdf(
+      interChargeId,
+      integration,
+    );
 
     const fileFolder = FileFolder.BillingSubscriptionBill;
 
@@ -205,24 +228,22 @@ export class InterService {
     return files[0].path;
   }
 
-  async getAccountBalance(_integration: InterIntegration) {
-    return await this.interApiClient.getAccountBalance();
+  async getAccountBalance(integration?: InterIntegration) {
+    return await this.interApiClient.getAccountBalance(integration);
   }
 
   async getAccountInfo(integrationId: string) {
-    const integration =
-      await this.interIntegrationService.findById(integrationId);
+    const integration = await this.loadWorkspaceIntegration(integrationId);
 
     if (!integration) {
       throw new Error('Integration not found');
     }
 
-    return await this.interApiClient.getAccountInfo();
+    return await this.interApiClient.getAccountInfo(integration);
   }
 
   async syncData(integrationId: string) {
-    const integration =
-      await this.interIntegrationService.findById(integrationId);
+    const integration = await this.loadWorkspaceIntegration(integrationId);
 
     if (!integration) {
       throw new Error('Integration not found');
@@ -304,8 +325,10 @@ export class InterService {
 
   async interSandboxPayBill({
     interChargeCode,
+    integration,
   }: {
     interChargeCode: string;
+    integration?: InterIntegration;
   }): Promise<{ success: boolean }> {
     const isSandbox = [
       NodeEnvironment.DEVELOPMENT,
@@ -318,7 +341,7 @@ export class InterService {
       );
     }
 
-    await this.interApiClient.payCharge(interChargeCode);
+    await this.interApiClient.payCharge(interChargeCode, integration);
 
     return {
       success: true,

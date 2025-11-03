@@ -15,6 +15,10 @@ import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-m
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+/* @kvoip-woulz proprietary:begin */
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
+import { ProcessBolepixChargeJob } from 'src/engine/core-modules/inter/jobs/process-bolepix-charge.job';
+/* @kvoip-woulz proprietary:end */
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -72,8 +76,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MessageQueueModule,
     TriggerModule,
     ServerlessFunctionModule,
+    /* @kvoip-woulz proprietary:begin */
     ClientChatMessageModule,
     ChatMessageManagerModule,
+    InterModule,
+    /* @kvoip-woulz proprietary:end */
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
@@ -82,7 +89,10 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
+    /* @kvoip-woulz proprietary:begin */
     CheckExpiredSubscriptionsJob,
+    ProcessBolepixChargeJob,
+    /* @kvoip-woulz proprietary:end */
     FileService,
     JwtService,
     JwtWrapperService,

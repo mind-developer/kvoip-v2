@@ -1,9 +1,9 @@
-/* @kvoip-woulz proprietary */
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosInstance, AxiosResponse } from 'axios';
 
 import { InterApiException } from 'src/engine/core-modules/inter/exceptions/inter-api.exception';
+import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import {
   InterChargeRequest,
   InterChargeResponse,
@@ -14,23 +14,32 @@ import { InterInstanceService } from 'src/engine/core-modules/inter/services/int
 @Injectable()
 export class InterApiClientService {
   private readonly logger = new Logger(InterApiClientService.name);
-  private readonly interInstance: AxiosInstance;
 
-  constructor(private readonly interInstanceService: InterInstanceService) {
-    this.interInstance = this.interInstanceService.getInterAxiosInstance();
+  constructor(private readonly interInstanceService: InterInstanceService) {}
+
+  /**
+   * Gets the appropriate axios instance for the given integration
+   * @param integration Optional workspace-specific integration. If not provided, uses global billing integration
+   */
+  private getAxiosInstance(integration?: InterIntegration): AxiosInstance {
+    return this.interInstanceService.getInterAxiosInstance(integration);
   }
 
   /**
    * Cria uma cobrança (bolepix) na Inter
    * POST /cobranca/v3/cobrancas
+   * @param chargeData Charge request data
+   * @param integration Optional workspace-specific integration
    */
   async createCharge(
     chargeData: InterChargeRequest,
+    integration?: InterIntegration,
   ): Promise<InterChargeResponse> {
     try {
       this.logger.log(`Creating charge with code: ${chargeData.seuNumero}`);
 
-      const response = await this.interInstance.post<
+      const axiosInstance = this.getAxiosInstance(integration);
+      const response = await axiosInstance.post<
         InterChargeResponse,
         AxiosResponse<InterChargeResponse, InterChargeRequest>,
         InterChargeRequest
@@ -50,12 +59,18 @@ export class InterApiClientService {
   /**
    * Obtém o PDF de uma cobrança
    * GET /cobranca/v3/cobrancas/:interChargeId/pdf
+   * @param interChargeId Charge ID
+   * @param integration Optional workspace-specific integration
    */
-  async getChargePdf(interChargeId: string): Promise<string> {
+  async getChargePdf(
+    interChargeId: string,
+    integration?: InterIntegration,
+  ): Promise<string> {
     try {
       this.logger.log(`Getting PDF for charge: ${interChargeId}`);
 
-      const response = await this.interInstance.get<InterGetChargePDFResponse>(
+      const axiosInstance = this.getAxiosInstance(integration);
+      const response = await axiosInstance.get<InterGetChargePDFResponse>(
         `/cobranca/v3/cobrancas/${interChargeId}/pdf`,
       );
 
@@ -73,12 +88,18 @@ export class InterApiClientService {
   /**
    * Paga um boleto (sandbox apenas)
    * POST /cobranca/v3/cobrancas/:interChargeCode/pagar
+   * @param interChargeCode Charge code
+   * @param integration Optional workspace-specific integration
    */
-  async payCharge(interChargeCode: string): Promise<void> {
+  async payCharge(
+    interChargeCode: string,
+    integration?: InterIntegration,
+  ): Promise<void> {
     try {
       this.logger.log(`Paying charge in sandbox: ${interChargeCode}`);
 
-      await this.interInstance.post(
+      const axiosInstance = this.getAxiosInstance(integration);
+      await axiosInstance.post(
         `/cobranca/v3/cobrancas/${interChargeCode}/pagar`,
         {
           pagarCom: 'BOLETO',
@@ -97,12 +118,14 @@ export class InterApiClientService {
   /**
    * Obtém o saldo da conta
    * GET /v1/balance
+   * @param integration Optional workspace-specific integration
    */
-  async getAccountBalance(): Promise<unknown> {
+  async getAccountBalance(integration?: InterIntegration): Promise<unknown> {
     try {
       this.logger.log('Getting account balance');
 
-      const response = await this.interInstance.get('/v1/balance');
+      const axiosInstance = this.getAxiosInstance(integration);
+      const response = await axiosInstance.get('/v1/balance');
 
       return response.data;
     } catch (error) {
@@ -115,12 +138,14 @@ export class InterApiClientService {
   /**
    * Obtém informações da conta
    * GET /v1/account
+   * @param integration Optional workspace-specific integration
    */
-  async getAccountInfo(): Promise<unknown> {
+  async getAccountInfo(integration?: InterIntegration): Promise<unknown> {
     try {
       this.logger.log('Getting account info');
 
-      const response = await this.interInstance.get('/v1/account');
+      const axiosInstance = this.getAxiosInstance(integration);
+      const response = await axiosInstance.get('/v1/account');
 
       return response.data;
     } catch (error) {
