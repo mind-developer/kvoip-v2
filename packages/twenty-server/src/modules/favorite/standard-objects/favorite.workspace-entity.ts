@@ -19,6 +19,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
+import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -209,6 +210,24 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('note')
   noteId: string;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.financialRegister,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Financial Register`,
+    description: msg`Favorite financial register`,
+    icon: 'IconReceipt',
+    inverseSideTarget: () => FinancialRegisterWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  financialRegister: Relation<FinancialRegisterWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('financialRegister')
+  financialRegisterId: string;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,

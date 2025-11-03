@@ -20,6 +20,7 @@ import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { FinancialClosingExecutionWorkspaceEntity } from 'src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity';
+import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
@@ -68,6 +69,9 @@ export const baseStandardObjectMetadataDefinitions = [
   DashboardWorkspaceEntity,
   FavoriteWorkspaceEntity,
   FavoriteFolderWorkspaceEntity,
+  /* @kvoip-woulz proprietary:begin */
+  FinancialRegisterWorkspaceEntity,
+  /* @kvoip-woulz proprietary:end */
   TimelineActivityWorkspaceEntity,
   ViewFieldWorkspaceEntity,
   ViewGroupWorkspaceEntity,

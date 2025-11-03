@@ -30,10 +30,18 @@ export const prefillRecord = <T extends ObjectRecord>({
             input[fieldMetadataItem.settings?.joinColumnName];
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
 
-          return [
+          const entries: Array<[string, unknown]> = [
             [fieldMetadataItem.name, fieldValue],
-            [fieldMetadataItem.settings?.joinColumnName, joinColumnValue],
           ];
+
+          if (joinColumnValue !== undefined) {
+            entries.push([
+              fieldMetadataItem.settings?.joinColumnName,
+              joinColumnValue,
+            ]);
+          }
+
+          return entries;
         }
 
         return [[fieldMetadataItem.name, fieldValue]];

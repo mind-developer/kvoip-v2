@@ -6,6 +6,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { FavoriteFolderModule } from 'src/modules/favorite-folder/favorite-folder.module';
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { FinancialClosingExecutionModule } from 'src/modules/financial-closing-execution/financial-closing-execution.module';
+import { FinancialRegisterModule } from 'src/modules/financial-register/financial-register.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 import { TraceableModule } from 'src/modules/traceable/traceable.module';
@@ -25,6 +26,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SoapClientModule,
     ChargeModule,
     FinancialClosingExecutionModule,
+    FinancialRegisterModule,
   ],
   providers: [],
   exports: [],

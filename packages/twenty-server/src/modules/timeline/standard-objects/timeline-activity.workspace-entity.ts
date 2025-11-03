@@ -22,6 +22,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
@@ -356,6 +357,24 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('invoice')
   invoiceId: string | null;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.financialRegister,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Financial Register`,
+    description: msg`Event financial register`,
+    icon: 'IconReceipt',
+    inverseSideTarget: () => FinancialRegisterWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  financialRegister: Relation<FinancialRegisterWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('financialRegister')
+  financialRegisterId: string | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.tenant,

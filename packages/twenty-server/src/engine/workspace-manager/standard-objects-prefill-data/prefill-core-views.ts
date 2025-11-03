@@ -20,6 +20,7 @@ import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objec
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
+import { financialRegistersAllViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/financial-registers-all-views';
 import { invoiceAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/invoice-all-views';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
@@ -71,6 +72,9 @@ export const prefillCoreViews = async ({
     productsAllView(objectMetadataItems),
     invoiceAllView(objectMetadataItems),
     chargesAllView(objectMetadataItems),
+    /* @kvoip-woulz proprietary:begin */
+    ...financialRegistersAllViews(objectMetadataItems),
+    /* @kvoip-woulz proprietary:end */
     // Kvoip admin views
     ...(shouldPrefillAdminViews
       ? KVOIP_ADMIN_ALL_VIEWS.map((view) => view(objectMetadataItems))

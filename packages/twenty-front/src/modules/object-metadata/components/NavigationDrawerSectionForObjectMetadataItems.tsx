@@ -12,6 +12,7 @@ const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
   'opportunity',
+  'financialRegister',
   'task',
   'note',
 ];

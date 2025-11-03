@@ -8,7 +8,11 @@ export const arrayOfStringsOrVariablesSchema = z
     if (isValidVariable(val) as boolean) {
       return [val];
     }
-    return JSON.parse(val);
+    try {
+      return JSON.parse(val);
+    } catch (error) {
+      return [];
+    }
   })
   .refine(
     (parsed) =>

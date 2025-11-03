@@ -19,6 +19,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -206,6 +207,24 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('invoice')
   invoiceId: string | null;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.financialRegister,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Financial Register`,
+    description: msg`Attachment financial register`,
+    icon: 'IconReceipt',
+    inverseSideTarget: () => FinancialRegisterWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  financialRegister: Relation<FinancialRegisterWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('financialRegister')
+  financialRegisterId: string | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

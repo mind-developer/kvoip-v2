@@ -58,9 +58,58 @@ const CST_CSOSN_MASK = createDigitBasedMask([
   { maxDigits: 4, mask: '0000' },
 ]);
 
+const BOLETO_BARCODE_MASK = (value: string): string => {
+  const digitsOnly = value.replace(/\D/g, '');
+
+  if (digitsOnly.length === 0) return '';
+
+  let formatted = '';
+
+  if (digitsOnly.length > 0) {
+    formatted += digitsOnly.substring(0, Math.min(5, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 5) {
+    formatted += '.' + digitsOnly.substring(5, Math.min(10, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 10) {
+    formatted +=
+      ' ' + digitsOnly.substring(10, Math.min(15, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 15) {
+    formatted +=
+      '.' + digitsOnly.substring(15, Math.min(21, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 21) {
+    formatted +=
+      ' ' + digitsOnly.substring(21, Math.min(26, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 26) {
+    formatted +=
+      '.' + digitsOnly.substring(26, Math.min(32, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 32) {
+    formatted +=
+      ' ' + digitsOnly.substring(32, Math.min(33, digitsOnly.length));
+  }
+
+  if (digitsOnly.length > 33) {
+    formatted +=
+      ' ' + digitsOnly.substring(33, Math.min(47, digitsOnly.length));
+  }
+
+  return formatted;
+};
+
 export const DYNAMIC_MASK_REGISTRY: Record<string, DynamicMaskFunction> = {
   CPF_CNPJ_MASK: CPF_CNPJ_MASK,
   CST_CSOSN_MASK: CST_CSOSN_MASK,
+  BOLETO_BARCODE_MASK: BOLETO_BARCODE_MASK,
 } as const;
 
 export const resolveDynamicMask = (
@@ -403,6 +452,44 @@ export const TEXT_VALIDATION_PATTERNS = {
     pattern: '^\\d{8}-\\d{2}$',
     mask: '00000000-00',
     placeholder: '00000000-00',
+  } as TextValidationPattern,
+
+  BOLETO_BARCODE: {
+    pattern: '^[0-9]{47,48}$',
+    dynamicMask: 'BOLETO_BARCODE_MASK',
+    placeholder: '12345.67890 12345.678901 12345.678901 1 12345678901234',
+  } as TextValidationPattern,
+
+  PIX_KEY: {
+    pattern:
+      '^(' +
+      '(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{11})|' +
+      '(\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}|\\d{14})|' +
+      '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})|' +
+      '(\\+?\\d{2}\\s?\\d{2}\\s?\\d{4,5}-?\\d{4})|' +
+      '([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})' +
+      ')$',
+    placeholder: 'CPF, CNPJ, email, phone, or random key',
+  } as TextValidationPattern,
+
+  DOCUMENT_NUMBER: {
+    pattern: '^[A-Z0-9-]+$',
+    placeholder: 'DOC-2024-001',
+  } as TextValidationPattern,
+
+  FINANCIAL_REGISTER_DESCRIPTION: {
+    pattern: '^[a-zA-Z0-9\\s\\-\\.,]{3,200}$',
+    placeholder: 'Enter financial register description',
+  } as TextValidationPattern,
+
+  PAYMENT_TYPE: {
+    pattern: '^[a-zA-Z0-9\\s\\-\\/]{2,50}$',
+    placeholder: 'PIX, TED, Boleto',
+  } as TextValidationPattern,
+
+  BANK_SLIP_LINK: {
+    pattern: '^https?://[^\\s]+$',
+    placeholder: 'https://example.com/boleto.pdf',
   } as TextValidationPattern,
 } as const;
 
