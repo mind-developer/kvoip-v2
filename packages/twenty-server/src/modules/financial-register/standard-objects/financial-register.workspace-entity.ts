@@ -23,6 +23,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { FINANCIAL_REGISTER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -97,7 +98,8 @@ registerEnumType(RegisterStatus, {
   labelSingular: msg`Financial Register`,
   labelPlural: msg`Financial Registers`,
   description: msg`Accounts receivable and payable records`,
-  icon: 'IconReceipt',
+  icon: STANDARD_OBJECT_ICONS.financialRegister,
+  shortcut: 'F',
   labelIdentifierStandardId:
     FINANCIAL_REGISTER_STANDARD_FIELD_IDS.documentNumber,
 })
