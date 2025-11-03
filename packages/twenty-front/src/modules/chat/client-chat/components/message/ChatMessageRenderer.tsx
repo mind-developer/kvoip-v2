@@ -4,6 +4,7 @@ import DocumentMessage from '@/chat/client-chat/components/message/DocumentMessa
 import EventMessage from '@/chat/client-chat/components/message/EventMessage';
 import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
+import { StickerMessage } from '@/chat/client-chat/components/message/StickerMessage';
 import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -14,7 +15,6 @@ import {
   ChatMessageType,
   type ClientChatMessage,
 } from 'twenty-shared/types';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMessageEvent = styled(motion.div)`
   display: flex;
@@ -97,20 +97,24 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
 `;
 
 type ChatMessageRendererProps = {
+  replyingTo: string | null;
   message: ClientChatMessage;
   index: number;
   isLastOfRow: boolean;
   onImageClick: (imageSrc: string) => void;
   animateDelay: number;
+  setIsReplyingTo: (messageId: string) => void;
 };
 
 export const ChatMessageRenderer = memo(
   ({
+    replyingTo,
     message,
     index,
     isLastOfRow,
     onImageClick,
     animateDelay,
+    setIsReplyingTo,
   }: ChatMessageRendererProps) => {
     const theme = useTheme();
 
@@ -173,9 +177,7 @@ export const ChatMessageRenderer = memo(
             <ImageMessage
               message={message}
               onClick={() => {
-                onImageClick(
-                  REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl,
-                );
+                onImageClick(message.attachmentUrl ?? '');
               }}
             />
           </StyledImageContainer>
@@ -197,9 +199,7 @@ export const ChatMessageRenderer = memo(
           >
             <DocumentMessage
               fromMe={message.fromType !== ChatMessageFromType.PERSON}
-              documentUrl={
-                REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl
-              }
+              documentUrl={message.attachmentUrl ?? ''}
             />
           </StyledDocumentContainer>
         );
@@ -209,6 +209,14 @@ export const ChatMessageRenderer = memo(
         renderedContent = (
           <VideoMessage
             key={message.providerMessageId || `video-${index}`}
+            message={message}
+          />
+        );
+        break;
+      case ChatMessageType.STICKER:
+        renderedContent = (
+          <StickerMessage
+            key={message.providerMessageId || `sticker-${index}`}
             message={message}
           />
         );

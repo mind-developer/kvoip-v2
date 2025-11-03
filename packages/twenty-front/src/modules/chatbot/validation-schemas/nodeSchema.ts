@@ -20,7 +20,7 @@ export const nodeActionSchema = z.discriminatedUnion('type', [
 ]);
 
 export const nodeConditionsSchema = z.object({
-  type: z.literal('condition'),
+  type: z.literal('conditional'),
 });
 
 export const otherNodeActionSchema = z.discriminatedUnion('type', [

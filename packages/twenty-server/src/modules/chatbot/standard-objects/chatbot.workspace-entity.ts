@@ -21,7 +21,9 @@ import { Relation } from 'typeorm';
   labelSingular: msg`Chatbot`,
   labelPlural: msg`Chatbots`,
   description: msg`A chatbot`,
+  icon: 'IconRobot',
 })
+@WorkspaceIsSystem()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,

@@ -51,7 +51,7 @@ export class ImageInputHandler implements NodeHandler {
           templateLanguage: null,
           templateName: null,
         };
-      this.chatMessageManagerService.sendMessage(
+      await this.chatMessageManagerService.sendMessage(
         message,
         workspaceId,
         providerIntegrationId,

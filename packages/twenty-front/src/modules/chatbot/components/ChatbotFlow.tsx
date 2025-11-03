@@ -17,7 +17,7 @@ import { useParams } from 'react-router-dom';
 
 const types: NodeTypes = {
   text: TextNode,
-  condition: ConditionalNode,
+  conditional: ConditionalNode,
   image: ImageNode,
   file: FileNode,
 };
@@ -33,8 +33,8 @@ export const ChatbotFlow = () => {
     },
     recordGqlFields: {
       id: true,
-      nodes: true,
-      edges: true,
+      flowNodes: true,
+      flowEdges: true,
       viewport: true,
       status: true,
     },
@@ -43,8 +43,8 @@ export const ChatbotFlow = () => {
   if (!chatbot[0]) return null;
 
   setChatbotFlowState({
-    nodes: chatbot[0].nodes,
-    edges: chatbot[0].edges,
+    nodes: chatbot[0].flowNodes,
+    edges: chatbot[0].flowEdges,
     chatbotId: chatbot[0].id,
     viewport: chatbot[0].viewport,
   });

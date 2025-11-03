@@ -9,7 +9,6 @@ import {
   type ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledAudioContainer = styled.div<{ isPending: boolean }>`
@@ -65,8 +64,6 @@ const AudioMessage = ({ message }: { message: ClientChatMessage }) => {
   const audioRef = useRef<HTMLAudioElement | null>();
   const isPending =
     message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
-  const audioUrl =
-    REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl;
 
   useEffect(() => {
     if (audioRef.current) {
@@ -153,7 +150,10 @@ const AudioMessage = ({ message }: { message: ClientChatMessage }) => {
           )}
         </StyledTime>
       )}
-      <audio src={audioUrl} ref={audioRef as LegacyRef<HTMLAudioElement>} />
+      <audio
+        src={message.attachmentUrl ?? ''}
+        ref={audioRef as LegacyRef<HTMLAudioElement>}
+      />
     </StyledAudioContainer>
   );
 };
