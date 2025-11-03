@@ -1,9 +1,12 @@
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
   IconAlertCircle,
   IconArrowBack,
+  IconArrowForward,
   IconCheck,
   IconChecks,
   IconClock,
@@ -27,9 +30,16 @@ const StyledMessageBubble = styled(motion.div)<{
   hasTail: boolean;
   isPending: boolean;
   isFailed: boolean;
+  isReply: boolean;
 }>`
-  ${({ type }) => (type === ChatMessageType.IMAGE ? 'max-width: 240px;' : '')}
-  ${({ type }) => (type === ChatMessageType.VIDEO ? 'max-width: 300px;' : '')}
+  ${({ type, isReply }) =>
+    isReply
+      ? 'width: 100%;'
+      : type === ChatMessageType.IMAGE
+        ? 'max-width: 240px;'
+        : ''}
+  ${({ type, isReply }) =>
+    isReply ? '' : type === ChatMessageType.VIDEO ? 'max-width: 300px;' : ''}
   position: relative;
 
   background: ${({ fromMe, theme }) =>
@@ -44,8 +54,8 @@ const StyledMessageBubble = styled(motion.div)<{
 
   padding: ${({ theme, type, isFailed }) =>
     `${theme.spacing(1)} ${theme.spacing(type !== ChatMessageType.IMAGE && type !== ChatMessageType.DOCUMENT && type !== ChatMessageType.VIDEO && !isFailed ? 3 : 1)}`};
-  border-radius: ${({ messageText }) =>
-    messageText.length < 30 ? '15px' : '15px'};
+  border-radius: ${({ messageText, isReply }) =>
+    messageText.length < 30 || isReply ? '15px' : '15px'};
   word-wrap: break-word;
   display: flex;
   flex-direction: ${({ messageText, type }) =>
@@ -54,8 +64,8 @@ const StyledMessageBubble = styled(motion.div)<{
       : 'column'};
   gap: 6px;
 
-  ${({ hasTail, fromMe: fromMe, theme, type }) =>
-    !hasTail || type === ChatMessageType.STICKER
+  ${({ hasTail, fromMe, theme, type, isReply }) =>
+    !hasTail || type === ChatMessageType.STICKER || isReply
       ? ''
       : `
   &:before, &:after {
@@ -125,12 +135,11 @@ const StyledUnsupportedMessage = styled.div`
   opacity: 0.5;
 `;
 
-const StyledMessageBubbleContainer = styled.div`
+const StyledMessageBubbleContainer = styled.div<{ fromPerson: boolean }>`
   display: flex;
-  flex-direction: row;
+  flex-direction: ${({ fromPerson }) => (fromPerson ? 'row' : 'row-reverse')};
   align-items: flex-start;
   gap: 5px;
-  transform: translateY(6px);
 `;
 
 const StyledIconButton = styled(IconButton)<{ isVisible: boolean }>`
@@ -148,16 +157,25 @@ export const MessageBubble = ({
   hasTail,
   customButton,
   animateDelay,
-  setIsReplyingTo,
+  replyingTo,
+  setReplyingTo,
+  isReply,
 }: {
   children: ReactNode;
-  message: ClientChatMessage;
+  message: ClientChatMessage & ObjectRecord;
   time: string;
   hasTail: boolean;
   customButton?: ReactNode;
   animateDelay: number;
-  setIsReplyingTo: (messageId: string) => void;
+  setReplyingTo: (messageId: string) => void;
+  replyingTo: string | null;
+  isReply: boolean;
 }) => {
+  const { record: repliesToMessage } = useFindOneRecord({
+    objectNameSingular: 'clientChatMessage',
+    objectRecordId: message.repliesTo ?? '',
+  });
+
   const theme = useTheme();
   const fromMe = message.fromType !== ChatMessageFromType.PERSON;
   const isPending =
@@ -186,13 +204,14 @@ export const MessageBubble = ({
   }
 
   return (
-    <StyledMessageBubbleContainer>
+    <StyledMessageBubbleContainer fromPerson={!fromMe}>
       <StyledMessageBubble
+        isReply={isReply}
         onMouseEnter={() => setIsHoveringBubble(true)}
         onMouseLeave={() => {
           setTimeout(() => {
             setIsHoveringBubble(false);
-          }, 500);
+          }, 100);
         }}
         messageText={message.textBody || ''}
         type={message.type}
@@ -222,10 +241,12 @@ export const MessageBubble = ({
             <span>{t`This message type is currently not supported`}</span>
           </StyledUnsupportedMessage>
         )}
-        <StyledTime messageType={message.type}>
-          {time}
-          {fromMe && <StatusIcon size={14} color={statusColor} />}
-        </StyledTime>
+        {!isReply && (
+          <StyledTime messageType={message.type}>
+            {time}
+            {fromMe && <StatusIcon size={14} color={statusColor} />}
+          </StyledTime>
+        )}
       </StyledMessageBubble>
       <div
         onMouseEnter={() => setIsHoveringIconButton(true)}
@@ -233,12 +254,21 @@ export const MessageBubble = ({
           setIsHoveringIconButton(false);
         }}
       >
-        <StyledIconButton
-          variant="secondary"
-          Icon={IconArrowBack}
-          onClick={() => {}}
-          isVisible={isHoveringBubble || isHoveringIconButton}
-        />
+        {!isReply && (
+          <StyledIconButton
+            variant="secondary"
+            Icon={fromMe ? IconArrowForward : IconArrowBack}
+            onClick={() => {
+              setReplyingTo(message.id);
+            }}
+            isVisible={
+              isHoveringBubble ||
+              (isHoveringIconButton &&
+                message.type !== ChatMessageType.UNSUPPORTED &&
+                message.type !== ChatMessageType.EVENT)
+            }
+          />
+        )}
       </div>
     </StyledMessageBubbleContainer>
   );

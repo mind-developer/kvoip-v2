@@ -61,6 +61,7 @@ const StyledVideo = styled.video`
   max-width: 240px;
   overflow: hidden;
   width: 300px;
+  height: 100%;
 `;
 
 const StyledOverlay = styled.div`
@@ -93,7 +94,7 @@ const StyledBottomBar = styled.div`
   justify-content: center;
   gap: 8px;
   padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px);
   pointer-events: auto;
   border-radius: ${({ theme }) => theme.spacing(3)};
@@ -101,14 +102,13 @@ const StyledBottomBar = styled.div`
 `;
 
 const StyledIconButton = styled(IconButton)`
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px);
   border: none;
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: 50%;
   aspect-ratio: 1/1;
-  height: 40px;
-  width: 40px;
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
@@ -258,6 +258,7 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
             }}
             variant="tertiary"
             disabled={isPending}
+            size="medium"
           />
         </StyledCenterControls>
         <StyledBottomBar>

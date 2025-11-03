@@ -321,6 +321,12 @@ export const Chat = () => {
     sendClientChatMessage,
   ]);
 
+  useEffect(() => {
+    if (replyingTo) {
+      setMessageInput(`@${replyingTo}`);
+    }
+  }, [replyingTo]);
+
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setModalImageSrc(null);
@@ -385,7 +391,7 @@ export const Chat = () => {
           onImageClick={handleImageClick}
           animateDelay={(index * 0.05) / (dbMessages.length * 0.5)}
           replyingTo={replyingTo}
-          setIsReplyingTo={(messageId: string) => setReplyingTo(messageId)}
+          setReplyingTo={(messageId: string) => setReplyingTo(messageId)}
         />
       );
     });
@@ -423,6 +429,7 @@ export const Chat = () => {
           audioStream={audioStream}
           lastMessage={lastMessage}
           onSendMessage={handleSendMessage}
+          replyingTo={replyingTo}
         />
       );
     }

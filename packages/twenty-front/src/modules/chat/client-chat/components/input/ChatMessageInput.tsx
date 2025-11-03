@@ -1,5 +1,8 @@
 import { AudioVisualizer } from '@/chat/client-chat/components/effects/AudioVisualizer';
 import { UploadMediaPopup } from '@/chat/client-chat/components/input/UploadMediaPopup';
+import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -10,11 +13,12 @@ import {
 } from 'twenty-shared/types';
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { formatDate } from '~/utils/date-utils';
 
 const StyledInputContainer = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.xxl};
+  border-radius: ${({ theme }) => theme.border.radius.xl};
   display: flex;
   padding: ${({ theme }) => theme.spacing(1)};
 `;
@@ -69,6 +73,7 @@ type ChatMessageInputProps = {
   audioStream: MediaStream | null;
   lastMessage: ClientChatMessage | null;
   onSendMessage: () => void;
+  replyingTo: string | null;
 };
 
 export const ChatMessageInput = memo(
@@ -83,6 +88,7 @@ export const ChatMessageInput = memo(
     audioStream,
     lastMessage,
     onSendMessage,
+    replyingTo,
   }: ChatMessageInputProps) => {
     const theme = useTheme();
     const { getIcon } = useIcons();
@@ -91,6 +97,11 @@ export const ChatMessageInput = memo(
     const [audioVisualizerWidth, setAudioVisualizerWidth] =
       useState<number>(200);
     const inputContainerRef = useRef<HTMLDivElement>(null);
+
+    const { record: replyingToMessage } = useFindOneRecord({
+      objectNameSingular: 'clientChatMessage',
+      objectRecordId: replyingTo ?? '',
+    });
 
     useEffect(() => {
       if (inputContainerRef.current) {
@@ -173,16 +184,38 @@ export const ChatMessageInput = memo(
           </div>
         )}
         {recordingState === 'none' && (
-          <StyledInput
-            autoComplete="off"
-            rows={1}
-            disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
-            className="new-message-input"
-            placeholder="Message"
-            onChange={onInputChange}
-            value={newMessage}
-            onKeyDown={onInputKeyDown}
-          />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: theme.spacing(1),
+              width: '100%',
+            }}
+          >
+            {replyingToMessage && (
+              <MessageBubble
+                message={replyingToMessage as ClientChatMessage & ObjectRecord}
+                time={formatDate(replyingToMessage?.createdAt ?? '', 'HH:mm')}
+                hasTail={false}
+                animateDelay={0}
+                replyingTo={replyingTo}
+                setReplyingTo={() => {}}
+                isReply={true}
+              >
+                <span>{replyingToMessage?.textBody ?? ''}</span>
+              </MessageBubble>
+            )}
+            <StyledInput
+              autoComplete="off"
+              rows={1}
+              disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
+              className="new-message-input"
+              placeholder="Message"
+              onChange={onInputChange}
+              value={newMessage}
+              onKeyDown={onInputKeyDown}
+            />
+          </div>
         )}
         <StyledDiv>
           {!newMessage.length && (

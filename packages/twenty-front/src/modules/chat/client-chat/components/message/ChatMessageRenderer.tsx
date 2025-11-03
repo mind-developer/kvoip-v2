@@ -6,6 +6,7 @@ import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
 import { StickerMessage } from '@/chat/client-chat/components/message/StickerMessage';
 import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -103,7 +104,7 @@ type ChatMessageRendererProps = {
   isLastOfRow: boolean;
   onImageClick: (imageSrc: string) => void;
   animateDelay: number;
-  setIsReplyingTo: (messageId: string) => void;
+  setReplyingTo: (messageId: string) => void;
 };
 
 export const ChatMessageRenderer = memo(
@@ -114,7 +115,7 @@ export const ChatMessageRenderer = memo(
     isLastOfRow,
     onImageClick,
     animateDelay,
-    setIsReplyingTo,
+    setReplyingTo,
   }: ChatMessageRendererProps) => {
     const theme = useTheme();
 
@@ -260,9 +261,12 @@ export const ChatMessageRenderer = memo(
           >
             <MessageBubble
               time={message.createdAt ?? ''}
-              message={message}
+              message={message as ClientChatMessage & ObjectRecord}
               hasTail={isLastOfRow}
               animateDelay={animateDelay}
+              replyingTo={replyingTo}
+              setReplyingTo={setReplyingTo}
+              isReply={false}
             >
               {renderedContent}
             </MessageBubble>
