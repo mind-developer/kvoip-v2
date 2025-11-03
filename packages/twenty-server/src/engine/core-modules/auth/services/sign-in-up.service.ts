@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
+import { SOURCE_LOCALE } from 'twenty-shared/translations'; //@kvoip-woulz proprietary:end
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -76,7 +77,7 @@ export class SignInUpService {
       firstName: newUserPayload.firstName ?? '',
       lastName: newUserPayload.lastName ?? '',
       picture: newUserPayload.picture ?? '',
-      locale: newUserPayload.locale ?? 'en',
+      locale: newUserPayload.locale ?? SOURCE_LOCALE, // @kvoip-woulz proprietary
       isEmailVerified: newUserPayload.isEmailAlreadyVerified,
     };
 
