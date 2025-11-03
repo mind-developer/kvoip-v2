@@ -108,9 +108,9 @@ export const baseStandardObjectMetadataDefinitions = [
   InvoiceWorkspaceEntity,
   WhatsappIntegrationWorkspaceEntity,
   TelephonyWorkspaceEntity,
+  ChatbotWorkspaceEntity,
   SectorWorkspaceEntity,
   AgentWorkspaceEntity,
-  ChatbotWorkspaceEntity,
   ClientChatWorkspaceEntity,
   ClientChatMessageWorkspaceEntity,
 ];

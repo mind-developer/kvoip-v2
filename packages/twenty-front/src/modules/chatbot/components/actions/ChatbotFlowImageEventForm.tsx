@@ -1,11 +1,12 @@
-import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import styled from '@emotion/styled';
-import { Node } from '@xyflow/react';
+import { type Node } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 
 type ChatbotFlowImageEventFormProps = {
@@ -33,9 +34,9 @@ export const ChatbotFlowImageEventForm = ({
     setImage(selectedNode.data?.imageUrl as string | undefined);
   }, [selectedNode.data]);
 
-  const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
   const { saveDataValue } = useHandleNodeValue();
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const chatbotFlow = useGetChatbotFlowState();
 
@@ -44,11 +45,14 @@ export const ChatbotFlowImageEventForm = ({
 
     setImage(undefined);
 
-    const url = await uploadFileToBucket({ file, type: 'image' });
+    const attachment = await uploadAttachmentFile(file, {
+      targetObjectNameSingular: CoreObjectNameSingular.Chatbot,
+      id: chatbotFlow?.chatbotId,
+    });
 
-    if (url && selectedNode) {
-      setImage(url);
-      saveDataValue('imageUrl', url, selectedNode);
+    if (attachment && selectedNode) {
+      setImage(attachment.attachmentAbsoluteURL);
+      saveDataValue('imageUrl', attachment.attachmentAbsoluteURL, selectedNode);
     }
   };
 

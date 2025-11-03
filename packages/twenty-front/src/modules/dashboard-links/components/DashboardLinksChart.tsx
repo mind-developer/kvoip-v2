@@ -1,7 +1,6 @@
 import { DashboardFilterDropdown } from '@/dashboard-links/components/ui/DashboardFilterDropdown';
 import { type FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import {
   Bar,
   BarChart,
@@ -44,14 +43,12 @@ export const DashboardLinksChart = ({
   chartData: { data, sourceKeyColors },
   onFilterChange,
 }: DashboardLinksChartProps) => {
-  const { t } = useLingui();
-
   const hasData = data.length > 0;
 
   return (
     <StyledChartContainer hasData={hasData}>
       <StyledHeader>
-        <label>{t`Origin of accesses`}</label>
+        <label>Origem dos acessos</label>
         <DashboardFilterDropdown
           onChange={onFilterChange}
           scopeKey="dashboard-filter"
@@ -84,7 +81,7 @@ export const DashboardLinksChart = ({
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <StyledText>{t`No data to display`}</StyledText>
+        <StyledText>Nenhum dado para exibir</StyledText>
       )}
     </StyledChartContainer>
   );

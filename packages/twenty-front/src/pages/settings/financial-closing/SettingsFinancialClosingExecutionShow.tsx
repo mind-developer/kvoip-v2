@@ -11,7 +11,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CompanyFinancialClosingExecutionsTable } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable';
 import { FinancialClosingExecutionDetailsCard } from '@/settings/financial-closing/components/FinancialClosingExecutionDetailsCard';
 import { FinancialClosingExecutionLogsList } from '@/settings/financial-closing/components/FinancialClosingExecutionLogsList';
-import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
+import { type FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';

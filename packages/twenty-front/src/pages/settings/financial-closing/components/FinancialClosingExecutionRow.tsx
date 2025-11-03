@@ -1,9 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionStatusTranslations } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
-import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
+import {
+  getFinancialClosingExecutionStatusColor,
+  useFinancialClosingExecutionStatusTranslations,
+} from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
+import { type FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Tag } from 'twenty-ui/components';
@@ -39,42 +42,42 @@ export const FinancialClosingExecutionRow = ({
   action,
   execution,
   link,
-}: SettingsFinancialClosingExecutionItemTableRowProps) => {
+}: FinancialClosingExecutionRowProps) => {
   const theme = useTheme();
-  const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
-  
+  const { getFinancialClosingExecutionStatusLabel } =
+    useFinancialClosingExecutionStatusTranslations();
+
   const formatDate = (dateString?: string | null) => {
-      if (!dateString) return '-';
-      const date = new Date(dateString);
+    if (!dateString) return '-';
+    const date = new Date(dateString);
 
-      const dia = String(date.getDate()).padStart(2, '0');
-      const mes = String(date.getMonth() + 1).padStart(2, '0');
-      const ano = date.getFullYear();
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const ano = date.getFullYear();
 
-      const horas = String(date.getHours()).padStart(2, '0');
-      const minutos = String(date.getMinutes()).padStart(2, '0');
+    const horas = String(date.getHours()).padStart(2, '0');
+    const minutos = String(date.getMinutes()).padStart(2, '0');
 
-      return `${horas}:${minutos} ${dia}/${mes}/${ano}`;
+    return `${horas}:${minutos} ${dia}/${mes}/${ano}`;
   };
 
   return (
     <StyledObjectTableRow key={execution.id} to={link}>
-
       <StyledNameTableCell>
-          <IconClockPlay
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+        <IconClockPlay
+          style={{ minWidth: theme.icon.size.md }}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
         <StyledNameLabel title={execution.name}>
           {formatDate(execution.executedAt)}
         </StyledNameLabel>
       </StyledNameTableCell>
-      
+
       <TableCell>
-        <Tag 
-          color={getFinancialClosingExecutionStatusColor(execution.status)} 
-          text={getFinancialClosingExecutionStatusLabel(execution.status)} 
+        <Tag
+          color={getFinancialClosingExecutionStatusColor(execution.status)}
+          text={getFinancialClosingExecutionStatusLabel(execution.status)}
           weight="medium"
         />
       </TableCell>
@@ -83,7 +86,6 @@ export const FinancialClosingExecutionRow = ({
       <TableCell align="right">{execution.companiesWithError || '0'}</TableCell>
 
       <StyledActionTableCell>{action}</StyledActionTableCell>
-
     </StyledObjectTableRow>
   );
 };

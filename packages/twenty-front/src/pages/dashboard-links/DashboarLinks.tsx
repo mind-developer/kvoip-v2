@@ -51,7 +51,6 @@ export const DashboardLinks = () => {
     Pick<Query, 'getDashboardLinklogs'>
   >(GET_DASHBOARD_LINKLOGS);
 
-  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
   if (isDefined(error))
     throw new Error(error?.message ?? 'No Data', {
       cause: error?.cause ?? JSON.stringify(data),

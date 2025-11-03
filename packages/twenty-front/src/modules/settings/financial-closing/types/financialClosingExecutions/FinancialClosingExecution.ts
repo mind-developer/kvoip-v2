@@ -12,7 +12,7 @@ export interface FinancialClosingExecution {
   completedCostIdentification: boolean;
   completedBoletoIssuance: boolean;
   completedInvoiceIssuance: boolean;
-  billingModelIds: string[]; 
+  billingModelIds: string[];
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

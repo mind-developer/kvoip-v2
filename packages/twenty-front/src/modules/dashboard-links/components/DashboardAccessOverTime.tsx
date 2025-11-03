@@ -1,7 +1,6 @@
 import { DashboardFilterDropdown } from '@/dashboard-links/components/ui/DashboardFilterDropdown';
 import { type FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import {
   Bar,
   BarChart,
@@ -44,14 +43,12 @@ export const DashboardAccessOverTime = ({
   chartData: { data, sourceKeyColors },
   onFilterChange,
 }: DashboardAccessOverTimeProps) => {
-  const { t } = useLingui();
-
   const hasData = data.length > 0;
 
   return (
     <StyledChartContainer hasData={hasData}>
       <StyledHeader>
-        <label>{t`Accesses over time`}</label>
+        <label>Acessos ao longo do tempo</label>
         <DashboardFilterDropdown
           onChange={onFilterChange}
           scopeKey="dashboard-filter-access-over-time"
@@ -84,7 +81,7 @@ export const DashboardAccessOverTime = ({
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <StyledText>{t`No data to display`}</StyledText>
+        <StyledText>Nenhum dado para exibir</StyledText>
       )}
     </StyledChartContainer>
   );

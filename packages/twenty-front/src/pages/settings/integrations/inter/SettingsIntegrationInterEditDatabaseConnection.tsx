@@ -27,12 +27,7 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   integrationName: z.string().min(1, 'Integration name is required'),
   clientId: z.string().min(1, 'Client ID is required'),
   clientSecret: z.string().min(1, 'Client Secret is required'),
-  currentAccount: z
-    .string()
-    .regex(
-      /^\d{8}-\d{2}$/,
-      'Current account must be in the format XXXXXXXX-XX',
-    ),
+  currentAccount: z.string().min(1, 'Current account is required'),
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),

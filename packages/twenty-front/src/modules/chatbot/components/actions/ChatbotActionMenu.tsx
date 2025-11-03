@@ -18,6 +18,9 @@ const StyledChatbotActionMenuContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 export const ChatbotActionMenu = () => {
@@ -34,7 +37,6 @@ export const ChatbotActionMenu = () => {
         selectableItemIdArray={selectableItemIdArray}
         focusId="cb-cm"
         selectableListInstanceId="=cb-cm"
-        hotkeyScope=""
       >
         <Label>Add a node</Label>
         <SelectableListItem itemId="add-text-node">

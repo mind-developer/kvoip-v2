@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { SendChatMessageQueueData } from 'src/engine/core-modules/chat-message-manager/types/sendChatMessageJobData';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
-  ClientChatMessage,
 } from 'twenty-shared/types';
 
 @Injectable()
@@ -37,10 +33,7 @@ export class ConditionalInputHandler implements NodeHandler {
     }
   }
 
-  constructor(
-    @InjectMessageQueue(MessageQueue.chatMessageManagerSendMessageQueue)
-    private sendChatMessageQueue: MessageQueueService,
-  ) {
+  constructor(private chatMessageManagerService: ChatMessageManagerService) {
     //this will probably cause issues
     this.askedNodes = new Set<string>();
   }
@@ -68,7 +61,10 @@ export class ConditionalInputHandler implements NodeHandler {
     if (!this.askedNodes.has(nodeId)) {
       this.askedNodes.add(nodeId);
       if (prompt) {
-        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        const message: Omit<
+          ClientChatMessageNoBaseFields,
+          'providerMessageId'
+        > = {
           type: ChatMessageType.TEXT,
           textBody: prompt,
           clientChatId: clientChat.id,
@@ -82,15 +78,16 @@ export class ConditionalInputHandler implements NodeHandler {
           edited: false,
           attachmentUrl: null,
           event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
+          templateName: null,
         };
-        console.log('sending', message.textBody);
-        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
-          SendChatMessageJob.name,
-          {
-            clientChatMessage: message,
-            providerIntegrationId,
-            workspaceId,
-          },
+        this.chatMessageManagerService.sendMessage(
+          message,
+          workspaceId,
+          providerIntegrationId,
         );
       }
 
@@ -112,7 +109,10 @@ export class ConditionalInputHandler implements NodeHandler {
         .join('\n');
 
       if (optionsList) {
-        const message: Omit<ClientChatMessage, 'providerMessageId'> = {
+        const message: Omit<
+          ClientChatMessageNoBaseFields,
+          'providerMessageId'
+        > = {
           type: ChatMessageType.TEXT,
           textBody: optionsList,
           clientChatId: clientChat.id,
@@ -126,18 +126,24 @@ export class ConditionalInputHandler implements NodeHandler {
           edited: false,
           attachmentUrl: null,
           event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
+          templateName: null,
         };
-        this.sendChatMessageQueue.add<SendChatMessageQueueData>(
-          SendChatMessageJob.name,
-          {
-            clientChatMessage: message,
-            providerIntegrationId,
-            workspaceId,
-          },
+        this.chatMessageManagerService.sendMessage(
+          message,
+          workspaceId,
+          providerIntegrationId,
         );
       }
 
-      return null;
+      // Retorna o primeiro outgoingNodeId disponível ou null se não houver
+      const firstOutgoingNodeId = logic.logicNodeData.find(
+        (d) => d.outgoingNodeId,
+      )?.outgoingNodeId;
+      return firstOutgoingNodeId ?? null;
     }
 
     for (const d of logic.logicNodeData) {

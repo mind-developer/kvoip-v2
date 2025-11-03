@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
   IconArchive,
-  IconComponent,
+  type IconComponent,
   IconDotsVertical,
   IconPencil,
   IconTextSize,

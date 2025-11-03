@@ -71,5 +71,6 @@ export const STANDARD_OBJECT_IDS = {
   inboxTarget: '3719ad4d-12dd-45fa-9625-10492b4098c2',
   clientChat: 'c60c2657-6c73-4cbe-bff9-666895c3efe1',
   clientChatMessage: 'd08e5520-6c78-4511-b03c-1589c0a11d66',
+  clientChatConfig: 'fc27439b-7f26-4745-a643-704bed272e06',
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 } as const;

@@ -14,7 +14,11 @@ export const useRingTone = (isRinging: boolean, isIncomingCall: boolean) => {
 
     // Atualiza o dispositivo de toque quando mudar no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'phone_ring_device' && e.newValue && e.newValue !== lastDeviceRef.current) {
+      if (
+        e.key === 'phone_ring_device' &&
+        e.newValue &&
+        e.newValue !== lastDeviceRef.current
+      ) {
         console.log('Dispositivo de toque alterado:', e.newValue);
         lastDeviceRef.current = e.newValue;
         managerRef.current?.setRingDevice(e.newValue);

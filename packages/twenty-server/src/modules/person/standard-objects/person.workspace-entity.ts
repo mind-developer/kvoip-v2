@@ -220,6 +220,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconChat',
     inverseSideTarget: () => ClientChatWorkspaceEntity,
     inverseSideFieldKey: 'person',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   chats: Relation<ClientChatWorkspaceEntity[]> | null;

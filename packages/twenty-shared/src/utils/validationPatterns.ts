@@ -130,9 +130,9 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   BR_MUNICIPAL_REGISTRATION: {
-    pattern: '^\\d{8}-\\d$',
-    mask: '00000000-0',
-    placeholder: '00000000-0',
+    pattern: '^\\d{7}-\\d$',
+    mask: '0000000-0',
+    placeholder: '0000000-0',
   } as TextValidationPattern,
 
   BR_CPF: {
@@ -302,9 +302,9 @@ export const TEXT_VALIDATION_PATTERNS = {
   } as TextValidationPattern,
 
   MUNICIPAL_REGISTRATION: {
-    pattern: '^\\d{8}-\\d$',
-    mask: '00000000-0',
-    placeholder: '00000000-0',
+    pattern: '^\\d{7}-\\d$',
+    mask: '0000000-0',
+    placeholder: '0000000-0',
   } as TextValidationPattern,
 
   STATE_REGISTRATION: {

@@ -1,4 +1,4 @@
-import { NewLogicNodeData } from '@/chatbot/types/LogicNodeDataType';
+import { type NewLogicNodeData } from '@/chatbot/types/LogicNodeDataType';
 import { v4 } from 'uuid';
 
 export const createNode = (type: string) => {
