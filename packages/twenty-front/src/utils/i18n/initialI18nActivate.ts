@@ -1,5 +1,7 @@
 import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import { APP_LOCALES } from 'twenty-shared/translations';
+/* @kvoip-woulz proprietary:begin */
+import { APP_LOCALES, USER_VISIBLE_LOCALES } from 'twenty-shared/translations';
+/* @kvoip-woulz proprietary:end */
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -8,7 +10,9 @@ export const initialI18nActivate = () => {
   const storageLocale = fromStorage('locale');
   const navigatorLocale = fromNavigator();
 
-  let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
+  /* @kvoip-woulz proprietary:begin */
+  let locale: keyof typeof APP_LOCALES = USER_VISIBLE_LOCALES['pt-BR'];
+  /* @kvoip-woulz proprietary:end */
 
   const normalizedUrlLocale = isDefined(urlLocale)
     ? normalizeLocale(urlLocale)
@@ -20,7 +24,18 @@ export const initialI18nActivate = () => {
     ? normalizeLocale(navigatorLocale)
     : null;
 
-  if (isDefined(normalizedUrlLocale) && isValidLocale(normalizedUrlLocale)) {
+  /* @kvoip-woulz proprietary:begin */
+  // Only allow user-visible locales to be set by user
+  const isUserVisibleLocale = (loc: string): boolean => {
+    return Object.values(USER_VISIBLE_LOCALES).includes(loc as any);
+  };
+  /* @kvoip-woulz proprietary:end */
+
+  if (
+    isDefined(normalizedUrlLocale) &&
+    isValidLocale(normalizedUrlLocale) &&
+    isUserVisibleLocale(normalizedUrlLocale)
+  ) {
     locale = normalizedUrlLocale;
     try {
       localStorage.setItem('locale', normalizedUrlLocale);
@@ -30,12 +45,14 @@ export const initialI18nActivate = () => {
     }
   } else if (
     isDefined(normalizedStorageLocale) &&
-    isValidLocale(normalizedStorageLocale)
+    isValidLocale(normalizedStorageLocale) &&
+    isUserVisibleLocale(normalizedStorageLocale)
   ) {
     locale = normalizedStorageLocale;
   } else if (
     isDefined(normalizedNavigatorLocale) &&
-    isValidLocale(normalizedNavigatorLocale)
+    isValidLocale(normalizedNavigatorLocale) &&
+    isUserVisibleLocale(normalizedNavigatorLocale)
   ) {
     locale = normalizedNavigatorLocale;
   }
