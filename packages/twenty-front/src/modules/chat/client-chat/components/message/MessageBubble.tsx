@@ -1,10 +1,9 @@
+import { CachedAvatarComponent } from '@/chat/client-chat/components/message/CachedAvatarComponent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import {
-  IconAlertCircle,
   IconArrowBack,
   IconArrowForward,
   IconCheck,
@@ -150,6 +149,13 @@ const StyledIconButton = styled(IconButton)<{ isVisible: boolean }>`
   height: 30px;
 `;
 
+const StyledReplyToMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
 export const MessageBubble = ({
   children,
   message,
@@ -233,14 +239,24 @@ export const MessageBubble = ({
         isFailed={message.deliveryStatus === ChatMessageDeliveryStatus.FAILED}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {isReply && (
+            <StyledReplyToMessage>
+              <span>Reply to:</span>
+              <CachedAvatarComponent
+                senderId={repliesToMessage?.from ?? ''}
+                senderType={
+                  repliesToMessage?.fromType as
+                    | ChatMessageFromType.PERSON
+                    | ChatMessageFromType.AGENT
+                    | ChatMessageFromType.CHATBOT
+                }
+                animateDelay={0}
+              />
+              <span>{repliesToMessage?.textBody ?? ''}</span>
+            </StyledReplyToMessage>
+          )}
           {children} <>{customButton}</>
         </div>
-        {message.type === ChatMessageType.UNSUPPORTED && (
-          <StyledUnsupportedMessage>
-            <IconAlertCircle size={14} color={theme.font.color.primary} />
-            <span>{t`This message type is currently not supported`}</span>
-          </StyledUnsupportedMessage>
-        )}
         {!isReply && (
           <StyledTime messageType={message.type}>
             {time}

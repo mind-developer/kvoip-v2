@@ -321,12 +321,6 @@ export const Chat = () => {
     sendClientChatMessage,
   ]);
 
-  useEffect(() => {
-    if (replyingTo) {
-      setMessageInput(`@${replyingTo}`);
-    }
-  }, [replyingTo]);
-
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setModalImageSrc(null);
