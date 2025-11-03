@@ -95,6 +95,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NF-e`,
     description: msg`Percentage for Electronic Invoice for Products`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfe: number;
@@ -105,6 +108,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NFS-e`,
     description: msg`Percentage for Electronic Service Invoice`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfse: number;
@@ -115,6 +121,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NFC-e`,
     description: msg`Percentage for Electronic Consumer Invoice`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfce: number;
@@ -125,6 +134,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`NF-Com`,
     description: msg`Percentage for Communication Invoice`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfcom: number;
@@ -221,6 +233,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`ICMS rate (%)`,
     description: msg`ICMS rate. Example: 18.00`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   rateIcms: number;
@@ -231,6 +246,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`PIS rate (%)`,
     description: msg`PIS rate. Example: 1.65`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   ratePis: number;
@@ -241,6 +259,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`COFINS rate (%)`,
     description: msg`COFINS rate. Example: 7.60`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   rateCofins: number;
@@ -251,6 +272,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Value/IPI rate`,
     description: msg`Value or IPI rate. Example: 0.00`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   rateIpi: number;
@@ -261,6 +285,9 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`ISS rate (%)`,
     description: msg`ISS rate. Some cities allow using 4 decimal places.`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   rateIss: number;
