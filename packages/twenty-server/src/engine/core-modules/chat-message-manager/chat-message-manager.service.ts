@@ -510,6 +510,7 @@ export class ChatMessageManagerService {
       this.clientChatMessageService.publishMessageCreated(
         message,
         clientChat.id,
+        workspaceId,
       );
       return message;
     } catch (error) {
@@ -549,6 +550,7 @@ export class ChatMessageManagerService {
           createdAt: new Date().toISOString(),
         },
         updatedMessage.clientChatId,
+        workspaceId,
       );
       const result = await messageRepository.save(updatedMessage);
       return result;
@@ -565,6 +567,7 @@ export class ChatMessageManagerService {
       [ChatIntegrationProvider.WHATSAPP]: new WhatsAppDriver(
         this.twentyORMGlobalManager,
         this.environmentService,
+        this.clientChatMessageService,
       ),
     };
     return drivers[provider];

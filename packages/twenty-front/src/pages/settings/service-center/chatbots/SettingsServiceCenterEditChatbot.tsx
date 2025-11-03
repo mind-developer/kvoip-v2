@@ -2,7 +2,7 @@ import { FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServiceCenterCreateChatbotForm } from '@/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm';
@@ -31,15 +31,25 @@ export const SettingsServiceCenterEditChatbot = () => {
   const navigate = useNavigate();
   const { openModal } = useModal();
 
-  const { records: chatbots } = useFindManyRecords<Chatbot>({
-    objectNameSingular: CoreObjectNameSingular.Chatbot,
-  });
-
   const { chatbotSlug } = useParams<{ chatbotSlug?: string }>();
 
-  const activeChatbot = chatbots.find((chatbot) => chatbot.id === chatbotSlug);
+  const { record: chatbot } = useFindOneRecord<
+    Chatbot & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Chatbot,
+    objectRecordId: chatbotSlug,
+    recordGqlFields: {
+      id: true,
+      name: true,
+      status: true,
+      whatsappIntegrations: {
+        id: true,
+        name: true,
+      },
+    },
+  });
 
-  const { form, onSubmit, handleDelete } = useEditChatbotForm(activeChatbot);
+  const { form, onSubmit, handleDelete } = useEditChatbotForm(chatbot);
 
   return (
     <>

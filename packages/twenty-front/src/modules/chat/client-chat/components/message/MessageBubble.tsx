@@ -1,6 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheck, IconChecks, IconClock, IconX } from '@tabler/icons-react';
+import { t } from '@lingui/core/macro';
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconChecks,
+  IconClock,
+  IconX,
+} from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import {
@@ -29,6 +36,7 @@ const StyledMessageBubble = styled(motion.div)<{
         ? '#274238'
         : '#bdffcc'
       : theme.background.quaternary};
+  ${({ type }) => (type === ChatMessageType.STICKER ? 'background: transparent;' : '')}
   color: ${({ theme }) => theme.font.color.primary};
 
   padding: ${({ theme, type, isFailed }) =>
@@ -43,8 +51,8 @@ const StyledMessageBubble = styled(motion.div)<{
       : 'column'};
   gap: 6px;
 
-  ${({ hasTail, fromMe: fromMe, theme }) =>
-    !hasTail
+  ${({ hasTail, fromMe: fromMe, theme, type }) =>
+    !hasTail || type === ChatMessageType.STICKER
       ? ''
       : `
   &:before, &:after {
@@ -78,7 +86,6 @@ const StyledMessageBubble = styled(motion.div)<{
   }
 `}
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
-
   }
 `;
 
@@ -98,7 +105,8 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
   ${(props) =>
     props.messageType === ChatMessageType.IMAGE ||
     props.messageType === ChatMessageType.DOCUMENT ||
-    props.messageType === ChatMessageType.VIDEO
+    props.messageType === ChatMessageType.VIDEO ||
+    props.messageType === ChatMessageType.STICKER
       ? `
     position: absolute;
     right: 13px;
@@ -107,16 +115,13 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
       : ''}
 `;
 
-const StyledFailedMessage = styled.div`
+const StyledUnsupportedMessage = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: 11px;
-  // margin-top: ${({ theme }) => theme.spacing(3)};
   opacity: 0.5;
-  margin-left: ${({ theme }) => theme.spacing(3)};
 `;
+
 export const MessageBubble = ({
   children,
   message,
@@ -181,6 +186,12 @@ export const MessageBubble = ({
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {children} <>{customButton}</>
         </div>
+        {message.type === ChatMessageType.UNSUPPORTED && (
+          <StyledUnsupportedMessage>
+            <IconAlertCircle size={14} color={theme.font.color.primary} />
+            <span>{t`This message type is currently not supported`}</span>
+          </StyledUnsupportedMessage>
+        )}
         <StyledTime messageType={message.type}>
           {time}
           {fromMe && <StatusIcon size={14} color={statusColor} />}

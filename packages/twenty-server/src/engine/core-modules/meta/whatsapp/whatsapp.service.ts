@@ -6,6 +6,11 @@ import {
 } from '@nestjs/common';
 
 import axios from 'axios';
+import { execFile as _execFile } from 'child_process';
+import { ffmpegPath } from 'ffmpeg-ffprobe-static';
+import { promises as fs } from 'fs';
+import os from 'os';
+import path from 'path';
 import { v4 } from 'uuid';
 
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
@@ -217,6 +222,11 @@ export class WhatsAppService {
           return;
         }
 
+        if (chatbot.status !== 'ACTIVE') {
+          console.log('chatbot is not enabled');
+          return;
+        }
+
         const baseEventMessage: ClientChatMessageNoBaseFields = {
           clientChatId: clientChat.id,
           from: chatbot.id,
@@ -277,7 +287,7 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
-            const executorKey = clientChat.id;
+            console.log('onFinish', _, sectorId);
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
                 {
@@ -407,6 +417,12 @@ export class WhatsAppService {
         case 'image/png':
           ext = '.png';
           break;
+        case 'image/webp':
+          ext = '.webp';
+          break;
+        case 'image/gif':
+          ext = '.gif';
+          break;
         case 'application/pdf':
           ext = '.pdf';
           break;
@@ -428,14 +444,65 @@ export class WhatsAppService {
         responseType: 'arraybuffer',
       });
 
-      const mediaBuffer = Buffer.from(mediaResponse.data, 'binary');
+      let mediaBuffer: Buffer = Buffer.from(mediaResponse.data, 'binary');
+      let finalMimeType = data.mime_type;
+      let finalExt = ext;
+
+      /* @kvoip-woulz proprietary:begin */
+      // Check if it's an animated sticker (MP4) and convert to GIF
+      if (data.mime_type === 'video/mp4') {
+        try {
+          if (!ffmpegPath) {
+            this.logger.warn('ffmpeg not available, skipping GIF conversion');
+          } else {
+            const execFile = (await import('node:util')).promisify(_execFile);
+            const tmpDir = os.tmpdir();
+            const inputPath = path.join(tmpDir, `${v4()}.mp4`);
+            const outputPath = path.join(tmpDir, `${v4()}.gif`);
+
+            // Write MP4 to temp file
+            await fs.writeFile(inputPath, mediaBuffer);
+
+            // Convert MP4 to GIF using ffmpeg
+            const ffmpegArgs = [
+              '-i',
+              inputPath,
+              '-vf',
+              'fps=10,scale=320:-1:flags=lanczos',
+              '-y', // Overwrite output file
+              outputPath,
+            ];
+
+            await execFile(ffmpegPath as string, ffmpegArgs);
+
+            // Read converted GIF
+            mediaBuffer = await fs.readFile(outputPath);
+            finalMimeType = 'image/gif';
+            finalExt = '.gif';
+
+            // Cleanup temp files
+            try {
+              await fs.unlink(inputPath);
+            } catch {}
+            try {
+              await fs.unlink(outputPath);
+            } catch {}
+          }
+        } catch (error) {
+          // If conversion fails, log and continue with original format
+          this.logger.warn(
+            `Failed to convert animated sticker (MP4) to GIF: ${error.message}`,
+          );
+        }
+      }
+      /* @kvoip-woulz proprietary:end */
 
       const fileUrl = this.fileService.signFileUrl({
         url: (
           await this.fileMetadataService.createFile({
             file: mediaBuffer,
-            filename: `${phoneNumber}_${v4()}${ext}`,
-            mimeType: data.mime_type,
+            filename: `${phoneNumber}_${v4()}${finalExt}`,
+            mimeType: finalMimeType,
             workspaceId,
           })
         ).fullPath,

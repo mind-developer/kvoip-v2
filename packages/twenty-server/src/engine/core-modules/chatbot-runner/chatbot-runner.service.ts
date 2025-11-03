@@ -114,6 +114,13 @@ class ExecuteFlow {
           }
         }
         if (!nextNodeId) {
+          if (
+            this.i.onFinish &&
+            ['text', 'image', 'file', 'condition'].includes(currentNode.type)
+          ) {
+            console.log('on finish', currentNode.type, this.chosenInput);
+            this.i.onFinish(currentNode, this.chosenInput);
+          }
           return null;
         }
       }

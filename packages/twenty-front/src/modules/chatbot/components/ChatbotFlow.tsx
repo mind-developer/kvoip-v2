@@ -17,7 +17,7 @@ import { useParams } from 'react-router-dom';
 
 const types: NodeTypes = {
   text: TextNode,
-  condition: ConditionalNode,
+  conditional: ConditionalNode,
   image: ImageNode,
   file: FileNode,
 };

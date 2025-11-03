@@ -24,6 +24,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -126,6 +127,8 @@ export const BotDiagramBase = ({
     chatbotFlowSelectedNodeState,
   );
 
+  const { enqueueInfoSnackBar } = useSnackBar();
+
   const isChatbotActionMenuOpen = useRecoilValue(isChatbotActionMenuOpenState);
   const setIsChatbotActionMenuOpen = useSetRecoilState(
     isChatbotActionMenuOpenState,
@@ -185,13 +188,33 @@ export const BotDiagramBase = ({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
-      setNodes((nds) =>
-        applyNodeChanges(
+      setNodes((nds) => {
+        const appliedNodeChanges = applyNodeChanges(
           structuredClone(changes),
           structuredClone(nds ?? initialNodes),
-        ),
-      ),
-    [],
+        );
+        if (
+          changes.some(
+            (change) => change.type === 'position' && !change.dragging,
+          )
+        ) {
+          updateOneRecord({
+            idToUpdate: chatbotId ?? '',
+            updateOneRecordInput: {
+              flowNodes: appliedNodeChanges.map((node) => {
+                const { selected, ...rest } = node;
+                return rest;
+              }),
+            },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: 'Nodes saved',
+            });
+          });
+        }
+        return appliedNodeChanges;
+      }),
+    [chatbotId, enqueueInfoSnackBar],
   );
 
   const onEdgesChange = useCallback(
@@ -205,15 +228,17 @@ export const BotDiagramBase = ({
           updateOneRecord({
             idToUpdate: chatbotId ?? '',
             updateOneRecordInput: {
-              nodes: rfInstance.toObject().nodes,
               edges: appliedEdgeChanges,
-              viewport: rfInstance.toObject().viewport,
             },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: 'Nodes saved',
+            });
           });
         }
         return appliedEdgeChanges;
       }),
-    [],
+    [enqueueInfoSnackBar, rfInstance],
   );
 
   const onConnect: OnConnect = useCallback(
@@ -293,6 +318,7 @@ export const BotDiagramBase = ({
         onNodeClick={(event, node) => {
           event.stopPropagation();
           setChatbotFlowSelectedNode(node);
+          setIsChatbotActionMenuOpen(false);
         }}
         onContextMenu={handleContextMenu}
       >
@@ -313,7 +339,7 @@ export const BotDiagramBase = ({
             zIndex: 1000,
           }}
         >
-          <ChatbotActionMenu />
+          <ChatbotActionMenu cursorPosition={chatbotActionMenuPosition} />
         </div>
       )}
 

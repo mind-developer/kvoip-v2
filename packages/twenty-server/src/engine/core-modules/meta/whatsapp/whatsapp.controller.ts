@@ -94,6 +94,7 @@ export class WhatsappController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
+    console.log(body);
     const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
     const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
 
@@ -119,6 +120,7 @@ export class WhatsappController {
 
     for (const msg of messages) {
       msg.type = msg.type.toUpperCase();
+      console.log(msg);
 
       const mediaId = extractMediaId(msg);
       const { isBase64Media, base64String, mimeType } =

@@ -90,6 +90,12 @@ export const extractMediaId = (
         mimeType: msg.video.mime_type || 'video/mp4',
         fileExtension: '.mp4',
       };
+    case 'STICKER':
+      return {
+        id: msg.sticker.id,
+        mimeType: msg.sticker.mime_type || 'image/webp',
+        fileExtension: '.webp',
+      };
     default:
       return undefined;
   }

@@ -1,5 +1,11 @@
+/* @kvoip-woulz proprietary */
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+/* @kvoip-woulz proprietary:begin */
+import { signAttachmentUrl } from 'src/engine/core-modules/file/utils/normalize-and-sign-file-url.utils';
+/* @kvoip-woulz proprietary:end */
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { ClientChatEvent, ClientChatEventDTO } from './dtos/on-chat-event.dto';
@@ -12,6 +18,8 @@ import {
 export class ClientChatMessageService {
   constructor(
     @Inject('CLIENT_CHAT_MESSAGE_PUB_SUB') public readonly pubSub: RedisPubSub,
+    private readonly fileService: FileService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async publishMessageCreated(
@@ -20,12 +28,28 @@ export class ClientChatMessageService {
       'updatedAt' | 'id' | 'clientChat' | 'deletedAt'
     >,
     chatId: string,
+    workspaceId: string,
     publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
+    /* @kvoip-woulz proprietary:begin */
+    // Sign the attachmentUrl before publishing
+    const messageWithSignedUrl = {
+      ...message,
+      attachmentUrl: signAttachmentUrl(
+        message.attachmentUrl,
+        workspaceId,
+        this.fileService,
+        this.twentyConfigService,
+      ),
+    };
+    /* @kvoip-woulz proprietary:end */
+
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.CREATED,
       clientChatMessageEventDate: new Date(),
-      clientChatMessage: message,
+      /* @kvoip-woulz proprietary:begin */
+      clientChatMessage: messageWithSignedUrl,
+      /* @kvoip-woulz proprietary:end */
     };
 
     if (publishTo === 'sector' || publishTo === 'all') {
@@ -58,12 +82,28 @@ export class ClientChatMessageService {
   async publishMessageUpdated(
     message: ClientChatMessageWorkspaceEntity,
     chatId: string,
+    workspaceId: string,
     publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
+    /* @kvoip-woulz proprietary:begin */
+    // Sign the attachmentUrl before publishing
+    const messageWithSignedUrl = {
+      ...message,
+      attachmentUrl: signAttachmentUrl(
+        message.attachmentUrl,
+        workspaceId,
+        this.fileService,
+        this.twentyConfigService,
+      ),
+    };
+    /* @kvoip-woulz proprietary:end */
+
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.UPDATED,
       clientChatMessageEventDate: new Date(),
-      clientChatMessage: message,
+      /* @kvoip-woulz proprietary:begin */
+      clientChatMessage: messageWithSignedUrl,
+      /* @kvoip-woulz proprietary:end */
     };
     if (publishTo === 'sector' || publishTo === 'all') {
       await this.pubSub.publish(`client-message-${chatId}`, eventData);

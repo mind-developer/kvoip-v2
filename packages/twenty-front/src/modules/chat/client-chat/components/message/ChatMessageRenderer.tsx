@@ -4,6 +4,7 @@ import DocumentMessage from '@/chat/client-chat/components/message/DocumentMessa
 import EventMessage from '@/chat/client-chat/components/message/EventMessage';
 import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
+import { StickerMessage } from '@/chat/client-chat/components/message/StickerMessage';
 import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -209,6 +210,14 @@ export const ChatMessageRenderer = memo(
         renderedContent = (
           <VideoMessage
             key={message.providerMessageId || `video-${index}`}
+            message={message}
+          />
+        );
+        break;
+      case ChatMessageType.STICKER:
+        renderedContent = (
+          <StickerMessage
+            key={message.providerMessageId || `sticker-${index}`}
             message={message}
           />
         );

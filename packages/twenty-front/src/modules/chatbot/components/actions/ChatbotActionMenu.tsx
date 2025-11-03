@@ -27,7 +27,13 @@ const StyledChatbotActionMenuContainer = styled.div`
   left: 0;
 `;
 
-export const ChatbotActionMenu = () => {
+type ChatbotActionMenuProps = {
+  cursorPosition?: { x: number; y: number };
+};
+
+export const ChatbotActionMenu = ({
+  cursorPosition,
+}: ChatbotActionMenuProps) => {
   const { addNode } = useHandleNodeValue();
   const setIsChatbotActionMenuOpen = useSetRecoilState(
     isChatbotActionMenuOpenState,
@@ -55,37 +61,37 @@ export const ChatbotActionMenu = () => {
         <SelectableListItem itemId="add-text-node">
           <MenuItem
             onClick={() => {
-              addNode('text');
+              addNode('text', cursorPosition);
               closeChatbotActionMenu();
             }}
             LeftIcon={IconTextSize}
             text="+ Text node"
           />
         </SelectableListItem>
-        <SelectableListItem itemId="add-text-node">
+        <SelectableListItem itemId="add-image-node">
           <MenuItem
             onClick={() => {
-              addNode('image');
+              addNode('image', cursorPosition);
               closeChatbotActionMenu();
             }}
             LeftIcon={IconPhoto}
             text="+ Image node"
           />
         </SelectableListItem>
-        <SelectableListItem itemId="add-text-node">
+        <SelectableListItem itemId="add-file-node">
           <MenuItem
             onClick={() => {
-              addNode('file');
+              addNode('file', cursorPosition);
               closeChatbotActionMenu();
             }}
             LeftIcon={IconFileImport}
             text="+ File node"
           />
         </SelectableListItem>
-        <SelectableListItem itemId="add-text-node">
+        <SelectableListItem itemId="add-conditional-node">
           <MenuItem
             onClick={() => {
-              addNode('conditional');
+              addNode('conditional', cursorPosition);
               closeChatbotActionMenu();
             }}
             LeftIcon={IconHierarchy}

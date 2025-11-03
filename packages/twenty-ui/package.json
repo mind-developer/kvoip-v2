@@ -39,7 +39,8 @@
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
-    "zod": "3.23.8"
+    "zod": "3.23.8",
+    "ffmpeg-ffprobe-static": "^6.1.2-rc.1"
   },
   "scripts": {
     "build": "npx vite build"
