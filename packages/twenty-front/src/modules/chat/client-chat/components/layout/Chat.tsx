@@ -384,10 +384,12 @@ export const Chat = () => {
           isLastOfRow={lastOfRow}
           onImageClick={handleImageClick}
           animateDelay={(index * 0.05) / (dbMessages.length * 0.5)}
+          replyingTo={replyingTo}
+          setIsReplyingTo={(messageId: string) => setReplyingTo(messageId)}
         />
       );
     });
-  }, [dbMessages, handleImageClick]);
+  }, [dbMessages, handleImageClick, setReplyingTo]);
 
   if (!selectedChat) {
     return <NoSelectedChat />;

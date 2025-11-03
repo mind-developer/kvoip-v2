@@ -157,7 +157,6 @@ export const SendTemplateModal = (): React.ReactNode => {
     <Modal
       shouldCloseModalOnClickOutsideOrEscape={true}
       modalId={CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID}
-      size="large"
     >
       <StyledHeader>
         <H2Title
@@ -240,6 +239,7 @@ const StyledCard = styled(Card)<{
       background-color: transparent;
       box-shadow: none;
     `}
+  min-height: 180px;
 `;
 
 const StyledTag = styled(Tag)`
@@ -250,6 +250,7 @@ const StyledCardContent = styled(CardContent)<{ enabled: boolean }>`
   cursor: ${({ enabled }) => (enabled ? 'pointer' : 'not-allowed')};
   opacity: ${({ enabled }) => (enabled ? 1 : 0.5)};
   padding: ${({ theme }) => theme.spacing(2)};
+  height: 100%;
 `;
 
 const StyledTemplateHeader = styled.div`

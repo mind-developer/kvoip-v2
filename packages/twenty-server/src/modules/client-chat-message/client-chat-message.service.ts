@@ -31,7 +31,6 @@ export class ClientChatMessageService {
     workspaceId: string,
     publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    /* @kvoip-woulz proprietary:begin */
     // Sign the attachmentUrl before publishing
     const messageWithSignedUrl = {
       ...message,
@@ -42,14 +41,11 @@ export class ClientChatMessageService {
         this.twentyConfigService,
       ),
     };
-    /* @kvoip-woulz proprietary:end */
 
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.CREATED,
       clientChatMessageEventDate: new Date(),
-      /* @kvoip-woulz proprietary:begin */
       clientChatMessage: messageWithSignedUrl,
-      /* @kvoip-woulz proprietary:end */
     };
 
     if (publishTo === 'sector' || publishTo === 'all') {
@@ -85,7 +81,6 @@ export class ClientChatMessageService {
     workspaceId: string,
     publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<void> {
-    /* @kvoip-woulz proprietary:begin */
     // Sign the attachmentUrl before publishing
     const messageWithSignedUrl = {
       ...message,
@@ -96,14 +91,11 @@ export class ClientChatMessageService {
         this.twentyConfigService,
       ),
     };
-    /* @kvoip-woulz proprietary:end */
 
     const eventData: ClientMessageEventDTO = {
       event: ClientMessageEvent.UPDATED,
       clientChatMessageEventDate: new Date(),
-      /* @kvoip-woulz proprietary:begin */
       clientChatMessage: messageWithSignedUrl,
-      /* @kvoip-woulz proprietary:end */
     };
     if (publishTo === 'sector' || publishTo === 'all') {
       await this.pubSub.publish(`client-message-${chatId}`, eventData);

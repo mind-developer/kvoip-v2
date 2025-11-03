@@ -3,19 +3,21 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
   IconAlertCircle,
+  IconArrowBack,
   IconCheck,
   IconChecks,
   IconClock,
   IconX,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageType,
   type ClientChatMessage,
 } from 'twenty-shared/types';
+import { IconButton } from 'twenty-ui/input';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledMessageBubble = styled(motion.div)<{
@@ -36,7 +38,8 @@ const StyledMessageBubble = styled(motion.div)<{
         ? '#274238'
         : '#bdffcc'
       : theme.background.quaternary};
-  ${({ type }) => (type === ChatMessageType.STICKER ? 'background: transparent;' : '')}
+  ${({ type }) =>
+    type === ChatMessageType.STICKER ? 'background: transparent;' : ''}
   color: ${({ theme }) => theme.font.color.primary};
 
   padding: ${({ theme, type, isFailed }) =>
@@ -86,7 +89,7 @@ const StyledMessageBubble = styled(motion.div)<{
   }
 `}
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
-  }
+  min-height: 20px;
 `;
 
 const StyledTime = styled.p<{ messageType: ChatMessageType }>`
@@ -122,6 +125,22 @@ const StyledUnsupportedMessage = styled.div`
   opacity: 0.5;
 `;
 
+const StyledMessageBubbleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+  transform: translateY(6px);
+`;
+
+const StyledIconButton = styled(IconButton)<{ isVisible: boolean }>`
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  scale: 0.8;
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  height: 30px;
+`;
+
 export const MessageBubble = ({
   children,
   message,
@@ -129,6 +148,7 @@ export const MessageBubble = ({
   hasTail,
   customButton,
   animateDelay,
+  setIsReplyingTo,
 }: {
   children: ReactNode;
   message: ClientChatMessage;
@@ -136,6 +156,7 @@ export const MessageBubble = ({
   hasTail: boolean;
   customButton?: ReactNode;
   animateDelay: number;
+  setIsReplyingTo: (messageId: string) => void;
 }) => {
   const theme = useTheme();
   const fromMe = message.fromType !== ChatMessageFromType.PERSON;
@@ -144,6 +165,9 @@ export const MessageBubble = ({
 
   let StatusIcon = IconCheck;
   let statusColor = theme.background.invertedPrimary;
+
+  const [isHoveringBubble, setIsHoveringBubble] = useState(false);
+  const [isHoveringIconButton, setIsHoveringIconButton] = useState(false);
 
   switch (message.deliveryStatus) {
     case ChatMessageDeliveryStatus.PENDING:
@@ -162,8 +186,14 @@ export const MessageBubble = ({
   }
 
   return (
-    <>
+    <StyledMessageBubbleContainer>
       <StyledMessageBubble
+        onMouseEnter={() => setIsHoveringBubble(true)}
+        onMouseLeave={() => {
+          setTimeout(() => {
+            setIsHoveringBubble(false);
+          }, 500);
+        }}
         messageText={message.textBody || ''}
         type={message.type}
         fromMe={fromMe}
@@ -197,6 +227,19 @@ export const MessageBubble = ({
           {fromMe && <StatusIcon size={14} color={statusColor} />}
         </StyledTime>
       </StyledMessageBubble>
-    </>
+      <div
+        onMouseEnter={() => setIsHoveringIconButton(true)}
+        onMouseLeave={() => {
+          setIsHoveringIconButton(false);
+        }}
+      >
+        <StyledIconButton
+          variant="secondary"
+          Icon={IconArrowBack}
+          onClick={() => {}}
+          isVisible={isHoveringBubble || isHoveringIconButton}
+        />
+      </div>
+    </StyledMessageBubbleContainer>
   );
 };

@@ -18,7 +18,7 @@ export type ProcessedMediaResult = {
  */
 export const extractBase64MediaInfo = (msg: any): Base64MediaInfo => {
   const isBase64Media =
-    ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT'].includes(msg.type) &&
+    ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT', 'STICKER'].includes(msg.type) &&
     msg.type &&
     msg[msg.type.toLowerCase()].base64;
 
