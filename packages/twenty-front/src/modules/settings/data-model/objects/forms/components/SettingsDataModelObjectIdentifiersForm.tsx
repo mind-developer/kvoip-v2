@@ -68,11 +68,14 @@ export const SettingsDataModelObjectIdentifiersForm = ({
 
       formConfig.reset(undefined, { keepValues: true });
     } catch (error) {
+      console.log('error teste juliano', error);
       if (error instanceof ZodError) {
-        enqueueErrorSnackBar({
-          message: error.issues[0].message,
-        });
+        console.log('error teste juliano 2');
+        // enqueueErrorSnackBar({
+        //   message: error.issues[0].message,
+        // });
       } else {
+        console.log('error teste juliano 3');
         enqueueErrorSnackBar({
           apolloError: error instanceof ApolloError ? error : undefined,
         });
