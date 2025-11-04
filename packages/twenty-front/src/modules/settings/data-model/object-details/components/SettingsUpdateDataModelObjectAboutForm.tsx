@@ -118,9 +118,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     console.error(error);
 
     if (error instanceof ZodError) {
-      enqueueErrorSnackBar({
-        message: error.issues[0].message,
-      });
+      console.log('error teste juliano 4');
+      // enqueueErrorSnackBar({
+      //   message: error.issues[0].message,
+      // });
       return;
     }
 
