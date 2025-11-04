@@ -1,4 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -11,6 +12,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import WebSoftphone from '@/softphone/components/WebSoftphone';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -19,8 +21,8 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
-import WebSoftphone from '@/softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -85,6 +87,9 @@ export const DefaultLayout = () => {
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
   const isOnboarding = useIsOnboarding();
+  /* @kvoip-woulz proprietary:begin */
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  /* @kvoip-woulz proprietary:end */
 
   return (
     <>
@@ -153,7 +158,7 @@ export const DefaultLayout = () => {
 
       {/* @kvoip-woulz proprietary:begin */}
 
-      {!isOnboarding && (
+      {!isOnboarding && !currentWorkspaceMember && (
         <StyledWebSoftphoneContainer>
           <WebSoftphone />
         </StyledWebSoftphoneContainer>
