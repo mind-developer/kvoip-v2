@@ -8,7 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
-import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`

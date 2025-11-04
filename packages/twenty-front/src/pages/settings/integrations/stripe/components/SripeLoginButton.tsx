@@ -7,23 +7,23 @@ interface StripeLoginButtonProps {
 }
 
 const Button = styled.button`
-  background-color: #080808d5;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  color: ${({ theme }) => theme.font.color.primary};
-  padding: 8px 16px;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  width: 100%;
+  background-color: #080808d5;
   border: none;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+  padding: 8px 16px;
+  width: 100%;
 `;
 
 const CheckBox = styled.input`
-  padding: 8px;
   margin-bottom: 30px;
   margin-right: 10px;
+  padding: 8px;
 `;
 
 const StripeLoginButton = ({ onClick }: StripeLoginButtonProps) => {

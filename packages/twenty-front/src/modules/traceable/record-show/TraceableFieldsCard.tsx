@@ -16,9 +16,9 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { Traceable } from '@/traceable/types/Traceable';
+import { type Traceable } from '@/traceable/types/Traceable';
 import { useLingui } from '@lingui/react/macro';
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import {
   TraceableFieldSection,

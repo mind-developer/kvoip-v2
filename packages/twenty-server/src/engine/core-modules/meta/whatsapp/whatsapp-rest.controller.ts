@@ -1,10 +1,13 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Logger,
   Param,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import axios from 'axios';
@@ -15,35 +18,43 @@ export class WhatsappRestController {
 
   constructor() {}
 
+  @Post('/session/:sessionId')
+  async createSession(
+    @Param('sessionId') sessionId: string,
+    @Body() body: { webhook: string; workspaceID: string; canalID: string },
+  ) {
+    try {
+      this.logger.log('running createSession');
+      const { webhook, workspaceID, canalID } = body;
+      const response = await axios.post(
+        `http://localhost:3002/api/session/${sessionId}`,
+        {
+          webhook,
+          workspaceID,
+          canalID,
+        },
+      );
+      this.logger.log(response.data);
+      return;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   // NOVO ENDPOINT PROXY PARA STATUS
   @Get('/status/:sessionId')
   @UseGuards()
   async getStatus(@Param('sessionId') sessionId: string) {
     try {
-      this.logger.log(`=== INICIANDO REQUISIÇÃO STATUS ===`);
-      this.logger.log(`Session ID: ${sessionId}`);
-      this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/status/${sessionId}`,
-      );
-
       const response = await axios.get(
         `http://localhost:3002/api/session/status/${sessionId}`,
         {
-          timeout: 10000, // 10 second timeout
+          timeout: 10000,
         },
       );
 
-      this.logger.log(`=== RESPOSTA RECEBIDA ===`);
-      this.logger.log(`Status: ${response.status}`);
-      this.logger.log(`Headers:`, response.headers);
-      this.logger.log(`Data:`, response.data);
-
       return response.data;
     } catch (error) {
-      this.logger.error(`=== ERRO NA REQUISIÇÃO STATUS ===`);
-      this.logger.error(`Session ID: ${sessionId}`);
-      this.logger.error(`Erro completo:`, error);
-
       if (error.response) {
         this.logger.error(`Status do erro: ${error.response.status}`);
         this.logger.error(`Dados do erro:`, error.response.data);

@@ -206,7 +206,7 @@ export class BillingWebhookSubscriptionService {
       {
         workspaceId: workspace.id,
         interBillingChargeId: seuNumero,
-        status: interToSubscriptionStatusMap[situacao],
+        status: SubscriptionStatus.Trialing, // interToSubscriptionStatusMap[situacao],
         provider: BillingPaymentProviders.Inter,
         interval: SubscriptionInterval.Month,
         stripeCustomerId: customer?.stripeCustomerId,
@@ -294,6 +294,12 @@ export class BillingWebhookSubscriptionService {
         { workspaceId: workspace.id },
       );
     }
+
+    // Save the status after everything is done to avoid admin subscriber to upsert the subscription with missing data.
+    await this.billingSubscriptionRepository.save({
+      ...updatedBillingSubscription,
+      status: interToSubscriptionStatusMap[situacao],
+    });
 
     return {
       interBillingChargeId: seuNumero,

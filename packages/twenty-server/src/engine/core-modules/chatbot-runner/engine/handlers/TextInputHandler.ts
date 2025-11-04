@@ -1,0 +1,75 @@
+import { Injectable } from '@nestjs/common';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
+import {
+  NodeHandler,
+  ProcessParams,
+} from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
+import {
+  ChatMessageDeliveryStatus,
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+} from 'twenty-shared/types';
+
+@Injectable()
+export class TextInputHandler implements NodeHandler {
+  constructor(private chatMessageManagerService: ChatMessageManagerService) {}
+
+  async process(params: ProcessParams): Promise<string | null> {
+    console.log('TextInputHandler.process called');
+    console.log(
+      'TextInputHandler.process - node:',
+      JSON.stringify(params.node, null, 2),
+    );
+    const {
+      node,
+      providerIntegrationId,
+      provider,
+      chatbotName,
+      workspaceId,
+      clientChat,
+    } = params;
+    /* @kvoip-woulz proprietary:begin */
+    const text = typeof node.data?.text === 'string' ? node.data.text : null;
+    /* @kvoip-woulz proprietary:end */
+    console.log('TextInputHandler.process - text found:', text);
+
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (text) {
+      const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
+      console.log('clientChat', clientChat);
+      const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
+        {
+          clientChatId: clientChat.id,
+          from: chatbotName,
+          fromType: ChatMessageFromType.CHATBOT,
+          to: clientChat.person.id,
+          toType: ChatMessageToType.PERSON,
+          provider: provider,
+          type: ChatMessageType.TEXT,
+          textBody: formattedText,
+          caption: null,
+          deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+          edited: false,
+          attachmentUrl: null,
+          event: null,
+          reactions: null,
+          repliesTo: null,
+          templateId: null,
+          templateLanguage: null,
+          templateName: null,
+        };
+      console.log(this.chatMessageManagerService);
+      await this.chatMessageManagerService.sendMessage(
+        message,
+        workspaceId,
+        providerIntegrationId,
+      );
+    }
+    const nextId = node.data?.outgoingNodeId;
+    console.log('TextInputHandler.process - nextId:', nextId);
+
+    return typeof nextId === 'string' ? nextId : null;
+  }
+}

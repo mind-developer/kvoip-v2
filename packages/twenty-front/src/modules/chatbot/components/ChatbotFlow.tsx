@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { NodeTypes, ReactFlowProvider } from '@xyflow/react';
+import { type NodeTypes, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import ConditionalNode from '@/chatbot/components/nodes/ConditionalNode';
@@ -9,73 +7,62 @@ import ImageNode from '@/chatbot/components/nodes/ImageNode';
 import TextNode from '@/chatbot/components/nodes/TextNode';
 
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
-import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
 
-import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
-import { GET_CHATBOT_FLOW_BY_ID } from '../graphql/query/getChatbotFlowById';
 
-import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { useSetChatbotFlowState } from '@/chatbot/hooks/useSetChatbotFlowState';
-import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
-import { initialEdges, initialNodes } from '../flow-templates/mockFlowTemplate';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useParams } from 'react-router-dom';
 
 const types: NodeTypes = {
   text: TextNode,
-  condition: ConditionalNode,
+  conditional: ConditionalNode,
   image: ImageNode,
   file: FileNode,
 };
 
-export const ChatbotFlow = ({
-  targetableObjectId,
-}: {
-  targetableObjectId: string;
-}) => {
-  const { chatbot } = useGetChatbot(targetableObjectId);
-  const status = chatbot?.statuses ?? 'DEACTIVATED';
-
-  const chatbotFlow = useGetChatbotFlowState();
-  const { setChatbotFlowState } = useSetChatbotFlowState();
-  const [canRender, setCanRender] = useState(false);
-
-  const { refetch, loading } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
-    variables: { chatbotId: targetableObjectId },
-    onCompleted: (d) => {
-      setChatbotFlowState(d.getChatbotFlowById);
-      setCanRender(true);
+export const ChatbotFlow = () => {
+  const { chatbotId } = useParams();
+  const { records: chatbot } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Chatbot,
+    filter: {
+      id: {
+        eq: chatbotId,
+      },
     },
-    onError: () => {
-      setChatbotFlowState({
-        nodes: initialNodes,
-        edges: initialEdges,
-        chatbotId: targetableObjectId,
-      });
-      setCanRender(true);
+    recordGqlFields: {
+      id: true,
+      flowNodes: true,
+      flowEdges: true,
+      viewport: true,
+      status: true,
     },
   });
+  const { setChatbotFlowState } = useSetChatbotFlowState();
+  if (!chatbot[0]) return null;
 
-  useEffect(() => {
-    if (chatbot?.id) refetch();
-  }, [chatbot]);
+  setChatbotFlowState({
+    nodes: chatbot[0].flowNodes,
+    edges: chatbot[0].flowEdges,
+    chatbotId: chatbot[0].id,
+    viewport: chatbot[0].viewport,
+  });
+
+  const status = chatbot[0]?.status ?? 'DEACTIVATED';
 
   const tagProps = chatbotStatusTagProps({
     chatbotStatus: status,
   });
 
-  if (loading) return <p>Loading</p>;
-  if (canRender) {
+  if (chatbot[0])
     return (
       <ReactFlowProvider>
         <BotDiagramBase
           nodeTypes={types}
           tagColor={tagProps.color}
           tagText={tagProps.text}
-          chatbotId={targetableObjectId}
         />
-        <ChatbotFlowDiagramCanvasEditableEffect />
       </ReactFlowProvider>
     );
-  }
 };

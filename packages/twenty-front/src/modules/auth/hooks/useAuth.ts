@@ -525,14 +525,12 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isEmailVerificationRequired) {
         setSearchParams({ email });
         setSignInUpStep(SignInUpStep.EmailVerification);
         return null;
       }
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isMultiWorkspaceEnabled) {
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(

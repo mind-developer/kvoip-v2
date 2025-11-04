@@ -87,7 +87,7 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
 
         // Log de sucesso
-        const successMessage = t`Charge issued successfully` + '. ' + t`Charge ID` + ': ' + charge.id;
+        const successMessage = `Boleto emitido com sucesso` + '. ' + `ID da Cobrança` + ': ' + charge.id;
         await addCompanyFinancialClosingExecutionLog(
           data.companyExecutionLog,
           companyFinancialClosingExecutionsRepository,
@@ -99,12 +99,12 @@ export class RunCompanyFinancialClosingJobProcessor {
         );
       } else {
         throw new Error(
-          t`Charge was not generated - null return from charge issuance service`,
+          `Não foi possível gerar a cobrança - retorno nulo do serviço de emissão de cobrança` + '',
         );
       }
     } catch (error) {
       // Tratamento específico para erros da API de cobrança
-      let errorMessage = t`It was not possible to generate the charge`;
+      let errorMessage = `Não foi possível gerar a cobrança`;
 
       // Tenta extrair o erro real do message se ele contém um JSON
       let actualError = error;
@@ -133,10 +133,10 @@ export class RunCompanyFinancialClosingJobProcessor {
         const violacoesText = violacoes
           .map((v: any) => `${v.propriedade}: ${v.razao} (valor: "${v.valor}")`)
           .join('; ');
-        errorMessage = t`Error in charge data validation` + ': ' + violacoesText;
+        errorMessage = `Erro na validação dos dados da cobrança` + ': ' + violacoesText;
       } else if (actualError?.response?.data?.detail) {
         // Erro da API de cobrança com detalhe genérico
-        errorMessage = t`Error in charge API` + ': ' + actualError.response.data.detail;
+        errorMessage = `Erro na API de cobrança` + ': ' + actualError.response.data.detail;
       } else if (
         actualError?.data?.violacoes &&
         Array.isArray(actualError.data.violacoes)
@@ -149,13 +149,13 @@ export class RunCompanyFinancialClosingJobProcessor {
               `${v.propriedade}: ${v.razao} (valor enviado: "${v.valor}")`,
           )
           .join('; ');
-        errorMessage = t`Error in charge data validation` + ': ' + violacoesText;
+        errorMessage = `Erro na validação dos dados da cobrança` + ': ' + violacoesText;
       } else if (actualError?.data?.detail) {
         // Erro direto com detalhe (sem response)
-        errorMessage = t`Error in charge API` + ': ' + actualError.data.detail;
+        errorMessage = `Erro na API de cobrança` + ': ' + actualError.data.detail;
       } else if (error?.message) {
         // Erro genérico
-        errorMessage = t`Error to generate charge` + ': ' + error.message;
+        errorMessage = `Erro ao gerar a cobrança` + ': ' + error.message;
       }
 
       // Adicionando logs de erro e status na execução da empresa
@@ -184,7 +184,7 @@ export class RunCompanyFinancialClosingJobProcessor {
           data.executionLog,
           financialClosingExecutionsRepository,
           'warn',
-          t`Error to generate charge for the company` + ' ' + data.company.name + ' (' + data.company.id + ')',
+          `Erro ao gerar a cobrança para a empresa` + ' ' + data.company.name + ' (' + data.company.id + ')',
         );
       }
 
@@ -220,7 +220,7 @@ export class RunCompanyFinancialClosingJobProcessor {
           await addCompanyFinancialClosingExecutionErrorLog(
             data.companyExecutionLog,
             companyFinancialClosingExecutionsRepository,
-            msg`Error to emit invoice` + ' ' + error.message,
+            `Erro ao emitir a nota fiscal` + ' ' + error.message,
             data.company,
             { status: FinancialClosingExecutionStatusEnum.ERROR },
           );
@@ -238,7 +238,7 @@ export class RunCompanyFinancialClosingJobProcessor {
             data.executionLog,
             financialClosingExecutionsRepository,
             'warn',
-            msg`Error to emit invoice for the company` + ' ' + data.company.name + ' (' + data.company.id + ')',
+            `Erro ao emitir a nota fiscal para a empresa` + ' ' + data.company.name + ' (' + data.company.id + ')',
           );
         }
 
@@ -250,9 +250,9 @@ export class RunCompanyFinancialClosingJobProcessor {
     } else {
       let message = '';
       if (data.company.typeEmissionNF == TypeEmissionNFEnum.AFTER) {
-        message = t`Invoice configured to be issued after payment, not issued`;
+        message = `Nota fiscal configurada para ser emitida após o pagamento, não emitida`;
       } else {
-        message = t`The company does not have invoice emission configured, not issued`;
+        message = `A empresa não tem emissão de nota fiscal configurada, não emitida`;
       }
 
       if (financialClosingExecutionsRepository && data.executionLog) {

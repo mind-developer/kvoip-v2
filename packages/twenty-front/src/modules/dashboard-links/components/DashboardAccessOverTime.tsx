@@ -1,5 +1,5 @@
 import { DashboardFilterDropdown } from '@/dashboard-links/components/ui/DashboardFilterDropdown';
-import { FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
+import { type FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import styled from '@emotion/styled';
 import {
   Bar,
@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { LinklogsChartData } from '~/types/LinkLogs';
+import { type LinklogsChartData } from '~/types/LinkLogs';
 
 const StyledChartContainer = styled.div<{ hasData: boolean }>`
   background: ${({ theme }) => theme.background.secondary};

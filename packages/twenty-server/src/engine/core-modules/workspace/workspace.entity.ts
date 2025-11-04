@@ -38,7 +38,6 @@ import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-grou
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
@@ -151,10 +150,6 @@ export class Workspace {
   })
   agents: Relation<AgentEntity[]>;
 
-  @OneToMany(() => WorkspaceAgent, (agent) => agent.workspace, {
-    onDelete: 'CASCADE',
-  })
-  workspaceAgents: Relation<WorkspaceAgent[]>;
   @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.workspace, {
     onDelete: 'CASCADE',
   })
@@ -265,9 +260,9 @@ export class Workspace {
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxCompanyId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxCompanyId?: string | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
@@ -277,11 +272,19 @@ export class Workspace {
   @Column({ type: 'varchar', nullable: true })
   onesignalApiKey?: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxTrunkId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxTrunkId?: string | null;
 
-  @Field(() => Number, { nullable: true })
-  @Column({ type: 'int', nullable: true })
-  pabxDialingPlanId?: number;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  pabxDialingPlanId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  softSwitchClientId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  originIpId?: string | null;
 }

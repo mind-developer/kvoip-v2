@@ -1,18 +1,16 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
-import { useToggleWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useToggleWhatsappIntegrationDisable';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useEffect, useState } from 'react';
-// eslint-disable-next-line no-restricted-imports
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useState } from 'react';
 import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
@@ -25,23 +23,9 @@ enum ChangeType {
   DisableWhatsapp = 'DISABLE_WHATSAPP',
 }
 
-const StyledDatabaseLogoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledDatabaseLogo = styled.img`
   height: 100%;
   width: 16px;
-`;
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -108,13 +92,9 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const [selectedIntegrationId, setSelectedIntegrationId] =
     useState<string>('');
 
-  const { whatsappIntegrations = [], refetchWhatsapp } =
-    useFindAllWhatsappIntegrations();
-  const { toggleWhatsappIntegrationDisable } = useToggleWhatsappIntegration();
-
-  useEffect(() => {
-    refetchWhatsapp();
-  }, [refetchWhatsapp]);
+  const whatsappIntegrations = useFindManyRecords<
+    WhatsappIntegration & { __typename: string }
+  >({ objectNameSingular: 'whatsappIntegration' }).records;
 
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);
@@ -125,8 +105,8 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const handleConfirmChange = () => {
     switch (changeType) {
       case ChangeType.DisableWhatsapp:
-        toggleWhatsappIntegrationDisable(selectedIntegrationId);
-        refetchWhatsapp();
+        // toggleWhatsappIntegrationDisable(selectedIntegrationId);
+        // refetchWhatsapp();
         return;
       default:
         return;

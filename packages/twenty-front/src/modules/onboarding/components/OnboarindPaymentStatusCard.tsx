@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { GetCurrentUserQueryResult } from '~/generated-metadata/graphql';
+import { type GetCurrentUserQueryResult } from '~/generated-metadata/graphql';
 
 const StyledCheckContainer = styled.div`
   align-items: center;

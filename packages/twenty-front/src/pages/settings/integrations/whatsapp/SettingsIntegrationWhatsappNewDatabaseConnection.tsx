@@ -2,7 +2,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm';
-import { useCreateWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,30 +17,57 @@ import axios from 'axios';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { useLingui } from '@lingui/react/macro';
+import { v4 } from 'uuid';
 import { z } from 'zod';
+import {
+  REACT_APP_META_WEBHOOK_URL,
+  REACT_APP_SERVER_BASE_URL,
+} from '~/config';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const settingsIntegrationWhatsappConnectionFormSchema = z.object({
-  name: z.string().min(1),
-  phoneId: z.string(),
-  businessAccountId: z.string(),
-  accessToken: z.string(),
-  appId: z.string(),
-  appKey: z.string(),
-  tipoApi: z.string().min(1, 'Selecione um tipo de API'),
-});
+export const settingsIntegrationWhatsappConnectionFormSchema = z
+  .object({
+    name: z.string().min(4, 'Name must be at least 4 characters'),
+    phoneId: z.string().optional(),
+    businessAccountId: z.string().optional(),
+    accessToken: z.string().optional(),
+    appId: z.string().optional(),
+    appKey: z.string().optional(),
+    apiType: z.string().min(1, 'Select an API type'),
+    sectorId: z.string().optional(),
+  })
+  .refine((data) => {
+    // For MetaAPI, require all MetaAPI-specific fields
+    if (data.apiType === 'MetaAPI') {
+      return (
+        data.phoneId &&
+        data.businessAccountId &&
+        data.accessToken &&
+        data.appId &&
+        data.appKey
+      );
+    }
+    return true;
+  });
 
 export type SettingsIntegrationWhatsappConnectionFormValues = z.infer<
   typeof settingsIntegrationWhatsappConnectionFormSchema
 >;
 
 export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const tokenPair = useRecoilValue(tokenPairState);
+  const workspaceId = useRecoilValue(currentWorkspaceState)?.id;
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
@@ -57,7 +83,20 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const [qrCodeError, setQrCodeError] = useState<string | null>(null);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState(false);
 
-  const { createWhatsappIntegration } = useCreateWhatsappIntegration();
+  const { createOneRecord } = useCreateOneRecord({
+    objectNameSingular: 'whatsappIntegration',
+    recordGqlFields: { id: true },
+  });
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: 'whatsappIntegration',
+  });
+
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    recordGqlFields: { id: true, name: true },
+  });
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -107,17 +146,17 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
-    // eslint-disable-next-line no-sparse-arrays
-  }, [integration, , navigateApp, isIntegrationAvailable]);
+  }, [integration, navigateApp, isIntegrationAvailable]);
 
   if (!isIntegrationAvailable) return null;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formConfig = useForm<SettingsIntegrationWhatsappConnectionFormValues>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: zodResolver(settingsIntegrationWhatsappConnectionFormSchema),
     defaultValues: {
-      tipoApi: 'MetaAPI',
+      apiType: 'MetaAPI',
+      sectorId: sectors.length > 0 ? sectors[0].id : '',
     },
   });
 
@@ -205,17 +244,42 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      const integration = await createWhatsappIntegration({
+      const newIntegrationId = v4();
+      const verifyToken = v4();
+      await createOneRecord({
+        id: newIntegrationId,
         name: formValues.name,
-        phoneId: formValues.phoneId,
-        businessAccountId: formValues.businessAccountId,
-        accessToken: formValues.accessToken,
-        appId: formValues.appId,
-        appKey: formValues.appKey,
-        tipoApi: formValues.tipoApi,
+        phoneId: formValues.phoneId || '',
+        businessAccountId: formValues.businessAccountId || '',
+        accessToken: formValues.accessToken || '',
+        appId: formValues.appId || '',
+        appKey: formValues.appKey || '',
+        apiType: formValues.apiType,
+        paused: false,
+        sla: 30,
+        defaultSectorId: formValues.sectorId || '',
+        verifyToken,
       });
 
-      if (formValues.tipoApi === 'Baileys') {
+      if (formValues.apiType === 'Baileys') {
+        try {
+          await axios.post(
+            `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+            {
+              webhook: `https://${REACT_APP_SERVER_BASE_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+              workspaceID: workspaceId,
+              canalID: newIntegrationId,
+            },
+          );
+        } catch (error) {
+          enqueueErrorSnackBar({
+            message: t`Failed to create session`,
+          });
+          await deleteOneRecord(newIntegrationId);
+        }
+      }
+
+      if (formValues.apiType === 'Baileys') {
         setIntegrationName(formValues.name);
         setShowQrCode(true);
         setQrCodeValue(null);
@@ -227,14 +291,35 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         }
         // Buscar o valor do QR code
         await fetchQrCodeWithRetry(formValues.name);
-        validateBaileysSession(formValues.name, integration.id);
+        validateBaileysSession(formValues.name, newIntegrationId);
       } else {
+        try {
+          await axios.post(
+            `https://graph.facebook.com/v22.0/${formValues.appId}/subscriptions`,
+            {
+              access_token: `${formValues.appId}|${formValues.appKey}`,
+              object: 'whatsapp_business_account',
+              callback_url: `${REACT_APP_META_WEBHOOK_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
+              verify_token: verifyToken,
+              fields: 'messages',
+            },
+            {
+              headers: {
+                contentType: 'application/json',
+              },
+            },
+          );
+        } catch (error) {
+          enqueueErrorSnackBar({
+            message: t`Failed to subscribe to business account`,
+          });
+          await deleteOneRecord(newIntegrationId);
+        }
         navigate(SettingsPath.IntegrationWhatsappDatabase);
       }
     } catch (error) {
-      // TODO: Add proper error message
       enqueueErrorSnackBar({
-        message: (error as Error).message,
+        message: t`Failed to create integration`,
       });
     }
   };
@@ -354,7 +439,9 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                 </p>
               </div>
             ) : (
-              <SettingsIntegrationWhatsappDatabaseConnectionForm />
+              <SettingsIntegrationWhatsappDatabaseConnectionForm
+                sectors={sectors}
+              />
             )}
           </Section>
         </FormProvider>

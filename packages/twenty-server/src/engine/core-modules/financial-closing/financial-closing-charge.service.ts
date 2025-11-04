@@ -134,14 +134,14 @@ export class FinancialClosingChargeService {
       await chargeRepository.save(charge);
 
       this.logger.log(
-        t`Charge issued for company` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
+        `Cobrança emitida para a empresa` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
       );
 
       return charge;
 
     } catch (err) {
       this.logger.error(
-        t`Error to emit charge for company` + ' ' + company.name + ': ' + err.message,
+        `Erro ao emitir a cobrança para a empresa` + ' ' + company.name + ': ' + err.message,
         err.stack,
       );
       throw err;

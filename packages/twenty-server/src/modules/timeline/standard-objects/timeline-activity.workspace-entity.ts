@@ -10,6 +10,7 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -18,14 +19,17 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { AgentWorkspaceEntity } from 'src/modules/agent/standard-objects/agent.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
@@ -184,6 +188,51 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   chargeId: string | null;
 
   @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.sector,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Sector`,
+    description: msg`Event sector`,
+    icon: 'IconBadge',
+    inverseSideTarget: () => SectorWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  sector: Relation<SectorWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('sector')
+  sectorId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.agent,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Sector`,
+    description: msg`Event sector`,
+    icon: 'IconBadge',
+    inverseSideTarget: () => AgentWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  agent: Relation<AgentWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('agent')
+  agentId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.chatbot,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Chatbot`,
+    description: msg`Event chatbot`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ChatbotWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  chatbot: Relation<ChatbotWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('chatbot')
+  chatbotId: string | null;
+
+  @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.support,
     type: RelationType.MANY_TO_ONE,
     label: msg`Support`,
@@ -310,21 +359,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   workflowRunId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.chatbot,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Chatbot`,
-    description: msg`Event chatbot`,
-    icon: 'IconTargetArrow',
-    inverseSideTarget: () => ChatbotWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivities',
-  })
-  @WorkspaceIsNullable()
-  chatbot: Relation<WorkflowWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('chatbot')
-  chatbotId: string | null;
-
-  @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.invoice,
     type: RelationType.MANY_TO_ONE,
     label: msg`Invoice`,
@@ -338,6 +372,24 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('invoice')
   invoiceId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.tenant,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Workspace`,
+    description: msg`A Workspace`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => TenantWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceGate({ featureFlag: 'IS_KVOIP_ADMIN' })
+  tenant: Relation<TenantWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('tenant')
+  @WorkspaceGate({ featureFlag: 'IS_KVOIP_ADMIN' })
+  tenantId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

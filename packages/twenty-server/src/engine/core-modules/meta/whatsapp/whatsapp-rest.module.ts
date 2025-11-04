@@ -1,24 +1,17 @@
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
-import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
-import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
-import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
-import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
+import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
+import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { Inbox } from '../../inbox/inbox.entity';
-import { Sector } from '../../sector/sector.entity';
-import { WorkspaceAgent } from '../../workspace-agent/workspace-agent.entity';
+import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
 import { Workspace } from '../../workspace/workspace.entity';
-import { WhatsappIntegration } from './integration/whatsapp-integration.entity';
-import { WhatsappIntegrationService } from './integration/whatsapp-integration.service';
 import { WhatsappRestController } from './whatsapp-rest.controller';
 import { WhatsAppService } from './whatsapp.service';
 
@@ -26,30 +19,16 @@ import { WhatsAppService } from './whatsapp.service';
   imports: [
     TypeORMModule,
     WorkspaceModule,
-    NestjsQueryTypeOrmModule.forFeature([
-      ChatbotFlow,
-      WhatsappIntegration,
-      Workspace,
-      Inbox,
-      Sector,
-      WorkspaceAgent,
-    ]),
+    NestjsQueryTypeOrmModule.forFeature([Workspace, FileEntity]),
     MessageQueueModule,
+    ClientChatMessageModule,
+    TwentyConfigModule,
+    ChatbotRunnerModule,
+    ChatMessageManagerModule,
+    FileModule,
   ],
   controllers: [WhatsappRestController],
-  providers: [
-    WhatsappIntegrationService,
-    WhatsAppService,
-    InboxService,
-    GoogleStorageService,
-    FirebaseService,
-    ChatbotFlowService,
-    ChatMessageManagerService,
-    TextInputHandler,
-    ImageInputHandler,
-    ConditionalInputHandler,
-    FileInputHandler,
-  ],
+  providers: [WhatsAppService, JwtService, JwtWrapperService],
   exports: [],
 })
 export class WhatsappRestModule {}

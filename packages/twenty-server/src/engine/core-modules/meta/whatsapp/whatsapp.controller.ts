@@ -10,21 +10,37 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FormattedWhatsAppMessage } from 'src/engine/core-modules/meta/whatsapp/types/FormattedWhatsAppMessage';
+import {
+  extractBase64MediaInfo,
+  extractMediaId,
+  processBase64Media,
+} from 'src/engine/core-modules/meta/whatsapp/utils/mediaUtils';
 
-import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
-import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
-import { WhatsAppDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { v4 } from 'uuid';
 
 @Controller('whatsapp')
 export class WhatsappController {
   protected readonly logger = new Logger(WhatsappController.name);
+  private SERVER_URL: string;
 
   constructor(
-    private whatsappIntegrationService: WhatsappIntegrationService,
+    private twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly whatsappService: WhatsAppService,
-  ) {}
+    private readonly fileMetadataService: FileMetadataService,
+    private readonly fileService: FileService,
+    private readonly chatMessageManagerService: ChatMessageManagerService,
+    private readonly environmentService: TwentyConfigService,
+  ) {
+    this.SERVER_URL = this.environmentService.get('SERVER_URL');
+  }
 
   @Get('/webhook/:workspaceId/:id')
   @UseGuards(PublicEndpointGuard)
@@ -35,10 +51,23 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    const integration = await this.whatsappIntegrationService.findById(
-      id,
-      workspaceId,
+    console.log(
+      'WEBHOOK VERIFICATION',
+      JSON.stringify(
+        { workspaceId, id, mode, challenge, verifyToken },
+        null,
+        2,
+      ),
     );
+    const whatsappIntegrationRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'whatsappIntegration',
+        { shouldBypassPermissionChecks: true },
+      );
+    const integration = await whatsappIntegrationRepository.findOne({
+      where: { id },
+    });
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {
@@ -46,173 +75,140 @@ export class WhatsappController {
 
         return challenge;
       } else {
-        throw new HttpException('Verification failed', HttpStatus.FORBIDDEN);
+        throw new HttpException(
+          'Verification failed',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
 
     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
   }
 
-  @Post('/webhook/:workspaceId/:id')
+  @Post('/webhook/:workspaceId/:integrationId')
   @UseGuards(PublicEndpointGuard)
   async handleIncomingMessage(
     @Param('workspaceId') workspaceId: string,
-    @Param('id') id: string,
+    @Param('integrationId') integrationId: string,
     // TO DO
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
-    if (body.entry[0].changes[0].statuses) {
-      // return await this.whatsappService.updateMessageAtFirebase({
-      //   integrationId: id,
-      //   id: body.entry[0].changes[0].statuses[0].id,
-      //   clientPhoneNumber:
-      //     body.entry[0].changes[0].statuses[0].baileysRecipientId.replace(
-      //       '@s.whatsapp.net',
-      //       '',
-      //     ) ?? body.entry[0].changes[0].statuses[0].recipent_id,
-      //   status: body.entry[0].changes[0].statuses[0].status ?? null,
-      // });
-      return true;
-    }
+    try {
+      const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
+      const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
+      console.log('messages', JSON.stringify(messages, null, 2));
 
-    const isReceiving = body.entry[0].changes[0].value.messages;
-    const messages = body.entry[0].changes[0].value.messages;
-
-    for (const msg of messages) {
-      let mediaId: string | undefined;
-      let fileUrl;
-
-      switch (msg.type) {
-        case 'image':
-          mediaId = msg.image.id;
-          break;
-        case 'audio':
-          mediaId = msg.audio.id;
-          break;
-        case 'document':
-          mediaId = msg.document.id;
-          break;
-        case 'video':
-          mediaId = msg.video.id;
-          break;
-        default:
-          mediaId = undefined;
-          break;
+      if (statuses) {
+        for (const status of statuses) {
+          try {
+            await this.chatMessageManagerService.updateMessage(
+              status.id,
+              {
+                deliveryStatus: status.status?.toUpperCase() ?? null,
+              },
+              workspaceId,
+            );
+          } catch (error) {
+            this.logger.error('Error updating message:', error);
+          }
+        }
+        return true;
       }
 
-      if (isReceiving) {
-        this.logger.log('IS RECEIVING');
-        // Novo fluxo: verifica se é mídia e se existe base64
-        let isBase64Media = false;
-        let base64String = '';
-        let mimeType = '';
-        let fileName = '';
+      for (const msg of messages) {
+        try {
+          msg.type = msg.type.toUpperCase();
 
-        if (
-          ['image', 'video', 'audio', 'document'].includes(msg.type) &&
-          msg.type &&
-          msg.type.base64
-        ) {
-          isBase64Media = true;
-          base64String = messages[messages.type].base64;
-          mimeType = msg[msg.type].mime_type || 'application/octet-stream';
-          fileName = `${msg.from}_${Date.now()}`;
-        }
+          const mediaId = extractMediaId(msg);
+          this.logger.warn('mediaId', mediaId);
+          const { isBase64Media, base64String, mimeType } =
+            extractBase64MediaInfo(msg);
 
-        if (isBase64Media) {
-          try {
-            this.logger.log('Recebendo mídia em base64');
-            // Remove prefixo se existir
-            if (base64String.startsWith('data:')) {
-              base64String = base64String.split(',')[1];
-              this.logger.log('Prefixo data: removido do base64');
-            }
-            const buffer = Buffer.from(base64String, 'base64');
+          let fileUrl: string | null = null;
+          this.logger.warn(isBase64Media);
 
-            this.logger.log(`Tamanho do buffer gerado: ${buffer.length} bytes`);
-            // Gera extensão correta
-            let ext = '';
-
-            if (mimeType && mimeType.includes('/')) {
-              ext =
-                '.' +
-                mimeType.split('/')[1].split(';')[0].replace('jpeg', 'jpg');
-            }
-            const fileNameWithExt = `${msg.from}_${Date.now()}${ext}`;
-
-            this.logger.log(
-              `Nome do arquivo gerado para upload: ${fileNameWithExt}`,
-            );
-            this.logger.log(
-              `Diretório do bucket: workspaceId=${workspaceId}, tipo=${msg.type}`,
-            );
-            const file = {
-              originalname: fileNameWithExt,
-              buffer,
-              mimetype: mimeType,
-            };
-
+          if (mediaId?.id) {
+            this.logger.warn(`Downloading media with ID: ${mediaId}`);
             fileUrl =
-              await this.whatsappService.googleStorageService.uploadFileToBucket(
+              (await this.whatsappService.downloadMedia(
+                mediaId.id,
+                integrationId,
+                msg.from,
                 workspaceId,
-                msg.type,
-                file,
-                false,
-              );
-            this.logger.log('Upload base64 concluído com sucesso:', fileUrl);
-          } catch (err) {
-            this.logger.error('Erro ao salvar mídia base64:', err);
-            throw new HttpException(
-              'Erro ao salvar mídia base64: ' + (err?.message || err),
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+              )) ?? null;
           }
-        } else if (mediaId) {
-          // Fluxo normal: baixa a mídia
-          fileUrl = await this.whatsappService.downloadMedia(
-            mediaId,
-            id,
-            msg.from,
-            msg.type,
+
+          if (isBase64Media) {
+            this.logger.warn(`Processing base64 media, mimeType: ${mimeType}`);
+            const buffer = await processBase64Media(
+              base64String,
+              mimeType,
+              workspaceId,
+              this.fileMetadataService,
+              this.fileService,
+            );
+            let ext = mimeType
+              .split('/')[1]
+              .split(';')[0]
+              .replace('jpeg', 'jpg');
+            ext = '.' + ext;
+
+            fileUrl = (
+              await this.fileMetadataService.createFile({
+                file: Buffer.from(buffer),
+                filename: v4() + ext,
+                mimeType,
+                workspaceId,
+              })
+            ).fullPath;
+          }
+
+          const message: FormattedWhatsAppMessage = {
+            id: msg.id,
+            remoteJid: msg.from,
+            fromMe: !!msg.fromMe,
+            senderAvatarUrl:
+              body.entry[0].changes[0].value?.contacts[0]?.profile?.ppUrl,
+            contactName:
+              body.entry[0].changes[0].value?.contacts[0]?.profile?.name ??
+              null,
+            textBody: msg.text?.body ?? null,
+            attachmentUrl: mediaId || isBase64Media ? (fileUrl ?? null) : null,
+            caption: null,
+            type: msg.type,
+            deliveryStatus: msg.status,
+            senderPhoneNumber:
+              body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+          };
+
+          await this.whatsappService.saveMessage(
+            message,
+            integrationId,
             workspaceId,
           );
+          this.logger.log(`Successfully processed message: ${msg.id}`);
+        } catch (error) {
+          this.logger.error(
+            `Error processing individual message ${msg.id}:`,
+            error,
+          );
+          this.logger.error(`Message data: ${JSON.stringify(msg, null, 2)}`);
+          throw error;
         }
-
-        const lastMessage = {
-          createdAt: new Date(),
-          id: msg.id,
-          from: body.entry[0].changes[0].value.contacts[0].profile.name,
-          message: mediaId || isBase64Media ? fileUrl : msg.text.body,
-          type: msg.type,
-          fromMe: !!msg.fromMe,
-        };
-
-        const whatsappIntegration: Omit<
-          WhatsAppDocument,
-          'personId' | 'timeline' | 'unreadMessages' | 'isVisible'
-        > = {
-          integrationId: id,
-          workspaceId: workspaceId,
-          client: {
-            phone: msg.from.replace('@s.whatsapp.net', ''),
-            name: body.entry[0].changes[0].value.contacts[0].profile.name,
-            ppUrl: body.entry[0].changes[0].value.contacts[0].profile.ppUrl,
-          },
-          messages: [
-            {
-              ...lastMessage,
-            },
-          ],
-          status: statusEnum.Waiting,
-          lastMessage,
-        };
-
-        await this.whatsappService.saveMessage(
-          whatsappIntegration,
-          workspaceId,
-        );
       }
+      this.logger.log(
+        `Successfully processed all messages for workspace: ${workspaceId}, integration: ${integrationId}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error handling incoming WhatsApp message for workspace: ${workspaceId}, integration: ${integrationId}`,
+        error,
+      );
+      this.logger.error(
+        `Error stack: ${error instanceof Error ? error.stack : 'No stack trace available'}`,
+      );
+      throw error;
     }
   }
 }

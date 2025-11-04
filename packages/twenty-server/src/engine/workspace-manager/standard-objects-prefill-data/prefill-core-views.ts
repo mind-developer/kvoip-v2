@@ -4,6 +4,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { KVOIP_ADMIN_ALL_VIEWS } from 'src/engine/core-modules/kvoip-admin/standard-objects/views/get-all-kvoip-admin-views';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -17,7 +18,6 @@ import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-worksp
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
-import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { invoiceAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/invoice-all-views';
@@ -43,6 +43,7 @@ type PrefillCoreViewsArgs = {
   objectMetadataItems: ObjectMetadataEntity[];
   schemaName: string;
   featureFlags?: Record<string, boolean>;
+  shouldPrefillAdminViews?: boolean;
 };
 
 export const prefillCoreViews = async ({
@@ -51,6 +52,7 @@ export const prefillCoreViews = async ({
   objectMetadataItems,
   schemaName,
   featureFlags,
+  shouldPrefillAdminViews = false,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
@@ -64,12 +66,15 @@ export const prefillCoreViews = async ({
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
-    chatbotsAllView(objectMetadataItems),
     supportAllView(objectMetadataItems),
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),
     invoiceAllView(objectMetadataItems),
     chargesAllView(objectMetadataItems),
+    // Kvoip admin views
+    ...(shouldPrefillAdminViews
+      ? KVOIP_ADMIN_ALL_VIEWS.map((view) => view(objectMetadataItems))
+      : []),
   ];
 
   if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {

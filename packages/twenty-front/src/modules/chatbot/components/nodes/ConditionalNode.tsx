@@ -4,13 +4,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { GenericNodeData } from '@/chatbot/types/GenericNode';
-import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import { GenericNode, type GenericNodeData } from '@/chatbot/types/GenericNode';
+import { type NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -51,7 +51,10 @@ function ConditionalNode({
   const [titleInput, setTitleInput] = useState(data.title ?? '');
 
   const thisNodeId = useNodeId();
-  const thisNode = useNodes().find((node) => node.id === thisNodeId);
+  const allNodes = useNodes();
+  const thisNode: GenericNode = allNodes.filter(
+    (node) => node.id === thisNodeId,
+  )[0];
 
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
@@ -62,7 +65,6 @@ function ConditionalNode({
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
       setLogicState(data.logic);
     }
@@ -85,20 +87,25 @@ function ConditionalNode({
       }),
     };
 
-    updateNodeData(id, {
-      ...data,
+    /* @kvoip-woulz proprietary:begin */
+    const currentNode = allNodes.find((n) => n.id === thisNodeId);
+    const currentNodeData = currentNode?.data || data;
+    /* @kvoip-woulz proprietary:end */
+
+    updateNodeData(thisNodeId!, {
+      ...currentNodeData,
       logic: updatedLogic,
     });
 
     setLogicState(updatedLogic);
-  }, [sourceConnections]);
+  }, [sourceConnections, allNodes, thisNodeId, data]);
 
   if (thisNode)
     return (
       <BaseNode
         icon={'IconHierarchy'}
-        title={data.title ?? 'Conditional Node'}
-        //add this description to node data
+        isInitialNode={thisNode?.data.nodeStart as boolean}
+        nodeId={thisNode.id}
         nodeTypeDescription="If/else node"
         onTitleChange={(e) => setTitleInput(e)}
         onTitleBlur={() => {
@@ -110,7 +117,6 @@ function ConditionalNode({
         }}
       >
         <Handle
-          title={data.title}
           type="target"
           position={Position.Top}
           isConnectable={isConnectable}

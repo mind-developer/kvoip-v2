@@ -1,8 +1,6 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import {
-  KVOIP_ADMIN_STANDARD_OBJECT_IDS,
-  TENANT_STANDARD_FIELD_IDS,
-} from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { TENANT_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
+import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -37,7 +35,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.owner,
+            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.person,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -46,8 +44,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.ownerEmail,
+            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.company,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -57,18 +54,17 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.membersCount,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.ownerEmail,
           )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
-        aggregateOperation: AggregateOperations.COUNT,
       },
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === TENANT_STANDARD_FIELD_IDS.extentionsCount,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.membersCount,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -79,9 +75,21 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+              field.standardId === TENANT_STANDARD_FIELD_IDS.extentionsCount,
           )?.id ?? '',
         position: 5,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AggregateOperations.COUNT,
+      },
+
+      {
+        fieldMetadataId:
+          tenantObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+          )?.id ?? '',
+        position: 6,
         isVisible: true,
         size: 150,
       },

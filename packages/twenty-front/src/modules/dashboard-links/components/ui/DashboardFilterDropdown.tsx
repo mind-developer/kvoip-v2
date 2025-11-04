@@ -1,4 +1,4 @@
-import { FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
+import { type FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import { Select } from '@/ui/input/components/Select';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import styled from '@emotion/styled';

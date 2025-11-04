@@ -3,7 +3,12 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+/* @kvoip-woulz proprietary:begin */
+import {
+  type FieldMetadataSettings,
+  type FieldMetadataSettingsInput,
+  type FieldMetadataTextSettingsInput,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -24,7 +29,7 @@ export interface WorkspaceFieldOptions<
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
-  settings?: FieldMetadataSettings<T>;
+  settings?: FieldMetadataSettingsInput<T>; // @kvoip-woulz proprietary
   isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
@@ -82,6 +87,13 @@ export function WorkspaceField<T extends FieldMetadataType>(
     const label = options.label.message ?? '';
     const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
 
+    /* @kvoip-woulz proprietary:begin */
+    const transformedSettings: FieldMetadataSettings | undefined =
+      options.settings
+        ? transformSettingsForStorage(options.settings)
+        : undefined;
+    /* @kvoip-woulz proprietary:end */
+
     metadataArgsStorage.addFields({
       target: object.constructor,
       standardId: options.standardId,
@@ -93,7 +105,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       icon: options.icon,
       defaultValue,
       options: options.options,
-      settings: options.settings,
+      settings: transformedSettings, // @kvoip-woulz proprietary
       isPrimary,
       isNullable,
       isSystem,
@@ -107,3 +119,32 @@ export function WorkspaceField<T extends FieldMetadataType>(
     });
   };
 }
+
+/* @kvoip-woulz proprietary:begin */
+function transformSettingsForStorage(
+  settings: FieldMetadataSettingsInput,
+): FieldMetadataSettings {
+  if (
+    settings &&
+    typeof settings === 'object' &&
+    'validation' in settings &&
+    settings.validation
+  ) {
+    const textSettings = settings as FieldMetadataTextSettingsInput;
+    const validation = textSettings.validation;
+
+    if (validation && typeof validation.errorMessage === 'object') {
+      const messageDescriptor = validation.errorMessage as MessageDescriptor;
+      return {
+        ...textSettings,
+        validation: {
+          ...validation,
+          errorMessage: messageDescriptor.message ?? '',
+        },
+      } as FieldMetadataSettings;
+    }
+  }
+
+  return settings as FieldMetadataSettings;
+}
+/* @kvoip-woulz proprietary:end */

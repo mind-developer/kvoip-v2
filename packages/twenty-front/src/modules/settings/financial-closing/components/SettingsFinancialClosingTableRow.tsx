@@ -1,9 +1,10 @@
+/* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 import { useBillingModelTranslations } from '@/settings/financial-closing/constants/BillingModelOptions';
 import { getBillingModelTagColor } from '@/settings/financial-closing/constants/LogLevelColors';
-import { FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
+import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/components';
@@ -66,40 +67,47 @@ export const SettingsFinancialClosingTableRow = ({
 
   const getDateDayText = () => {
     if (financialClosing.lastDayMonth) {
-      return (t`At` + ' ' + financialClosing.time + ' ' + t`of the last day of the month`);
+      return (
+        t`At` +
+        ' ' +
+        financialClosing.time +
+        ' ' +
+        t`of the last day of the month`
+      );
     }
-    return (t`At` + ' ' + financialClosing.time + ' ' + t`of every day` + ' ' + financialClosing.day);
+    return (
+      t`At` +
+      ' ' +
+      financialClosing.time +
+      ' ' +
+      t`of every day` +
+      ' ' +
+      financialClosing.day
+    );
   };
 
   return (
     <StyledContainer>
       <StyledContent>
         <StyledTextContent>
-          <OverflowingTextWithTooltip
-            text={financialClosing.name}
-          />
-          <StyledEmailText>
-            {getDateDayText()}
-          </StyledEmailText>
+          <OverflowingTextWithTooltip text={financialClosing.name} />
+          <StyledEmailText>{getDateDayText()}</StyledEmailText>
         </StyledTextContent>
 
         <StyledBillingModelsContainer>
-          {
-            financialClosing.billingModelIds && financialClosing.billingModelIds.length > 0 && (
+          {financialClosing.billingModelIds &&
+            financialClosing.billingModelIds.length > 0 && (
               <>
-                {
-                  financialClosing.billingModelIds.map((billingModel) => (
-                    <Tag
-                      key={financialClosing.id + "_" + billingModel}
-                      color={getBillingModelTagColor()}
-                      text={getBillingModelLabel(billingModel) ?? billingModel}
-                      weight="medium"
-                    />
-                  ))
-                }
+                {financialClosing.billingModelIds.map((billingModel) => (
+                  <Tag
+                    key={financialClosing.id + '_' + billingModel}
+                    color={getBillingModelTagColor()}
+                    text={getBillingModelLabel(billingModel) ?? billingModel}
+                    weight="medium"
+                  />
+                ))}
               </>
-            )
-          }
+            )}
         </StyledBillingModelsContainer>
       </StyledContent>
       {accessory}

@@ -35,6 +35,7 @@ import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
+import { ValidateFreeTrialDuration } from 'src/engine/core-modules/twenty-config/decorators/validate-free-trial-duration.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
@@ -565,12 +566,25 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
+    description: 'Enable or disable free trial for billing',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_IS_FREE_TRIAL_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
     description: 'Duration of free trial with credit card in days',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  @ValidateFreeTrialDuration({
+    message:
+      'Free trial duration with credit card must be greater than 0 when free trial is enabled',
+  })
   BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
 
   @ConfigVariablesMetadata({
@@ -581,6 +595,10 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  @ValidateFreeTrialDuration({
+    message:
+      'Free trial duration without credit card must be greater than 0 when free trial is enabled',
+  })
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @ConfigVariablesMetadata({
@@ -1205,10 +1223,6 @@ export class ConfigVariables {
 
   @IsString()
   @IsOptional()
-  META_WEBHOOK_URL: string;
-
-  @IsString()
-  @IsOptional()
   WEBHOOK_URL: string;
 
   // Onesignal
@@ -1269,18 +1283,29 @@ export class ConfigVariables {
   @IsOptional()
   FOCUS_NFE_BASE_URL: string;
 
-  @IsString()
-  @IsOptional()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Geo location production api url',
+    type: ConfigVariableType.STRING,
+  })
+  @IsNotEmpty()
+  @ValidateIf((env) => env.NODE_ENV === NodeEnvironment.PRODUCTION)
   GEOLOCATION_API_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
-    description: 'Last number rps issued',
-    type: ConfigVariableType.NUMBER,
+    description: 'Geo location test api url',
+    type: ConfigVariableType.STRING,
   })
-  @CastToPositiveNumber()
   @IsOptional()
-  LAST_NUMBER_RPS: number;
+  GEOLOCATION_TEST_API_URL: string = 'http://ip-api.com';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Geo location ip used for testing',
+    type: ConfigVariableType.STRING,
+  })
+  GEOLOCATION_TEST_IP: string = '198.51.100.42';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
@@ -1471,6 +1496,15 @@ export class ConfigVariables {
   INTER_SECRET_CERT_PATH: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'The e-mail address to send the invoices to for sandbox test.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_SANDBOX_EMAIL_TO?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Kvoip admin invite hash',
     isSensitive: true,
@@ -1479,6 +1513,34 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   KVOIP_ADMIN_INVITE_HASH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Softphone soap username.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_USERNAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TelephonyConfig,
+    description: 'Soap password.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  SOFTPHONE_SOAP_PASSWORD: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: '',
+    isSensitive: false,
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  LAST_NUMBER_RPS: number = 1000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

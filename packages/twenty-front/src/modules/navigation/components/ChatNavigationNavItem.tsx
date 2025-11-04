@@ -1,9 +1,8 @@
+import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { Theme, useTheme } from '@emotion/react';
+import { type Theme, useTheme } from '@emotion/react';
 // eslint-disable-next-line no-restricted-imports
-import { IconBrandWechat } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { IconMessageCircle } from '@tabler/icons-react';
 import { useLocation } from 'react-router-dom';
 import { IconBriefcase, IconHeadphones } from 'twenty-ui/display';
 
@@ -25,34 +24,34 @@ export const ChatNavigationNavItem = () => {
   const { pathname, search } = useLocation();
   const currentPathWithSearch = pathname + search;
 
-  const navigationPath = '/chat';
-
   const chatsPath = [
     {
       id: 'internalChat',
       label: 'Internal Chat',
-      path: `${navigationPath}/internal`,
+      path: AppPath.InternalChatCenter,
       Icon: IconBriefcase,
     },
     {
-      id: 'callCenter',
-      label: 'Call Center',
-      path: `${navigationPath}/call-center`,
+      id: 'clientChat',
+      label: 'Client Chat',
+      path: AppPath.ClientChatCenter,
       Icon: IconHeadphones,
     },
   ];
 
-  const shouldSubItemsBeDisplayed = pathname.startsWith(navigationPath);
+  const shouldSubItemsBeDisplayed = pathname.startsWith(
+    AppPath.ClientChatCenter,
+  );
 
   return (
     <>
       <NavigationDrawerItem
         label="Chat"
-        to={`${navigationPath}/internal`}
-        active={pathname.startsWith(navigationPath)}
-        Icon={IconBrandWechat}
+        to={AppPath.ClientChatCenter}
+        active={pathname.startsWith(AppPath.ClientChatCenter)}
+        Icon={IconMessageCircle}
       />
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {shouldSubItemsBeDisplayed && (
           <motion.div
             initial="hidden"
@@ -75,7 +74,7 @@ export const ChatNavigationNavItem = () => {
             })}
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };

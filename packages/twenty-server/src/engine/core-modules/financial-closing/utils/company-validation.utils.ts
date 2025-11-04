@@ -54,12 +54,12 @@ export class CompanyValidationUtils {
       // Para campos de endereço
       if (parentField === 'address') {
         const addressLabels: Record<string, string> = {
-          'addressNumber': t`Number`,
-          'addressStreet1': t`Street`,
-          'addressStreet2': t`Complemento`,
-          'addressCity': t`Cidade`,
-          'addressState': t`Estado`,
-          'addressPostcode': t`CEP`
+          'addressNumber': `Número`,
+          'addressStreet1': `Rua`,
+          'addressStreet2': `Complemento`,
+          'addressCity': `Cidade`,
+          'addressState': `Estado`,
+          'addressPostcode': `CEP`
         };
         return `${addressLabels[childField] || childField}`;
       }
@@ -67,7 +67,7 @@ export class CompanyValidationUtils {
       // Para campos de email
       if (parentField === 'emails') {
         const emailLabels: Record<string, string> = {
-          'primaryEmail': t`Email`
+          'primaryEmail': `Email`
         };
         return `${emailLabels[childField] || childField}`;
       }
@@ -80,7 +80,7 @@ export class CompanyValidationUtils {
     if (missingFields.length > 0) {
       const missingFieldLabels = missingFields.map(field => getFieldLabel(field));
       throw new Error(
-        t`Company is missing required fields` + ': ' + missingFieldLabels.join(', ')
+        `A empresa está faltando campos obrigatórios` + ': ' + missingFieldLabels.join(', ')
       );
     }
   }
@@ -92,7 +92,7 @@ export class CompanyValidationUtils {
   static validateCep(cep: string): void {
     if (cep.replace(/\D/g, '').length !== 8) {
       throw new Error(
-        t`The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters`
+        `O campo CEP da empresa está incorreto, deve ter 8 números e preferencialmente sem caracteres especiais`
       );
     }
   }
@@ -104,7 +104,7 @@ export class CompanyValidationUtils {
   static validateState(state: string): void {
     if (!isValidBrazilianState(state)) {
       throw new Error(
-        t`The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)`
+        `O campo estado da empresa está incorreto, deve ser um estado válido do Brasil (SP, RJ, MG, etc.)`
       );
     }
   }
@@ -124,28 +124,28 @@ export class CompanyValidationUtils {
     // Verificar se pelo menos um percentual está preenchido
     if (percentNfcom <= 0 && percentNfse <= 0) {
       throw new Error(
-        t`At least one NF percentage must be filled for the company (percentNfcom or percentNfse)`
+        `Pelo menos um percentual de NF deve ser preenchido para a empresa (percentNfcom ou percentNfse)`
       );
     }
 
     // Verificar se os percentuais são números válidos
     if (isNaN(percentNfcom) || isNaN(percentNfse)) {
       throw new Error(
-        t`The company's NF percentages must be valid numbers`
+        `Os percentuais de NF devem ser números válidos`
       );
     }
 
     // Verificar se os percentuais estão no range válido (0-100)
     if (percentNfcom < 0 || percentNfcom > 100 || percentNfse < 0 || percentNfse > 100) {
       throw new Error(
-        t`The company's NF percentages must be between 0 and 100`
+        `Os percentuais de NF devem estar entre 0 e 100`
       );
     }
 
     // Verificar se a soma não excede 100%
     if (totalPercent > 100) {
       throw new Error(
-        t`The sum of the company's NF percentages cannot exceed 100%. Current: ` + `${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`
+        `A soma dos percentuais de NF não pode exceder 100%. Atual: ` + `${totalPercent}% (NFCom: ${percentNfcom}%, NFSe: ${percentNfse}%)`
       );
     }
   }
