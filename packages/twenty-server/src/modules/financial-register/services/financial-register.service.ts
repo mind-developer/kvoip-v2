@@ -273,6 +273,12 @@ export class FinancialRegisterService {
         { shouldBypassPermissionChecks: true },
       );
 
+    /* @kvoip-woulz proprietary:begin */
+    if (!register.amount || !register.dueDate) {
+      throw new Error('Amount and due date are required to generate bank slip');
+    }
+    /* @kvoip-woulz proprietary:end */
+
     const chargeData = {
       id: registerId,
       authorId: register.createdBy?.workspaceMemberId || 'system',
@@ -407,6 +413,12 @@ export class FinancialRegisterService {
         'Register is not marked as a telephony recharge',
       );
     }
+
+    /* @kvoip-woulz proprietary:begin */
+    if (!register.amount) {
+      throw new BadRequestException('Amount is required to process recharge');
+    }
+    /* @kvoip-woulz proprietary:end */
 
     // Get recharge amount
     const rechargeAmount = register.amount.amountMicros / 1000000;

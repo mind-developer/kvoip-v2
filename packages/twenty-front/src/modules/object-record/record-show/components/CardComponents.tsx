@@ -13,6 +13,10 @@ import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { TraceableFieldsCard } from '@/traceable/record-show/TraceableFieldsCard';
 import { TraceableCardContainer } from '@/traceable/record-show/components/TraceableCardContainer';
+/* @kvoip-woulz proprietary:begin */
+import { FinancialRegisterFieldsCard } from '@/financial-register/record-show/FinancialRegisterFieldsCard';
+import { FinancialRegisterCardContainer } from '@/financial-register/record-show/components/FinancialRegisterCardContainer';
+/* @kvoip-woulz proprietary:end */
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
@@ -225,6 +229,20 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       />
     </TraceableCardContainer>
   ),
+
+  /* @kvoip-woulz proprietary:begin */
+  [CardType.FinancialRegisterFieldsCard]: ({
+    targetableObject,
+    isInRightDrawer,
+  }) => (
+    <FinancialRegisterCardContainer isInRightDrawer={isInRightDrawer}>
+      <FinancialRegisterFieldsCard
+        objectNameSingular={targetableObject.targetObjectNameSingular}
+        objectRecordId={targetableObject.id}
+      />
+    </FinancialRegisterCardContainer>
+  ),
+  /* @kvoip-woulz proprietary:end */
 
   [CardType.ChatbotCard]: ({ targetableObject }) => (
     <ChatbotFlow targetableObjectId={targetableObject.id} />

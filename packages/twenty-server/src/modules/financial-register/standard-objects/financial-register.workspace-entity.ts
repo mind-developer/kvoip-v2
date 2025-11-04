@@ -129,6 +129,7 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'orange',
       },
     ],
+    defaultValue: `'${RegisterType.RECEIVABLE}'`,
   })
   @WorkspaceFieldIndex()
   registerType: RegisterType;
@@ -205,7 +206,8 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Amount to receive or pay`,
     icon: 'IconCurrencyDollar',
   })
-  amount: CurrencyMetadata;
+  @WorkspaceIsNullable()
+  amount: CurrencyMetadata | null;
 
   @WorkspaceField({
     standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.dueDate,
@@ -214,7 +216,8 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Due date for payment or receipt`,
     icon: 'IconCalendarEvent',
   })
-  dueDate: string;
+  @WorkspaceIsNullable()
+  dueDate: string | null;
 
   @WorkspaceField({
     standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.cpfCnpj,

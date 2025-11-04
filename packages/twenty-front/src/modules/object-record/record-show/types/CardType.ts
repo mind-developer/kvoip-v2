@@ -12,4 +12,5 @@ export enum CardType {
   RichTextCard = 'RichTextCard',
   ChatbotCard = 'ChatbotCard',
   TraceableFieldsCard = 'TraceableFieldsCard',
+  FinancialRegisterFieldsCard = 'FinancialRegisterFieldsCard', // @kvoip-woulz proprietary
 }
