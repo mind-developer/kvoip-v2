@@ -130,6 +130,8 @@ export const ChatNavigationDrawer = () => {
         return '📄 Document';
       case ChatMessageType.VIDEO:
         return '🎥 Video';
+      case ChatMessageType.STICKER:
+        return '🌠 Sticker';
       default:
         return t`Click to open chat`;
     }

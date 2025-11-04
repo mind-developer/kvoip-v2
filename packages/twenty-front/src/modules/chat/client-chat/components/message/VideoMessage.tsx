@@ -20,7 +20,6 @@ const StyledVideoWrapper = styled.div<{ isPending: boolean }>`
 `;
 
 const StyledTime = styled.p`
-  color: ${({ theme }) => theme.font.color.inverted};
   min-width: 30px;
   @keyframes appear {
     0% {

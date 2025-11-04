@@ -226,6 +226,27 @@ export class WhatsAppDriver implements ChatProviderDriver {
         .split('&')[0]
         .replace('primary=', '');
       fields.to = primaryAddressingMode;
+      if (clientChatMessage.repliesTo) {
+        const repliesToMessage = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+            workspaceId,
+            'clientChatMessage',
+          )
+        ).findOne({ where: { id: clientChatMessage.repliesTo } });
+        if (repliesToMessage) {
+          fields.quoted = {
+            key: {
+              remoteJid: primaryAddressingMode,
+              fromMe: false,
+              id: repliesToMessage.providerMessageId,
+              type: repliesToMessage.type,
+            },
+            message: {
+              conversation: clientChatMessage.textBody,
+            },
+          };
+        }
+      }
 
       const response = await axios.post(baileysUrl, { fields });
       return response.data.messages[0].id;

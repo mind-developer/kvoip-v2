@@ -11,6 +11,9 @@ import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
@@ -45,12 +48,11 @@ const StyledChatContainer = styled.div`
 const StyledMessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
   max-width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-inline: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
   padding-right: ${({ theme }) => theme.spacing(1.5)};
@@ -136,12 +138,18 @@ const StyledModalImage = styled.img`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 `;
 
+const CHAT_FOCUS_ID = 'chat-component';
+
 export const Chat = () => {
   const { t } = useLingui();
   const { chatId } = useParams() || '';
   const { chats: clientChats } = useClientChatsContext();
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const [messageInput, setMessageInput] = useState<string>('');
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.ClientChat,
@@ -170,6 +178,9 @@ export const Chat = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<
+    string | null
+  >(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -178,10 +189,35 @@ export const Chat = () => {
   );
 
   useEffect(() => {
+    pushFocusItemToFocusStack({
+      focusId: CHAT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.SIDE_PANEL,
+        instanceId: CHAT_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+    return () => {
+      removeFocusItemFromFocusStackById({ focusId: CHAT_FOCUS_ID });
+    };
+  }, [pushFocusItemToFocusStack, removeFocusItemFromFocusStackById]);
+
+  useEffect(() => {
     if (selectedChat?.id) {
       updateOneRecord({
         idToUpdate: selectedChat.id,
         updateOneRecordInput: { unreadMessagesCount: 0 },
+      });
+    }
+    setReplyingTo(null);
+    if (chatContainerRef.current && selectedChat?.id && dbMessages.length > 0) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        left: 0,
+        behavior: 'instant',
       });
     }
   }, [selectedChat?.id]);
@@ -190,19 +226,6 @@ export const Chat = () => {
     if (dbMessages.length > 0)
       setLastMessage(dbMessages[dbMessages.length - 1]);
   }, [dbMessages.length]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (chatContainerRef.current && selectedChat?.id) {
-        chatContainerRef.current.scrollTo({
-          top: chatContainerRef.current.scrollHeight + 500,
-          left: 0,
-          behavior: 'smooth',
-        });
-      }
-    }, 1000);
-    return () => clearTimeout(timeout);
-  }, [selectedChat?.id]);
 
   const sendAudioMessage = useCallback(
     async (chunks: Blob[]) => {
@@ -272,15 +295,95 @@ export const Chat = () => {
   }, [sendAudioMessage, enqueueErrorSnackBar, t]);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight + 1000,
-        behavior: 'smooth',
+    if (!chatContainerRef.current) return;
+
+    const container = chatContainerRef.current;
+    let lastScrollHeight = container.scrollHeight;
+
+    const scrollToBottomIfNear = () => {
+      if (!container) return;
+
+      const currentScrollHeight = container.scrollHeight;
+      const scrollTop = container.scrollTop;
+      const clientHeight = container.clientHeight;
+      const scrollBottom = scrollTop + clientHeight;
+
+      // If content height increased and we were near the bottom (within 400px), scroll to bottom
+      if (
+        currentScrollHeight > lastScrollHeight &&
+        scrollBottom >= lastScrollHeight - 400
+      ) {
+        if (container) {
+          container.scrollTo({
+            top: currentScrollHeight,
+            left: 0,
+            behavior: 'instant',
+          });
+        }
+      }
+
+      lastScrollHeight = currentScrollHeight;
+    };
+
+    const resizeObserver = new ResizeObserver(scrollToBottomIfNear);
+    resizeObserver.observe(container);
+
+    // Also listen for media load events to catch when images and videos load
+    const handleMediaLoad = () => {
+      scrollToBottomIfNear();
+    };
+
+    const attachMediaListeners = () => {
+      const images = container.querySelectorAll('img');
+      images.forEach((img) => {
+        if (!img.complete) {
+          img.addEventListener('load', handleMediaLoad, { once: true });
+        }
       });
-    }
-  }, [dbMessages.length]);
+
+      // Listen for video load events (videos need loadedmetadata to know dimensions)
+      const videos = container.querySelectorAll('video');
+      videos.forEach((video) => {
+        if (video.readyState < 1) {
+          // Use loadedmetadata event which fires when video dimensions are available
+          video.addEventListener('loadedmetadata', handleMediaLoad, {
+            once: true,
+          });
+          video.addEventListener('loadeddata', handleMediaLoad, { once: true });
+        }
+      });
+    };
+
+    attachMediaListeners();
+
+    // Use MutationObserver to catch dynamically added media
+    const mutationObserver = new MutationObserver(() => {
+      attachMediaListeners();
+      scrollToBottomIfNear();
+    });
+
+    mutationObserver.observe(container, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      const images = container.querySelectorAll('img');
+      images.forEach((img) => {
+        img.removeEventListener('load', handleMediaLoad);
+      });
+      const videos = container.querySelectorAll('video');
+      videos.forEach((video) => {
+        video.removeEventListener('loadedmetadata', handleMediaLoad);
+        video.removeEventListener('loadeddata', handleMediaLoad);
+      });
+    };
+  }, [selectedChat?.id]);
 
   const handleSendMessage = useCallback(async () => {
+    setReplyingTo(null);
     if (!chatContainerRef.current) return;
 
     if (recordingState === 'recording' && mediaRecorder) {
@@ -373,23 +476,82 @@ export const Chat = () => {
     setIsModalOpen(true);
   }, []);
 
+  const scrollToMessage = useCallback(
+    (messageId: string) => {
+      if (!chatContainerRef.current) return;
+
+      const messageInArray = dbMessages.find(
+        (msg) =>
+          (msg as ClientChatMessage & { id?: string }).id === messageId ||
+          msg.providerMessageId === messageId,
+      );
+
+      if (!messageInArray) {
+        return;
+      }
+
+      const targetMessageId =
+        (messageInArray as ClientChatMessage & { id?: string }).id ||
+        messageInArray.providerMessageId;
+
+      const messageElement = chatContainerRef.current.querySelector(
+        `[data-message-id="${targetMessageId}"]`,
+      );
+
+      if (messageElement) {
+        setHighlightedMessageId(targetMessageId);
+
+        messageElement.scrollIntoView({
+          behavior: 'instant',
+          block: 'center',
+        });
+
+        const timeout = setTimeout(() => {
+          setHighlightedMessageId(null);
+        }, 3000);
+        return () => clearTimeout(timeout);
+      }
+    },
+    [dbMessages, highlightedMessageId],
+  );
+
   const renderedMessages = useMemo(() => {
     return dbMessages.map((message: ClientChatMessage, index: number) => {
       const lastOfRow = dbMessages[index + 1]?.from !== message.from;
+      const messageId =
+        (message as ClientChatMessage & { id?: string }).id ||
+        message.providerMessageId;
+      const isHighlighted = highlightedMessageId === messageId;
       return (
         <ChatMessageRenderer
           key={message.providerMessageId || `message-${index}`}
           message={message}
           index={index}
-          isLastOfRow={lastOfRow}
           onImageClick={handleImageClick}
           animateDelay={(index * 0.05) / (dbMessages.length * 0.5)}
-          replyingTo={replyingTo}
-          setReplyingTo={(messageId: string) => setReplyingTo(messageId)}
+          setReplyingTo={(messageId: string | null) => setReplyingTo(messageId)}
+          onScrollToMessage={scrollToMessage}
+          isHighlighted={isHighlighted}
+          isLastOfRow={lastOfRow}
         />
       );
     });
-  }, [dbMessages, handleImageClick, setReplyingTo]);
+  }, [
+    dbMessages,
+    handleImageClick,
+    setReplyingTo,
+    scrollToMessage,
+    highlightedMessageId,
+  ]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'instant',
+      });
+    }
+  }, [replyingTo]);
 
   if (!selectedChat) {
     return <NoSelectedChat />;
@@ -424,6 +586,7 @@ export const Chat = () => {
           lastMessage={lastMessage}
           onSendMessage={handleSendMessage}
           replyingTo={replyingTo}
+          setReplyingTo={(messageId: string | null) => setReplyingTo(messageId)}
         />
       );
     }

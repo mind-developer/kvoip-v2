@@ -1,8 +1,7 @@
 import { AudioVisualizer } from '@/chat/client-chat/components/effects/AudioVisualizer';
 import { UploadMediaPopup } from '@/chat/client-chat/components/input/UploadMediaPopup';
-import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
+import { MessageQuotePreview } from '@/chat/client-chat/components/message/MessageQuotePreview';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -13,7 +12,6 @@ import {
 } from 'twenty-shared/types';
 import { IconPlayerPause, IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { formatDate } from '~/utils/date-utils';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -62,6 +60,11 @@ const StyledIconButton = styled(IconButton)`
   width: 24px;
 `;
 
+const StyledReplyToText = styled.span`
+  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
 type ChatMessageInputProps = {
   selectedChat: ClientChat;
   newMessage: string;
@@ -74,6 +77,7 @@ type ChatMessageInputProps = {
   lastMessage: ClientChatMessage | null;
   onSendMessage: () => void;
   replyingTo: string | null;
+  setReplyingTo: (messageId: string | null) => void;
 };
 
 export const ChatMessageInput = memo(
@@ -89,6 +93,7 @@ export const ChatMessageInput = memo(
     lastMessage,
     onSendMessage,
     replyingTo,
+    setReplyingTo,
   }: ChatMessageInputProps) => {
     const theme = useTheme();
     const { getIcon } = useIcons();
@@ -192,18 +197,21 @@ export const ChatMessageInput = memo(
               width: '100%',
             }}
           >
-            {replyingToMessage && (
-              <MessageBubble
-                message={replyingToMessage as ClientChatMessage & ObjectRecord}
-                time={formatDate(replyingToMessage?.createdAt ?? '', 'HH:mm')}
-                hasTail={false}
-                animateDelay={0}
-                replyingTo={replyingTo}
-                setReplyingTo={() => {}}
-                isReply={true}
+            {replyingToMessage && replyingTo && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing(1),
+                  padding: theme.spacing(1),
+                }}
               >
-                <span>{replyingToMessage?.textBody ?? ''}</span>
-              </MessageBubble>
+                <StyledReplyToText>Reply to:</StyledReplyToText>
+                <MessageQuotePreview
+                  messageId={replyingToMessage.id}
+                  onClose={() => setReplyingTo(null)}
+                />
+              </div>
             )}
             <StyledInput
               autoComplete="off"
