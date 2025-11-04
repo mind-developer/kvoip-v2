@@ -1,7 +1,6 @@
-import { type NewLogicNodeData } from '@/chatbot/types/LogicNodeDataType';
 import { v4 } from 'uuid';
 
-export const createNode = (type: string) => {
+export const createNode = (type: 'text' | 'image' | 'file' | 'conditional') => {
   const baseNode = {
     id: v4(),
     type,
@@ -17,26 +16,11 @@ export const createNode = (type: string) => {
           title: 'Send text',
         },
       };
-    case 'condition': {
+    case 'conditional': {
       // TODO: Missing 'recordType' property
-      // @ts-expect-error Incorrect type
-      const initialLogicNode: NewLogicNodeData = {
-        option: '1',
-        comparison: '==',
-        sectorId: '',
-        conditionValue: '||',
-        recordType: 'text',
-      };
-
       return {
         ...baseNode,
-        data: {
-          title: 'Conditional node',
-          logic: {
-            logicNodes: [0],
-            logicNodeData: [initialLogicNode],
-          },
-        },
+        data: { title: 'Conditional node' },
       };
     }
     case 'image':

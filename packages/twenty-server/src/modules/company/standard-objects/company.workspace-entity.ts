@@ -229,6 +229,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`% NF-e`,
     description: msg`Percentage for Eletronic Invoice (Electronic Invoice for Products)`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfe: number | null;
@@ -239,6 +242,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`% NFS-e`,
     description: msg`Percentage for Electronic Service Invoice (Electronic Service Invoice)`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfse: number | null;
@@ -249,6 +255,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`% NFC-e`,
     description: msg`Percentage for Electronic Consumer Invoice (Electronic Consumer Invoice)`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfce: number | null;
@@ -259,6 +268,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`% NF-Com`,
     description: msg`Percentage for Communication Invoice (Communication Invoice)`,
     icon: 'IconPercentage',
+    settings: {
+      type: 'percentage',
+    },
   })
   @WorkspaceIsNullable()
   percentNfcom: number | null;

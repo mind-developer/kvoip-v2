@@ -3,7 +3,6 @@ import {
   ChatMessageDeliveryStatus,
   type ClientChatMessage,
 } from 'twenty-shared/types';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledImageContainer = styled.div<{ isPending: boolean }>`
@@ -39,14 +38,12 @@ const ImageMessage = ({
 }) => {
   const isPending =
     message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
-  const imageUrl = message.attachmentUrl;
-  const fullImageUrl = REACT_APP_SERVER_BASE_URL + '/files/' + imageUrl;
 
   return (
     <StyledImageContainer onClick={onClick} isPending={isPending}>
       <StyledImageImg
         isPending={isPending}
-        src={fullImageUrl}
+        src={message.attachmentUrl ?? ''}
         width="100%"
         height="100%"
       />

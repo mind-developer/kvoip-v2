@@ -184,7 +184,8 @@ const TransferChatDropdownContent = () => {
   const filteredSectors = sectors.filter(
     (sector) =>
       sector.id !== selectedChat?.sectorId ||
-      selectedChat.status === ClientChatStatus.ASSIGNED,
+      selectedChat.status === ClientChatStatus.ASSIGNED ||
+      selectedChat.status === ClientChatStatus.CHATBOT,
   );
 
   const handleTransferToAgent = (member: any) => {

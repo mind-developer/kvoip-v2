@@ -1,36 +1,80 @@
-import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
+import { createNode } from '@/chatbot/utils/createNode';
 import { type XYPosition, useReactFlow } from '@xyflow/react';
+import { v4 } from 'uuid';
 import { type GenericNode, type GenericNodeData } from '../types/GenericNode';
 
 export const useHandleNodeValue = () => {
-  const chatbotFlow = useGetChatbotFlowState();
-  const { updateNodeData } = useReactFlow();
+  const { updateNodeData, setNodes, screenToFlowPosition } = useReactFlow();
 
   const saveDataValue = (
     key: keyof GenericNodeData,
     value: any,
     node: GenericNode,
   ) => {
-    if (!chatbotFlow) throw new Error(`Could not find flow state to update`);
-    const updatedNodes = chatbotFlow.nodes.filter(
-      (filterNode) => filterNode.id !== node.id,
-    );
-    updatedNodes.push({ ...node, data: { ...node.data, [key]: value } });
-    updateNodeData(node.id, { ...node.data, [key]: value });
+    const updatedData = { ...node.data, [key]: value };
+    // Sanitize outgoingNodeId to prevent self-referencing loops
+    if ((updatedData as any).outgoingNodeId === node.id) {
+      (updatedData as any).outgoingNodeId = '';
+    }
+    updateNodeData(node.id, updatedData);
   };
 
   const savePositionValue = (position: XYPosition, node: GenericNode) => {
-    if (!chatbotFlow)
-      throw new Error(`Could not find flow state to update: ${chatbotFlow}`);
-    const updatedNodes = chatbotFlow.nodes.filter(
-      (filterNode) => filterNode.id !== node.id,
-    );
-    updatedNodes.push({ ...node, position });
-    updateNodeData(node.id, { ...node.data, position });
+    // Position is stored on the node itself, not in data
+    // This function might not be needed, but keeping it for consistency
+    const updatedData = { ...node.data };
+    // Sanitize outgoingNodeId to prevent self-referencing loops
+    if ((updatedData as any).outgoingNodeId === node.id) {
+      (updatedData as any).outgoingNodeId = '';
+    }
+    updateNodeData(node.id, updatedData);
+  };
+
+  const sanitizeNode = (node: GenericNode): GenericNode => {
+    // Sanitize outgoingNodeId to prevent self-referencing loops
+    if ((node.data as any).outgoingNodeId === node.id) {
+      return {
+        ...node,
+        data: { ...node.data, outgoingNodeId: '' } as any,
+      };
+    }
+    return node;
+  };
+
+  const addNode = (
+    type: 'text' | 'image' | 'file' | 'conditional',
+    cursorPosition?: { x: number; y: number },
+  ) => {
+    setNodes((prevNodes) => {
+      const isFirstNode = prevNodes.length === 0;
+      const baseNode = createNode(type);
+
+      // Convert cursor position from screen coordinates to flow coordinates
+      let position = baseNode.position;
+      if (cursorPosition) {
+        const flowPosition = screenToFlowPosition({
+          x: cursorPosition.x,
+          y: cursorPosition.y,
+        });
+        position = flowPosition;
+      }
+
+      const newNode = {
+        ...baseNode,
+        id: v4(),
+        position,
+        data: {
+          ...baseNode.data,
+          nodeStart: isFirstNode,
+        },
+      };
+      return [...prevNodes, sanitizeNode(newNode)];
+    });
   };
 
   return {
     saveDataValue,
     savePositionValue,
+    addNode,
   };
 };

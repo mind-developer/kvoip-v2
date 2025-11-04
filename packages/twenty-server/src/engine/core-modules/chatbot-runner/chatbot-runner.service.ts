@@ -33,14 +33,15 @@ export class ChatbotRunnerService {
       },
     });
 
-    this.executors[i.providerIntegrationId + '_' + i.clientChat.id] = executor;
+    this.executors[i.clientChat.id] = executor;
 
     return executor;
   }
 
   getExecutor(key: string): ExecuteFlow | undefined {
     try {
-      return this.executors[key];
+      const executor = this.executors[key];
+      return executor;
     } catch {
       return undefined;
     }
@@ -54,15 +55,28 @@ class ExecuteFlow {
   currentNodeId: string | undefined;
   chosenInput: string | undefined;
   constructor(private i: ExecutorInput) {
+    console.log(
+      'ExecuteFlow constructor - flowNodes:',
+      JSON.stringify(this.i.chatbot.flowNodes, null, 2),
+    );
+    /* @kvoip-woulz proprietary:begin */
     this.currentNodeId = this.i.chatbot.flowNodes.find(
       (node) => node.data?.nodeStart,
     )?.id;
+    /* @kvoip-woulz proprietary:end */
+    console.log('ExecuteFlow constructor - currentNodeId:', this.currentNodeId);
   }
 
   public async runFlow(incomingMessage: string) {
+    console.log('runFlow called with incomingMessage:', incomingMessage);
+    console.log('runFlow - current currentNodeId:', this.currentNodeId);
     while (this.currentNodeId) {
       const currentNode = this.i.chatbot.flowNodes.find(
         (node) => node.id === this.currentNodeId,
+      );
+      console.log(
+        'runFlow - currentNode found:',
+        JSON.stringify(currentNode, null, 2),
       );
       if (!currentNode || typeof currentNode.type !== 'string') {
         console.log('current node not found or type not string');
@@ -73,6 +87,10 @@ class ExecuteFlow {
         console.log('handler not found for node', currentNode.type);
         break;
       }
+      console.log(
+        'runFlow - calling handler.process for type:',
+        currentNode.type,
+      );
       const nextNodeId = await handler.process({
         provider: this.i.provider,
         providerIntegrationId: this.i.providerIntegrationId,
@@ -96,6 +114,13 @@ class ExecuteFlow {
           }
         }
         if (!nextNodeId) {
+          if (
+            this.i.onFinish &&
+            ['text', 'image', 'file', 'condition'].includes(currentNode.type)
+          ) {
+            console.log('on finish', currentNode.type, this.chosenInput);
+            this.i.onFinish(currentNode, this.chosenInput);
+          }
           return null;
         }
       }

@@ -71,6 +71,8 @@ export enum ChatMessageType {
   DOCUMENT = 'DOCUMENT',
   STICKER = 'STICKER',
   EVENT = 'EVENT',
+  WHISPER = 'WHISPER',
+  UNSUPPORTED = 'UNSUPPORTED',
 }
 export enum ChatMessageDeliveryStatus {
   PENDING = 'PENDING',

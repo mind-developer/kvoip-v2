@@ -1,13 +1,11 @@
 import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
-import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
 import { useGetWhatsappTemplates } from '@/chat/client-chat/hooks/useGetWhatsappTemplates';
-import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
+import { useSendTemplateMessage } from '@/chat/client-chat/hooks/useSendTemplateMessage';
 import { type WhatsAppTemplate } from '@/chat/types/WhatsAppTemplate';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { type Person } from '@/people/types/Person';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { FormCountryCodeSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -15,30 +13,17 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconBrandMeta, IconX } from '@tabler/icons-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ChatIntegrationProvider,
-  ChatMessageFromType,
-  ChatMessageToType,
-  ChatMessageType,
-  ClientChatStatus,
-} from 'twenty-shared/types';
 import { Tag } from 'twenty-ui/components';
-import { H2Title } from 'twenty-ui/display';
+import { Checkmark, H2Title } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
-import { v4 } from 'uuid';
 
-const StyledTemplateListContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-`;
+const StyledTemplateListContainer = styled.div``;
 
 const StyledHeader = styled.div`
   display: flex;
@@ -49,8 +34,12 @@ const StyledFooter = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFormCountryCodeSelectInput = styled(FormCountryCodeSelectInput)`
+  max-width: 50px !important;
 `;
 
 export const SendTemplateModal = (): React.ReactNode => {
@@ -84,29 +73,35 @@ export const SendTemplateModal = (): React.ReactNode => {
   }, [selectedIntegrationId]);
 
   const { closeModal } = useModal();
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
-    null,
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
+    'BR',
   );
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<
+    string | number | null
+  >(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     null,
   );
 
-  const { sendClientChatMessage } = useSendClientChatMessage();
-  const { createOneRecord: createOnePerson } = useCreateOneRecord<Person>({
-    objectNameSingular: 'person',
-  });
-  const { deleteOneRecord: deleteOnePerson } = useDeleteOneRecord({
-    objectNameSingular: 'person',
-  });
-  const { deleteOneRecord: deleteOneClientChat } = useDeleteOneRecord({
-    objectNameSingular: 'clientChat',
-  });
-  const { createOneRecord: createOneClientChat } = useCreateOneRecord({
-    objectNameSingular: 'clientChat',
-  });
-
   const { templates, refetch } = useGetWhatsappTemplates(
     selectedIntegrationId ?? '',
+  );
+
+  const selectedTemplate = useMemo(
+    () =>
+      templates.find(
+        (template: WhatsAppTemplate) => template.id === selectedTemplateId,
+      ) ?? null,
+    [templates, selectedTemplateId],
+  );
+
+  const { sendTemplateMessage } = useSendTemplateMessage(
+    selectedCountryCode
+      ? `${selectedCountryCode}${selectedPhoneNumber?.toString().replace('+', '') ?? null}`
+      : null,
+    selectedIntegrationId,
+    selectedTemplateId,
+    selectedTemplate,
   );
 
   const isModalOpen = useRecoilComponentValue(
@@ -118,96 +113,27 @@ export const SendTemplateModal = (): React.ReactNode => {
     refetch();
   }, [isModalOpen, refetch]);
 
-  const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
-  const agentId = workspaceMemberWithAgent?.agent?.id;
-
-  const selectedTemplate = useMemo(
-    () =>
-      templates.find(
-        (template: WhatsAppTemplate) => template.id === selectedTemplateId,
-      ) ?? null,
-    [templates, selectedTemplateId],
-  );
-
-  const handleSendTemplate = useCallback(() => {
-    let clientChatId: string = v4();
-    let personId: string = v4();
-    createOnePerson({
-      id: personId,
-      name: {
-        firstName: selectedPhoneNumber + '(Chat)',
-        lastName: '',
-      },
-      phones: {
-        primaryPhoneNumber: selectedPhoneNumber ?? '',
-        primaryPhoneCallingCode: '',
-        primaryPhoneCountryCode: 'BR',
-        additionalPhones: [],
-      },
-    })
-      .then((person) => {
-        personId = person.id;
-        createOneClientChat({
-          id: clientChatId,
-          personId: person.id,
-          //todo: get provider from integration
-          providerContactId: selectedPhoneNumber ?? '',
-          whatsappIntegrationId: selectedIntegrationId ?? '',
-          lastMessageDate: new Date(),
-          lastMessageType: ChatMessageType.TEMPLATE,
-          lastMessagePreview: null,
-          unreadMessagesCount: 0,
-          status: ClientChatStatus.ASSIGNED,
-          agentId,
-        })
-          .then((clientChat) => {
-            clientChatId = clientChat.id;
-            if (!agentId) {
-              return;
-            }
-            sendClientChatMessage({
-              clientChatId: clientChat.id,
-              fromType: ChatMessageFromType.AGENT,
-              from: agentId ?? '',
-              to: personId ?? '',
-              provider: ChatIntegrationProvider.WHATSAPP,
-              toType: ChatMessageToType.PERSON,
-              type: ChatMessageType.TEMPLATE,
-              providerIntegrationId: selectedIntegrationId ?? '',
-              templateId: selectedTemplateId ?? '',
-              templateLanguage: selectedTemplate?.language ?? null,
-              templateName: selectedTemplate?.name ?? null,
-            });
-            closeModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
-          })
-          .catch((error) => {
-            console.error(error);
-            deleteOnePerson(personId);
-            deleteOneClientChat(clientChatId);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        deleteOnePerson(personId);
-        deleteOneClientChat(clientChatId);
-      })
-      .finally(() => {
+  const handleSendTemplate = useCallback(async () => {
+    if (!selectedPhoneNumber || !selectedIntegrationId || !selectedTemplateId) {
+      return;
+    }
+    await sendTemplateMessage({
+      selectedPhoneNumber: selectedPhoneNumber.toString(),
+      selectedIntegrationId,
+      selectedTemplateId,
+      selectedTemplate,
+      onSuccess: () => {
         setSelectedPhoneNumber(null);
         setSelectedIntegrationId('');
         setSelectedTemplateId(null);
-      });
+      },
+    });
   }, [
-    agentId,
-    closeModal,
-    createOneClientChat,
-    createOnePerson,
-    deleteOneClientChat,
-    deleteOnePerson,
     selectedIntegrationId,
     selectedPhoneNumber,
     selectedTemplate,
     selectedTemplateId,
-    sendClientChatMessage,
+    sendTemplateMessage,
     setSelectedIntegrationId,
     setSelectedPhoneNumber,
     setSelectedTemplateId,
@@ -257,15 +183,21 @@ export const SendTemplateModal = (): React.ReactNode => {
         />
       </StyledTemplateListContainer>
       <StyledFooter>
-        <TextInput
-          fullWidth
-          placeholder="Phone number"
-          type="tel"
-          value={selectedPhoneNumber ?? ''}
-          onChange={(text) => setSelectedPhoneNumber(text)}
+        <StyledFormCountryCodeSelectInput
+          label={t`Recipient's country`}
+          selectedCountryCode={selectedCountryCode ?? ''}
+          onChange={(countryCode) => setSelectedCountryCode(countryCode)}
+        />
+        <FormNumberFieldInput
+          label={t`Recipient's phone number`}
+          defaultValue={selectedPhoneNumber ?? ''}
+          onChange={(phoneNumber) => setSelectedPhoneNumber(phoneNumber)}
+          readonly={false}
         />
         <Button
-          disabled={!selectedPhoneNumber || !selectedTemplateId}
+          disabled={
+            !selectedPhoneNumber || !selectedTemplateId || !selectedCountryCode
+          }
           onClick={handleSendTemplate}
           title="Send"
         />
@@ -275,27 +207,59 @@ export const SendTemplateModal = (): React.ReactNode => {
 };
 
 const StyledTemplateList = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledCard = styled(Card)<{ isSelected: boolean }>`
+const StyledCard = styled(Card)<{
+  isSelected: boolean;
+  isPaddingCard?: boolean;
+}>`
   outline: ${({ theme, isSelected }) =>
     isSelected ? `2px solid ${theme.color.blue}` : 'none'};
   cursor: pointer;
   &:hover {
-    outline: ${({ theme, isSelected }) =>
-      isSelected
-        ? `2px solid ${theme.color.blue}`
-        : `2px solid ${theme.color.gray30}`};
+    ${({ isPaddingCard, theme, isSelected }) =>
+      !isPaddingCard
+        ? `outline: ${
+            isSelected
+              ? `2px solid ${theme.color.blue}`
+              : `2px solid ${theme.color.gray30}`
+          };`
+        : ''}
   }
+  ${({ isPaddingCard, theme }) =>
+    isPaddingCard &&
+    css`
+      border: 1px dashed ${theme.border.color.medium};
+      background-color: transparent;
+      box-shadow: none;
+    `}
+  min-height: 180px;
 `;
 
 const StyledTag = styled(Tag)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledCardContent = styled(CardContent)<{ enabled: boolean }>`
+  cursor: ${({ enabled }) => (enabled ? 'pointer' : 'not-allowed')};
+  opacity: ${({ enabled }) => (enabled ? 1 : 0.5)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  height: 100%;
+`;
+
+const StyledTemplateHeader = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledCheckmark = styled(Checkmark)<{ color: string }>`
+  background-color: ${({ color }) => color};
 `;
 
 const TemplateList = memo(
@@ -308,32 +272,69 @@ const TemplateList = memo(
     selectedTemplateId: string | null;
     setSelectedTemplateId: (templateId: string) => void;
   }) => {
-    const items = useMemo(
-      () =>
-        templates.map((template) => (
-          <StyledCard
-            isSelected={selectedTemplateId === template.id}
-            key={template.id}
-            onClick={() => setSelectedTemplateId(template.id)}
-          >
-            <CardContent>
-              <StyledTag
-                variant="outline"
-                color={template.status === 'APPROVED' ? 'green' : 'red'}
-                text={template.status}
-              />
-              <H2Title title={template.name} />
-              <p>
-                {template.components
-                  .map((component) => component.text)
-                  .join(', ')}
-              </p>
-            </CardContent>
-          </StyledCard>
-        )),
-      [templates, selectedTemplateId, setSelectedTemplateId],
+    const { enqueueInfoSnackBar } = useSnackBar();
+    return (
+      <StyledTemplateList>
+        {templates.map((template) => {
+          return (
+            <StyledCard
+              isSelected={selectedTemplateId === template.id}
+              key={template.id}
+              onClick={() => {
+                if (template.status !== 'APPROVED') {
+                  enqueueInfoSnackBar({
+                    message: t`You cannot select this template because it is not approved.`,
+                  });
+                  return;
+                }
+                if (!template.components.every((component) => component.text)) {
+                  enqueueInfoSnackBar({
+                    message: t`You cannot select this type of template because it is not currently supported.`,
+                  });
+                  return;
+                }
+                setSelectedTemplateId(template.id);
+              }}
+              rounded={true}
+            >
+              <StyledCardContent
+                enabled={
+                  template.status === 'APPROVED' &&
+                  template.components.every((component) => component.text)
+                }
+              >
+                <StyledTemplateHeader>
+                  <H2Title title={template.name} />
+                  <StyledCheckmark
+                    color={template.status === 'APPROVED' ? 'green' : 'red'}
+                  />
+                </StyledTemplateHeader>
+                <p>
+                  {template.components
+                    .map((component) => component.text)
+                    .join(', ')}
+                </p>
+              </StyledCardContent>
+            </StyledCard>
+          );
+        })}
+        {Array.from({ length: 6 - templates.length }, (_, index) => {
+          return (
+            <StyledCard
+              isSelected={false}
+              key={`empty-${index}`}
+              rounded={true}
+              isPaddingCard={true}
+            >
+              <StyledCardContent enabled={false}>
+                <StyledTemplateHeader>
+                  <H2Title title="" />
+                </StyledTemplateHeader>
+              </StyledCardContent>
+            </StyledCard>
+          );
+        })}
+      </StyledTemplateList>
     );
-
-    return <StyledTemplateList>{items}</StyledTemplateList>;
   },
 );
