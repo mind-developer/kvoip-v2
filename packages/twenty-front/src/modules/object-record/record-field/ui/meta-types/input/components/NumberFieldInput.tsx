@@ -33,7 +33,13 @@ export const NumberFieldInput = () => {
         return { success: false };
       }
 
-      const castedValue = castAsNumberOrNull(newValue);
+      const castedValue = castAsNumberOrNull(newValueEscaped);
+
+      /* @kvoip-woulz proprietary:begin */
+      if (!isNull(castedValue) && (castedValue < 0 || castedValue > 100)) {
+        return { success: false };
+      }
+      /* @kvoip-woulz proprietary:end */
 
       if (!isNull(castedValue)) {
         return { success: true, value: castedValue / 100 };
