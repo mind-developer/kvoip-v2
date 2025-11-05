@@ -43,7 +43,7 @@ export const CurrencyFieldInput = () => {
     ? draftCurrencyCode
     : defaultCurrencyCodeIsNotEmpty
       ? defaultCurrencyCodeWithoutSQLQuotes
-      : CurrencyCode.USD;
+      : CurrencyCode.BRL; // @kvoip-woulz proprietary
 
   const getNewCurrencyValue = ({
     amountText,

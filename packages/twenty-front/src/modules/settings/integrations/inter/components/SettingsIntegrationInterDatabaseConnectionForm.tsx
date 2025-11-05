@@ -1,14 +1,11 @@
+/* @kvoip-woulz proprietary */
+/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  TEXT_VALIDATION_PATTERNS,
-  type TextValidationPattern,
-} from 'twenty-shared/utils';
 
 import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
-import { MaskedTextInput } from '@/ui/input/components/MaskedTextInput';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { type SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
+import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -35,27 +32,6 @@ const StyledHalfWidthInput = styled.div`
 type SettingsIntegrationInterDatabaseConnectionFormProps = {
   disabled?: boolean;
 };
-
-/* @kvoip-woulz proprietary:begin */
-const INTER_FIELD_VALIDATIONS: Record<
-  string,
-  { validation: TextValidationPattern }
-> = {
-  currentAccount: {
-    validation: TEXT_VALIDATION_PATTERNS.BR_INTER_ACCOUNT,
-  },
-};
-
-const getFieldValidation = (
-  fieldName: string,
-): TextValidationPattern | undefined => {
-  const validation = INTER_FIELD_VALIDATIONS[fieldName]?.validation;
-  if (fieldName === 'currentAccount' && validation) {
-    console.log('Inter currentAccount validation:', validation);
-  }
-  return validation;
-};
-/* @kvoip-woulz proprietary:end */
 
 export const SettingsIntegrationInterDatabaseConnectionForm = ({
   disabled,
@@ -90,18 +66,15 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             name="currentAccount"
             control={control}
             render={({ field: { onChange, value }, fieldState: { error } }) => {
-              const validation = getFieldValidation('currentAccount');
-
               return (
-                <MaskedTextInput
+                <TextInput
                   label="Current account"
-                  value={value}
+                  value={value as string}
                   onChange={onChange}
-                  mask={validation?.mask}
-                  placeholder={validation?.placeholder || '00000000-00'}
+                  type="text"
                   disabled={disabled}
+                  placeholder="********-**"
                   fullWidth
-                  error={error?.message}
                 />
               );
             }}
