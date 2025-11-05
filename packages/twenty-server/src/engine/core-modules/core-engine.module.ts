@@ -64,6 +64,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { FocusNfeModule } from 'src/modules/focus-nfe/focus-nfe-integration.module';
 
 import { FinancialClosingModule } from 'src/engine/core-modules/financial-closing/financial-closing.module';
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -117,6 +118,7 @@ import { StripeModule } from './stripe/stripe.module';
     SubscriptionsModule,
     FocusNfeModule,
     ImapSmtpCaldavModule,
+    PaymentModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
