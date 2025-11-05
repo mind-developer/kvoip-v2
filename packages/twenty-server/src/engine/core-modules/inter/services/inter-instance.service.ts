@@ -148,9 +148,9 @@ export class InterInstanceService {
           return config;
         }
 
-        const token = integration
-          ? await this.getWorkspaceOauthToken(integration)
-          : await this.getOauthToken();
+        /* @kvoip-woulz proprietary:begin */
+        const token = await this.getOauthToken(integration);
+        /* @kvoip-woulz proprietary:end */
 
         if (!config.headers) {
           config.headers = {} as InternalAxiosRequestConfig['headers'];
@@ -167,94 +167,22 @@ export class InterInstanceService {
     );
   }
 
+  /* @kvoip-woulz proprietary:begin */
   /**
    * Obtém o token OAuth, reutilizando o cache se ainda válido
    * ou renovando se expirado
+   *
+   * @param integration Optional workspace integration. If provided, uses workspace-level credentials,
+   *                    otherwise uses server-level credentials
    */
   async getOauthToken(integration?: InterIntegration): Promise<string> {
-    if (integration) {
-      return this.getWorkspaceOauthToken(integration);
-    }
-
-    // Verifica se o token em cache ainda é válido
-    const cachedToken = await this.cacheStorageService.get<string>(
-      this.CACHE_KEY_TOKEN,
-    );
-    const tokenExpiresAt = await this.cacheStorageService.get<string>(
-      this.CACHE_KEY_TOKEN_EXPIRES,
-    );
-
-    if (
-      cachedToken &&
-      tokenExpiresAt &&
-      new Date() < new Date(tokenExpiresAt)
-    ) {
-      this.logger.debug('Using cached OAuth token');
-
-      return cachedToken;
-    }
-
-    this.logger.log('Fetching new OAuth token from Inter API');
-
-    const response = await this.serverInterApiInstance.post<
-      GetAuthTokenResponse,
-      AxiosResponse<GetAuthTokenResponse, GetAuthTokenInput>
-    >(
-      '/oauth/v2/token',
-      qs.stringify({
-        client_id: this.twentyConfigService.get('INTER_CLIENT_ID'),
-        client_secret: this.twentyConfigService.get('INTER_CLIENT_SECRET'),
-        grant_type: 'client_credentials',
-        scope:
-          'cob.write cob.read cobv.write cobv.read lotecobv.write lotecobv.read pix.write pix.read webhook.write webhook.read payloadlocation.write payloadlocation.read boleto-cobranca.read boleto-cobranca.write extrato.read pagamento-pix.write pagamento-pix.read extrato-usend.read pagamento-boleto.read pagamento-boleto.write pagamento-darf.write pagamento-lote.write pagamento-lote.read webhook-banking.read webhook-banking.write pagamento-pix.read',
-      }),
-      {
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded',
-        },
-      },
-    );
-
-    // Cachear token com tempo de expiração
-    // Renovar 5 minutos antes do tempo real de expiração para evitar race conditions
-    const expiresInSeconds = response.data.expires_in;
-    const safetyMarginSeconds = 300; // 5 minutos
-    const effectiveExpirationSeconds = Math.max(
-      expiresInSeconds - safetyMarginSeconds,
-      0,
-    );
-
-    const newToken = response.data.access_token;
-    const expiresAt = new Date(Date.now() + effectiveExpirationSeconds * 1000);
-
-    const ttlMilliseconds = effectiveExpirationSeconds * 1000;
-
-    await this.cacheStorageService.set(
-      this.CACHE_KEY_TOKEN,
-      newToken,
-      ttlMilliseconds,
-    );
-    await this.cacheStorageService.set(
-      this.CACHE_KEY_TOKEN_EXPIRES,
-      expiresAt.toISOString(),
-      ttlMilliseconds,
-    );
-
-    this.logger.log(
-      `OAuth token cached in Redis. Expires at: ${expiresAt.toISOString()}`,
-    );
-
-    return newToken;
-  }
-
-  /**
-   * Obtem o token OAuth para uma integração específica do workspace
-   */
-  private async getWorkspaceOauthToken(
-    integration: InterIntegration,
-  ): Promise<string> {
-    const tokenKey = `inter:oauth:token:${integration.id}`;
-    const expiresKey = `inter:oauth:token:expires:${integration.id}`;
+    // Determine cache keys based on integration type
+    const tokenKey = integration
+      ? `inter:oauth:token:${integration.id}`
+      : this.CACHE_KEY_TOKEN;
+    const expiresKey = integration
+      ? `inter:oauth:token:expires:${integration.id}`
+      : this.CACHE_KEY_TOKEN_EXPIRES;
 
     // Check if cached token is still valid
     const cachedToken = await this.cacheStorageService.get<string>(tokenKey);
@@ -266,27 +194,43 @@ export class InterInstanceService {
       tokenExpiresAt &&
       new Date() < new Date(tokenExpiresAt)
     ) {
-      this.logger.debug(
-        `Using cached OAuth token for integration: ${integration.id}`,
-      );
+      const logMessage = integration
+        ? `Using cached OAuth token for integration: ${integration.id}`
+        : 'Using cached OAuth token';
+
+      this.logger.debug(logMessage);
 
       return cachedToken;
     }
 
-    this.logger.log(
-      `Fetching new OAuth token for workspace integration: ${integration.id}`,
-    );
+    // Determine which axios instance and credentials to use
+    const axiosInstance = integration
+      ? this.getWorkspaceAxiosInstance(integration)
+      : this.serverInterApiInstance;
 
-    const axiosInstance = this.getWorkspaceAxiosInstance(integration);
+    const clientId = integration
+      ? integration.clientId
+      : this.twentyConfigService.get('INTER_CLIENT_ID');
 
+    const clientSecret = integration
+      ? integration.clientSecret
+      : this.twentyConfigService.get('INTER_CLIENT_SECRET');
+
+    const logMessage = integration
+      ? `Fetching new OAuth token for workspace integration: ${integration.id}`
+      : 'Fetching new OAuth token from Inter API';
+
+    this.logger.log(logMessage);
+
+    // Request new token
     const response = await axiosInstance.post<
       GetAuthTokenResponse,
       AxiosResponse<GetAuthTokenResponse, GetAuthTokenInput>
     >(
       '/oauth/v2/token',
       qs.stringify({
-        client_id: integration.clientId,
-        client_secret: integration.clientSecret,
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: 'client_credentials',
         scope:
           'cob.write cob.read cobv.write cobv.read lotecobv.write lotecobv.read pix.write pix.read webhook.write webhook.read payloadlocation.write payloadlocation.read boleto-cobranca.read boleto-cobranca.write extrato.read pagamento-pix.write pagamento-pix.read extrato-usend.read pagamento-boleto.read pagamento-boleto.write pagamento-darf.write pagamento-lote.write pagamento-lote.read webhook-banking.read webhook-banking.write pagamento-pix.read',
@@ -299,6 +243,7 @@ export class InterInstanceService {
     );
 
     // Cache token with expiration
+    // Renew 5 minutes before actual expiration to avoid race conditions
     const expiresInSeconds = response.data.expires_in;
     const safetyMarginSeconds = 300; // 5 minutes
     const effectiveExpirationSeconds = Math.max(
@@ -317,9 +262,11 @@ export class InterInstanceService {
       ttlMilliseconds,
     );
 
-    this.logger.log(
-      `OAuth token cached for integration ${integration.id}. Expires at: ${expiresAt.toISOString()}`,
-    );
+    const cacheLogMessage = integration
+      ? `OAuth token cached for integration ${integration.id}. Expires at: ${expiresAt.toISOString()}`
+      : `OAuth token cached in Redis. Expires at: ${expiresAt.toISOString()}`;
+
+    this.logger.log(cacheLogMessage);
 
     return newToken;
   }
