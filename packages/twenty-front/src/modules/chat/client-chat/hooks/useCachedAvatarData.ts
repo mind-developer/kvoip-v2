@@ -13,7 +13,7 @@ export const useCachedPersonAvatar = (personId: string) => {
         avatarUrl: true,
         name: true,
       },
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
     });
 
   return {
@@ -34,7 +34,7 @@ export const useCachedAgentAvatar = (agentId: string) => {
       avatarUrl: true,
       name: true,
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-and-network',
   });
 
   return {
@@ -53,7 +53,7 @@ export const useCachedChatbotAvatar = (chatbotId: string) => {
       recordGqlFields: {
         name: true,
       },
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
     });
 
   return {
