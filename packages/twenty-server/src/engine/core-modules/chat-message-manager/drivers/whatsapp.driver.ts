@@ -217,11 +217,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
         const caption = fields[fields.type]?.caption;
         fields[fields.type] = { id: mediaId, ...(caption ? { caption } : {}) };
       }
-
-      if (apiType === 'MetaAPI') {
-        const response = await axios.post(metaUrl, fields, { headers });
-        return response.data.messages[0].id;
-      }
       const primaryAddressingMode = fields.to
         .split('&')[0]
         .replace('primary=', '');
@@ -233,6 +228,16 @@ export class WhatsAppDriver implements ChatProviderDriver {
             'clientChatMessage',
           )
         ).findOne({ where: { id: clientChatMessage.repliesTo } });
+
+        if (apiType === 'MetaAPI') {
+          if (repliesToMessage) {
+            fields.context = {
+              message_id: repliesToMessage.providerMessageId,
+            };
+          }
+          const response = await axios.post(metaUrl, fields, { headers });
+          return response.data.messages[0].id;
+        }
         if (repliesToMessage) {
           fields.quoted = {
             key: {
