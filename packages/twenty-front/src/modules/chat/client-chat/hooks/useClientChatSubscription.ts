@@ -39,7 +39,7 @@ export const useClientChatSubscription = ({
       headers: {
         Authorization: token ? `Bearer ${token}` : '',
         'X-Accel-Buffering': 'no',
-        'Content-Type': 'text/event-stream',
+        // Connection: 'keep-alive',
       },
     });
   }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
