@@ -253,6 +253,11 @@ export class WhatsAppDriver implements ChatProviderDriver {
         }
       }
 
+      if (apiType === 'MetaAPI') {
+        const response = await axios.post(metaUrl, fields, { headers });
+        return response.data.messages[0].id;
+      }
+
       const response = await axios.post(baileysUrl, { fields });
       return response.data.messages[0].id;
     } catch (error) {
