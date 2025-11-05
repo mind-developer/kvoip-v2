@@ -8,6 +8,8 @@ import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.mod
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CheckExpiredSubscriptionsJob } from 'src/engine/core-modules/billing/crons/jobs/billing-check-expired-subscriptions.job';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -49,7 +51,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, BillingSubscription]),
+    TypeOrmModule.forFeature([
+      Workspace,
+      BillingSubscription,
+      BillingCharge,
+      BillingCustomer,
+    ]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
