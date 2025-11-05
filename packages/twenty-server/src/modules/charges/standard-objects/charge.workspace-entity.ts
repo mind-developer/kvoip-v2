@@ -135,12 +135,12 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Request Code`,
     description: msg`Charge request code`,
     icon: 'IconSettings',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
-        errorMessage: msg`Follow the format: REQ-123`,
-      },
-    },
+    // settings: {
+    //   validation: {
+    //     ...TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
+    //     errorMessage: msg`Follow the format: REQ-123`,
+    //   },
+    // },
   })
   @WorkspaceIsNullable()
   requestCode: string;
