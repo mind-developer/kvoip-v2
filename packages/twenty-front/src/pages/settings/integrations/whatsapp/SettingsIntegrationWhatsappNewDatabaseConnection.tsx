@@ -264,7 +264,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
       if (formValues.apiType === 'Baileys') {
         try {
           await axios.post(
-            `http://localhost:3000/Whats-App-rest/whatsapp/session/${formValues.name}`,
+            `http://${REACT_APP_SERVER_BASE_URL}/Whats-App-rest/whatsapp/session/${formValues.name}`,
             {
               webhook: `https://${REACT_APP_SERVER_BASE_URL}/whatsapp/webhook/${workspaceId}/${newIntegrationId}/`,
               workspaceID: workspaceId,
