@@ -13,9 +13,13 @@ export const accountsReceivableAllView = (
     (object) => object.standardId === STANDARD_OBJECT_IDS.accountReceivable,
   );
 
+  if (!accountReceivableObjectMetadata) {
+    throw new Error('Account Receivable object metadata not found');
+  }
+
   return {
     name: 'Todos',
-    objectMetadataId: accountReceivableObjectMetadata?.id ?? '',
+    objectMetadataId: accountReceivableObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -25,7 +29,7 @@ export const accountsReceivableAllView = (
     fields: [
       {
         fieldMetadataId:
-          accountReceivableObjectMetadata?.fields.find(
+          accountReceivableObjectMetadata.fields.find(
             (field) =>
               field.standardId ===
               ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
@@ -36,7 +40,7 @@ export const accountsReceivableAllView = (
       },
       {
         fieldMetadataId:
-          accountReceivableObjectMetadata?.fields.find(
+          accountReceivableObjectMetadata.fields.find(
             (field) =>
               field.standardId ===
               ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.company,
@@ -47,7 +51,7 @@ export const accountsReceivableAllView = (
       },
       {
         fieldMetadataId:
-          accountReceivableObjectMetadata?.fields.find(
+          accountReceivableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.amount,
           )?.id ?? '',
@@ -57,7 +61,7 @@ export const accountsReceivableAllView = (
       },
       {
         fieldMetadataId:
-          accountReceivableObjectMetadata?.fields.find(
+          accountReceivableObjectMetadata.fields.find(
             (field) =>
               field.standardId ===
               ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.dueDate,
@@ -68,7 +72,7 @@ export const accountsReceivableAllView = (
       },
       {
         fieldMetadataId:
-          accountReceivableObjectMetadata?.fields.find(
+          accountReceivableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.status,
           )?.id ?? '',
@@ -87,9 +91,13 @@ export const accountsPayableAllView = (
     (object) => object.standardId === STANDARD_OBJECT_IDS.accountPayable,
   );
 
+  if (!accountPayableObjectMetadata) {
+    throw new Error('Account Payable object metadata not found');
+  }
+
   return {
     name: 'Todos',
-    objectMetadataId: accountPayableObjectMetadata?.id ?? '',
+    objectMetadataId: accountPayableObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -99,7 +107,7 @@ export const accountsPayableAllView = (
     fields: [
       {
         fieldMetadataId:
-          accountPayableObjectMetadata?.fields.find(
+          accountPayableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.company,
           )?.id ?? '',
@@ -109,7 +117,7 @@ export const accountsPayableAllView = (
       },
       {
         fieldMetadataId:
-          accountPayableObjectMetadata?.fields.find(
+          accountPayableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.amount,
           )?.id ?? '',
@@ -119,7 +127,7 @@ export const accountsPayableAllView = (
       },
       {
         fieldMetadataId:
-          accountPayableObjectMetadata?.fields.find(
+          accountPayableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.dueDate,
           )?.id ?? '',
@@ -129,7 +137,7 @@ export const accountsPayableAllView = (
       },
       {
         fieldMetadataId:
-          accountPayableObjectMetadata?.fields.find(
+          accountPayableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.status,
           )?.id ?? '',
@@ -139,7 +147,7 @@ export const accountsPayableAllView = (
       },
       {
         fieldMetadataId:
-          accountPayableObjectMetadata?.fields.find(
+          accountPayableObjectMetadata.fields.find(
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.barcode,
           )?.id ?? '',
