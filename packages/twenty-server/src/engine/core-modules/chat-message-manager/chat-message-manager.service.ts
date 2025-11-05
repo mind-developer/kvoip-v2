@@ -97,6 +97,60 @@ export class ChatMessageManagerService {
     );
   }
 
+  @OnDatabaseBatchEvent('clientChat', DatabaseEventAction.UPDATED)
+  async onClientChatUpdated(
+    event: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<ClientChatWorkspaceEntity>
+    >,
+  ) {
+    const updatedClientChat = event.events[0].properties.after;
+    if (updatedClientChat.sectorId) {
+      const sector = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+          event.workspaceId,
+          'sector',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).findOne({ where: { id: updatedClientChat.sectorId } });
+      if (!sector) {
+        this.logger.error('Sector not found');
+        return;
+      }
+      updatedClientChat.sector = sector;
+      if (updatedClientChat.personId) {
+        const person = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+            event.workspaceId,
+            'person',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { id: updatedClientChat.personId } });
+        if (person) {
+          updatedClientChat.person = person;
+        }
+      }
+      if (updatedClientChat.agentId) {
+        const agent = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<AgentWorkspaceEntity>(
+            event.workspaceId,
+            'agent',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { id: updatedClientChat.agentId } });
+        if (agent) {
+          updatedClientChat.agent = agent;
+          updatedClientChat.agentId = agent.id;
+        }
+        updatedClientChat.agent = agent ?? null;
+      }
+      await this.clientChatMessageService.publishChatUpdated(
+        updatedClientChat,
+        updatedClientChat.sectorId,
+        'all',
+      );
+    }
+  }
+
   @OnDatabaseBatchEvent('clientChatMessage', DatabaseEventAction.UPDATED)
   async onClientChatMessageUpdated(
     event: WorkspaceEventBatch<
@@ -150,7 +204,10 @@ export class ChatMessageManagerService {
       );
       return v4();
     }
-    if (clientChat.status !== ClientChatStatus.ASSIGNED) {
+    if (
+      clientChat.status !== ClientChatStatus.ASSIGNED &&
+      clientChat.status !== ClientChatStatus.CHATBOT
+    ) {
       this.logger.error('Client chat not assigned');
       return null;
     }
@@ -175,7 +232,6 @@ export class ChatMessageManagerService {
     clientChatId: string,
     data: Partial<ClientChatWorkspaceEntity>,
     workspaceId: string,
-    publishTo: 'sector' | 'admin' | 'all' = 'all',
   ): Promise<ClientChatWorkspaceEntity | null> {
     try {
       const clientChatRepository =
@@ -197,11 +253,6 @@ export class ChatMessageManagerService {
         ...data,
       };
       await clientChatRepository.update(clientChat.id, updatedClientChat);
-      await this.clientChatMessageService.publishChatUpdated(
-        updatedClientChat,
-        updatedClientChat.sectorId!,
-        publishTo,
-      );
       return updatedClientChat;
     } catch (error) {
       this.logger.error('Error updating chat:', error);
@@ -239,29 +290,27 @@ export class ChatMessageManagerService {
           { shouldBypassPermissionChecks: true },
         )
       ).findOne({ where: { id: clientChatMessage.to } });
-      //chat disappears from agent who transferred it (published to the agent's sector channel)
-      await this.clientChatMessageService.publishChatDeleted(
-        clientChat,
-        clientChat.sectorId,
-        'sector',
-      );
       if (!sector) {
         this.logger.error('Sector not found ' + clientChatMessage.to);
         return;
       }
-      //change sector to the new sector
       clientChat.agentId = null;
       clientChat.agent = null;
       clientChat.status = ClientChatStatus.UNASSIGNED;
       clientChat.sector = sector;
       clientChat.sectorId = sector.id;
-      //chat appears in sector that transferred it (published to the sector channel)
-      await this.clientChatMessageService.publishChatCreated(
-        clientChat,
-        clientChatMessage.to,
-        'sector',
-      );
+      if (clientChat.sectorId !== clientChatMessage.to) {
+        await this.clientChatMessageService.publishChatCreated(
+          clientChat,
+          clientChatMessage.to,
+          'sector',
+        );
+      }
       await this.updateChat(clientChat.id, clientChat, workspaceId);
+      await this.saveMessage(
+        { ...clientChatMessage, providerMessageId: v4() },
+        workspaceId,
+      );
       return;
     }
     if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {
@@ -299,9 +348,13 @@ export class ChatMessageManagerService {
         clientChat.sectorId,
         'sector',
       );
+      await this.saveMessage(
+        { ...clientChatMessage, providerMessageId: v4() },
+        workspaceId,
+      );
       return;
     }
-    await this.updateChat(clientChat.id, clientChat, workspaceId, 'admin');
+    await this.updateChat(clientChat.id, clientChat, workspaceId);
   }
 
   async handleEventMessage(
@@ -314,10 +367,6 @@ export class ChatMessageManagerService {
       clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT
     ) {
       await this.transferService(clientChatMessage, workspaceId);
-      await this.saveMessage(
-        { ...clientChatMessage, providerMessageId: v4() },
-        workspaceId,
-      );
       return;
     } else if (
       clientChatMessage.event === ClientChatMessageEvent.CHATBOT_START
@@ -503,6 +552,7 @@ export class ChatMessageManagerService {
       this.clientChatMessageService.publishMessageCreated(
         message,
         clientChat.id,
+        workspaceId,
       );
       return message;
     } catch (error) {
@@ -542,6 +592,7 @@ export class ChatMessageManagerService {
           createdAt: new Date().toISOString(),
         },
         updatedMessage.clientChatId,
+        workspaceId,
       );
       const result = await messageRepository.save(updatedMessage);
       return result;
@@ -558,6 +609,7 @@ export class ChatMessageManagerService {
       [ChatIntegrationProvider.WHATSAPP]: new WhatsAppDriver(
         this.twentyORMGlobalManager,
         this.environmentService,
+        this.clientChatMessageService,
       ),
     };
     return drivers[provider];
@@ -688,8 +740,11 @@ export class ChatMessageManagerService {
       await this.cancelScheduledAbandonment(jobData.chatId);
       return;
     }
-    //TODO: get from future clientChatConfig entity
     if (clientChatMessage.fromType === ChatMessageFromType.AGENT) {
+      await this.cancelScheduledAbandonment(jobData.chatId);
+      return;
+    }
+    if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
       await this.cancelScheduledAbandonment(jobData.chatId);
       return;
     }

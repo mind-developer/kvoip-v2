@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ZodError, isDirty, type z } from 'zod';
-
+import { ZodError, type z, isDirty } from 'zod';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -54,7 +53,10 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const handleSave = async (
     formValues: SettingsDataModelObjectIdentifiersFormValues,
   ) => {
+    /* @kvoip-woulz proprietary:begin */
+    // TODO: Modificado para corrigir erro na versao 1.5.3x1.0, antes puxava diretamente do zod a prop .isDirty.
     if (!isDirty) {
+    /* @kvoip-woulz proprietary:end */
       return;
     }
 

@@ -217,6 +217,11 @@ export class WhatsAppService {
           return;
         }
 
+        if (chatbot.status !== 'ACTIVE') {
+          console.log('chatbot is not enabled');
+          return;
+        }
+
         const baseEventMessage: ClientChatMessageNoBaseFields = {
           clientChatId: clientChat.id,
           from: chatbot.id,
@@ -239,10 +244,11 @@ export class WhatsAppService {
           templateName: null,
         };
 
-        let executor = this.ChatbotRunnerService.getExecutor(clientChat.id);
+        const executorKey = clientChat.id;
+        let executor = this.ChatbotRunnerService.getExecutor(executorKey);
         if (executor) {
           console.log('executor found');
-          executor.runFlow(message.textBody ?? '');
+          await executor.runFlow(message.textBody ?? '');
           return true;
         }
 
@@ -276,7 +282,7 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
-            console.log('on finish', sectorId);
+            console.log('onFinish', _, sectorId);
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
                 {
@@ -303,11 +309,10 @@ export class WhatsAppService {
               workspaceId,
               integrationId,
             );
-            this.ChatbotRunnerService.clearExecutor(clientChat.id);
           },
         });
-        console.log('running flow');
-        executor.runFlow(message.textBody ?? '');
+        this.ChatbotRunnerService.clearExecutor(executorKey);
+        await executor.runFlow(message.textBody ?? '');
       }
     } catch (error) {
       console.log('error', error);
@@ -407,6 +412,12 @@ export class WhatsAppService {
         case 'image/png':
           ext = '.png';
           break;
+        case 'image/webp':
+          ext = '.webp';
+          break;
+        case 'image/gif':
+          ext = '.gif';
+          break;
         case 'application/pdf':
           ext = '.pdf';
           break;
@@ -428,14 +439,16 @@ export class WhatsAppService {
         responseType: 'arraybuffer',
       });
 
-      const mediaBuffer = Buffer.from(mediaResponse.data, 'binary');
+      let mediaBuffer: Buffer = Buffer.from(mediaResponse.data, 'binary');
+      let finalMimeType = data.mime_type;
+      let finalExt = ext;
 
       const fileUrl = this.fileService.signFileUrl({
         url: (
           await this.fileMetadataService.createFile({
             file: mediaBuffer,
-            filename: `${phoneNumber}_${v4()}${ext}`,
-            mimeType: data.mime_type,
+            filename: `${phoneNumber}_${v4()}${finalExt}`,
+            mimeType: finalMimeType,
             workspaceId,
           })
         ).fullPath,

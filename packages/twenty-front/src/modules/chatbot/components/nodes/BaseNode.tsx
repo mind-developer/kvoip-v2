@@ -1,7 +1,11 @@
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ReactNode, useId, useState } from 'react';
+import { useNodes } from '@xyflow/react';
+import { type ReactNode, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { Label, useIcons } from 'twenty-ui/display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
@@ -71,48 +75,51 @@ const StyledTitleInput = styled(TitleInput)`
 
 const BaseNode = ({
   icon,
-  title,
   children,
-  nodeStart,
+  isInitialNode,
   iconColor,
   onTitleChange,
   onTitleBlur,
   nodeTypeDescription,
-  isSelected,
+  nodeId,
 }: {
-  icon?: string;
-  title: string;
+  icon: string;
   children: ReactNode;
-  nodeStart?: boolean;
+  isInitialNode?: boolean;
   newNode?: boolean;
   iconColor?: ThemeColor;
   nodeTypeDescription: string;
   onTitleChange: (value: string) => void;
   onTitleBlur: () => void;
-  isSelected: boolean;
+  nodeId: string;
 }) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(icon);
 
+  const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
+  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
   const theme = useTheme();
   const iconHeader = (
     <Icon size={18} color={theme.color[iconColor ?? 'gray']} />
   );
 
-  const [customTitle, setCustomTitle] = useState<string>(title);
-  const id = useId();
-
+  const [customTitle, setCustomTitle] = useState<string>(
+    node?.data.title as string,
+  );
   return (
     <div>
-      {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
-      <StyledBaseNodeWrapper className="nopan" isSelected={isSelected}>
+      {isInitialNode && <StyledNodeType variant="small">Start</StyledNodeType>}
+      <StyledBaseNodeWrapper
+        className="nopan"
+        isSelected={chatbotFlowSelectedNode?.id === nodeId}
+      >
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
           <div>
-            {title && (
+            {isDefined(node?.data.title) && (
               <StyledTitleInput
-                placeholder={title}
-                instanceId={id}
+                placeholder={node?.data.title as string}
+                instanceId={node?.id}
                 value={customTitle}
                 onEscape={onTitleBlur}
                 onEnter={onTitleBlur}

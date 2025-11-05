@@ -11,7 +11,6 @@ import {
   type ClientChatMessage,
 } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/input';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledVideoWrapper = styled.div<{ isPending: boolean }>`
@@ -126,8 +125,6 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
   const videoRef = useRef<HTMLVideoElement | null>();
   const isPending =
     message.deliveryStatus === ChatMessageDeliveryStatus.PENDING;
-  const videoUrl =
-    REACT_APP_SERVER_BASE_URL + '/files/' + message.attachmentUrl;
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -235,7 +232,7 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
       onTouchStart={handleUserActivity}
     >
       <StyledVideo
-        src={videoUrl}
+        src={message.attachmentUrl ?? ''}
         ref={videoRef as LegacyRef<HTMLVideoElement>}
         playsInline
         muted={false}

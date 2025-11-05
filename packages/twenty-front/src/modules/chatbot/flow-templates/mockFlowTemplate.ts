@@ -15,7 +15,7 @@ export const initialNodes: GenericNode[] = [
   },
   {
     id: '2',
-    type: 'condition',
+    type: 'conditional',
     data: {
       logic: {
         logicNodes: [0],

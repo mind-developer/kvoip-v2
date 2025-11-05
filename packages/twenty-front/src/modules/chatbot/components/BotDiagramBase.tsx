@@ -24,6 +24,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -34,6 +35,7 @@ import {
   initialNodes,
 } from '@/chatbot/flow-templates/mockFlowTemplate';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { isChatbotActionMenuOpenState } from '@/chatbot/state/isChatbotActionMenuOpen';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useParams } from 'react-router-dom';
@@ -125,8 +127,13 @@ export const BotDiagramBase = ({
     chatbotFlowSelectedNodeState,
   );
 
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{
+  const { enqueueInfoSnackBar } = useSnackBar();
+
+  const isChatbotActionMenuOpen = useRecoilValue(isChatbotActionMenuOpenState);
+  const setIsChatbotActionMenuOpen = useSetRecoilState(
+    isChatbotActionMenuOpenState,
+  );
+  const [chatbotActionMenuPosition, setChatbotActionMenuPosition] = useState<{
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
@@ -168,8 +175,11 @@ export const BotDiagramBase = ({
       updateOneRecord({
         idToUpdate: chatbotId,
         updateOneRecordInput: {
-          nodes: newFlow.nodes,
-          edges: newFlow.edges,
+          flowNodes: newFlow.nodes.map((node) => {
+            const { selected, ...rest } = node;
+            return rest;
+          }),
+          flowEdges: newFlow.edges,
           viewport: newFlow.viewport,
         },
       });
@@ -178,13 +188,33 @@ export const BotDiagramBase = ({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
-      setNodes((nds) =>
-        applyNodeChanges(
+      setNodes((nds) => {
+        const appliedNodeChanges = applyNodeChanges(
           structuredClone(changes),
           structuredClone(nds ?? initialNodes),
-        ),
-      ),
-    [],
+        );
+        if (
+          changes.some(
+            (change) => change.type === 'position' && !change.dragging,
+          )
+        ) {
+          updateOneRecord({
+            idToUpdate: chatbotId ?? '',
+            updateOneRecordInput: {
+              flowNodes: appliedNodeChanges.map((node) => {
+                const { selected, ...rest } = node;
+                return rest;
+              }),
+            },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: 'Nodes saved',
+            });
+          });
+        }
+        return appliedNodeChanges;
+      }),
+    [chatbotId, enqueueInfoSnackBar],
   );
 
   const onEdgesChange = useCallback(
@@ -198,15 +228,17 @@ export const BotDiagramBase = ({
           updateOneRecord({
             idToUpdate: chatbotId ?? '',
             updateOneRecordInput: {
-              nodes: rfInstance.toObject().nodes,
               edges: appliedEdgeChanges,
-              viewport: rfInstance.toObject().viewport,
             },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: 'Nodes saved',
+            });
           });
         }
         return appliedEdgeChanges;
       }),
-    [],
+    [enqueueInfoSnackBar, rfInstance],
   );
 
   const onConnect: OnConnect = useCallback(
@@ -242,8 +274,8 @@ export const BotDiagramBase = ({
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setContextMenuPosition({ x: e.clientX, y: e.clientY });
-    setIsContextMenuOpen((prev) => !prev);
+    setChatbotActionMenuPosition({ x: e.clientX, y: e.clientY });
+    setIsChatbotActionMenuOpen(true);
   };
 
   useEffect(() => {
@@ -279,13 +311,14 @@ export const BotDiagramBase = ({
         isValidConnection={isValidConnection}
         fitView
         onClick={() => {
-          setIsContextMenuOpen(false);
+          setIsChatbotActionMenuOpen(false);
           setChatbotFlowSelectedNode(undefined);
         }}
-        onDragStart={() => setIsContextMenuOpen(false)}
+        onDragStart={() => setIsChatbotActionMenuOpen(false)}
         onNodeClick={(event, node) => {
           event.stopPropagation();
           setChatbotFlowSelectedNode(node);
+          setIsChatbotActionMenuOpen(false);
         }}
         onContextMenu={handleContextMenu}
       >
@@ -297,15 +330,16 @@ export const BotDiagramBase = ({
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
 
-      {isContextMenuOpen && (
+      {isChatbotActionMenuOpen && (
         <div
           style={{
-            position: 'relative',
-            top: contextMenuPosition.y,
-            left: contextMenuPosition.x,
+            position: 'fixed',
+            top: chatbotActionMenuPosition.y,
+            left: chatbotActionMenuPosition.x,
+            zIndex: 1000,
           }}
         >
-          <ChatbotActionMenu />
+          <ChatbotActionMenu cursorPosition={chatbotActionMenuPosition} />
         </div>
       )}
 
