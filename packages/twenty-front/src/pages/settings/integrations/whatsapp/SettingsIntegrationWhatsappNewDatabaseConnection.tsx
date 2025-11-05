@@ -106,7 +106,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   const validateBaileysSession = async (sessionName: string, id: string) => {
     axios
       .get(
-        `http://localhost:3000/Whats-App-rest/whatsapp/status/${sessionName}`,
+        `http://${REACT_APP_SERVER_BASE_URL}/Whats-App-rest/whatsapp/status/${sessionName}`,
       )
       .then((r) => {
         if (r.data.connected === true) {
@@ -176,7 +176,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           `Tentativa ${attempt}/${maxRetries} de buscar QR code para: ${sessionName}`,
         );
         const response = await fetch(
-          `http://localhost:3000/Whats-App-rest/whatsapp/qr/${sessionName}`,
+          `http://${REACT_APP_SERVER_BASE_URL}/Whats-App-rest/whatsapp/qr/${sessionName}`,
           {
             headers: {
               Authorization: `Bearer ${tokenPair?.accessOrWorkspaceAgnosticToken?.token}`,
