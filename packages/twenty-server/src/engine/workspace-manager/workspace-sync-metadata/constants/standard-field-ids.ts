@@ -47,7 +47,11 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
   invoice: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
-  financialRegister: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f6a',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegister: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f6a', // @deprecated
+  accountReceivable: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f7b',
+  accountPayable: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f8c',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -171,7 +175,11 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   tenants: '5eca6f7c-4d68-4bb1-9945-0420d9fe72d5',
   invoices: '5f007e23-1389-4ea1-a5cc-edc871f01ad3',
   companyFinancialClosingExecutions: '22c5ce2b-375b-45ea-81e6-8f379098cc41',
-  financialRegisters: '20202020-c1a1-4001-a001-100000000099',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegisters: '20202020-c1a1-4001-a001-100000000099', // @deprecated
+  accountsReceivable: '20202020-c1a1-4001-a001-100000000100',
+  accountsPayable: '20202020-c1a1-4001-a001-100000000101',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const CHARGE_STANDARD_FIELD_IDS = {
@@ -290,7 +298,10 @@ export const FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
   billingModel: '83e79212-06ab-4663-81c3-5ccf51c0a839',
   logs: '3472f9a8-39c3-41fa-9898-615d1f4613e2',
   companyFinancialClosingExecutions: '6e47f8b7-2f7e-4fef-a0a0-e793ca9e541e',
-  financialRegisters: '20202020-e1a1-4001-a001-100000000099',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegisters: '20202020-e1a1-4001-a001-100000000099', // @deprecated
+  accountsReceivable: '20202020-e1a1-4001-a001-100000000100',
+  /* @kvoip-woulz proprietary:end */
 };
 
 export const COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
@@ -309,6 +320,8 @@ export const COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS = {
   logs: 'ce3b3f25-dba1-46f2-9c33-bc2a94f5c10e',
 };
 
+/* @kvoip-woulz proprietary:begin */
+// @deprecated - Split into ACCOUNT_RECEIVABLE and ACCOUNT_PAYABLE
 export const FINANCIAL_REGISTER_STANDARD_FIELD_IDS = {
   // Common fields (both RECEIVABLE and PAYABLE)
   registerType: '20202020-f1a1-4001-a001-100000000001',
@@ -344,6 +357,62 @@ export const FINANCIAL_REGISTER_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-f1a1-4001-a001-800000000003',
 } as const;
 
+export const ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS = {
+  // Common fields
+  status: '20202020-f1a1-4001-a001-100000000002',
+  amount: '20202020-f1a1-4001-a001-100000000003',
+  dueDate: '20202020-f1a1-4001-a001-100000000004',
+  cpfCnpj: '20202020-f1a1-4001-a001-100000000005',
+  pixKey: '20202020-f1a1-4001-a001-100000000006',
+  company: '20202020-f1a1-4001-a001-100000000007',
+  integration: '20202020-f1a1-4001-a001-100000000008',
+
+  // Receivable-specific fields
+  documentNumber: '20202020-f1a1-4001-a001-200000000001',
+  isRecharge: '20202020-f1a1-4001-a001-200000000002',
+  invoice: '20202020-f1a1-4001-a001-200000000003',
+  bankSlipLink: '20202020-f1a1-4001-a001-200000000004',
+  closingExecution: '20202020-f1a1-4001-a001-200000000005',
+
+  // Standard system fields
+  position: '20202020-f1a1-4001-a001-900000000001',
+  createdBy: '20202020-f1a1-4001-a001-900000000002',
+  searchVector: '20202020-f1a1-4001-a001-900000000003',
+
+  // Polymorphic relations
+  favorites: '20202020-f1a1-4001-a001-800000000001',
+  attachments: '20202020-f1a1-4001-a001-800000000002',
+  timelineActivities: '20202020-f1a1-4001-a001-800000000003',
+} as const;
+
+export const ACCOUNT_PAYABLE_STANDARD_FIELD_IDS = {
+  // Common fields
+  status: '20202020-f1a1-4001-a001-100000000002',
+  amount: '20202020-f1a1-4001-a001-100000000003',
+  dueDate: '20202020-f1a1-4001-a001-100000000004',
+  cpfCnpj: '20202020-f1a1-4001-a001-100000000005',
+  pixKey: '20202020-f1a1-4001-a001-100000000006',
+  company: '20202020-f1a1-4001-a001-100000000007',
+  integration: '20202020-f1a1-4001-a001-100000000008',
+
+  // Payable-specific fields
+  paymentType: '20202020-f1a1-4001-a001-300000000001',
+  barcode: '20202020-f1a1-4001-a001-300000000002',
+  paymentDate: '20202020-f1a1-4001-a001-300000000003',
+  message: '20202020-f1a1-4001-a001-300000000004',
+
+  // Standard system fields
+  position: '20202020-f1a1-4001-a001-900000000001',
+  createdBy: '20202020-f1a1-4001-a001-900000000002',
+  searchVector: '20202020-f1a1-4001-a001-900000000003',
+
+  // Polymorphic relations
+  favorites: '20202020-f1a1-4001-a001-800000000001',
+  attachments: '20202020-f1a1-4001-a001-800000000002',
+  timelineActivities: '20202020-f1a1-4001-a001-800000000003',
+} as const;
+/* @kvoip-woulz proprietary:end */
+
 export const LINKLOGS_STANDARD_FIELD_IDS = {
   name: '20202020-8e7f-6a5b-4c3d-2e1f0a9b8c7d',
   linkId: '20202020-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
@@ -373,7 +442,9 @@ export const INTEGRATION_STANDARD_FIELD_IDS = {
   position: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5f',
   searchVector: '85c71601-72f9-4b7b-b343-d00000b2a27a',
   /* @kvoip-woulz proprietary:begin */
-  financialRegisters: '20202020-f1a1-4001-a001-100000000099',
+  financialRegisters: '20202020-f1a1-4001-a001-100000000099', // @deprecated
+  accountsReceivable: '20202020-f1a1-4001-a001-100000000102',
+  accountsPayable: '20202020-f1a1-4001-a001-100000000103',
   /* @kvoip-woulz proprietary:end */
 } as const;
 
@@ -460,7 +531,10 @@ export const INVOICE_FIELD_IDS = {
   focusNFe: 'd156564a-6e20-4c43-a61b-e2ee8ca4fcbc',
   createdBy: '303c7ff1-3a10-4fe0-aeed-03575b4ad0fc',
   companyFinancialClosingExecution: 'ca00afdd-cf6e-4189-8cc4-b814cd06d705',
-  financialRegisters: '20202020-a1a1-4001-a001-100000000099',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegisters: '20202020-a1a1-4001-a001-100000000099', // @deprecated
+  accountsReceivable: '20202020-a1a1-4001-a001-100000000100',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -532,7 +606,11 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   tenant: '30303030-390e-4271-8f14-03957ae27f6e',
   sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
   agent: '45194ac8-73e8-4e76-85f9-a1e8f7a4cd1e',
-  financialRegister: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a4b',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegister: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a4b', // @deprecated
+  accountReceivable: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a5c',
+  accountPayable: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a6d',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -551,7 +629,9 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
   chatbot: '82cb4030-897c-45d5-9b0d-9cf2f72b8c92',
   /* @kvoip-woulz proprietary:begin */
-  financialRegister: '20202020-fab1-4e3b-9c2d-1a8b5e7f9d6a',
+  financialRegister: '20202020-fab1-4e3b-9c2d-1a8b5e7f9d6a', // @deprecated
+  accountReceivable: '20202020-fab1-4e3b-9c2d-1a8b5e7f9d7b',
+  accountPayable: '20202020-fab1-4e3b-9c2d-1a8b5e7f9d8c',
   /* @kvoip-woulz proprietary:end */
 } as const;
 

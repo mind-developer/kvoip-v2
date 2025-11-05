@@ -20,10 +20,12 @@ import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objec
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
+/* @kvoip-woulz proprietary:begin */
 import {
-  financialRegistersPayablesView,
-  financialRegistersReceivablesView,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/views/financial-registers-all-views';
+  accountsPayableAllView,
+  accountsReceivableAllView,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/views/accounts-receivable-payable-all-views';
+/* @kvoip-woulz proprietary:end */
 import { invoiceAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/invoice-all-views';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
@@ -75,8 +77,10 @@ export const prefillCoreViews = async ({
     productsAllView(objectMetadataItems),
     invoiceAllView(objectMetadataItems),
     chargesAllView(objectMetadataItems),
-    financialRegistersReceivablesView(objectMetadataItems),
-    financialRegistersPayablesView(objectMetadataItems),
+    /* @kvoip-woulz proprietary:begin */
+    accountsReceivableAllView(objectMetadataItems),
+    accountsPayableAllView(objectMetadataItems),
+    /* @kvoip-woulz proprietary:end */
 
     // Kvoip admin views
     ...(shouldPrefillAdminViews

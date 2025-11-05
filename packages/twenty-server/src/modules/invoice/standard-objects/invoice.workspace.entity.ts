@@ -28,7 +28,9 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
+/* @kvoip-woulz proprietary:begin */
+import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
+/* @kvoip-woulz proprietary:end */
 import { FocusNFeWorkspaceEntity } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 import { NfStatusOptions } from 'src/modules/focus-nfe/types/NfStatus';
 import { NfTypeOptions } from 'src/modules/focus-nfe/types/NfType';
@@ -558,17 +560,17 @@ export class InvoiceWorkspaceEntity extends BaseWorkspaceEntity {
 
   /* @kvoip-woulz proprietary:begin */
   @WorkspaceRelation({
-    standardId: INVOICE_FIELD_IDS.financialRegisters,
+    standardId: INVOICE_FIELD_IDS.accountsReceivable,
     type: RelationType.ONE_TO_MANY,
-    label: msg`Financial Registers`,
+    label: msg`Contas a Receber`,
     description: msg`Accounts receivable linked to this invoice`,
-    icon: 'IconReceipt',
-    inverseSideTarget: () => FinancialRegisterWorkspaceEntity,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => AccountReceivableWorkspaceEntity,
     inverseSideFieldKey: 'invoice',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  financialRegisters: Relation<FinancialRegisterWorkspaceEntity[]> | null;
+  accountsReceivable: Relation<AccountReceivableWorkspaceEntity[]> | null;
   /* @kvoip-woulz proprietary:end */
 
   @WorkspaceField({

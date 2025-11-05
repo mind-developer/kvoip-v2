@@ -287,31 +287,6 @@ export const useRecordShowContainerTabs = (
           files: null,
         },
       },
-      /* @kvoip-woulz proprietary:begin */
-      [CoreObjectNameSingular.FinancialRegister]: {
-        hideSummaryAndFields: false,
-        tabs: {
-          fields: {
-            title: 'Financial Register',
-            position: 101,
-            Icon: IconSettings,
-            cards: [{ type: CardType.FinancialRegisterFieldsCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
-            },
-          },
-          timeline: null,
-          tasks: null,
-          notes: null,
-          files: null,
-        },
-      },
-      /* @kvoip-woulz proprietary:end */
     }),
     [],
   );

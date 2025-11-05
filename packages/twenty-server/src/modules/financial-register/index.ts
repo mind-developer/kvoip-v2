@@ -10,7 +10,10 @@ export type {
   PixCodeResponse,
 } from './services/financial-register.service';
 export {
-  FinancialRegisterWorkspaceEntity,
-  RegisterStatus,
-  RegisterType,
-} from './standard-objects/financial-register.workspace-entity';
+  AccountPayableWorkspaceEntity,
+  PayableStatus,
+} from './standard-objects/account-payable.workspace-entity';
+export {
+  AccountReceivableWorkspaceEntity,
+  ReceivableStatus,
+} from './standard-objects/account-receivable.workspace-entity';

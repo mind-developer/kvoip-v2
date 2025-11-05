@@ -7,12 +7,18 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useRecoilValue } from 'recoil';
+/* @kvoip-woulz proprietary:begin */
+import { NavigationDrawerFinancialRegistersGroup } from '@/object-metadata/components/NavigationDrawerFinancialRegistersGroup';
+/* @kvoip-woulz proprietary:end */
 
 const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
   'opportunity',
-  'financialRegister',
+  /* @kvoip-woulz proprietary:begin */
+  'accountReceivable',
+  'accountPayable',
+  /* @kvoip-woulz proprietary:end */
   'task',
   'note',
 ];
@@ -74,6 +80,40 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
         ).canReadObjectRecords,
     );
 
+  /* @kvoip-woulz proprietary:begin */
+  const accountReceivableItem =
+    objectMetadataItemsForNavigationItemsWithReadPermission.find(
+      (item) => item.nameSingular === 'accountReceivable',
+    );
+  const accountPayableItem =
+    objectMetadataItemsForNavigationItemsWithReadPermission.find(
+      (item) => item.nameSingular === 'accountPayable',
+    );
+
+  const objectMetadataItemsWithoutFinancialRegisters =
+    objectMetadataItemsForNavigationItemsWithReadPermission.filter(
+      (item) =>
+        item.nameSingular !== 'accountReceivable' &&
+        item.nameSingular !== 'accountPayable',
+    );
+
+  const itemsBeforeFinancialRegisters =
+    objectMetadataItemsWithoutFinancialRegisters.filter((item) => {
+      const orderIndex = ORDERED_STANDARD_OBJECTS.indexOf(item.nameSingular);
+      const financialRegistersIndex =
+        ORDERED_STANDARD_OBJECTS.indexOf('accountReceivable');
+      return orderIndex !== -1 && orderIndex < financialRegistersIndex;
+    });
+
+  const itemsAfterFinancialRegisters =
+    objectMetadataItemsWithoutFinancialRegisters.filter((item) => {
+      const orderIndex = ORDERED_STANDARD_OBJECTS.indexOf(item.nameSingular);
+      const financialRegistersIndex =
+        ORDERED_STANDARD_OBJECTS.indexOf('accountReceivable');
+      return orderIndex === -1 || orderIndex >= financialRegistersIndex;
+    });
+  /* @kvoip-woulz proprietary:end */
+
   return (
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
@@ -83,15 +123,30 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             onClick={() => toggleNavigationSection()}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
-        {isNavigationSectionOpen &&
-          objectMetadataItemsForNavigationItemsWithReadPermission.map(
-            (objectMetadataItem) => (
+        {isNavigationSectionOpen && (
+          <>
+            {/* @kvoip-woulz proprietary:begin */}
+            {itemsBeforeFinancialRegisters.map((objectMetadataItem) => (
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}
               />
-            ),
-          )}
+            ))}
+            {(accountReceivableItem || accountPayableItem) && (
+              <NavigationDrawerFinancialRegistersGroup
+                accountReceivableMetadataItem={accountReceivableItem}
+                accountPayableMetadataItem={accountPayableItem}
+              />
+            )}
+            {itemsAfterFinancialRegisters.map((objectMetadataItem) => (
+              <NavigationDrawerItemForObjectMetadataItem
+                key={`navigation-drawer-item-${objectMetadataItem.id}`}
+                objectMetadataItem={objectMetadataItem}
+              />
+            ))}
+            {/* @kvoip-woulz proprietary:end */}
+          </>
+        )}
       </NavigationDrawerSection>
     )
   );

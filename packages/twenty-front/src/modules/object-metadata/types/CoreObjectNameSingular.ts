@@ -51,5 +51,6 @@ export enum CoreObjectNameSingular {
   ClientChat = 'clientChat',
   WhatsappIntegration = 'whatsappIntegration',
   Telephony = 'telephony',
-  FinancialRegister = 'financialRegister', // @kvoip-woulz proprietary
+  AccountReceivable = 'accountReceivable', // @kvoip-woulz proprietary
+  AccountPayable = 'accountPayable', // @kvoip-woulz proprietary
 }

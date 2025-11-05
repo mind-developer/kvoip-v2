@@ -16,7 +16,11 @@ export const STANDARD_OBJECT_ICONS = {
   connectedAccount: 'IconAt',
   dashboard: 'IconLayoutDashboard',
   favorite: 'IconHeart',
-  financialRegister: 'IconReceipt',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegister: 'IconBuildingSkyscraper', // @deprecated
+  accountReceivable: 'IconCurrencyDollar',
+  accountPayable: 'IconBuildingSkyscraper',
+  /* @kvoip-woulz proprietary:end */
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
   messageChannel: 'IconMessage',

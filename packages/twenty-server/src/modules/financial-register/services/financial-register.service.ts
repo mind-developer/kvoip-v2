@@ -13,10 +13,13 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import {
-  FinancialRegisterWorkspaceEntity,
-  RegisterStatus,
-  RegisterType,
-} from '../standard-objects/financial-register.workspace-entity';
+  AccountPayableWorkspaceEntity,
+  PayableStatus,
+} from '../standard-objects/account-payable.workspace-entity';
+import {
+  AccountReceivableWorkspaceEntity,
+  ReceivableStatus,
+} from '../standard-objects/account-receivable.workspace-entity';
 import { FinancialRegisterValidationService } from './financial-register-validation.service';
 
 // ============================================
@@ -87,15 +90,15 @@ export class FinancialRegisterService {
   async createReceivable(
     workspaceId: string,
     input: CreateReceivableInput,
-  ): Promise<FinancialRegisterWorkspaceEntity> {
+  ): Promise<AccountReceivableWorkspaceEntity> {
     this.logger.log(`Creating receivable for workspace ${workspaceId}`);
 
     this.validationService.validateAmount(input.amount);
 
-    const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+    const accountReceivableRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -114,9 +117,8 @@ export class FinancialRegisterService {
       throw new NotFoundException(`Company ${input.companyId} not found`);
     }
 
-    const receivable = financialRegisterRepository.create({
-      registerType: RegisterType.RECEIVABLE,
-      status: RegisterStatus.PENDING,
+    const receivable = accountReceivableRepository.create({
+      status: ReceivableStatus.PENDING,
       amount: {
         amountMicros: input.amount * 1000000,
         currencyCode: 'BRL',
@@ -130,7 +132,7 @@ export class FinancialRegisterService {
       cpfCnpj: input.cpfCnpj || company.cpfCnpj,
     });
 
-    const savedReceivable = await financialRegisterRepository.save(receivable);
+    const savedReceivable = await accountReceivableRepository.save(receivable);
 
     this.logger.log(`Receivable created: ${savedReceivable.id}`);
 
@@ -177,15 +179,15 @@ export class FinancialRegisterService {
   async createPayable(
     workspaceId: string,
     input: CreatePayableInput,
-  ): Promise<FinancialRegisterWorkspaceEntity> {
+  ): Promise<AccountPayableWorkspaceEntity> {
     this.logger.log(`Creating payable for workspace ${workspaceId}`);
 
     this.validationService.validateAmount(input.amount);
 
-    const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+    const accountPayableRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountPayableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountPayable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -212,9 +214,8 @@ export class FinancialRegisterService {
       }
     }
 
-    const payable = financialRegisterRepository.create({
-      registerType: RegisterType.PAYABLE,
-      status: RegisterStatus.PENDING,
+    const payable = accountPayableRepository.create({
+      status: PayableStatus.PENDING,
       amount: {
         amountMicros: input.amount * 1000000,
         currencyCode: 'BRL',
@@ -227,7 +228,7 @@ export class FinancialRegisterService {
       cpfCnpj: input.cpfCnpj || company.cpfCnpj,
     });
 
-    const savedPayable = await financialRegisterRepository.save(payable);
+    const savedPayable = await accountPayableRepository.save(payable);
 
     this.logger.log(`Payable created: ${savedPayable.id}`);
 
@@ -245,9 +246,9 @@ export class FinancialRegisterService {
     this.logger.log(`Generating bank slip for register ${registerId}`);
 
     const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -257,13 +258,7 @@ export class FinancialRegisterService {
     });
 
     if (!register) {
-      throw new NotFoundException(`Financial register ${registerId} not found`);
-    }
-
-    if (register.registerType !== RegisterType.RECEIVABLE) {
-      throw new BadRequestException(
-        'Bank slips can only be generated for receivables',
-      );
+      throw new NotFoundException(`Account receivable ${registerId} not found`);
     }
 
     const attachmentRepository =
@@ -298,7 +293,7 @@ export class FinancialRegisterService {
         ),
       },
       mensagem: {
-        linha1: register.message || 'Pagamento de serviços',
+        linha1: 'Pagamento de serviços de telefonia',
       },
     };
 
@@ -336,9 +331,9 @@ export class FinancialRegisterService {
     this.logger.log(`Generating PIX code for register ${registerId}`);
 
     const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -348,12 +343,6 @@ export class FinancialRegisterService {
 
     if (!register) {
       throw new NotFoundException(`Financial register ${registerId} not found`);
-    }
-
-    if (register.registerType !== RegisterType.RECEIVABLE) {
-      throw new BadRequestException(
-        'PIX codes can only be generated for receivables',
-      );
     }
 
     // TODO: Implement actual Inter PIX API call
@@ -389,9 +378,9 @@ export class FinancialRegisterService {
     this.logger.log(`Processing recharge for register ${registerId}`);
 
     const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -402,10 +391,6 @@ export class FinancialRegisterService {
 
     if (!register) {
       throw new NotFoundException(`Financial register ${registerId} not found`);
-    }
-
-    if (register.registerType !== RegisterType.RECEIVABLE) {
-      throw new BadRequestException('Only receivables can be recharges');
     }
 
     if (!register.isRecharge) {
@@ -453,9 +438,9 @@ export class FinancialRegisterService {
     );
 
     const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -465,8 +450,7 @@ export class FinancialRegisterService {
 
     const overdueRegisters = await financialRegisterRepository.find({
       where: {
-        registerType: RegisterType.RECEIVABLE,
-        status: RegisterStatus.PENDING,
+        status: ReceivableStatus.PENDING,
         dueDate: LessThan(overdueDate.toISOString()),
       },
     });
@@ -481,7 +465,7 @@ export class FinancialRegisterService {
       }
 
       await financialRegisterRepository.update(register.id, {
-        status: RegisterStatus.OVERDUE,
+        status: ReceivableStatus.OVERDUE,
       });
 
       markedOverdue++;
@@ -512,16 +496,16 @@ export class FinancialRegisterService {
   async updateStatus(
     workspaceId: string,
     registerId: string,
-    newStatus: RegisterStatus,
-  ): Promise<FinancialRegisterWorkspaceEntity> {
+    newStatus: ReceivableStatus,
+  ): Promise<AccountReceivableWorkspaceEntity> {
     this.logger.log(
       `Updating status for register ${registerId} to ${newStatus}`,
     );
 
     const financialRegisterRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FinancialRegisterWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AccountReceivableWorkspaceEntity>(
         workspaceId,
-        'financialRegister',
+        'accountReceivable',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -533,24 +517,14 @@ export class FinancialRegisterService {
       throw new NotFoundException(`Financial register ${registerId} not found`);
     }
 
-    this.validationService.validateStatusTransition(
+    this.validationService.validateReceivableStatusTransition(
       register.status,
       newStatus,
-      register.registerType,
     );
 
     await financialRegisterRepository.update(registerId, {
       status: newStatus,
     });
-
-    if (
-      newStatus === RegisterStatus.PAID &&
-      register.registerType === RegisterType.PAYABLE
-    ) {
-      await financialRegisterRepository.update(registerId, {
-        paymentDate: new Date().toISOString(),
-      });
-    }
 
     const updatedRegister = await financialRegisterRepository.findOne({
       where: { id: registerId },

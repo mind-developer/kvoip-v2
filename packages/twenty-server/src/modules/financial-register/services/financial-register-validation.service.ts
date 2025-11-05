@@ -1,11 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import {
-  RegisterStatus,
-  RegisterType,
-} from '../standard-objects/financial-register.workspace-entity';
-
 @Injectable()
 export class FinancialRegisterValidationService {
   validateCpfCnpj(cpfCnpj: string): boolean {
@@ -134,37 +129,35 @@ export class FinancialRegisterValidationService {
     }
   }
 
-  validateStatusTransition(
-    currentStatus: RegisterStatus,
-    newStatus: RegisterStatus,
-    registerType: RegisterType,
+  /* @kvoip-woulz proprietary:begin */
+  validateReceivableStatusTransition(
+    currentStatus: string,
+    newStatus: string,
   ): void {
-    if (
-      currentStatus === RegisterStatus.PAID &&
-      newStatus === RegisterStatus.PENDING
-    ) {
+    if (currentStatus === 'paid' && newStatus === 'pending') {
       throw new BadRequestException('Cannot revert paid status to pending');
     }
 
-    if (currentStatus === RegisterStatus.CANCELLED) {
+    if (currentStatus === 'cancelled') {
       throw new BadRequestException(
-        'Cannot change status of cancelled register',
-      );
-    }
-
-    const receivableOnlyStatuses = [
-      RegisterStatus.DO_NOT_PAY,
-      RegisterStatus.BANK_RELEASE,
-      RegisterStatus.DISPUTED,
-    ];
-
-    if (
-      registerType === RegisterType.PAYABLE &&
-      receivableOnlyStatuses.includes(newStatus)
-    ) {
-      throw new BadRequestException(
-        `Status ${newStatus} is only valid for receivables`,
+        'Cannot change status of cancelled receivable',
       );
     }
   }
+
+  validatePayableStatusTransition(
+    currentStatus: string,
+    newStatus: string,
+  ): void {
+    if (currentStatus === 'paid' && newStatus === 'pending') {
+      throw new BadRequestException('Cannot revert paid status to pending');
+    }
+
+    if (currentStatus === 'cancelled') {
+      throw new BadRequestException(
+        'Cannot change status of cancelled payable',
+      );
+    }
+  }
+  /* @kvoip-woulz proprietary:end */
 }

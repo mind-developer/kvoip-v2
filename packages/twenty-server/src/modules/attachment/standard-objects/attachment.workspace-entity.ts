@@ -20,7 +20,10 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { FinancialRegisterWorkspaceEntity } from 'src/modules/financial-register/standard-objects/financial-register.workspace-entity';
+/* @kvoip-woulz proprietary:begin */
+import { AccountPayableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-payable.workspace-entity';
+import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
+/* @kvoip-woulz proprietary:end */
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -227,20 +230,36 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   /* @kvoip-woulz proprietary:begin */
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.financialRegister,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.accountReceivable,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Financial Register`,
-    description: msg`Attachment financial register`,
-    icon: 'IconReceipt',
-    inverseSideTarget: () => FinancialRegisterWorkspaceEntity,
+    label: msg`Account Receivable`,
+    description: msg`Attachment account receivable`,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => AccountReceivableWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  financialRegister: Relation<FinancialRegisterWorkspaceEntity> | null;
+  accountReceivable: Relation<AccountReceivableWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('financialRegister')
-  financialRegisterId: string | null;
+  @WorkspaceJoinColumn('accountReceivable')
+  accountReceivableId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.accountPayable,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Account Payable`,
+    description: msg`Attachment account payable`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => AccountPayableWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  accountPayable: Relation<AccountPayableWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('accountPayable')
+  accountPayableId: string | null;
   /* @kvoip-woulz proprietary:end */
 
   @WorkspaceDynamicRelation({

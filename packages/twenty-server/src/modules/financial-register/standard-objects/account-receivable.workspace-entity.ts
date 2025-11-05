@@ -22,7 +22,7 @@ import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspac
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { FINANCIAL_REGISTER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
@@ -40,11 +40,9 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 // ============================================
 // SEARCH CONFIGURATION
 // ============================================
-export const SEARCH_FIELDS_FOR_FINANCIAL_REGISTER: FieldTypeAndNameMetadata[] =
+export const SEARCH_FIELDS_FOR_ACCOUNT_RECEIVABLE: FieldTypeAndNameMetadata[] =
   [
     { name: 'documentNumber', type: FieldMetadataType.TEXT },
-    { name: 'paymentType', type: FieldMetadataType.TEXT },
-    { name: 'message', type: FieldMetadataType.TEXT },
     { name: 'cpfCnpj', type: FieldMetadataType.TEXT },
   ];
 
@@ -53,39 +51,24 @@ export const SEARCH_FIELDS_FOR_FINANCIAL_REGISTER: FieldTypeAndNameMetadata[] =
 // ============================================
 
 /**
- * Register Type - Discriminator field
- * Determines if this is an account receivable (A Receber) or payable (A Pagar)
+ * Receivable Status - Status for accounts receivable
  */
-export enum RegisterType {
-  RECEIVABLE = 'receivable', // A Receber - Money to receive from clients
-  PAYABLE = 'payable', // A Pagar - Bills to pay to suppliers
-}
-
-registerEnumType(RegisterType, {
-  name: 'RegisterType',
-  description: 'Type of financial register: receivable or payable',
-});
-
-/**
- * Register Status - Unified status for both types
- * Some statuses are specific to RECEIVABLE only (doNotPay, bankRelease, disputed)
- */
-export enum RegisterStatus {
-  // Universal statuses (both RECEIVABLE and PAYABLE)
+export enum ReceivableStatus {
+  // Universal statuses
   PENDING = 'pending',
   PAID = 'paid',
   OVERDUE = 'overdue',
   CANCELLED = 'cancelled',
 
-  // RECEIVABLE-specific statuses
+  // Receivable-specific statuses
   DO_NOT_PAY = 'doNotPay', // Client requested to not pay this charge
   BANK_RELEASE = 'bankRelease', // Waiting for bank to release payment
   DISPUTED = 'disputed', // Client is disputing this charge
 }
 
-registerEnumType(RegisterStatus, {
-  name: 'RegisterStatus',
-  description: 'Status of the financial register',
+registerEnumType(ReceivableStatus, {
+  name: 'ReceivableStatus',
+  description: 'Status of the account receivable',
 });
 
 // ============================================
@@ -93,137 +76,106 @@ registerEnumType(RegisterStatus, {
 // ============================================
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.financialRegister,
-  namePlural: 'financialRegisters',
-  labelSingular: msg`Financial Register`,
-  labelPlural: msg`Financial Registers`,
-  description: msg`Accounts receivable and payable records`,
-  icon: STANDARD_OBJECT_ICONS.financialRegister,
-  shortcut: 'F',
+  standardId: STANDARD_OBJECT_IDS.accountReceivable,
+  namePlural: 'accountsReceivable',
+  labelSingular: msg`Conta a Receber`,
+  labelPlural: msg`Contas a Receber`,
+  description: msg`Accounts receivable records - money to receive from clients`,
+  icon: STANDARD_OBJECT_ICONS.accountReceivable,
+  shortcut: 'R',
   labelIdentifierStandardId:
-    FINANCIAL_REGISTER_STANDARD_FIELD_IDS.documentNumber,
+    ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
 })
 @WorkspaceIsSearchable()
-export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
-  // ============================================
-  // DISCRIMINATOR FIELD
-  // ============================================
-
-  @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.registerType,
-    type: FieldMetadataType.SELECT,
-    label: msg`Type`,
-    description: msg`Register type: Receivable (A Receber) or Payable (A Pagar)`,
-    icon: 'IconCategory',
-    options: [
-      {
-        value: RegisterType.RECEIVABLE,
-        label: 'A Receber',
-        position: 0,
-        color: 'blue',
-      },
-      {
-        value: RegisterType.PAYABLE,
-        label: 'A Pagar',
-        position: 1,
-        color: 'orange',
-      },
-    ],
-    defaultValue: `'${RegisterType.RECEIVABLE}'`,
-  })
-  @WorkspaceFieldIndex()
-  registerType: RegisterType;
-
+export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   // ============================================
   // STATUS FIELD
   // ============================================
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.status,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Status`,
-    description: msg`Current status of the register`,
+    description: msg`Current status of the receivable`,
     icon: 'IconProgressCheck',
     options: [
-      // Universal statuses
       {
-        value: RegisterStatus.PENDING,
+        value: ReceivableStatus.PENDING,
         label: 'Pendente',
         position: 0,
         color: 'blue',
       },
       {
-        value: RegisterStatus.PAID,
+        value: ReceivableStatus.PAID,
         label: 'Pago',
         position: 1,
         color: 'green',
       },
       {
-        value: RegisterStatus.OVERDUE,
+        value: ReceivableStatus.OVERDUE,
         label: 'Vencido',
         position: 2,
         color: 'red',
       },
       {
-        value: RegisterStatus.CANCELLED,
+        value: ReceivableStatus.CANCELLED,
         label: 'Cancelado',
         position: 3,
         color: 'gray',
       },
-      // RECEIVABLE-specific statuses
       {
-        value: RegisterStatus.DO_NOT_PAY,
+        value: ReceivableStatus.DO_NOT_PAY,
         label: 'Não Pagar',
         position: 4,
         color: 'yellow',
       },
       {
-        value: RegisterStatus.BANK_RELEASE,
+        value: ReceivableStatus.BANK_RELEASE,
         label: 'Banco Liberar',
         position: 5,
         color: 'purple',
       },
       {
-        value: RegisterStatus.DISPUTED,
+        value: ReceivableStatus.DISPUTED,
         label: 'Contestado',
         position: 6,
         color: 'orange',
       },
     ],
-    defaultValue: `'${RegisterStatus.PENDING}'`,
+    defaultValue: `'${ReceivableStatus.PENDING}'`,
   })
   @WorkspaceFieldIndex()
-  status: RegisterStatus;
+  status: ReceivableStatus;
 
   // ============================================
-  // COMMON FIELDS (Both RECEIVABLE and PAYABLE)
+  // COMMON FIELDS
   // ============================================
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.amount,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: msg`Valor`,
-    description: msg`Amount to receive or pay`,
+    description: msg`Amount to receive`,
     icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
   amount: CurrencyMetadata | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.dueDate,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.dueDate,
     type: FieldMetadataType.DATE,
     label: msg`Vencimento`,
-    description: msg`Due date for payment or receipt`,
+    description: msg`Due date for receipt`,
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
   dueDate: string | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.cpfCnpj,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.cpfCnpj,
     type: FieldMetadataType.TEXT,
     label: msg`CPF/CNPJ`,
-    description: msg`Tax ID (CPF or CNPJ) of the client or supplier`,
+    description: msg`Tax ID (CPF or CNPJ) of the client`,
     icon: 'IconId',
     settings: {
       validation: {
@@ -236,10 +188,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   cpfCnpj: string | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.pixKey,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.pixKey,
     type: FieldMetadataType.TEXT,
     label: msg`Chave PIX`,
-    description: msg`PIX key for payment or receipt`,
+    description: msg`PIX key for receipt`,
     icon: 'IconQrcode',
     settings: {
       validation: {
@@ -252,14 +204,14 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   pixKey: string | null;
 
   // ============================================
-  // RECEIVABLE-SPECIFIC FIELDS (nullable)
+  // RECEIVABLE-SPECIFIC FIELDS
   // ============================================
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.documentNumber,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
     type: FieldMetadataType.TEXT,
     label: msg`Número do Documento`,
-    description: msg`Document number (RECEIVABLE only - boleto number, invoice number)`,
+    description: msg`Document number (boleto number, invoice number)`,
     icon: 'IconFileText',
     settings: {
       validation: {
@@ -272,10 +224,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   documentNumber: string | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.isRecharge,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.isRecharge,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Recarga`,
-    description: msg`Indicates if this is a telephony recharge (RECEIVABLE only)`,
+    description: msg`Indicates if this is a telephony recharge`,
     icon: 'IconRefresh',
     defaultValue: false,
   })
@@ -283,10 +235,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   isRecharge: boolean | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.bankSlipLink,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.bankSlipLink,
     type: FieldMetadataType.TEXT,
     label: msg`Link Boleto/Comprovante`,
-    description: msg`Link to bank slip PDF or payment receipt (RECEIVABLE only)`,
+    description: msg`Link to bank slip PDF or payment receipt`,
     icon: 'IconLink',
     settings: {
       validation: {
@@ -299,67 +251,11 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   bankSlipLink: string | null;
 
   // ============================================
-  // PAYABLE-SPECIFIC FIELDS (nullable)
-  // ============================================
-
-  @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.paymentType,
-    type: FieldMetadataType.TEXT,
-    label: msg`Tipo de Pagamento`,
-    description: msg`Payment type (PAYABLE only - PIX, TED, Boleto, etc.)`,
-    icon: 'IconCreditCard',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.PAYMENT_TYPE,
-        errorMessage: msg`Invalid payment type`,
-      },
-    },
-  })
-  @WorkspaceIsNullable()
-  paymentType: string | null;
-
-  @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.barcode,
-    type: FieldMetadataType.TEXT,
-    label: msg`Código de Barras`,
-    description: msg`Barcode for boleto payment (PAYABLE only - 47 or 48 digits)`,
-    icon: 'IconBarcode',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.BOLETO_BARCODE,
-        errorMessage: msg`Barcode must have 47 or 48 digits`,
-      },
-    },
-  })
-  @WorkspaceIsNullable()
-  barcode: string | null;
-
-  @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.paymentDate,
-    type: FieldMetadataType.DATE,
-    label: msg`Data Pagamento`,
-    description: msg`Actual payment date (PAYABLE only)`,
-    icon: 'IconCalendarCheck',
-  })
-  @WorkspaceIsNullable()
-  paymentDate: string | null;
-
-  @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.message,
-    type: FieldMetadataType.TEXT,
-    label: msg`Mensagem`,
-    description: msg`Additional message or notes (PAYABLE only)`,
-    icon: 'IconMessage',
-  })
-  @WorkspaceIsNullable()
-  message: string | null;
-
-  // ============================================
   // SYSTEM FIELDS
   // ============================================
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.position,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Record position for ordering`,
@@ -370,7 +266,7 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   position: number | null;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.createdBy,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -379,14 +275,14 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.searchVector,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconSearch',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_FINANCIAL_REGISTER,
+      SEARCH_FIELDS_FOR_ACCOUNT_RECEIVABLE,
     ),
   })
   @WorkspaceIsNullable()
@@ -399,18 +295,16 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   // ============================================
 
   /**
-   * Company relation - Polymorphic usage:
-   * - For RECEIVABLE: This is the CLIENT who owes money
-   * - For PAYABLE: This is the SUPPLIER to whom we owe money
+   * Company relation - This is the CLIENT who owes money
    */
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.company,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Fornecedor/Cliente`,
-    description: msg`Related company (client for receivable, supplier for payable)`,
+    label: msg`Cliente`,
+    description: msg`Client company for this receivable`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'financialRegisters',
+    inverseSideFieldKey: 'accountsReceivable',
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -420,16 +314,15 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
 
   /**
    * Integration relation - Links to payment gateway
-   * Used for tracking which payment provider processed the transaction
    */
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.integration,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.integration,
     type: RelationType.MANY_TO_ONE,
     label: msg`Gateway de Pagamento`,
     description: msg`Payment gateway integration (Inter Bank, etc.)`,
     icon: 'IconPlug',
     inverseSideTarget: () => IntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'financialRegisters',
+    inverseSideFieldKey: 'accountsReceivable',
   })
   @WorkspaceIsNullable()
   integration: Relation<IntegrationWorkspaceEntity> | null;
@@ -438,17 +331,16 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   integrationId: string | null;
 
   /**
-   * Invoice relation - RECEIVABLE only
-   * Links to the invoice (NF) that generated this receivable
+   * Invoice relation - Links to the invoice (NF) that generated this receivable
    */
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.invoice,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.invoice,
     type: RelationType.MANY_TO_ONE,
     label: msg`Nota Fiscal`,
-    description: msg`Related invoice (RECEIVABLE only)`,
+    description: msg`Related invoice`,
     icon: 'IconFileInvoice',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
-    inverseSideFieldKey: 'financialRegisters',
+    inverseSideFieldKey: 'accountsReceivable',
   })
   @WorkspaceIsNullable()
   invoice: Relation<InvoiceWorkspaceEntity> | null;
@@ -457,17 +349,16 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   invoiceId: string | null;
 
   /**
-   * Financial Closing Execution relation - RECEIVABLE only
-   * Links to the automated financial closing that created this receivable
+   * Financial Closing Execution relation
    */
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.closingExecution,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.closingExecution,
     type: RelationType.MANY_TO_ONE,
     label: msg`Fechamento`,
     description: msg`Financial closing execution that generated this receivable`,
     icon: 'IconCalendarStats',
     inverseSideTarget: () => FinancialClosingExecutionWorkspaceEntity,
-    inverseSideFieldKey: 'financialRegisters',
+    inverseSideFieldKey: 'accountsReceivable',
   })
   @WorkspaceIsNullable()
   closingExecution: Relation<FinancialClosingExecutionWorkspaceEntity> | null;
@@ -480,10 +371,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   // ============================================
 
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.favorites,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
-    description: msg`Favorites linked to the financial register`,
+    description: msg`Favorites linked to the account receivable`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -493,10 +384,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.attachments,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
-    description: msg`Attachments linked to the financial register (boleto PDFs, receipts, etc.)`,
+    description: msg`Attachments linked to the account receivable (boleto PDFs, receipts, etc.)`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -505,10 +396,10 @@ export class FinancialRegisterWorkspaceEntity extends BaseWorkspaceEntity {
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: FINANCIAL_REGISTER_STANDARD_FIELD_IDS.timelineActivities,
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
-    description: msg`Events linked to the financial register`,
+    description: msg`Events linked to the account receivable`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
