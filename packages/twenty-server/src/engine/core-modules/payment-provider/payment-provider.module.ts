@@ -1,8 +1,11 @@
+/* @kvoip-woulz proprietary */
 import { Module } from '@nestjs/common';
-import { MOCKASASModule } from 'src/engine/core-modules/payment-provider/providers/asas/mock-asas.module';
-import { MOCKInterModule } from 'src/engine/core-modules/payment-provider/providers/inter/mock-inter.module';
+
+import { AsasProviderModule } from 'src/engine/core-modules/payment-provider/providers/asas/asas-provider.module';
+import { InterProviderModule } from 'src/engine/core-modules/payment-provider/providers/inter/inter-provider.module';
 
 @Module({
-  imports: [MOCKInterModule, MOCKASASModule],
+  imports: [InterProviderModule, AsasProviderModule],
+  exports: [InterProviderModule, AsasProviderModule],
 })
 export class PaymentProviderModule {}
