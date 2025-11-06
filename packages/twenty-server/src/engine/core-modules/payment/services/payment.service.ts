@@ -4,11 +4,13 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
 import { CreateChargeDto } from 'src/engine/core-modules/payment/dtos/create-charge.dto';
+import { supportsPaymentMethod } from 'src/engine/core-modules/payment/utils/suports-payment-method.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { PAYMENT_PROVIDER_TOKENS } from '../constants/payment-provider-tokens';
 import { ChargeStatus } from '../enums/charge-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { PaymentProvider } from '../enums/payment-provider.enum';
+import { PaymentMethodNotSupportedException } from '../exceptions/payment-method-not-supported.exception';
 import {
   BankSlipResponse,
   CancelChargeResponse,
@@ -27,6 +29,26 @@ export class PaymentService {
   ) {}
 
   /**
+   * Gets available payment methods for a provider
+   */
+  getAvailablePaymentMethods(provider: PaymentProvider): PaymentMethod[] {
+    const paymentProvider = this.getPaymentProvider(provider);
+    const capabilities = paymentProvider.capabilities;
+    const availableMethods: PaymentMethod[] = [];
+
+    if (capabilities.boleto) availableMethods.push(PaymentMethod.BOLETO);
+    if (capabilities.bolepix) availableMethods.push(PaymentMethod.BOLEPIX);
+    if (capabilities.pix) availableMethods.push(PaymentMethod.PIX);
+    if (capabilities.creditCard)
+      availableMethods.push(PaymentMethod.CREDIT_CARD);
+    if (capabilities.debitCard) availableMethods.push(PaymentMethod.DEBIT_CARD);
+    if (capabilities.bankTransfer)
+      availableMethods.push(PaymentMethod.BANK_TRANSFER);
+
+    return availableMethods;
+  }
+
+  /**
    * Main method to create a charge using the specified payment provider
    */
   async createCharge(
@@ -37,6 +59,19 @@ export class PaymentService {
   ): Promise<ChargeWorkspaceEntity> {
     // Get the appropriate payment provider
     const paymentProvider = this.getPaymentProvider(provider);
+
+    // Check if the provider supports the requested payment method
+    if (
+      !supportsPaymentMethod(
+        paymentProvider.capabilities,
+        chargeDto.paymentMethod,
+      )
+    ) {
+      throw new PaymentMethodNotSupportedException(
+        provider,
+        chargeDto.paymentMethod,
+      );
+    }
 
     // Get integration for the workspace and provider
     // This would be implemented based on your integration structure
@@ -140,6 +175,13 @@ export class PaymentService {
   ): Promise<CancelChargeResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
+    // Check if provider supports cancellation
+    if (!paymentProvider.capabilities.cancellation) {
+      throw new Error(
+        `Provider ${provider} does not support charge cancellation`,
+      );
+    }
+
     const response = await paymentProvider.cancelCharge(
       workspaceId,
       chargeId,
@@ -167,6 +209,16 @@ export class PaymentService {
     reason?: string,
   ): Promise<RefundResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
+
+    // Check if provider supports refunds
+    if (!paymentProvider.capabilities.refunds) {
+      throw new Error(`Provider ${provider} does not support refunds`);
+    }
+
+    // Check if partial refunds are supported
+    if (amount && !paymentProvider.capabilities.partialRefunds) {
+      throw new Error(`Provider ${provider} does not support partial refunds`);
+    }
 
     const response = await paymentProvider.refundCharge(
       workspaceId,

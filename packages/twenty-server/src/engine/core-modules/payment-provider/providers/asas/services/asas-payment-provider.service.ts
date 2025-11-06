@@ -3,6 +3,7 @@ import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 
 import { ChargeStatus } from 'src/engine/core-modules/payment/enums/charge-status.enum';
 import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { PaymentProviderCapabilities } from 'src/engine/core-modules/payment/interfaces/payment-provider-capabilities.interface';
 import {
   BankSlipResponse,
   CancelChargeResponse,
@@ -21,6 +22,33 @@ import {
 @Injectable()
 export class AsasPaymentProviderService implements IPaymentProvider {
   private readonly logger = new Logger(AsasPaymentProviderService.name);
+
+  /**
+   * ASAS capabilities (when implemented)
+   * ASAS typically supports a wide range of payment methods
+   */
+  readonly capabilities: PaymentProviderCapabilities = {
+    // Payment methods - To be confirmed when implementing
+    boleto: true,
+    bolepix: false,
+    pix: true,
+    creditCard: true,
+    debitCard: true,
+    bankTransfer: false,
+
+    // Operations - To be confirmed when implementing
+    refunds: true,
+    partialRefunds: true,
+    cancellation: true,
+    updates: true,
+    statusQuery: true,
+    listCharges: true,
+
+    // Features - To be confirmed when implementing
+    installments: true,
+    recurring: true,
+    webhooks: true,
+  };
 
   async createBoletoCharge(
     workspaceId: string,

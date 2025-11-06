@@ -4,10 +4,10 @@ import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { InterApiClientService } from 'src/engine/core-modules/inter/services/inter-api-client.service';
 import { ChargeStatus } from 'src/engine/core-modules/payment/enums/charge-status.enum';
 import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { PaymentProviderCapabilities } from 'src/engine/core-modules/payment/interfaces/payment-provider-capabilities.interface';
 import {
   BankSlipResponse,
   CancelChargeResponse,
-  CardData,
   CreateChargeResponse,
   IPaymentProvider,
   PayerInfo,
@@ -22,6 +22,34 @@ import {
 @Injectable()
 export class InterPaymentProviderService implements IPaymentProvider {
   private readonly logger = new Logger(InterPaymentProviderService.name);
+
+  /**
+   * Inter Bank capabilities
+   * Inter supports Bolepix (Boleto + PIX combo) but not standalone Boleto or PIX
+   * No credit/debit card support in the current API
+   */
+  readonly capabilities: PaymentProviderCapabilities = {
+    // Payment methods
+    boleto: false, // Inter uses Bolepix (combined)
+    bolepix: true, // Inter's main payment method (Boleto + PIX combo)
+    pix: false, // Included in Bolepix
+    creditCard: false, // Not supported by Inter API
+    debitCard: false, // Not supported by Inter API
+    bankTransfer: false,
+
+    // Operations
+    refunds: false, // TODO: Check if Inter API supports refunds
+    partialRefunds: false,
+    cancellation: false, // TODO: Check if Inter API supports cancellation
+    updates: false, // TODO: Check if Inter API supports updates
+    statusQuery: false, // Inter uses webhooks for status updates
+    listCharges: false, // Inter doesn't provide a list charges endpoint
+
+    // Features
+    installments: false,
+    recurring: false,
+    webhooks: true, // Inter sends webhook events for status updates
+  };
 
   constructor(private readonly interApiClient: InterApiClientService) {}
 
@@ -64,19 +92,11 @@ export class InterPaymentProviderService implements IPaymentProvider {
 
   /**
    * Creates a credit/debit card charge
-   * Note: This would need to be implemented using Inter's card payment API if available
+   * Note: This method is not supported by Inter API.
    */
-  async createCardCharge(
-    workspaceId: string,
-    amount: number,
-    cardData: CardData,
-    payerInfo: PayerInfo,
-    description?: string,
-    metadata?: Record<string, any>,
-  ): Promise<CreateChargeResponse> {
+  async createCardCharge(): Promise<CreateChargeResponse> {
     throw new NotImplementedException(
-      // TODO: Investigate this
-      'Card payments not supported by Inter Bolepix API. Use a different payment method or provider.',
+      'Card payments not supported by Inter API. Use a different payment method or provider.',
     );
   }
 

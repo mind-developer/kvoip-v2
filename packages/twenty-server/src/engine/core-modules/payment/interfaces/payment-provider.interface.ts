@@ -1,5 +1,10 @@
 import { ChargeStatus } from '../enums/charge-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
+import { PaymentProviderCapabilities } from './payment-provider-capabilities.interface';
+
+/**
+ * TODO: We need to check for common interfaces used between different providers.
+ */
 
 /**
  * Card data for credit/debit card payments
@@ -19,7 +24,7 @@ export type CardData = {
 export type PayerInfo = {
   name: string;
   email: string;
-  taxId: string; // CPF or CNPJ for Brazil
+  taxId: string; // CPF or CNPJ
   phone?: string;
   address?: {
     street: string;
@@ -100,6 +105,12 @@ export type CancelChargeResponse = {
  * Main interface that all payment providers must implement
  */
 export interface IPaymentProvider {
+  /**
+   * Capabilities supported by this provider
+   * Check these before calling methods to provide better UX
+   */
+  readonly capabilities: PaymentProviderCapabilities;
+
   /**
    * Creates a bank slip (boleto) charge
    */
