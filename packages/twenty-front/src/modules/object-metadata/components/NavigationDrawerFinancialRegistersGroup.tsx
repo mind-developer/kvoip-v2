@@ -13,7 +13,7 @@ import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/se
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconBuildingSkyscraper, useIcons } from 'twenty-ui/display';
+import { IconFileText, useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
@@ -166,7 +166,7 @@ export const NavigationDrawerFinancialRegistersGroup = ({
       <NavigationDrawerItem
         label={t`Financial Records`}
         to={defaultNavigationPath}
-        Icon={IconBuildingSkyscraper}
+        Icon={IconFileText}
         active={!!isActive}
       />
 

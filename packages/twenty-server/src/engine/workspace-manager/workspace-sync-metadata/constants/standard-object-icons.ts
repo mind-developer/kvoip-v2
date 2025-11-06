@@ -18,8 +18,8 @@ export const STANDARD_OBJECT_ICONS = {
   favorite: 'IconHeart',
   /* @kvoip-woulz proprietary:begin */
   financialRegister: 'IconBuildingSkyscraper', // @deprecated
-  accountReceivable: 'IconCurrencyDollar',
-  accountPayable: 'IconBuildingSkyscraper',
+  accountReceivable: 'IconCoins',
+  accountPayable: 'IconMoneybag',
   /* @kvoip-woulz proprietary:end */
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',

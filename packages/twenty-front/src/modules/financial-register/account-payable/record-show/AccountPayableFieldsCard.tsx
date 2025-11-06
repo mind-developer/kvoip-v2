@@ -22,6 +22,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { IconDeviceFloppy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import {
@@ -79,15 +80,13 @@ const StyledSystemInfoFieldsGreyBox = styled.div`
 /* @kvoip-woulz proprietary:begin */
 const StyledButtonContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(3)} 0;
-  border-top: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)} 0;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledCancelButton = styled(Button)`
-  color: ${({ theme }) => theme.grayScale.gray0} !important;
+const StyledSaveButton = styled(Button)`
+  width: 100%;
+  border-width: 3px !important;
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -276,20 +275,13 @@ export const AccountPayableFieldsCard = ({
             {/* @kvoip-woulz proprietary:begin */}
             {/* Action Buttons */}
             <StyledButtonContainer>
-              <StyledCancelButton
-                variant="primary"
-                accent="danger"
-                title="Cancel"
-                onClick={() => {
-                  console.log(
-                    'Cancel clicked - functionality to be implemented',
-                  );
-                }}
-              />
-              <Button
-                variant="primary"
+              <StyledSaveButton
+                variant="secondary"
                 accent="blue"
                 title="Save"
+                Icon={IconDeviceFloppy}
+                justify="center"
+                fullWidth
                 onClick={() => {
                   console.log('Save clicked - functionality to be implemented');
                 }}
