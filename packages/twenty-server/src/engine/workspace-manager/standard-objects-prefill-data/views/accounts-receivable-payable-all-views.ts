@@ -31,12 +31,11 @@ export const accountsReceivableAllView = (
         fieldMetadataId:
           accountReceivableObjectMetadata.fields.find(
             (field) =>
-              field.standardId ===
-              ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
+              field.standardId === ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.name,
           )?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 150,
+        size: 200,
       },
       {
         fieldMetadataId:
@@ -109,7 +108,7 @@ export const accountsPayableAllView = (
         fieldMetadataId:
           accountPayableObjectMetadata.fields.find(
             (field) =>
-              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.company,
+              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.name,
           )?.id ?? '',
         position: 0,
         isVisible: true,
@@ -119,17 +118,17 @@ export const accountsPayableAllView = (
         fieldMetadataId:
           accountPayableObjectMetadata.fields.find(
             (field) =>
-              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.amount,
+              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.company,
           )?.id ?? '',
         position: 1,
         isVisible: true,
-        size: 150,
+        size: 200,
       },
       {
         fieldMetadataId:
           accountPayableObjectMetadata.fields.find(
             (field) =>
-              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.dueDate,
+              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.amount,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -139,9 +138,19 @@ export const accountsPayableAllView = (
         fieldMetadataId:
           accountPayableObjectMetadata.fields.find(
             (field) =>
-              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.status,
+              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.dueDate,
           )?.id ?? '',
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          accountPayableObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
+        position: 4,
         isVisible: true,
         size: 120,
       },
@@ -151,7 +160,7 @@ export const accountsPayableAllView = (
             (field) =>
               field.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.barcode,
           )?.id ?? '',
-        position: 4,
+        position: 5,
         isVisible: true,
         size: 250,
       },

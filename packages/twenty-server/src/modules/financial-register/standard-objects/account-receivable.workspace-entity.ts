@@ -42,6 +42,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 // ============================================
 export const SEARCH_FIELDS_FOR_ACCOUNT_RECEIVABLE: FieldTypeAndNameMetadata[] =
   [
+    { name: 'name', type: FieldMetadataType.TEXT },
     { name: 'documentNumber', type: FieldMetadataType.TEXT },
     { name: 'cpfCnpj', type: FieldMetadataType.TEXT },
   ];
@@ -83,8 +84,7 @@ registerEnumType(ReceivableStatus, {
   description: msg`Accounts receivable records - money to receive from clients`,
   icon: STANDARD_OBJECT_ICONS.accountReceivable,
   shortcut: 'R',
-  labelIdentifierStandardId:
-    ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
+  labelIdentifierStandardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
 export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
@@ -150,6 +150,16 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   // ============================================
   // COMMON FIELDS
   // ============================================
+
+  @WorkspaceField({
+    standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.name,
+    type: FieldMetadataType.TEXT,
+    label: msg`Name`,
+    description: msg`Receivable description or reference`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.amount,

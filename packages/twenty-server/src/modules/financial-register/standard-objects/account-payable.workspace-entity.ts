@@ -39,6 +39,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 // SEARCH CONFIGURATION
 // ============================================
 export const SEARCH_FIELDS_FOR_ACCOUNT_PAYABLE: FieldTypeAndNameMetadata[] = [
+  { name: 'name', type: FieldMetadataType.TEXT },
   { name: 'paymentType', type: FieldMetadataType.TEXT },
   { name: 'message', type: FieldMetadataType.TEXT },
   { name: 'cpfCnpj', type: FieldMetadataType.TEXT },
@@ -75,7 +76,7 @@ registerEnumType(PayableStatus, {
   description: msg`Accounts payable records - bills to pay to suppliers`,
   icon: STANDARD_OBJECT_ICONS.accountPayable,
   shortcut: 'P',
-  labelIdentifierStandardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.cpfCnpj,
+  labelIdentifierStandardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
 export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
@@ -123,6 +124,16 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   // ============================================
   // COMMON FIELDS
   // ============================================
+
+  @WorkspaceField({
+    standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.name,
+    type: FieldMetadataType.TEXT,
+    label: msg`Name`,
+    description: msg`Payable description or reference`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.amount,
