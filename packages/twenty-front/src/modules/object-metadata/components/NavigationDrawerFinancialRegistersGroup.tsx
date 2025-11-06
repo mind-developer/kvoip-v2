@@ -164,7 +164,7 @@ export const NavigationDrawerFinancialRegistersGroup = ({
       isGroup={shouldSubItemsBeDisplayed}
     >
       <NavigationDrawerItem
-        label={t`Registros Financeiros`}
+        label={t`Financial Records`}
         to={defaultNavigationPath}
         Icon={IconBuildingSkyscraper}
         active={!!isActive}

@@ -78,8 +78,8 @@ registerEnumType(ReceivableStatus, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.accountReceivable,
   namePlural: 'accountsReceivable',
-  labelSingular: msg`Conta a Receber`,
-  labelPlural: msg`Contas a Receber`,
+  labelSingular: msg`Account Receivable`,
+  labelPlural: msg`Accounts Receivable`,
   description: msg`Accounts receivable records - money to receive from clients`,
   icon: STANDARD_OBJECT_ICONS.accountReceivable,
   shortcut: 'R',
@@ -101,43 +101,43 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
     options: [
       {
         value: ReceivableStatus.PENDING,
-        label: 'Pendente',
+        label: 'Pending',
         position: 0,
         color: 'blue',
       },
       {
         value: ReceivableStatus.PAID,
-        label: 'Pago',
+        label: 'Paid',
         position: 1,
         color: 'green',
       },
       {
         value: ReceivableStatus.OVERDUE,
-        label: 'Vencido',
+        label: 'Overdue',
         position: 2,
         color: 'red',
       },
       {
         value: ReceivableStatus.CANCELLED,
-        label: 'Cancelado',
+        label: 'Cancelled',
         position: 3,
         color: 'gray',
       },
       {
         value: ReceivableStatus.DO_NOT_PAY,
-        label: 'Não Pagar',
+        label: 'Do Not Pay',
         position: 4,
         color: 'yellow',
       },
       {
         value: ReceivableStatus.BANK_RELEASE,
-        label: 'Banco Liberar',
+        label: 'Bank Release',
         position: 5,
         color: 'purple',
       },
       {
         value: ReceivableStatus.DISPUTED,
-        label: 'Contestado',
+        label: 'Disputed',
         position: 6,
         color: 'orange',
       },
@@ -154,7 +154,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
-    label: msg`Valor`,
+    label: msg`Amount`,
     description: msg`Amount to receive`,
     icon: 'IconCurrencyDollar',
   })
@@ -164,7 +164,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.dueDate,
     type: FieldMetadataType.DATE,
-    label: msg`Vencimento`,
+    label: msg`Due Date`,
     description: msg`Due date for receipt`,
     icon: 'IconCalendarEvent',
   })
@@ -190,7 +190,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.pixKey,
     type: FieldMetadataType.TEXT,
-    label: msg`Chave PIX`,
+    label: msg`PIX Key`,
     description: msg`PIX key for receipt`,
     icon: 'IconQrcode',
     settings: {
@@ -210,7 +210,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.documentNumber,
     type: FieldMetadataType.TEXT,
-    label: msg`Número do Documento`,
+    label: msg`Document Number`,
     description: msg`Document number (boleto number, invoice number)`,
     icon: 'IconFileText',
     settings: {
@@ -226,7 +226,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.isRecharge,
     type: FieldMetadataType.BOOLEAN,
-    label: msg`Recarga`,
+    label: msg`Recharge`,
     description: msg`Indicates if this is a telephony recharge`,
     icon: 'IconRefresh',
     defaultValue: false,
@@ -237,7 +237,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.bankSlipLink,
     type: FieldMetadataType.TEXT,
-    label: msg`Link Boleto/Comprovante`,
+    label: msg`Bank Slip Link`,
     description: msg`Link to bank slip PDF or payment receipt`,
     icon: 'IconLink',
     settings: {
@@ -300,7 +300,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Cliente`,
+    label: msg`Client`,
     description: msg`Client company for this receivable`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
@@ -318,7 +318,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.integration,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Gateway de Pagamento`,
+    label: msg`Payment Gateway`,
     description: msg`Payment gateway integration (Inter Bank, etc.)`,
     icon: 'IconPlug',
     inverseSideTarget: () => IntegrationWorkspaceEntity,
@@ -336,7 +336,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.invoice,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Nota Fiscal`,
+    label: msg`Invoice`,
     description: msg`Related invoice`,
     icon: 'IconFileInvoice',
     inverseSideTarget: () => InvoiceWorkspaceEntity,
@@ -354,7 +354,7 @@ export class AccountReceivableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_RECEIVABLE_STANDARD_FIELD_IDS.closingExecution,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Fechamento`,
+    label: msg`Closing`,
     description: msg`Financial closing execution that generated this receivable`,
     icon: 'IconCalendarStats',
     inverseSideTarget: () => FinancialClosingExecutionWorkspaceEntity,

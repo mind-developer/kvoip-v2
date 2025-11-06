@@ -70,8 +70,8 @@ registerEnumType(PayableStatus, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.accountPayable,
   namePlural: 'accountsPayable',
-  labelSingular: msg`Conta a Pagar`,
-  labelPlural: msg`Contas a Pagar`,
+  labelSingular: msg`Account Payable`,
+  labelPlural: msg`Accounts Payable`,
   description: msg`Accounts payable records - bills to pay to suppliers`,
   icon: STANDARD_OBJECT_ICONS.accountPayable,
   shortcut: 'P',
@@ -92,25 +92,25 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
     options: [
       {
         value: PayableStatus.PENDING,
-        label: 'Pendente',
+        label: 'Pending',
         position: 0,
         color: 'blue',
       },
       {
         value: PayableStatus.PAID,
-        label: 'Pago',
+        label: 'Paid',
         position: 1,
         color: 'green',
       },
       {
         value: PayableStatus.OVERDUE,
-        label: 'Vencido',
+        label: 'Overdue',
         position: 2,
         color: 'red',
       },
       {
         value: PayableStatus.CANCELLED,
-        label: 'Cancelado',
+        label: 'Cancelled',
         position: 3,
         color: 'gray',
       },
@@ -127,7 +127,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
-    label: msg`Valor`,
+    label: msg`Amount`,
     description: msg`Amount to pay`,
     icon: 'IconCurrencyDollar',
   })
@@ -137,7 +137,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.dueDate,
     type: FieldMetadataType.DATE,
-    label: msg`Vencimento`,
+    label: msg`Due Date`,
     description: msg`Due date for payment`,
     icon: 'IconCalendarEvent',
   })
@@ -163,7 +163,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.pixKey,
     type: FieldMetadataType.TEXT,
-    label: msg`Chave PIX`,
+    label: msg`PIX Key`,
     description: msg`PIX key for payment`,
     icon: 'IconQrcode',
     settings: {
@@ -183,7 +183,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.paymentType,
     type: FieldMetadataType.TEXT,
-    label: msg`Tipo de Pagamento`,
+    label: msg`Payment Type`,
     description: msg`Payment type (PIX, TED, Boleto, etc.)`,
     icon: 'IconCreditCard',
     settings: {
@@ -199,7 +199,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.barcode,
     type: FieldMetadataType.TEXT,
-    label: msg`Código de Barras`,
+    label: msg`Barcode`,
     description: msg`Barcode for boleto payment (47 or 48 digits)`,
     icon: 'IconBarcode',
     settings: {
@@ -215,7 +215,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.paymentDate,
     type: FieldMetadataType.DATE,
-    label: msg`Data Pagamento`,
+    label: msg`Payment Date`,
     description: msg`Actual payment date`,
     icon: 'IconCalendarCheck',
   })
@@ -225,7 +225,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.message,
     type: FieldMetadataType.TEXT,
-    label: msg`Mensagem`,
+    label: msg`Message`,
     description: msg`Additional message or notes`,
     icon: 'IconMessage',
   })
@@ -282,7 +282,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Fornecedor`,
+    label: msg`Supplier`,
     description: msg`Supplier company for this payable`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
@@ -300,7 +300,7 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.integration,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Gateway de Pagamento`,
+    label: msg`Payment Gateway`,
     description: msg`Payment gateway integration (Inter Bank, etc.)`,
     icon: 'IconPlug',
     inverseSideTarget: () => IntegrationWorkspaceEntity,

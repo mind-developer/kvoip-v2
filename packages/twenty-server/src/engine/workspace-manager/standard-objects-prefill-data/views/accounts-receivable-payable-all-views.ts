@@ -18,7 +18,7 @@ export const accountsReceivableAllView = (
   }
 
   return {
-    name: 'Todos',
+    name: 'All Accounts Receivable',
     objectMetadataId: accountReceivableObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
@@ -96,7 +96,7 @@ export const accountsPayableAllView = (
   }
 
   return {
-    name: 'Todos',
+    name: 'All Accounts Payable',
     objectMetadataId: accountPayableObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
