@@ -54,6 +54,9 @@ import { isFieldRawJson } from '../types/guards/isFieldRawJson';
 import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
+/* @kvoip-woulz proprietary:begin */
+import { FieldErrorBoundary } from './FieldErrorBoundary';
+/* @kvoip-woulz proprietary:end */
 
 export const FieldDisplay = () => {
   const {
@@ -72,7 +75,8 @@ export const FieldDisplay = () => {
     return <ForbiddenFieldDisplay />;
   }
 
-  return isChipDisplay ? (
+  /* @kvoip-woulz proprietary:begin */
+  const fieldComponent = isChipDisplay ? (
     <ChipFieldDisplay />
   ) : isFieldRelationToOneObject(fieldDefinition) ? (
     <RelationToOneFieldDisplay />
@@ -123,4 +127,11 @@ export const FieldDisplay = () => {
   ) : isFieldPhones(fieldDefinition) ? (
     <PhonesFieldDisplay />
   ) : null;
+
+  return (
+    <FieldErrorBoundary fieldName={fieldDefinition?.metadata?.fieldName}>
+      {fieldComponent}
+    </FieldErrorBoundary>
+  );
+  /* @kvoip-woulz proprietary:end */
 };

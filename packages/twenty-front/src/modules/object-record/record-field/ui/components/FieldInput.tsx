@@ -42,55 +42,62 @@ import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInpu
 import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { isFieldText } from '../types/guards/isFieldText';
+/* @kvoip-woulz proprietary:begin */
+import { FieldErrorBoundary } from './FieldErrorBoundary';
+/* @kvoip-woulz proprietary:end */
 
 export const FieldInput = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  return (
-    <>
-      {isFieldRelationToOneObject(fieldDefinition) ? (
-        <RelationToOneFieldInput />
-      ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-        <RelationFromManyFieldInput />
-      ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
-        <MorphRelationOneToManyFieldInput />
-      ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput />
-      ) : isFieldText(fieldDefinition) ? (
-        <TextFieldInput />
-      ) : isFieldEmails(fieldDefinition) ? (
-        <EmailsFieldInput />
-      ) : isFieldFullName(fieldDefinition) ? (
-        <FullNameFieldInput />
-      ) : isFieldDateTime(fieldDefinition) ? (
-        <DateTimeFieldInput />
-      ) : isFieldDate(fieldDefinition) ? (
-        <DateFieldInput />
-      ) : isFieldNumber(fieldDefinition) ? (
-        <NumberFieldInput />
-      ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput />
-      ) : isFieldCurrency(fieldDefinition) ? (
-        <CurrencyFieldInput />
-      ) : isFieldBoolean(fieldDefinition) ? (
-        <BooleanFieldInput />
-      ) : isFieldRating(fieldDefinition) ? (
-        <RatingFieldInput />
-      ) : isFieldSelect(fieldDefinition) ? (
-        <SelectFieldInput />
-      ) : isFieldMultiSelect(fieldDefinition) ? (
-        <MultiSelectFieldInput />
-      ) : isFieldAddress(fieldDefinition) ? (
-        <AddressFieldInput />
-      ) : isFieldRawJson(fieldDefinition) ? (
-        <RawJsonFieldInput />
-      ) : isFieldArray(fieldDefinition) ? (
-        <ArrayFieldInput />
-      ) : isFieldRichTextV2(fieldDefinition) ? (
-        <RichTextFieldInput />
-      ) : (
-        <></>
-      )}
-    </>
+  /* @kvoip-woulz proprietary:begin */
+  const fieldComponent = isFieldRelationToOneObject(fieldDefinition) ? (
+    <RelationToOneFieldInput />
+  ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
+    <RelationFromManyFieldInput />
+  ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
+    <MorphRelationOneToManyFieldInput />
+  ) : isFieldPhones(fieldDefinition) ? (
+    <PhonesFieldInput />
+  ) : isFieldText(fieldDefinition) ? (
+    <TextFieldInput />
+  ) : isFieldEmails(fieldDefinition) ? (
+    <EmailsFieldInput />
+  ) : isFieldFullName(fieldDefinition) ? (
+    <FullNameFieldInput />
+  ) : isFieldDateTime(fieldDefinition) ? (
+    <DateTimeFieldInput />
+  ) : isFieldDate(fieldDefinition) ? (
+    <DateFieldInput />
+  ) : isFieldNumber(fieldDefinition) ? (
+    <NumberFieldInput />
+  ) : isFieldLinks(fieldDefinition) ? (
+    <LinksFieldInput />
+  ) : isFieldCurrency(fieldDefinition) ? (
+    <CurrencyFieldInput />
+  ) : isFieldBoolean(fieldDefinition) ? (
+    <BooleanFieldInput />
+  ) : isFieldRating(fieldDefinition) ? (
+    <RatingFieldInput />
+  ) : isFieldSelect(fieldDefinition) ? (
+    <SelectFieldInput />
+  ) : isFieldMultiSelect(fieldDefinition) ? (
+    <MultiSelectFieldInput />
+  ) : isFieldAddress(fieldDefinition) ? (
+    <AddressFieldInput />
+  ) : isFieldRawJson(fieldDefinition) ? (
+    <RawJsonFieldInput />
+  ) : isFieldArray(fieldDefinition) ? (
+    <ArrayFieldInput />
+  ) : isFieldRichTextV2(fieldDefinition) ? (
+    <RichTextFieldInput />
+  ) : (
+    <></>
   );
+
+  return (
+    <FieldErrorBoundary fieldName={fieldDefinition?.metadata?.fieldName}>
+      {fieldComponent}
+    </FieldErrorBoundary>
+  );
+  /* @kvoip-woulz proprietary:end */
 };

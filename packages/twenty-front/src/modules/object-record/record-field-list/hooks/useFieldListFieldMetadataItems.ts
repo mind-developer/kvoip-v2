@@ -36,17 +36,30 @@ export const useFieldListFieldMetadataItems = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const availableFieldMetadataItems = objectMetadataItem.readableFields
-    .filter(
-      (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
-        !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
-        (!excludeCreatedAtAndUpdatedAt ||
-          (fieldMetadataItem.name !== 'createdAt' &&
-            fieldMetadataItem.name !== 'deletedAt')) &&
-        (showRelationSections ||
-          fieldMetadataItem.type !== FieldMetadataType.RELATION),
-    )
+    .filter((fieldMetadataItem) => {
+      const isSupported = isFieldCellSupported(
+        fieldMetadataItem,
+        objectMetadataItems,
+      );
+      const isLabelId =
+        fieldMetadataItem.id === labelIdentifierFieldMetadataItem?.id;
+      const isExcluded = excludeFieldMetadataIds.includes(fieldMetadataItem.id);
+      const isCreatedOrDeleted =
+        excludeCreatedAtAndUpdatedAt &&
+        (fieldMetadataItem.name === 'createdAt' ||
+          fieldMetadataItem.name === 'deletedAt');
+      const isRelationFiltered =
+        !showRelationSections &&
+        fieldMetadataItem.type === FieldMetadataType.RELATION;
+
+      return (
+        isSupported &&
+        !isLabelId &&
+        !isExcluded &&
+        !isCreatedOrDeleted &&
+        !isRelationFiltered
+      );
+    })
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );

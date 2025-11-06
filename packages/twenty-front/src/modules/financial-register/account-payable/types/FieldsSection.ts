@@ -3,6 +3,8 @@ export enum AccountPayableFieldSection {
   BasicInfo = 'BasicInfo',
   Financial = 'Financial',
   PaymentInfo = 'PaymentInfo',
+  AdditionalInfo = 'AdditionalInfo',
+  SystemInfo = 'SystemInfo',
   Others = 'Others',
 }
 
@@ -13,5 +15,7 @@ export const getAccountPayableFieldSectionLabel = (
     [AccountPayableFieldSection.BasicInfo]: 'no-label-basic-info',
     [AccountPayableFieldSection.Financial]: 'Financial',
     [AccountPayableFieldSection.PaymentInfo]: 'Payment Information',
+    [AccountPayableFieldSection.AdditionalInfo]: 'Additional Information',
+    [AccountPayableFieldSection.SystemInfo]: 'System Information',
     [AccountPayableFieldSection.Others]: 'no-label-others',
   })[section];

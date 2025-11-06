@@ -18,6 +18,7 @@ export const isFieldCellSupported = (
     return false;
   }
 
+  // Check relation fields
   if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     const relationObjectMetadataItemId =
       fieldMetadataItem.relation?.targetObjectMetadata.id;
