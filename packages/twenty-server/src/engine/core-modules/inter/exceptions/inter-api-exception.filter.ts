@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { GqlArgumentsHost, GqlContextType } from '@nestjs/graphql';
 

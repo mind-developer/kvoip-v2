@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Injectable, Logger } from '@nestjs/common';
 
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';

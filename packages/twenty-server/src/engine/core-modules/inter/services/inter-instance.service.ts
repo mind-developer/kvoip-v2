@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import fs from 'fs';

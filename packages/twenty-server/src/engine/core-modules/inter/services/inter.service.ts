@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 

@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { HttpModule } from '@nestjs/axios';
 import { Module, forwardRef } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';

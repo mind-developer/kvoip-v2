@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosInstance, AxiosResponse } from 'axios';

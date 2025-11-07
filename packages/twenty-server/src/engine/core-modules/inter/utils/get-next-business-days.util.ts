@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { addBusinessDays, format } from 'date-fns';
 
 export const getNextBusinessDays = (days: number): string => {

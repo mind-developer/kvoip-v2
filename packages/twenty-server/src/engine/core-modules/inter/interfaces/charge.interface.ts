@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { registerEnumType } from '@nestjs/graphql';
 
 import { HttpStatusCode } from 'axios';

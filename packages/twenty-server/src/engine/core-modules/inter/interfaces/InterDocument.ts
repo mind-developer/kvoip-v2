@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export type InterDocument = {
   integrationId: string;
   clientId: string;
