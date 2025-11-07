@@ -7,6 +7,7 @@ import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runne
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
 import { WhatsAppDriver } from 'src/engine/core-modules/chat-message-manager/drivers/whatsapp.driver';
+import { MediaHelperService } from 'src/engine/core-modules/chat-message-manager/services/media-helper.service';
 import { ChatMessageManagerSetAbandonedCronJobData } from 'src/engine/core-modules/chat-message-manager/types/ChatMessageManagerSetAbandonedCronJobData';
 import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -51,6 +52,7 @@ export class ChatMessageManagerService {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly redisClient: RedisClientService,
+    private readonly mediaHelperService: MediaHelperService,
   ) {
     this.redisClientInstance = this.redisClient.getClient();
     this.queue = new Queue(MessageQueue.cronQueue, {
@@ -610,6 +612,7 @@ export class ChatMessageManagerService {
         this.twentyORMGlobalManager,
         this.environmentService,
         this.clientChatMessageService,
+        this.mediaHelperService,
       ),
     };
     return drivers[provider];

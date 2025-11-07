@@ -2,13 +2,9 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
-import { execFile as _execFile } from 'child_process';
-import { ffmpegPath, ffprobePath } from 'ffmpeg-ffprobe-static';
 import FormData from 'form-data';
-import { promises as fs } from 'fs';
-import os from 'os';
-import path from 'path';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
+import { MediaHelperService } from 'src/engine/core-modules/chat-message-manager/services/media-helper.service';
 import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -21,7 +17,6 @@ import {
   ChatMessageType,
   ClientChatMessage,
 } from 'twenty-shared/types';
-import { v4 as uuidv4 } from 'uuid';
 
 export class WhatsAppDriver implements ChatProviderDriver {
   private readonly META_API_URL: string;
@@ -30,6 +25,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
     private readonly clientChatMessageManagerService: ClientChatMessageService,
+    private readonly mediaHelperService: MediaHelperService,
   ) {
     this.META_API_URL = this.environmentService.get('META_API_URL');
   }
@@ -47,6 +43,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (lower.endsWith('.webm')) return 'audio/webm';
     return 'application/octet-stream';
   }
+
 
   private async uploadMediaAndGetId(
     link: string,
@@ -71,87 +68,14 @@ export class WhatsAppDriver implements ChatProviderDriver {
       }
     })();
 
-    let uploadBuffer = Buffer.from(downloadResponse.data);
-    let uploadContentType = contentType;
-
-    const isWebmContent =
-      uploadContentType.includes('webm') ||
-      filenameFromUrl.toLowerCase().endsWith('.webm');
-
-    if (isWebmContent && ffmpegPath && ffprobePath) {
-      const execFile = (await import('node:util')).promisify(_execFile);
-
-      const tmpDir = os.tmpdir();
-      const inputPath = path.join(tmpDir, `${uuidv4()}.webm`);
-      await fs.writeFile(inputPath, uploadBuffer);
-
-      const probeArgs = [
-        '-v',
-        'error',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream=codec_type',
-        '-of',
-        'json',
-        inputPath,
-      ];
-      let hasVideo = false;
-      try {
-        const { stdout } = await execFile(ffprobePath as string, probeArgs);
-        const json = JSON.parse(stdout || '{}');
-        hasVideo = Array.isArray(json.streams) && json.streams.length > 0;
-      } catch {
-        hasVideo = false;
-      }
-
-      const outputExt = hasVideo ? '.mp4' : '.ogg';
-      const outputMime = hasVideo ? 'video/mp4' : 'audio/ogg; codecs=opus';
-      const outputPath = path.join(tmpDir, `${uuidv4()}${outputExt}`);
-
-      const ffmpegArgs = hasVideo
-        ? [
-            '-i',
-            inputPath,
-            '-c:v',
-            'libx264',
-            '-c:a',
-            'aac',
-            '-movflags',
-            '+faststart',
-            outputPath,
-          ]
-        : [
-            '-i',
-            inputPath,
-            '-vn',
-            '-c:a',
-            'libopus',
-            '-b:a',
-            '96k',
-            '-vbr',
-            'on',
-            '-application',
-            'voip',
-            outputPath,
-          ];
-
-      try {
-        await execFile(ffmpegPath as string, ffmpegArgs);
-        const converted = await fs.readFile(outputPath);
-        uploadBuffer = converted;
-        uploadContentType = outputMime;
-        filenameFromUrl = filenameFromUrl.replace(/\.webm$/i, outputExt);
-      } finally {
-        // cleanup
-        try {
-          await fs.unlink(inputPath);
-        } catch {}
-        try {
-          await fs.unlink(outputPath);
-        } catch {}
-      }
-    }
+    const convertedMedia = await this.mediaHelperService.convertMediaForWhatsApp(
+      Buffer.from(downloadResponse.data),
+      contentType,
+      filenameFromUrl,
+    );
+    const uploadBuffer = convertedMedia.buffer;
+    const uploadContentType = convertedMedia.contentType;
+    filenameFromUrl = convertedMedia.filename;
 
     const formData = new FormData();
     formData.append('messaging_product', 'whatsapp');
