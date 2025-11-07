@@ -134,11 +134,11 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   useEffect(() => {
     if (baileysSessionValid) {
       enqueueSuccessSnackBar({
-        message: 'Integração criada com sucesso!',
+        message: t`Integration created successfully!`,
       });
       navigate(SettingsPath.IntegrationWhatsappDatabase);
     }
-  }, [baileysSessionValid, navigate]);
+  }, [baileysSessionValid, navigate, t]);
 
   const isIntegrationAvailable = !!integration;
 
@@ -161,7 +161,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   });
 
   const canSave = formConfig.formState.isValid;
-  // Função para buscar QR code com retry
+  // Function to fetch QR code with retry
   const fetchQrCodeWithRetry = async (
     sessionName: string,
     maxRetries = 5,
@@ -173,7 +173,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(
-          `Tentativa ${attempt}/${maxRetries} de buscar QR code para: ${sessionName}`,
+          `Attempt ${attempt}/${maxRetries} to fetch QR code for: ${sessionName}`,
         );
         const response = await fetch(
           `${REACT_APP_SERVER_BASE_URL}/Whats-App-rest/whatsapp/qr/${sessionName}`,
@@ -184,59 +184,57 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           },
         );
 
-        console.log(`Tentativa ${attempt} - Status:`, response.status);
+        console.log(`Attempt ${attempt} - Status:`, response.status);
 
         if (response.ok) {
           const data = await response.json();
-          console.log('QR code encontrado:', data);
+          console.log('QR code found:', data);
           if (data.qr) {
             setQrCodeValue(data.qr);
             setIsLoadingQrCode(false);
             return;
           } else {
-            console.log('QR code não encontrado nos dados:', data);
+            console.log('QR code not found in data:', data);
           }
         } else {
           const errorText = await response.text();
           console.log(
-            `Tentativa ${attempt} - Erro:`,
+            `Attempt ${attempt} - Error:`,
             response.status,
             errorText,
           );
           //
-          // Se for 404, continuar tentando
+          // If 404, continue trying
           if (response.status === 404) {
             if (attempt < maxRetries) {
               console.log(
-                `Aguardando ${delay}ms antes da próxima tentativa...`,
+                `Waiting ${delay}ms before next attempt...`,
               );
               await new Promise((resolve) => setTimeout(resolve, delay));
               continue;
             }
           }
-          // Para outros erros, parar
+          // For other errors, stop
           throw new Error(
-            `Erro HTTP ${response.status}: ${response.statusText}`,
+            `HTTP Error ${response.status}: ${response.statusText}`,
           );
         }
       } catch (error) {
-        console.error(`Erro na tentativa ${attempt}:`, error);
+        console.error(`Error on attempt ${attempt}:`, error);
         if (attempt === maxRetries) {
-          setQrCodeError(
-            `Erro ao buscar QR code: ${
-              typeof error === 'object' && error !== null && 'message' in error
-                ? (error as { message?: string }).message
-                : String(error)
-            }`,
-          );
+          const errorMessage =
+            typeof error === 'object' && error !== null && 'message' in error
+              ? (error as { message?: string }).message
+              : String(error);
+          setQrCodeError(`${t`Error fetching QR code:`} ${errorMessage}`);
           setIsLoadingQrCode(false);
           return;
         }
-        // Aguardar antes da próxima tentativa
+        // Wait before next attempt
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    setQrCodeError('QR code não disponível após várias tentativas');
+    setQrCodeError(t`QR code not available after multiple attempts`);
     setIsLoadingQrCode(false);
   };
 
@@ -284,12 +282,12 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
         setShowQrCode(true);
         setQrCodeValue(null);
         setQrCodeError(null);
-        // Verificar se o token existe
+        // Check if token exists
         if (!tokenPair?.accessOrWorkspaceAgnosticToken.token) {
-          setQrCodeError('Token de autenticação não encontrado');
+          setQrCodeError(t`Authentication token not found`);
           return;
         }
-        // Buscar o valor do QR code
+        // Fetch QR code value
         await fetchQrCodeWithRetry(formValues.name);
         validateBaileysSession(formValues.name, newIntegrationId);
       } else {
@@ -326,21 +324,21 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New Whatsapp Inbox"
+      title={t`New Whatsapp Inbox`}
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: 'Integrations',
+          children: t`Integrations`,
           href: settingsIntegrationsPagePath,
         },
         {
           children: integration.text,
           href: `${settingsIntegrationsPagePath}/whatsapp`,
         },
-        { children: 'New Whatsapp Inbox' },
+        { children: t`New Whatsapp Inbox` },
       ]}
       actionButton={
         showQrCode ? (
@@ -348,8 +346,6 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
             isSaveDisabled={false}
             onCancel={() => navigate(SettingsPath.IntegrationWhatsappDatabase)}
             onSave={() => navigate(SettingsPath.IntegrationWhatsappDatabase)}
-            // saveButtonText="Voltar à Lista"
-            // cancelButtonText="Cancelar"
           />
         ) : (
           <SaveAndCancelButtons
@@ -368,27 +364,26 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           <Section>
             <H2Title
               title=""
-              description="Start supporting your customers via WhatsApp"
+              description={t`Start supporting your customers via WhatsApp`}
             />
             {showQrCode ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <h3>QR Code para Baileys - {integrationName}</h3>
+                <h3>{t`QR Code for Baileys`} - {integrationName}</h3>
                 <p>
-                  Escaneie o QR code abaixo com seu WhatsApp para conectar a
-                  integração:
+                  {t`Scan the QR code below with your WhatsApp to connect the integration:`}
                 </p>
                 <div style={{ margin: '20px 0' }}>
                   {qrCodeValue ? (
                     <div>
                       <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(qrCodeValue)}`}
-                        alt="QR Code Baileys"
+                        alt={t`QR Code Baileys`}
                         style={{
                           border: '1px solid #ccc',
                           borderRadius: '8px',
                         }}
                         onError={(e) => {
-                          console.error('Erro ao carregar QR code:', e);
+                          console.error('Error loading QR code:', e);
                           e.currentTarget.style.display = 'none';
                           if (e.currentTarget.nextElementSibling)
                             (
@@ -406,8 +401,8 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                           backgroundColor: '#f5f5f5',
                         }}
                       >
-                        <p>QR Code não pôde ser gerado</p>
-                        <p>Valor do QR: {qrCodeValue}</p>
+                        <p>{t`QR Code could not be generated`}</p>
+                        <p>{t`QR Value:`} {qrCodeValue}</p>
                       </div>
                     </div>
                   ) : qrCodeError ? (
@@ -424,18 +419,17 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                     </div>
                   ) : isLoadingQrCode ? (
                     <div style={{ textAlign: 'center', padding: '20px' }}>
-                      <p>🔄 Buscando QR code...</p>
+                      <p>{t`🔄 Fetching QR code...`}</p>
                       <p style={{ fontSize: '14px', color: '#666' }}>
-                        Isso pode levar alguns segundos. Aguarde...
+                        {t`This may take a few seconds. Please wait...`}
                       </p>
                     </div>
                   ) : (
-                    <p>QR code não disponível</p>
+                    <p>{t`QR code not available`}</p>
                   )}
                 </div>
                 <p style={{ fontSize: '14px', color: '#666' }}>
-                  Após escanear o QR code, sua integração estará ativa e pronta
-                  para uso.
+                  {t`After scanning the QR code, your integration will be active and ready to use.`}
                 </p>
               </div>
             ) : (
