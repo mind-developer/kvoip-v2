@@ -516,7 +516,7 @@ export class ChatMessageManagerService {
           workspaceId,
         );
       }
-      if (clientChat.status === ClientChatStatus.FINISHED) {
+      if (clientChat.status === ClientChatStatus.FINISHED && clientChatMessage.fromType === ChatMessageFromType.PERSON) {
         //add more integrations here in the future
         const whatsappIntegration = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
