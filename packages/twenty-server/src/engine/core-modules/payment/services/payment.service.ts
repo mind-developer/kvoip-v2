@@ -176,6 +176,7 @@ export class PaymentService {
   }: PaymentServiceGetBankSlipFileParams): Promise<BankSlipResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
+    // TODO: Receive a base64 string and sotre it as an attached file to the charge using the file service
     return paymentProvider.getBankSlipFile({
       workspaceId,
       integrationId,

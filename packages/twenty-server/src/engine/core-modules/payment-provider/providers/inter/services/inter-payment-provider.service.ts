@@ -1,16 +1,24 @@
 /* @kvoip-woulz proprietary */
 import {
+  NotImplementedException as BadRequestExeption,
   Injectable,
   Logger,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
+import {
+  InterCustomer,
+  InterCustomerType,
+  InterCustomerUf,
+} from 'src/engine/core-modules/inter/interfaces/charge.interface';
+/* @kvoip-woulz proprietary:end */
 import { InterApiClientService } from 'src/engine/core-modules/inter/services/inter-api-client.service';
+import { ChargeStatus } from 'src/engine/core-modules/payment/enums/charge-status.enum';
 import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
 import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
 import { PaymentMethodNotSupportedException } from 'src/engine/core-modules/payment/exceptions/payment-method-not-supported.exception';
@@ -85,25 +93,59 @@ export class InterPaymentProviderService implements IPaymentProvider {
   async createBoletoCharge(
     params: CreateBoletoChargeParams,
   ): Promise<CreateChargeResponse> {
-    this.logger.log(
-      `Creating boleto charge for workspace ${params.workspaceId}, amount: ${params.amount}`,
-    );
-
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   async createBolepixCharge({
     workspaceId,
     integrationId,
+    amount,
+    payerInfo,
+    expirationMinutes,
+    description,
+    metadata,
   }: CreateBolepixChargeParams): Promise<CreateChargeResponse> {
-    await this.resolveIntegrationOrThrow(workspaceId, integrationId);
+    const integration = await this.resolveIntegrationOrThrow(
+      workspaceId,
+      integrationId,
+    );
 
-    throw new NotImplementedException('Not implemented');
+    const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
+
+    const { dueDate, formatted } = this.resolveDueDate(expirationMinutes);
+
+    const response = await this.interApiClient.createCharge(
+      {
+        seuNumero: chargeCode,
+        valorNominal: this.formatAmount(amount),
+        dataVencimento: formatted,
+        numDiasAgenda: '0',
+        pagador: this.mapToInterCustomer(payerInfo),
+        menssagem: description ? [description] : undefined,
+      },
+      integration,
+    );
+
+    if (!response.codigoSolicitacao) {
+      throw new BadRequestExeption(
+        'Inter API response did not include a charge identifier',
+      );
+    }
+
+    return {
+      chargeId: chargeCode,
+      externalChargeId: response.codigoSolicitacao,
+      status: ChargeStatus.PENDING,
+      paymentMethod: PaymentMethod.BOLEPIX,
+      amount,
+      dueDate,
+      metadata: {
+        ...metadata,
+        interChargeCode: response.codigoSolicitacao,
+        integrationId: integration.id,
+        expirationMinutes,
+      },
+    };
   }
 
   /**
@@ -111,25 +153,15 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * Note: Does all boleto generated have a pix option?
    */
   async createPixCharge(
-    params: CreatePixChargeParams,
+    _params: CreatePixChargeParams,
   ): Promise<CreateChargeResponse> {
-    this.logger.log(
-      `Creating PIX charge for workspace ${params.workspaceId}, amount: ${params.amount}`,
-    );
-
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   /**
    * Creates a credit/debit card charge
    * Note: This method is not supported by Inter API.
    */
-  /* @kvoip-woulz proprietary:begin */
   async createCardCharge(
     _params: CreateCardChargeParams,
   ): Promise<CreateChargeResponse> {
@@ -138,7 +170,6 @@ export class InterPaymentProviderService implements IPaymentProvider {
       PaymentMethod.CREDIT_CARD,
     );
   }
-  /* @kvoip-woulz proprietary:end */
 
   /**
    * Retrieves bank slip file (PDF)
@@ -146,12 +177,20 @@ export class InterPaymentProviderService implements IPaymentProvider {
   async getBankSlipFile(
     params: GetBankSlipFileParams,
   ): Promise<BankSlipResponse> {
-    await this.resolveIntegrationOrThrow(
+    const integration = await this.resolveIntegrationOrThrow(
       params.workspaceId,
       params.integrationId,
     );
 
-    throw new NotImplementedException('Not implemented');
+    const pdfBase64 = await this.interApiClient.getChargePdf(
+      params.chargeId,
+      integration,
+    );
+
+    return {
+      fileBuffer: Buffer.from(pdfBase64, 'base64'),
+      fileName: `inter-bolepix-${params.chargeId}.pdf`,
+    };
   }
 
   /**
@@ -160,90 +199,158 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * This method would need to query Inter's API for charge status
    */
   async getChargeStatus(
-    params: GetChargeStatusParams,
+    _params: GetChargeStatusParams,
   ): Promise<PaymentStatusResponse> {
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   /**
    * Cancels a pending charge
    */
   async cancelCharge(
-    params: CancelChargeParams,
+    _params: CancelChargeParams,
   ): Promise<CancelChargeResponse> {
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   /**
    * Refunds a paid charge
    */
   async refundCharge(_params: RefundChargeParams): Promise<RefundResponse> {
-    await this.resolveIntegrationOrThrow(
-      _params.workspaceId,
-      _params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   /**
    * Updates charge information
    */
   async updateCharge(
-    params: UpdateChargeParams,
+    _params: UpdateChargeParams,
   ): Promise<CreateChargeResponse> {
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
-
-    throw new NotImplementedException('Not implemented');
+    throw new BadRequestExeption('Not implemented');
   }
 
   /**
    * Lists all charges for a workspace
    */
-  async listCharges(params: ListChargesParams): Promise<ListChargesResponse> {
-    await this.resolveIntegrationOrThrow(
-      params.workspaceId,
-      params.integrationId,
-    );
+  async listCharges(_params: ListChargesParams): Promise<ListChargesResponse> {
+    throw new BadRequestExeption('Not implemented');
+  }
 
-    throw new NotImplementedException('Not implemented');
+  // TODO: Confirm inter expiration date options
+  private resolveDueDate(expirationMinutes?: number): {
+    dueDate: Date;
+    formatted: string;
+  } {
+    const minutes = Math.max(expirationMinutes ?? 60 * 24, 1);
+    const dueDate = new Date(Date.now() + minutes * 60 * 1000);
+
+    return {
+      dueDate,
+      formatted: this.formatDate(dueDate),
+    };
+  }
+
+  private formatAmount(amount: number): string {
+    return amount.toFixed(2);
+  }
+
+  private mapToInterCustomer(
+    payerInfo: CreateBolepixChargeParams['payerInfo'],
+  ): InterCustomer {
+    const sanitizedTaxId = this.sanitizeDigits(payerInfo.taxId);
+    const address = payerInfo.address;
+
+    return {
+      cpfCnpj: sanitizedTaxId,
+      tipoPessoa: this.determineLegalEntityType(payerInfo.taxId),
+      nome: payerInfo.name,
+      endereco: address ? this.buildAddressLine(address) : '',
+      cidade: address?.city ?? '',
+      uf: this.resolveUf(address?.state),
+      cep: address ? this.sanitizeDigits(address.zipCode) : '',
+      bairro: address?.neighborhood,
+      email: payerInfo.email,
+      ddd: this.extractDDD(payerInfo.phone),
+      telefone: this.extractPhoneNumber(payerInfo.phone),
+      numero: address?.number,
+      complemento: address?.complement,
+    };
+  }
+
+  private buildAddressLine(
+    address: NonNullable<CreateBolepixChargeParams['payerInfo']['address']>,
+  ): string {
+    const parts = [
+      address.street,
+      address.number ? `nº ${address.number}` : undefined,
+      address.complement,
+    ].filter(Boolean);
+
+    return parts.join(', ');
+  }
+
+  private determineLegalEntityType(taxId: string): InterCustomerType {
+    return this.sanitizeDigits(taxId).length > 11
+      ? InterCustomerType.JURIDICA
+      : InterCustomerType.FISICA;
+  }
+
+  private sanitizeDigits(value?: string): string {
+    return value?.replace(/\D/g, '') ?? '';
+  }
+
+  private extractDDD(phone?: string): string | undefined {
+    const digits = this.sanitizeDigits(phone);
+
+    return digits.length >= 10 ? digits.slice(0, 2) : undefined;
+  }
+
+  private extractPhoneNumber(phone?: string): string | undefined {
+    const digits = this.sanitizeDigits(phone);
+
+    return digits.length > 2 ? digits.slice(2) : undefined;
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private resolveUf(state?: string): InterCustomerUf {
+    if (!state) {
+      throw new BadRequestExeption('State is required for Inter charges');
+    }
+
+    const upperState = state.toUpperCase();
+    if ((Object.values(InterCustomerUf) as string[]).includes(upperState)) {
+      return upperState as InterCustomerUf;
+    }
+
+    throw new BadRequestExeption(
+      `Invalid state provided for Inter customer: ${state}`,
+    );
   }
 
   private async resolveIntegrationOrThrow(
     workspaceId: string,
     integrationId?: string,
   ): Promise<InterIntegration> {
-    const integration = integrationId
-      ? await this.interIntegrationRepository.findOne({
-          where: {
+    const integration = await this.interIntegrationRepository.findOne({
+      where: integrationId
+        ? {
             id: integrationId,
             workspace: { id: workspaceId },
-          },
-          relations: {
-            workspace: true,
-          },
-        })
-      : await this.interIntegrationRepository.findOne({
-          where: {
+          }
+        : {
             workspace: { id: workspaceId },
           },
-          relations: {
-            workspace: true,
-          },
-        });
+      relations: {
+        workspace: true,
+      },
+    });
 
     if (!integration) {
       throw new NotFoundException(
