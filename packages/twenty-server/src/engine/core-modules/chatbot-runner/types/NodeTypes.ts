@@ -5,5 +5,5 @@ export enum NodeTypes {
   AUDIO = 'audio',
   FILE = 'file',
   INTERACTION = 'interaction',
-  CONDITION = 'conditional',
+  CONDITIONAL = 'conditional',
 }

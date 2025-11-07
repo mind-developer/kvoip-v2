@@ -8,6 +8,7 @@ import {
   ExecutorInput,
 } from 'src/engine/core-modules/chatbot-runner/types/CreateExecutorInput';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
+import { FlowNode } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
 import { NodeTypes } from 'src/engine/core-modules/chatbot-runner/types/NodeTypes';
 
 @Injectable()
@@ -28,7 +29,7 @@ export class ChatbotRunnerService {
       handlers: {
         [NodeTypes.TEXT]: this.textInputHandler,
         [NodeTypes.IMAGE]: this.imageInputHandler,
-        [NodeTypes.CONDITION]: this.conditionalInputHandler,
+        [NodeTypes.CONDITIONAL]: this.conditionalInputHandler,
         [NodeTypes.FILE]: this.fileInputHandler,
       },
     });
@@ -59,11 +60,9 @@ class ExecuteFlow {
       'ExecuteFlow constructor - flowNodes:',
       JSON.stringify(this.i.chatbot.flowNodes, null, 2),
     );
-    /* @kvoip-woulz proprietary:begin */
     this.currentNodeId = this.i.chatbot.flowNodes.find(
       (node) => node.data?.nodeStart,
     )?.id;
-    /* @kvoip-woulz proprietary:end */
     console.log('ExecuteFlow constructor - currentNodeId:', this.currentNodeId);
   }
 
@@ -71,7 +70,7 @@ class ExecuteFlow {
     console.log('runFlow called with incomingMessage:', incomingMessage);
     console.log('runFlow - current currentNodeId:', this.currentNodeId);
     while (this.currentNodeId) {
-      const currentNode = this.i.chatbot.flowNodes.find(
+      const currentNode: FlowNode = this.i.chatbot.flowNodes.find(
         (node) => node.id === this.currentNodeId,
       );
       console.log(
@@ -103,7 +102,7 @@ class ExecuteFlow {
           incomingMessage,
         },
       });
-      if (currentNode.type === NodeTypes.CONDITION) {
+      if (currentNode.type === NodeTypes.CONDITIONAL) {
         const logic = currentNode.data?.logic as NewConditionalState;
         if (logic?.logicNodeData && nextNodeId) {
           const matchedCondition = logic.logicNodeData.find(
@@ -116,7 +115,7 @@ class ExecuteFlow {
         if (!nextNodeId) {
           if (
             this.i.onFinish &&
-            ['text', 'image', 'file', 'condition'].includes(currentNode.type)
+            ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
           ) {
             console.log('on finish', currentNode.type, this.chosenInput);
             this.i.onFinish(currentNode, this.chosenInput);
@@ -125,9 +124,10 @@ class ExecuteFlow {
         }
       }
       if (!nextNodeId) {
+        console.log(this.i.onFinish, currentNode.type);
         if (
           this.i.onFinish &&
-          ['text', 'image', 'file', 'condition'].includes(currentNode.type)
+          ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
         ) {
           console.log('on finish', currentNode.type, this.chosenInput);
           this.i.onFinish(currentNode, this.chosenInput);
