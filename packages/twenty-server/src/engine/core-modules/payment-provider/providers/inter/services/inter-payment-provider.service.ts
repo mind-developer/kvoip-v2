@@ -1,19 +1,41 @@
 /* @kvoip-woulz proprietary */
-import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { Repository } from 'typeorm';
+
+import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterApiClientService } from 'src/engine/core-modules/inter/services/inter-api-client.service';
-import { ChargeStatus } from 'src/engine/core-modules/payment/enums/charge-status.enum';
 import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
+import { PaymentMethodNotSupportedException } from 'src/engine/core-modules/payment/exceptions/payment-method-not-supported.exception';
 import { PaymentProviderCapabilities } from 'src/engine/core-modules/payment/interfaces/payment-provider-capabilities.interface';
 import {
   BankSlipResponse,
+  /* @kvoip-woulz proprietary:begin */
+  CancelChargeParams,
   CancelChargeResponse,
+  CreateBolepixChargeParams,
+  CreateBoletoChargeParams,
+  CreateCardChargeParams,
   CreateChargeResponse,
+  CreatePixChargeParams,
+  GetBankSlipFileParams,
+  GetChargeStatusParams,
   IPaymentProvider,
-  PayerInfo,
+  ListChargesParams,
+  ListChargesResponse,
   PaymentStatusResponse,
+  RefundChargeParams,
   RefundResponse,
+  UpdateChargeParams,
 } from 'src/engine/core-modules/payment/interfaces/payment-provider.interface';
+/* @kvoip-woulz proprietary:end */
 
 /**
  * Inter Bank payment provider implementation
@@ -51,22 +73,35 @@ export class InterPaymentProviderService implements IPaymentProvider {
     webhooks: true, // Inter sends webhook events for status updates
   };
 
-  constructor(private readonly interApiClient: InterApiClientService) {}
+  constructor(
+    private readonly interApiClient: InterApiClientService,
+    @InjectRepository(InterIntegration)
+    private readonly interIntegrationRepository: Repository<InterIntegration>,
+  ) {}
 
   /**
    * Creates a boleto (bank slip) charge using Inter's API
    */
   async createBoletoCharge(
-    workspaceId: string,
-    amount: number,
-    dueDate: Date,
-    payerInfo: PayerInfo,
-    description?: string,
-    metadata?: Record<string, any>,
+    params: CreateBoletoChargeParams,
   ): Promise<CreateChargeResponse> {
     this.logger.log(
-      `Creating boleto charge for workspace ${workspaceId}, amount: ${amount}`,
+      `Creating boleto charge for workspace ${params.workspaceId}, amount: ${params.amount}`,
     );
+
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
+    throw new NotImplementedException('Not implemented');
+  }
+
+  async createBolepixCharge({
+    workspaceId,
+    integrationId,
+  }: CreateBolepixChargeParams): Promise<CreateChargeResponse> {
+    await this.resolveIntegrationOrThrow(workspaceId, integrationId);
 
     throw new NotImplementedException('Not implemented');
   }
@@ -76,15 +111,15 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * Note: Does all boleto generated have a pix option?
    */
   async createPixCharge(
-    workspaceId: string,
-    amount: number,
-    payerInfo: PayerInfo,
-    expirationMinutes: number = 30,
-    description?: string,
-    metadata?: Record<string, any>,
+    params: CreatePixChargeParams,
   ): Promise<CreateChargeResponse> {
     this.logger.log(
-      `Creating PIX charge for workspace ${workspaceId}, amount: ${amount}`,
+      `Creating PIX charge for workspace ${params.workspaceId}, amount: ${params.amount}`,
+    );
+
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
     );
 
     throw new NotImplementedException('Not implemented');
@@ -94,19 +129,28 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * Creates a credit/debit card charge
    * Note: This method is not supported by Inter API.
    */
-  async createCardCharge(): Promise<CreateChargeResponse> {
-    throw new NotImplementedException(
-      'Card payments not supported by Inter API. Use a different payment method or provider.',
+  /* @kvoip-woulz proprietary:begin */
+  async createCardCharge(
+    _params: CreateCardChargeParams,
+  ): Promise<CreateChargeResponse> {
+    throw new PaymentMethodNotSupportedException(
+      PaymentProvider.INTER,
+      PaymentMethod.CREDIT_CARD,
     );
   }
+  /* @kvoip-woulz proprietary:end */
 
   /**
    * Retrieves bank slip file (PDF)
    */
   async getBankSlipFile(
-    workspaceId: string,
-    chargeId: string,
+    params: GetBankSlipFileParams,
   ): Promise<BankSlipResponse> {
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
   }
 
@@ -116,9 +160,13 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * This method would need to query Inter's API for charge status
    */
   async getChargeStatus(
-    workspaceId: string,
-    chargeId: string,
+    params: GetChargeStatusParams,
   ): Promise<PaymentStatusResponse> {
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
   }
 
@@ -126,22 +174,25 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * Cancels a pending charge
    */
   async cancelCharge(
-    workspaceId: string,
-    chargeId: string,
-    reason?: string,
+    params: CancelChargeParams,
   ): Promise<CancelChargeResponse> {
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
   }
 
   /**
    * Refunds a paid charge
    */
-  async refundCharge(
-    workspaceId: string,
-    chargeId: string,
-    amount?: number,
-    reason?: string,
-  ): Promise<RefundResponse> {
+  async refundCharge(_params: RefundChargeParams): Promise<RefundResponse> {
+    await this.resolveIntegrationOrThrow(
+      _params.workspaceId,
+      _params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
   }
 
@@ -149,35 +200,57 @@ export class InterPaymentProviderService implements IPaymentProvider {
    * Updates charge information
    */
   async updateCharge(
-    workspaceId: string,
-    chargeId: string,
-    updates: Partial<{
-      amount: number;
-      dueDate: Date;
-      description: string;
-    }>,
+    params: UpdateChargeParams,
   ): Promise<CreateChargeResponse> {
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
   }
 
   /**
    * Lists all charges for a workspace
    */
-  async listCharges(
-    workspaceId: string,
-    filters?: {
-      status?: ChargeStatus;
-      paymentMethod?: PaymentMethod;
-      startDate?: Date;
-      endDate?: Date;
-      limit?: number;
-      offset?: number;
-    },
-  ): Promise<{
-    charges: CreateChargeResponse[];
-    total: number;
-    hasMore: boolean;
-  }> {
+  async listCharges(params: ListChargesParams): Promise<ListChargesResponse> {
+    await this.resolveIntegrationOrThrow(
+      params.workspaceId,
+      params.integrationId,
+    );
+
     throw new NotImplementedException('Not implemented');
+  }
+
+  private async resolveIntegrationOrThrow(
+    workspaceId: string,
+    integrationId?: string,
+  ): Promise<InterIntegration> {
+    const integration = integrationId
+      ? await this.interIntegrationRepository.findOne({
+          where: {
+            id: integrationId,
+            workspace: { id: workspaceId },
+          },
+          relations: {
+            workspace: true,
+          },
+        })
+      : await this.interIntegrationRepository.findOne({
+          where: {
+            workspace: { id: workspaceId },
+          },
+          relations: {
+            workspace: true,
+          },
+        });
+
+    if (!integration) {
+      throw new NotFoundException(
+        `No Inter integration found for workspace ${workspaceId}`,
+      );
+    }
+
+    return integration;
   }
 }

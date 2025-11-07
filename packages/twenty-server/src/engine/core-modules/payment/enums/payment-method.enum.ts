@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export enum PaymentMethod {
   // Note: Does all payment provviders suport bolepix?
   BOLEPIX = 'BOLEPIX',

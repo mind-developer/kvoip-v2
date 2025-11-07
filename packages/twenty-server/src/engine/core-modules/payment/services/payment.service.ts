@@ -11,6 +11,7 @@ import { ChargeStatus } from '../enums/charge-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { PaymentProvider } from '../enums/payment-provider.enum';
 import { PaymentMethodNotSupportedException } from '../exceptions/payment-method-not-supported.exception';
+import type { ListChargesResponse } from '../interfaces/payment-provider.interface';
 import {
   BankSlipResponse,
   CancelChargeResponse,
@@ -19,6 +20,16 @@ import {
   PaymentStatusResponse,
   RefundResponse,
 } from '../interfaces/payment-provider.interface';
+import {
+  PaymentServiceCancelChargeParams,
+  PaymentServiceCreateChargeParams,
+  PaymentServiceGetBankSlipFileParams,
+  PaymentServiceGetChargeStatusParams,
+  PaymentServiceListChargesParams,
+  PaymentServiceRefundChargeParams,
+  PaymentServiceSyncChargeStatusParams,
+  PaymentServiceUpdateChargeParams,
+} from '../types/payment-service.types';
 
 @Injectable()
 export class PaymentService {
@@ -51,12 +62,13 @@ export class PaymentService {
   /**
    * Main method to create a charge using the specified payment provider
    */
-  async createCharge(
-    workspaceId: string,
+  async createCharge({
+    workspaceId,
+    chargeDto,
+    provider,
+    integrationId,
+  }: PaymentServiceCreateChargeParams): Promise<ChargeWorkspaceEntity> {
     // integrationId: string,
-    chargeDto: CreateChargeDto,
-    provider: PaymentProvider,
-  ): Promise<ChargeWorkspaceEntity> {
     // Get the appropriate payment provider
     const paymentProvider = this.getPaymentProvider(provider);
 
@@ -85,25 +97,39 @@ export class PaymentService {
         if (!chargeDto.dueDate) {
           throw new Error('Due date is required for boleto payments');
         }
-        response = await paymentProvider.createBoletoCharge(
+        response = await paymentProvider.createBoletoCharge({
           workspaceId,
-          chargeDto.amount,
-          chargeDto.dueDate,
-          chargeDto.payerInfo,
-          chargeDto.description,
-          chargeDto.metadata,
-        );
+          integrationId,
+          amount: chargeDto.amount,
+          dueDate: chargeDto.dueDate,
+          payerInfo: chargeDto.payerInfo,
+          description: chargeDto.description,
+          metadata: chargeDto.metadata,
+        });
+        break;
+
+      case PaymentMethod.BOLEPIX:
+        response = await paymentProvider.createBolepixCharge({
+          workspaceId,
+          integrationId,
+          amount: chargeDto.amount,
+          payerInfo: chargeDto.payerInfo,
+          expirationMinutes: chargeDto.expirationMinutes,
+          description: chargeDto.description,
+          metadata: chargeDto.metadata,
+        });
         break;
 
       case PaymentMethod.PIX:
-        response = await paymentProvider.createPixCharge(
+        response = await paymentProvider.createPixCharge({
           workspaceId,
-          chargeDto.amount,
-          chargeDto.payerInfo,
-          chargeDto.expirationMinutes,
-          chargeDto.description,
-          chargeDto.metadata,
-        );
+          integrationId,
+          amount: chargeDto.amount,
+          payerInfo: chargeDto.payerInfo,
+          expirationMinutes: chargeDto.expirationMinutes,
+          description: chargeDto.description,
+          metadata: chargeDto.metadata,
+        });
         break;
 
       case PaymentMethod.CREDIT_CARD:
@@ -111,14 +137,15 @@ export class PaymentService {
         if (!chargeDto.cardData) {
           throw new Error('Card data is required for card payments');
         }
-        response = await paymentProvider.createCardCharge(
+        response = await paymentProvider.createCardCharge({
           workspaceId,
-          chargeDto.amount,
-          chargeDto.cardData,
-          chargeDto.payerInfo,
-          chargeDto.description,
-          chargeDto.metadata,
-        );
+          integrationId,
+          amount: chargeDto.amount,
+          cardData: chargeDto.cardData,
+          payerInfo: chargeDto.payerInfo,
+          description: chargeDto.description,
+          metadata: chargeDto.metadata,
+        });
         break;
 
       default:
@@ -141,38 +168,49 @@ export class PaymentService {
   /**
    * Retrieves bank slip file for a charge
    */
-  async getBankSlipFile(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-  ): Promise<BankSlipResponse> {
+  async getBankSlipFile({
+    workspaceId,
+    chargeId,
+    provider,
+    integrationId,
+  }: PaymentServiceGetBankSlipFileParams): Promise<BankSlipResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    return paymentProvider.getBankSlipFile(workspaceId, chargeId);
+    return paymentProvider.getBankSlipFile({
+      workspaceId,
+      integrationId,
+      chargeId,
+    });
   }
 
   /**
    * Gets the payment status of a charge
    */
-  async getChargeStatus(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-  ): Promise<PaymentStatusResponse> {
+  async getChargeStatus({
+    workspaceId,
+    chargeId,
+    provider,
+    integrationId,
+  }: PaymentServiceGetChargeStatusParams): Promise<PaymentStatusResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    return paymentProvider.getChargeStatus(workspaceId, chargeId);
+    return paymentProvider.getChargeStatus({
+      workspaceId,
+      integrationId,
+      chargeId,
+    });
   }
 
   /**
    * Cancels a pending charge
    */
-  async cancelCharge(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-    reason?: string,
-  ): Promise<CancelChargeResponse> {
+  async cancelCharge({
+    workspaceId,
+    chargeId,
+    provider,
+    reason,
+    integrationId,
+  }: PaymentServiceCancelChargeParams): Promise<CancelChargeResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
     // Check if provider supports cancellation
@@ -182,11 +220,12 @@ export class PaymentService {
       );
     }
 
-    const response = await paymentProvider.cancelCharge(
+    const response = await paymentProvider.cancelCharge({
       workspaceId,
+      integrationId,
       chargeId,
       reason,
-    );
+    });
 
     // Update the charge entity in database
     await this.updateChargeStatus(
@@ -201,13 +240,14 @@ export class PaymentService {
   /**
    * Refunds a paid charge (full or partial)
    */
-  async refundCharge(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-    amount?: number,
-    reason?: string,
-  ): Promise<RefundResponse> {
+  async refundCharge({
+    workspaceId,
+    chargeId,
+    provider,
+    amount,
+    reason,
+    integrationId,
+  }: PaymentServiceRefundChargeParams): Promise<RefundResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
     // Check if provider supports refunds
@@ -220,12 +260,13 @@ export class PaymentService {
       throw new Error(`Provider ${provider} does not support partial refunds`);
     }
 
-    const response = await paymentProvider.refundCharge(
+    const response = await paymentProvider.refundCharge({
       workspaceId,
+      integrationId,
       chargeId,
       amount,
       reason,
-    );
+    });
 
     // Update the charge entity in database
     await this.updateChargeStatus(workspaceId, chargeId, ChargeStatus.REFUNDED);
@@ -236,59 +277,57 @@ export class PaymentService {
   /**
    * Updates charge information
    */
-  async updateCharge(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-    updates: Partial<{
-      amount: number;
-      dueDate: Date;
-      description: string;
-    }>,
-  ): Promise<CreateChargeResponse> {
+  async updateCharge({
+    workspaceId,
+    chargeId,
+    provider,
+    updates,
+    integrationId,
+  }: PaymentServiceUpdateChargeParams): Promise<CreateChargeResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    return paymentProvider.updateCharge(workspaceId, chargeId, updates);
+    return paymentProvider.updateCharge({
+      workspaceId,
+      integrationId,
+      chargeId,
+      updates,
+    });
   }
 
   /**
    * Lists all charges for a workspace
    */
-  async listCharges(
-    workspaceId: string,
-    provider: PaymentProvider,
-    filters?: {
-      status?: ChargeStatus;
-      paymentMethod?: PaymentMethod;
-      startDate?: Date;
-      endDate?: Date;
-      limit?: number;
-      offset?: number;
-    },
-  ): Promise<{
-    charges: CreateChargeResponse[];
-    total: number;
-    hasMore: boolean;
-  }> {
+  async listCharges({
+    workspaceId,
+    provider,
+    filters,
+    integrationId,
+  }: PaymentServiceListChargesParams): Promise<ListChargesResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    return paymentProvider.listCharges(workspaceId, filters);
+    return paymentProvider.listCharges({
+      workspaceId,
+      integrationId,
+      filters,
+    });
   }
 
   /**
    * Syncs charge status from payment provider
    * Useful for webhooks or scheduled sync jobs
    */
-  async syncChargeStatus(
-    workspaceId: string,
-    chargeId: string,
-    provider: PaymentProvider,
-  ): Promise<ChargeWorkspaceEntity> {
-    const statusResponse = await this.getChargeStatus(
+  async syncChargeStatus({
+    workspaceId,
+    chargeId,
+    provider,
+    integrationId,
+  }: PaymentServiceSyncChargeStatusParams): Promise<ChargeWorkspaceEntity> {
+    const statusResponse = await this.getChargeStatus({
       workspaceId,
       chargeId,
       provider,
-    );
+      integrationId,
+    });
 
     const chargeRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(

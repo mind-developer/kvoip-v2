@@ -1,18 +1,25 @@
 /* @kvoip-woulz proprietary */
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
-
-import { ChargeStatus } from 'src/engine/core-modules/payment/enums/charge-status.enum';
-import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
 import { PaymentProviderCapabilities } from 'src/engine/core-modules/payment/interfaces/payment-provider-capabilities.interface';
+
 import {
   BankSlipResponse,
+  CancelChargeParams,
   CancelChargeResponse,
-  CardData,
+  CreateBolepixChargeParams,
+  CreateBoletoChargeParams,
+  CreateCardChargeParams,
   CreateChargeResponse,
+  CreatePixChargeParams,
+  GetBankSlipFileParams,
+  GetChargeStatusParams,
   IPaymentProvider,
-  PayerInfo,
+  ListChargesParams,
+  ListChargesResponse,
   PaymentStatusResponse,
+  RefundChargeParams,
   RefundResponse,
+  UpdateChargeParams,
 } from 'src/engine/core-modules/payment/interfaces/payment-provider.interface';
 
 /**
@@ -22,7 +29,6 @@ import {
 @Injectable()
 export class AsasPaymentProviderService implements IPaymentProvider {
   private readonly logger = new Logger(AsasPaymentProviderService.name);
-
   /**
    * ASAS capabilities (when implemented)
    * ASAS typically supports a wide range of payment methods
@@ -50,97 +56,53 @@ export class AsasPaymentProviderService implements IPaymentProvider {
     webhooks: true,
   };
 
-  async createBoletoCharge(
-    workspaceId: string,
-    amount: number,
-    dueDate: Date,
-    payerInfo: PayerInfo,
-    description?: string,
-    metadata?: Record<string, any>,
+  createBoletoCharge(
+    _params: CreateBoletoChargeParams,
   ): Promise<CreateChargeResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async createPixCharge(
-    workspaceId: string,
-    amount: number,
-    payerInfo: PayerInfo,
-    expirationMinutes?: number,
-    description?: string,
-    metadata?: Record<string, any>,
+  createPixCharge(
+    _params: CreatePixChargeParams,
   ): Promise<CreateChargeResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async createCardCharge(
-    workspaceId: string,
-    amount: number,
-    cardData: CardData,
-    payerInfo: PayerInfo,
-    description?: string,
-    metadata?: Record<string, any>,
+  createBolepixCharge(
+    _params: CreateBolepixChargeParams,
   ): Promise<CreateChargeResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async getBankSlipFile(
-    workspaceId: string,
-    chargeId: string,
-  ): Promise<BankSlipResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+  createCardCharge(
+    _params: CreateCardChargeParams,
+  ): Promise<CreateChargeResponse> {
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async getChargeStatus(
-    workspaceId: string,
-    chargeId: string,
+  getBankSlipFile(_params: GetBankSlipFileParams): Promise<BankSlipResponse> {
+    throw new NotImplementedException('Method not implemented.');
+  }
+
+  getChargeStatus(
+    _params: GetChargeStatusParams,
   ): Promise<PaymentStatusResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async cancelCharge(
-    workspaceId: string,
-    chargeId: string,
-    reason?: string,
-  ): Promise<CancelChargeResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+  cancelCharge(_params: CancelChargeParams): Promise<CancelChargeResponse> {
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async refundCharge(
-    workspaceId: string,
-    chargeId: string,
-    amount?: number,
-    reason?: string,
-  ): Promise<RefundResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+  refundCharge(_params: RefundChargeParams): Promise<RefundResponse> {
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async updateCharge(
-    workspaceId: string,
-    chargeId: string,
-    updates: Partial<{
-      amount: number;
-      dueDate: Date;
-      description: string;
-    }>,
-  ): Promise<CreateChargeResponse> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+  updateCharge(_params: UpdateChargeParams): Promise<CreateChargeResponse> {
+    throw new NotImplementedException('Method not implemented.');
   }
 
-  async listCharges(
-    workspaceId: string,
-    filters?: {
-      status?: ChargeStatus;
-      paymentMethod?: PaymentMethod;
-      startDate?: Date;
-      endDate?: Date;
-      limit?: number;
-      offset?: number;
-    },
-  ): Promise<{
-    charges: CreateChargeResponse[];
-    total: number;
-    hasMore: boolean;
-  }> {
-    throw new NotImplementedException('ASAS provider not yet implemented');
+  listCharges(_params: ListChargesParams): Promise<ListChargesResponse> {
+    throw new NotImplementedException('Method not implemented.');
   }
 }

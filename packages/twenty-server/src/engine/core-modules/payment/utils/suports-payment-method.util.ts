@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { PaymentProviderCapabilities } from 'src/engine/core-modules/payment/interfaces/payment-provider-capabilities.interface';
 
 /**

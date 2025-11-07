@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 import { PaymentMethod } from '../enums/payment-method.enum';
-import { CardData, PayerInfo } from '../interfaces/payment-provider.interface';
+import { CardData, Customer } from '../interfaces/payment-provider.interface';
 
 export class CreateChargeDto {
   @IsEnum(PaymentMethod)
@@ -24,7 +24,7 @@ export class CreateChargeDto {
 
   @IsObject()
   @IsNotEmpty()
-  payerInfo: PayerInfo;
+  payerInfo: Customer;
 
   @IsOptional()
   @IsString()
