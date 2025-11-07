@@ -253,6 +253,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       <AccountPayableFieldsCard
         objectNameSingular={CoreObjectNameSingular.AccountPayable}
         objectRecordId={targetableObject.id}
+        isInRightDrawer={isInRightDrawer}
       />
     </AccountPayableCardContainer>
   ),

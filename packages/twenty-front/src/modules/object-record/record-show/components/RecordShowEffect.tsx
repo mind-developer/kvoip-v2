@@ -17,6 +17,8 @@ export const RecordShowEffect = ({
   objectNameSingular,
   recordId,
 }: RecordShowEffectProps) => {
+  const isDraftRecord = recordId.startsWith('draft-');
+
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -31,6 +33,7 @@ export const RecordShowEffect = ({
     objectNameSingular,
     recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
     withSoftDeleted: true,
+    skip: isDraftRecord,
   });
 
   const setRecordStore = useRecoilCallback(
@@ -48,10 +51,14 @@ export const RecordShowEffect = ({
   );
 
   useEffect(() => {
+    if (isDraftRecord) {
+      return;
+    }
+
     if (!loading && isDefined(record)) {
       setRecordStore(record);
     }
-  }, [record, setRecordStore, loading]);
+  }, [isDraftRecord, loading, record, setRecordStore]);
 
   return <></>;
 };

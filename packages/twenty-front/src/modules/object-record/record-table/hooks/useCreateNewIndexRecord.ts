@@ -1,5 +1,8 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+/* @kvoip-woulz proprietary:begin */
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+/* @kvoip-woulz proprietary:end */
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -47,6 +50,33 @@ export const useCreateNewIndexRecord = ({
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
+
+        /* @kvoip-woulz proprietary:begin */
+        if (
+          objectMetadataItem.nameSingular ===
+          CoreObjectNameSingular.AccountPayable
+        ) {
+          const draftRecordId = `draft-${recordId}`;
+
+          if (
+            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+            canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
+          ) {
+            openRecordInCommandMenu({
+              recordId: draftRecordId,
+              objectNameSingular: objectMetadataItem.nameSingular,
+              isNewRecord: true,
+            });
+          } else {
+            navigate(AppPath.RecordShowPage, {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: draftRecordId,
+            });
+          }
+
+          return;
+        }
+        /* @kvoip-woulz proprietary:end */
 
         await createOneRecord({
           id: recordId,
