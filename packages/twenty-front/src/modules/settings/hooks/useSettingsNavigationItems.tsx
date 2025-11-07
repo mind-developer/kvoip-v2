@@ -139,6 +139,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: 'Service Center',
           path: SettingsPath.ServiceCenter,
           Icon: IconHeadset,
+          isHidden: !isAdminEnabled,
           subItems: [
             {
               label: t`Agents`,
@@ -222,7 +223,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Financial Closing`,
           path: SettingsPath.FinancialClosing,
           Icon: IconCalendarEvent,
-          isHidden: !isAdminEnabled,
+          isHidden: !permissionMap[PermissionFlagType.FINANCIAL_CLOSING],
         },
 
         {
