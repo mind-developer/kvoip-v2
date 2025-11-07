@@ -183,6 +183,8 @@ export const Chat = () => {
   >(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const userScrolledUpRef = useRef<boolean>(false);
+  const lastMessagesLengthRef = useRef<number>(0);
 
   const [lastMessage, setLastMessage] = useState<ClientChatMessage | null>(
     null,
@@ -205,6 +207,57 @@ export const Chat = () => {
     };
   }, [pushFocusItemToFocusStack, removeFocusItemFromFocusStackById]);
 
+  const scrollToBottom = useCallback((behavior: 'smooth' | 'instant' = 'smooth') => {
+    if (!chatContainerRef.current) return;
+    
+    const container = chatContainerRef.current;
+    
+    const performScroll = () => {
+      if (!container) return;
+      
+      // Use scrollTop directly for more reliable scrolling
+      container.scrollTop = container.scrollHeight;
+      
+      // Double-check with requestAnimationFrame to ensure it's at the bottom
+      requestAnimationFrame(() => {
+        if (!container) return;
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+        
+        // If not fully at bottom, scroll again
+        if (distanceFromBottom > 1) {
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    };
+    
+    if (behavior === 'smooth') {
+      container.scrollTo({
+        top: container.scrollHeight,
+        left: 0,
+        behavior: 'smooth',
+      });
+      // Also ensure it goes all the way after smooth animation
+      setTimeout(() => {
+        performScroll();
+      }, 300);
+    } else {
+      performScroll();
+    }
+  }, []);
+
+  const isNearBottom = useCallback(() => {
+    if (!chatContainerRef.current) return false;
+    const container = chatContainerRef.current;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    return distanceFromBottom < 100;
+  }, []);
+
   useEffect(() => {
     if (selectedChat?.id) {
       updateOneRecord({
@@ -213,14 +266,82 @@ export const Chat = () => {
       });
     }
     setReplyingTo(null);
+    userScrolledUpRef.current = false;
+    lastMessagesLengthRef.current = 0;
+    
     if (chatContainerRef.current && selectedChat?.id && dbMessages.length > 0) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        left: 0,
-        behavior: 'instant',
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
       });
     }
-  }, [selectedChat?.id]);
+  }, [selectedChat?.id, scrollToBottom]);
+
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+
+    const container = chatContainerRef.current;
+
+    const handleScroll = () => {
+      if (!container) return;
+      
+      const isNear = isNearBottom();
+      
+      if (isNear) {
+        userScrolledUpRef.current = false;
+      } else {
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        const wasAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+        
+        if (!wasAtBottom && scrollTop > 0) {
+          userScrolledUpRef.current = true;
+        }
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [isNearBottom]);
+
+  useEffect(() => {
+    if (!chatContainerRef.current || dbMessages.length === 0) {
+      lastMessagesLengthRef.current = dbMessages.length;
+      return;
+    }
+
+    const hasNewMessages = dbMessages.length > lastMessagesLengthRef.current;
+    let isDifferentLastMessage = false;
+    
+    if (lastMessagesLengthRef.current > 0) {
+      const lastMessageId = dbMessages[dbMessages.length - 1]?.providerMessageId;
+      const previousLastMessageId = dbMessages[lastMessagesLengthRef.current - 1]?.providerMessageId;
+      isDifferentLastMessage = lastMessageId !== previousLastMessageId;
+    }
+    
+    lastMessagesLengthRef.current = dbMessages.length;
+
+    if ((hasNewMessages || isDifferentLastMessage) && !userScrolledUpRef.current) {
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+  }, [dbMessages, scrollToBottom]);
+
+  useEffect(() => {
+    if (chatContainerRef.current && dbMessages.length > 0) {
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (dbMessages.length > 0)
@@ -301,7 +422,7 @@ export const Chat = () => {
     let lastScrollHeight = container.scrollHeight;
 
     const scrollToBottomIfNear = () => {
-      if (!container) return;
+      if (!container || userScrolledUpRef.current) return;
 
       const currentScrollHeight = container.scrollHeight;
       const scrollTop = container.scrollTop;
@@ -313,13 +434,7 @@ export const Chat = () => {
         currentScrollHeight > lastScrollHeight &&
         scrollBottom >= lastScrollHeight - 400
       ) {
-        if (container) {
-          container.scrollTo({
-            top: currentScrollHeight,
-            left: 0,
-            behavior: 'instant',
-          });
-        }
+        scrollToBottom('smooth');
       }
 
       lastScrollHeight = currentScrollHeight;
@@ -380,7 +495,7 @@ export const Chat = () => {
         video.removeEventListener('loadeddata', handleMediaLoad);
       });
     };
-  }, [selectedChat?.id]);
+  }, [selectedChat?.id, scrollToBottom]);
 
   const handleSendMessage = useCallback(async () => {
     setReplyingTo(null);
@@ -545,13 +660,8 @@ export const Chat = () => {
   ]);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: 'instant',
-      });
-    }
-  }, [replyingTo]);
+    scrollToBottom('smooth');
+  }, [replyingTo, scrollToBottom]);
 
   if (!selectedChat) {
     return <NoSelectedChat />;

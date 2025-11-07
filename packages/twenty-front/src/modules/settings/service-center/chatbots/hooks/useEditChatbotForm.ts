@@ -18,6 +18,7 @@ type Chatbot = {
   id: string;
   name: string;
   status: 'ACTIVE' | 'DRAFT' | 'DISABLED';
+  whatsappIntegrations?: Array<{ id: string; name: string }>;
   whatsappIntegrationIds?: string[];
 };
 
@@ -51,10 +52,14 @@ export const useEditChatbotForm = (activeChatbot?: Chatbot) => {
 
   useEffect(() => {
     if (activeChatbot) {
+      const integrationIds =
+        activeChatbot.whatsappIntegrationIds ||
+        activeChatbot.whatsappIntegrations?.map((integration) => integration.id) ||
+        [];
       form.reset({
         name: activeChatbot.name,
         status: activeChatbot.status,
-        whatsappIntegrationIds: activeChatbot.whatsappIntegrationIds || [],
+        whatsappIntegrationIds: integrationIds,
       });
     }
   }, [activeChatbot, form]);

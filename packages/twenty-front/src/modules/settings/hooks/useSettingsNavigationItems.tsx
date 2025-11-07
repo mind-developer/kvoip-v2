@@ -223,7 +223,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Financial Closing`,
           path: SettingsPath.FinancialClosing,
           Icon: IconCalendarEvent,
-          isHidden: !permissionMap[PermissionFlagType.FINANCIAL_CLOSING],
+          isHidden: !isAdminEnabled,
         },
 
         {

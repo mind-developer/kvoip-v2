@@ -26,8 +26,8 @@ import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 import {
-  REACT_APP_META_WEBHOOK_URL,
-  REACT_APP_SERVER_BASE_URL,
+    REACT_APP_META_WEBHOOK_URL,
+    REACT_APP_SERVER_BASE_URL,
 } from '~/config';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -95,7 +95,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     Sector & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.Sector,
-    recordGqlFields: { id: true, name: true },
+    recordGqlFields: { id: true, name: true, icon: true },
   });
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
