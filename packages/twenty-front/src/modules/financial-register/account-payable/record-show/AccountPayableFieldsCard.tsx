@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
-import { useCallback, useMemo, useState } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -13,6 +13,7 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordCreateField } from '@/object-record/record-create/components/RecordCreateField';
 import { RecordCreateProvider } from '@/object-record/record-create/components/RecordCreateProvider';
+import { useCreateFormFields } from '@/object-record/record-create/hooks/useCreateFormFields';
 import { useRecordCreateContext } from '@/object-record/record-create/hooks/useRecordCreateContext';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
@@ -27,6 +28,9 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+/* @kvoip-woulz proprietary:begin */
+import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+/* @kvoip-woulz proprietary:end */
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -36,7 +40,14 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { type ObjectPermissions } from 'twenty-shared/types';
+/* @kvoip-woulz proprietary:begin */
+import { TextInput } from '@/ui/input/components/TextInput';
+/* @kvoip-woulz proprietary:end */
+import {
+  FieldMetadataType,
+  RelationType,
+  type ObjectPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDeviceFloppy,
@@ -49,6 +60,10 @@ import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+/* @kvoip-woulz proprietary:begin */
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
+/* @kvoip-woulz proprietary:end */
+/* @kvoip-woulz proprietary:begin */
 import {
   AccountPayableFieldSection,
   getAccountPayableFieldSectionLabel,
@@ -151,6 +166,35 @@ const StyledSystemInfoFieldsGreyBox = styled.div`
 `;
 
 /* @kvoip-woulz proprietary:begin */
+const StyledRelationFieldsGreyBox = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledRelationFieldItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRelationFieldLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledRelationFieldValue = styled.div`
+  width: 100%;
+  display: flex;
+`;
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
 const StyledCardHeader = styled.div`
   display: flex;
   align-items: center;
@@ -176,6 +220,12 @@ const StyledTitleFieldContainer = styled.div`
   min-width: 0;
   display: flex;
 `;
+
+/* @kvoip-woulz proprietary:begin */
+const StyledTitleTextInput = styled(TextInput)`
+  width: 100%;
+`;
+/* @kvoip-woulz proprietary:end */
 
 const StyledActionsButton = styled(Button)`
   width: auto;
@@ -243,6 +293,42 @@ const AccountPayablePersistedFieldsCard = ({
     objectNameSingular: CoreObjectNameSingular.AccountPayable,
   });
 
+  /* @kvoip-woulz proprietary:begin */
+  const {
+    inlineFieldMetadataItems,
+    inlineRelationFieldMetadataItems,
+    boxedRelationFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
+    objectNameSingular,
+  });
+
+  const fieldPositions = useMemo(() => {
+    const positions = new Map<string, number>();
+    let currentPosition = 0;
+
+    inlineRelationFieldMetadataItems?.forEach((fieldMetadataItem) => {
+      positions.set(fieldMetadataItem.name, currentPosition);
+      currentPosition += 1;
+    });
+
+    inlineFieldMetadataItems?.forEach((fieldMetadataItem) => {
+      positions.set(fieldMetadataItem.name, currentPosition);
+      currentPosition += 1;
+    });
+
+    boxedRelationFieldMetadataItems?.forEach((fieldMetadataItem) => {
+      positions.set(fieldMetadataItem.name, currentPosition);
+      currentPosition += 1;
+    });
+
+    return positions;
+  }, [
+    inlineFieldMetadataItems,
+    inlineRelationFieldMetadataItems,
+    boxedRelationFieldMetadataItems,
+  ]);
+  /* @kvoip-woulz proprietary:end */
+
   const { isPrefetchLoading, recordLoading } = useRecordShowContainerData({
     objectRecordId,
   });
@@ -299,24 +385,142 @@ const AccountPayablePersistedFieldsCard = ({
     });
   };
 
-  const handleMouseEnter = (index: number) => {
-    setRecordFieldListHoverPosition(index);
-  };
+  /* @kvoip-woulz proprietary:begin */
+  const handleMouseEnter = useCallback(
+    (position?: number) => {
+      if (!isDefined(position)) {
+        return;
+      }
+
+      setRecordFieldListHoverPosition(position);
+    },
+    [setRecordFieldListHoverPosition],
+  );
+  /* @kvoip-woulz proprietary:end */
 
   const fieldsByName = mapArrayToObject(
     objectMetadataItem.fields,
     ({ name }) => name,
   );
 
+  /* @kvoip-woulz proprietary:begin */
+  const labelIdentifierFieldMetadataItem = objectMetadataItem.fields.find(
+    ({ id }) => id === objectMetadataItem.labelIdentifierFieldMetadataId,
+  );
+
+  const headerFieldName = labelIdentifierFieldMetadataItem?.name ?? 'name';
+  /* @kvoip-woulz proprietary:end */
+
   const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
     objectPermissionsByObjectMetadataId,
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const renderField = (fieldName: string, globalIndex: number) => {
-    const fieldMetadataItem = fieldsByName[fieldName];
+  /* @kvoip-woulz proprietary:begin */
+  /* @kvoip-woulz proprietary:begin */
+  const relationFieldMetadataItems = useMemo(
+    () =>
+      objectMetadataItem.fields
+        .filter(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.type === FieldMetadataType.RELATION &&
+            fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE &&
+            fieldMetadataItem.isSystem !== true,
+        )
+        .sort((fieldA, fieldB) => {
+          const positionA =
+            fieldPositions.get(fieldA.name) ?? Number.MAX_SAFE_INTEGER;
+          const positionB =
+            fieldPositions.get(fieldB.name) ?? Number.MAX_SAFE_INTEGER;
 
-    if (!fieldMetadataItem) {
+          return positionA - positionB;
+        }),
+    [fieldPositions, objectMetadataItem.fields],
+  );
+
+  const relationFieldNames = useMemo(
+    () => relationFieldMetadataItems.map(({ name }) => name),
+    [relationFieldMetadataItems],
+  );
+
+  const relationJoinColumnFieldNames = useMemo(
+    () =>
+      relationFieldMetadataItems
+        .map((fieldMetadataItem) => fieldMetadataItem.settings?.joinColumnName)
+        .filter((joinColumnName): joinColumnName is string =>
+          Boolean(joinColumnName),
+        ),
+    [relationFieldMetadataItems],
+  );
+
+  const predefinedFieldNames = useMemo(() => {
+    return new Set<string>([
+      ...ACCOUNT_PAYABLE_BASIC_FIELDS,
+      ...ACCOUNT_PAYABLE_FINANCIAL_FIELDS,
+      ...ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS,
+      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
+      ...ACCOUNT_PAYABLE_SYSTEM_FIELDS,
+      headerFieldName,
+      ...relationFieldNames,
+      ...relationJoinColumnFieldNames,
+    ]);
+  }, [headerFieldName, relationFieldNames, relationJoinColumnFieldNames]);
+
+  const dynamicFieldNames = useMemo(
+    () =>
+      objectMetadataItem.fields
+        .filter((fieldMetadataItem) => {
+          if (predefinedFieldNames.has(fieldMetadataItem.name)) {
+            return false;
+          }
+
+          if (fieldMetadataItem.isSystem === true) {
+            return false;
+          }
+
+          if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+            return false;
+          }
+
+          return true;
+        })
+        .sort((fieldA, fieldB) => {
+          const positionA =
+            fieldPositions.get(fieldA.name) ?? Number.MAX_SAFE_INTEGER;
+          const positionB =
+            fieldPositions.get(fieldB.name) ?? Number.MAX_SAFE_INTEGER;
+
+          return positionA - positionB;
+        })
+        .map(({ name }) => name),
+    [fieldPositions, objectMetadataItem.fields, predefinedFieldNames],
+  );
+
+  const additionalInfoFieldNames = useMemo(() => {
+    const seen = new Set<string>();
+
+    return [
+      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
+      ...dynamicFieldNames,
+    ].filter((fieldName) => {
+      if (seen.has(fieldName)) {
+        return false;
+      }
+
+      seen.add(fieldName);
+      return true;
+    });
+  }, [dynamicFieldNames]);
+  /* @kvoip-woulz proprietary:end */
+  /* @kvoip-woulz proprietary:end */
+
+  const renderField = (fieldName: string) => {
+    const fieldMetadataItem = fieldsByName[fieldName];
+    /* @kvoip-woulz proprietary:begin */
+    const fieldPosition = fieldPositions.get(fieldName);
+    /* @kvoip-woulz proprietary:end */
+
+    if (!fieldMetadataItem || !isDefined(fieldPosition)) {
       return null;
     }
 
@@ -329,14 +533,18 @@ const AccountPayablePersistedFieldsCard = ({
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
             field: fieldMetadataItem,
-            position: globalIndex,
+            /* @kvoip-woulz proprietary:begin */
+            position: fieldPosition,
+            /* @kvoip-woulz proprietary:end */
             objectMetadataItem,
             showLabel: true,
             labelWidth: 90,
           }),
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
-          onMouseEnter: () => handleMouseEnter(globalIndex),
+          /* @kvoip-woulz proprietary:begin */
+          onMouseEnter: () => handleMouseEnter(fieldPosition),
+          /* @kvoip-woulz proprietary:end */
           anchorId: `${getRecordFieldInputInstanceId({
             recordId: objectRecordId,
             fieldName: fieldMetadataItem.name,
@@ -370,8 +578,6 @@ const AccountPayablePersistedFieldsCard = ({
     );
   };
 
-  let globalIndex = 0;
-
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
       <PropertyBox>
@@ -382,7 +588,7 @@ const AccountPayablePersistedFieldsCard = ({
             <StyledCardHeader>
               {/* @kvoip-woulz proprietary:begin */}
               <StyledTitleFieldContainer>
-                {renderField('title', globalIndex++)}
+                {renderField(headerFieldName)}
               </StyledTitleFieldContainer>
               {/* @kvoip-woulz proprietary:end */}
               <StyledCardHeaderActions>
@@ -433,8 +639,10 @@ const AccountPayablePersistedFieldsCard = ({
 
             <StyledFieldsSectionContainer>
               {ACCOUNT_PAYABLE_BASIC_FIELDS.filter(
-                (fieldName) => fieldName !== 'title',
-              ).map((fieldName) => renderField(fieldName, globalIndex++))}
+                /* @kvoip-woulz proprietary:begin */
+                (fieldName) => fieldName !== headerFieldName,
+                /* @kvoip-woulz proprietary:end */
+              ).map((fieldName) => renderField(fieldName))}
             </StyledFieldsSectionContainer>
 
             <StyledFieldsSectionContainer>
@@ -445,7 +653,7 @@ const AccountPayablePersistedFieldsCard = ({
               </StyledSectionTitle>
               <StyledFinancialFieldsGreyBox>
                 {ACCOUNT_PAYABLE_FINANCIAL_FIELDS.map((fieldName) =>
-                  renderField(fieldName, globalIndex++),
+                  renderField(fieldName),
                 )}
               </StyledFinancialFieldsGreyBox>
             </StyledFieldsSectionContainer>
@@ -458,7 +666,7 @@ const AccountPayablePersistedFieldsCard = ({
               </StyledSectionTitle>
               <StyledPaymentInfoFieldsGreyBox>
                 {ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS.map((fieldName) =>
-                  renderField(fieldName, globalIndex++),
+                  renderField(fieldName),
                 )}
               </StyledPaymentInfoFieldsGreyBox>
             </StyledFieldsSectionContainer>
@@ -470,8 +678,8 @@ const AccountPayablePersistedFieldsCard = ({
                 )}
               </StyledSectionTitle>
               <StyledAdditionalInfoFieldsGreyBox>
-                {ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS.map((fieldName) =>
-                  renderField(fieldName, globalIndex++),
+                {additionalInfoFieldNames.map((fieldName) =>
+                  renderField(fieldName),
                 )}
               </StyledAdditionalInfoFieldsGreyBox>
             </StyledFieldsSectionContainer>
@@ -484,10 +692,27 @@ const AccountPayablePersistedFieldsCard = ({
               </StyledSectionTitle>
               <StyledSystemInfoFieldsGreyBox>
                 {ACCOUNT_PAYABLE_SYSTEM_FIELDS.map((fieldName) =>
-                  renderField(fieldName, globalIndex++),
+                  renderField(fieldName),
                 )}
               </StyledSystemInfoFieldsGreyBox>
             </StyledFieldsSectionContainer>
+
+            {/* @kvoip-woulz proprietary:begin */}
+            {relationFieldMetadataItems.length > 0 && (
+              <StyledFieldsSectionContainer>
+                <StyledSectionTitle>
+                  {getAccountPayableFieldSectionLabel(
+                    AccountPayableFieldSection.Others,
+                  )}
+                </StyledSectionTitle>
+                <StyledRelationFieldsGreyBox>
+                  {relationFieldMetadataItems.map((fieldMetadataItem) =>
+                    renderField(fieldMetadataItem.name),
+                  )}
+                </StyledRelationFieldsGreyBox>
+              </StyledFieldsSectionContainer>
+            )}
+            {/* @kvoip-woulz proprietary:end */}
           </>
         )}
       </PropertyBox>
@@ -564,7 +789,8 @@ const AccountPayableDraftFieldsCardInner = ({
   objectPermissions,
   isInRightDrawer,
 }: AccountPayableDraftFieldsCardInnerProps) => {
-  const { draftRecordId, draftValues, resetDraft } = useRecordCreateContext();
+  const { draftRecordId, draftValues, resetDraft, persistFieldValue } =
+    useRecordCreateContext();
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
   const navigateApp = useNavigateApp();
@@ -593,12 +819,71 @@ const AccountPayableDraftFieldsCardInner = ({
     instanceId,
   );
 
+  /* @kvoip-woulz proprietary:begin */
+  const { getRenderableField, fieldsByName, relationFieldConfigs } =
+    useCreateFormFields({
+      objectMetadataItem,
+      objectNameSingular,
+    });
+  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
+  const clearHoverState = useCallback(() => {
+    setRecordFieldListHoverPosition(null);
+  }, [setRecordFieldListHoverPosition]);
+  /* @kvoip-woulz proprietary:end */
+
   const handleMouseEnter = useCallback(
-    (index: number) => {
-      setRecordFieldListHoverPosition(index);
+    (position?: number) => {
+      if (!isDefined(position)) {
+        return;
+      }
+
+      setRecordFieldListHoverPosition(position);
     },
     [setRecordFieldListHoverPosition],
   );
+
+  /* @kvoip-woulz proprietary:begin */
+  const renderCreateField = useCallback(
+    (fieldName: string, options?: { showLabel?: boolean }) => {
+      const fieldConfig = getRenderableField(fieldName);
+      if (!fieldConfig) {
+        return null;
+      }
+
+      return (
+        <RecordCreateField
+          fieldName={fieldConfig.fieldName}
+          position={fieldConfig.position}
+          objectPermissions={objectPermissions}
+          instanceIdPrefix={instanceId}
+          onMouseEnter={handleMouseEnter}
+          showLabel={options?.showLabel ?? true}
+        />
+      );
+    },
+    [getRenderableField, objectPermissions, instanceId, handleMouseEnter],
+  );
+
+  const relationSectionItems = useMemo(
+    () =>
+      relationFieldConfigs
+        .map(({ relationFieldName, label }) => ({
+          fieldName: relationFieldName,
+          label,
+        }))
+        .filter(
+          (
+            item,
+          ): item is {
+            fieldName: string;
+            label: string;
+          } => item.label.length > 0,
+        ),
+    [relationFieldConfigs],
+  );
+  /* @kvoip-woulz proprietary:end */
 
   const handleActionSelection = (action: ActionDropdownItem) => {
     if (action.confirmation) {
@@ -633,7 +918,48 @@ const AccountPayableDraftFieldsCardInner = ({
     setSaving(true);
 
     try {
-      const createdRecord = await createOneRecord(draftValues);
+      const inputValues: Record<string, unknown> = { ...draftValues };
+
+      relationFieldConfigs.forEach(
+        ({ relationFieldName, relationIdFieldName }) => {
+          if (!relationIdFieldName) {
+            return;
+          }
+
+          if (
+            !Object.prototype.hasOwnProperty.call(
+              inputValues,
+              relationFieldName,
+            )
+          ) {
+            return;
+          }
+
+          const relationValue = inputValues[relationFieldName];
+
+          if (relationValue === undefined) {
+            delete inputValues[relationFieldName];
+            return;
+          }
+
+          if (
+            relationValue !== null &&
+            typeof relationValue === 'object' &&
+            'id' in (relationValue as Record<string, unknown>)
+          ) {
+            inputValues[relationIdFieldName] = (
+              relationValue as { id?: string | null }
+            ).id;
+          } else {
+            inputValues[relationIdFieldName] =
+              relationValue === '' ? null : relationValue;
+          }
+
+          delete inputValues[relationFieldName];
+        },
+      );
+
+      const createdRecord = await createOneRecord(inputValues);
       const createdRecordId = createdRecord?.id;
 
       if (!isDefined(createdRecordId)) {
@@ -658,25 +984,154 @@ const AccountPayableDraftFieldsCardInner = ({
     draftValues,
     goBackFromCommandMenu,
     isInRightDrawer,
+    relationFieldConfigs,
     navigateApp,
     objectMetadataItem.namePlural,
     resetDraft,
   ]);
 
-  let globalIndex = 0;
+  /* @kvoip-woulz proprietary:begin */
+  const labelIdentifierFieldMetadataItem = objectMetadataItem.fields.find(
+    ({ id }) => id === objectMetadataItem.labelIdentifierFieldMetadataId,
+  );
 
+  const headerFieldName = labelIdentifierFieldMetadataItem?.name ?? 'name';
+  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
+  const headerFieldConfig = getRenderableField(headerFieldName);
+  const headerFieldPosition = headerFieldConfig?.position ?? 0;
+
+  const headerFieldDefinition = useMemo(() => {
+    if (!labelIdentifierFieldMetadataItem) {
+      return null;
+    }
+
+    return formatFieldMetadataItemAsColumnDefinition({
+      field: labelIdentifierFieldMetadataItem,
+      position: headerFieldPosition ?? 0,
+      objectMetadataItem,
+      showLabel: false,
+      labelWidth: 0,
+    });
+  }, [
+    labelIdentifierFieldMetadataItem,
+    headerFieldPosition,
+    objectMetadataItem,
+  ]);
+
+  const headerFieldValue =
+    (draftValues[headerFieldName] as string | undefined) ?? '';
+
+  const handleHeaderFieldChange = useCallback(
+    (newValue: string) => {
+      if (!headerFieldDefinition) {
+        return;
+      }
+
+      persistFieldValue({
+        fieldDefinition: headerFieldDefinition,
+        value: turnIntoUndefinedIfWhitespacesOnly(newValue),
+      });
+    },
+    [headerFieldDefinition, persistFieldValue],
+  );
+  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
+  const relationFieldNames = useMemo(
+    () =>
+      relationFieldConfigs.map(({ relationFieldName }) => relationFieldName),
+    [relationFieldConfigs],
+  );
+
+  const relationIdFieldNames = useMemo(
+    () =>
+      relationFieldConfigs
+        .map(({ relationIdFieldName }) => relationIdFieldName)
+        .filter(
+          (fieldName): fieldName is string =>
+            typeof fieldName === 'string' && fieldName.length > 0,
+        ),
+    [relationFieldConfigs],
+  );
+
+  const predefinedFieldNames = useMemo(() => {
+    return new Set<string>([
+      ...ACCOUNT_PAYABLE_BASIC_FIELDS,
+      ...ACCOUNT_PAYABLE_FINANCIAL_FIELDS,
+      ...ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS,
+      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
+      ...ACCOUNT_PAYABLE_SYSTEM_FIELDS,
+      headerFieldName,
+      ...relationFieldNames,
+      ...relationIdFieldNames,
+    ]);
+  }, [headerFieldName, relationFieldNames, relationIdFieldNames]);
+
+  const dynamicFieldNames = useMemo(
+    () =>
+      objectMetadataItem.fields
+        .filter((fieldMetadataItem) => {
+          if (predefinedFieldNames.has(fieldMetadataItem.name)) {
+            return false;
+          }
+
+          if (fieldMetadataItem.isSystem === true) {
+            return false;
+          }
+
+          if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+            return false;
+          }
+
+          return getRenderableField(fieldMetadataItem.name) !== null;
+        })
+        .sort((fieldA, fieldB) => {
+          const fieldAConfig = getRenderableField(fieldA.name);
+          const fieldBConfig = getRenderableField(fieldB.name);
+
+          return (
+            (fieldAConfig?.position ?? Number.MAX_SAFE_INTEGER) -
+            (fieldBConfig?.position ?? Number.MAX_SAFE_INTEGER)
+          );
+        })
+        .map(({ name }) => name),
+    [getRenderableField, objectMetadataItem.fields, predefinedFieldNames],
+  );
+
+  const additionalInfoFieldNames = useMemo(() => {
+    const seen = new Set<string>();
+
+    return [
+      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
+      ...dynamicFieldNames,
+    ].filter((fieldName) => {
+      if (seen.has(fieldName)) {
+        return false;
+      }
+
+      seen.add(fieldName);
+      return true;
+    });
+  }, [dynamicFieldNames]);
+  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
       <PropertyBox>
         <StyledCardHeader>
           <StyledTitleFieldContainer>
-            <RecordCreateField
-              fieldName="title"
-              position={globalIndex++}
-              objectPermissions={objectPermissions}
-              instanceIdPrefix={instanceId}
-              onMouseEnter={handleMouseEnter}
+            {/* @kvoip-woulz proprietary:begin */}
+            <StyledTitleTextInput
+              value={headerFieldValue}
+              onChange={handleHeaderFieldChange}
+              placeholder="Empty"
+              onFocus={clearHoverState}
+              onMouseEnter={clearHoverState}
             />
+            {/* @kvoip-woulz proprietary:end */}
           </StyledTitleFieldContainer>
           <StyledCardHeaderActions>
             <Dropdown
@@ -723,17 +1178,17 @@ const AccountPayableDraftFieldsCardInner = ({
         <StyledCardHeaderDivider />
         <StyledFieldsSectionContainer>
           {ACCOUNT_PAYABLE_BASIC_FIELDS.filter(
-            (fieldName) => fieldName !== 'title',
-          ).map((fieldName) => (
-            <RecordCreateField
-              key={fieldName}
-              fieldName={fieldName}
-              position={globalIndex++}
-              objectPermissions={objectPermissions}
-              instanceIdPrefix={instanceId}
-              onMouseEnter={handleMouseEnter}
-            />
-          ))}
+            /* @kvoip-woulz proprietary:begin */
+            (fieldName) => fieldName !== headerFieldName,
+            /* @kvoip-woulz proprietary:end */
+          ).map((fieldName) => {
+            const fieldElement = renderCreateField(fieldName);
+            if (!fieldElement) {
+              return null;
+            }
+
+            return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+          })}
         </StyledFieldsSectionContainer>
 
         <StyledFieldsSectionContainer>
@@ -743,16 +1198,14 @@ const AccountPayableDraftFieldsCardInner = ({
             )}
           </StyledSectionTitle>
           <StyledFinancialFieldsGreyBox>
-            {ACCOUNT_PAYABLE_FINANCIAL_FIELDS.map((fieldName) => (
-              <RecordCreateField
-                key={fieldName}
-                fieldName={fieldName}
-                position={globalIndex++}
-                objectPermissions={objectPermissions}
-                instanceIdPrefix={instanceId}
-                onMouseEnter={handleMouseEnter}
-              />
-            ))}
+            {ACCOUNT_PAYABLE_FINANCIAL_FIELDS.map((fieldName) => {
+              const fieldElement = renderCreateField(fieldName);
+              if (!fieldElement) {
+                return null;
+              }
+
+              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+            })}
           </StyledFinancialFieldsGreyBox>
         </StyledFieldsSectionContainer>
 
@@ -763,16 +1216,14 @@ const AccountPayableDraftFieldsCardInner = ({
             )}
           </StyledSectionTitle>
           <StyledPaymentInfoFieldsGreyBox>
-            {ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS.map((fieldName) => (
-              <RecordCreateField
-                key={fieldName}
-                fieldName={fieldName}
-                position={globalIndex++}
-                objectPermissions={objectPermissions}
-                instanceIdPrefix={instanceId}
-                onMouseEnter={handleMouseEnter}
-              />
-            ))}
+            {ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS.map((fieldName) => {
+              const fieldElement = renderCreateField(fieldName);
+              if (!fieldElement) {
+                return null;
+              }
+
+              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+            })}
           </StyledPaymentInfoFieldsGreyBox>
         </StyledFieldsSectionContainer>
 
@@ -783,16 +1234,14 @@ const AccountPayableDraftFieldsCardInner = ({
             )}
           </StyledSectionTitle>
           <StyledAdditionalInfoFieldsGreyBox>
-            {ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS.map((fieldName) => (
-              <RecordCreateField
-                key={fieldName}
-                fieldName={fieldName}
-                position={globalIndex++}
-                objectPermissions={objectPermissions}
-                instanceIdPrefix={instanceId}
-                onMouseEnter={handleMouseEnter}
-              />
-            ))}
+            {additionalInfoFieldNames.map((fieldName) => {
+              const fieldElement = renderCreateField(fieldName);
+              if (!fieldElement) {
+                return null;
+              }
+
+              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+            })}
           </StyledAdditionalInfoFieldsGreyBox>
         </StyledFieldsSectionContainer>
 
@@ -803,18 +1252,38 @@ const AccountPayableDraftFieldsCardInner = ({
             )}
           </StyledSectionTitle>
           <StyledSystemInfoFieldsGreyBox>
-            {ACCOUNT_PAYABLE_SYSTEM_FIELDS.map((fieldName) => (
-              <RecordCreateField
-                key={fieldName}
-                fieldName={fieldName}
-                position={globalIndex++}
-                objectPermissions={objectPermissions}
-                instanceIdPrefix={instanceId}
-                onMouseEnter={handleMouseEnter}
-              />
-            ))}
+            {ACCOUNT_PAYABLE_SYSTEM_FIELDS.map((fieldName) => {
+              const fieldElement = renderCreateField(fieldName);
+              if (!fieldElement) {
+                return null;
+              }
+
+              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+            })}
           </StyledSystemInfoFieldsGreyBox>
         </StyledFieldsSectionContainer>
+
+        {/* @kvoip-woulz proprietary:begin */}
+        {relationSectionItems.length > 0 && (
+          <StyledFieldsSectionContainer>
+            <StyledSectionTitle>
+              {getAccountPayableFieldSectionLabel(
+                AccountPayableFieldSection.Others,
+              )}
+            </StyledSectionTitle>
+            <StyledRelationFieldsGreyBox>
+              {relationSectionItems.map(({ fieldName, label }) => (
+                <StyledRelationFieldItem key={fieldName}>
+                  <StyledRelationFieldLabel>{label}</StyledRelationFieldLabel>
+                  <StyledRelationFieldValue>
+                    {renderCreateField(fieldName, { showLabel: false })}
+                  </StyledRelationFieldValue>
+                </StyledRelationFieldItem>
+              ))}
+            </StyledRelationFieldsGreyBox>
+          </StyledFieldsSectionContainer>
+        )}
+        {/* @kvoip-woulz proprietary:end */}
 
         <StyledButtonContainer>
           <StyledSaveButton
@@ -840,6 +1309,7 @@ const AccountPayableDraftFieldsCardInner = ({
         objectMetadataItem={objectMetadataItem}
         recordId={draftRecordId}
       />
+      {/* @kvoip-woulz proprietary:end */}
     </RecordFieldListComponentInstanceContext.Provider>
   );
 };

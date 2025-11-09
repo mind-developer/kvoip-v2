@@ -17,5 +17,7 @@ export const getAccountPayableFieldSectionLabel = (
     [AccountPayableFieldSection.PaymentInfo]: 'Payment Information',
     [AccountPayableFieldSection.AdditionalInfo]: 'Additional Information',
     [AccountPayableFieldSection.SystemInfo]: 'System Information',
-    [AccountPayableFieldSection.Others]: 'no-label-others',
+    /* @kvoip-woulz proprietary:begin */
+    [AccountPayableFieldSection.Others]: 'Related Records',
+    /* @kvoip-woulz proprietary:end */
   })[section];

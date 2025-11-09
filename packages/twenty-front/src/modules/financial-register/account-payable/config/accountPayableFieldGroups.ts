@@ -1,12 +1,18 @@
 /* @kvoip-woulz proprietary */
 import { AccountPayableFieldSection } from '@/financial-register/account-payable/types/FieldsSection';
 
+/* @kvoip-woulz proprietary:begin */
 export const ACCOUNT_PAYABLE_BASIC_FIELDS = [
-  'title',
-  'company',
+  'name',
   'dueDate',
   'status',
 ] as const;
+
+export const ACCOUNT_PAYABLE_RELATION_FIELDS = [
+  'company',
+  'integration',
+] as const;
+/* @kvoip-woulz proprietary:end */
 
 export const ACCOUNT_PAYABLE_FINANCIAL_FIELDS = ['amount'] as const;
 
@@ -34,4 +40,5 @@ export const ACCOUNT_PAYABLE_FIELD_GROUP_LABELS: Record<
     ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
   [AccountPayableFieldSection.SystemInfo]: ACCOUNT_PAYABLE_SYSTEM_FIELDS,
   [AccountPayableFieldSection.BasicInfo]: ACCOUNT_PAYABLE_BASIC_FIELDS,
+  [AccountPayableFieldSection.Others]: ACCOUNT_PAYABLE_RELATION_FIELDS,
 };
