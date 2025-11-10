@@ -366,8 +366,8 @@ export class InterApiService {
 
       this.logger.log(`requestCode: ${requestCode}`)
 
-      // Aguarda 5 segundos - SOLUÇÃO TEMPORARIA, TODO: INSERIR NUMA FILA A PARTE
-      await new Promise(resolve => setTimeout(resolve, 9000));
+      // Aguarda alguns segundos - SOLUÇÃO TEMPORARIA, TODO: INSERIR NUMA FILA A PARTE
+      await new Promise(resolve => setTimeout(resolve, 20000));
 
       this.logger.log(`Tempo passou`)
 
