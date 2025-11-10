@@ -6,7 +6,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CLIENT_CHAT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -55,7 +54,6 @@ export class ClientChatWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Provider Contact ID`,
     description: msg`The provider contact ID of the chat. For WhatsApp, this is the phone number of the client.`,
   })
-  @WorkspaceIsUnique()
   providerContactId: string;
 
   @WorkspaceRelation({

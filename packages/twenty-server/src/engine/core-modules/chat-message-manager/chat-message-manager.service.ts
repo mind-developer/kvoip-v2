@@ -384,6 +384,18 @@ export class ChatMessageManagerService {
         { ...clientChatMessage, providerMessageId: v4() },
         workspaceId,
       );
+    } else if (clientChatMessage.event === ClientChatMessageEvent.CHATBOT_END) {
+      await this.updateChat(
+        clientChatMessage.clientChatId,
+        {
+          status: ClientChatStatus.FINISHED,
+        },
+        workspaceId,
+      );
+      await this.saveMessage(
+        { ...clientChatMessage, providerMessageId: v4() },
+        workspaceId,
+      );
     } else if (clientChatMessage.event === ClientChatMessageEvent.END) {
       const clientChat = await this.getChatByClientChatId(
         clientChatMessage.clientChatId,
@@ -495,6 +507,22 @@ export class ChatMessageManagerService {
         return null;
       }
 
+      // Cancel abandonment if chatbot sends a message - must be done before handleAbandonment
+      if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
+        await this.cancelScheduledAbandonment(clientChat.id);
+        if (clientChat.status === ClientChatStatus.ABANDONED) {
+          await this.updateChat(
+            clientChat.id,
+            {
+              status: ClientChatStatus.CHATBOT,
+            },
+            workspaceId,
+          );
+          // Update clientChat object to reflect the change
+          clientChat.status = ClientChatStatus.CHATBOT;
+        }
+      }
+
       if (
         clientChat.sector.abandonmentInterval &&
         message.event !== ClientChatMessageEvent.ABANDONED
@@ -518,7 +546,10 @@ export class ChatMessageManagerService {
           workspaceId,
         );
       }
-      if (clientChat.status === ClientChatStatus.FINISHED && clientChatMessage.fromType === ChatMessageFromType.PERSON) {
+      if (
+        clientChat.status === ClientChatStatus.FINISHED &&
+        clientChatMessage.fromType === ChatMessageFromType.PERSON
+      ) {
         //add more integrations here in the future
         const whatsappIntegration = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(

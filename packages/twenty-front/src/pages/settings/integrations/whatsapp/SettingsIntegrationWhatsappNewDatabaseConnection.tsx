@@ -26,8 +26,8 @@ import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 import {
-    REACT_APP_META_WEBHOOK_URL,
-    REACT_APP_SERVER_BASE_URL,
+  REACT_APP_META_WEBHOOK_URL,
+  REACT_APP_SERVER_BASE_URL,
 } from '~/config';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -42,7 +42,7 @@ export const settingsIntegrationWhatsappConnectionFormSchema = z
     appId: z.string().optional(),
     appKey: z.string().optional(),
     apiType: z.string().min(1, 'Select an API type'),
-    sectorId: z.string().optional(),
+    sectorId: z.string().min(1, 'Select a sector'),
   })
   .refine((data) => {
     // For MetaAPI, require all MetaAPI-specific fields
@@ -95,7 +95,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
     Sector & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.Sector,
-    recordGqlFields: { id: true, name: true, icon: true },
+    recordGqlFields: { id: true, name: true },
   });
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
@@ -161,7 +161,6 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
   });
 
   const canSave = formConfig.formState.isValid;
-  // Function to fetch QR code with retry
   const fetchQrCodeWithRetry = async (
     sessionName: string,
     maxRetries = 5,
@@ -207,9 +206,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
           // If 404, continue trying
           if (response.status === 404) {
             if (attempt < maxRetries) {
-              console.log(
-                `Waiting ${delay}ms before next attempt...`,
-              );
+              console.log(`Waiting ${delay}ms before next attempt...`);
               await new Promise((resolve) => setTimeout(resolve, delay));
               continue;
             }
@@ -368,7 +365,9 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
             />
             {showQrCode ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <h3>{t`QR Code for Baileys`} - {integrationName}</h3>
+                <h3>
+                  {t`QR Code for Baileys`} - {integrationName}
+                </h3>
                 <p>
                   {t`Scan the QR code below with your WhatsApp to connect the integration:`}
                 </p>
@@ -402,7 +401,9 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
                         }}
                       >
                         <p>{t`QR Code could not be generated`}</p>
-                        <p>{t`QR Value:`} {qrCodeValue}</p>
+                        <p>
+                          {t`QR Value:`} {qrCodeValue}
+                        </p>
                       </div>
                     </div>
                   ) : qrCodeError ? (

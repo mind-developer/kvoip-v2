@@ -22,4 +22,5 @@ export type CreateExecutorInput = {
 
 export type ExecutorInput = CreateExecutorInput & {
   handlers: { [key: string]: NodeHandler };
+  clearExecutor: () => void;
 };

@@ -206,14 +206,13 @@ export const BotDiagramBase = ({
 
   const nodes = useRecoilValue(chatbotFlowNodes) ?? initialNodes;
   const edges = useRecoilValue(chatbotFlowEdges) ?? initialEdges;
-  const setNodes = useSetRecoilState(chatbotFlowNodes);
   const setEdges = useSetRecoilState(chatbotFlowEdges);
 
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
 
-  const { enqueueInfoSnackBar } = useSnackBar();
+  const { enqueueInfoSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const isChatbotActionMenuOpen = useRecoilValue(isChatbotActionMenuOpenState);
   const setIsChatbotActionMenuOpen = useSetRecoilState(
@@ -247,11 +246,7 @@ export const BotDiagramBase = ({
   // Callback to update nodes and save with current edges atomically
   const updateNodesAndSave = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (
-        newNodes: GenericNode[],
-        shouldSave: boolean,
-        saveType: 'nodes' | 'edges',
-      ) => {
+      async (newNodes: GenericNode[], shouldSave: boolean) => {
         set(chatbotFlowNodes, newNodes);
         if (shouldSave && chatbotId) {
           // Read current edges from snapshot atomically
@@ -266,14 +261,14 @@ export const BotDiagramBase = ({
               }),
               flowEdges: currentEdges,
             },
-          }).then(() => {
-            enqueueInfoSnackBar({
-              message: saveType === 'nodes' ? 'Nodes saved' : 'Edges saved',
+          }).catch(() => {
+            enqueueErrorSnackBar({
+              message: t`Your changes could not be saved. Please try again.`,
             });
           });
         }
       },
-    [chatbotId, enqueueInfoSnackBar, updateOneRecord],
+    [chatbotId, enqueueErrorSnackBar, t, updateOneRecord],
   );
 
   // Callback to update edges and save with current nodes atomically
@@ -397,7 +392,7 @@ export const BotDiagramBase = ({
           (change.type === 'position' && !change.dragging) ||
           change.type === 'remove',
       );
-      updateNodesAndSave(finalNodes, shouldSave, 'nodes');
+      updateNodesAndSave(finalNodes, shouldSave);
     },
     [nodes, edges, updateNodesAndSave],
   );

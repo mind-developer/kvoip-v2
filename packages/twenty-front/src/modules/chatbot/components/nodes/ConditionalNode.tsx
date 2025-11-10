@@ -57,7 +57,12 @@ function ConditionalNode({
   )[0];
 
   const { updateNodeData } = useReactFlow();
-  const { saveDataValue } = useHandleNodeValue();
+  const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();
+
+  const targetConnections = useNodeConnections({
+    id,
+    handleType: 'target',
+  });
 
   const sourceConnections = useNodeConnections({
     id,
@@ -69,6 +74,42 @@ function ConditionalNode({
       setLogicState(data.logic);
     }
   }, [data.logic]);
+
+  useEffect(() => {
+    /* @kvoip-woulz proprietary:begin */
+    const currentNode = allNodes.find((n) => n.id === thisNodeId);
+    const currentNodeData = currentNode?.data || data;
+    /* @kvoip-woulz proprietary:end */
+
+    if (targetConnections.length > 0) {
+      const connection = targetConnections[0];
+      const sourceHandle = connection.sourceHandle || '';
+      const sourceNodeId = connection.source;
+
+      /* @kvoip-woulz proprietary:begin */
+      const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
+      const sourceNodeData = sourceNode?.data || {};
+
+      // If the start node receives an incoming connection, set the previous node as the new start node
+      handleIncomingConnection(thisNodeId!, sourceNodeId, allNodes);
+      /* @kvoip-woulz proprietary:end */
+
+      // Update current node with incoming connection info
+      updateNodeData(thisNodeId!, {
+        ...currentNodeData,
+        incomingEdgeId: sourceHandle,
+        incomingNodeId: sourceNodeId,
+      });
+
+      // Update source node with outgoing connection info
+      updateNodeData(sourceNodeId!, {
+        ...sourceNodeData,
+        outgoingEdgeId: sourceHandle,
+        outgoingNodeId: thisNodeId,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetConnections, allNodes, thisNodeId, data.nodeStart]);
 
   useEffect(() => {
     if (!logicState.logicNodeData.length) return;

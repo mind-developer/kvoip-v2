@@ -44,7 +44,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     return 'application/octet-stream';
   }
 
-
   private async uploadMediaAndGetId(
     link: string,
     integration: WhatsappIntegrationWorkspaceEntity,
@@ -68,11 +67,12 @@ export class WhatsAppDriver implements ChatProviderDriver {
       }
     })();
 
-    const convertedMedia = await this.mediaHelperService.convertMediaForWhatsApp(
-      Buffer.from(downloadResponse.data),
-      contentType,
-      filenameFromUrl,
-    );
+    const convertedMedia =
+      await this.mediaHelperService.convertMediaForWhatsApp(
+        Buffer.from(downloadResponse.data),
+        contentType,
+        filenameFromUrl,
+      );
     const uploadBuffer = convertedMedia.buffer;
     const uploadContentType = convertedMedia.contentType;
     filenameFromUrl = convertedMedia.filename;
@@ -101,7 +101,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     providerIntegrationId: string,
     clientChat: ClientChatWorkspaceEntity,
   ) {
-    console.log('clientChatMessage', clientChatMessage);
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
@@ -123,7 +122,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     };
 
     const fields = await getMessageFields(clientChatMessage, clientChat);
-    console.log('fields', JSON.stringify(fields, null, 2));
 
     try {
       // Se houver mídia por link, fazer upload para o Meta e trocar por id
