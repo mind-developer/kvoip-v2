@@ -15,7 +15,6 @@ import {
 
 @Injectable()
 export class ConditionalInputHandler implements NodeHandler {
-  askedNodes: Set<string>;
   private compare(
     actual: string,
     expected: string,
@@ -33,10 +32,7 @@ export class ConditionalInputHandler implements NodeHandler {
     }
   }
 
-  constructor(private chatMessageManagerService: ChatMessageManagerService) {
-    //this will probably cause issues
-    this.askedNodes = new Set<string>();
-  }
+  constructor(private chatMessageManagerService: ChatMessageManagerService) {}
 
   async process(params: ProcessParams): Promise<string | null> {
     const {
@@ -48,18 +44,21 @@ export class ConditionalInputHandler implements NodeHandler {
       workspaceId,
       sectors,
       context,
+      askedNodes,
     } = params;
     const logic = node.data?.logic as NewConditionalState | undefined;
 
     if (!logic || !logic.logicNodeData) return null;
 
+    // Usa o estado passado pelo executor, ou cria um novo se não fornecido (fallback)
+    const askedNodesSet = askedNodes || new Set<string>();
     const nodeId = node.id;
 
     const input = context.incomingMessage.toLowerCase().trim();
     const prompt = typeof node.data?.text === 'string' ? node.data.text : '';
 
-    if (!this.askedNodes.has(nodeId)) {
-      this.askedNodes.add(nodeId);
+    if (!askedNodesSet.has(nodeId)) {
+      askedNodesSet.add(nodeId);
       if (prompt) {
         const message: Omit<
           ClientChatMessageNoBaseFields,
@@ -139,11 +138,8 @@ export class ConditionalInputHandler implements NodeHandler {
         );
       }
 
-      // Retorna o primeiro outgoingNodeId disponível ou null se não houver
-      const firstOutgoingNodeId = logic.logicNodeData.find(
-        (d) => d.outgoingNodeId,
-      )?.outgoingNodeId;
-      return firstOutgoingNodeId ?? null;
+      // Retorna null para esperar a resposta do usuário antes de avaliar condições
+      return null;
     }
 
     for (const d of logic.logicNodeData) {
@@ -166,7 +162,7 @@ export class ConditionalInputHandler implements NodeHandler {
           : matchOption && matchSector;
 
       if (matched) {
-        this.askedNodes.delete(nodeId); // limpa para próxima vez que cair aqui
+        askedNodesSet.delete(nodeId); // limpa para próxima vez que cair aqui
         return d.outgoingNodeId ?? null;
       }
     }

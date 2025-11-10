@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ConditionalInputHandler';
 import { FileInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/FileInputHandler';
 import { ImageInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/ImageInputHandler';
 import { TextInputHandler } from 'src/engine/core-modules/chatbot-runner/engine/handlers/TextInputHandler';
 import {
-    CreateExecutorInput,
-    ExecutorInput,
+  CreateExecutorInput,
+  ExecutorInput,
 } from 'src/engine/core-modules/chatbot-runner/types/CreateExecutorInput';
 import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import { FlowNode } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
@@ -55,29 +55,21 @@ export class ChatbotRunnerService {
 class ExecuteFlow {
   currentNodeId: string | undefined;
   chosenInput: string | undefined;
+  askedNodes: Set<string>; // Estado por executor (chat)
+  private readonly logger = new Logger(ExecuteFlow.name);
   constructor(private i: ExecutorInput) {
-    console.log(
-      'ExecuteFlow constructor - flowNodes:',
-      JSON.stringify(this.i.chatbot.flowNodes, null, 2),
-    );
     this.currentNodeId = this.i.chatbot.flowNodes.find(
       (node) => node.data?.nodeStart,
     )?.id;
-    console.log('ExecuteFlow constructor - currentNodeId:', this.currentNodeId);
+    this.askedNodes = new Set<string>(); // Inicializa o estado por executor
   }
 
   public async runFlow(incomingMessage: string) {
-    console.log('runFlow called with incomingMessage:', incomingMessage);
-    console.log('runFlow - current currentNodeId:', this.currentNodeId);
     let lastNode: FlowNode | undefined;
     let onFinishCalled = false;
     while (this.currentNodeId) {
       const currentNode: FlowNode = this.i.chatbot.flowNodes.find(
         (node) => node.id === this.currentNodeId,
-      );
-      console.log(
-        'runFlow - currentNode found:',
-        JSON.stringify(currentNode, null, 2),
       );
       if (!currentNode) {
         break;
@@ -85,13 +77,9 @@ class ExecuteFlow {
       lastNode = currentNode;
       const handler = this.i.handlers[currentNode.type];
       if (!handler) {
-        console.log('handler not found for node', currentNode.type);
+        this.logger.error('handler not found for node', currentNode.type);
         break;
       }
-      console.log(
-        'runFlow - calling handler.process for type:',
-        currentNode.type,
-      );
       const nextNodeId = await handler.process({
         provider: this.i.provider,
         providerIntegrationId: this.i.providerIntegrationId,
@@ -103,6 +91,7 @@ class ExecuteFlow {
         context: {
           incomingMessage,
         },
+        askedNodes: this.askedNodes, // Passa o estado para o handler
       });
       if (currentNode.type === NodeTypes.CONDITIONAL) {
         const logic = currentNode.data?.logic as NewConditionalState;
@@ -119,7 +108,6 @@ class ExecuteFlow {
             this.i.onFinish &&
             ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
           ) {
-            console.log('on finish', currentNode.type, this.chosenInput);
             this.i.onFinish(currentNode, this.chosenInput);
             onFinishCalled = true;
           }
@@ -127,45 +115,48 @@ class ExecuteFlow {
         }
       }
       if (!nextNodeId) {
-        console.log(this.i.onFinish, currentNode.type);
+        this.logger.error(this.i.onFinish, currentNode.type);
         if (
           this.i.onFinish &&
           ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
         ) {
-          console.log('on finish', currentNode.type, this.chosenInput);
           this.i.onFinish(currentNode, this.chosenInput);
           onFinishCalled = true;
         }
         break;
       }
-      /* @kvoip-woulz proprietary:begin */
       // Verificar se o próximo nó existe antes de continuar
       const nextNodeExists = this.i.chatbot.flowNodes.some(
         (node) => node.id === nextNodeId,
       );
       if (!nextNodeExists) {
-        console.log('nextNodeId não encontrado:', nextNodeId);
+        this.logger.warn('nextNodeId não encontrado:', nextNodeId);
         if (
           this.i.onFinish &&
           ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
         ) {
-          console.log('on finish (next node not found)', currentNode.type, this.chosenInput);
+          this.logger.warn(
+            'on finish (next node not found)',
+            currentNode.type,
+            this.chosenInput,
+          );
           this.i.onFinish(currentNode, this.chosenInput);
           onFinishCalled = true;
         }
         break;
       }
-      /* @kvoip-woulz proprietary:end */
       this.currentNodeId = nextNodeId;
     }
-    /* @kvoip-woulz proprietary:begin */
     // Garantir que onFinish seja chamado quando o fluxo termina
     if (!onFinishCalled && this.i.onFinish && lastNode) {
       if (['text', 'image', 'file', 'conditional'].includes(lastNode.type)) {
-        console.log('on finish (end of flow)', lastNode.type, this.chosenInput);
+        this.logger.warn(
+          'on finish (end of flow)',
+          lastNode.type,
+          this.chosenInput,
+        );
         this.i.onFinish(lastNode, this.chosenInput);
       }
     }
-    /* @kvoip-woulz proprietary:end */
   }
 }
