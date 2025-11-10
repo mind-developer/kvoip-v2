@@ -24,6 +24,7 @@ export class ChatbotRunnerService {
   }
 
   createExecutor(i: CreateExecutorInput) {
+    const executorKey = i.clientChat.id;
     const executor = new ExecuteFlow({
       ...i,
       handlers: {
@@ -32,9 +33,12 @@ export class ChatbotRunnerService {
         [NodeTypes.CONDITIONAL]: this.conditionalInputHandler,
         [NodeTypes.FILE]: this.fileInputHandler,
       },
+      clearExecutor: () => {
+        this.clearExecutor(executorKey);
+      },
     });
 
-    this.executors[i.clientChat.id] = executor;
+    this.executors[executorKey] = executor;
 
     return executor;
   }
@@ -77,7 +81,6 @@ class ExecuteFlow {
 
   public async runFlow(incomingMessage: string) {
     let lastNode: FlowNode | undefined;
-    let onFinishCalled = false;
     this.logger.log(
       `ExecuteFlow: Iniciando runFlow com incomingMessage="${incomingMessage}", currentNodeId=${this.currentNodeId}`,
     );
@@ -138,58 +141,29 @@ class ExecuteFlow {
         }
       }
       if (!nextNodeId) {
-        this.logger.error(this.i.onFinish, currentNode.type);
+        // Fluxo terminou - não há mais nós para executar
+        this.logger.log(
+          `ExecuteFlow: Fluxo terminou no node ${currentNode.id} (tipo: ${currentNode.type})`,
+        );
         if (
           this.i.onFinish &&
           ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
         ) {
-          this.i.onFinish(currentNode, this.chosenInput);
-          onFinishCalled = true;
-          // Limpar currentNodeId para indicar que o fluxo terminou
-          this.currentNodeId = undefined;
-        }
-        break;
-      }
-      // Verificar se o próximo nó existe antes de continuar
-      const nextNodeExists = this.i.chatbot.flowNodes.some(
-        (node) => node.id === nextNodeId,
-      );
-      if (!nextNodeExists) {
-        this.logger.warn('nextNodeId não encontrado:', nextNodeId);
-        if (
-          this.i.onFinish &&
-          ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
-        ) {
-          this.logger.warn(
-            'on finish (next node not found)',
-            currentNode.type,
-            this.chosenInput,
+          this.logger.log(
+            `ExecuteFlow: Chamando onFinish para node ${currentNode.id}`,
           );
           this.i.onFinish(currentNode, this.chosenInput);
-          onFinishCalled = true;
-          // Limpar currentNodeId para indicar que o fluxo terminou
-          this.currentNodeId = undefined;
         }
+        // Limpar currentNodeId para indicar que o fluxo terminou
+        this.currentNodeId = undefined;
+        // Remover executor já que o fluxo terminou
+        this.i.clearExecutor();
         break;
       }
       this.logger.log(
         `ExecuteFlow: Atualizando currentNodeId de ${this.currentNodeId} para ${nextNodeId}`,
       );
       this.currentNodeId = nextNodeId;
-    }
-    // Garantir que onFinish seja chamado quando o fluxo termina
-    if (!onFinishCalled && this.i.onFinish && lastNode) {
-      if (['text', 'image', 'file', 'conditional'].includes(lastNode.type)) {
-        this.logger.warn(
-          'on finish (end of flow)',
-          lastNode.type,
-          this.chosenInput,
-        );
-        this.i.onFinish(lastNode, this.chosenInput);
-        onFinishCalled = true;
-        // Limpar currentNodeId para indicar que o fluxo terminou
-        this.currentNodeId = undefined;
-      }
     }
   }
 }

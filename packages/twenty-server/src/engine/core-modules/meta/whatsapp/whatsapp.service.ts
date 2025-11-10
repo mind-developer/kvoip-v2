@@ -269,27 +269,7 @@ export class WhatsAppService {
             currentNodeId: (executor as any).currentNodeId,
           });
           await executor.runFlow(message.textBody ?? '');
-          /* @kvoip-woulz proprietary:begin */
-          // Verificar se o fluxo terminou após a execução
-          const executorAfterRun =
-            this.ChatbotRunnerService.getExecutor(executorKey);
-          if (!executorAfterRun || !(executorAfterRun as any).currentNodeId) {
-            // Executor não existe mais ou não tem currentNodeId - fluxo terminou
-            // Limpar executor para permitir reiniciar do zero na próxima mensagem
-            this.ChatbotRunnerService.clearExecutor(executorKey);
-            this.logger.log('chatbot executor limpo - fluxo terminou', {
-              executorKey,
-            });
-          } else {
-            this.logger.log(
-              'chatbot executor mantido - aguardando resposta do usuário',
-              {
-                executorKey,
-                currentNodeId: (executorAfterRun as any).currentNodeId,
-              },
-            );
-          }
-          /* @kvoip-woulz proprietary:end */
+          // O executor se auto-remove quando o fluxo termina
           return true;
         }
         this.logger.log('chatbot executor not found, creating new one', {
@@ -327,6 +307,14 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
+            this.chatMessageManagerService.sendMessage(
+              {
+                ...baseEventMessage,
+                event: ClientChatMessageEvent.CHATBOT_END,
+              },
+              workspaceId,
+              integrationId,
+            );
             this.logger.log('onFinish');
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
@@ -346,33 +334,10 @@ export class WhatsAppService {
             //     status: ClientChatStatus.ASSIGNED,
             //   }, workspaceId);
             // }
-            this.chatMessageManagerService.sendMessage(
-              {
-                ...baseEventMessage,
-                event: ClientChatMessageEvent.CHATBOT_END,
-              },
-              workspaceId,
-              integrationId,
-            );
           },
         });
         await executor.runFlow(message.textBody ?? '');
-        // Limpar executor apenas se o fluxo terminou (não está aguardando resposta)
-        // Se o executor ainda tem currentNodeId, significa que está aguardando resposta do usuário
-        const executorAfterRun =
-          this.ChatbotRunnerService.getExecutor(executorKey);
-        if (!executorAfterRun || !(executorAfterRun as any).currentNodeId) {
-          // Executor não existe mais ou não tem currentNodeId - fluxo terminou
-          this.ChatbotRunnerService.clearExecutor(executorKey);
-        } else {
-          this.logger.log(
-            'chatbot executor mantido - aguardando resposta do usuário',
-            {
-              executorKey,
-              currentNodeId: (executorAfterRun as any).currentNodeId,
-            },
-          );
-        }
+        // O executor se auto-remove quando o fluxo termina
       }
     } catch (error) {
       this.logger.error('error', error);
