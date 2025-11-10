@@ -42,6 +42,12 @@ export class ChatbotRunnerService {
   getExecutor(key: string): ExecuteFlow | undefined {
     try {
       const executor = this.executors[key];
+      console.log('ChatbotRunnerService.getExecutor', {
+        key,
+        found: !!executor,
+        executorKeys: Object.keys(this.executors),
+        currentNodeId: executor ? (executor as any).currentNodeId : undefined,
+      });
       return executor;
     } catch {
       return undefined;
@@ -49,6 +55,11 @@ export class ChatbotRunnerService {
   }
 
   clearExecutor(key: string): void {
+    console.log('ChatbotRunnerService.clearExecutor', {
+      key,
+      hadExecutor: !!this.executors[key],
+      executorKeys: Object.keys(this.executors),
+    });
     delete this.executors[key];
   }
 }
@@ -67,19 +78,31 @@ class ExecuteFlow {
   public async runFlow(incomingMessage: string) {
     let lastNode: FlowNode | undefined;
     let onFinishCalled = false;
+    this.logger.log(
+      `ExecuteFlow: Iniciando runFlow com incomingMessage="${incomingMessage}", currentNodeId=${this.currentNodeId}`,
+    );
     while (this.currentNodeId) {
       const currentNode: FlowNode = this.i.chatbot.flowNodes.find(
         (node) => node.id === this.currentNodeId,
       );
       if (!currentNode) {
+        this.logger.warn(
+          `ExecuteFlow: Nó não encontrado: ${this.currentNodeId}`,
+        );
         break;
       }
       lastNode = currentNode;
+      this.logger.log(
+        `ExecuteFlow: Processando node ${currentNode.id} (tipo: ${currentNode.type})`,
+      );
       const handler = this.i.handlers[currentNode.type];
       if (!handler) {
         this.logger.error('handler not found for node', currentNode.type);
         break;
       }
+      this.logger.log(
+        `ExecuteFlow: Chamando handler.process para node ${currentNode.id} (tipo: ${currentNode.type})`,
+      );
       const nextNodeId = await handler.process({
         provider: this.i.provider,
         providerIntegrationId: this.i.providerIntegrationId,
@@ -93,6 +116,9 @@ class ExecuteFlow {
         },
         askedNodes: this.askedNodes, // Passa o estado para o handler
       });
+      this.logger.log(
+        `ExecuteFlow: Handler retornou nextNodeId=${nextNodeId} para node ${currentNode.id} (tipo: ${currentNode.type})`,
+      );
       if (currentNode.type === NodeTypes.CONDITIONAL) {
         const logic = currentNode.data?.logic as NewConditionalState;
         if (logic?.logicNodeData && nextNodeId) {
@@ -104,13 +130,10 @@ class ExecuteFlow {
           }
         }
         if (!nextNodeId) {
-          if (
-            this.i.onFinish &&
-            ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
-          ) {
-            this.i.onFinish(currentNode, this.chosenInput);
-            onFinishCalled = true;
-          }
+          this.logger.log(
+            `ExecuteFlow: Nó CONDITIONAL retornou null, aguardando resposta do usuário - mantendo executor ativo`,
+          );
+          // Não chama onFinish aqui - o executor deve permanecer ativo para processar a próxima mensagem
           return null;
         }
       }
@@ -122,6 +145,8 @@ class ExecuteFlow {
         ) {
           this.i.onFinish(currentNode, this.chosenInput);
           onFinishCalled = true;
+          // Limpar currentNodeId para indicar que o fluxo terminou
+          this.currentNodeId = undefined;
         }
         break;
       }
@@ -142,9 +167,14 @@ class ExecuteFlow {
           );
           this.i.onFinish(currentNode, this.chosenInput);
           onFinishCalled = true;
+          // Limpar currentNodeId para indicar que o fluxo terminou
+          this.currentNodeId = undefined;
         }
         break;
       }
+      this.logger.log(
+        `ExecuteFlow: Atualizando currentNodeId de ${this.currentNodeId} para ${nextNodeId}`,
+      );
       this.currentNodeId = nextNodeId;
     }
     // Garantir que onFinish seja chamado quando o fluxo termina
@@ -156,6 +186,9 @@ class ExecuteFlow {
           this.chosenInput,
         );
         this.i.onFinish(lastNode, this.chosenInput);
+        onFinishCalled = true;
+        // Limpar currentNodeId para indicar que o fluxo terminou
+        this.currentNodeId = undefined;
       }
     }
   }
