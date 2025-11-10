@@ -64,6 +64,20 @@ registerEnumType(PayableStatus, {
   description: 'Status of the account payable',
 });
 
+/* @kvoip-woulz proprietary:begin */
+export enum PayablePaymentType {
+  PIX = 'pix',
+  TED = 'ted',
+  BOLETO = 'boleto',
+  OTHER = 'other',
+}
+
+registerEnumType(PayablePaymentType, {
+  name: 'PayablePaymentType',
+  description: 'Payment method used to settle the payable',
+});
+/* @kvoip-woulz proprietary:end */
+
 // ============================================
 // WORKSPACE ENTITY
 // ============================================
@@ -191,21 +205,44 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   // PAYABLE-SPECIFIC FIELDS
   // ============================================
 
+  /* @kvoip-woulz proprietary:begin */
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.paymentType,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: msg`Payment Type`,
-    description: msg`Payment type (PIX, TED, Boleto, etc.)`,
+    description: msg`Payment method to settle this payable`,
     icon: 'IconCreditCard',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.PAYMENT_TYPE,
-        errorMessage: msg`Invalid payment type`,
+    defaultValue: "'" + PayablePaymentType.OTHER + "'",
+    options: [
+      {
+        value: PayablePaymentType.PIX,
+        label: 'PIX',
+        position: 0,
+        color: 'blue',
       },
-    },
+      {
+        value: PayablePaymentType.TED,
+        label: 'TED',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: PayablePaymentType.BOLETO,
+        label: 'Boleto',
+        position: 2,
+        color: 'purple',
+      },
+      {
+        value: PayablePaymentType.OTHER,
+        label: 'Other',
+        position: 3,
+        color: 'gray',
+      },
+    ],
   })
   @WorkspaceIsNullable()
-  paymentType: string | null;
+  paymentType: PayablePaymentType | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.barcode,

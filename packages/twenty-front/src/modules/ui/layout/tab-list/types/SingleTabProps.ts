@@ -11,4 +11,7 @@ export type SingleTabProps<T extends string = string> = {
   cards?: LayoutCard[];
   logo?: string;
   incomingMessages?: number;
+  /* @kvoip-woulz proprietary:begin */
+  disabledTooltip?: string;
+  /* @kvoip-woulz proprietary:end */
 };

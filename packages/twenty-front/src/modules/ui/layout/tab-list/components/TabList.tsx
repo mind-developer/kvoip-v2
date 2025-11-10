@@ -51,6 +51,12 @@ const StyledHiddenMeasurement = styled.div`
   visibility: hidden;
 `;
 
+/* @kvoip-woulz proprietary:begin */
+const StyledTabButtonWrapper = styled.span`
+  display: inline-flex;
+`;
+/* @kvoip-woulz proprietary:end */
+
 export const TabList = ({
   tabs,
   loading,
@@ -166,26 +172,34 @@ export const TabList = ({
 
         {visibleTabs.length > 1 && (
           <StyledHiddenMeasurement>
-            {visibleTabs.map((tab) => (
-              <NodeDimension
-                key={tab.id}
-                onDimensionChange={handleTabWidthChange(tab.id)}
-              >
-                <TabButton
-                  id={tab.id}
-                  title={tab.title}
-                  LeftIcon={tab.Icon}
-                  logo={tab.logo}
-                  active={tab.id === activeTabId}
-                  disabled={tab.disabled ?? loading}
-                  pill={tab.pill}
-                  disableTestId={true}
-                  /* @kvoip-woulz proprietary:begin */
-                  incomingMessages={tab.incomingMessages}
-                  /* @kvoip-woulz proprietary:end */
-                />
-              </NodeDimension>
-            ))}
+            {visibleTabs.map((tab) => {
+              const isDisabled = tab.disabled ?? loading;
+
+              return (
+                <NodeDimension
+                  key={tab.id}
+                  onDimensionChange={handleTabWidthChange(tab.id)}
+                >
+                  {/* @kvoip-woulz proprietary:begin */}
+                  <StyledTabButtonWrapper
+                    title={isDisabled ? tab.disabledTooltip : undefined}
+                  >
+                    <TabButton
+                      id={tab.id}
+                      title={tab.title}
+                      LeftIcon={tab.Icon}
+                      logo={tab.logo}
+                      active={tab.id === activeTabId}
+                      disabled={isDisabled}
+                      pill={tab.pill}
+                      disableTestId={true}
+                      incomingMessages={tab.incomingMessages}
+                    />
+                  </StyledTabButtonWrapper>
+                  {/* @kvoip-woulz proprietary:end */}
+                </NodeDimension>
+              );
+            })}
 
             <NodeDimension onDimensionChange={handleMoreButtonWidthChange}>
               <TabMoreButton hiddenTabsCount={1} active={false} />
@@ -196,25 +210,41 @@ export const TabList = ({
         <NodeDimension onDimensionChange={handleContainerWidthChange}>
           <StyledContainer className={className}>
             <StyledTabContainer>
-              {visibleTabs.slice(0, visibleTabCount).map((tab) => (
-                <TabButton
-                  key={tab.id}
-                  id={tab.id}
-                  title={tab.title}
-                  LeftIcon={tab.Icon}
-                  logo={tab.logo}
-                  active={tab.id === activeTabId}
-                  disabled={tab.disabled ?? loading}
-                  pill={tab.pill}
-                  to={behaveAsLinks ? `#${tab.id}` : undefined}
-                  onClick={
-                    behaveAsLinks ? undefined : () => handleTabSelect(tab.id)
-                  }
-                  /* @kvoip-woulz proprietary:begin */
-                  incomingMessages={tab.incomingMessages}
-                  /* @kvoip-woulz proprietary:end */
-                />
-              ))}
+              {visibleTabs.slice(0, visibleTabCount).map((tab) => {
+                const isDisabled = tab.disabled ?? loading;
+                /* @kvoip-woulz proprietary:begin */
+                const tabDomId = `${componentInstanceId}-tab-${tab.id}`;
+                /* @kvoip-woulz proprietary:end */
+
+                /* @kvoip-woulz proprietary:begin */
+                return (
+                  <StyledTabButtonWrapper
+                    key={tab.id}
+                    id={tabDomId}
+                    title={isDisabled ? tab.disabledTooltip : undefined}
+                  >
+                    <TabButton
+                      id={tab.id}
+                      title={tab.title}
+                      LeftIcon={tab.Icon}
+                      logo={tab.logo}
+                      active={tab.id === activeTabId}
+                      disabled={isDisabled}
+                      pill={tab.pill}
+                      to={
+                        behaveAsLinks && !isDisabled ? `#${tab.id}` : undefined
+                      }
+                      onClick={
+                        behaveAsLinks || isDisabled
+                          ? undefined
+                          : () => handleTabSelect(tab.id)
+                      }
+                      incomingMessages={tab.incomingMessages}
+                    />
+                  </StyledTabButtonWrapper>
+                );
+                /* @kvoip-woulz proprietary:end */
+              })}
             </StyledTabContainer>
 
             {hasHiddenTabs && (

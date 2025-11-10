@@ -17,6 +17,7 @@ import { useCreateFormFields } from '@/object-record/record-create/hooks/useCrea
 import { useRecordCreateContext } from '@/object-record/record-create/hooks/useRecordCreateContext';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
+import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
@@ -28,11 +29,9 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-/* @kvoip-woulz proprietary:begin */
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
-/* @kvoip-woulz proprietary:end */
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -41,7 +40,8 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 /* @kvoip-woulz proprietary:begin */
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 /* @kvoip-woulz proprietary:end */
 import {
   FieldMetadataType,
@@ -50,27 +50,34 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconChevronDown,
   IconDeviceFloppy,
   IconFileImport,
   IconFileText,
-  IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
+/* @kvoip-woulz proprietary:begin */
+import {
+  IconCalendarEvent,
+  IconCheckbox,
+  IconHome,
+  IconMail,
+  IconNotes,
+  IconPaperclip,
+} from 'twenty-ui/display';
+/* @kvoip-woulz proprietary:end */
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-/* @kvoip-woulz proprietary:begin */
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
-/* @kvoip-woulz proprietary:end */
-/* @kvoip-woulz proprietary:begin */
+
 import {
   ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
   ACCOUNT_PAYABLE_PRIMARY_FIELDS,
   ACCOUNT_PAYABLE_RELATION_FIELDS,
   ACCOUNT_PAYABLE_REQUIRED_FIELDS,
 } from '../config/accountPayableFieldGroups';
-/* @kvoip-woulz proprietary:end */
 
 type AccountPayableFieldsCardProps = {
   objectNameSingular: string;
@@ -117,7 +124,6 @@ const ACCOUNT_PAYABLE_ACTION_ITEMS: ActionDropdownItem[] = [
   },
 ];
 
-/* @kvoip-woulz proprietary:begin */
 const StyledFieldsGreyBox = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
@@ -139,12 +145,6 @@ const StyledRelationSection = styled.div`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledRelationSectionTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
 const StyledRelationFieldsList = styled.div`
   display: flex;
   flex-direction: column;
@@ -162,13 +162,12 @@ const StyledRelationFieldLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
-/* @kvoip-woulz proprietary:end */
-/* @kvoip-woulz proprietary:end */
 
-/* @kvoip-woulz proprietary:begin */
 const StyledCardHeader = styled.div`
   display: flex;
-  align-items: center;
+  /* @kvoip-woulz proprietary:begin */
+  align-items: flex-end;
+  /* @kvoip-woulz proprietary:end */
   gap: ${({ theme }) => theme.spacing(3)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
@@ -186,13 +185,51 @@ const StyledCardHeaderDivider = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
+/* @kvoip-woulz proprietary:begin */
+const StyledFieldsSectionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledFieldsSectionTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
+const StyledDraftLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledDraftTabListContainer = styled.div`
+  width: 100%;
+`;
+
+const StyledDraftTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledDraftActionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+/* @kvoip-woulz proprietary:end */
+
 const StyledTitleFieldContainer = styled.div`
   flex: 1;
   min-width: 0;
   display: flex;
 `;
 
-/* @kvoip-woulz proprietary:begin */
 const StyledTitleFieldContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -203,22 +240,57 @@ const StyledTitleFieldContent = styled.div`
 const StyledTitleTextInput = styled(TextInput)`
   width: 100%;
 
-  input {
-    font-size: ${({ theme }) => theme.font.size.lg};
-    font-weight: ${({ theme }) => theme.font.weight.semiBold};
-    border-width: 2px;
+  /* @kvoip-woulz proprietary:begin */
+  label {
+    display: none;
   }
+
+  input {
+    font-size: ${({ theme }) => theme.font.size.xl};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  input:focus {
+    border: none;
+    box-shadow: none;
+  }
+  /* @kvoip-woulz proprietary:end */
 `;
 
 const StyledTitleHelperText = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
-/* @kvoip-woulz proprietary:end */
 
 const StyledActionsButton = styled(Button)`
-  width: auto;
+  /* @kvoip-woulz proprietary:begin */
+  width: 100%;
+  border-width: 2px !important;
+  padding: 0 ${({ theme }) => theme.spacing(3)};
+  font-size: ${({ theme }) => theme.font.size.md};
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:active {
+    border-color: ${({ theme }) => theme.border.color.medium} !important;
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.background.transparent.medium} !important;
+  }
+  /* @kvoip-woulz proprietary:end */
 `;
+
+/* @kvoip-woulz proprietary:begin */
+const StyledDraftActionsButton = styled(StyledActionsButton)`
+  width: 100%;
+  justify-content: center;
+`;
+/* @kvoip-woulz proprietary:end */
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -234,8 +306,6 @@ const StyledSaveButton = styled(Button)`
   border-width: 2px !important;
   flex: 1;
 `;
-
-/* @kvoip-woulz proprietary:end */
 
 export const AccountPayableFieldsCard = ({
   objectNameSingular,
@@ -282,7 +352,6 @@ const AccountPayablePersistedFieldsCard = ({
     objectNameSingular: CoreObjectNameSingular.AccountPayable,
   });
 
-  /* @kvoip-woulz proprietary:begin */
   const {
     inlineFieldMetadataItems,
     inlineRelationFieldMetadataItems,
@@ -316,7 +385,6 @@ const AccountPayablePersistedFieldsCard = ({
     inlineRelationFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   ]);
-  /* @kvoip-woulz proprietary:end */
 
   const { isPrefetchLoading, recordLoading } = useRecordShowContainerData({
     objectRecordId,
@@ -374,7 +442,6 @@ const AccountPayablePersistedFieldsCard = ({
     });
   };
 
-  /* @kvoip-woulz proprietary:begin */
   const handleMouseEnter = useCallback(
     (position?: number) => {
       if (!isDefined(position)) {
@@ -385,28 +452,23 @@ const AccountPayablePersistedFieldsCard = ({
     },
     [setRecordFieldListHoverPosition],
   );
-  /* @kvoip-woulz proprietary:end */
 
   const fieldsByName = mapArrayToObject(
     objectMetadataItem.fields,
     ({ name }) => name,
   );
 
-  /* @kvoip-woulz proprietary:begin */
   const labelIdentifierFieldMetadataItem = objectMetadataItem.fields.find(
     ({ id }) => id === objectMetadataItem.labelIdentifierFieldMetadataId,
   );
 
   const headerFieldName = labelIdentifierFieldMetadataItem?.name ?? 'name';
-  /* @kvoip-woulz proprietary:end */
 
   const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
     objectPermissionsByObjectMetadataId,
     objectMetadataId: objectMetadataItem.id,
   });
 
-  /* @kvoip-woulz proprietary:begin */
-  /* @kvoip-woulz proprietary:begin */
   const relationFieldMetadataItems = useMemo(
     () =>
       objectMetadataItem.fields
@@ -514,14 +576,103 @@ const AccountPayablePersistedFieldsCard = ({
     dynamicFieldNames,
     relationFieldMetadataItems,
   ]);
-  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
+  const relationFieldNameSet = useMemo(
+    () => new Set<string>(relationFieldMetadataItems.map(({ name }) => name)),
+    [relationFieldMetadataItems],
+  );
+
+  const requiredFieldNameSet = useMemo(
+    () => new Set<string>(ACCOUNT_PAYABLE_REQUIRED_FIELDS),
+    [],
+  );
+
+  const essentialFieldNames = useMemo(() => {
+    const sorted = [...ACCOUNT_PAYABLE_REQUIRED_FIELDS].filter(
+      (fieldName) => fieldsByName[fieldName],
+    );
+
+    sorted.sort((fieldA, fieldB) => {
+      const positionA = fieldPositions.get(fieldA) ?? Number.MAX_SAFE_INTEGER;
+      const positionB = fieldPositions.get(fieldB) ?? Number.MAX_SAFE_INTEGER;
+
+      return positionA - positionB;
+    });
+
+    return sorted;
+  }, [fieldsByName, fieldPositions]);
+
+  const optionalFieldNames = useMemo(() => {
+    const optionalDefaults = ACCOUNT_PAYABLE_PRIMARY_FIELDS.filter(
+      (fieldName) =>
+        !requiredFieldNameSet.has(fieldName) &&
+        !relationFieldNameSet.has(fieldName) &&
+        fieldsByName[fieldName],
+    );
+
+    optionalDefaults.sort((fieldA, fieldB) => {
+      const positionA = fieldPositions.get(fieldA) ?? Number.MAX_SAFE_INTEGER;
+      const positionB = fieldPositions.get(fieldB) ?? Number.MAX_SAFE_INTEGER;
+
+      return positionA - positionB;
+    });
+
+    return optionalDefaults;
+  }, [
+    relationFieldNameSet,
+    requiredFieldNameSet,
+    fieldsByName,
+    fieldPositions,
+  ]);
+
+  const connectionFieldNames = useMemo(() => {
+    const essentialRelationNames = new Set<string>(
+      essentialFieldNames.filter((fieldName) =>
+        relationFieldNameSet.has(fieldName),
+      ),
+    );
+
+    const connections = relationFieldMetadataItems
+      .map(({ name }) => name)
+      .filter((fieldName) => !essentialRelationNames.has(fieldName));
+
+    connections.sort((fieldA, fieldB) => {
+      const positionA = fieldPositions.get(fieldA) ?? Number.MAX_SAFE_INTEGER;
+      const positionB = fieldPositions.get(fieldB) ?? Number.MAX_SAFE_INTEGER;
+
+      return positionA - positionB;
+    });
+
+    return connections;
+  }, [
+    essentialFieldNames,
+    relationFieldMetadataItems,
+    relationFieldNameSet,
+    fieldPositions,
+  ]);
+
+  const additionalFieldNames = useMemo(() => {
+    const excludedNames = new Set([
+      ...essentialFieldNames,
+      ...optionalFieldNames,
+      ...connectionFieldNames,
+    ]);
+
+    return orderedFieldNames.filter(
+      (fieldName) => !excludedNames.has(fieldName),
+    );
+  }, [
+    connectionFieldNames,
+    essentialFieldNames,
+    optionalFieldNames,
+    orderedFieldNames,
+  ]);
   /* @kvoip-woulz proprietary:end */
 
   const renderField = (fieldName: string) => {
     const fieldMetadataItem = fieldsByName[fieldName];
-    /* @kvoip-woulz proprietary:begin */
     const fieldPosition = fieldPositions.get(fieldName);
-    /* @kvoip-woulz proprietary:end */
 
     if (!fieldMetadataItem || !isDefined(fieldPosition)) {
       return null;
@@ -536,18 +687,14 @@ const AccountPayablePersistedFieldsCard = ({
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
             field: fieldMetadataItem,
-            /* @kvoip-woulz proprietary:begin */
             position: fieldPosition,
-            /* @kvoip-woulz proprietary:end */
             objectMetadataItem,
             showLabel: true,
             labelWidth: 90,
           }),
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
-          /* @kvoip-woulz proprietary:begin */
           onMouseEnter: () => handleMouseEnter(fieldPosition),
-          /* @kvoip-woulz proprietary:end */
           anchorId: `${getRecordFieldInputInstanceId({
             recordId: objectRecordId,
             fieldName: fieldMetadataItem.name,
@@ -581,6 +728,23 @@ const AccountPayablePersistedFieldsCard = ({
     );
   };
 
+  /* @kvoip-woulz proprietary:begin */
+  const renderFieldsSection = (title: string, fieldNames: string[]) => {
+    if (fieldNames.length === 0) {
+      return null;
+    }
+
+    return (
+      <StyledFieldsGreyBox key={title}>
+        <StyledFieldsSectionTitle>{title}</StyledFieldsSectionTitle>
+        <StyledFieldsList>
+          {fieldNames.map((fieldName) => renderField(fieldName))}
+        </StyledFieldsList>
+      </StyledFieldsGreyBox>
+    );
+  };
+  /* @kvoip-woulz proprietary:end */
+
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
       <PropertyBox>
@@ -589,11 +753,9 @@ const AccountPayablePersistedFieldsCard = ({
         ) : (
           <>
             <StyledCardHeader>
-              {/* @kvoip-woulz proprietary:begin */}
               <StyledTitleFieldContainer>
                 {renderField(headerFieldName)}
               </StyledTitleFieldContainer>
-              {/* @kvoip-woulz proprietary:end */}
               <StyledCardHeaderActions>
                 <Dropdown
                   dropdownId={actionsDropdownId}
@@ -601,9 +763,9 @@ const AccountPayablePersistedFieldsCard = ({
                   clickableComponent={
                     <StyledActionsButton
                       variant="secondary"
-                      accent="blue"
+                      accent="default"
                       title="Actions"
-                      Icon={IconPlus}
+                      Icon={IconChevronDown}
                       justify="center"
                     />
                   }
@@ -636,15 +798,19 @@ const AccountPayablePersistedFieldsCard = ({
                 />
               )}
             </StyledCardHeader>
-            {/* @kvoip-woulz proprietary:begin */}
             <StyledCardHeaderDivider />
-            {/* @kvoip-woulz proprietary:end */}
 
-            <StyledFieldsGreyBox>
-              <StyledFieldsList>
-                {orderedFieldNames.map((fieldName) => renderField(fieldName))}
-              </StyledFieldsList>
-            </StyledFieldsGreyBox>
+            {/* @kvoip-woulz proprietary:begin */}
+            <StyledFieldsSectionsContainer>
+              {renderFieldsSection('Essential Fields', essentialFieldNames)}
+              {renderFieldsSection('Optional Fields', optionalFieldNames)}
+              {renderFieldsSection('Additional Fields', additionalFieldNames)}
+              {renderFieldsSection(
+                'Connections & Integrations',
+                connectionFieldNames,
+              )}
+            </StyledFieldsSectionsContainer>
+            {/* @kvoip-woulz proprietary:end */}
           </>
         )}
       </PropertyBox>
@@ -745,25 +911,24 @@ const AccountPayableDraftFieldsCardInner = ({
   );
   const actionsDropdownId = `${instanceId}-actions-dropdown`;
   const actionsModalId = `${instanceId}-actions-modal`;
+  /* @kvoip-woulz proprietary:begin */
+  const tabListComponentId = useMemo(() => `${instanceId}-tabs`, [instanceId]);
+  /* @kvoip-woulz proprietary:end */
 
   const setRecordFieldListHoverPosition = useSetRecoilComponentState(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );
 
-  /* @kvoip-woulz proprietary:begin */
   const { getRenderableField, fieldsByName, relationFieldConfigs } =
     useCreateFormFields({
       objectMetadataItem,
       objectNameSingular,
     });
-  /* @kvoip-woulz proprietary:end */
 
-  /* @kvoip-woulz proprietary:begin */
   const clearHoverState = useCallback(() => {
     setRecordFieldListHoverPosition(null);
   }, [setRecordFieldListHoverPosition]);
-  /* @kvoip-woulz proprietary:end */
 
   const handleMouseEnter = useCallback(
     (position?: number) => {
@@ -776,7 +941,6 @@ const AccountPayableDraftFieldsCardInner = ({
     [setRecordFieldListHoverPosition],
   );
 
-  /* @kvoip-woulz proprietary:begin */
   const renderCreateField = useCallback(
     (fieldName: string, options?: { showLabel?: boolean }) => {
       const fieldConfig = getRenderableField(fieldName);
@@ -809,6 +973,100 @@ const AccountPayableDraftFieldsCardInner = ({
     [relationFieldNames],
   );
 
+  /* @kvoip-woulz proprietary:begin */
+  const objectRelationNamesSet = useMemo(() => {
+    const names = new Set<string>();
+
+    objectMetadataItem.fields.forEach((fieldMetadataItem) => {
+      if (
+        fieldMetadataItem.type === FieldMetadataType.RELATION &&
+        fieldMetadataItem.isActive !== false
+      ) {
+        names.add(fieldMetadataItem.name);
+      }
+    });
+
+    return names;
+  }, [objectMetadataItem.fields]);
+
+  const supportsTasksTab = objectRelationNamesSet.has('taskTargets');
+  const supportsNotesTab = objectRelationNamesSet.has('noteTargets');
+  const supportsFilesTab = objectRelationNamesSet.has('attachments');
+  const supportsEmailsTab = objectRelationNamesSet.has('emails');
+  const supportsCalendarTab =
+    objectRelationNamesSet.has('calendarEvents') ||
+    objectRelationNamesSet.has('eventParticipants');
+
+  const draftTabs = useMemo<SingleTabProps[]>(() => {
+    const tabs: SingleTabProps[] = [
+      {
+        id: 'home',
+        title: 'Home',
+        Icon: IconHome,
+        disabled: false,
+      },
+    ];
+
+    const disabledTabConfig = {
+      disabled: true,
+      disabledTooltip: 'Save to access this section',
+    };
+
+    if (supportsTasksTab) {
+      tabs.push({
+        id: 'tasks',
+        title: 'Tasks',
+        Icon: IconCheckbox,
+        ...disabledTabConfig,
+      });
+    }
+
+    if (supportsNotesTab) {
+      tabs.push({
+        id: 'notes',
+        title: 'Notes',
+        Icon: IconNotes,
+        ...disabledTabConfig,
+      });
+    }
+
+    if (supportsFilesTab) {
+      tabs.push({
+        id: 'files',
+        title: 'Files',
+        Icon: IconPaperclip,
+        ...disabledTabConfig,
+      });
+    }
+
+    if (supportsEmailsTab) {
+      tabs.push({
+        id: 'emails',
+        title: 'Emails',
+        Icon: IconMail,
+        ...disabledTabConfig,
+      });
+    }
+
+    if (supportsCalendarTab) {
+      tabs.push({
+        id: 'calendar',
+        title: 'Calendar',
+        Icon: IconCalendarEvent,
+        ...disabledTabConfig,
+      });
+    }
+
+    return tabs;
+  }, [
+    supportsCalendarTab,
+    supportsEmailsTab,
+    supportsFilesTab,
+    supportsNotesTab,
+    supportsTasksTab,
+  ]);
+  /* @kvoip-woulz proprietary:end */
+
   const relationFieldPriorityMap = useMemo(() => {
     const priorities = new Map<string, number>();
 
@@ -829,12 +1087,7 @@ const AccountPayableDraftFieldsCardInner = ({
         ),
     [relationFieldConfigs],
   );
-  /* @kvoip-woulz proprietary:end */
 
-  /**
-   * Required fields are configured in the module config so the same pattern can
-   * be reused by other financial-register forms.
-   */
   const requiredFieldNamesSet = useMemo(
     () => new Set<string>(ACCOUNT_PAYABLE_REQUIRED_FIELDS),
     [],
@@ -957,15 +1210,12 @@ const AccountPayableDraftFieldsCardInner = ({
     resetDraft,
   ]);
 
-  /* @kvoip-woulz proprietary:begin */
   const labelIdentifierFieldMetadataItem = objectMetadataItem.fields.find(
     ({ id }) => id === objectMetadataItem.labelIdentifierFieldMetadataId,
   );
 
   const headerFieldName = labelIdentifierFieldMetadataItem?.name ?? 'name';
-  /* @kvoip-woulz proprietary:end */
 
-  /* @kvoip-woulz proprietary:begin */
   const headerFieldConfig = getRenderableField(headerFieldName);
   const headerFieldPosition = headerFieldConfig?.position ?? 0;
 
@@ -1005,9 +1255,7 @@ const AccountPayableDraftFieldsCardInner = ({
     },
     [headerFieldDefinition, persistFieldValue],
   );
-  /* @kvoip-woulz proprietary:end */
 
-  /* @kvoip-woulz proprietary:begin */
   const excludedFieldNamesSet = useMemo(
     () =>
       new Set<string>([
@@ -1138,6 +1386,57 @@ const AccountPayableDraftFieldsCardInner = ({
         }),
     [getRenderableField, relationFieldConfigs, relationFieldPriorityMap],
   );
+
+  /* @kvoip-woulz proprietary:begin */
+  const essentialBaseFieldNames = useMemo(
+    () =>
+      orderedBaseFieldNames.filter((fieldName) =>
+        requiredFieldNamesSet.has(fieldName),
+      ),
+    [orderedBaseFieldNames, requiredFieldNamesSet],
+  );
+
+  const optionalBaseFieldNames = useMemo(() => {
+    const optionalDefaults = new Set<string>(
+      ACCOUNT_PAYABLE_PRIMARY_FIELDS.filter(
+        (fieldName) =>
+          !requiredFieldNamesSet.has(fieldName) &&
+          !relationFieldNameSet.has(fieldName),
+      ),
+    );
+
+    return orderedBaseFieldNames.filter((fieldName) =>
+      optionalDefaults.has(fieldName),
+    );
+  }, [orderedBaseFieldNames, relationFieldNameSet, requiredFieldNamesSet]);
+
+  const additionalBaseFieldNames = useMemo(() => {
+    const excludedNames = new Set([
+      ...essentialBaseFieldNames,
+      ...optionalBaseFieldNames,
+    ]);
+
+    return orderedBaseFieldNames.filter(
+      (fieldName) => !excludedNames.has(fieldName),
+    );
+  }, [essentialBaseFieldNames, optionalBaseFieldNames, orderedBaseFieldNames]);
+
+  const essentialRelationFieldItems = useMemo(
+    () =>
+      orderedRelationFieldItems.filter(({ relationFieldName }) =>
+        requiredFieldNamesSet.has(relationFieldName),
+      ),
+    [orderedRelationFieldItems, requiredFieldNamesSet],
+  );
+
+  const connectionRelationFieldItems = useMemo(
+    () =>
+      orderedRelationFieldItems.filter(
+        ({ relationFieldName }) =>
+          !requiredFieldNamesSet.has(relationFieldName),
+      ),
+    [orderedRelationFieldItems, requiredFieldNamesSet],
+  );
   /* @kvoip-woulz proprietary:end */
 
   const getFieldCurrentValue = useCallback(
@@ -1213,55 +1512,102 @@ const AccountPayableDraftFieldsCardInner = ({
   );
 
   /* @kvoip-woulz proprietary:begin */
+  const renderDraftSection = (
+    title: string,
+    baseFieldNames: string[],
+    relationFieldItems: {
+      relationFieldName: string;
+      label: string;
+    }[] = [],
+  ) => {
+    if (baseFieldNames.length === 0 && relationFieldItems.length === 0) {
+      return null;
+    }
+
+    return (
+      <StyledFieldsGreyBox key={title}>
+        <StyledFieldsSectionTitle>{title}</StyledFieldsSectionTitle>
+        {baseFieldNames.length > 0 && (
+          <StyledFieldsList>
+            {baseFieldNames.map((fieldName) => {
+              const fieldElement = renderCreateField(
+                fieldName as Parameters<typeof renderCreateField>[0],
+              );
+              if (!fieldElement) {
+                return null;
+              }
+
+              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
+            })}
+          </StyledFieldsList>
+        )}
+        {relationFieldItems.length > 0 && (
+          <StyledRelationSection>
+            <StyledRelationFieldsList>
+              {relationFieldItems.map(({ relationFieldName, label }) => (
+                <StyledRelationFieldItem key={relationFieldName}>
+                  <StyledRelationFieldLabel>{label}</StyledRelationFieldLabel>
+                  {renderCreateField(
+                    relationFieldName as Parameters<
+                      typeof renderCreateField
+                    >[0],
+                    {
+                      showLabel: false,
+                    },
+                  )}
+                </StyledRelationFieldItem>
+              ))}
+            </StyledRelationFieldsList>
+          </StyledRelationSection>
+        )}
+      </StyledFieldsGreyBox>
+    );
+  };
+  /* @kvoip-woulz proprietary:end */
+
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
-      <PropertyBox>
-        <StyledCardHeader>
-          <StyledTitleFieldContainer>
-            {/* @kvoip-woulz proprietary:begin */}
-            <StyledTitleFieldContent>
-              <StyledTitleTextInput
-                value={headerFieldValue}
-                onChange={handleHeaderFieldChange}
-                label={headerFieldLabel}
-                placeholder="Enter title"
-                autoFocus
-                fullWidth
-                onFocus={clearHoverState}
-                onMouseEnter={clearHoverState}
-              />
-            </StyledTitleFieldContent>
-            {/* @kvoip-woulz proprietary:end */}
-          </StyledTitleFieldContainer>
-          <StyledCardHeaderActions>
-            <Dropdown
-              dropdownId={actionsDropdownId}
-              dropdownPlacement="bottom-end"
-              clickableComponent={
-                <StyledActionsButton
-                  variant="secondary"
-                  accent="blue"
-                  title="Actions"
-                  Icon={IconPlus}
-                  justify="center"
-                />
-              }
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
-                      <MenuItem
-                        key={action.id}
-                        text={action.label}
-                        LeftIcon={action.icon}
-                        onClick={() => handleActionSelection(action)}
-                      />
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
+      {/* @kvoip-woulz proprietary:begin */}
+      <StyledDraftLayout>
+        {draftTabs.length > 1 && (
+          <StyledDraftTabListContainer>
+            <StyledDraftTabList
+              behaveAsLinks={false}
+              loading={false}
+              tabs={draftTabs}
+              componentInstanceId={tabListComponentId}
+              isInRightDrawer={isInRightDrawer}
             />
-          </StyledCardHeaderActions>
+          </StyledDraftTabListContainer>
+        )}
+        <StyledDraftActionsContainer>
+          <Dropdown
+            dropdownId={actionsDropdownId}
+            dropdownPlacement="bottom-end"
+            clickableComponent={
+              <StyledDraftActionsButton
+                variant="secondary"
+                accent="default"
+                title="Actions"
+                Icon={IconChevronDown}
+                justify="center"
+              />
+            }
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
+                    <MenuItem
+                      key={action.id}
+                      text={action.label}
+                      LeftIcon={action.icon}
+                      onClick={() => handleActionSelection(action)}
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
           {pendingAction !== null && (
             <ConfirmationModal
               modalId={actionsModalId}
@@ -1274,58 +1620,75 @@ const AccountPayableDraftFieldsCardInner = ({
               onClose={handleClosePendingAction}
             />
           )}
-        </StyledCardHeader>
-        <StyledCardHeaderDivider />
-        <StyledFieldsGreyBox>
-          <StyledFieldsList>
-            {orderedBaseFieldNames.map((fieldName) => {
-              const fieldElement = renderCreateField(fieldName);
-              if (!fieldElement) {
-                return null;
-              }
+        </StyledDraftActionsContainer>
+        <PropertyBox>
+          {/* @kvoip-woulz proprietary:end */}
+          <StyledCardHeader>
+            <StyledTitleFieldContainer>
+              <StyledTitleFieldContent>
+                {/* @kvoip-woulz proprietary:begin */}
+                <StyledTitleTextInput
+                  value={headerFieldValue}
+                  onChange={handleHeaderFieldChange}
+                  placeholder={headerFieldLabel}
+                  autoFocus
+                  fullWidth
+                  autoGrow
+                  inheritFontStyles
+                  sizeVariant="md"
+                  onFocus={clearHoverState}
+                  onMouseEnter={clearHoverState}
+                  spellCheck={false}
+                />
+                {/* @kvoip-woulz proprietary:end */}
+              </StyledTitleFieldContent>
+            </StyledTitleFieldContainer>
+          </StyledCardHeader>
+          <StyledCardHeaderDivider />
+          {/* @kvoip-woulz proprietary:begin */}
+          <StyledFieldsSectionsContainer>
+            {renderDraftSection(
+              'Essential Fields',
+              essentialBaseFieldNames,
+              essentialRelationFieldItems.map(
+                ({ relationFieldName, label }) => ({
+                  relationFieldName,
+                  label,
+                }),
+              ),
+            )}
+            {renderDraftSection('Optional Fields', optionalBaseFieldNames)}
+            {renderDraftSection('Additional Fields', additionalBaseFieldNames)}
+            {renderDraftSection(
+              'Connections & Integrations',
+              [],
+              connectionRelationFieldItems.map(
+                ({ relationFieldName, label }) => ({
+                  relationFieldName,
+                  label,
+                }),
+              ),
+            )}
+          </StyledFieldsSectionsContainer>
+          {/* @kvoip-woulz proprietary:end */}
 
-              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
-            })}
-          </StyledFieldsList>
-          {orderedRelationFieldItems.length > 0 && (
-            <StyledRelationSection>
-              <StyledRelationSectionTitle>
-                Related Records
-              </StyledRelationSectionTitle>
-              <StyledRelationFieldsList>
-                {orderedRelationFieldItems.map(
-                  ({ relationFieldName, label }) => (
-                    <StyledRelationFieldItem key={relationFieldName}>
-                      <StyledRelationFieldLabel>
-                        {label}
-                      </StyledRelationFieldLabel>
-                      {renderCreateField(relationFieldName, {
-                        showLabel: false,
-                      })}
-                    </StyledRelationFieldItem>
-                  ),
-                )}
-              </StyledRelationFieldsList>
-            </StyledRelationSection>
-          )}
-        </StyledFieldsGreyBox>
-
-        <StyledButtonContainer>
-          <StyledSaveButton
-            variant="secondary"
-            accent="blue"
-            title="Save"
-            Icon={IconDeviceFloppy}
-            justify="center"
-            onClick={handleSave}
-            /* @kvoip-woulz proprietary:begin */
-            fullWidth
-            isLoading={saving || createLoading}
-            disabled={!areRequiredFieldsFilled || saving || createLoading}
-            /* @kvoip-woulz proprietary:end */
-          />
-        </StyledButtonContainer>
-      </PropertyBox>
+          <StyledButtonContainer>
+            <StyledSaveButton
+              variant="secondary"
+              accent="blue"
+              title="Save"
+              Icon={IconDeviceFloppy}
+              justify="center"
+              onClick={handleSave}
+              fullWidth
+              isLoading={saving || createLoading}
+              disabled={!areRequiredFieldsFilled || saving || createLoading}
+            />
+          </StyledButtonContainer>
+          {/* @kvoip-woulz proprietary:begin */}
+        </PropertyBox>
+      </StyledDraftLayout>
+      {/* @kvoip-woulz proprietary:end */}
 
       <RecordFieldListCellHoveredPortal
         objectMetadataItem={objectMetadataItem}
@@ -1335,7 +1698,6 @@ const AccountPayableDraftFieldsCardInner = ({
         objectMetadataItem={objectMetadataItem}
         recordId={draftRecordId}
       />
-      {/* @kvoip-woulz proprietary:end */}
     </RecordFieldListComponentInstanceContext.Provider>
   );
 };
