@@ -47,7 +47,7 @@ function ImageNode({
   const allNodes = useNodes();
   const node = allNodes.filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { updateNodeData } = useReactFlow();
-  const { saveDataValue } = useHandleNodeValue();
+  const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();
 
   const targetConnections = useNodeConnections({
     id,
@@ -80,6 +80,9 @@ function ImageNode({
       /* @kvoip-woulz proprietary:begin */
       const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
       const sourceNodeData = sourceNode?.data || {};
+
+      // If the start node receives an incoming connection, set the previous node as the new start node
+      handleIncomingConnection(id, sourceNodeId, allNodes);
       /* @kvoip-woulz proprietary:end */
 
       // Update current node with incoming connection info

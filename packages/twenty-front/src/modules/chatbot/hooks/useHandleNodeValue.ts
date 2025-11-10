@@ -4,7 +4,39 @@ import { v4 } from 'uuid';
 import { type GenericNode, type GenericNodeData } from '../types/GenericNode';
 
 export const useHandleNodeValue = () => {
-  const { updateNodeData, setNodes, screenToFlowPosition } = useReactFlow();
+  const {
+    updateNodeData,
+    setNodes,
+    setEdges,
+    screenToFlowPosition,
+    getNodes,
+    getEdges,
+  } = useReactFlow();
+
+  /* @kvoip-woulz proprietary:begin */
+  const handleIncomingConnection = (
+    currentNodeId: string,
+    sourceNodeId: string,
+    allNodes: GenericNode[],
+  ) => {
+    const currentNode = allNodes.find((n) => n.id === currentNodeId);
+    const currentNodeData = currentNode?.data || {};
+
+    // If the start node receives an incoming connection, set the previous node as the new start node
+    const isCurrentNodeStart = currentNodeData.nodeStart === true;
+    if (isCurrentNodeStart && sourceNodeId) {
+      setNodes((prevNodes) =>
+        prevNodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            nodeStart: node.id === sourceNodeId,
+          },
+        })),
+      );
+    }
+  };
+  /* @kvoip-woulz proprietary:end */
 
   const saveDataValue = (
     key: keyof GenericNodeData,
@@ -29,6 +61,55 @@ export const useHandleNodeValue = () => {
     }
     return node;
   };
+
+  /* @kvoip-woulz proprietary:begin */
+  const deleteNode = (nodeId: string) => {
+    const currentNodes = getNodes();
+    const currentEdges = getEdges();
+
+    const nodeToDelete = currentNodes.find((node) => node.id === nodeId);
+    if (!nodeToDelete) return;
+
+    const isDeletingStartNode = nodeToDelete.data?.nodeStart === true;
+    const updatedNodes = currentNodes.filter((node) => node.id !== nodeId);
+    const updatedEdges = currentEdges.filter(
+      (edge) => edge.source !== nodeId && edge.target !== nodeId,
+    );
+
+    // If deleting the start node and there are remaining nodes, set a new start node
+    if (isDeletingStartNode && updatedNodes.length > 0) {
+      // Find the first node connected to the deleted start node
+      const outgoingEdges = currentEdges.filter(
+        (edge) => edge.source === nodeId,
+      );
+      let nextStartNode: (typeof updatedNodes)[0] | undefined;
+
+      if (outgoingEdges.length > 0) {
+        const firstConnectedNodeId = outgoingEdges[0].target;
+        nextStartNode = updatedNodes.find(
+          (node) => node.id === firstConnectedNodeId,
+        );
+      }
+
+      // Use the first connected node if found, otherwise use the first node in the array
+      const newStartNode = nextStartNode ?? updatedNodes[0];
+
+      const nodesWithNewStart = updatedNodes.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          nodeStart: node.id === newStartNode.id,
+        },
+      }));
+
+      setNodes(nodesWithNewStart);
+    } else {
+      setNodes(updatedNodes);
+    }
+
+    setEdges(updatedEdges);
+  };
+  /* @kvoip-woulz proprietary:end */
 
   const addNode = (
     type: 'text' | 'image' | 'file' | 'conditional',
@@ -59,7 +140,7 @@ export const useHandleNodeValue = () => {
           nodeStart: isFirstNode,
         },
       };
-      
+
       return [...prevNodes, sanitizeNode(newNode)];
     });
   };
@@ -67,5 +148,7 @@ export const useHandleNodeValue = () => {
   return {
     saveDataValue,
     addNode,
+    handleIncomingConnection,
+    deleteNode,
   };
 };
