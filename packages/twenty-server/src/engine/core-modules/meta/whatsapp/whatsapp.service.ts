@@ -21,6 +21,7 @@ import { whatsAppMessageToClientChatMessage } from 'src/engine/core-modules/meta
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -177,10 +178,25 @@ export class WhatsAppService {
         });
       }
 
+      let repliesToMessage = null;
+      if (message.repliesTo) {
+        repliesToMessage = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+            workspaceId,
+            'clientChatMessage',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { providerMessageId: message.repliesTo } });
+      }
+
       if (!clientChat) throw new InternalServerError('Client chat not found');
 
       await this.chatMessageManagerService.saveMessage(
-        whatsAppMessageToClientChatMessage(message, clientChat),
+        whatsAppMessageToClientChatMessage(
+          message,
+          clientChat,
+          repliesToMessage?.id ?? null,
+        ),
         workspaceId,
       );
 

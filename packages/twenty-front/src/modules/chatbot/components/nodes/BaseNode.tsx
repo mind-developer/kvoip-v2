@@ -18,9 +18,12 @@ const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
+  /* @kvoip-woulz proprietary:begin */
   &:hover {
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${({ theme, isSelected }) =>
+      isSelected ? theme.color.blue40 : theme.color.blue20};
   }
+  /* @kvoip-woulz proprietary:end */
   ${({ theme, isSelected }) =>
     isSelected
       ? `
@@ -97,7 +100,7 @@ const BaseNode = ({
   const Icon = getIcon(icon);
 
   const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
-  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+  const chatbotFlowSelectedNodes = useRecoilValue(chatbotFlowSelectedNodeState);
   const theme = useTheme();
   const iconHeader = (
     <Icon size={18} color={theme.color[iconColor ?? 'gray']} />
@@ -106,12 +109,17 @@ const BaseNode = ({
   const [customTitle, setCustomTitle] = useState<string>(
     node?.data.title as string,
   );
+  
+  const isSelected = chatbotFlowSelectedNodes.some(
+    (selectedNode) => selectedNode.id === nodeId,
+  );
+  
   return (
     <div>
       {isInitialNode && <StyledNodeType variant="small">Start</StyledNodeType>}
       <StyledBaseNodeWrapper
         className="nopan"
-        isSelected={chatbotFlowSelectedNode?.id === nodeId}
+        isSelected={isSelected}
       >
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}

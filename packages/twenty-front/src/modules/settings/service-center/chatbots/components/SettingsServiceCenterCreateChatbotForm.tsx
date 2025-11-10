@@ -9,6 +9,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -32,14 +33,16 @@ const StyledSection = styled(Section)`
 
 export const SettingsServiceCenterCreateChatbotForm = () => {
   const form = useFormContext<ChatbotFormValues>();
+  const { chatbotSlug } = useParams<{ chatbotSlug?: string }>();
 
   const { records: integrations } = useFindManyRecords<
     IWhatsappIntegration & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    recordGqlFields: { id: true, name: true, chatbot: { id: true } },
   });
 
-  const integrationOptions: SelectOption[] = integrations.map(
+  const integrationOptions: SelectOption[] = integrations.filter(integration => !integration.chatbot?.id || integration.chatbot?.id === chatbotSlug).map(
     (integration) => ({
       label: integration.name,
       value: integration.id,
@@ -71,8 +74,9 @@ export const SettingsServiceCenterCreateChatbotForm = () => {
             control={form.control}
             render={({ field }) => (
               <FormSelectFieldInput
+                key={field.value}
                 label={t`Status`}
-                defaultValue={ChatbotStatus.DRAFT}
+                defaultValue={field.value || ChatbotStatus.DRAFT}
                 options={[
                   {
                     label: t`Active`,
@@ -105,8 +109,10 @@ export const SettingsServiceCenterCreateChatbotForm = () => {
             control={form.control}
             render={({ field }) => (
               <FormMultiSelectFieldInput
-                label={t`Integrations`}
-                defaultValue={[]}
+                key={JSON.stringify(field.value)}
+                label={t`Connectable Integrations`}
+                placeholder={t`Integrations free for connection`}
+                defaultValue={field.value || []}
                 options={integrationOptions}
                 onChange={(value) => {
                   if (value) {

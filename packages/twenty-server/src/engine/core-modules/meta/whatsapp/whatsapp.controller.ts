@@ -97,7 +97,6 @@ export class WhatsappController {
     try {
       const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
       const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
-      console.log('messages', JSON.stringify(messages, null, 2));
 
       if (statuses) {
         for (const status of statuses) {
@@ -114,6 +113,11 @@ export class WhatsappController {
           }
         }
         return true;
+      }
+
+      if (!messages) {
+        this.logger.warn('No messages found in body');
+        return;
       }
 
       for (const msg of messages) {
@@ -180,6 +184,7 @@ export class WhatsappController {
             deliveryStatus: msg.status,
             senderPhoneNumber:
               body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+            repliesTo: msg.context?.id ?? null,
           };
 
           await this.whatsappService.saveMessage(

@@ -1,5 +1,6 @@
 import { type Person } from '@/people/types/Person';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ChatMessageFromType } from 'twenty-shared/types';
@@ -10,10 +11,22 @@ import {
   useCachedPersonAvatar,
 } from '../../hooks/useCachedAvatarData';
 
+const StyledNameTag = styled.span`
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StyledAvatarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
 export const CachedAvatarComponent = ({
   animateDelay,
   senderType,
   senderId,
+  showName,
 }: {
   senderId: string;
   senderType:
@@ -21,17 +34,24 @@ export const CachedAvatarComponent = ({
     | ChatMessageFromType.AGENT
     | ChatMessageFromType.CHATBOT;
   animateDelay: number;
+  showName: boolean;
 }) => {
   let CachedAvatarComponent = null;
   switch (senderType) {
     case ChatMessageFromType.PERSON:
-      CachedAvatarComponent = <PersonAvatar personId={senderId} />;
+      CachedAvatarComponent = (
+        <PersonAvatar personId={senderId} showName={showName} />
+      );
       break;
     case ChatMessageFromType.AGENT:
-      CachedAvatarComponent = <AgentAvatar agentId={senderId} />;
+      CachedAvatarComponent = (
+        <AgentAvatar agentId={senderId} showName={showName} />
+      );
       break;
     case ChatMessageFromType.CHATBOT:
-      CachedAvatarComponent = <ChatbotAvatar chatbotId={senderId} />;
+      CachedAvatarComponent = (
+        <ChatbotAvatar chatbotId={senderId} showName={showName} />
+      );
       break;
     default:
       CachedAvatarComponent = null;
@@ -57,31 +77,76 @@ export const CachedAvatarComponent = ({
   );
 };
 
-function PersonAvatar({ personId }: { personId: string }) {
-  const { findOneRecord, loading, error } = useCachedPersonAvatar(personId);
+function PersonAvatar({
+  personId,
+  showName,
+}: {
+  personId: string;
+  showName: boolean;
+}) {
+  const { findOneRecord, loading, error, record, called } =
+    useCachedPersonAvatar(personId);
   const [person, setPerson] = useState<Person | null>(null);
+
+  /* @kvoip-woulz proprietary:begin */
+  // Skip fetching if personId is invalid
+  const isValidPersonId = personId && personId !== 'FROM_UNKNOWN';
+  /* @kvoip-woulz proprietary:end */
+
   useEffect(() => {
+    /* @kvoip-woulz proprietary:begin */
+    if (!isValidPersonId) {
+      return;
+    }
+    /* @kvoip-woulz proprietary:end */
     findOneRecord({
       objectRecordId: personId,
       onCompleted: (person) => setPerson(person),
     });
-  }, [personId]);
-  if (loading) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personId, isValidPersonId]);
+
+  /* @kvoip-woulz proprietary:begin */
+  // Use record from hook if available, otherwise use local state
+  const personData = record || person;
+  const isLoading = loading || (!called && isValidPersonId);
+  /* @kvoip-woulz proprietary:end */
+
+  if (!isValidPersonId) {
+    return <Avatar placeholder="Unknown" type="rounded" />;
+  }
+
+  if (isLoading) {
     return <Avatar placeholder="Loading..." type="rounded" />;
   }
+
   if (error) {
     return <Avatar placeholder="Error loading avatar" type="rounded" />;
   }
+
+  const firstName = personData?.name?.firstName || '';
+  const lastName = personData?.name?.lastName || '';
+  const fullName = `${firstName} ${lastName}`.trim() || 'Unknown';
+
   return (
-    <Avatar
-      avatarUrl={person?.avatarUrl}
-      placeholder={person?.name?.firstName + ' ' + person?.name?.lastName}
-      type="rounded"
-    />
+    <StyledAvatarContainer>
+      <Avatar
+        avatarUrl={personData?.avatarUrl}
+        placeholder={fullName}
+        type="rounded"
+      />
+      {showName && <StyledNameTag>{fullName}</StyledNameTag>}
+    </StyledAvatarContainer>
   );
 }
 
-function AgentAvatar({ agentId }: { agentId: string }) {
+function AgentAvatar({
+  agentId,
+  showName,
+}: {
+  agentId: string;
+  showName: boolean;
+}) {
   const { findManyRecordsLazy } = useCachedAgentAvatar(agentId);
   const [agent, setAgent] = useState<WorkspaceMember | null>(null);
   useEffect(() => {
@@ -92,16 +157,30 @@ function AgentAvatar({ agentId }: { agentId: string }) {
     });
   }, [agentId]);
   return (
-    <Avatar
-      avatarUrl={agent?.avatarUrl}
-      placeholder={agent?.name?.firstName + ' ' + agent?.name?.lastName}
-      type="rounded"
-    />
+    <StyledAvatarContainer>
+      <Avatar
+        avatarUrl={agent?.avatarUrl}
+        placeholder={agent?.name?.firstName + ' ' + agent?.name?.lastName}
+        type="rounded"
+      />
+      {showName && (
+        <StyledNameTag>
+          {agent?.name?.firstName + ' ' + agent?.name?.lastName}
+        </StyledNameTag>
+      )}
+    </StyledAvatarContainer>
   );
 }
 
-function ChatbotAvatar({ chatbotId }: { chatbotId: string }) {
-  const { findOneRecord, loading, error } = useCachedChatbotAvatar(chatbotId);
+function ChatbotAvatar({
+  chatbotId,
+  showName,
+}: {
+  chatbotId: string;
+  showName: boolean;
+}) {
+  const { findOneRecord, loading, error, record, called } =
+    useCachedChatbotAvatar(chatbotId);
   const [chatbot, setChatbot] = useState<{
     name: string;
     __typename: string;
@@ -112,6 +191,29 @@ function ChatbotAvatar({ chatbotId }: { chatbotId: string }) {
       objectRecordId: chatbotId,
       onCompleted: (chatbot) => setChatbot(chatbot),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatbotId]);
-  return <Avatar placeholder={chatbot?.name} type="rounded" />;
+
+  /* @kvoip-woulz proprietary:begin */
+  // Use record from hook if available, otherwise use local state
+  const chatbotData = record || chatbot;
+  const isLoading = loading || (!called && chatbotId);
+  /* @kvoip-woulz proprietary:end */
+
+  if (isLoading) {
+    return <Avatar placeholder="Loading..." type="rounded" />;
+  }
+
+  if (error) {
+    return <Avatar placeholder="Error loading avatar" type="rounded" />;
+  }
+
+  return (
+    <StyledAvatarContainer>
+      <Avatar placeholder={chatbotData?.name || 'Chatbot'} type="rounded" />
+      {showName && (
+        <StyledNameTag>{chatbotData?.name || 'Chatbot'}</StyledNameTag>
+      )}
+    </StyledAvatarContainer>
+  );
 }

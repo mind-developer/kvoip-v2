@@ -139,6 +139,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: 'Service Center',
           path: SettingsPath.ServiceCenter,
           Icon: IconHeadset,
+          isHidden: !isAdminEnabled,
           subItems: [
             {
               label: t`Agents`,
