@@ -65,16 +65,10 @@ import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndef
 /* @kvoip-woulz proprietary:end */
 /* @kvoip-woulz proprietary:begin */
 import {
-  AccountPayableFieldSection,
-  getAccountPayableFieldSectionLabel,
-} from '../types/FieldsSection';
-/* @kvoip-woulz proprietary:begin */
-import {
-  ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
-  ACCOUNT_PAYABLE_BASIC_FIELDS,
-  ACCOUNT_PAYABLE_FINANCIAL_FIELDS,
-  ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS,
-  ACCOUNT_PAYABLE_SYSTEM_FIELDS,
+  ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
+  ACCOUNT_PAYABLE_PRIMARY_FIELDS,
+  ACCOUNT_PAYABLE_RELATION_FIELDS,
+  ACCOUNT_PAYABLE_REQUIRED_FIELDS,
 } from '../config/accountPayableFieldGroups';
 /* @kvoip-woulz proprietary:end */
 
@@ -123,57 +117,38 @@ const ACCOUNT_PAYABLE_ACTION_ITEMS: ActionDropdownItem[] = [
   },
 ];
 
-const StyledFieldsSectionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  gap: ${({ theme }) => theme.spacing(2)};
+/* @kvoip-woulz proprietary:begin */
+const StyledFieldsGreyBox = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledSectionTitle = styled.div`
+const StyledFieldsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledRelationSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledRelationSectionTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledFinancialFieldsGreyBox = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledPaymentInfoFieldsGreyBox = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledAdditionalInfoFieldsGreyBox = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSystemInfoFieldsGreyBox = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-/* @kvoip-woulz proprietary:begin */
-const StyledRelationFieldsGreyBox = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
+const StyledRelationFieldsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledRelationFieldItem = styled.div`
@@ -182,16 +157,12 @@ const StyledRelationFieldItem = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRelationFieldLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
+const StyledRelationFieldLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
-
-const StyledRelationFieldValue = styled.div`
-  width: 100%;
-  display: flex;
-`;
+/* @kvoip-woulz proprietary:end */
 /* @kvoip-woulz proprietary:end */
 
 /* @kvoip-woulz proprietary:begin */
@@ -222,8 +193,26 @@ const StyledTitleFieldContainer = styled.div`
 `;
 
 /* @kvoip-woulz proprietary:begin */
+const StyledTitleFieldContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
 const StyledTitleTextInput = styled(TextInput)`
   width: 100%;
+
+  input {
+    font-size: ${({ theme }) => theme.font.size.lg};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    border-width: 2px;
+  }
+`;
+
+const StyledTitleHelperText = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -438,11 +427,6 @@ const AccountPayablePersistedFieldsCard = ({
     [fieldPositions, objectMetadataItem.fields],
   );
 
-  const relationFieldNames = useMemo(
-    () => relationFieldMetadataItems.map(({ name }) => name),
-    [relationFieldMetadataItems],
-  );
-
   const relationJoinColumnFieldNames = useMemo(
     () =>
       relationFieldMetadataItems
@@ -453,24 +437,21 @@ const AccountPayablePersistedFieldsCard = ({
     [relationFieldMetadataItems],
   );
 
-  const predefinedFieldNames = useMemo(() => {
-    return new Set<string>([
-      ...ACCOUNT_PAYABLE_BASIC_FIELDS,
-      ...ACCOUNT_PAYABLE_FINANCIAL_FIELDS,
-      ...ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS,
-      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
-      ...ACCOUNT_PAYABLE_SYSTEM_FIELDS,
-      headerFieldName,
-      ...relationFieldNames,
-      ...relationJoinColumnFieldNames,
-    ]);
-  }, [headerFieldName, relationFieldNames, relationJoinColumnFieldNames]);
+  const excludedFieldNamesSet = useMemo(
+    () =>
+      new Set<string>([
+        headerFieldName,
+        ...ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
+        ...relationJoinColumnFieldNames,
+      ]),
+    [headerFieldName, relationJoinColumnFieldNames],
+  );
 
   const dynamicFieldNames = useMemo(
     () =>
       objectMetadataItem.fields
         .filter((fieldMetadataItem) => {
-          if (predefinedFieldNames.has(fieldMetadataItem.name)) {
+          if (excludedFieldNamesSet.has(fieldMetadataItem.name)) {
             return false;
           }
 
@@ -482,7 +463,7 @@ const AccountPayablePersistedFieldsCard = ({
             return false;
           }
 
-          return true;
+          return fieldPositions.has(fieldMetadataItem.name);
         })
         .sort((fieldA, fieldB) => {
           const positionA =
@@ -493,24 +474,46 @@ const AccountPayablePersistedFieldsCard = ({
           return positionA - positionB;
         })
         .map(({ name }) => name),
-    [fieldPositions, objectMetadataItem.fields, predefinedFieldNames],
+    [excludedFieldNamesSet, fieldPositions, objectMetadataItem.fields],
   );
 
-  const additionalInfoFieldNames = useMemo(() => {
+  const orderedFieldNames = useMemo(() => {
     const seen = new Set<string>();
+    const fieldNames: string[] = [];
 
-    return [
-      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
-      ...dynamicFieldNames,
-    ].filter((fieldName) => {
+    const pushFieldName = (fieldName: string | undefined) => {
+      if (!fieldName) {
+        return;
+      }
+
+      if (excludedFieldNamesSet.has(fieldName)) {
+        return;
+      }
+
       if (seen.has(fieldName)) {
-        return false;
+        return;
+      }
+
+      if (!fieldsByName[fieldName]) {
+        return;
       }
 
       seen.add(fieldName);
-      return true;
-    });
-  }, [dynamicFieldNames]);
+      fieldNames.push(fieldName);
+    };
+
+    ACCOUNT_PAYABLE_PRIMARY_FIELDS.forEach(pushFieldName);
+    dynamicFieldNames.forEach(pushFieldName);
+    ACCOUNT_PAYABLE_RELATION_FIELDS.forEach(pushFieldName);
+    relationFieldMetadataItems.forEach(({ name }) => pushFieldName(name));
+
+    return fieldNames;
+  }, [
+    excludedFieldNamesSet,
+    fieldsByName,
+    dynamicFieldNames,
+    relationFieldMetadataItems,
+  ]);
   /* @kvoip-woulz proprietary:end */
   /* @kvoip-woulz proprietary:end */
 
@@ -637,82 +640,11 @@ const AccountPayablePersistedFieldsCard = ({
             <StyledCardHeaderDivider />
             {/* @kvoip-woulz proprietary:end */}
 
-            <StyledFieldsSectionContainer>
-              {ACCOUNT_PAYABLE_BASIC_FIELDS.filter(
-                /* @kvoip-woulz proprietary:begin */
-                (fieldName) => fieldName !== headerFieldName,
-                /* @kvoip-woulz proprietary:end */
-              ).map((fieldName) => renderField(fieldName))}
-            </StyledFieldsSectionContainer>
-
-            <StyledFieldsSectionContainer>
-              <StyledSectionTitle>
-                {getAccountPayableFieldSectionLabel(
-                  AccountPayableFieldSection.Financial,
-                )}
-              </StyledSectionTitle>
-              <StyledFinancialFieldsGreyBox>
-                {ACCOUNT_PAYABLE_FINANCIAL_FIELDS.map((fieldName) =>
-                  renderField(fieldName),
-                )}
-              </StyledFinancialFieldsGreyBox>
-            </StyledFieldsSectionContainer>
-
-            <StyledFieldsSectionContainer>
-              <StyledSectionTitle>
-                {getAccountPayableFieldSectionLabel(
-                  AccountPayableFieldSection.PaymentInfo,
-                )}
-              </StyledSectionTitle>
-              <StyledPaymentInfoFieldsGreyBox>
-                {ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS.map((fieldName) =>
-                  renderField(fieldName),
-                )}
-              </StyledPaymentInfoFieldsGreyBox>
-            </StyledFieldsSectionContainer>
-
-            <StyledFieldsSectionContainer>
-              <StyledSectionTitle>
-                {getAccountPayableFieldSectionLabel(
-                  AccountPayableFieldSection.AdditionalInfo,
-                )}
-              </StyledSectionTitle>
-              <StyledAdditionalInfoFieldsGreyBox>
-                {additionalInfoFieldNames.map((fieldName) =>
-                  renderField(fieldName),
-                )}
-              </StyledAdditionalInfoFieldsGreyBox>
-            </StyledFieldsSectionContainer>
-
-            <StyledFieldsSectionContainer>
-              <StyledSectionTitle>
-                {getAccountPayableFieldSectionLabel(
-                  AccountPayableFieldSection.SystemInfo,
-                )}
-              </StyledSectionTitle>
-              <StyledSystemInfoFieldsGreyBox>
-                {ACCOUNT_PAYABLE_SYSTEM_FIELDS.map((fieldName) =>
-                  renderField(fieldName),
-                )}
-              </StyledSystemInfoFieldsGreyBox>
-            </StyledFieldsSectionContainer>
-
-            {/* @kvoip-woulz proprietary:begin */}
-            {relationFieldMetadataItems.length > 0 && (
-              <StyledFieldsSectionContainer>
-                <StyledSectionTitle>
-                  {getAccountPayableFieldSectionLabel(
-                    AccountPayableFieldSection.Others,
-                  )}
-                </StyledSectionTitle>
-                <StyledRelationFieldsGreyBox>
-                  {relationFieldMetadataItems.map((fieldMetadataItem) =>
-                    renderField(fieldMetadataItem.name),
-                  )}
-                </StyledRelationFieldsGreyBox>
-              </StyledFieldsSectionContainer>
-            )}
-            {/* @kvoip-woulz proprietary:end */}
+            <StyledFieldsGreyBox>
+              <StyledFieldsList>
+                {orderedFieldNames.map((fieldName) => renderField(fieldName))}
+              </StyledFieldsList>
+            </StyledFieldsGreyBox>
           </>
         )}
       </PropertyBox>
@@ -866,24 +798,59 @@ const AccountPayableDraftFieldsCardInner = ({
     [getRenderableField, objectPermissions, instanceId, handleMouseEnter],
   );
 
-  const relationSectionItems = useMemo(
+  const relationFieldNames = useMemo(
+    () =>
+      relationFieldConfigs.map(({ relationFieldName }) => relationFieldName),
+    [relationFieldConfigs],
+  );
+
+  const relationFieldNameSet = useMemo(
+    () => new Set<string>(relationFieldNames),
+    [relationFieldNames],
+  );
+
+  const relationFieldPriorityMap = useMemo(() => {
+    const priorities = new Map<string, number>();
+
+    ACCOUNT_PAYABLE_RELATION_FIELDS.forEach((fieldName, index) => {
+      priorities.set(fieldName, index);
+    });
+
+    return priorities;
+  }, []);
+
+  const relationIdFieldNames = useMemo(
     () =>
       relationFieldConfigs
-        .map(({ relationFieldName, label }) => ({
-          fieldName: relationFieldName,
-          label,
-        }))
+        .map(({ relationIdFieldName }) => relationIdFieldName)
         .filter(
-          (
-            item,
-          ): item is {
-            fieldName: string;
-            label: string;
-          } => item.label.length > 0,
+          (fieldName): fieldName is string =>
+            typeof fieldName === 'string' && fieldName.length > 0,
         ),
     [relationFieldConfigs],
   );
   /* @kvoip-woulz proprietary:end */
+
+  /**
+   * Required fields are configured in the module config so the same pattern can
+   * be reused by other financial-register forms.
+   */
+  const requiredFieldNamesSet = useMemo(
+    () => new Set<string>(ACCOUNT_PAYABLE_REQUIRED_FIELDS),
+    [],
+  );
+
+  const requiredRelationFieldNamesSet = useMemo(() => {
+    const names = new Set<string>();
+
+    relationFieldConfigs.forEach(({ relationFieldName }) => {
+      if (requiredFieldNamesSet.has(relationFieldName)) {
+        names.add(relationFieldName);
+      }
+    });
+
+    return names;
+  }, [relationFieldConfigs, requiredFieldNamesSet]);
 
   const handleActionSelection = (action: ActionDropdownItem) => {
     if (action.confirmation) {
@@ -1023,6 +990,8 @@ const AccountPayableDraftFieldsCardInner = ({
   const headerFieldValue =
     (draftValues[headerFieldName] as string | undefined) ?? '';
 
+  const headerFieldLabel = labelIdentifierFieldMetadataItem?.label ?? 'Title';
+
   const handleHeaderFieldChange = useCallback(
     (newValue: string) => {
       if (!headerFieldDefinition) {
@@ -1039,41 +1008,27 @@ const AccountPayableDraftFieldsCardInner = ({
   /* @kvoip-woulz proprietary:end */
 
   /* @kvoip-woulz proprietary:begin */
-  const relationFieldNames = useMemo(
+  const excludedFieldNamesSet = useMemo(
     () =>
-      relationFieldConfigs.map(({ relationFieldName }) => relationFieldName),
-    [relationFieldConfigs],
+      new Set<string>([
+        headerFieldName,
+        ...ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
+        ...relationIdFieldNames,
+      ]),
+    [headerFieldName, relationIdFieldNames],
   );
-
-  const relationIdFieldNames = useMemo(
-    () =>
-      relationFieldConfigs
-        .map(({ relationIdFieldName }) => relationIdFieldName)
-        .filter(
-          (fieldName): fieldName is string =>
-            typeof fieldName === 'string' && fieldName.length > 0,
-        ),
-    [relationFieldConfigs],
-  );
-
-  const predefinedFieldNames = useMemo(() => {
-    return new Set<string>([
-      ...ACCOUNT_PAYABLE_BASIC_FIELDS,
-      ...ACCOUNT_PAYABLE_FINANCIAL_FIELDS,
-      ...ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS,
-      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
-      ...ACCOUNT_PAYABLE_SYSTEM_FIELDS,
-      headerFieldName,
-      ...relationFieldNames,
-      ...relationIdFieldNames,
-    ]);
-  }, [headerFieldName, relationFieldNames, relationIdFieldNames]);
 
   const dynamicFieldNames = useMemo(
     () =>
       objectMetadataItem.fields
         .filter((fieldMetadataItem) => {
-          if (predefinedFieldNames.has(fieldMetadataItem.name)) {
+          const { name } = fieldMetadataItem;
+
+          if (excludedFieldNamesSet.has(name)) {
+            return false;
+          }
+
+          if (relationFieldNameSet.has(name)) {
             return false;
           }
 
@@ -1085,7 +1040,7 @@ const AccountPayableDraftFieldsCardInner = ({
             return false;
           }
 
-          return getRenderableField(fieldMetadataItem.name) !== null;
+          return getRenderableField(name) !== null;
         })
         .sort((fieldA, fieldB) => {
           const fieldAConfig = getRenderableField(fieldA.name);
@@ -1097,25 +1052,165 @@ const AccountPayableDraftFieldsCardInner = ({
           );
         })
         .map(({ name }) => name),
-    [getRenderableField, objectMetadataItem.fields, predefinedFieldNames],
+    [
+      excludedFieldNamesSet,
+      getRenderableField,
+      objectMetadataItem.fields,
+      relationFieldNameSet,
+    ],
   );
 
-  const additionalInfoFieldNames = useMemo(() => {
+  const orderedBaseFieldNames = useMemo(() => {
     const seen = new Set<string>();
+    const fieldNames: string[] = [];
 
-    return [
-      ...ACCOUNT_PAYABLE_ADDITIONAL_INFO_FIELDS,
-      ...dynamicFieldNames,
-    ].filter((fieldName) => {
+    const pushFieldName = (fieldName: string | undefined) => {
+      if (!fieldName) {
+        return;
+      }
+
+      if (excludedFieldNamesSet.has(fieldName)) {
+        return;
+      }
+
+      if (relationFieldNameSet.has(fieldName)) {
+        return;
+      }
+
       if (seen.has(fieldName)) {
-        return false;
+        return;
+      }
+
+      if (getRenderableField(fieldName) === null) {
+        return;
       }
 
       seen.add(fieldName);
-      return true;
-    });
-  }, [dynamicFieldNames]);
+      fieldNames.push(fieldName);
+    };
+
+    ACCOUNT_PAYABLE_PRIMARY_FIELDS.forEach(pushFieldName);
+    dynamicFieldNames.forEach(pushFieldName);
+
+    return fieldNames;
+  }, [
+    excludedFieldNamesSet,
+    dynamicFieldNames,
+    getRenderableField,
+    relationFieldNameSet,
+  ]);
+
+  const orderedRelationFieldItems = useMemo(
+    () =>
+      relationFieldConfigs
+        .map((config) => {
+          const fieldConfig = getRenderableField(config.relationFieldName);
+
+          if (!fieldConfig) {
+            return null;
+          }
+
+          return {
+            ...config,
+            position: fieldConfig.position,
+            priority:
+              relationFieldPriorityMap.get(config.relationFieldName) ??
+              Number.MAX_SAFE_INTEGER,
+          };
+        })
+        .filter(
+          (
+            config,
+          ): config is {
+            relationFieldName: string;
+            relationIdFieldName: string;
+            label: string;
+            position: number;
+            priority: number;
+          } => config !== null,
+        )
+        .sort((configA, configB) => {
+          if (configA.priority !== configB.priority) {
+            return configA.priority - configB.priority;
+          }
+
+          return configA.position - configB.position;
+        }),
+    [getRenderableField, relationFieldConfigs, relationFieldPriorityMap],
+  );
   /* @kvoip-woulz proprietary:end */
+
+  const getFieldCurrentValue = useCallback(
+    (fieldName: string) => {
+      if (Object.prototype.hasOwnProperty.call(draftValues, fieldName)) {
+        return draftValues[fieldName];
+      }
+
+      const fieldMetadataItem = fieldsByName[fieldName];
+
+      return fieldMetadataItem?.defaultValue ?? undefined;
+    },
+    [draftValues, fieldsByName],
+  );
+
+  const isValueFilled = useCallback((value: unknown) => {
+    if (value === null || value === undefined) {
+      return false;
+    }
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+
+    if (typeof value === 'number') {
+      return !Number.isNaN(value);
+    }
+
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    if (typeof value === 'object') {
+      const record = value as Record<string, unknown>;
+
+      if ('id' in record) {
+        const idValue = record.id;
+
+        if (typeof idValue === 'string') {
+          return idValue.trim().length > 0;
+        }
+
+        return idValue !== null && idValue !== undefined;
+      }
+
+      return Object.keys(record).length > 0;
+    }
+
+    return true;
+  }, []);
+
+  const areRequiredFieldsFilled = useMemo(
+    () =>
+      ACCOUNT_PAYABLE_REQUIRED_FIELDS.every((fieldName) => {
+        const fieldValue = getFieldCurrentValue(fieldName);
+
+        if (requiredRelationFieldNamesSet.has(fieldName)) {
+          return isValueFilled(fieldValue);
+        }
+
+        return isValueFilled(fieldValue);
+      }),
+    [
+      getFieldCurrentValue,
+      isValueFilled,
+      requiredRelationFieldNamesSet,
+      draftValues,
+    ],
+  );
 
   /* @kvoip-woulz proprietary:begin */
   return (
@@ -1124,13 +1219,18 @@ const AccountPayableDraftFieldsCardInner = ({
         <StyledCardHeader>
           <StyledTitleFieldContainer>
             {/* @kvoip-woulz proprietary:begin */}
-            <StyledTitleTextInput
-              value={headerFieldValue}
-              onChange={handleHeaderFieldChange}
-              placeholder="Empty"
-              onFocus={clearHoverState}
-              onMouseEnter={clearHoverState}
-            />
+            <StyledTitleFieldContent>
+              <StyledTitleTextInput
+                value={headerFieldValue}
+                onChange={handleHeaderFieldChange}
+                label={headerFieldLabel}
+                placeholder="Enter title"
+                autoFocus
+                fullWidth
+                onFocus={clearHoverState}
+                onMouseEnter={clearHoverState}
+              />
+            </StyledTitleFieldContent>
             {/* @kvoip-woulz proprietary:end */}
           </StyledTitleFieldContainer>
           <StyledCardHeaderActions>
@@ -1176,29 +1276,9 @@ const AccountPayableDraftFieldsCardInner = ({
           )}
         </StyledCardHeader>
         <StyledCardHeaderDivider />
-        <StyledFieldsSectionContainer>
-          {ACCOUNT_PAYABLE_BASIC_FIELDS.filter(
-            /* @kvoip-woulz proprietary:begin */
-            (fieldName) => fieldName !== headerFieldName,
-            /* @kvoip-woulz proprietary:end */
-          ).map((fieldName) => {
-            const fieldElement = renderCreateField(fieldName);
-            if (!fieldElement) {
-              return null;
-            }
-
-            return <Fragment key={fieldName}>{fieldElement}</Fragment>;
-          })}
-        </StyledFieldsSectionContainer>
-
-        <StyledFieldsSectionContainer>
-          <StyledSectionTitle>
-            {getAccountPayableFieldSectionLabel(
-              AccountPayableFieldSection.Financial,
-            )}
-          </StyledSectionTitle>
-          <StyledFinancialFieldsGreyBox>
-            {ACCOUNT_PAYABLE_FINANCIAL_FIELDS.map((fieldName) => {
+        <StyledFieldsGreyBox>
+          <StyledFieldsList>
+            {orderedBaseFieldNames.map((fieldName) => {
               const fieldElement = renderCreateField(fieldName);
               if (!fieldElement) {
                 return null;
@@ -1206,84 +1286,29 @@ const AccountPayableDraftFieldsCardInner = ({
 
               return <Fragment key={fieldName}>{fieldElement}</Fragment>;
             })}
-          </StyledFinancialFieldsGreyBox>
-        </StyledFieldsSectionContainer>
-
-        <StyledFieldsSectionContainer>
-          <StyledSectionTitle>
-            {getAccountPayableFieldSectionLabel(
-              AccountPayableFieldSection.PaymentInfo,
-            )}
-          </StyledSectionTitle>
-          <StyledPaymentInfoFieldsGreyBox>
-            {ACCOUNT_PAYABLE_PAYMENT_INFO_FIELDS.map((fieldName) => {
-              const fieldElement = renderCreateField(fieldName);
-              if (!fieldElement) {
-                return null;
-              }
-
-              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
-            })}
-          </StyledPaymentInfoFieldsGreyBox>
-        </StyledFieldsSectionContainer>
-
-        <StyledFieldsSectionContainer>
-          <StyledSectionTitle>
-            {getAccountPayableFieldSectionLabel(
-              AccountPayableFieldSection.AdditionalInfo,
-            )}
-          </StyledSectionTitle>
-          <StyledAdditionalInfoFieldsGreyBox>
-            {additionalInfoFieldNames.map((fieldName) => {
-              const fieldElement = renderCreateField(fieldName);
-              if (!fieldElement) {
-                return null;
-              }
-
-              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
-            })}
-          </StyledAdditionalInfoFieldsGreyBox>
-        </StyledFieldsSectionContainer>
-
-        <StyledFieldsSectionContainer>
-          <StyledSectionTitle>
-            {getAccountPayableFieldSectionLabel(
-              AccountPayableFieldSection.SystemInfo,
-            )}
-          </StyledSectionTitle>
-          <StyledSystemInfoFieldsGreyBox>
-            {ACCOUNT_PAYABLE_SYSTEM_FIELDS.map((fieldName) => {
-              const fieldElement = renderCreateField(fieldName);
-              if (!fieldElement) {
-                return null;
-              }
-
-              return <Fragment key={fieldName}>{fieldElement}</Fragment>;
-            })}
-          </StyledSystemInfoFieldsGreyBox>
-        </StyledFieldsSectionContainer>
-
-        {/* @kvoip-woulz proprietary:begin */}
-        {relationSectionItems.length > 0 && (
-          <StyledFieldsSectionContainer>
-            <StyledSectionTitle>
-              {getAccountPayableFieldSectionLabel(
-                AccountPayableFieldSection.Others,
-              )}
-            </StyledSectionTitle>
-            <StyledRelationFieldsGreyBox>
-              {relationSectionItems.map(({ fieldName, label }) => (
-                <StyledRelationFieldItem key={fieldName}>
-                  <StyledRelationFieldLabel>{label}</StyledRelationFieldLabel>
-                  <StyledRelationFieldValue>
-                    {renderCreateField(fieldName, { showLabel: false })}
-                  </StyledRelationFieldValue>
-                </StyledRelationFieldItem>
-              ))}
-            </StyledRelationFieldsGreyBox>
-          </StyledFieldsSectionContainer>
-        )}
-        {/* @kvoip-woulz proprietary:end */}
+          </StyledFieldsList>
+          {orderedRelationFieldItems.length > 0 && (
+            <StyledRelationSection>
+              <StyledRelationSectionTitle>
+                Related Records
+              </StyledRelationSectionTitle>
+              <StyledRelationFieldsList>
+                {orderedRelationFieldItems.map(
+                  ({ relationFieldName, label }) => (
+                    <StyledRelationFieldItem key={relationFieldName}>
+                      <StyledRelationFieldLabel>
+                        {label}
+                      </StyledRelationFieldLabel>
+                      {renderCreateField(relationFieldName, {
+                        showLabel: false,
+                      })}
+                    </StyledRelationFieldItem>
+                  ),
+                )}
+              </StyledRelationFieldsList>
+            </StyledRelationSection>
+          )}
+        </StyledFieldsGreyBox>
 
         <StyledButtonContainer>
           <StyledSaveButton
@@ -1296,6 +1321,7 @@ const AccountPayableDraftFieldsCardInner = ({
             /* @kvoip-woulz proprietary:begin */
             fullWidth
             isLoading={saving || createLoading}
+            disabled={!areRequiredFieldsFilled || saving || createLoading}
             /* @kvoip-woulz proprietary:end */
           />
         </StyledButtonContainer>

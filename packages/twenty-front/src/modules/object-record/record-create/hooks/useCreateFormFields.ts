@@ -95,6 +95,7 @@ export const useCreateFormFields = ({
     const relationConfigs: RelationFieldConfig[] = [];
     let fallbackPosition = fieldPositions.size;
 
+    /* @kvoip-woulz proprietary:begin */
     relationFieldMetadataItems.forEach((relationFieldMetadataItem) => {
       if (
         relationFieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE
@@ -107,12 +108,6 @@ export const useCreateFormFields = ({
       const relationIdFieldName =
         relationFieldMetadataItem.settings?.joinColumnName ??
         getForeignKeyNameFromRelationFieldName(relationFieldName);
-
-      const relationIdFieldMetadataItem = fieldsByName[relationIdFieldName];
-
-      if (!relationIdFieldMetadataItem) {
-        return;
-      }
 
       const position =
         fieldPositions.get(relationFieldName) ??
@@ -132,6 +127,7 @@ export const useCreateFormFields = ({
         label: relationFieldMetadataItem.label,
       });
     });
+    /* @kvoip-woulz proprietary:end */
 
     Object.values(fieldsByName).forEach((fieldMetadataItem) => {
       if (!fieldMetadataItem) {
