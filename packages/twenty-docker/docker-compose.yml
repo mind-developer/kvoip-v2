@@ -12,6 +12,8 @@ services:
       bash -c "
       chown -R 1000:1000 /tmp/server-local-data
       && chown -R 1000:1000 /tmp/docker-data"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   server:
     container_name: kvoipv2-server
@@ -26,6 +28,7 @@ services:
       - server.env
     ports:
       - '${SERVER_PORT:-3000}:${SERVER_PORT:-3000}'
+      - "5432:5432"
     environment:
       NODE_PORT: ${SERVER_PORT:-3000}
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
