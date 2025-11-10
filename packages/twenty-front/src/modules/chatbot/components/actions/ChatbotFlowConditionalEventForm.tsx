@@ -41,16 +41,11 @@ export const ChatbotFlowConditionalEventForm = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [text, setText] = useState<string>(initialText);
-  const [nodeData, setNodeData] = useState<NewConditionalState>(initialState);
 
   const { deleteSelectedNode } = useDeleteSelectedNode();
   const { saveDataValue } = useHandleNodeValue();
 
-  useEffect(() => {
-    if (selectedNode.data.logic) {
-      setNodeData(selectedNode.data.logic);
-    }
-  }, [selectedNode.data.logic]);
+  const nodeData = (selectedNode.data.logic as NewConditionalState) ?? initialState;
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -61,9 +56,24 @@ export const ChatbotFlowConditionalEventForm = ({
 
   useEffect(() => {
     if (!selectedNode.data.logic) {
-      addCondition();
+      const newIndex = initialState.logicNodes.length;
+
+      const newCondition: NewLogicNodeData = {
+        option: `${newIndex + 1}`,
+        comparison: '==',
+        sectorId: '',
+        conditionValue: '||',
+        recordType: '',
+      };
+
+      const updated = {
+        logicNodes: [...initialState.logicNodes, newIndex],
+        logicNodeData: [...initialState.logicNodeData, newCondition],
+      };
+
+      saveDataValue('logic', updated, selectedNode);
     }
-  }, [selectedNode.data.logic]);
+  }, [selectedNode.data.logic, saveDataValue, selectedNode]);
 
   const handleInputChange = (e: string) => {
     if (e.length > 4000) {

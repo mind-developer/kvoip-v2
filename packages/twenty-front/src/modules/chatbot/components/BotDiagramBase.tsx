@@ -22,12 +22,12 @@ import {
 } from '@xyflow/react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
 import {
@@ -38,7 +38,13 @@ import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelecte
 import { isChatbotActionMenuOpenState } from '@/chatbot/state/isChatbotActionMenuOpen';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { IconMaximize, IconMinimize } from '@tabler/icons-react';
+import { useLingui } from '@lingui/react/macro';
+import {
+  IconAlertCircle,
+  IconArrowsMaximize,
+  IconArrowsMinimize,
+  IconX,
+} from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { chatbotFlowEdges, chatbotFlowNodes } from '../state/chatbotFlowState';
 import { type GenericNode } from '../types/GenericNode';
@@ -47,6 +53,7 @@ type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
   tagColor: TagColor;
   tagText: string;
+  chatbotStatus: 'ACTIVE' | 'DRAFT' | 'DISABLED';
 };
 
 const StyledResetReactflowStyles = styled.div<{ $isViewportMode: boolean }>`
@@ -116,23 +123,84 @@ const StyledStatusTagContainer = styled.div`
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  right: 0;
-  bottom: 0;
-  position: absolute;
   padding: ${({ theme }) => theme.spacing(4)};
   gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ theme }) => theme.background.primaryInverted};
+  align-self: flex-end;
 `;
 
 const StyledButton = styled(Button)`
   height: 24px;
 `;
 
+const StyledActiveChatbotWarning = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.color.yellow20};
+  color: ${({ theme }) => theme.background.primaryInverted};
+  border: 1px dashed ${({ theme }) => theme.border.color.strong};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${({ theme }) => theme.spacing(1)};
+  text-align: center;
+  z-index: 1000;
+`;
+
+const StyledWarningText = styled.p`
+  display: flex;
+  flex: 1;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledCloseButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(4)};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  background-color: transparent;
+  cursor: pointer;
+  color: ${({ theme }) => theme.background.primaryInverted};
+  padding: 0;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const StyledFooter = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: ${({ theme }) => theme.spacing(4)};
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
+  chatbotStatus,
 }: BotDiagramBaseProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { chatbotId } = useParams();
 
@@ -157,6 +225,7 @@ export const BotDiagramBase = ({
   }>({ x: 0, y: 0 });
 
   const [isViewportMode, setIsViewportMode] = useState(false);
+  const [isWarningVisible, setIsWarningVisible] = useState(true);
 
   const reactFlow = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -174,6 +243,70 @@ export const BotDiagramBase = ({
       id: true,
     },
   });
+
+  // Callback to update nodes and save with current edges atomically
+  const updateNodesAndSave = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (
+        newNodes: GenericNode[],
+        shouldSave: boolean,
+        saveType: 'nodes' | 'edges',
+      ) => {
+        set(chatbotFlowNodes, newNodes);
+        if (shouldSave && chatbotId) {
+          // Read current edges from snapshot atomically
+          const currentEdges =
+            (await snapshot.getPromise(chatbotFlowEdges)) ?? initialEdges;
+          updateOneRecord({
+            idToUpdate: chatbotId,
+            updateOneRecordInput: {
+              flowNodes: newNodes.map((node) => {
+                const { selected, ...rest } = node;
+                return rest;
+              }),
+              flowEdges: currentEdges,
+            },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: saveType === 'nodes' ? 'Nodes saved' : 'Edges saved',
+            });
+          });
+        }
+      },
+    [chatbotId, enqueueInfoSnackBar, updateOneRecord],
+  );
+
+  // Callback to update edges and save with current nodes atomically
+  const updateEdgesAndSave = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (
+        newEdges: Edge[],
+        shouldSave: boolean,
+        saveType: 'nodes' | 'edges',
+      ) => {
+        set(chatbotFlowEdges, newEdges);
+        if (shouldSave && chatbotId && rfInstance) {
+          // Read current nodes from snapshot atomically
+          const currentNodes =
+            (await snapshot.getPromise(chatbotFlowNodes)) ?? initialNodes;
+          updateOneRecord({
+            idToUpdate: chatbotId,
+            updateOneRecordInput: {
+              flowNodes: currentNodes.map((node) => {
+                const { selected, ...rest } = node;
+                return rest;
+              }),
+              flowEdges: newEdges,
+            },
+          }).then(() => {
+            enqueueInfoSnackBar({
+              message: saveType === 'nodes' ? 'Nodes saved' : 'Edges saved',
+            });
+          });
+        }
+      },
+    [chatbotId, enqueueInfoSnackBar, updateOneRecord, rfInstance],
+  );
 
   useEffect(() => {
     if (
@@ -207,73 +340,78 @@ export const BotDiagramBase = ({
   }, [rfInstance]);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => {
-        const appliedNodeChanges = applyNodeChanges(
-          structuredClone(changes),
-          structuredClone(nds ?? initialNodes),
-        );
-        if (
-          changes.some(
-            (change) => change.type === 'position' && !change.dragging,
-          )
-        ) {
-          // Include edges when saving node positions to prevent losing connections
-          setEdges((currentEdges) => {
-            const edgesToSave = currentEdges ?? edges ?? initialEdges;
-            updateOneRecord({
-              idToUpdate: chatbotId ?? '',
-              updateOneRecordInput: {
-                flowNodes: appliedNodeChanges.map((node) => {
-                  const { selected, ...rest } = node;
-                  return rest;
-                }),
-                flowEdges: edgesToSave,
-              },
-            }).then(() => {
-              enqueueInfoSnackBar({
-                message: 'Nodes saved',
-              });
-            });
-            return currentEdges;
-          });
+    (changes: NodeChange[]) => {
+      const currentNodes = nodes ?? initialNodes;
+      const currentEdges = edges ?? initialEdges;
+
+      /* @kvoip-woulz proprietary:begin */
+      // Check if we're deleting a start node
+      const removeChanges = changes.filter(
+        (change) => change.type === 'remove',
+      );
+      let finalNodes = applyNodeChanges(
+        structuredClone(changes),
+        structuredClone(currentNodes),
+      );
+
+      if (removeChanges.length > 0) {
+        for (const removeChange of removeChanges) {
+          if (removeChange.type === 'remove') {
+            const nodeToDelete = currentNodes.find(
+              (node) => node.id === removeChange.id,
+            );
+            const isDeletingStartNode = nodeToDelete?.data?.nodeStart === true;
+
+            if (isDeletingStartNode && finalNodes.length > 0) {
+              // Find the first node connected to the deleted start node
+              const outgoingEdges = currentEdges.filter(
+                (edge) => edge.source === removeChange.id,
+              );
+              let nextStartNode: (typeof finalNodes)[0] | undefined;
+
+              if (outgoingEdges.length > 0) {
+                const firstConnectedNodeId = outgoingEdges[0].target;
+                nextStartNode = finalNodes.find(
+                  (node) => node.id === firstConnectedNodeId,
+                );
+              }
+
+              // Use the first connected node if found, otherwise use the first node in the array
+              const newStartNode = nextStartNode ?? finalNodes[0];
+
+              finalNodes = finalNodes.map((node) => ({
+                ...node,
+                data: {
+                  ...node.data,
+                  nodeStart: node.id === newStartNode.id,
+                },
+              }));
+            }
+          }
         }
-        return appliedNodeChanges;
-      }),
-    [chatbotId, enqueueInfoSnackBar, edges, setEdges],
+      }
+      /* @kvoip-woulz proprietary:end */
+
+      const shouldSave = changes.some(
+        (change) =>
+          (change.type === 'position' && !change.dragging) ||
+          change.type === 'remove',
+      );
+      updateNodesAndSave(finalNodes, shouldSave, 'nodes');
+    },
+    [nodes, edges, updateNodesAndSave],
   );
 
   const onEdgesChange = useCallback(
-    (newEdgesState: EdgeChange[]) =>
-      setEdges((eds: Edge[]) => {
-        const appliedEdgeChanges = applyEdgeChanges(
-          structuredClone(newEdgesState),
-          structuredClone(eds ?? initialEdges),
-        );
-        if (rfInstance) {
-          // Include nodes when saving edges to prevent losing node data
-          setNodes((currentNodes) => {
-            const nodesToSave = currentNodes ?? nodes ?? initialNodes;
-            updateOneRecord({
-              idToUpdate: chatbotId ?? '',
-              updateOneRecordInput: {
-                flowNodes: nodesToSave.map((node) => {
-                  const { selected, ...rest } = node;
-                  return rest;
-                }),
-                flowEdges: appliedEdgeChanges,
-              },
-            }).then(() => {
-              enqueueInfoSnackBar({
-                message: 'Nodes saved',
-              });
-            });
-            return currentNodes;
-          });
-        }
-        return appliedEdgeChanges;
-      }),
-    [enqueueInfoSnackBar, rfInstance, chatbotId, nodes, setNodes],
+    (newEdgesState: EdgeChange[]) => {
+      const currentEdges = edges ?? initialEdges;
+      const appliedEdgeChanges = applyEdgeChanges(
+        structuredClone(newEdgesState),
+        structuredClone(currentEdges),
+      );
+      updateEdgesAndSave(appliedEdgeChanges, !!rfInstance, 'edges');
+    },
+    [edges, rfInstance, updateEdgesAndSave],
   );
 
   const onConnect: OnConnect = useCallback(
@@ -332,11 +470,23 @@ export const BotDiagramBase = ({
   }, [reactFlow]);
 
   const toggleViewportMode = useCallback(() => {
-    setIsViewportMode((prev) => !prev);
-  }, []);
+    setIsViewportMode((prev) => {
+      const newMode = !prev;
+      // Center the viewport when toggling
+      if (reactFlow.viewportInitialized) {
+        setTimeout(() => {
+          reactFlow.fitView({ padding: 0.2, duration: 0 });
+        }, 0);
+      }
+      return newMode;
+    });
+  }, [reactFlow]);
 
   return (
-    <StyledResetReactflowStyles ref={containerRef} $isViewportMode={isViewportMode}>
+    <StyledResetReactflowStyles
+      ref={containerRef}
+      $isViewportMode={isViewportMode}
+    >
       <WorkflowDiagramCustomMarkers />
       <ReactFlow
         nodes={nodes}
@@ -362,14 +512,12 @@ export const BotDiagramBase = ({
         onContextMenu={handleContextMenu}
         multiSelectionKeyCode={'shift'}
       >
-        <Controls />
+        <Controls position="top-right" />
         <Background bgColor={theme.background.primary} size={2} />
       </ReactFlow>
-
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
-
       {isChatbotActionMenuOpen && (
         <div
           style={{
@@ -382,17 +530,31 @@ export const BotDiagramBase = ({
           <ChatbotActionMenu cursorPosition={chatbotActionMenuPosition} />
         </div>
       )}
-
-      <StyledButtonContainer>
-        <LightIconButton
-          Icon={isViewportMode ? IconMinimize : IconMaximize}
-          accent="tertiary"
-          size="small"
-          title={isViewportMode ? 'Restaurar' : 'Expandir para viewport'}
-          onClick={toggleViewportMode}
-        />
-        <StyledButton accent="blue" title="Save" onClick={handleSave} />
-      </StyledButtonContainer>
+      <StyledFooter>
+        <StyledButtonContainer>
+          <StyledButton
+            Icon={isViewportMode ? IconArrowsMinimize : IconArrowsMaximize}
+            size="small"
+            title={isViewportMode ? t`Restore` : t`Expand`}
+            onClick={toggleViewportMode}
+          />
+          <StyledButton accent="blue" title={t`Save`} onClick={handleSave} />
+        </StyledButtonContainer>
+        {chatbotStatus === 'ACTIVE' && isWarningVisible && (
+          <StyledActiveChatbotWarning>
+            <StyledWarningText>
+              <IconAlertCircle size={12} />
+              {t`Be careful: you are editing an active chatbot. Some changes are saved automatically and may be reflected to your clients.`}
+            </StyledWarningText>
+            <StyledCloseButton
+              onClick={() => setIsWarningVisible(false)}
+              title={t`Close`}
+            >
+              <IconX size={12} />
+            </StyledCloseButton>
+          </StyledActiveChatbotWarning>
+        )}
+      </StyledFooter>
     </StyledResetReactflowStyles>
   );
 };
