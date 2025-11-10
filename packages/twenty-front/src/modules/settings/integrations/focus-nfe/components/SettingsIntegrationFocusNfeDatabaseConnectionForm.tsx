@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
-
+/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useState } from 'react';
-import { type SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+import { SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 
 const StyledFormContainer = styled.div`
   display: flex;

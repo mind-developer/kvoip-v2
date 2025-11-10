@@ -19,11 +19,6 @@ import {
   TaxRegime,
 } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-
 type FocusNfeIntegrationInput =
   | CreateFocusNfeIntegrationInput
   | UpdateFocusNfeIntegrationInput;
@@ -35,8 +30,6 @@ export class FocusNFeIntegrationService {
   constructor(
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
-    private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async encryptText(text: string): Promise<string> {
@@ -100,20 +93,17 @@ export class FocusNFeIntegrationService {
       throw new NotFoundException('FocusNFe repository not found'); // @kvoip-woulz proprietary
     }
 
-    const validatedInput = await this.validateInput(createInput, workspaceId);
-
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(createInput.taxRegime);
 
     const createdFocusNfeIntegration = focusNFeRepository.create({
-      ...validatedInput,
-      token: await this.encryptText(validatedInput.token),
+      ...createInput,
+      token: await this.encryptText(createInput.token),
       taxRegime: taxRegimeEnum,
     });
 
-    const createdIntegration: FocusNFeWorkspaceEntity =
-      (await focusNFeRepository.save(
-        createdFocusNfeIntegration,
-      )) as FocusNFeWorkspaceEntity;
+    const createdIntegration = await focusNFeRepository.save(
+      createdFocusNfeIntegration,
+    );
 
     if (!createdIntegration.cnpj && !createdIntegration.cpf) {
       throw new BadRequestException('Either CNPJ or CPF must be provided');
@@ -206,48 +196,34 @@ export class FocusNFeIntegrationService {
       throw new NotFoundException('Focus NFe integration not found');
     }
 
-    const validatedInput = await this.validateInput(updateInput, workspaceId);
-
-    if (validatedInput.token) {
-      validatedInput.token = await this.encryptText(validatedInput.token);
+    if (updateInput.token) {
+      updateInput.token = await this.encryptText(updateInput.token);
     }
 
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(updateInput.taxRegime);
 
     const updatedFocusNfeIntegration: FocusNFeWorkspaceEntity = {
       ...focusNfeIntegration,
-      ...validatedInput,
+      ...updateInput,
       taxRegime: taxRegimeEnum,
     };
 
-    if (
-      validatedInput.token &&
-      focusNfeIntegration.token !== updatedFocusNfeIntegration.token
-    ) {
+    if (focusNfeIntegration.token !== updatedFocusNfeIntegration.token) {
       // TODO: Delete previous webhook and then register again (create delete method)
-      const validateDocument =
-        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf;
-
-      if (!validateDocument) {
-        throw new BadRequestException('Either CNPJ or CPF must be provided');
-      }
-
-      await Promise.all([
-        this.subscriptionWebhook(
-          'nfse',
-          validateDocument,
-          updatedFocusNfeIntegration.token,
-          workspaceId,
-          updatedFocusNfeIntegration.id,
-        ),
-        this.subscriptionWebhook(
-          'nfcom',
-          validateDocument,
-          updatedFocusNfeIntegration.token,
-          workspaceId,
-          updatedFocusNfeIntegration.id,
-        ),
-      ]);
+      await this.subscriptionWebhook(
+        'nfse',
+        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        updatedFocusNfeIntegration.token,
+        workspaceId,
+        updatedFocusNfeIntegration.id,
+      );
+      await this.subscriptionWebhook(
+        'nfcom',
+        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        updatedFocusNfeIntegration.token,
+        workspaceId,
+        updatedFocusNfeIntegration.id,
+      );
     }
 
     return await focusNFeRepository.save(updatedFocusNfeIntegration);
@@ -301,51 +277,6 @@ export class FocusNFeIntegrationService {
       integration.status === Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE;
 
     await focusNFeRepository.save(integration);
-  }
-
-  private async validateInput<T extends FocusNfeIntegrationInput>(
-    input: T,
-    workspaceId: string,
-  ): Promise<T> {
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: 'focusNFe' },
-        relations: ['fields'],
-      });
-
-    if (!objectMetadata) {
-      throw new NotFoundException('FocusNFe object metadata not found');
-    }
-
-    const fieldIdByName: Record<string, string> = {};
-    const fieldsById: Record<string, FieldMetadataEntity> = {};
-    const fieldIdByJoinColumnName: Record<string, string> = {};
-
-    objectMetadata.fields.forEach((field) => {
-      fieldIdByName[field.name] = field.id;
-      fieldsById[field.id] = field;
-
-      if (field.type === 'RELATION') {
-        const relationSettings =
-          field.settings as FieldMetadataRelationSettings;
-
-        if (relationSettings?.joinColumnName) {
-          fieldIdByJoinColumnName[relationSettings.joinColumnName] = field.id;
-        }
-      }
-    });
-
-    const transformedInput = await this.recordInputTransformerService.process({
-      recordInput: input,
-      objectMetadataMapItem: {
-        ...objectMetadata,
-        fieldIdByName,
-        fieldsById,
-        fieldIdByJoinColumnName,
-      },
-    });
-
-    return transformedInput as T;
   }
 
   private async subscriptionWebhook(
