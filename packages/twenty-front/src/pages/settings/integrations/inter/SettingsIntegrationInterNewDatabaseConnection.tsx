@@ -18,12 +18,11 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-// Validation schema with pattern validation for Inter-specific fields
 export const settingsIntegrationInterConnectionFormSchema = z.object({
-  integrationName: z.string().min(1, 'Integration name is required'),
-  clientId: z.string().min(1, 'Client ID is required'),
-  clientSecret: z.string().min(1, 'Client Secret is required'),
-  currentAccount: z.string().min(1, 'Current account is required'),
+  integrationName: z.string().min(1),
+  clientId: z.string(),
+  clientSecret: z.string(),
+  currentAccount: z.string(),
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),

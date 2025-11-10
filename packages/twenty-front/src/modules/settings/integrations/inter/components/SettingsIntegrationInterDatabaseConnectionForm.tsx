@@ -65,19 +65,17 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           <Controller
             name="currentAccount"
             control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => {
-              return (
-                <TextInput
-                  label="Current account"
-                  value={value as string}
-                  onChange={onChange}
-                  type="text"
-                  disabled={disabled}
-                  placeholder="********-**"
-                  fullWidth
-                />
-              );
-            }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label="Current account"
+                value={value as string}
+                onChange={onChange}
+                type="text"
+                disabled={disabled}
+                placeholder="********-**"
+                fullWidth
+              />
+            )}
           />
         </StyledHalfWidthInput>
 
