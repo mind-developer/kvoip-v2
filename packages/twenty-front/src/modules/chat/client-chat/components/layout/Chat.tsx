@@ -43,6 +43,7 @@ const StyledChatContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
   width: 100%;
+  min-width: 400px;
 `;
 
 const StyledMessagesContainer = styled.div`
@@ -207,46 +208,49 @@ export const Chat = () => {
     };
   }, [pushFocusItemToFocusStack, removeFocusItemFromFocusStackById]);
 
-  const scrollToBottom = useCallback((behavior: 'smooth' | 'instant' = 'smooth') => {
-    if (!chatContainerRef.current) return;
-    
-    const container = chatContainerRef.current;
-    
-    const performScroll = () => {
-      if (!container) return;
-      
-      // Use scrollTop directly for more reliable scrolling
-      container.scrollTop = container.scrollHeight;
-      
-      // Double-check with requestAnimationFrame to ensure it's at the bottom
-      requestAnimationFrame(() => {
+  const scrollToBottom = useCallback(
+    (behavior: 'smooth' | 'instant' = 'smooth') => {
+      if (!chatContainerRef.current) return;
+
+      const container = chatContainerRef.current;
+
+      const performScroll = () => {
         if (!container) return;
-        const scrollTop = container.scrollTop;
-        const scrollHeight = container.scrollHeight;
-        const clientHeight = container.clientHeight;
-        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-        
-        // If not fully at bottom, scroll again
-        if (distanceFromBottom > 1) {
-          container.scrollTop = container.scrollHeight;
-        }
-      });
-    };
-    
-    if (behavior === 'smooth') {
-      container.scrollTo({
-        top: container.scrollHeight,
-        left: 0,
-        behavior: 'smooth',
-      });
-      // Also ensure it goes all the way after smooth animation
-      setTimeout(() => {
+
+        // Use scrollTop directly for more reliable scrolling
+        container.scrollTop = container.scrollHeight;
+
+        // Double-check with requestAnimationFrame to ensure it's at the bottom
+        requestAnimationFrame(() => {
+          if (!container) return;
+          const scrollTop = container.scrollTop;
+          const scrollHeight = container.scrollHeight;
+          const clientHeight = container.clientHeight;
+          const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+          // If not fully at bottom, scroll again
+          if (distanceFromBottom > 1) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
+      };
+
+      if (behavior === 'smooth') {
+        container.scrollTo({
+          top: container.scrollHeight,
+          left: 0,
+          behavior: 'smooth',
+        });
+        // Also ensure it goes all the way after smooth animation
+        setTimeout(() => {
+          performScroll();
+        }, 300);
+      } else {
         performScroll();
-      }, 300);
-    } else {
-      performScroll();
-    }
-  }, []);
+      }
+    },
+    [],
+  );
 
   const isNearBottom = useCallback(() => {
     if (!chatContainerRef.current) return false;
@@ -268,7 +272,7 @@ export const Chat = () => {
     setReplyingTo(null);
     userScrolledUpRef.current = false;
     lastMessagesLengthRef.current = 0;
-    
+
     if (chatContainerRef.current && selectedChat?.id && dbMessages.length > 0) {
       // Use requestAnimationFrame to ensure DOM is fully updated
       requestAnimationFrame(() => {
@@ -284,9 +288,9 @@ export const Chat = () => {
 
     const handleScroll = () => {
       if (!container) return;
-      
+
       const isNear = isNearBottom();
-      
+
       if (isNear) {
         userScrolledUpRef.current = false;
       } else {
@@ -294,7 +298,7 @@ export const Chat = () => {
         const scrollHeight = container.scrollHeight;
         const clientHeight = container.clientHeight;
         const wasAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
-        
+
         if (!wasAtBottom && scrollTop > 0) {
           userScrolledUpRef.current = true;
         }
@@ -316,16 +320,21 @@ export const Chat = () => {
 
     const hasNewMessages = dbMessages.length > lastMessagesLengthRef.current;
     let isDifferentLastMessage = false;
-    
+
     if (lastMessagesLengthRef.current > 0) {
-      const lastMessageId = dbMessages[dbMessages.length - 1]?.providerMessageId;
-      const previousLastMessageId = dbMessages[lastMessagesLengthRef.current - 1]?.providerMessageId;
+      const lastMessageId =
+        dbMessages[dbMessages.length - 1]?.providerMessageId;
+      const previousLastMessageId =
+        dbMessages[lastMessagesLengthRef.current - 1]?.providerMessageId;
       isDifferentLastMessage = lastMessageId !== previousLastMessageId;
     }
-    
+
     lastMessagesLengthRef.current = dbMessages.length;
 
-    if ((hasNewMessages || isDifferentLastMessage) && !userScrolledUpRef.current) {
+    if (
+      (hasNewMessages || isDifferentLastMessage) &&
+      !userScrolledUpRef.current
+    ) {
       // Use requestAnimationFrame to ensure DOM is fully updated
       requestAnimationFrame(() => {
         scrollToBottom('smooth');
