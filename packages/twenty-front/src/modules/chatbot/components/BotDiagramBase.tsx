@@ -27,7 +27,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import { Button } from 'twenty-ui/input';
+import { Button, LightIconButton } from 'twenty-ui/input';
 
 import { ChatbotActionMenu } from '@/chatbot/components/actions/ChatbotActionMenu';
 import {
@@ -38,6 +38,7 @@ import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelecte
 import { isChatbotActionMenuOpenState } from '@/chatbot/state/isChatbotActionMenuOpen';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { IconMaximize, IconMinimize } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { chatbotFlowEdges, chatbotFlowNodes } from '../state/chatbotFlowState';
 import { type GenericNode } from '../types/GenericNode';
@@ -48,11 +49,23 @@ type BotDiagramBaseProps = {
   tagText: string;
 };
 
-const StyledResetReactflowStyles = styled.div`
+const StyledResetReactflowStyles = styled.div<{ $isViewportMode: boolean }>`
   height: 100%;
   width: 100%;
   min-height: 600px;
   position: relative;
+
+  ${({ $isViewportMode }) =>
+    $isViewportMode &&
+    `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    min-height: 100vh;
+  `}
 
   /* Below we reset the default styling of Reactflow */
   .react-flow__node-input,
@@ -82,6 +95,10 @@ const StyledResetReactflowStyles = styled.div`
     cursor: pointer;
   }
 
+  .react-flow__attribution {
+    display: none;
+  }
+
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;
@@ -100,10 +117,11 @@ const StyledStatusTagContainer = styled.div`
 const StyledButtonContainer = styled.div`
   display: flex;
   right: 0;
-  top: 0;
+  bottom: 0;
   position: absolute;
   padding: ${({ theme }) => theme.spacing(4)};
   gap: ${({ theme }) => theme.spacing(2)};
+  color: ${({ theme }) => theme.background.primaryInverted};
 `;
 
 const StyledButton = styled(Button)`
@@ -137,6 +155,8 @@ export const BotDiagramBase = ({
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
+
+  const [isViewportMode, setIsViewportMode] = useState(false);
 
   const reactFlow = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -198,23 +218,29 @@ export const BotDiagramBase = ({
             (change) => change.type === 'position' && !change.dragging,
           )
         ) {
-          updateOneRecord({
-            idToUpdate: chatbotId ?? '',
-            updateOneRecordInput: {
-              flowNodes: appliedNodeChanges.map((node) => {
-                const { selected, ...rest } = node;
-                return rest;
-              }),
-            },
-          }).then(() => {
-            enqueueInfoSnackBar({
-              message: 'Nodes saved',
+          // Include edges when saving node positions to prevent losing connections
+          setEdges((currentEdges) => {
+            const edgesToSave = currentEdges ?? edges ?? initialEdges;
+            updateOneRecord({
+              idToUpdate: chatbotId ?? '',
+              updateOneRecordInput: {
+                flowNodes: appliedNodeChanges.map((node) => {
+                  const { selected, ...rest } = node;
+                  return rest;
+                }),
+                flowEdges: edgesToSave,
+              },
+            }).then(() => {
+              enqueueInfoSnackBar({
+                message: 'Nodes saved',
+              });
             });
+            return currentEdges;
           });
         }
         return appliedNodeChanges;
       }),
-    [chatbotId, enqueueInfoSnackBar],
+    [chatbotId, enqueueInfoSnackBar, edges, setEdges],
   );
 
   const onEdgesChange = useCallback(
@@ -225,20 +251,29 @@ export const BotDiagramBase = ({
           structuredClone(eds ?? initialEdges),
         );
         if (rfInstance) {
-          updateOneRecord({
-            idToUpdate: chatbotId ?? '',
-            updateOneRecordInput: {
-              edges: appliedEdgeChanges,
-            },
-          }).then(() => {
-            enqueueInfoSnackBar({
-              message: 'Nodes saved',
+          // Include nodes when saving edges to prevent losing node data
+          setNodes((currentNodes) => {
+            const nodesToSave = currentNodes ?? nodes ?? initialNodes;
+            updateOneRecord({
+              idToUpdate: chatbotId ?? '',
+              updateOneRecordInput: {
+                flowNodes: nodesToSave.map((node) => {
+                  const { selected, ...rest } = node;
+                  return rest;
+                }),
+                flowEdges: appliedEdgeChanges,
+              },
+            }).then(() => {
+              enqueueInfoSnackBar({
+                message: 'Nodes saved',
+              });
             });
+            return currentNodes;
           });
         }
         return appliedEdgeChanges;
       }),
-    [enqueueInfoSnackBar, rfInstance],
+    [enqueueInfoSnackBar, rfInstance, chatbotId, nodes, setNodes],
   );
 
   const onConnect: OnConnect = useCallback(
@@ -296,8 +331,12 @@ export const BotDiagramBase = ({
     );
   }, [reactFlow]);
 
+  const toggleViewportMode = useCallback(() => {
+    setIsViewportMode((prev) => !prev);
+  }, []);
+
   return (
-    <StyledResetReactflowStyles ref={containerRef}>
+    <StyledResetReactflowStyles ref={containerRef} $isViewportMode={isViewportMode}>
       <WorkflowDiagramCustomMarkers />
       <ReactFlow
         nodes={nodes}
@@ -312,17 +351,18 @@ export const BotDiagramBase = ({
         fitView
         onClick={() => {
           setIsChatbotActionMenuOpen(false);
-          setChatbotFlowSelectedNode(undefined);
+          setChatbotFlowSelectedNode([]);
         }}
         onDragStart={() => setIsChatbotActionMenuOpen(false)}
         onNodeClick={(event, node) => {
           event.stopPropagation();
-          setChatbotFlowSelectedNode(node);
+          setChatbotFlowSelectedNode([node]);
           setIsChatbotActionMenuOpen(false);
         }}
         onContextMenu={handleContextMenu}
+        multiSelectionKeyCode={'shift'}
       >
-        <Controls showZoom={true} />
+        <Controls />
         <Background bgColor={theme.background.primary} size={2} />
       </ReactFlow>
 
@@ -336,7 +376,7 @@ export const BotDiagramBase = ({
             position: 'fixed',
             top: chatbotActionMenuPosition.y,
             left: chatbotActionMenuPosition.x,
-            zIndex: 1000,
+            zIndex: isViewportMode ? 10000 : 1000,
           }}
         >
           <ChatbotActionMenu cursorPosition={chatbotActionMenuPosition} />
@@ -344,6 +384,13 @@ export const BotDiagramBase = ({
       )}
 
       <StyledButtonContainer>
+        <LightIconButton
+          Icon={isViewportMode ? IconMinimize : IconMaximize}
+          accent="tertiary"
+          size="small"
+          title={isViewportMode ? 'Restaurar' : 'Expandir para viewport'}
+          onClick={toggleViewportMode}
+        />
         <StyledButton accent="blue" title="Save" onClick={handleSave} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>
