@@ -11,12 +11,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import axios from 'axios';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 // Controller separado para endpoints REST
 @Controller('Whats-App-rest/whatsapp')
 export class WhatsappRestController {
   protected readonly logger = new Logger(WhatsappRestController.name);
-
-  constructor() {}
+  private BAILEYS_SERVER_URL: string;
+  constructor(private readonly environmentService: TwentyConfigService) {
+    this.BAILEYS_SERVER_URL = this.environmentService.get('BAILEYS_SERVER_URL');
+  }
 
   @Post('/session/:sessionId')
   async createSession(
@@ -27,7 +30,7 @@ export class WhatsappRestController {
       this.logger.log('running createSession');
       const { webhook, workspaceID, canalID } = body;
       const response = await axios.post(
-        `http://localhost:3002/api/session/${sessionId}`,
+        `${this.BAILEYS_SERVER_URL}/api/session/${sessionId}`,
         {
           webhook,
           workspaceID,
@@ -47,7 +50,7 @@ export class WhatsappRestController {
   async getStatus(@Param('sessionId') sessionId: string) {
     try {
       const response = await axios.get(
-        `http://localhost:3002/api/session/status/${sessionId}`,
+        `${this.BAILEYS_SERVER_URL}/api/session/status/${sessionId}`,
         {
           timeout: 10000,
         },
@@ -83,11 +86,11 @@ export class WhatsappRestController {
       this.logger.log(`=== INICIANDO REQUISIÇÃO QR CODE ===`);
       this.logger.log(`Session ID: ${sessionId}`);
       this.logger.log(
-        `URL de destino: http://localhost:3002/api/session/${sessionId}/qr`,
+        `URL de destino: ${this.BAILEYS_SERVER_URL}/api/session/${sessionId}/qr`,
       );
 
       const response = await axios.get(
-        `http://localhost:3002/api/session/${sessionId}/qr`,
+        `${this.BAILEYS_SERVER_URL}/api/session/${sessionId}/qr`,
         {
           timeout: 10000, // 10 second timeout
         },
