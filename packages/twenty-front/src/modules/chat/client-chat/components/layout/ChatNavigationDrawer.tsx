@@ -131,7 +131,11 @@ export const ChatNavigationDrawer = () => {
   const [initialPointerX, setInitialPointerX] = useState<number | null>(null);
   const [initialWidth, setInitialWidth] = useState<number | null>(null);
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
+  const [tabListContainerWidth, setTabListContainerWidth] = useState<
+    number | undefined
+  >(undefined);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const tabListContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -187,6 +191,30 @@ export const ChatNavigationDrawer = () => {
   useEffect(() => {
     localStorage.setItem(DRAWER_WIDTH_STORAGE_KEY, drawerWidth.toString());
   }, [drawerWidth]);
+
+  useEffect(() => {
+    const updateTabListContainerWidth = () => {
+      if (tabListContainerRef.current) {
+        setTabListContainerWidth(tabListContainerRef.current.clientWidth);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateTabListContainerWidth();
+    });
+
+    const timeoutId = setTimeout(() => {
+      if (tabListContainerRef.current) {
+        updateTabListContainerWidth();
+        resizeObserver.observe(tabListContainerRef.current);
+      }
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   const handleResizeStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -351,6 +379,15 @@ export const ChatNavigationDrawer = () => {
       ).length,
     },
   ];
+  if (workspaceMemberWithAgent?.agent?.isAdmin) {
+    tabs.push({
+      id: ClientChatStatus.FINISHED,
+      title: 'Finished',
+      incomingMessages: clientChats.filter(
+        (chat) => chat.status === ClientChatStatus.FINISHED,
+      ).length,
+    });
+  }
 
   const renderClientChats = useMemo(() => {
     if (!workspaceMemberWithAgent) {
@@ -427,8 +464,12 @@ export const ChatNavigationDrawer = () => {
           onSortClick={onSortClick}
           sortDirection={sortDirection}
         />
-        <StyledTabListContainer>
-          <ChatNavigationDrawerTabs loading={false} tabs={tabs} />
+        <StyledTabListContainer ref={tabListContainerRef}>
+          <ChatNavigationDrawerTabs
+            loading={false}
+            tabs={tabs}
+            width={tabListContainerWidth}
+          />
         </StyledTabListContainer>
         <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
           {renderClientChats}
