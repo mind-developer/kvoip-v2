@@ -62,11 +62,12 @@ const newFunction = () => {
 
 ### Implementation Guidelines
 
-1. **Surround all modifications**: Every piece of modified or added code must be wrapped with the proprietary comment blocks
+1. **Surround all modifications**: Every piece of modified or added code must be wrapped or appended with/by the proprietary comment blocks
 2. **Place comments correctly**:
+   if wrapping...
    - Start comment should be placed immediately before the modified code
    - End comment should be placed immediately after the modified code
-3. **Maintain readability**: Keep the proprietary comments close to the actual code changes
+3. **Maintain readability**: Keep the proprietary comments close to the actual code changes. If a change is only one line, just append the comment to the end of it.
 4. **Multiple sections**: If you have multiple modified sections in the same file, each section should have its own comment pair
 5. **No redundancy**: If a section is already wrapped in proprietary comment blocks, don't add more comments inside it. If a file already has a proprietary header in its first line, don't wrap any code blocks inside it.
 
@@ -107,9 +108,7 @@ class UserService {
 
 ```typescript
 import { Component } from 'react';
-/* @kvoip-woulz proprietary:begin */
-import { KVOIPUtils } from '@/utils/kvoip-utils';
-/* @kvoip-woulz proprietary:end */
+import { KVOIPUtils } from '@/utils/kvoip-utils'; /* @kvoip-woulz proprietary */
 ```
 
 ### Best Practices
