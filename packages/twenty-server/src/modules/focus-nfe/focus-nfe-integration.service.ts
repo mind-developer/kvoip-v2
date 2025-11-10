@@ -106,7 +106,8 @@ export class FocusNFeIntegrationService {
 
     const createdFocusNfeIntegration = focusNFeRepository.create({
       ...validatedInput,
-      token: await this.encryptText(validatedInput.token),
+      // token: await this.encryptText(validatedInput.token),
+      token: validatedInput.token,
       taxRegime: taxRegimeEnum,
     });
 
@@ -211,6 +212,9 @@ export class FocusNFeIntegrationService {
     // if (validatedInput.token) {
     //   validatedInput.token = await this.encryptText(validatedInput.token);
     // }
+
+    this.logger.log(`validatedInput: ${JSON.stringify(validatedInput, null, 2)}`);
+    this.logger.log(`tok: ${validatedInput.token}`);
 
     const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
 
