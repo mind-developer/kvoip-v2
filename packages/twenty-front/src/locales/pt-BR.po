@@ -1442,29 +1442,29 @@ msgstr "Conversar"
 #. placeholder {1}: data.whatsappIntegrationIds.join(', ')
 #: src/modules/settings/service-center/chatbots/hooks/useCreateChatbotForm.ts
 msgid "Chatbot \"{0}\" created and linked to \"{1}\""
-msgstr ""
+msgstr "Chatbot \"{0}\" criado e conectado à \"{1}\""
 
 #. js-lingui-id: 9MCO4/
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot.tsx
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
 msgid "Chatbots"
-msgstr ""
+msgstr "Chatbots"
 
 #. js-lingui-id: ndrhsR
 #: src/pages/settings/service-center/SettingsServiceCenterSection.tsx
 msgid "Chatbots can be assigned to sectors and chat providers"
-msgstr ""
+msgstr "Chatbots podem ser atrelados à setores e provedores de chat"
 
 #. js-lingui-id: peai3l
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
 msgid "Chatbots will automatically answer messages as soon as they reach their assigned integrations. Chats already in attendance will be ignored."
-msgstr ""
+msgstr "Chatbots irão automaticamente responder à mensagens assim que chegarem à suas integrações associadas. Chats já em atendimento serão ignorados."
 
 #. js-lingui-id: ymYf0R
 #: src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm.tsx
 #: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
 msgid "Chats will be moved to the \"Abandoned\" inbox after this interval if a client hasn't been answered yet."
-msgstr ""
+msgstr "Chats serão movidos para a inbox \"Abandonados\" após esse intervalo caso um cliente ainda não tenha sido respondido."
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1951,7 +1951,7 @@ msgstr "Não foi possível excluir o domínio de acesso aprovado"
 #. placeholder {3}: updatedWhatsappIntegration.name
 #: src/modules/settings/service-center/chatbots/hooks/useCreateChatbotForm.ts
 msgid "Could not link chatbot \"{2}\" to WhatsApp integration \"{3}\", please try again"
-msgstr ""
+msgstr "Não foi possível conectar o chatbot \"{2}\" à integração WhatsApp \"{3}\". Por favor, tente novamente."
 
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
@@ -2022,17 +2022,17 @@ msgid ""
 "Create a chatbot and define what integrations it will answer to. Chatbots in \"Draft\" or \"Disabled\" statuses will not answer to any messages. You can change this later.\n"
 "\n"
 ""
-msgstr ""
+msgstr "Crie um chatbot e defina a quais integrações ele responderá. Chatbots no status \"Esboço\" ou \"Desativado"\ não responderão a mensagens. Você pode alterar isso posteriormente."
 
 #. js-lingui-id: 3zucmP
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
 msgid "Create a chatbot to get started"
-msgstr ""
+msgstr "Crie um chatbot para começar"
 
 #. js-lingui-id: KOLJtE
 #: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
 msgid "Create a financial closing to get started"
-msgstr ""
+msgstr "Crie um fechamento financeiro para começar"
 
 #. js-lingui-id: 7/h1ZC
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -2042,7 +2042,7 @@ msgstr "Criar um novo agente de IA"
 #. js-lingui-id: CUPA+T
 #: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
 msgid "Create a sector to get started"
-msgstr ""
+msgstr "Crie um setor para começar"
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -2057,12 +2057,12 @@ msgstr "Criar Workspace"
 #. js-lingui-id: +D/mAn
 #: src/pages/settings/service-center/agents/SettingsServiceCenterNewAgent.tsx
 msgid "Create agent"
-msgstr ""
+msgstr "Criar agente"
 
 #. js-lingui-id: rkv+MZ
 #: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
 msgid "Create an agent to get started"
-msgstr ""
+msgstr "Crie um agente para começar"
 
 #. js-lingui-id: 4Nqrhp
 #: src/modules/settings/service-center/telephony/components/SettingsServiceCenterTabContent.tsx
@@ -2604,7 +2604,7 @@ msgstr ""
 #. js-lingui-id: +OfAup
 #: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
 msgid "Delete telephony integration"
-msgstr ""
+msgstr "Excluir integração de telefonia"
 
 #. js-lingui-id: DgHnjS
 #: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
@@ -2615,17 +2615,17 @@ msgstr "Excluir este agente"
 #. js-lingui-id: ezIwLc
 #: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
 msgid "Delete this agent?"
-msgstr ""
+msgstr "Excluir este agente?"
 
 #. js-lingui-id: Dv3q+9
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
 msgid "Delete this chatbot"
-msgstr ""
+msgstr "Excluir este chatbot"
 
 #. js-lingui-id: LRHW92
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
 msgid "Delete this chatbot?"
-msgstr ""
+msgstr "Excluir este chatbot?"
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2655,7 +2655,7 @@ msgstr ""
 #. js-lingui-id: Zx+PHF
 #: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
 msgid "Delete this telephony integration"
-msgstr ""
+msgstr "Excluir esta integração de telefonia"
 
 #. js-lingui-id: KSOhjo
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3695,12 +3695,12 @@ msgstr "Falha ao criar transferência"
 #. js-lingui-id: Uvyvii
 #: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
 msgid "Failed to create integration"
-msgstr ""
+msgstr "Não foi possível criar a integração"
 
 #. js-lingui-id: 6iZ5iS
 #: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
 msgid "Failed to create session"
-msgstr ""
+msgstr "Não foi possível criar a sessão"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -3730,7 +3730,7 @@ msgstr "Falhou em começar a gravar. Verifique o acesso ao microfone."
 #. js-lingui-id: b6mbQA
 #: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
 msgid "Failed to subscribe to business account"
-msgstr ""
+msgstr "Não foi possível inscrever conta business"
 
 #. js-lingui-id: U/94Qz
 #: src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts
@@ -3912,7 +3912,7 @@ msgstr "Nome"
 #. js-lingui-id: S5mpO/
 #: src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts
 msgid "Focus NFe integration created successfully!"
-msgstr ""
+msgstr "Integração Focus NFe criada com sucesso"
 
 #. js-lingui-id: 3admaT
 #: src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
@@ -5006,7 +5006,7 @@ msgstr "Gerenciar informações de faturamento"
 #. js-lingui-id: WM+yLT
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
 msgid "Manage chatbots"
-msgstr ""
+msgstr "Gerenciar chatbots"
 
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -5017,7 +5017,7 @@ msgstr "Gerenciar favorito"
 #. js-lingui-id: ePL3M+
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage financial closings"
-msgstr ""
+msgstr "Gerenciar fechamento financeiro"
 
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5037,7 +5037,7 @@ msgstr "Gerenciar funções e permissões para membros da equipe, agentes e chav
 #. js-lingui-id: KUy6zQ
 #: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
 msgid "Manage sectors"
-msgstr ""
+msgstr "Gerenciar setores"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5067,7 +5067,7 @@ msgstr "Gerir as suas contas de internet."
 #. js-lingui-id: vo2a+a
 #: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
 msgid "Marketing"
-msgstr ""
+msgstr "Marketing"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -5103,7 +5103,7 @@ msgstr "Eu"
 #. js-lingui-id: t5eAlS
 #: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
 msgid "Member linked to extension successfully"
-msgstr ""
+msgstr "Membro conectado à extensão com sucesso"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -5167,12 +5167,12 @@ msgstr "Falha na geração do arquivo de metadados"
 #. js-lingui-id: LEcdXu
 #: src/modules/softphone/components/modal/AudioDevicesModal.tsx
 msgid "Microphone Device"
-msgstr ""
+msgstr "Dispositivo de microfone"
 
 #. js-lingui-id: TQjMPH
 #: src/modules/softphone/components/modal/AudioDevicesModal.tsx
 msgid "Microphone Level"
-msgstr ""
+msgstr "Volume do microfone"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -5496,7 +5496,7 @@ msgstr "Nenhum agente disponível para transferência"
 #. js-lingui-id: p3UQFR
 #: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
 msgid "No agents created yet"
-msgstr ""
+msgstr "Nenhum agente criado ainda"
 
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -5531,12 +5531,12 @@ msgstr "Nenhuma alteração detectada"
 #. js-lingui-id: kknhfj
 #: src/modules/softphone/components/modal/AudioDevicesModal.tsx
 msgid "No changes"
-msgstr ""
+msgstr "Sem mudanças"
 
 #. js-lingui-id: 1sa974
 #: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
 msgid "No chatbots created yet"
-msgstr ""
+msgstr "Nenhum chatbot criado ainda"
 
 #. js-lingui-id: r8v6mL
 #: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx

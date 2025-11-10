@@ -213,7 +213,7 @@ export class WhatsAppService {
         clientChat.status === ClientChatStatus.UNASSIGNED ||
         (clientChat.status === ClientChatStatus.CHATBOT &&
           !message.fromMe &&
-          whatsappIntegration?.chatbotId)
+          whatsappIntegration?.chatbotId) || clientChat.status === ClientChatStatus.FINISHED
       ) {
         const chatbot = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
@@ -298,7 +298,7 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
-            console.log('onFinish', _, sectorId);
+            this.logger.log('onFinish');
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
                 {
@@ -327,8 +327,9 @@ export class WhatsAppService {
             );
           },
         });
-        this.ChatbotRunnerService.clearExecutor(executorKey);
         await executor.runFlow(message.textBody ?? '');
+        // Limpar executor após a execução do fluxo
+        this.ChatbotRunnerService.clearExecutor(executorKey);
       }
     } catch (error) {
       console.log('error', error);

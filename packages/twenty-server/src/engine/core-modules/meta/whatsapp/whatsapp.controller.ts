@@ -51,14 +51,6 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    console.log(
-      'WEBHOOK VERIFICATION',
-      JSON.stringify(
-        { workspaceId, id, mode, challenge, verifyToken },
-        null,
-        2,
-      ),
-    );
     const whatsappIntegrationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -125,15 +117,12 @@ export class WhatsappController {
           msg.type = msg.type.toUpperCase();
 
           const mediaId = extractMediaId(msg);
-          this.logger.warn('mediaId', mediaId);
           const { isBase64Media, base64String, mimeType } =
             extractBase64MediaInfo(msg);
 
           let fileUrl: string | null = null;
-          this.logger.warn(isBase64Media);
 
           if (mediaId?.id) {
-            this.logger.warn(`Downloading media with ID: ${mediaId}`);
             fileUrl =
               (await this.whatsappService.downloadMedia(
                 mediaId.id,

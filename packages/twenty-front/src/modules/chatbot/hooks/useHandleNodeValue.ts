@@ -1,5 +1,5 @@
 import { createNode } from '@/chatbot/utils/createNode';
-import { type XYPosition, useReactFlow } from '@xyflow/react';
+import { useReactFlow } from '@xyflow/react';
 import { v4 } from 'uuid';
 import { type GenericNode, type GenericNodeData } from '../types/GenericNode';
 
@@ -12,17 +12,6 @@ export const useHandleNodeValue = () => {
     node: GenericNode,
   ) => {
     const updatedData = { ...node.data, [key]: value };
-    // Sanitize outgoingNodeId to prevent self-referencing loops
-    if ((updatedData as any).outgoingNodeId === node.id) {
-      (updatedData as any).outgoingNodeId = '';
-    }
-    updateNodeData(node.id, updatedData);
-  };
-
-  const savePositionValue = (position: XYPosition, node: GenericNode) => {
-    // Position is stored on the node itself, not in data
-    // This function might not be needed, but keeping it for consistency
-    const updatedData = { ...node.data };
     // Sanitize outgoingNodeId to prevent self-referencing loops
     if ((updatedData as any).outgoingNodeId === node.id) {
       (updatedData as any).outgoingNodeId = '';
@@ -46,6 +35,8 @@ export const useHandleNodeValue = () => {
     cursorPosition?: { x: number; y: number },
   ) => {
     setNodes((prevNodes) => {
+      // If there are no other nodes, the new node should be the start node
+      console.log('addNode', prevNodes);
       const isFirstNode = prevNodes.length === 0;
       const baseNode = createNode(type);
 
@@ -68,13 +59,13 @@ export const useHandleNodeValue = () => {
           nodeStart: isFirstNode,
         },
       };
+      
       return [...prevNodes, sanitizeNode(newNode)];
     });
   };
 
   return {
     saveDataValue,
-    savePositionValue,
     addNode,
   };
 };
