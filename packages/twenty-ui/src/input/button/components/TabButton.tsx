@@ -65,25 +65,7 @@ const StyledTabHover = styled.span<{
   }
 `;
 
-/* @kvoip-woulz proprietary:begin */
-const StyledMessageBadge = styled.div`
-  background-color: ${({ theme }) => theme.color.blue};
-  border-radius: 50%;
-  color: ${({ theme }) => theme.font.color.inverted};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  box-sizing: border-box;
-`;
-/* @kvoip-woulz proprietary:end */
-
-export type TabButtonProps = {
+type TabButtonProps = {
   id: string;
   active?: boolean;
   disabled?: boolean;
@@ -97,7 +79,6 @@ export type TabButtonProps = {
   pill?: string | ReactElement;
   contentSize?: 'sm' | 'md';
   disableTestId?: boolean;
-  incomingMessages?: number /* @kvoip-woulz proprietary */;
 };
 
 export const TabButton = ({
@@ -114,7 +95,6 @@ export const TabButton = ({
   pill,
   contentSize = 'sm',
   disableTestId = false,
-  incomingMessages /* @kvoip-woulz proprietary */,
 }: TabButtonProps) => {
   const { theme } = useContext(ThemeContext);
   const iconColor = active
@@ -139,13 +119,6 @@ export const TabButton = ({
         {title}
         {RightIcon && <RightIcon color={iconColor} size={theme.icon.size.md} />}
         {pill && (typeof pill === 'string' ? <Pill label={pill} /> : pill)}
-        {/* @kvoip-woulz proprietary:begin */}
-        {incomingMessages !== undefined && incomingMessages > 0 && (
-          <StyledMessageBadge>
-            {incomingMessages > 99 ? '99+' : incomingMessages}
-          </StyledMessageBadge>
-        )}
-        {/* @kvoip-woulz proprietary:end */}
       </StyledTabHover>
     </StyledTabButton>
   );

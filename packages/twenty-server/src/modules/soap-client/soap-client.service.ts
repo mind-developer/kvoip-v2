@@ -8,7 +8,6 @@ import { ClienteEstrutura } from './interfaces/cliente.interface';
 import { ContaVoipEstrutura } from './interfaces/conta-voip.interface';
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
 import { RetornoEstrutura } from './interfaces/return.interface';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class SoapClientService {
@@ -16,32 +15,7 @@ export class SoapClientService {
     'https://log.kvoip.com.br/webservice/index.php?WSDL';
   private readonly logger = new Logger(SoapClientService.name);
 
-  // constructor(private readonly twentyConfigService: TwentyConfigService) {
-  //   if (!twentyConfigService.get('IS_BILLING_ENABLED')) return;
-
-  //   const interBaseUrl = twentyConfigService.get('INTER_BASE_URL');
-
-  //   if (!interBaseUrl) throw new Error('INTER_BASE_URL is not configured');
-
-  //   const certPath = `${process.cwd()}/${twentyConfigService.get('INTER_SECRET_CERT_PATH')}`;
-  //   const keyPath = `${process.cwd()}/${twentyConfigService.get('INTER_SECRET_KEY_PATH')}`;
-
-  //   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath))
-  //     throw new Error('Inter secret files not found');
-
-  //   const httpsAgent = new https.Agent({
-  //     rejectUnauthorized: false,
-  //     cert: fs.readFileSync(certPath),
-  //     key: fs.readFileSync(keyPath),
-  //   });
-
-  //   this.interAxiosInstance = axios.create({
-  //     baseURL: this.twentyConfigService.get('INTER_BASE_URL'),
-  //     httpsAgent,
-  //   });
-  // }
-
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   // TODO: Create correct type for this method.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,8 +36,8 @@ export class SoapClientService {
 
   createAuthStruct(): AuthEstrutura {
     return {
-      usuario: this.twentyConfigService.get('SOFTPHONE_SOAP_USERNAME') || '',
-      senha: this.twentyConfigService.get('SOFTPHONE_SOAP_PASSWORD') || '',
+      usuario: this.configService.get('SOAP_USERNAME') || '',
+      senha: this.configService.get('SOAP_PASSWORD') || '',
     };
   }
 
@@ -151,7 +125,6 @@ export class SoapClientService {
     try {
       // Step 1: Create client
       const clienteResult = await this.insereCliente(clienteData);
-      this.logger.log('clienteResult --------------------------------------------------------------', clienteResult);
 
       if (!clienteResult.status) {
         throw new Error(`Failed to create client: ${clienteResult.erro}`);

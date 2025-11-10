@@ -1,8 +1,7 @@
-/* @kvoip-woulz proprietary */
-import { CallState } from '../types/callState';
-import { CallStatus } from '../types/callStatusEnum';
+import { CallState } from "../types/callState";
+import { CallStatus } from "../types/callStatusEnum";
 
-const defaultCallState: CallState = {
+const defaultCallState : CallState = {
   isRegistered: false,
   isRegistering: false,
   isInCall: false,
@@ -13,7 +12,7 @@ const defaultCallState: CallState = {
   incomingCallNumber: '',
   callStatus: CallStatus.NONE,
   callStartTime: null,
-  ringingStartTime: null,
-};
+  ringingStartTime: null
+}
 
 export default defaultCallState;

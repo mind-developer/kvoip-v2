@@ -15,12 +15,6 @@ export class AddTelephonyFieldsToWorkspace1747142178034
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ADD "pabxDialingPlanId" integer`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "softSwitchClientId" varchar`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "originIpId" varchar`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -32,12 +26,6 @@ export class AddTelephonyFieldsToWorkspace1747142178034
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" DROP COLUMN "pabxCompanyId"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "softSwitchClientId"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "originIpId"`,
     );
   }
 }

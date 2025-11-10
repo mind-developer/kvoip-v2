@@ -50,11 +50,10 @@ export const transformDatabaseBillingSubscriptionToSubscriptionWorkspaceEntity =
     recurrence: billingSubscription.interval as SubscriptionInterval,
     status: billingSubscription.status,
     amount: {
-      // TODO: This will have to change in the future to suport different payment providers as stripe saves the price in a different format.
-      // TODO: We should either make all providers save the prices using stripe format or convert stripe to our db.
       amountMicros:
-        getPriceFromStripeDecimal(price.unitAmountDecimal as string) *
-        1_000_000,
+        (billingSubscription.provider === BillingPaymentProviders.Stripe
+          ? getPriceFromStripeDecimal(price.unitAmountDecimal as string)
+          : (price.unitAmount as number)) * 1_000_000,
       currencyCode: price.currency,
     },
     trialStart: billingSubscription.trialStart,

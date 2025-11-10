@@ -1,14 +1,14 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { GenericNode } from '@/chatbot/types/GenericNode';
 import { TextArea } from '@/ui/input/components/TextArea';
 import {
   Handle,
-  type Node,
-  type NodeProps,
+  Node,
+  NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
   useNodes,
   useReactFlow,
 } from '@xyflow/react';
@@ -27,10 +27,8 @@ const TextNode = ({
     nodeStart: boolean;
   }>
 >) => {
-  const allNodes = useNodes();
-  const node: GenericNode = allNodes.filter(
-    (filterNode) => filterNode.id === id,
-  )[0];
+  const nodeId = useNodeId();
+  const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
 
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
@@ -49,62 +47,44 @@ const TextNode = ({
   });
 
   useEffect(() => {
-    const currentNode = allNodes.find((n) => n.id === id);
-    const currentNodeData = currentNode?.data || data;
-
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
       const sourceHandle = connection.sourceHandle || '';
-      const sourceNodeId = connection.source;
+      const nodeId = connection.source;
 
-      const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
-      const sourceNodeData = sourceNode?.data || {};
-
-      // Update current node with incoming connection info
       updateNodeData(id, {
-        ...currentNodeData,
+        ...data,
         incomingEdgeId: sourceHandle,
-        incomingNodeId: sourceNodeId,
-      });
-
-      // Update source node with outgoing connection info
-      updateNodeData(sourceNodeId!, {
-        ...sourceNodeData,
-        outgoingEdgeId: sourceHandle,
-        outgoingNodeId: id,
+        incomingNodeId: nodeId,
       });
     }
 
     if (sourceConnections.length > 0) {
       const connection = sourceConnections[0];
       const sourceHandle = connection.sourceHandle;
-      const targetNodeId = connection.target;
+      const nodeId = connection.target;
 
-      const targetNode = allNodes.find((n) => n.id === targetNodeId);
-      const targetNodeData = targetNode?.data || {};
-
-      // Update current node with outgoing connection info
-      updateNodeData(id, {
-        ...currentNodeData,
-        outgoingEdgeId: sourceHandle,
-        outgoingNodeId: targetNodeId,
-      });
-
-      // Update target node with incoming connection info
-      updateNodeData(targetNodeId!, {
-        ...targetNodeData,
-        incomingEdgeId: sourceHandle,
-        incomingNodeId: id,
-      });
+      if (data.nodeStart) {
+        updateNodeData(id, {
+          ...data,
+          outgoingNodeId: nodeId || '2',
+        });
+      } else {
+        updateNodeData(id, {
+          ...data,
+          outgoingEdgeId: sourceHandle,
+          outgoingNodeId: nodeId,
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetConnections, sourceConnections, allNodes, id, data.nodeStart]);
+  }, [targetConnections, sourceConnections]);
 
   return (
     <BaseNode
       icon={'IconTextSize'}
-      nodeId={node.id}
-      isInitialNode={node?.data.nodeStart as boolean}
+      title={titleValue ?? 'Text node'}
+      nodeStart={data.nodeStart}
       nodeTypeDescription="Text node"
       onTitleChange={(e) => setTitleValue(e)}
       onTitleBlur={() => {
@@ -121,7 +101,6 @@ const TextNode = ({
       )}
       <>
         <TextArea
-          textAreaId="text-node-text-area"
           label="Message body"
           placeholder="Text message to be sent"
           value={textValue}
@@ -130,13 +109,13 @@ const TextNode = ({
             saveDataValue('text', textValue, node);
           }}
         />
-        <Handle
-          type="source"
-          position={Position.Right}
-          isConnectable={isConnectable}
-          style={{ height: 10, width: 10 }}
-        />
       </>
+      <Handle
+        type="source"
+        position={Position.Right}
+        isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
+      />
     </BaseNode>
   );
 };

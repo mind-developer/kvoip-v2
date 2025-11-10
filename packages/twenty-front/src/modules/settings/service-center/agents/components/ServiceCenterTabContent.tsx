@@ -1,7 +1,7 @@
 import { SettingsServiceCenterFieldActionDropdown } from '@/settings/service-center/agents/components/SettingsServiceCenterFieldActionDropdown';
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/agents/components/SettingsServiceCenterItemTableRow';
 import { useToggleAgentStatus } from '@/settings/service-center/agents/hooks/useToggleAgentStatus';
-import { type Agent } from '@/settings/service-center/agents/types/Agent';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {
   agents: Agent[];
+  refetchAgents: () => void;
 };
 
 const StyledSection = styled(Section)`
@@ -21,6 +22,7 @@ const StyledSection = styled(Section)`
 
 export const ServiceCenterTabContent = ({
   agents,
+  refetchAgents,
 }: ServiceCenterTabContentProps) => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
@@ -57,6 +59,7 @@ export const ServiceCenterTabContent = ({
                   }}
                   onDeactivate={async () => {
                     await toggleAgentStatus(agent.id);
+                    refetchAgents();
                   }}
                   isActive={agent.isActive}
                 />

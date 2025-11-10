@@ -23,7 +23,7 @@ export const chatbotsAllView = (
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconRobot',
+    icon: 'IconSettingsAutomation',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     kanbanFieldMetadataId: '',
     filters: [],
@@ -40,7 +40,7 @@ export const chatbotsAllView = (
       {
         fieldMetadataId:
           chatbotObjectMetadata.fields.find(
-            (field) => field.standardId === CHATBOT_STANDARD_FIELD_IDS.status,
+            (field) => field.standardId === CHATBOT_STANDARD_FIELD_IDS.statuses,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -71,7 +71,7 @@ export const chatbotsAllView = (
           chatbotObjectMetadata.fields.find(
             (field) =>
               field.standardId ===
-              CHATBOT_STANDARD_FIELD_IDS.whatsappIntegrations,
+              CHATBOT_STANDARD_FIELD_IDS.whatsappIntegration,
           )?.id ?? '',
         position: 4,
         isVisible: true,

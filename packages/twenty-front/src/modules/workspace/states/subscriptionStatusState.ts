@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { selector } from 'recoil';
-import { type SubscriptionStatus } from '../../../generated/graphql';
+import { SubscriptionStatus } from '../../../generated/graphql';
 
 export const subscriptionStatusState = selector<SubscriptionStatus | null>({
   key: 'subscriptionStatusState',

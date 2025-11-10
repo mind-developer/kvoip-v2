@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { v4 } from 'uuid';
 
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

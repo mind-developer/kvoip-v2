@@ -16,9 +16,6 @@ export class InterWebhookService {
   async registerWebhook(): Promise<boolean> {
     const accessToken = await this.interInstanceService.getOauthToken();
 
-    this.logger.log(`Tentando registrar webhook 1...`);
-    this.logger.log(`accessToken: ${accessToken}`);
-
     const WEBHOOK_URL = `${this.twentyConfigService.get('WEBHOOK_URL')}/webhooks/inter`;
 
     const requestBody = {

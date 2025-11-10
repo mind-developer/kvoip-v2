@@ -1,22 +1,23 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
 
-import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { useEffect } from 'react';
-
+// eslint-disable-next-line no-restricted-imports
 import { SettingsIntegrationFocusNfeToggleStatusButton } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseToggleStatusButton';
 import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
 import { useToggleFocusNfeIntegrationStatus } from '@/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { type FocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FocusNfeIntegration';
+import { FocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FocusNfeIntegration';
 
 type SettingsIntegrationFocusNfeConectionsListCardProps = {
   integration: SettingsIntegration;

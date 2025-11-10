@@ -1223,6 +1223,10 @@ export class ConfigVariables {
 
   @IsString()
   @IsOptional()
+  META_WEBHOOK_URL: string;
+
+  @IsString()
+  @IsOptional()
   WEBHOOK_URL: string;
 
   // Onesignal
@@ -1283,29 +1287,18 @@ export class ConfigVariables {
   @IsOptional()
   FOCUS_NFE_BASE_URL: string;
 
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
-    description: 'Geo location production api url',
-    type: ConfigVariableType.STRING,
-  })
-  @IsNotEmpty()
-  @ValidateIf((env) => env.NODE_ENV === NodeEnvironment.PRODUCTION)
+  @IsString()
+  @IsOptional()
   GEOLOCATION_API_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
-    description: 'Geo location test api url',
-    type: ConfigVariableType.STRING,
+    description: 'Last number rps issued',
+    type: ConfigVariableType.NUMBER,
   })
+  @CastToPositiveNumber()
   @IsOptional()
-  GEOLOCATION_TEST_API_URL: string = 'http://ip-api.com';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.Other,
-    description: 'Geo location ip used for testing',
-    type: ConfigVariableType.STRING,
-  })
-  GEOLOCATION_TEST_IP: string = '198.51.100.42';
+  LAST_NUMBER_RPS: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
@@ -1496,15 +1489,6 @@ export class ConfigVariables {
   INTER_SECRET_CERT_PATH: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BillingConfig,
-    description: 'The e-mail address to send the invoices to for sandbox test.',
-    isSensitive: true,
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  INTER_SANDBOX_EMAIL_TO?: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Kvoip admin invite hash',
     isSensitive: true,
@@ -1513,34 +1497,6 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   KVOIP_ADMIN_INVITE_HASH: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TelephonyConfig,
-    description: 'Softphone soap username.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsString()
-  @IsOptional()
-  SOFTPHONE_SOAP_USERNAME: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TelephonyConfig,
-    description: 'Soap password.',
-    isSensitive: true,
-    type: ConfigVariableType.STRING,
-  })
-  @IsString()
-  @IsOptional()
-  SOFTPHONE_SOAP_PASSWORD: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
-    description: '',
-    isSensitive: false,
-    type: ConfigVariableType.NUMBER,
-  })
-  @IsOptional()
-  LAST_NUMBER_RPS: number = 1000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

@@ -1,17 +1,17 @@
-import React, { type ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 const Container = styled.div`
-  align-items: center;
   background-color: #f1f1f1;
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  align-items: center;
   justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing(2)};
+  color: ${({ theme }) => theme.font.color.primary};
   padding: 8px 16px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   width: 100%;
+  border: none;
 `;
 
 const StripeAccountConnectedContainer = ({

@@ -46,7 +46,6 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
   invoice: '76b1e10e-2f13-4f94-9d0f-232d7fa534ba',
-  chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -358,26 +357,6 @@ export const FOCUS_NFE_STANDARD_FIELD_ID = {
   invoices: 'df67718b-deba-4f31-b947-e9a8b4967976',
 } as const;
 
-export const SECTOR_FIELD_IDS = {
-  name: '6c986ab5-5e7b-4c60-9cb8-f7748a37e244',
-  icon: 'e8b8da42-fd66-4ab3-abb1-15a5aafc5a39',
-  agents: 'e6a69273-98ae-48ee-af0d-d60843d210cd',
-  timelineActivities: 'df78d56e-4eb2-4aaa-b5fa-58afa386e01c',
-  chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
-  whatsappIntegrations: 'f12979a9-a1a3-4091-b536-0d4345d58f70',
-  abandonmentInterval: '3d3f4bd0-1f85-4b09-a5c5-e646f2d2a51f',
-} as const;
-
-export const AGENT_FIELD_IDS = {
-  isAdmin: 'd87a73d2-ddbc-4b18-b5b7-611440897ceb',
-  isActive: '0ab3e0ac-4b00-4ccb-8753-cda39ee1dcfc',
-  sector: 'aab6d481-1b85-475d-b6e4-6bc58d6050b8',
-  workspaceMember: '89bea358-d134-4aca-b94c-12b5f0514d8d',
-  timelineActivities: '59f80989-6ef7-426d-a8bb-f6b7542854d6',
-  chats: 'e6ce11d2-d479-4147-aa02-8a31885638c2',
-  support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
-} as const;
-
 export const INVOICE_FIELD_IDS = {
   name: '1881e61b-4bd7-4aa7-ad37-6e507a99e9c6',
   nfType: '2548531e-456f-4ca8-b85b-a7260326e696',
@@ -393,6 +372,22 @@ export const INVOICE_FIELD_IDS = {
   cfop: '284b42dc-e264-431f-b7e9-3106f7ec8e98',
   cstIcmsCsosn: '98ff97ad-a078-4188-b855-835db313c723',
   timelineActivities: '3411cd87-c65d-4d2d-8636-c1910fd5a890',
+  // origem: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1',
+  // aliquotaIcms: 'eb601572-7c52-4dad-b077-585bc1615374',
+  // aliquotaPis: '12f215c3-038e-44d3-8bc3-30a43a21aed9',
+  // aliquotaCofins: '56df9004-2ad1-4a35-93d4-d5976768b525',
+  // aliquotaIpi: '6f2f3e01-521d-4a14-8167-eed31cd1e698',
+  // aliquotaIss: 'c8dac85c-20a2-4bb2-8d8e-8126976e812f',
+  // issRetido: 'bb7f967a-6ec7-4410-9b3f-656c32dbe05e',
+  // itemListaServico: 'a77b6974-b911-4e50-9ad5-7fb547ddb8fd',
+  // discriminacao: '4ca3e13c-1522-4b06-949b-7a19597bebb4',
+  // codAssinante: '9cfbbfe1-b6f3-4aa0-9001-b32424705cc4',
+  // numContratoAssinante: '2aecf923-83b1-46a0-be75-1a7b770c34ac',
+  // classificacao: '75a55f5b-5d12-4e93-af0c-625ecfd12ae2',
+  // unidade: '744d7802-7e21-4f65-b0c9-696e2204c4f2',
+  // justificativa: '8169d623-fa6a-4c54-9812-3ea56a69640b',
+  // dataEmissao: '50332075-7324-49ab-ae38-2d6c468f8580',
+  // numeroRps: '60027ee6-65d3-4ff7-8219-8e0ac367d55b',
 
   origin: '9bf6b523-cba2-4df1-b1a5-0e3e274290b1', // origem
   icmsRate: 'eb601572-7c52-4dad-b077-585bc1615374', // aliquotaIcms
@@ -488,8 +483,6 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
   tenant: '30303030-390e-4271-8f14-03957ae27f6e',
-  sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
-  agent: '45194ac8-73e8-4e76-85f9-a1e8f7a4cd1e',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -652,30 +645,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
   support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
-  tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
-  chats: '2f828aa3-a5b0-4fcf-85a9-fe90989b1367',
-} as const;
-
-export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
-  clientChat: 'a224b390-a112-491b-8beb-863d97612f51',
-  from: 'fd6cad84-5105-4b88-a3b9-4081f5209a40',
-  fromType: '9ca3f7be-79bc-483d-b87b-97bd25479aa6',
-  to: 'dd40445b-9e5c-44d3-a7bb-afe543b52a82',
-  toType: '6bb8dabc-4f1c-4120-9479-d5aea729ef71',
-  provider: 'ac28ef07-65da-4afd-941a-d4c6e20dea80',
-  providerMessageId: '76413383-fb39-4587-a686-6736d0f7feb0',
-  type: '86f2f89f-54ff-4365-b5ca-9484f64d8fc5',
-  event: 'a844a730-789d-41f7-969d-24b744405eb6',
-  textBody: '9bb1f483-e428-47ed-a015-9aba0c91f35f',
-  caption: 'dab24e69-2728-47b1-bdb9-371dcc07d5a1',
-  deliveryStatus: '1374f720-eea1-43a4-8f8e-79bbdb53aa0f',
-  edited: '30005416-0c21-4557-98c7-c9d75b5b5ca8',
-  attachmentUrl: 'ac734b13-92c2-4edd-8a44-04b5e5a4c81f',
-  reactions: '115bc5b9-bd49-4be2-bf22-57776537405d',
-  repliesTo: '31b13032-f501-42c1-abca-826ba323ba5e',
-  templateId: 'fde7fd83-0271-4950-b1c9-49338d42b1f8',
-  templateLanguageCode: 'c50d95f9-4366-4948-84f5-acef072a6a74',
-  templateName: '7073b2e6-6076-4657-a0dc-318100b48fd6',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {
@@ -817,34 +786,16 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   searchVector: '20202020-3f17-44ef-b8c1-b282ae8469b2',
 } as const;
 
-export const CLIENT_CHAT_STANDARD_FIELD_IDS = {
-  whatsappIntegration: '291c6ec4-cba9-48a9-9e6a-b1fac0d8266b',
-  providerContactId: 'e3bb903b-1490-4e58-81e3-af028dfd4453',
-  sector: '6af22d10-1af5-42fb-bc2e-82c001227eb8',
-  agent: '521b5083-c7bd-419d-80fe-2c41ee73a6be',
-  person: '81157d97-44b6-432e-aa2b-065b1eefb548',
-  status: 'd4a5d317-9043-451d-b8a6-f25b82b99b07',
-  clientChatMessages: '1c7cca97-cf57-48bb-85bc-f80ed9a58e2a',
-  lastMessageType: 'c391a517-1514-450b-9751-6239c4c18d62',
-  lastMessageDate: 'dde154dd-bfbc-49bd-a127-c71aa5e34b41',
-  lastMessagePreview: '5ebec8ba-14a7-4ac3-91f5-45bbfd27907a',
-  unreadMessagesCount: '8f2e9c1a-3b4d-4e5f-9a8b-2c3d4e5f6a7b',
-} as const;
-
 export const CHATBOT_STANDARD_FIELD_IDS = {
   name: '92a00578-f689-43c6-9d79-5171e9d9ab74',
-  status: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
-  nodes: 'e7b4ca7b-120a-4859-82ed-1349410e98f8',
-  edges: 'f7546bda-a746-4406-ab8c-369fc6746909',
-  viewport: '3ef4132c-8fbd-48e6-b14c-c95b6b86aeac',
+  statuses: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
   position: '41f9c916-7914-44a9-9302-2ee9897d6db7',
   favorites: '045ca203-42d5-4cd9-a320-624e0c76ba25',
   timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
+  whatsappIntegration: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
-  whatsappIntegrations: 'fa8546ab-020d-46ef-8182-39186104fce2',
-  attachments: '35c7ff99-7fde-42a6-a325-0e2d29afb600',
-} as const;
+};
 
 export const WHATSAPP_STANDARD_FIELD_IDS = {
   name: 'f34bf730-b3e2-4513-a8dc-a85f8817105a',
@@ -858,10 +809,8 @@ export const WHATSAPP_STANDARD_FIELD_IDS = {
   chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
   disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
   searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
-  apiType: '0f112edf-794d-4e0d-b054-b7a5a72f15cd',
-  defaultSector: '84b0151b-547b-4b14-a9ad-263968e2868d',
-  clientChats: 'ee41e808-1b6f-4593-a421-87a85118506e',
-} as const;
+  tipoApi: 'c0a80101-0000-0000-0000-000000000001',
+};
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   position: '20202020-1810-4591-a93c-d0df97dca843',
@@ -889,10 +838,10 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
-  agent: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
+  agentId: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
-  telephonies: '2e371500-a9e7-4fcd-ac16-660efa2462c3',
+  extensionNumber: '0271a0fa-20de-45e1-9908-b198bd1e7b99',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
 } as const;
 
@@ -917,7 +866,7 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
 
 export const TELEPHONY_STANDARD_FIELD_IDS = {
   name: '31f61bb0-d981-454f-9703-64d5fbee9d2c',
-  member: '8a80a5a6-9728-4e83-9c16-c7cafce38006',
+  memberId: '469eb1cb-72d3-4f94-b0cd-dd9a05c6c84a',
   numberExtension: '28680674-5024-496a-b554-20ab12f1a02c',
   extensionName: 'bfbc7a80-0260-4e92-be5c-fee6f699e226',
   extensionGroup: '5f86fbba-8fa9-487c-b247-b225b3cfc143',
@@ -954,11 +903,6 @@ export const TELEPHONY_STANDARD_FIELD_IDS = {
   advancedFowarding5Value: '21991b1d-2583-4732-bd88-ce339ab6fdf5',
   searchVector: 'cbeba309-6b50-4d4c-9b4a-1ae4b6af2a58',
 };
-
-export const CLIENT_CHAT_CONFIG_STANDARD_FIELD_IDS = {
-  abandonmentInterval: '2f307b17-e423-4ff6-a3ea-bd83e47f0942',
-  sectors: '3a2b308d-a2a8-402b-a9d7-7c008cddb310',
-} as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,

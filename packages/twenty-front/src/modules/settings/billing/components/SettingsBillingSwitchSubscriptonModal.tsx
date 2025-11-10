@@ -4,7 +4,7 @@ import { Controller } from 'react-hook-form';
 
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
-import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -16,7 +16,7 @@ import { MainButton } from 'twenty-ui/input';
 import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
 import { useHandleSwichPlan } from '@/settings/billing/hooks/useHandleSwichPlan';
 import {
-  type SwitchPlanForm,
+  SwitchPlanForm,
   useSwitchPlanForm,
 } from '@/settings/billing/hooks/useSwitchPlanForm';
 import { useBillingBaseProductPricesQuery } from '~/generated-metadata/graphql';

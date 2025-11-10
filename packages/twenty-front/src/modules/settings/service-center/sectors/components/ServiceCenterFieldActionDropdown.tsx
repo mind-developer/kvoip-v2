@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
   IconArchive,
-  type IconComponent,
+  IconComponent,
   IconDotsVertical,
   IconPencil,
   IconTextSize,
@@ -16,7 +16,112 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { SERVICE_CENTER_ACTION_MODAL_ID } from '../constants/ServiceCenterActionModalId';
-import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+
+// type ServiceCenterFieldActionDropdownProps = {
+//   modalMessage: {
+//     title: string;
+//     subtitle: string;
+//   };
+//   onDelete?: () => void;
+//   onDeactivate?: () => void;
+//   onEdit: (action: ActionType) => void;
+//   onSetAsLabelIdentifier?: () => void;
+//   scopeKey: string;
+//   isActive?: boolean;
+// };
+
+// export type ActionType = 'Edit' | 'View';
+
+// export const ServiceCenterFieldActionDropdown = ({
+//   modalMessage,
+//   onDelete,
+//   onDeactivate,
+//   onEdit,
+//   onSetAsLabelIdentifier,
+//   scopeKey,
+//   isActive,
+// }: ServiceCenterFieldActionDropdownProps) => {
+//   const { closeModal, openModal } = useModal();
+//   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
+
+//   const { closeDropdown } = useDropdown(dropdownId);
+
+//   const handleEdit = (action: ActionType) => {
+//     onEdit(action);
+//     closeDropdown();
+//   };
+
+//   const handleDelete = () => {
+//     onDelete?.();
+//     closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
+//     closeDropdown();
+//   };
+
+//   const handleDeactivate = () => {
+//     onDeactivate?.();
+//     closeModal(SERVICE_CENTER_ACTION_MODAL_ID);
+//     closeDropdown();
+//   };
+
+//   const handleSetAsLabelIdentifier = () => {
+//     onSetAsLabelIdentifier?.();
+//     closeDropdown();
+//   };
+
+//   return (
+//     <>
+//       <Dropdown
+//         dropdownId={dropdownId}
+//         clickableComponent={
+//           <LightIconButton
+//             aria-label="Active Field Options"
+//             Icon={IconDotsVertical}
+//             accent="tertiary"
+//           />
+//         }
+//         dropdownComponents={
+//           <DropdownContent>
+//             <DropdownMenuItemsContainer>
+//               <MenuItem
+//                 text={'Edit'}
+//                 LeftIcon={IconPencil}
+//                 onClick={() => handleEdit('Edit')}
+//               />
+//               {!!onSetAsLabelIdentifier && (
+//                 <MenuItem
+//                   text="Set as record text"
+//                   LeftIcon={IconTextSize}
+//                   onClick={handleSetAsLabelIdentifier}
+//                 />
+//               )}
+//               {!!onDelete && (
+//                 <MenuItem
+//                   text={'Delete'}
+//                   LeftIcon={IconArchive}
+//                   onClick={() => openModal(SERVICE_CENTER_ACTION_MODAL_ID)}
+//                 />
+//               )}
+//               {!!onDeactivate && (
+//                 <MenuItem
+//                   text={isActive ? 'deactivate' : 'reactivate'}
+//                   LeftIcon={IconArchive}
+//                   onClick={() => openModal(SERVICE_CENTER_ACTION_MODAL_ID)}
+//                 />
+//               )}
+//             </DropdownMenuItemsContainer>
+//           </DropdownContent>
+//         }
+//       />
+//       <ConfirmationModal
+//         modalId={SERVICE_CENTER_ACTION_MODAL_ID}
+//         title={modalMessage.title}
+//         subtitle={modalMessage.subtitle}
+//         onConfirmClick={onDelete ? handleDelete : handleDeactivate}
+//         confirmButtonText="Continue"
+//       />
+//     </>
+//   );
+// };
 
 export type ActionType = 'Edit' | 'View';
 
@@ -33,13 +138,13 @@ type ExtraMenuItem = {
 };
 
 type ServiceCenterFieldActionDropdownProps = {
-  modalMessage?: {
+  modalMessage: {
     title: string;
     subtitle: string;
   };
   onDelete?: () => void;
   onDeactivate?: () => void;
-  onEdit?: (action: ActionType) => void;
+  onEdit: (action: ActionType) => void;
   onSetAsLabelIdentifier?: () => void;
   scopeKey: string;
   isActive?: boolean;
@@ -97,17 +202,14 @@ export const ServiceCenterFieldActionDropdown = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {/* --- FIXOS --- */}
-
-              {!!onEdit && (              
-                <MenuItem
-                  text={t`Edit`}
-                  LeftIcon={IconPencil}
-                  onClick={() => {
-                    onEdit('Edit');
-                    toggleDropdown();
-                  }}
-                />
-              )}
+              <MenuItem
+                text={t`Edit`}
+                LeftIcon={IconPencil}
+                onClick={() => {
+                  onEdit('Edit');
+                  toggleDropdown();
+                }}
+              />
 
               {!!onSetAsLabelIdentifier && (
                 <MenuItem
@@ -136,6 +238,7 @@ export const ServiceCenterFieldActionDropdown = ({
                 />
               )}
 
+              {/* --- DINÂMICOS --- */}
               {extraMenuItems?.map((item, idx) => (
                 <MenuItem
                   key={idx}
@@ -157,16 +260,15 @@ export const ServiceCenterFieldActionDropdown = ({
         }
       />
 
-      {!!modalMessage && (
-        <ConfirmationModal
-          modalId={SERVICE_CENTER_ACTION_MODAL_ID}
-          title={modalMessage.title}
-          subtitle={modalMessage.subtitle}
-          onConfirmClick={onDelete ? handleDelete : handleDeactivate}
-          confirmButtonText={t`Continue`}
-        />
-      )}
+      <ConfirmationModal
+        modalId={SERVICE_CENTER_ACTION_MODAL_ID}
+        title={modalMessage.title}
+        subtitle={modalMessage.subtitle}
+        onConfirmClick={onDelete ? handleDelete : handleDeactivate}
+        confirmButtonText={t`Continue`}
+      />
 
+      {/* Modal para itens dinâmicos */}
       {activeExtraModal && (
         <ConfirmationModal
           modalId={SERVICE_CENTER_ACTION_MODAL_ID}

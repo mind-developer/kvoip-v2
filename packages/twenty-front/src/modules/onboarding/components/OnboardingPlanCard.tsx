@@ -11,7 +11,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type BillingPriceLicensedDto,
+  BillingPriceLicensedDto,
   SubscriptionInterval,
 } from '~/generated/graphql';
 

@@ -252,15 +252,10 @@ export class DataloaderService {
               {},
             );
 
-            /* @kvoip-woulz proprietary:begin */
-            return fromFieldMetadataEntityToFieldMetadataDto(
-              {
-                ...fieldMetadata,
-                ...overrides,
-              },
-              i18nInstance,
-            );
-            /* @kvoip-woulz proprietary:end */
+            return fromFieldMetadataEntityToFieldMetadataDto({
+              ...fieldMetadata,
+              ...overrides,
+            });
           });
 
           return filterMorphRelationDuplicateFieldsDTO<FieldMetadataDTO>(

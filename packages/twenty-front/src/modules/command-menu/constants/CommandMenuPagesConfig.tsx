@@ -1,3 +1,6 @@
+import { CommandMenuTicketPage } from '@/chat/call-center/components/CommandMenuTicketPage';
+import { CommandMenuChatbotFlowEditStep } from '@/chatbot/components/CommandMenuChatbotFlowEditStep';
+import { CommandMenuChatbotFlowPage } from '@/chatbot/components/CommandMenuChatbotFlowPage';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuAIChatThreadsPage } from '@/command-menu/pages/AIChatThreads/components/CommandMenuAIChatThreadsPage';
 import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
@@ -39,6 +42,9 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
+  [CommandMenuPages.ChatbotFlow, <CommandMenuChatbotFlowPage />],
+  [CommandMenuPages.ChatbotFlowStepEdit, <CommandMenuChatbotFlowEditStep />],
+  [CommandMenuPages.Ticket, <CommandMenuTicketPage />],
   [CommandMenuPages.AskAI, <CommandMenuAskAIPage />],
   [CommandMenuPages.ViewPreviousAIChats, <CommandMenuAIChatThreadsPage />],
   [

@@ -4,10 +4,10 @@ import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/Chat
 import { LogicOption } from '@/chatbot/components/nodes/LogicOption';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { type GenericNode } from '@/chatbot/types/GenericNode';
+import { GenericNode } from '@/chatbot/types/GenericNode';
 import {
-  type NewConditionalState,
-  type NewLogicNodeData,
+  NewConditionalState,
+  NewLogicNodeData,
 } from '@/chatbot/types/LogicNodeDataType';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
@@ -123,7 +123,6 @@ export const ChatbotFlowConditionalEventForm = ({
     >
       <StyledStepBody>
         <TextArea
-          textAreaId="conditional-event-form-text-area"
           label={`Message body (${text.length}/4000)`}
           placeholder="Insert text to be sent"
           value={text}

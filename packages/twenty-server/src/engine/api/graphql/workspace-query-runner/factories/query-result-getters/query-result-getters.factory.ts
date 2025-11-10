@@ -15,12 +15,10 @@ import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/work
 import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record.guard';
 import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/activity-query-result-getter.handler';
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
-import { ClientChatMessageQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/client-chat-message-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -35,27 +33,13 @@ export class QueryResultGettersFactory {
   );
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly fileService: FileService,
-    /* @kvoip-woulz proprietary:begin */
-    private readonly twentyConfigService: TwentyConfigService,
-    /* @kvoip-woulz proprietary:end */
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
   private initializeHandlers() {
     this.handlers = new Map<string, QueryResultGetterHandlerInterface>([
       ['attachment', new AttachmentQueryResultGetterHandler(this.fileService)],
-      /* @kvoip-woulz proprietary:begin */
-      [
-        'clientChatMessage',
-        new ClientChatMessageQueryResultGetterHandler(
-          this.fileService,
-          this.twentyConfigService,
-        ),
-      ],
-      /* @kvoip-woulz proprietary:end */
       ['person', new PersonQueryResultGetterHandler(this.fileService)],
       [
         'workspaceMember',

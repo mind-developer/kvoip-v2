@@ -1,4 +1,3 @@
-/* @kvoip-woulz proprietary */
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -53,19 +52,21 @@ type CompanyFinancialClosingExecutionsTableProps = {
   loading: boolean;
 };
 
-export const CompanyFinancialClosingExecutionsTable = ({
-  companyExecutions,
-  loading,
+export const CompanyFinancialClosingExecutionsTable = ({ 
+  companyExecutions, 
+  loading 
 }: CompanyFinancialClosingExecutionsTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
 
   const getCompanyFinancialClosingExecutionViewPath = (id: string) => {
-    const path = getSettingsPath(
-      SettingsPath.CompanyFinancialClosingExecution,
-    ).replace(':companyFinancialClosingExecutionId', id);
+    const path = getSettingsPath(SettingsPath.CompanyFinancialClosingExecution).replace(
+      ':companyFinancialClosingExecutionId',
+      id,
+    );
     return path;
   };
+
 
   if (loading) {
     return (
@@ -97,22 +98,26 @@ export const CompanyFinancialClosingExecutionsTable = ({
         <TableHeader></TableHeader>
       </StyledObjectTableRow>
 
-      {companyExecutions.map((execution) => (
-        <CompanyFinancialClosingExecutionRow
-          key={execution.id}
-          execution={execution}
-          action={
-            <StyledIconChevronRight
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          }
-          link={getCompanyFinancialClosingExecutionViewPath(execution.id)}
-        />
-      ))}
+      {companyExecutions.map(
+        (execution) => (
+          <CompanyFinancialClosingExecutionRow
+            key={execution.id}
+            execution={execution}
+            action={
+              <StyledIconChevronRight
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            link={getCompanyFinancialClosingExecutionViewPath(execution.id)}
+          />
+        )
+      )}
 
       {companyExecutions.length === 0 && (
-        <StyledNoResults>{t`No executions found`}</StyledNoResults>
+        <StyledNoResults>
+          {t`No executions found`}
+        </StyledNoResults>
       )}
     </Table>
   );

@@ -158,6 +158,7 @@ export const CreateProfile = () => {
         });
 
         setCurrentWorkspaceMember((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (isDefined(current)) {
             return {
               ...current,
@@ -174,6 +175,7 @@ export const CreateProfile = () => {
         });
 
         setCurrentUser((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (isDefined(current)) {
             return {
               ...current,

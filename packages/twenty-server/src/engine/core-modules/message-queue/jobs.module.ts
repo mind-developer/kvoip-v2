@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -12,15 +11,27 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
+import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
+import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
+import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
+import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { HandlersModule } from 'src/engine/core-modules/chatbot-flow/engine/handlers/handlers.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { WhatsappEmmitResolvedChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-resolved-status.cron.job';
+import { WhatsappEmmitWaitingChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-waiting-status.cron.job';
+import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -35,7 +46,6 @@ import { CleanWorkspaceDeletionWarningUserVarsJob } from 'src/engine/workspace-m
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
-import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
@@ -45,7 +55,14 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, BillingSubscription]),
+    TypeOrmModule.forFeature([
+	ChatbotFlow,
+        Workspace,
+        BillingSubscription,
+        WhatsappIntegration,
+        Sector,
+        WorkspaceAgent,
+      ]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -69,11 +86,13 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
+    MetaModule,
+    HandlersModule,
+    ChatbotFlowModule,
+    ChatMessageManagerModule,
     MessageQueueModule,
     TriggerModule,
     ServerlessFunctionModule,
-    ClientChatMessageModule,
-    ChatMessageManagerModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
@@ -83,9 +102,13 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     CheckExpiredSubscriptionsJob,
-    FileService,
-    JwtService,
-    JwtWrapperService,
+    WhatsAppService,
+    GoogleStorageService,
+    FirebaseService,
+    WhatsappEmmitWaitingChatsCronJob,
+    WhatsappEmmitResolvedChatsCronJob,
+    ChatbotFlowService,
+    ChatMessageManagerService,
   ],
 })
 export class JobsModule {

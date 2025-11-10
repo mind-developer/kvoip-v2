@@ -338,7 +338,7 @@ export const AddressInput = ({
         <TextInput
           value={internalValue.addressNumber ?? ''}
           ref={inputRefs.addressNumber}
-          label="Address Number"
+          label="State"
           fullWidth
           onChange={getChangeHandler('addressNumber')}
           onFocus={getFocusHandler('addressNumber')}

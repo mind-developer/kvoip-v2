@@ -1,3 +1,4 @@
+import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
@@ -16,6 +17,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   IconChartBar,
   IconLink,
+  IconRobot,
   IconSearch,
   IconSettings,
   IconSparkles,
@@ -45,6 +47,8 @@ export const MainNavigationDrawerFixedItems = () => {
   const lastVisitedViewPerObjectMetadataItem =
     useRecoilValue(lastVisitedViewPerObjectMetadataItemState) ?? {};
 
+  const isChatbotEnabled = useRecoilValue(isChatbotEnabledState);
+
   const getNavigationPath = (objectName: string) => {
     const objectMetadata = workspaceFavoritesObjectMetadataItems?.find(
       (item: any) => item.nameSingular === objectName,
@@ -63,6 +67,7 @@ export const MainNavigationDrawerFixedItems = () => {
   };
 
   const traceablePath = getNavigationPath('traceable');
+  const chatbotPath = getNavigationPath('chatbot');
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
@@ -99,6 +104,17 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSettings}
         />
         <ChatNavigationNavItem />
+        {isChatbotEnabled && (
+          <NavigationDrawerItem
+            label="Chatbot"
+            to={chatbotPath}
+            // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+            onClick={() => {
+              navigate(chatbotPath);
+            }}
+            Icon={IconRobot}
+          />
+        )}
         <NavigationDrawerItem
           label="Dashboard links"
           to={'/dashboard-links'}

@@ -2,6 +2,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConectionsListCard } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConectionsListCard';
+import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -16,13 +17,21 @@ export const SettingsIntegrationWhatsappDatabase = () => {
     ({ from: { key } }) => key === 'whatsapp',
   );
 
+  const { refetchWhatsapp } = useFindAllWhatsappIntegrations();
+
+  const isIntegrationAvailable = !!integration;
+
   useEffect(() => {
-    if (!integration) {
+    if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
-  }, [integration, navigateApp]);
+  }, [integration, isIntegrationAvailable, navigateApp]);
 
-  if (!integration) return null;
+  useEffect(() => {
+    refetchWhatsapp();
+  }, [refetchWhatsapp]);
+
+  if (!isIntegrationAvailable) return null;
 
   return (
     <SubMenuTopBarContainer

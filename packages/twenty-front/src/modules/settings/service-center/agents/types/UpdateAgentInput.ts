@@ -1,4 +1,4 @@
-import { type CreateAgentInput } from '~/generated-metadata/graphql';
+import { CreateAgentInput } from '~/generated-metadata/graphql';
 
 export interface UpdateAgentInput extends CreateAgentInput {
   id: string;

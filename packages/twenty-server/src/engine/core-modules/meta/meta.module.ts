@@ -1,49 +1,73 @@
 /* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.module';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { ChatbotRunnerModule } from 'src/engine/core-modules/chatbot-runner/chatbot-runner.module';
-import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
+import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
+import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
+import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
+import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
+import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
+import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { WhatsappCronCommand } from 'src/engine/core-modules/meta/whatsapp/cron/command/whatsapp.cron.command';
+import { WhatsappEmmitResolvedchatsJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
+import { WhatsappEmmitWaitingStatusJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
+import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
+import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
 import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([Workspace]),
+        NestjsQueryTypeOrmModule.forFeature([
+          WhatsappIntegration,
+          Workspace,
+          Inbox,
+          Sector,
+          WorkspaceAgent,
+          ChatbotFlow,
+        ]),
         TypeORMModule,
       ],
     }),
     WorkspaceModule,
     MessageQueueModule,
-    ClientChatMessageModule,
-    ChatbotRunnerModule,
-    TwentyConfigModule,
-    FileModule,
-    ChatMessageManagerModule,
   ],
   exports: [WhatsAppService],
   controllers: [WhatsappController],
   providers: [
+    ChatbotFlowService,
+    WhatsappIntegrationService,
+    WhatsappIntegrationResolver,
+    InboxService,
     WhatsAppService,
     WhatsappResolver,
+    GoogleStorageService,
+    FirebaseService,
+    WhatsappEmmitWaitingStatusJob,
+    WhatsappEmmitResolvedchatsJob,
+    WhatsappCronCommand,
     ChatMessageManagerService,
-    JwtService,
-    JwtWrapperService,
+    TextInputHandler,
+    ImageInputHandler,
+    ConditionalInputHandler,
+    FileInputHandler,
   ],
 })
 export class MetaModule {}

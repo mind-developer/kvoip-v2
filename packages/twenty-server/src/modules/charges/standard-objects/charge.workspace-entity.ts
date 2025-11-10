@@ -2,7 +2,6 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { TEXT_VALIDATION_PATTERNS } from 'twenty-shared/utils';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -79,9 +78,8 @@ registerEnumType(ChargeEntityType, {
   icon: 'IconReportMoney',
   labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
-//! We should either remove this decorator or remove the timelineActivities relation
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSearchable()
+@WorkspaceIsNotAuditLogged()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.name,
@@ -89,12 +87,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Name`,
     description: msg`Charge product`,
     icon: 'IconReportMoney',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.CHARGE_NAME,
-        errorMessage: msg`Insert the charge name`,
-      },
-    },
   })
   @WorkspaceIsNullable()
   name: string;
@@ -135,12 +127,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Request Code`,
     description: msg`Charge request code`,
     icon: 'IconSettings',
-    // settings: {
-    //   validation: {
-    //     ...TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
-    //     errorMessage: msg`Follow the format: REQ-123`,
-    //   },
-    // },
   })
   @WorkspaceIsNullable()
   requestCode: string;
@@ -181,12 +167,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Tax ID`,
     description: msg`CPF or CNPJ identifier for the charge`,
     icon: 'IconId',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.TAX_ID,
-        errorMessage: msg`Follow the format: 000.000.000-00 or 00.000.000/0000-00`,
-      },
-    },
   })
   @WorkspaceIsNullable()
   taxId: string;

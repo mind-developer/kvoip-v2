@@ -1,6 +1,5 @@
-/* @kvoip-woulz proprietary */
 import { CREATE_FINANCIAL_CLOSING } from '@/settings/financial-closing/graphql/mutations/createFinancialClosing';
-import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
+import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 

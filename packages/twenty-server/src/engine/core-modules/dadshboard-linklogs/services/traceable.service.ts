@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { HandleLinkAccessResult } from 'src/engine/core-modules/dadshboard-linklogs/interfaces/traceable.interface';
 
-import { GeolocationApiService } from 'src/engine/core-modules/dadshboard-linklogs/geolocation/services/geolocation-api.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -22,7 +22,6 @@ export class TraceableService {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly geolocationApiService: GeolocationApiService,
   ) {}
 
   async handleLinkAccess(input: {
@@ -82,7 +81,7 @@ export class TraceableService {
     const normalizedPlatform = this.normalizePlatform(platform);
 
     const { country, regionName, city } =
-      await this.geolocationApiService.getLocationByIp(userIp);
+      await this.getGeoLocationFromIp(userIp);
 
     const linklogsRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
@@ -111,6 +110,40 @@ export class TraceableService {
       workspace,
       traceable,
       notFoundUrl,
+    };
+  }
+
+  private async getGeoLocationFromIp(ip: string): Promise<{
+    country: string | null;
+    regionName: string | null;
+    city: string | null;
+  }> {
+    try {
+      const response = await axios.get(
+        `${this.twentyConfigService.get('GEOLOCATION_API_URL')}/${ip}`,
+      );
+
+      const data = response.data;
+
+      if (data?.status === 'success') {
+        return {
+          country: data.country ?? null,
+          regionName: data.regionName ?? null,
+          city: data.city ?? null,
+        };
+      } else {
+        this.logger.warn(`IP lookup failed for ${ip}: ${data?.message}`);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error fetching IP info for ${ip}: ${error?.message || error}`,
+      );
+    }
+
+    return {
+      country: null,
+      regionName: null,
+      city: null,
     };
   }
 

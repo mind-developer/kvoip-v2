@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-import { type BillingBaseProductPricesQueryPlan } from '@/billing/types/planQueryPlan';
+import { BillingBaseProductPricesQueryPlan } from '@/billing/types/planQueryPlan';
 import { geProductPrice } from '@/billing/utils/getProductPrice';
 import { OnboardingPlanCard } from '@/onboarding/components/OnboardingPlanCard';
 import { CardPicker } from 'twenty-ui/input';
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
-import { type BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated/graphql';
 
 const StyledChoosePlanCardContainer = styled.div`
   display: flex;

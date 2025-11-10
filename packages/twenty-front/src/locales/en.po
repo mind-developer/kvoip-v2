@@ -88,23 +88,11 @@ msgstr "{0, plural, one {{days} {1}} other {{days} {2}}}"
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
 msgstr "{0, plural, one {{years} {1}} other {{years} {2}}}"
 
-#. js-lingui-id: J/hVSQ
-#. placeholder {0}: loading ? 'Loading...' : 'No agents transferable'
-#: src/modules/chat/client-chat/components/layout/TransferChatDropdown.tsx
-msgid "{0}"
-msgstr "{0}"
-
 #. js-lingui-id: RfrN2K
 #. placeholder {0}: fileRejection.file.name
 #: src/modules/settings/integrations/inter/components/FileDropZone.tsx
 msgid "{0} upload rejected"
 msgstr "{0} upload rejected"
-
-#. js-lingui-id: 8oBg8K
-#. placeholder {1}: loading ? 'Loading...' : 'No sectors transferable'
-#: src/modules/chat/client-chat/components/layout/TransferChatDropdown.tsx
-msgid "{1}"
-msgstr "{1}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
@@ -222,16 +210,6 @@ msgstr "2FA Method has been deleted successfully."
 msgid "2FA Method Reset"
 msgstr "2FA Method Reset"
 
-#. js-lingui-id: UXlxV2
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "A Chatbot ended the service"
-msgstr "A Chatbot ended the service"
-
-#. js-lingui-id: bogUB9
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "A Chatbot started the service"
-msgstr "A Chatbot started the service"
-
 #. js-lingui-id: keUlu+
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "A draft already exists"
@@ -247,11 +225,6 @@ msgstr "A draft already exists for this workflow. Are you sure you want to erase
 msgid "A role must be selected for the API key"
 msgstr "A role must be selected for the API key"
 
-#. js-lingui-id: XbBimC
-#: src/modules/settings/service-center/sectors/hooks/useNewSectorForm.ts
-msgid "A sector with this name already exists"
-msgstr "A sector with this name already exists"
-
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
@@ -261,12 +234,6 @@ msgstr "A shared environment where you will be able to manage your customer rela
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "A verification email has been sent to"
 msgstr "A verification email has been sent to"
-
-#. js-lingui-id: nPjCmw
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-msgid "Abandonment Interval"
-msgstr "Abandonment Interval"
 
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -284,11 +251,7 @@ msgid "Abort"
 msgstr "Abort"
 
 #. js-lingui-id: uyJsf6
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
-#: src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
@@ -310,10 +273,14 @@ msgid "About this workspace"
 msgstr "About this workspace"
 
 #. js-lingui-id: g3UF2V
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone/components/dialer/IncomingCallBody.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Accept"
 msgstr "Accept"
+
+#. js-lingui-id: +oUYRr
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "Accesses over time"
+msgstr "Accesses over time"
 
 #. js-lingui-id: v+L6Nt
 #: src/modules/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard.tsx
@@ -393,7 +360,6 @@ msgstr "Activate Workflow"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
 msgstr "Active"
@@ -416,11 +382,6 @@ msgstr "Add a Trigger"
 msgid "Add account"
 msgstr "Add account"
 
-#. js-lingui-id: eFX17T
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Add agent"
-msgstr "Add agent"
-
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
@@ -430,11 +391,6 @@ msgstr "Add Approved Access Domain"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 msgid "Add Block"
 msgstr "Add Block"
-
-#. js-lingui-id: mkea2V
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-msgid "Add Extension"
-msgstr "Add Extension"
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -530,20 +486,10 @@ msgstr "Add Output Field"
 msgid "Add rule"
 msgstr "Add rule"
 
-#. js-lingui-id: 3/04Oo
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-msgid "Add sector"
-msgstr "Add sector"
-
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Add SSO Identity Provider"
-
-#. js-lingui-id: F/UgUd
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension.tsx
-msgid "Add Telephony"
-msgstr "Add Telephony"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -655,6 +601,16 @@ msgstr "Afrikaans"
 msgid "Agent"
 msgstr "Agent"
 
+#. js-lingui-id: RSQn8/
+#: src/modules/settings/service-center/agents/hooks/useCreateAgent.ts
+msgid "Agent created successfully!"
+msgstr "Agent created successfully!"
+
+#. js-lingui-id: u2JOu2
+#: src/modules/settings/service-center/agents/hooks/useCreateAgent.ts
+msgid "Agent creation error"
+msgstr "Agent creation error"
+
 #. js-lingui-id: Q37C8E
 #: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
 msgid "Agent Handoffs"
@@ -670,24 +626,16 @@ msgstr "Agent not found"
 msgid "Agent Roles"
 msgstr "Agent Roles"
 
+#. js-lingui-id: SFW8BY
+#: src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts
+msgid "Agent updated successfully!"
+msgstr "Agent updated successfully!"
+
 #. js-lingui-id: 8Uv5e6
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Agents"
 msgstr "Agents"
-
-#. js-lingui-id: a9ItT3
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Agents can be assigned to sectors"
-msgstr "Agents can be assigned to sectors"
-
-#. js-lingui-id: b7u26F
-#: src/pages/settings/service-center/SettingsServiceCenterSection.tsx
-msgid "Agents can be assigned to sectors and message inboxes"
-msgstr "Agents can be assigned to sectors and message inboxes"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -741,11 +689,6 @@ msgstr "All Actions Access"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
 msgstr "All emails and events linked to this account ({accountHandle}) will be deleted"
-
-#. js-lingui-id: 3xw6TR
-#: src/pages/settings/service-center/SettingsServiceCenterShowTabs.tsx
-msgid "All Extensions"
-msgstr "All Extensions"
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -1002,11 +945,6 @@ msgstr "Are you sure you want to delete this record? It can be recovered from th
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Are you sure? Your current information will not be saved."
 
-#. js-lingui-id: KnfX8Z
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Area Code"
-msgstr "Area Code"
-
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1088,16 +1026,6 @@ msgstr "At least 8 characters long."
 msgid "At least one authentication method must be enabled"
 msgstr "At least one authentication method must be enabled"
 
-#. js-lingui-id: 1nIbF/
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Attended is disabled temporarily"
-msgstr "Attended is disabled temporarily"
-
-#. js-lingui-id: JOL9K9
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Attended Transfer"
-msgstr "Attended Transfer"
-
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -1163,11 +1091,6 @@ msgstr "Automatically create People records when receiving or sending emails"
 msgid "Availability"
 msgstr "Availability"
 
-#. js-lingui-id: 1ZQonX
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Available Extensions"
-msgstr "Available Extensions"
-
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1198,11 +1121,6 @@ msgstr "Billing"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Billing interval"
 msgstr "Billing interval"
-
-#. js-lingui-id: q8MuEv
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Blind Transfer"
-msgstr "Blind Transfer"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -1306,11 +1224,6 @@ msgstr "Calendar Sync"
 msgid "Calendars"
 msgstr "Calendars"
 
-#. js-lingui-id: k2XGmq
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Call Device"
-msgstr "Call Device"
-
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -1331,8 +1244,6 @@ msgstr "Can't scan? Copy the"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
-#: src/modules/softphone/components/modal/TransferModal.tsx
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 msgid "Cancel"
@@ -1427,49 +1338,19 @@ msgid "Charge Value"
 msgstr "Charge Value"
 
 #. js-lingui-id: AHZflp
-#: src/modules/chat/client-chat/components/layout/ChatNavigationDrawerHeader.tsx
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr "Chat"
-
-#. js-lingui-id: M9sI+G
-#. placeholder {0}: createdChatbot.name
-#. placeholder {1}: data.whatsappIntegrationIds.join(', ')
-#: src/modules/settings/service-center/chatbots/hooks/useCreateChatbotForm.ts
-msgid "Chatbot \"{0}\" created and linked to \"{1}\""
-msgstr "Chatbot \"{0}\" created and linked to \"{1}\""
-
-#. js-lingui-id: 9MCO4/
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot.tsx
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "Chatbots"
-msgstr "Chatbots"
-
-#. js-lingui-id: ndrhsR
-#: src/pages/settings/service-center/SettingsServiceCenterSection.tsx
-msgid "Chatbots can be assigned to sectors and chat providers"
-msgstr "Chatbots can be assigned to sectors and chat providers"
-
-#. js-lingui-id: peai3l
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "Chatbots will automatically answer messages as soon as they reach their assigned integrations. Chats already in attendance will be ignored."
-msgstr "Chatbots will automatically answer messages as soon as they reach their assigned integrations. Chats already in attendance will be ignored."
-
-#. js-lingui-id: ymYf0R
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-msgid "Chats will be moved to the \"Abandoned\" inbox after this interval if a client hasn't been answered yet."
-msgstr "Chats will be moved to the \"Abandoned\" inbox after this interval if a client hasn't been answered yet."
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
 msgstr "Check your Emails"
 
-#. js-lingui-id: SxwQE8
+#. js-lingui-id: OdCT8h
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Checkout session error. Please retry or contact Twenty team"
+msgid "Checkout session error. Please retry or contact Woulz team"
+msgstr "Checkout session error. Please retry or contact Woulz team"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1495,11 +1376,6 @@ msgstr "Choose between OIDC and SAML protocols"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Choose between Short and Full"
-
-#. js-lingui-id: HiKUGB
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Choose Member"
-msgstr "Choose Member"
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -1566,12 +1442,6 @@ msgstr "Click on \"Add Output Field\" below to define the structure of your AI a
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
 msgstr "Click on the checkmark to apply your changes."
-
-#. js-lingui-id: w4l5xr
-#: src/modules/chat/client-chat/components/layout/ChatNavigationDrawer.tsx
-#: src/modules/chat/client-chat/components/layout/ChatNavigationDrawer.tsx
-msgid "Click to open chat"
-msgstr "Click to open chat"
 
 #. js-lingui-id: d0rtA5
 #: src/modules/dashboards/widgets/graph/components/GraphWidgetTooltip.tsx
@@ -1941,13 +1811,6 @@ msgstr "Cost per 1k Extra Credits"
 msgid "Could not delete approved access domain"
 msgstr "Could not delete approved access domain"
 
-#. js-lingui-id: rsHM9U
-#. placeholder {2}: createdChatbot.name
-#. placeholder {3}: updatedWhatsappIntegration.name
-#: src/modules/settings/service-center/chatbots/hooks/useCreateChatbotForm.ts
-msgid "Could not link chatbot \"{2}\" to WhatsApp integration \"{3}\", please try again"
-msgstr "Could not link chatbot \"{2}\" to WhatsApp integration \"{3}\", please try again"
-
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
@@ -2011,36 +1874,10 @@ msgstr "Create"
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Create {targetObjectLabelSingular}"
 
-#. js-lingui-id: tCtlmZ
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
-msgid ""
-"Create a chatbot and define what integrations it will answer to. Chatbots in \"Draft\" or \"Disabled\" statuses will not answer to any messages. You can change this later.\n"
-"\n"
-""
-msgstr ""
-"Create a chatbot and define what integrations it will answer to. Chatbots in \"Draft\" or \"Disabled\" statuses will not answer to any messages. You can change this later.\n"
-"\n"
-""
-
-#. js-lingui-id: 3zucmP
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "Create a chatbot to get started"
-msgstr "Create a chatbot to get started"
-
-#. js-lingui-id: KOLJtE
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
-msgid "Create a financial closing to get started"
-msgstr "Create a financial closing to get started"
-
 #. js-lingui-id: 7/h1ZC
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Create a new AI agent"
 msgstr "Create a new AI agent"
-
-#. js-lingui-id: CUPA+T
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-msgid "Create a sector to get started"
-msgstr "Create a sector to get started"
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -2051,26 +1888,6 @@ msgstr "Create a workflow and return here to view its versions"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Create a workspace"
-
-#. js-lingui-id: +D/mAn
-#: src/pages/settings/service-center/agents/SettingsServiceCenterNewAgent.tsx
-msgid "Create agent"
-msgstr "Create agent"
-
-#. js-lingui-id: rkv+MZ
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Create an agent to get started"
-msgstr "Create an agent to get started"
-
-#. js-lingui-id: 4Nqrhp
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterTabContent.tsx
-msgid "Create an extension for a member to get started"
-msgstr "Create an extension for a member to get started"
-
-#. js-lingui-id: Kq2GSp
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent.tsx
-msgid "Create an extension to get started"
-msgstr "Create an extension to get started"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2223,11 +2040,6 @@ msgstr "Custom domain updated"
 msgid "Custom objects"
 msgstr "Custom objects"
 
-#. js-lingui-id: up4yQ9
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Customer Service"
-msgstr "Customer Service"
-
 #. js-lingui-id: qt+EaC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Customise the fields available in the {objectLabelSingular} views."
@@ -2264,11 +2076,6 @@ msgid "Czech"
 msgstr "Czech"
 
 #. js-lingui-id: Zz6Cxn
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -2453,17 +2260,6 @@ msgstr "Default View"
 msgid "Define the name and description of your object"
 msgstr "Define the name and description of your object"
 
-#. js-lingui-id: Elnde6
-#: src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
-msgid "Define this agent's properties"
-msgstr "Define this agent's properties"
-
-#. js-lingui-id: wGul5u
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-msgid "Define this sector's properties."
-msgstr "Define this sector's properties."
-
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Define user roles and access levels"
@@ -2481,11 +2277,6 @@ msgid "delete"
 msgstr "delete"
 
 #. js-lingui-id: cnGeoo
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -2523,12 +2314,6 @@ msgstr "Delete account"
 msgid "Delete account and all the associated data"
 msgstr "Delete account and all the associated data"
 
-#. js-lingui-id: 3F2bUD
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
-msgid "Delete agent"
-msgstr "Delete agent"
-
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -2545,12 +2330,6 @@ msgstr "Delete API key"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr "Delete branch"
-
-#. js-lingui-id: hjpJ9E
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-msgid "Delete chatbot"
-msgstr "Delete chatbot"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2582,48 +2361,10 @@ msgstr "Delete role"
 msgid "Delete Role Permanently"
 msgstr "Delete Role Permanently"
 
-#. js-lingui-id: biCtyf
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-msgid "Delete sector"
-msgstr "Delete sector"
-
-#. js-lingui-id: peBKYX
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-msgid "Delete service level"
-msgstr "Delete service level"
-
-#. js-lingui-id: xRazNh
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-msgid "Delete telephony"
-msgstr "Delete telephony"
-
-#. js-lingui-id: +OfAup
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-msgid "Delete telephony integration"
-msgstr "Delete telephony integration"
-
 #. js-lingui-id: DgHnjS
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Delete this agent"
 msgstr "Delete this agent"
-
-#. js-lingui-id: ezIwLc
-#: src/pages/settings/service-center/agents/SettingsServiceCenterEditAgent.tsx
-msgid "Delete this agent?"
-msgstr "Delete this agent?"
-
-#. js-lingui-id: Dv3q+9
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-msgid "Delete this chatbot"
-msgstr "Delete this chatbot"
-
-#. js-lingui-id: LRHW92
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-msgid "Delete this chatbot?"
-msgstr "Delete this chatbot?"
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2634,26 +2375,6 @@ msgstr "Delete this integration"
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Delete this role and assign a new role to its members"
 msgstr "Delete this role and assign a new role to its members"
-
-#. js-lingui-id: Qct9OB
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-msgid "Delete this sector"
-msgstr "Delete this sector"
-
-#. js-lingui-id: TsLY4v
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-msgid "Delete this sector?"
-msgstr "Delete this sector?"
-
-#. js-lingui-id: 6pDeZc
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-msgid "Delete this service level"
-msgstr "Delete this service level"
-
-#. js-lingui-id: Zx+PHF
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-msgid "Delete this telephony integration"
-msgstr "Delete this telephony integration"
 
 #. js-lingui-id: KSOhjo
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2799,21 +2520,10 @@ msgid "Details of the execution of the company in the financial closing"
 msgstr "Details of the execution of the company in the financial closing"
 
 #. js-lingui-id: wqAFwb
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone/components/call/CallControls.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Dial the phone number"
 msgstr "Dial the phone number"
-
-#. js-lingui-id: w9U8oz
-#: src/modules/softphone/components/call/CallControls.tsx
-msgid "Dial the phone number (DTMF)"
-msgstr "Dial the phone number (DTMF)"
-
-#. js-lingui-id: E/QGRL
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
-msgid "Disabled"
-msgstr "Disabled"
 
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2925,11 +2635,6 @@ msgstr "Download file"
 msgid "Download sample file."
 msgstr "Download sample file."
 
-#. js-lingui-id: eneWvv
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
-msgid "Draft"
-msgstr "Draft"
-
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -2988,11 +2693,6 @@ msgstr "Edit Account"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
 msgstr "Edit Agent"
-
-#. js-lingui-id: P1Xu2y
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot.tsx
-msgid "Edit Chatbot"
-msgstr "Edit Chatbot"
 
 #. js-lingui-id: X8x8v5
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
@@ -3171,10 +2871,8 @@ msgid "Empty Object"
 msgstr "Empty Object"
 
 #. js-lingui-id: cEyYbs
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone/components/call/CallControls.tsx
-#: src/modules/softphone/components/call/CallControls.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "End call"
 msgstr "End call"
 
@@ -3227,11 +2925,6 @@ msgstr "Enter array of items or variable expression"
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of step IDs"
 msgstr "Enter array of step IDs"
-
-#. js-lingui-id: GTtNq5
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Enter extension number"
-msgstr "Enter extension number"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -3305,6 +2998,11 @@ msgstr "Error deleting api key."
 msgid "Error deleting invitation"
 msgstr "Error deleting invitation"
 
+#. js-lingui-id: euw+Ln
+#: src/modules/settings/service-center/sectors/hooks/useDeleteSector.ts
+msgid "Error deleting sector"
+msgstr "Error deleting sector"
+
 #. js-lingui-id: cyvTSq
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
@@ -3335,12 +3033,33 @@ msgstr "Error regenerating api key."
 msgid "Error resending invitation"
 msgstr "Error resending invitation"
 
+#. js-lingui-id: 2NAP09
+#: src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts
+msgid "Error toggling agent status"
+msgstr "Error toggling agent status"
+
+#. js-lingui-id: oR+hvI
+#: src/modules/settings/service-center/agents/hooks/useUpdateAgent.ts
+msgid "Error updating agent"
+msgstr "Error updating agent"
+
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts
 #: src/modules/settings/integrations/inter/hooks/useUpdateInterIntegration.ts
 #: src/modules/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration.ts
 msgid "Error updating role"
 msgstr "Error updating role"
+
+#. js-lingui-id: TKkMd8
+#: src/modules/settings/service-center/sectors/hooks/useUpdateSector.ts
+msgid "Error updating sector"
+msgstr "Error updating sector"
+
+#. js-lingui-id: mTV4LO
+#: src/modules/chat/internal/context/chatContext.tsx
+msgid "Error uploading file"
+msgstr "Error uploading file"
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -3626,50 +3345,6 @@ msgstr "Export workflows"
 msgid "Expression"
 msgstr "Expression"
 
-#. js-lingui-id: V3sher
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterItemTableRow.tsx
-#: src/modules/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow.tsx
-msgid "Extension"
-msgstr "Extension"
-
-#. js-lingui-id: E4CiQT
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Extension ID"
-msgstr "Extension ID"
-
-#. js-lingui-id: UiRopk
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Extension Information"
-msgstr "Extension Information"
-
-#. js-lingui-id: oS3rxN
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Extension Name"
-msgstr "Extension Name"
-
-#. js-lingui-id: c/ANJK
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Extension not found"
-msgstr "Extension not found"
-
-#. js-lingui-id: BcoOrs
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Extension Number"
-msgstr "Extension Number"
-
-#. js-lingui-id: d00Ao6
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Extension number not found"
-msgstr "Extension number not found"
-
-#. js-lingui-id: COlIpI
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension.tsx
-msgid "Extensions"
-msgstr "Extensions"
-
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Extra Credits Used"
@@ -3689,16 +3364,6 @@ msgstr "Failed to create checkout session"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
 msgstr "Failed to create handoff"
-
-#. js-lingui-id: Uvyvii
-#: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
-msgid "Failed to create integration"
-msgstr "Failed to create integration"
-
-#. js-lingui-id: 6iZ5iS
-#: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
-msgid "Failed to create session"
-msgstr "Failed to create session"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -3721,14 +3386,10 @@ msgid "Failed to remove override"
 msgstr "Failed to remove override"
 
 #. js-lingui-id: KvW5x6
-#: src/modules/chat/client-chat/components/layout/Chat.tsx
+#: src/modules/chat/internal/components/OpenChat.tsx
+#: src/modules/chat/call-center/components/PaneChat.tsx
 msgid "Failed to start recording. Check microphone access."
 msgstr "Failed to start recording. Check microphone access."
-
-#. js-lingui-id: b6mbQA
-#: src/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection.tsx
-msgid "Failed to subscribe to business account"
-msgstr "Failed to subscribe to business account"
 
 #. js-lingui-id: U/94Qz
 #: src/modules/settings/integrations/focus-nfe/hooks/useUpdateIssuer.ts
@@ -3831,15 +3492,9 @@ msgstr "Filter"
 msgid "Filters"
 msgstr "Filters"
 
-#. js-lingui-id: 8V6XO3
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Finance"
-msgstr "Finance"
-
 #. js-lingui-id: RaGSJi
 #: src/pages/settings/financial-closing/SettingsFinancialClosingNew.tsx
 #: src/pages/settings/financial-closing/SettingsFinancialClosingEdit.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Financial Closing"
 msgstr "Financial Closing"
@@ -3906,6 +3561,16 @@ msgstr "First 5 lines"
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "First Name"
+
+#. js-lingui-id: ylQd2j
+#: src/modules/chatbot/hooks/useChatbotFlowCommandMenu.ts
+msgid "Flow"
+msgstr "Flow"
+
+#. js-lingui-id: xmqRLE
+#: src/modules/chatbot/hooks/useUpdateChatbotFlow.ts
+msgid "Flow updated successfully!"
+msgstr "Flow updated successfully!"
 
 #. js-lingui-id: S5mpO/
 #: src/modules/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration.ts
@@ -4103,11 +3768,6 @@ msgstr "Greek"
 msgid "Group"
 msgstr "Group"
 
-#. js-lingui-id: qY2tZk
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-msgid "Group agents into sectors for easier management"
-msgstr "Group agents into sectors for easier management"
-
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -4200,11 +3860,6 @@ msgstr "How you'll be identified on the app."
 msgid "How your system is doing"
 msgstr "How your system is doing"
 
-#. js-lingui-id: aDLrMs
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "HR"
-msgstr "HR"
-
 #. js-lingui-id: DvpBQM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "HTTP Request"
@@ -4226,7 +3881,6 @@ msgid "Hungarian"
 msgstr "Hungarian"
 
 #. js-lingui-id: wwu18a
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
 msgstr "Icon"
@@ -4351,8 +4005,7 @@ msgid "Inbox"
 msgstr "Inbox"
 
 #. js-lingui-id: ciXrsj
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone/components/dialer/IncomingCallHeader.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "incoming"
 msgstr "incoming"
 
@@ -4408,12 +4061,10 @@ msgid "Instructions for AI"
 msgstr "Instructions for AI"
 
 #. js-lingui-id: nbfdhU
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
@@ -4438,12 +4089,6 @@ msgstr "Inter integration updated successfully!"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Interact with your workspace data"
-
-#. js-lingui-id: 0T34VM
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-msgid "Interval in minutes (max. 60)"
-msgstr "Interval in minutes (max. 60)"
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4558,11 +4203,6 @@ msgstr "Invoice Emission Type"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
 msgstr "Is"
-
-#. js-lingui-id: I537Mi
-#: src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
-msgid "Is Admin"
-msgstr "Is Admin"
 
 #. js-lingui-id: N73SBG
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -4679,20 +4319,10 @@ msgstr "Issuer updated successfully!"
 msgid "Issuer URI"
 msgstr "Issuer URI"
 
-#. js-lingui-id: SuwYYN
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "IT Support"
-msgstr "IT Support"
-
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
 msgstr "Italian"
-
-#. js-lingui-id: 5H6tYm
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "Items per page:"
-msgstr "Items per page:"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
@@ -4853,11 +4483,6 @@ msgstr "Leave blank if you don't need to import emails."
 msgid "Leave blank if you don't need to send emails."
 msgstr "Leave blank if you don't need to send emails."
 
-#. js-lingui-id: vifyyw
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Legal"
-msgstr "Legal"
-
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
@@ -4879,17 +4504,6 @@ msgstr "Light"
 msgid "Link copied to clipboard"
 msgstr "Link copied to clipboard"
 
-#. js-lingui-id: RCsby9
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Link Extension"
-msgstr "Link Extension"
-
-#. js-lingui-id: 8k13l+
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent.tsx
-msgid "Link member"
-msgstr "Link member"
-
 #. js-lingui-id: pGCSfW
 #: src/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow.tsx
 msgid "List of specific executions by company"
@@ -4910,11 +4524,6 @@ msgstr "Listings"
 #: src/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow.tsx
 msgid "Loading"
 msgstr "Loading"
-
-#. js-lingui-id: v0Kjxn
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Loading audio devices..."
-msgstr "Loading audio devices..."
 
 #. js-lingui-id: wMRjyY
 #: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
@@ -4976,16 +4585,6 @@ msgstr "Look up users to impersonate them."
 msgid "Mail Account"
 msgstr "Mail Account"
 
-#. js-lingui-id: /UHZ2t
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Manage agents"
-msgstr "Manage agents"
-
-#. js-lingui-id: CXkqkv
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-msgid "Manage all extensions here."
-msgstr "Manage all extensions here."
-
 #. js-lingui-id: lD1zht
 #: src/pages/settings/financial-closing/SettingsFinancialClosing.tsx
 msgid "Manage all financial closings here."
@@ -5001,21 +4600,11 @@ msgstr "Manage API keys and webhooks"
 msgid "Manage billing information"
 msgstr "Manage billing information"
 
-#. js-lingui-id: WM+yLT
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "Manage chatbots"
-msgstr "Manage chatbots"
-
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
 msgstr "Manage favorite"
-
-#. js-lingui-id: ePL3M+
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
-msgid "Manage financial closings"
-msgstr "Manage financial closings"
 
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5031,11 +4620,6 @@ msgstr "Manage roles and permissions for team members and API keys"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Manage roles and permissions for team members, agents, and API keys"
 msgstr "Manage roles and permissions for team members, agents, and API keys"
-
-#. js-lingui-id: KUy6zQ
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-msgid "Manage sectors"
-msgstr "Manage sectors"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5061,11 +4645,6 @@ msgstr "Manage workflows"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "Manage your internet accounts."
-
-#. js-lingui-id: vo2a+a
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Marketing"
-msgstr "Marketing"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -5097,11 +4676,6 @@ msgstr "MCP Configuration copied to clipboard"
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
 msgstr "Me"
-
-#. js-lingui-id: t5eAlS
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Member linked to extension successfully"
-msgstr "Member linked to extension successfully"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -5161,16 +4735,6 @@ msgstr "Metadata"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "Metadata file generation failed"
-
-#. js-lingui-id: LEcdXu
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Microphone Device"
-msgstr "Microphone Device"
-
-#. js-lingui-id: TQjMPH
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Microphone Level"
-msgstr "Microphone Level"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -5266,9 +4830,6 @@ msgstr "must be an array of valid emails"
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
-#: src/modules/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow.tsx
-#: src/modules/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm.tsx
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -5353,7 +4914,6 @@ msgid "Never expires"
 msgstr "Never expires"
 
 #. js-lingui-id: isRobC
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension.tsx
 #: src/pages/settings/financial-closing/SettingsFinancialClosingNew.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5434,11 +4994,6 @@ msgstr "New SSO provider"
 msgid "Next"
 msgstr "Next"
 
-#. js-lingui-id: /dqduX
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "Next page"
-msgstr "Next page"
-
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -5491,11 +5046,6 @@ msgstr "No agents available"
 msgid "No agents available for handoff"
 msgstr "No agents available for handoff"
 
-#. js-lingui-id: p3UQFR
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "No agents created yet"
-msgstr "No agents created yet"
-
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
@@ -5516,6 +5066,12 @@ msgstr "No API keys available"
 msgid "No API keys match your search"
 msgstr "No API keys match your search"
 
+#. js-lingui-id: urMmxl
+#: src/modules/chat/internal/components/OpenChat.tsx
+#: src/modules/chat/call-center/components/PaneChat.tsx
+msgid "No audio recorded"
+msgstr "No audio recorded"
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
@@ -5525,16 +5081,6 @@ msgstr "No available fields to select"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "No change detected"
-
-#. js-lingui-id: kknhfj
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "No changes"
-msgstr "No changes"
-
-#. js-lingui-id: 1sa974
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "No chatbots created yet"
-msgstr "No chatbots created yet"
 
 #. js-lingui-id: r8v6mL
 #: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
@@ -5566,6 +5112,12 @@ msgstr "No data containing errors"
 msgid "No data found"
 msgstr "No data found"
 
+#. js-lingui-id: R+A2Vd
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+#: src/modules/dashboard-links/components/DashboardAccessOverTime.tsx
+msgid "No data to display"
+msgstr "No data to display"
+
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No Deleted {objectLabelSingular} found"
@@ -5592,25 +5144,10 @@ msgstr "No email exchange has occurred with this record yet."
 msgid "No executions found"
 msgstr "No executions found"
 
-#. js-lingui-id: qy+35+
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent.tsx
-msgid "No extensions found"
-msgstr "No extensions found"
-
-#. js-lingui-id: RJ2/Gg
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent.tsx
-msgid "No extensions found for"
-msgstr "No extensions found for"
-
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/Attachments.tsx
 msgid "No Files"
 msgstr "No Files"
-
-#. js-lingui-id: Jh5XQk
-#: src/modules/settings/financial-closing/components/SettingsFinancialClosings.tsx
-msgid "No financial closings found"
-msgstr "No financial closings found"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
@@ -5662,11 +5199,6 @@ msgstr "No members assigned"
 msgid "No members match your search"
 msgstr "No members match your search"
 
-#. js-lingui-id: rUPMZf
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterTabContent.tsx
-msgid "No members with extensions found"
-msgstr "No members with extensions found"
-
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
@@ -5676,11 +5208,6 @@ msgstr "No metrics data available"
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "No models available. Please configure AI models in your workspace settings."
-
-#. js-lingui-id: xneSeE
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterTabContent.tsx
-msgid "No operators found for \"{searchTerm}\""
-msgstr "No operators found for \"{searchTerm}\""
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -5728,16 +5255,6 @@ msgstr "No roles found"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No rows with errors"
 msgstr "No rows with errors"
-
-#. js-lingui-id: jZ7CGd
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "No sector assigned"
-msgstr "No sector assigned"
-
-#. js-lingui-id: moC+aa
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-msgid "No sectors created yet"
-msgstr "No sectors created yet"
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -5798,11 +5315,6 @@ msgstr "Not empty"
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "Not Found"
-
-#. js-lingui-id: yG0zSJ
-#: src/modules/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow.tsx
-msgid "Not linked"
-msgstr "Not linked"
 
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
@@ -5885,11 +5397,6 @@ msgstr "Objects"
 msgid "Objects and fields permissions settings"
 msgstr "Objects and fields permissions settings"
 
-#. js-lingui-id: BwJKBw
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "of"
-msgstr "of"
-
 #. js-lingui-id: V7rxgd
 #: src/modules/settings/financial-closing/components/SettingsFinancialClosingTableRow.tsx
 msgid "of every day"
@@ -5905,22 +5412,10 @@ msgstr "of the last day of the month"
 msgid "Off the beaten path"
 msgstr "Off the beaten path"
 
-#. js-lingui-id: 6Aih4U
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-msgid "Offline"
-msgstr "Offline"
-
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "On which object(s) should this trigger be available"
-
-#. js-lingui-id: oXOSPE
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-msgid "Online"
-msgstr "Online"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -5963,16 +5458,6 @@ msgstr "Open the ⌘K to trigger this workflow"
 msgid "Opened"
 msgstr "Opened"
 
-#. js-lingui-id: B1MDds
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Operations"
-msgstr "Operations"
-
-#. js-lingui-id: a07hYu
-#: src/pages/settings/service-center/SettingsServiceCenterShowTabs.tsx
-msgid "Operators"
-msgstr "Operators"
-
 #. js-lingui-id: 4MyDFl
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
@@ -6005,6 +5490,11 @@ msgstr "Or"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "Organization"
+
+#. js-lingui-id: hVChxc
+#: src/modules/dashboard-links/components/DashboardLinksChart.tsx
+msgid "Origin of accesses"
+msgstr "Origin of accesses"
 
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/releases/SettingsReleases.tsx
@@ -6201,11 +5691,6 @@ msgstr "Please check your email for a verification link."
 msgid "Please create agents in the AI settings to use in workflows."
 msgstr "Please create agents in the AI settings to use in workflows."
 
-#. js-lingui-id: wAME/c
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Please enter an extension number"
-msgstr "Please enter an extension number"
-
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 #: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
@@ -6226,16 +5711,6 @@ msgstr "Please start your subscription first"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
-
-#. js-lingui-id: 0yi47d
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-msgid "Please type \"yes\" to confirm you want to delete this service level."
-msgstr "Please type \"yes\" to confirm you want to delete this service level."
-
-#. js-lingui-id: aj+AXc
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-msgid "Please type \"yes\" to confirm you want to delete this telephony integration."
-msgstr "Please type \"yes\" to confirm you want to delete this telephony integration."
 
 #. js-lingui-id: GbtYRD
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6386,16 +5861,6 @@ msgstr "Receive an email containing password update link"
 msgid "Recent Events (oldest → newest)"
 msgstr "Recent Events (oldest → newest)"
 
-#. js-lingui-id: sCBpZc
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "Recipient's country"
-msgstr "Recipient's country"
-
-#. js-lingui-id: nnBpTw
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "Recipient's phone number"
-msgstr "Recipient's phone number"
-
 #. js-lingui-id: gcoiFh
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -6460,15 +5925,8 @@ msgstr "Regenerate key"
 msgid "Regenerate Key"
 msgstr "Regenerate Key"
 
-#. js-lingui-id: dmQQce
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-#: src/modules/softphone/constants/enum/SoftphoneStatus.ts
-msgid "Registering"
-msgstr "Registering"
-
 #. js-lingui-id: 1t/NnN
-#: src/modules/softphone-old/components/WebSoftphone.tsx
-#: src/modules/softphone/components/dialer/IncomingCallBody.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Reject"
 msgstr "Reject"
 
@@ -6621,11 +6079,6 @@ msgstr "REST"
 msgid "Restart"
 msgstr "Restart"
 
-#. js-lingui-id: N39IJd
-#: src/modules/chat/client-chat/components/layout/Chat.tsx
-msgid "Restart abandoned service"
-msgstr "Restart abandoned service"
-
 #. js-lingui-id: 82zWno
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6647,11 +6100,6 @@ msgstr "Restore record"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore records"
 msgstr "Restore records"
-
-#. js-lingui-id: mO8KLE
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "results"
-msgstr "results"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
@@ -6722,11 +6170,6 @@ msgstr "Run Function"
 msgid "Russian"
 msgstr "Russian"
 
-#. js-lingui-id: mUv9U4
-#: src/modules/settings/service-center/sectors/components/utils/sectorTemplates.ts
-msgid "Sales"
-msgstr "Sales"
-
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -6743,11 +6186,6 @@ msgstr "Save"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Save as new view"
-
-#. js-lingui-id: UGT5vp
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Save Settings"
-msgstr "Save Settings"
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -6833,11 +6271,6 @@ msgstr "Search any field"
 msgid "Search API keys"
 msgstr "Search API keys"
 
-#. js-lingui-id: a4xYoA
-#: src/modules/chat/client-chat/components/layout/ChatNavigationDrawerHeader.tsx
-msgid "Search chats"
-msgstr "Search chats"
-
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
 msgid "Search config variables"
@@ -6853,16 +6286,6 @@ msgstr "Search country"
 msgid "Search currency"
 msgstr "Search currency"
 
-#. js-lingui-id: dImxjZ
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-msgid "Search extensions and operators..."
-msgstr "Search extensions and operators..."
-
-#. js-lingui-id: 7H5EOl
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Search extensions..."
-msgstr "Search extensions..."
-
 #. js-lingui-id: 7taA9j
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -6871,16 +6294,6 @@ msgstr "Search extensions..."
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr "Search fields"
-
-#. js-lingui-id: 9Ffp8l
-#: src/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots.tsx
-msgid "Search for a chatbot..."
-msgstr "Search for a chatbot..."
-
-#. js-lingui-id: S82MZI
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Search for an agent..."
-msgstr "Search for an agent..."
 
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -6933,32 +6346,25 @@ msgstr "Secret"
 msgid "Secret (optional)"
 msgstr "Secret (optional)"
 
-#. js-lingui-id: 0XGeB0
-#: src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
-msgid "Sector"
-msgstr "Sector"
+#. js-lingui-id: xmdoZY
+#: src/modules/settings/service-center/sectors/hooks/useCreateSector.ts
+msgid "Sector created successfully!"
+msgstr "Sector created successfully!"
 
-#. js-lingui-id: MY9SRR
-#. placeholder {0}: createdSector.name
-#: src/modules/settings/service-center/sectors/hooks/useNewSectorForm.ts
-msgid "Sector {0} created"
-msgstr "Sector {0} created"
+#. js-lingui-id: h0llnT
+#: src/modules/settings/service-center/sectors/hooks/useCreateSector.ts
+msgid "Sector creation error"
+msgstr "Sector creation error"
 
-#. js-lingui-id: v2IO5i
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterEditSector.tsx
-msgid "Sector deleted successfully"
-msgstr "Sector deleted successfully"
+#. js-lingui-id: gd3T/w
+#: src/modules/settings/service-center/sectors/hooks/useDeleteSector.ts
+msgid "Sector deleted successfully!"
+msgstr "Sector deleted successfully!"
 
-#. js-lingui-id: BD/9kt
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Sectors"
-msgstr "Sectors"
-
-#. js-lingui-id: 7JrROl
-#: src/pages/settings/service-center/SettingsServiceCenterSection.tsx
-msgid "Sectors group agents for easier management"
-msgstr "Sectors group agents for easier management"
+#. js-lingui-id: LpDMsV
+#: src/modules/settings/service-center/sectors/hooks/useUpdateSector.ts
+msgid "Sector updated successfully!"
+msgstr "Sector updated successfully!"
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -7127,16 +6533,6 @@ msgstr "Select Group"
 msgid "Select header row"
 msgstr "Select header row"
 
-#. js-lingui-id: l2g0QG
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "Select items per page"
-msgstr "Select items per page"
-
-#. js-lingui-id: 2B3/hC
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
-msgid "Select Member to Link"
-msgstr "Select Member to Link"
-
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Source"
@@ -7187,11 +6583,6 @@ msgstr "Send an invite email to your team"
 msgid "Send Email"
 msgstr "Send Email"
 
-#. js-lingui-id: /MN/IT
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "Send template message"
-msgstr "Send template message"
-
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7213,53 +6604,15 @@ msgstr "Sent and Received"
 msgid "Serbian (Cyrillic)"
 msgstr "Serbian (Cyrillic)"
 
-#. js-lingui-id: 8i4Oxy
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephony.tsx
-#: src/pages/settings/service-center/sectors/SettingsServiceCenterSectors.tsx
-#: src/pages/settings/service-center/agents/SettingsServiceCenterAgents.tsx
-msgid "Service Center"
-msgstr "Service Center"
-
-#. js-lingui-id: eQrG4L
-#: src/modules/chat/client-chat/hooks/useClientChats.ts
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service finished"
-msgstr "Service finished"
-
-#. js-lingui-id: 7kB8al
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-msgid "Service level deleted successfully"
-msgstr "Service level deleted successfully"
-
-#. js-lingui-id: h99bZy
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service moved to abandoned due to inactivity from agent"
-msgstr "Service moved to abandoned due to inactivity from agent"
-
-#. js-lingui-id: mJ8E7h
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service placed on hold"
-msgstr "Service placed on hold"
+#. js-lingui-id: Np58q1
+#: src/modules/settings/service-center/service-level/hooks/useUpdateWhatsappServiceLevel.ts
+msgid "Service Level updated successfully!"
+msgstr "Service Level updated successfully!"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "Service Provider Details"
-
-#. js-lingui-id: ZAaerP
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service started"
-msgstr "Service started"
-
-#. js-lingui-id: ZVzWsc
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service transferred to agent:"
-msgstr "Service transferred to agent:"
-
-#. js-lingui-id: sEvk6a
-#: src/modules/chat/client-chat/components/message/EventMessage.tsx
-msgid "Service transferred to sector:"
-msgstr "Service transferred to sector:"
 
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -7375,11 +6728,6 @@ msgstr "Show hidden groups"
 msgid "Show only rows with errors"
 msgstr "Show only rows with errors"
 
-#. js-lingui-id: g7jwTg
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "Showing"
-msgstr "Showing"
-
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -7477,11 +6825,6 @@ msgstr "SMTP Username"
 msgid "smtp.example.com"
 msgstr "smtp.example.com"
 
-#. js-lingui-id: QXa+ZN
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Softphone Audio Settings"
-msgstr "Softphone Audio Settings"
-
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -7536,11 +6879,6 @@ msgstr "Standard"
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 
-#. js-lingui-id: Fwt4IV
-#: src/modules/chat/client-chat/components/layout/Chat.tsx
-msgid "Start Service"
-msgstr "Start Service"
-
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
@@ -7554,7 +6892,6 @@ msgstr "State"
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/financial-closing/SettingsFinancialClosingExecutions.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/modules/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm.tsx
 #: src/modules/settings/financial-closing/components/FinancialClosingExecutionDetailsCard.tsx
 #: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable.tsx
 #: src/modules/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard.tsx
@@ -7681,6 +7018,11 @@ msgstr "Subscriptions"
 #: src/modules/settings/financial-closing/constants/FinancialClosingExecutionStatus.ts
 msgid "Success"
 msgstr "Success"
+
+#. js-lingui-id: 1vN0Fy
+#: src/modules/settings/service-center/agents/hooks/useToggleAgentStatus.ts
+msgid "Successful agent status change"
+msgstr "Successful agent status change"
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -7822,11 +7164,14 @@ msgid "Tax Invocies"
 msgstr "Tax Invocies"
 
 #. js-lingui-id: yEt5zR
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension.tsx
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension.tsx
 #: src/modules/navigation/components/AdminWorkspaceNavigationItems.tsx
 msgid "Telephony"
 msgstr "Telephony"
+
+#. js-lingui-id: W4A/Fb
+#: src/modules/settings/service-center/telephony/hooks/useCreateTelephony.ts
+msgid "Telephony creation error"
+msgstr "Telephony creation error"
 
 #. js-lingui-id: KIk6yG
 #: src/modules/settings/service-center/telephony/hooks/useCreateTelephony.ts
@@ -7839,8 +7184,6 @@ msgid "Terms of Service"
 msgstr "Terms of Service"
 
 #. js-lingui-id: NnH3pK
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "Test"
@@ -7890,11 +7233,6 @@ msgstr "The email associated to your account"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "The icon your workflow trigger will display in the command menu"
-
-#. js-lingui-id: 69rXmz
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "The integrations below have template messaging capabilities. Choose the one you want to use to send a template message from."
-msgstr "The integrations below have template messaging capabilities. Choose the one you want to use to send a template message from."
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -8017,10 +7355,10 @@ msgstr "This database value overrides environment settings. "
 msgid "This is required to enable manual row reordering."
 msgstr "This is required to enable manual row reordering."
 
-#. js-lingui-id: smgHRe
-#: src/modules/chat/client-chat/components/message/MessageBubble.tsx
-msgid "This message type is currently not supported"
-msgstr "This message type is currently not supported"
+#. js-lingui-id: oW3yYY
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This month"
+msgstr "This month"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -8049,18 +7387,24 @@ msgstr "This value will be saved to the database."
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
 msgid "This week"
 msgstr "This week"
-
-#. js-lingui-id: 9EcKYB
-#: src/modules/chat/client-chat/components/layout/ChatHeader.tsx
-msgid "This will end the chat and change the status of the service to finished"
-msgstr "This will end the chat and change the status of the service to finished"
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+
+#. js-lingui-id: xYHlfW
+#: src/modules/dashboard-links/components/ui/DashboardFilterDropdown.tsx
+msgid "This year"
+msgstr "This year"
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
+msgstr "Ticket"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -8089,11 +7433,6 @@ msgstr "Time zone"
 msgid "Timestamp and participants will be shared with your team."
 msgstr "Timestamp and participants will be shared with your team."
 
-#. js-lingui-id: dMtLDE
-#: src/modules/ui/layout/pagination/components/PaginationComponent.tsx
-msgid "to"
-msgstr "to"
-
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -8121,26 +7460,10 @@ msgstr "Tomorrow"
 msgid "Total of Companies"
 msgstr "Total of Companies"
 
-#. js-lingui-id: jY1I7M
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "Touch Device"
-msgstr "Touch Device"
-
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Track your {intervalLabel} workflow credit consumption."
-
-#. js-lingui-id: BD6DfP
-#: src/modules/softphone/components/modal/TransferModal.tsx
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Transfer Call"
-msgstr "Transfer Call"
-
-#. js-lingui-id: Po5VxZ
-#: src/modules/softphone/components/modal/TransferModal.tsx
-msgid "Transfer Type"
-msgstr "Transfer Type"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8190,12 +7513,6 @@ msgstr "Trigger Type"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "True"
 msgstr "True"
-
-#. js-lingui-id: jKoZME
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterTabContent.tsx
-#: src/modules/settings/service-center/telephony/components/SettingsServiceCenterExtensionsTabContent.tsx
-msgid "Try a different search term"
-msgstr "Try a different search term"
 
 #. js-lingui-id: haaL9N
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -8627,6 +7944,16 @@ msgstr "Welcome to {workspaceName}"
 msgid "What this API can do: Select a user role to define its permissions."
 msgstr "What this API can do: Select a user role to define its permissions."
 
+#. js-lingui-id: fUMmQw
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useCreateWhatsappIntegration.ts
+msgid "Whatsapp integration created successfully!"
+msgstr "Whatsapp integration created successfully!"
+
+#. js-lingui-id: LfslSL
+#: src/modules/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration.ts
+msgid "Whatsapp integration updated successfully!"
+msgstr "Whatsapp integration updated successfully!"
+
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -8704,11 +8031,6 @@ msgstr "Workspace Info"
 msgid "Workspace logo"
 msgstr "Workspace logo"
 
-#. js-lingui-id: qc38qR
-#: src/modules/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm.tsx
-msgid "Workspace Member"
-msgstr "Workspace Member"
-
 #. js-lingui-id: CozWO1
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
@@ -8755,10 +8077,6 @@ msgid "years"
 msgstr "years"
 
 #. js-lingui-id: 3d1wCB
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-#: src/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit.tsx
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
-#: src/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -8794,26 +8112,6 @@ msgstr "You can set up any combination of IMAP (receiving emails), SMTP (sending
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 msgid "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
 msgstr "You cannot edit this connection because it has tracked tables. If you need to make changes, please create a new connection or unsync the tables first."
-
-#. js-lingui-id: OBM9GX
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "You cannot select this template because it is not approved."
-msgstr "You cannot select this template because it is not approved."
-
-#. js-lingui-id: 1shC1N
-#: src/modules/chat/client-chat/components/layout/SendTemplateModal.tsx
-msgid "You cannot select this type of template because it is not currently supported."
-msgstr "You cannot select this type of template because it is not currently supported."
-
-#. js-lingui-id: AQSngY
-#: src/modules/softphone/components/modal/AudioDevicesModal.tsx
-msgid "You must select the microphone before starting the call"
-msgstr "You must select the microphone before starting the call"
-
-#. js-lingui-id: 0MOFbc
-#: src/modules/chat/client-chat/hooks/useClientChats.ts
-msgid "You no longer have access to this chat"
-msgstr "You no longer have access to this chat"
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

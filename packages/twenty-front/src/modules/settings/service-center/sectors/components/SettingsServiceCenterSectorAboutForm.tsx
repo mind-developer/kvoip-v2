@@ -1,12 +1,11 @@
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { SettingsServiceCenterSectorTopicSelect } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorTopicSelect';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 
@@ -14,18 +13,22 @@ const sectorMetadataFormSchema = z.object({
   id: z.string(),
   icon: z.string(),
   name: z.string().min(3, 'Name is required'),
-  abandonmentInterval: z
-    .number()
-    .min(1, 'Abandonment interval must be at least 10 minutes')
-    .max(60, 'Abandonment interval must be less than 60 minutes')
-    .default(10)
-    .optional(),
+  workspaceId: z.string(),
+  topics: z.array(
+    z.object({
+      color: z.string(),
+      id: z.string().uuid(),
+      label: z.string(),
+      position: z.number().int(),
+      value: z.string(),
+    }),
+  ),
 });
 
 export const SettingsSectorFormSchema = sectorMetadataFormSchema.pick({
   icon: true,
   name: true,
-  abandonmentInterval: true,
+  topics: true,
 });
 
 export type SettingsSectorFormSchemaValues = z.infer<
@@ -62,6 +65,8 @@ export const SettingsServiceCenterSectorAboutForm = ({
   disableNameEdit,
   activeSector,
 }: SettingsServiceCenterSectorAboutFormProps) => {
+  // const { t } = useTranslation();
+
   const { control, reset } = useFormContext<SettingsSectorFormSchemaValues>();
 
   useEffect(() => {
@@ -69,9 +74,10 @@ export const SettingsServiceCenterSectorAboutForm = ({
     if (activeSector) {
       reset({
         id: activeSector.id ?? '',
-        icon: activeSector.icon ?? 'IconBadge',
+        icon: activeSector.icon ?? 'IconListNumbers',
         name: activeSector.name ?? '',
-        abandonmentInterval: activeSector.abandonmentInterval ?? 10,
+        topics: activeSector.topics ?? [],
+        workspaceId: activeSector.workspace.id ?? '',
       });
     }
   }, [activeSector, reset]);
@@ -112,32 +118,7 @@ export const SettingsServiceCenterSectorAboutForm = ({
         </StyledInputsContainer>
       </Section>
       <Section>
-        <H2Title
-          title={t`Abandonment Interval`}
-          description={t`Chats will be moved to the "Abandoned" inbox after this interval if a client hasn't been answered yet.`}
-        />
-        <Controller
-          name="abandonmentInterval"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              value={value?.toString() || ''}
-              onChange={(inputValue) => {
-                const numberValue = Number(inputValue);
-                if (numberValue > 60) {
-                  return;
-                }
-                onChange(numberValue);
-              }}
-              label={t`Interval in minutes (max. 60)`}
-              placeholder="10"
-              disabled={disabled}
-              type="number"
-              min="1"
-              max="60"
-            />
-          )}
-        />
+        <SettingsServiceCenterSectorTopicSelect />
       </Section>
     </>
   );
