@@ -48,7 +48,9 @@ export class ConditionalInputHandler implements NodeHandler {
     } = params;
     const logic = node.data?.logic as NewConditionalState | undefined;
 
-    if (!logic || !logic.logicNodeData) return null;
+    if (!logic || !logic.logicNodeData) {
+      return null;
+    }
 
     // Usa o estado passado pelo executor, ou cria um novo se não fornecido (fallback)
     const askedNodesSet = askedNodes || new Set<string>();
@@ -138,23 +140,24 @@ export class ConditionalInputHandler implements NodeHandler {
         );
       }
 
-      // Retorna null para esperar a resposta do usuário antes de avaliar condições
       return null;
     }
 
     for (const d of logic.logicNodeData) {
       const sector = sectors.find((s) => s.id === d.sectorId);
-      const sectorName = sector?.name.toLowerCase() ?? '';
+      const sectorName = sector?.name.toLowerCase().trim() ?? '';
 
-      const option = d.option.toLowerCase();
-      const comparison = d.comparison;
+      const option = d.option.toLowerCase().trim();
+      const comparison = d.comparison || '==';
       const condition = d.conditionValue;
 
       const matchOption = this.compare(input, option, comparison);
       const fallbackMessage = d.message?.toLowerCase().trim() ?? '';
       const matchSector = sectorName
         ? this.compare(input, sectorName, comparison)
-        : this.compare(input, fallbackMessage, comparison);
+        : fallbackMessage
+          ? this.compare(input, fallbackMessage, comparison)
+          : false;
 
       const matched =
         condition === '||'
@@ -162,8 +165,17 @@ export class ConditionalInputHandler implements NodeHandler {
           : matchOption && matchSector;
 
       if (matched) {
-        askedNodesSet.delete(nodeId); // limpa para próxima vez que cair aqui
-        return d.outgoingNodeId ?? null;
+        askedNodesSet.delete(nodeId);
+        const conditionOutgoingNodeId =
+          d.outgoingNodeId && d.outgoingNodeId.trim() !== ''
+            ? d.outgoingNodeId
+            : null;
+        const nodeOutgoingNodeId =
+          typeof node.data?.outgoingNodeId === 'string'
+            ? node.data.outgoingNodeId
+            : null;
+        const outgoingNodeId = conditionOutgoingNodeId ?? nodeOutgoingNodeId;
+        return outgoingNodeId;
       }
     }
 
