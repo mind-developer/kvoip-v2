@@ -11,7 +11,6 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 import { TraceableModule } from 'src/modules/traceable/traceable.module';
 import { ViewModule } from 'src/modules/view/view.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
-import { ClientChatMessageModule } from './client-chat-message/client-chat-message.module';
 
 @Module({
   imports: [
@@ -26,7 +25,6 @@ import { ClientChatMessageModule } from './client-chat-message/client-chat-messa
     SoapClientModule,
     ChargeModule,
     FinancialClosingExecutionModule,
-    ClientChatMessageModule,
   ],
   providers: [],
   exports: [],

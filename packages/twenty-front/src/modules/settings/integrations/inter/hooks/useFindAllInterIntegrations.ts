@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_INTER_INTEGRATIONS } from '@/settings/integrations/inter/graphql/query/interIntegrationByWorkspace';
-import { type FindInterIntegration } from '@/settings/integrations/inter/types/FindInterIntegrationInput';
+import { FindInterIntegration } from '@/settings/integrations/inter/types/FindInterIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type FindAllInterIntegrations = {

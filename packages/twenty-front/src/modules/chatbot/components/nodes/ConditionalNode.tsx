@@ -4,13 +4,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
-import { GenericNode, type GenericNodeData } from '@/chatbot/types/GenericNode';
-import { type NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import { GenericNodeData } from '@/chatbot/types/GenericNode';
+import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
 import {
   Handle,
-  type Node,
-  type NodeProps,
+  Node,
+  NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -51,10 +51,7 @@ function ConditionalNode({
   const [titleInput, setTitleInput] = useState(data.title ?? '');
 
   const thisNodeId = useNodeId();
-  const allNodes = useNodes();
-  const thisNode: GenericNode = allNodes.filter(
-    (node) => node.id === thisNodeId,
-  )[0];
+  const thisNode = useNodes().find((node) => node.id === thisNodeId);
 
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
@@ -65,6 +62,7 @@ function ConditionalNode({
   });
 
   useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (data.logic) {
       setLogicState(data.logic);
     }
@@ -87,25 +85,20 @@ function ConditionalNode({
       }),
     };
 
-    /* @kvoip-woulz proprietary:begin */
-    const currentNode = allNodes.find((n) => n.id === thisNodeId);
-    const currentNodeData = currentNode?.data || data;
-    /* @kvoip-woulz proprietary:end */
-
-    updateNodeData(thisNodeId!, {
-      ...currentNodeData,
+    updateNodeData(id, {
+      ...data,
       logic: updatedLogic,
     });
 
     setLogicState(updatedLogic);
-  }, [sourceConnections, allNodes, thisNodeId, data]);
+  }, [sourceConnections]);
 
   if (thisNode)
     return (
       <BaseNode
         icon={'IconHierarchy'}
-        isInitialNode={thisNode?.data.nodeStart as boolean}
-        nodeId={thisNode.id}
+        title={data.title ?? 'Conditional Node'}
+        //add this description to node data
         nodeTypeDescription="If/else node"
         onTitleChange={(e) => setTitleInput(e)}
         onTitleBlur={() => {
@@ -117,6 +110,7 @@ function ConditionalNode({
         }}
       >
         <Handle
+          title={data.title}
           type="target"
           position={Position.Top}
           isConnectable={isConnectable}

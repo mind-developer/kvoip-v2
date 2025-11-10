@@ -6,16 +6,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 
 import { compareDesc } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FocusNFeResponse } from 'src/modules/focus-nfe/types/FocusNFeResponse.type';
 import { InvoiceFocusNFe } from 'src/modules/focus-nfe/types/InvoiceFocusNFe.type';
 import { NfType } from 'src/modules/focus-nfe/types/NfType';
-import {
-  buildNFComPayload,
-  buildNFSePayload,
-  getCurrentFormattedDate,
-} from 'src/modules/focus-nfe/utils/nf-builder';
+import { buildNFComPayload, buildNFSePayload, getCurrentFormattedDate } from 'src/modules/focus-nfe/utils/nf-builder';
 import {
   validateNFCom,
   validateNFSe,
@@ -100,7 +97,7 @@ export class FocusNFeService {
     nfcom: { validate: validateNFCom, endpoint: '/nfcom' },
     nfse: { validate: validateNFSe, endpoint: '/nfse' },
     // nfe: { validate: validateNFe, endpoint: '/nfe' },  // TODO: habilitar os demais modelos de NF
-    // nfce: { validate: validateNFCe, endpoint: '/nfce' },
+    // nfce: { validate: validateNFCe, endpoint: '/nfce' }, 
   };
 
   async preIssueNf(
@@ -108,6 +105,7 @@ export class FocusNFeService {
     workspaceId: string,
     productObj?: ProductWorkspaceEntity,
   ): Promise<FocusNFeResponse | void> {
+
     const { company, focusNFe } = invoice;
 
     const product = productObj ? productObj : invoice.product;
@@ -130,18 +128,11 @@ export class FocusNFeService {
             focusNFe?.token,
           );
         } catch (error) {
-          this.logger.error(
-            `Erro ao buscar código do município do prestador: ${error.message}`,
-          );
+          this.logger.error(`Erro ao buscar código do município do prestador: ${error.message}`);
           return {
             success: false,
-            error:
-              msg`Error in the city of the provider` +
-              ' ' +
-              focusNFe?.city +
-              ' - ' +
-              error.message,
-            data: null,
+            error: msg`Error in the city of the provider` + ' ' + focusNFe?.city + ' - ' + error.message,
+            data: null
           };
         }
 
@@ -153,13 +144,8 @@ export class FocusNFeService {
         } catch (error) {
           return {
             success: false,
-            error:
-              msg`Error in the city of the recipient` +
-              ' ' +
-              invoice.company?.address.addressCity +
-              ' - ' +
-              error.message,
-            data: null,
+            error: msg`Error in the city of the recipient` + ' ' + invoice.company?.address.addressCity + ' - ' + error.message,
+            data: null
           };
         }
 
@@ -171,18 +157,21 @@ export class FocusNFeService {
         );
 
         if (!nfse) {
-          this.logger.log(
-            'Erro ao construir o objeto de envio para emissão da NF-se.',
-          );
+          this.logger.log('Erro ao construir o objeto de envio para emissão da NF-se.');
           return;
-        }
+        };
 
         this.logger.log(`DADOS DA NF:`);
         this.logger.log(`codMunicipioPrestador: ${codMunicipioPrestador}`);
         this.logger.log(`codMunicipioTomador: ${codMunicipioTomador}`);
         this.logger.log(`nfse: ${JSON.stringify(nfse, null, 2)}`);
 
-        result = await this.issueNF('nfse', nfse, invoice.id, focusNFe?.token);
+        result = await this.issueNF(
+          'nfse',
+          nfse,
+          invoice.id,
+          focusNFe?.token,
+        );
 
         // adiciona o rps no result
         result.data = {
@@ -205,18 +194,11 @@ export class FocusNFeService {
             focusNFe?.token,
           );
         } catch (error) {
-          this.logger.error(
-            `Erro ao buscar código do município do emitente: ${error.message}`,
-          );
+          this.logger.error(`Erro ao buscar código do município do emitente: ${error.message}`);
           return {
             success: false,
-            error:
-              msg`Error in the city of the emitter` +
-              ' ' +
-              focusNFe?.city +
-              ' - ' +
-              error.message,
-            data: null,
+            error: msg`Error in the city of the emitter` + ' ' + focusNFe?.city + ' - ' + error.message,
+            data: null
           };
         }
 
@@ -226,18 +208,11 @@ export class FocusNFeService {
             focusNFe?.token,
           );
         } catch (error) {
-          this.logger.error(
-            `Erro ao buscar código do município do tomador: ${error.message}`,
-          );
+          this.logger.error(`Erro ao buscar código do município do tomador: ${error.message}`);
           return {
             success: false,
-            error:
-              msg`Error in the city of the recipient` +
-              ' ' +
-              invoice.company?.address.addressCity +
-              ' - ' +
-              error.message,
-            data: null,
+            error: msg`Error in the city of the recipient` + ' ' + invoice.company?.address.addressCity + ' - ' + error.message,
+            data: null
           };
         }
 
@@ -249,11 +224,9 @@ export class FocusNFeService {
         );
 
         if (!nfcom) {
-          this.logger.log(
-            'Erro ao construir o objeto de envio para emissão da NF-Com.',
-          );
+          this.logger.log('Erro ao construir o objeto de envio para emissão da NF-Com.');
           return;
-        }
+        };
 
         this.logger.log(`DADOS DA NF:`);
         this.logger.log(`codMunicipioEmitente: ${codMunicipioEmitente}`);
@@ -273,15 +246,16 @@ export class FocusNFeService {
       }
     }
 
-    return result;
-  }
-
+    return result;  
+  };
+  
   async issueNF(
     type: keyof typeof this.nfStrategies,
     data: InvoiceFocusNFe,
     referenceCode: string,
     token: string,
   ): Promise<FocusNFeResponse> {
+
     this.logger.log(`REFERENCE CODE: ${referenceCode}`);
 
     const strategy = this.nfStrategies[type];
@@ -289,12 +263,7 @@ export class FocusNFeService {
     if (!strategy.validate(data)) {
       return {
         success: false,
-        error:
-          msg`Invalid` +
-          ' ' +
-          type.toUpperCase() +
-          ' ' +
-          msg`data. Please check all required fields.`,
+        error: msg`Invalid` + ' ' + type.toUpperCase() + ' ' + msg`data. Please check all required fields.`,
       };
     }
 
@@ -342,25 +311,13 @@ export class FocusNFeService {
     this.logger.log(`getCodigoMunicipio: ${JSON.stringify(response, null, 2)}`);
 
     if (!response.success) {
-      const errorMessage =
-        response.error || msg`Error to search the city code`.toString();
+      const errorMessage = response.error || msg`Error to search the city code`.toString();
       this.logger.error(`Erro na API Focus NFe: ${errorMessage}`);
-      throw new Error(
-        msg`Error to search the city code` +
-          ' ' +
-          nomeMunicipio +
-          ': ' +
-          errorMessage,
-      );
+      throw new Error(msg`Error to search the city code` + ' ' + nomeMunicipio + ': ' + errorMessage);
     }
 
-    if (
-      !response.data ||
-      !Array.isArray(response.data) ||
-      response.data.length === 0
-    ) {
-      const errorMessage =
-        msg`City` + ' ' + nomeMunicipio + ' ' + msg`not found`.toString();
+    if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
+      const errorMessage = msg`City` + ' ' + nomeMunicipio + ' ' + msg`not found`.toString();
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
@@ -398,24 +355,21 @@ export class FocusNFeService {
     const latestNFSe = invoiceIssued
       .filter((nf) => nf.issueDate)
       .sort((a, b) =>
-        compareDesc(new Date(a.issueDate || ''), new Date(b.issueDate || '')),
+        compareDesc(
+          zonedTimeToUtc(new Date(a.issueDate || ''), 'America/Sao_Paulo'),
+          zonedTimeToUtc(new Date(b.issueDate || ''), 'America/Sao_Paulo'),
+        ),
       )[0];
 
     const latestNumeroRps = Number(latestNFSe?.rpsNumber);
 
-    /* @kvoip-woulz proprietary:begin */
-    if (
-      LAST_NUMBER_RPS !== undefined &&
-      typeof LAST_NUMBER_RPS === 'number' &&
-      LAST_NUMBER_RPS > latestNumeroRps
-    ) {
+    if (LAST_NUMBER_RPS > latestNumeroRps) {
       return {
         id: '0',
         rpsNumber: LAST_NUMBER_RPS,
         issueDate: getCurrentFormattedDate(),
       };
     }
-    /* @kvoip-woulz proprietary:end */
 
     return {
       id: latestNFSe.id,

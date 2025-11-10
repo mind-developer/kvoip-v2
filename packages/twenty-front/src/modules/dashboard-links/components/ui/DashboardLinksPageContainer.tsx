@@ -1,4 +1,3 @@
-// src/modules/dashboard-links/components/ui/DashboardLinksPageContainer.tsx
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 

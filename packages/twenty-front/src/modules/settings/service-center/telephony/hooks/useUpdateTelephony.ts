@@ -1,5 +1,6 @@
 import { UPDATE_TELEPHONY } from '@/settings/service-center/telephony/graphql/mutations/updateAgent';
-import { type UpdateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { UpdateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 
@@ -36,10 +37,9 @@ export const useUpdateTelephony = (): UseEditTelephonyReturn => {
       });
     } catch (err) {
       // TODO: Add proper error message
-      // enqueueErrorSnackBar({
-      //   message: (error as Error).message,
-      // });
-      throw err;
+      enqueueErrorSnackBar({
+        message: (error as Error).message,
+      });
     }
   };
 

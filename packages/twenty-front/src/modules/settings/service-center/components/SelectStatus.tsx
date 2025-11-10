@@ -2,7 +2,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { IconComponent } from 'twenty-ui/display';
 
 import { MenuSelectStatus } from '@/settings/service-center/components/MenuSelectStatus';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

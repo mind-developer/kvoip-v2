@@ -1,5 +1,4 @@
-import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type Agent } from '@/settings/service-center/agents/types/Agent';
+import { FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
@@ -25,12 +24,11 @@ export type WorkspaceMember = {
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
+  agentId: string;
   extensionNumber?: string;
   userDocument?: string | null;
   userPhone?: FieldPhonesValue | null;
   calendarStartDay?: number | null;
-  agent: Agent | null;
-  agentId: string | null;
 };
 
 export type WorkspaceInvitation = {

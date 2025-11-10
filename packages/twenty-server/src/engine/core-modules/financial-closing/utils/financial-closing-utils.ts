@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { Logger } from '@nestjs/common';
 import { XMLParser } from 'fast-xml-parser';
 import fetch from 'node-fetch';
@@ -82,7 +81,7 @@ export async function getAmountToBeChargedToCompanies(
                     await addCompanyFinancialClosingExecutionErrorLog(
                       companyExecution,
                       companyExecutionRepository,
-                      `Erro para calcular o consumo para a empresa` + ' ' + company?.id + ': ' + error.message,
+                      `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
                       company
                     );
                   }
@@ -120,7 +119,7 @@ export async function getAmountToBeChargedToCompanies(
                   await addCompanyFinancialClosingExecutionErrorLog(
                     companyExecution,
                     companyExecutionRepository,
-                    `Erro para calcular o consumo para a empresa` + ' ' + company?.id + ': ' + error.message,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
                     company
                   );
                 }
@@ -158,7 +157,7 @@ export async function getAmountToBeChargedToCompanies(
                   await addCompanyFinancialClosingExecutionErrorLog(
                     companyExecution,
                     companyExecutionRepository,
-                    `Erro para calcular o consumo para a empresa` + ' ' + company?.id + ': ' + error.message,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
                     company
                   );
                 }
@@ -196,7 +195,7 @@ export async function getAmountToBeChargedToCompanies(
                   await addCompanyFinancialClosingExecutionErrorLog(
                     companyExecution,
                     companyExecutionRepository,
-                    `Erro para calcular o consumo para a empresa` + ' ' + company?.id + ': ' + error.message,
+                    `Erro ao buscar consumo para empresa ${company?.id}: ${error.message}`,
                     company
                   );
                 }
@@ -211,7 +210,7 @@ export async function getAmountToBeChargedToCompanies(
               await addCompanyFinancialClosingExecutionErrorLog(
                 companyExecution,
                 companyExecutionRepository,
-                `Modelo de cobrança desconhecido para a empresa` + ' ' + company.name + ' - ' + company.id,
+                `Modelo de faturamento desconhecido para a empresa ${company.name} - ${company.id}`,
                 company
               );
             }
@@ -227,7 +226,7 @@ export async function getAmountToBeChargedToCompanies(
           await addCompanyFinancialClosingExecutionErrorLog(
             companyExecution,
             companyExecutionRepository,
-            `O valor a ser cobrado é 0 para a empresa` + ' ' + company.name + ' - ' + company.id,
+            `Valor a ser cobrado é 0 para a empresa ${company.name} - ${company.id}`,
             company
           );
         }
@@ -323,8 +322,6 @@ export async function getPostpaidUnlimitedAmountTobeCharged(
 async function getAmountToBeChargedByCdrId(id: string | number, startDate?: string, endDate?: string): Promise<any> {
 //   const url = 'http://localhost:4000/soap'; // Proxy URL
     const url = "https://log.kvoip.com.br/webservice/index.php";
-    // TODO: rever a data de inicio e fim
-    // TODO: rever o usuario e senha
     const xml = `
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="urn:SoapSiptek">
         <soapenv:Header/>
@@ -544,7 +541,7 @@ export async function addCompanyFinancialClosingExecutionLog(
   companyExecution.logs.push(logEntry);
 
   // Log no console baseado no nível
-  const logMessage = `${level.toUpperCase()} no fechamento financeiro ${company ? ` para empresa ${company.name} (${company.id})` : ''}: ${message}`;
+  const logMessage = `${level.toUpperCase()} no fechamento financeiro${company ? ` para empresa ${company.name} (${company.id})` : ''}: ${message}`;
   
   switch (level) {
     case 'error':

@@ -8,7 +8,6 @@ import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
-  IconCalendarEvent,
   IconCode,
   IconHierarchy,
   IconKey,
@@ -90,15 +89,6 @@ export const SettingsRolePermissionsSettingsSection = ({
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
       },
-      
-      /* @kvoip-woulz proprietary:begin */
-      {
-        key: PermissionFlagType.FINANCIAL_CLOSING,
-        name: t`Financial Closing`,
-        description: t`Manage financial closings`,
-        Icon: IconCalendarEvent,
-      },
-      /* @kvoip-woulz proprietary:end */
     ];
 
   return (

@@ -20,16 +20,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
-import { type Entries } from 'type-fest';
+import { Entries } from 'type-fest';
 import {
-  type BillingPaymentProviders,
-  type BillingPlanKey,
+  BillingPaymentProviders,
+  BillingPlanKey,
   useBillingBaseProductPricesQuery,
 } from '~/generated-metadata/graphql';
 
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
-import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
 import { AppPath } from '@/types/AppPath';
 

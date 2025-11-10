@@ -12,5 +12,5 @@ export type IWhatsappIntegration = {
     id: string;
     name: string;
   };
-  apiType: string;
+  tipoApi: string;
 };

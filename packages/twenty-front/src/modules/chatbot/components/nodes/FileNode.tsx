@@ -2,15 +2,15 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { StyledOption } from '@/chatbot/components/ui/StyledOption';
-import { GenericNode } from '@/chatbot/types/GenericNode';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
 import {
   Handle,
-  type Node,
-  type NodeProps,
+  Node,
+  NodeProps,
   Position,
   useNodeConnections,
+  useNodeId,
   useNodes,
   useReactFlow,
 } from '@xyflow/react';
@@ -41,10 +41,8 @@ function FileNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
-  const allNodes = useNodes();
-  const thisNode: GenericNode = allNodes.filter(
-    (filterNodes) => filterNodes.id === id,
-  )[0];
+  const nodeId = useNodeId();
+  const node = useNodes().filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { getIcon } = useIcons();
   const IconFileText = getIcon('IconFileText');
 
@@ -59,71 +57,39 @@ function FileNode({
   });
 
   useEffect(() => {
-    /* @kvoip-woulz proprietary:begin */
-    const currentNode = allNodes.find((n) => n.id === id);
-    const currentNodeData = currentNode?.data || thisNode?.data || {};
-    /* @kvoip-woulz proprietary:end */
-
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
       const sourceHandle = connection.sourceHandle || '';
-      const sourceNodeId = connection.source;
+      const nodeId = connection.source;
 
-      /* @kvoip-woulz proprietary:begin */
-      const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
-      const sourceNodeData = sourceNode?.data || {};
-      /* @kvoip-woulz proprietary:end */
-
-      // Update current node with incoming connection info
       updateNodeData(id, {
-        ...currentNodeData,
+        ...data,
         incomingEdgeId: sourceHandle,
-        incomingNodeId: sourceNodeId,
-      });
-
-      // Update source node with outgoing connection info
-      updateNodeData(sourceNodeId!, {
-        ...sourceNodeData,
-        outgoingEdgeId: sourceHandle,
-        outgoingNodeId: id,
+        incomingNodeId: nodeId,
       });
     }
 
     if (sourceConnections.length > 0) {
       const connection = sourceConnections[0];
       const sourceHandle = connection.sourceHandle;
-      const targetNodeId = connection.target;
+      const nodeId = connection.target;
 
-      /* @kvoip-woulz proprietary:begin */
-      const targetNode = allNodes.find((n) => n.id === targetNodeId);
-      const targetNodeData = targetNode?.data || {};
-      /* @kvoip-woulz proprietary:end */
-
-      // Update current node with outgoing connection info
       updateNodeData(id, {
-        ...currentNodeData,
+        ...data,
         outgoingEdgeId: sourceHandle,
-        outgoingNodeId: targetNodeId,
-      });
-
-      // Update target node with incoming connection info
-      updateNodeData(targetNodeId!, {
-        ...targetNodeData,
-        incomingEdgeId: sourceHandle,
-        incomingNodeId: id,
+        outgoingNodeId: nodeId,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetConnections, sourceConnections, allNodes, id]);
+  }, [targetConnections, sourceConnections]);
 
   return (
     <BaseNode
       onTitleBlur={() => {}}
       onTitleChange={() => {}}
       icon={'IconFileImport'}
-      nodeId={thisNode.id}
+      title={data.title ?? 'Node title'}
       nodeTypeDescription="File node"
-      isInitialNode={thisNode.data.nodeStart as boolean}
     >
       <Handle
         type="target"
@@ -139,7 +105,7 @@ function FileNode({
           {renameFile(data.fileUrl)}
         </StyledOption>
       )}
-      <ChatbotFlowFileEventForm selectedNode={thisNode} />
+      <ChatbotFlowFileEventForm selectedNode={node} />
       <Handle
         type="source"
         position={Position.Right}

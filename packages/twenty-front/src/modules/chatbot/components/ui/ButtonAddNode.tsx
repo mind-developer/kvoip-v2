@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import styled from '@emotion/styled';
-import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
+import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { memo } from 'react';
 import { useIcons } from 'twenty-ui/display';
 

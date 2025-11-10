@@ -39,9 +39,6 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
 
-  // Trust proxy to properly extract client IPs from X-Forwarded-For header
-  app.set('trust proxy', true);
-
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
   // Apply class-validator container so that we can use injection in validators

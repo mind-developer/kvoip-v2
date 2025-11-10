@@ -83,10 +83,6 @@ export class BillingPortalWorkspaceService {
         user,
       });
 
-    if (paymentProvider === BillingPaymentProviders.Inter) {
-      return successUrl;
-    }
-
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({
         user,

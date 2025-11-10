@@ -39,7 +39,6 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   icon: 'IconLink',
   labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.name,
 })
-//! We should either remove this decorator or remove the timelineActivities relation
 @WorkspaceIsNotAuditLogged()
 export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -138,7 +137,7 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: TRACEABLE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
-    description: msg`Events linked to the workspace entity`,
+    description: msg`Events linked to the tracable link`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

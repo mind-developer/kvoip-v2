@@ -1,4 +1,4 @@
-import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 
 export const useSettingsIntegrationStripeCategory =
   (): SettingsIntegrationCategory => {

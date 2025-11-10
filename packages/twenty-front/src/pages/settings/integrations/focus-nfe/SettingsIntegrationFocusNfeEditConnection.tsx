@@ -1,8 +1,4 @@
-/* @kvoip-woulz proprietary */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createTextValidationSchema } from '@/object-record/record-field/ui/validation-schemas/textWithPatternSchema';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm';
@@ -14,7 +10,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui/display';
@@ -23,68 +19,6 @@ import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const createFocusNfeEditFormSchema = (
-  objectMetadataItem?: ObjectMetadataItem,
-) => {
-  if (!objectMetadataItem) {
-    return z.object({
-      id: z.string(),
-      name: z.string().min(1, 'Name is required'),
-      token: z.string().optional(),
-      companyName: z.string().min(1, 'Company name is required'),
-      cnpj: z.string(),
-      cpf: z.string().optional().nullable(),
-      ie: z.string(),
-      inscricaoMunicipal: z.string(),
-      cnaeCode: z.string().optional(),
-      cep: z.string(),
-      street: z.string(),
-      number: z.string(),
-      neighborhood: z.string(),
-      city: z.string().min(1, 'City is required'),
-      state: z.string(),
-      taxRegime: z.string(),
-    });
-  }
-
-  const getFieldValidationSchema = (fieldName: string) => {
-    const field = objectMetadataItem.fields.find((f) => f.name === fieldName);
-
-    if (!field) {
-      return z.string();
-    }
-
-    const validation = field.settings?.validation;
-    const isRequired = !field.isNullable;
-
-    return createTextValidationSchema(
-      validation?.pattern,
-      validation?.errorMessage ||
-        (isRequired ? `${field.label} is required` : undefined),
-      isRequired,
-    );
-  };
-
-  return z.object({
-    id: z.string(),
-    name: getFieldValidationSchema('name'),
-    token: z.string().optional(),
-    companyName: getFieldValidationSchema('companyName'),
-    cnpj: getFieldValidationSchema('cnpj'),
-    cpf: getFieldValidationSchema('cpf').optional().nullable(),
-    ie: getFieldValidationSchema('ie'),
-    inscricaoMunicipal: getFieldValidationSchema('inscricaoMunicipal'),
-    cnaeCode: getFieldValidationSchema('cnaeCode').optional(),
-    cep: getFieldValidationSchema('cep'),
-    street: getFieldValidationSchema('street'),
-    number: getFieldValidationSchema('number'),
-    neighborhood: getFieldValidationSchema('neighborhood'),
-    city: getFieldValidationSchema('city'),
-    state: getFieldValidationSchema('state'),
-    taxRegime: getFieldValidationSchema('taxRegime'),
-  });
-};
 
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   id: z.string(),
@@ -133,19 +67,11 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
 
   const isIntegrationAvailable = !!integration;
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'focusNFe',
-  });
-
-  const dynamicFormSchema = useMemo(
-    () => createFocusNfeEditFormSchema(objectMetadataItem),
-    [objectMetadataItem],
-  );
-
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
+    // eslint-disable-next-line no-sparse-arrays
   }, [integration, navigateApp, isIntegrationAvailable]);
 
   if (!isIntegrationAvailable) return null;
@@ -153,7 +79,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
   const formConfig =
     useForm<SettingsEditIntegrationFocusNfeConnectionFormValues>({
       mode: 'onChange',
-      resolver: zodResolver(dynamicFormSchema),
+      resolver: zodResolver(settingsIntegrationFocusNfeConnectionFormSchema),
       defaultValues: {
         id: activeConnection?.id,
         name: activeConnection?.name,
@@ -173,10 +99,6 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
         taxRegime: activeConnection?.taxRegime,
       },
     });
-
-  useEffect(() => {
-    formConfig.clearErrors();
-  }, [dynamicFormSchema, formConfig]);
 
   const canSave = formConfig.formState.isValid;
 
@@ -247,9 +169,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
               title=""
               description="Edit the information to connect your integration"
             />
-            <SettingsIntegrationFocusNfeDatabaseConnectionForm
-              objectMetadataItem={objectMetadataItem}
-            />
+            <SettingsIntegrationFocusNfeDatabaseConnectionForm />
           </Section>
         </FormProvider>
       </SettingsPageContainer>

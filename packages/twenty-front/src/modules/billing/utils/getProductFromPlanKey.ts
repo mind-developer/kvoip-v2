@@ -1,5 +1,5 @@
-import { type BillingBaseProductPricesQueryPlan } from '@/billing/types/planQueryPlan';
-import { type BillingPlanKey } from '~/generated-metadata/graphql';
+import { BillingBaseProductPricesQueryPlan } from '@/billing/types/planQueryPlan';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 export const getProductFromPlanByKey = (
   planKey: BillingPlanKey,

@@ -29,7 +29,6 @@
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "date-fns": "^2.30.0",
-    "ffmpeg-ffprobe-static": "^6.1.2-rc.1",
     "framer-motion": "^11.18.0",
     "glob": "^11.0.1",
     "hex-rgb": "^5.0.0",

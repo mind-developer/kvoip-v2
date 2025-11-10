@@ -1,4 +1,3 @@
-/* @kvoip-woulz proprietary */
 import {
   BadRequestException,
   Injectable,
@@ -19,35 +18,20 @@ import {
   TaxRegime,
 } from 'src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity';
 
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-
-type FocusNfeIntegrationInput =
-  | CreateFocusNfeIntegrationInput
-  | UpdateFocusNfeIntegrationInput;
-
 @Injectable()
 export class FocusNFeIntegrationService {
+
   private readonly logger = new Logger(FocusNFeIntegrationService.name);
 
   constructor(
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
-    private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async encryptText(text: string): Promise<string> {
     const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
 
-    if (!secretKey) {
-      this.logger.warn(
-        'FOCUS_NFE_ENCRYPTION_KEY not configured, token will not be encrypted',
-      );
-      return text;
-    }
+    if (!secretKey) return text;
     const key = CryptoJS.enc.Utf8.parse(secretKey);
     const iv = CryptoJS.enc.Utf8.parse(secretKey.slice(0, 16));
 
@@ -63,26 +47,12 @@ export class FocusNFeIntegrationService {
   async decryptText(cipherText: string): Promise<string> {
     const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
 
-    if (!secretKey) {
-      this.logger.warn(
-        'FOCUS_NFE_ENCRYPTION_KEY not configured, token will not be decrypted',
-      );
-      return cipherText;
-    }
+    if (!secretKey) return cipherText;
+    const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
 
-    try {
-      const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
-      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-      if (!decrypted) {
-        throw new Error('Decryption resulted in empty string');
-      }
-
-      return decrypted;
-    } catch (error) {
-      this.logger.error('Failed to decrypt token', error);
-      throw new BadRequestException('Failed to decrypt token');
-    }
+    return decrypted;
   }
 
   async create(
@@ -97,48 +67,43 @@ export class FocusNFeIntegrationService {
       );
 
     if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found'); // @kvoip-woulz proprietary
+      throw new Error('FocusNFe repository not found');
     }
 
-    const validatedInput = await this.validateInput(createInput, workspaceId);
-
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(createInput.taxRegime);
 
     const createdFocusNfeIntegration = focusNFeRepository.create({
-      ...validatedInput,
-      token: await this.encryptText(validatedInput.token),
+      ...createInput,
+      token: await this.encryptText(createInput.token),
       taxRegime: taxRegimeEnum,
     });
 
-    const createdIntegration: FocusNFeWorkspaceEntity =
-      (await focusNFeRepository.save(
-        createdFocusNfeIntegration,
-      )) as FocusNFeWorkspaceEntity;
+    const createdIntegration = await focusNFeRepository.save(
+      createdFocusNfeIntegration,
+    );
 
     if (!createdIntegration.cnpj && !createdIntegration.cpf) {
-      throw new BadRequestException('Either CNPJ or CPF must be provided');
+      throw new Error('FocusNFe repository not found');
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const validateDocument = (createdIntegration.cnpj ??
       createdIntegration.cpf)!;
 
-    await Promise.all([
-      this.subscriptionWebhook(
-        'nfse',
-        validateDocument,
-        createdIntegration.token,
-        workspaceId,
-        createdIntegration.id,
-      ),
-      this.subscriptionWebhook(
-        'nfcom',
-        validateDocument,
-        createdIntegration.token,
-        workspaceId,
-        createdIntegration.id,
-      ),
-    ]);
+    await this.subscriptionWebhook(
+      'nfse',
+      validateDocument,
+      createdIntegration.token,
+      workspaceId,
+      createdIntegration.id,
+    );
+    await this.subscriptionWebhook(
+      'nfcom',
+      validateDocument,
+      createdIntegration.token,
+      workspaceId,
+      createdIntegration.id,
+    );
 
     return createdIntegration;
   }
@@ -152,7 +117,7 @@ export class FocusNFeIntegrationService {
       );
 
     if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found');
+      throw new Error('FocusNFe repository not found');
     }
 
     return await focusNFeRepository.find({
@@ -173,10 +138,6 @@ export class FocusNFeIntegrationService {
         { shouldBypassPermissionChecks: true },
       );
 
-    if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found');
-    }
-
     return await focusNFeRepository.findOne({
       where: { id: focusNfeIntegrationId },
     });
@@ -193,61 +154,43 @@ export class FocusNFeIntegrationService {
         { shouldBypassPermissionChecks: true },
       );
 
-    if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found');
-    }
-
     const focusNfeIntegration = await this.findById(
       updateInput.id,
       workspaceId,
     );
 
     if (!focusNfeIntegration) {
-      throw new NotFoundException('Focus NFe integration not found');
+      throw new Error('Focus NFe integration not found');
     }
 
-    const validatedInput = await this.validateInput(updateInput, workspaceId);
+    if (updateInput.token) {
+      updateInput.token = await this.encryptText(updateInput.token);
+    }
 
-    // if (validatedInput.token) {
-    //   validatedInput.token = await this.encryptText(validatedInput.token);
-    // }
+    const taxRegimeEnum = this.convertToTaxRegimeEnum(updateInput.taxRegime);
 
-    const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
-
-    const updatedFocusNfeIntegration: FocusNFeWorkspaceEntity = {
+    const updatedFocusNfeIntegration = {
       ...focusNfeIntegration,
-      ...validatedInput,
+      ...updateInput,
       taxRegime: taxRegimeEnum,
     };
 
-    if (
-      validatedInput.token &&
-      focusNfeIntegration.token !== updatedFocusNfeIntegration.token
-    ) {
+    if (focusNfeIntegration.token !== updatedFocusNfeIntegration.token) {
       // TODO: Delete previous webhook and then register again (create delete method)
-      const validateDocument =
-        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf;
-
-      if (!validateDocument) {
-        throw new BadRequestException('Either CNPJ or CPF must be provided');
-      }
-
-      await Promise.all([
-        this.subscriptionWebhook(
-          'nfse',
-          validateDocument,
-          updatedFocusNfeIntegration.token,
-          workspaceId,
-          updatedFocusNfeIntegration.id,
-        ),
-        this.subscriptionWebhook(
-          'nfcom',
-          validateDocument,
-          updatedFocusNfeIntegration.token,
-          workspaceId,
-          updatedFocusNfeIntegration.id,
-        ),
-      ]);
+      await this.subscriptionWebhook(
+        'nfse',
+        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        updatedFocusNfeIntegration.token,
+        workspaceId,
+        updatedFocusNfeIntegration.id,
+      );
+      await this.subscriptionWebhook(
+        'nfcom', 
+        updatedFocusNfeIntegration.cnpj ?? updatedFocusNfeIntegration.cpf,
+        updatedFocusNfeIntegration.token,
+        workspaceId,
+        updatedFocusNfeIntegration.id,
+      );
     }
 
     return await focusNFeRepository.save(updatedFocusNfeIntegration);
@@ -264,19 +207,24 @@ export class FocusNFeIntegrationService {
         { shouldBypassPermissionChecks: true },
       );
 
-    if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found');
-    }
-
-    const { affected } = await focusNFeRepository.delete(focusNfeIntegrationId);
-
-    if (!affected) {
-      throw new NotFoundException(
-        'Focus NFe integration not found or already deleted',
+    if (focusNFeRepository) {
+      const { affected } = await focusNFeRepository.delete(
+        focusNfeIntegrationId,
       );
+
+      if (!affected) {
+        throw new BadRequestException(undefined, {
+          description: 'Error when removing Focus NFe Integration',
+        });
+      }
+
+
+      return affected ? true : false;
     }
 
-    return true;
+    throw new BadRequestException(undefined, {
+      description: 'Focus NFe integration not found',
+    });
   }
 
   async toggleStatus(id: string, workspaceId: string): Promise<void> {
@@ -287,65 +235,19 @@ export class FocusNFeIntegrationService {
         { shouldBypassPermissionChecks: true },
       );
 
-    if (!focusNFeRepository) {
-      throw new NotFoundException('FocusNFe repository not found');
-    }
-
     const integration = await this.findById(id, workspaceId);
 
     if (!integration) {
       throw new NotFoundException('Integration not found');
     }
 
-    integration.status =
-      integration.status === Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE;
-
-    await focusNFeRepository.save(integration);
-  }
-
-  private async validateInput<T extends FocusNfeIntegrationInput>(
-    input: T,
-    workspaceId: string,
-  ): Promise<T> {
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: 'focusNFe' },
-        relations: ['fields'],
-      });
-
-    if (!objectMetadata) {
-      throw new NotFoundException('FocusNFe object metadata not found');
+    if (integration.status === 'active') {
+      integration.status = Status.INACTIVE;
+    } else {
+      integration.status = Status.ACTIVE;
     }
 
-    const fieldIdByName: Record<string, string> = {};
-    const fieldsById: Record<string, FieldMetadataEntity> = {};
-    const fieldIdByJoinColumnName: Record<string, string> = {};
-
-    objectMetadata.fields.forEach((field) => {
-      fieldIdByName[field.name] = field.id;
-      fieldsById[field.id] = field;
-
-      if (field.type === 'RELATION') {
-        const relationSettings =
-          field.settings as FieldMetadataRelationSettings;
-
-        if (relationSettings?.joinColumnName) {
-          fieldIdByJoinColumnName[relationSettings.joinColumnName] = field.id;
-        }
-      }
-    });
-
-    const transformedInput = await this.recordInputTransformerService.process({
-      recordInput: input,
-      objectMetadataMapItem: {
-        ...objectMetadata,
-        fieldIdByName,
-        fieldsById,
-        fieldIdByJoinColumnName,
-      },
-    });
-
-    return transformedInput as T;
+    await focusNFeRepository.save(integration);
   }
 
   private async subscriptionWebhook(
@@ -354,16 +256,9 @@ export class FocusNFeIntegrationService {
     token: string,
     workspaceId: string,
     integrationId: string,
-  ): Promise<void> {
+  ) {
     const baseUrl = this.environmentService.get('FOCUS_NFE_BASE_URL');
     const webhookUrl = this.environmentService.get('WEBHOOK_URL');
-
-    if (!baseUrl || !webhookUrl) {
-      this.logger.warn(
-        'FOCUS_NFE_BASE_URL or WEBHOOK_URL not configured, skipping webhook subscription',
-      );
-      return;
-    }
 
     const webhook = {
       // TODO: ideal to receive cnpj when adding integration with Focus NF-e (mandatory information)
@@ -371,12 +266,6 @@ export class FocusNFeIntegrationService {
       event,
       url: `${webhookUrl}/focus-nfe/webhook/${workspaceId}/${integrationId}/${event}`,
     };
-
-    this.logger.log(`baseUrl: ${baseUrl}`);
-    this.logger.log(`token: ${token}`);
-    this.logger.log(`workspaceId: ${workspaceId}`);
-    this.logger.log(`integrationId: ${integrationId}`);
-    this.logger.log(`webhookUrl: ${webhookUrl}`);
 
     try {
       const response = await axios.post(`${baseUrl}/hooks`, webhook, {
@@ -387,34 +276,31 @@ export class FocusNFeIntegrationService {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 10000,
       });
 
-      this.logger.log(
-        `Webhook subscription successful for ${event} - Status: ${response.status}`,
-      );
+      // TODO: Redo log messages using the logger
+      console.log('HTTP code:', response.status);
+      console.log('Body:', response.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        this.logger.error(
-          `Webhook subscription failed for ${event} - Status: ${error.response?.status}`,
-          error.response?.data,
-        );
+      if (error.response) {
+        console.error('Error:', error.response.status);
+        console.error('Response:', error.response.data);
       } else {
-        this.logger.error(
-          `Webhook subscription request error for ${event}`,
-          error,
-        );
+        console.error('Request error:', error.message);
       }
     }
   }
 
   private convertToTaxRegimeEnum(taxRegime: string): TaxRegime | null {
-    const taxRegimeMap: Record<string, TaxRegime> = {
-      simples_nacional: TaxRegime.SimplesNacional,
-      lucro_presumido: TaxRegime.LucroPresumido,
-      lucro_real: TaxRegime.LucroReal,
-    };
-
-    return taxRegimeMap[taxRegime] ?? null;
+    switch (taxRegime) {
+      case 'simples_nacional':
+        return TaxRegime.SimplesNacional;
+      case 'lucro_presumido':
+        return TaxRegime.LucroPresumido;
+      case 'lucro_real':
+        return TaxRegime.LucroReal;
+      default:
+        return null;
+    }
   }
 }

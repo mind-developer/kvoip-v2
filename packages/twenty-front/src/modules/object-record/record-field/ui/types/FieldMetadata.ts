@@ -3,7 +3,6 @@ import { type RATING_VALUES } from '@/object-record/record-field/ui/meta-types/c
 import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
-  ChatIntegrationProvider,
   ConnectedAccountProvider,
   type AllowedAddressSubField,
 } from 'twenty-shared/types';
@@ -11,17 +10,6 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 import { type CurrencyCode } from './CurrencyCode';
-
-/* @kvoip-woulz proprietary:begin */
-export type FieldTextValidation = {
-  pattern: string;
-  mask?: string;
-  dynamicMask?: string;
-  placeholder?: string;
-  errorMessage?: string;
-  validateOnType?: boolean;
-};
-/* @kvoip-woulz proprietary:end */
 
 type BaseFieldMetadata = {
   fieldName: string;
@@ -42,9 +30,6 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     displayedMaxRows?: number;
-    /* @kvoip-woulz proprietary:begin */
-    validation?: FieldTextValidation;
-    /* @kvoip-woulz proprietary:end */
   };
 };
 
@@ -298,7 +283,6 @@ const FieldActorSourceSchema = z.union([
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
   z.literal('WEBHOOK'),
-  z.literal('CHAT'),
 ]);
 
 export const FieldActorValueSchema = z.object({
@@ -308,7 +292,6 @@ export const FieldActorValueSchema = z.object({
   context: z
     .object({
       provider: z.nativeEnum(ConnectedAccountProvider).optional(),
-      chatProvider: z.nativeEnum(ChatIntegrationProvider).optional(),
     })
     .nullable(),
 });

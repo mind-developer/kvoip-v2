@@ -1,6 +1,6 @@
 import { GET_ALL_ISSUERS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/query/getAllIssuersByWorkspace';
 import { useQuery } from '@apollo/client';
-import { type Issuer } from '~/types/Issuer';
+import { Issuer } from '~/types/Issuer';
 
 interface GetIssuersQueryData {
   getIssuersByWorkspace: Issuer[];

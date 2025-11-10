@@ -1,19 +1,11 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
+import { IconCheck, IconComponent } from 'twenty-ui/display';
+import { LightIconButtonGroup, LightIconButtonProps } from 'twenty-ui/input';
 import {
-  type FunctionComponent,
-  type MouseEvent,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
-import { IconCheck, type IconComponent } from 'twenty-ui/display';
-import {
-  LightIconButtonGroup,
-  type LightIconButtonProps,
-} from 'twenty-ui/input';
-import {
-  type MenuItemAccent,
+  MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';

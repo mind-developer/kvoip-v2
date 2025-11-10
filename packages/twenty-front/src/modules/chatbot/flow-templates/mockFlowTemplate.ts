@@ -1,6 +1,6 @@
-import { type Edge } from '@xyflow/react';
-import { type GenericNode } from '../types/GenericNode';
-import { type ChatbotFlowData } from '../types/chatbotFlow.type';
+import { Edge } from '@xyflow/react';
+import { GenericNode } from '../types/GenericNode';
+import { ChatbotFlowData } from '../types/chatbotFlow.type';
 
 export const initialNodes: GenericNode[] = [
   {
@@ -15,7 +15,7 @@ export const initialNodes: GenericNode[] = [
   },
   {
     id: '2',
-    type: 'conditional',
+    type: 'condition',
     data: {
       logic: {
         logicNodes: [0],
@@ -33,6 +33,12 @@ export const initialNodes: GenericNode[] = [
       },
     },
     position: { x: 150, y: 150 },
+  },
+  {
+    id: '3',
+    type: 'text',
+    data: { nodeStart: false },
+    position: { x: 500, y: 300 },
   },
 ];
 

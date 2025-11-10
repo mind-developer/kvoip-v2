@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_ALL_DIDS } from '@/settings/service-center/telephony/graphql/queries/getAllDids';
-import { type Dids } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
+import { Dids } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 

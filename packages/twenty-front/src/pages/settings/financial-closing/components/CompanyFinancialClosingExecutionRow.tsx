@@ -1,12 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-import {
-  getFinancialClosingExecutionStatusColor,
-  useFinancialClosingExecutionStatusTranslations,
-} from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
-import { type CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
+import { getFinancialClosingExecutionStatusColor, useFinancialClosingExecutionStatusTranslations } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
+import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Tag } from 'twenty-ui/components';
@@ -19,9 +16,9 @@ export type SettingsCompanyFinancialClosingExecutionItemTableRowProps = {
 };
 
 export const StyledObjectTableRow = styled(TableRow)`
-  align-items: center;
   grid-template-columns: 140px 1fr 100px 100px 36px;
   min-height: 50px;
+  align-items: center;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -37,14 +34,14 @@ const StyledDateContainer = styled.div`
 `;
 
 const StyledTime = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledDate = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 const StyledCompanyTableCell = styled(TableCell)`
@@ -71,11 +68,10 @@ export const CompanyFinancialClosingExecutionRow = ({
   action,
   execution,
   link,
-}: CompanyFinancialClosingExecutionRowProps) => {
+}: SettingsCompanyFinancialClosingExecutionItemTableRowProps) => {
   const theme = useTheme();
-  const { getFinancialClosingExecutionStatusLabel } =
-    useFinancialClosingExecutionStatusTranslations();
-
+  const { getFinancialClosingExecutionStatusLabel } = useFinancialClosingExecutionStatusTranslations();
+  
   const { getIcon } = useIcons();
   const Icon = getIcon('clock-play');
 
@@ -90,69 +86,70 @@ export const CompanyFinancialClosingExecutionRow = ({
     }
   };
 
-  const formatDateTime = (dateString?: string | null) => {
-    if (!dateString) return { time: '-', date: '-' };
-    const date = new Date(dateString);
+    const formatDateTime = (dateString?: string | null) => {
+        if (!dateString) return { time: '-', date: '-' };
+        const date = new Date(dateString);
 
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const ano = date.getFullYear();
+        const dia = String(date.getDate()).padStart(2, '0');
+        const mes = String(date.getMonth() + 1).padStart(2, '0');
+        const ano = date.getFullYear();
 
-    const horas = String(date.getHours()).padStart(2, '0');
-    const minutos = String(date.getMinutes()).padStart(2, '0');
+        const horas = String(date.getHours()).padStart(2, '0');
+        const minutos = String(date.getMinutes()).padStart(2, '0');
 
-    return {
-      time: `${horas}:${minutos}`,
-      date: `${dia}/${mes}/${ano}`,
+        return {
+            time: `${horas}:${minutos}`,
+            date: `${dia}/${mes}/${ano}`
+        };
     };
-  };
 
-  const formatCurrency = (value?: string | number | null) => {
-    if (!value || value === '0') return 'R$ 0,00';
-
-    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
-
-    if (isNaN(numericValue)) return 'R$ 0,00';
-
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(numericValue);
-  };
+    const formatCurrency = (value?: string | number | null) => {
+        if (!value || value === '0') return 'R$ 0,00';
+        
+        const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+        
+        if (isNaN(numericValue)) return 'R$ 0,00';
+        
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        }).format(numericValue);
+    };
 
   return (
     <StyledObjectTableRow key={execution.id} to={link}>
+
       <StyledNameTableCell>
-        <IconClockPlay
-          style={{ minWidth: theme.icon.size.md }}
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+          <IconClockPlay
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         <StyledDateContainer>
           <StyledTime>{formatDateTime(execution.executedAt).time}</StyledTime>
           <StyledDate>{formatDateTime(execution.executedAt).date}</StyledDate>
         </StyledDateContainer>
       </StyledNameTableCell>
-
+      
       <StyledCompanyTableCell>
         <StyledCompanyName>
           {execution.company?.name || 'N/A'}
         </StyledCompanyName>
       </StyledCompanyTableCell>
 
-      <TableCell align="right">
-        {formatCurrency(execution.chargeValue)}
-      </TableCell>
+      <TableCell align="right">{formatCurrency(execution.chargeValue)}</TableCell>
 
       <TableCell align="right">
-        <Tag
-          color={getFinancialClosingExecutionStatusColor(execution.status)}
-          text={getFinancialClosingExecutionStatusLabel(execution.status)}
+        <Tag 
+          color={getFinancialClosingExecutionStatusColor(execution.status)} 
+          text={getFinancialClosingExecutionStatusLabel(execution.status)} 
           weight="medium"
         />
       </TableCell>
 
+
       <StyledActionTableCell>{action}</StyledActionTableCell>
+
     </StyledObjectTableRow>
   );
 };

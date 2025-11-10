@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 

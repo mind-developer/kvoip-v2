@@ -9,7 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
-import { type IssuerFormValues } from '~/types/Issuer';
+import { IssuerFormValues } from '~/types/Issuer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 // Basic Zod schema for validation - can be enhanced

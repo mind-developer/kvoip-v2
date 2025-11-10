@@ -4464,7 +4464,6 @@ msgstr "Begin van de week"
 
 #. js-lingui-id: w0RUMe
 #: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
 msgid "Starting closing execution"
 msgstr ""
 

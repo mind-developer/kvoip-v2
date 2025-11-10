@@ -39,20 +39,6 @@ export const GET_ALL_TELEPHONYS = gql`
       advancedFowarding3Value
       advancedFowarding4Value
       advancedFowarding5Value
-      member {
-        id
-        name {
-          firstName
-          lastName
-        }
-        userEmail
-        avatarUrl
-        userId
-        timeZone
-        dateFormat
-        timeFormat
-        calendarStartDay
-      }
     }
   }
 `;

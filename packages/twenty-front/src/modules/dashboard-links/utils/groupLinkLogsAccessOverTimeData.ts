@@ -1,7 +1,8 @@
-import { type FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
+import { FilterType } from '@/dashboard-links/utils/filterLinkLogsData';
 import { format, fromUnixTime } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
-import { type LinkLogsWorkspaceEntity } from '~/generated/graphql';
+import { LinkLogsWorkspaceEntity } from '~/generated/graphql';
 import { getRandomHexColor } from '~/utils/get-hex-random-collor';
 
 export type PlatformGroupedData = {

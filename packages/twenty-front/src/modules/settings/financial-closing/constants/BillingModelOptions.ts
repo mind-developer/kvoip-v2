@@ -1,5 +1,4 @@
-/* @kvoip-woulz proprietary */
-import { useLingui } from '@lingui/react/macro';
+import { useLingui } from "@lingui/react/macro";
 
 export type SelectOption<T = string> = {
   label: string;

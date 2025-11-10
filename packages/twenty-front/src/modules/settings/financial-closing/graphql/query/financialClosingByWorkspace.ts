@@ -1,4 +1,3 @@
-/* @kvoip-woulz proprietary */
 import { gql } from '@apollo/client';
 
 export const GET_ALL_FINANCIAL_CLOSINGS = gql`
@@ -17,5 +16,5 @@ export const GET_ALL_FINANCIAL_CLOSINGS = gql`
       createdAt
       updatedAt
     }
-  }
+  } 
 `;

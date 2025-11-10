@@ -1,8 +1,8 @@
-import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getPlanBenefits } from '@/billing/utils/getPlanBenefits';
 import styled from '@emotion/styled';
 import { IconCheck } from 'twenty-ui/display';
-import { type BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated/graphql';
 
 const StyledBenefitsContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};

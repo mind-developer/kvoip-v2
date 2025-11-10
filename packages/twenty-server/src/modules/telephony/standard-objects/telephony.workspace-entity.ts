@@ -1,14 +1,11 @@
-/* @kvoip-woulz proprietary */
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Column, Relation } from 'typeorm';
+import { Column } from 'typeorm';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -16,52 +13,40 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TELEPHONY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-const NUMBER_EXTENSION_FIELD = 'numberExtension';
+const MEMBER_ID_FIELD = 'memberId';
 
 export const SEARCH_FIELDS_FOR_TELEPHONY: FieldTypeAndNameMetadata[] = [
-  { name: NUMBER_EXTENSION_FIELD, type: FieldMetadataType.TEXT },
+  { name: MEMBER_ID_FIELD, type: FieldMetadataType.TEXT },
 ];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.telephony,
-  namePlural: 'telephonies',
+  namePlural: 'Telephonies',
   labelSingular: msg`Telephony`,
   labelPlural: msg`Telephonies`,
   description: msg`A telephony integration`,
   icon: 'IconHeadset',
-  labelIdentifierStandardId: TELEPHONY_STANDARD_FIELD_IDS.numberExtension,
+  labelIdentifierStandardId: TELEPHONY_STANDARD_FIELD_IDS.memberId,
 })
 @WorkspaceIsSearchable()
 @WorkspaceIsSystem()
 @ObjectType()
 export class TelephonyWorkspaceEntity extends BaseWorkspaceEntity {
-
-  @WorkspaceRelation({
-    standardId: TELEPHONY_STANDARD_FIELD_IDS.member,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Workspace Member`,
-    description: msg`Reference to the workspace member`,
-    icon: 'IconUser',
-    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-    inverseSideFieldKey: 'telephonies',
-    onDelete: RelationOnDeleteAction.CASCADE,
+  @WorkspaceField({
+    standardId: TELEPHONY_STANDARD_FIELD_IDS.memberId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Member ID`,
   })
-  @WorkspaceIsNullable()
-  member: Relation<WorkspaceMemberWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('member')
-  @Field(() => String, { nullable: true })
-  memberId: string | null;
+  @Column({ unique: true })
+  @Field(() => String, { nullable: false })
+  memberId: string;
 
   @WorkspaceField({
     standardId: TELEPHONY_STANDARD_FIELD_IDS.numberExtension,

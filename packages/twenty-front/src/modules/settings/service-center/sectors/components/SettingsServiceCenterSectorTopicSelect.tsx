@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { type DropResult } from '@hello-pangea/dnd';
+import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { z } from 'zod';
 
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
 import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';

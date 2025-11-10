@@ -21,7 +21,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
-import { WorkspaceTelephonyService } from 'src/engine/core-modules/workspace/services/workspace-telephony.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
@@ -70,7 +69,7 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
         DomainManagerModule,
         CoreViewModule,
       ],
-      services: [WorkspaceService, WorkspaceTelephonyService],
+      services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
     }),
   ],
@@ -78,7 +77,6 @@ import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
   providers: [
     WorkspaceResolver,
     WorkspaceService,
-    WorkspaceTelephonyService,
     WorkspaceWorkspaceMemberListener,
   ],
 })

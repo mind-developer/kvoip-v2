@@ -8,7 +8,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
-import { KVOIP_ADMIN_STANDARD_OBJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
+import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -24,8 +24,8 @@ import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspac
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
-    FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { SubscriptionWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/subscription.workspace-entity';
 
@@ -76,7 +76,7 @@ const subscriptionPlanStatusOptions: FieldMetadataComplexOption[] = [
   labelSingular: msg`SubscriptionPlan plan`,
   labelPlural: msg`SubscriptionPlan plans`,
   description: msg`All subscription plans`,
-  icon: KVOIP_ADMIN_STANDARD_OBJECT_ICONS.subscriptionPlan,
+  icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.subscriptionPlan,
   labelIdentifierStandardId: SUBSCRIPTION_PLAN_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceGate({

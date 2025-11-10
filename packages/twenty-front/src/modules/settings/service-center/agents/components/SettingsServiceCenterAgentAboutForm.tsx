@@ -1,158 +1,213 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { type AgentFormValues } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
-import { type Sector } from '@/settings/service-center/sectors/types/Sector';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { useTheme } from '@emotion/react';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { useFindAllInboxes } from '@/settings/service-center/inboxes/hooks/useFindAllInboxes';
+import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
+import { Select } from '@/ui/input/components/Select';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { AvatarChip } from 'twenty-ui/components';
-import { H2Title, Label, useIcons } from 'twenty-ui/display';
-import { type SelectOption, Toggle } from 'twenty-ui/input';
+import { H2Title, useIcons } from 'twenty-ui/display';
+import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
-const StyledForm = styled.div`
-  gap: ${({ theme }) => theme.spacing(1)};
-  align-items: center;
-  justify-content: center;
-`;
+import { z } from 'zod';
 
-const StyledFormRow = styled(Section)`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
+const agentMetadataFormSchema = z.object({
+  id: z.string(),
+  isAdmin: z.boolean(),
+  memberId: z.string().min(1, 'Member ID is required'),
+  sectorIds: z.array(z.string()).nonempty('At least one sector ID is required'),
+  inboxesIds: z.array(z.string()).nonempty('At least one inbox ID is required'),
+  workspaceId: z.string().min(1, 'Workspace ID is required'),
+});
+
+export const SettingsServiceCenterAgentFormSchema =
+  agentMetadataFormSchema.pick({
+    isAdmin: true,
+    memberId: true,
+    sectorIds: true,
+    inboxesIds: true,
+    workspaceId: true,
+  });
+
+export type SettingsServiceCenterAgentFormSchemaValues = z.infer<
+  typeof agentMetadataFormSchema
+>;
 
 type SettingsServiceCenterAgentAboutFormProps = {
-  isEditMode?: boolean;
+  disabled?: boolean;
+  disableNameEdit?: boolean;
+  activeAgent?: Agent;
 };
 
-export default function SettingsServiceCenterAgentAboutForm({
-  isEditMode = false,
-}: SettingsServiceCenterAgentAboutFormProps) {
-  const theme = useTheme();
-  const form = useFormContext<AgentFormValues>();
+const StyledSection = styled(Section)`
+  display: flex;
+  gap: 4px;
+`;
+
+export const SettingsServiceCenterAgentAboutForm = ({
+  disabled,
+  activeAgent,
+}: SettingsServiceCenterAgentAboutFormProps) => {
+  const { control, reset } =
+    useFormContext<SettingsServiceCenterAgentFormSchemaValues>();
+  // const { t } = useTranslation();
   const { getIcon } = useIcons();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    recordGqlFields: {
-      id: true,
-      name: true,
-      agentId: true,
-      agent: true,
-      avatarUrl: true,
-    },
   });
 
-  const { records: sectors } = useFindManyRecords<
-    Sector & { __typename: string }
-  >({
-    objectNameSingular: CoreObjectNameSingular.Sector,
-  });
+  const { sectors, refetch: refetchSectors } = useFindAllSectors();
+  const { inboxes, refetch: refecthInboxes } = useFindAllInboxes();
+  const { whatsappIntegrations = [] } = useFindAllWhatsappIntegrations();
 
-  const workspaceMemberId = form.watch('workspaceMemberId');
+  const Icon = getIcon('IconIdBadge2');
 
-  // In edit mode, include the current workspace member
-  // In create mode, only show unassigned workspace members
-  const selectableWorkspaceMembers = isEditMode
-    ? workspaceMembers.filter(
-        (member) => !member.agentId || member.id === workspaceMemberId,
-      )
-    : workspaceMembers.filter((member) => !member.agent);
+  const memberOptions = workspaceMembers
+    ?.filter(
+      (member) => member.agentId === '' || member.agentId === activeAgent?.id,
+    )
+    .map((workspaceMember) => {
+      const label =
+        workspaceMember.name.firstName.trim() !== '' ||
+        workspaceMember.name.lastName.trim() !== ''
+          ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`
+          : 'Name not provided';
 
-  const memberOptions =
-    selectableWorkspaceMembers.map(
-      (member) =>
-        ({
-          Icon: () => (
-            <AvatarChip
-              avatarType={'rounded'}
-              avatarUrl={member.avatarUrl ?? undefined}
-              placeholder={member.name.firstName + ' ' + member.name.lastName}
-              placeholderColorSeed={member.id}
-            />
-          ),
-          label: member.name.firstName + ' ' + member.name.lastName,
-          value: member.id,
-        }) as SelectOption,
-    ) ?? [];
-  const sectorOptions =
-    sectors.map(
-      (sector) =>
-        ({
-          label: sector.name,
-          value: sector.id,
-          icon: getIcon(sector.icon),
-        }) as SelectOption,
-    ) ?? [];
+      return {
+        label: label,
+        value: workspaceMember.id,
+        avatarUrl: workspaceMember.avatarUrl,
+      };
+    });
+
+  const sectorsOptions =
+    sectors?.map((sector) => ({
+      Icon: getIcon(sector.icon),
+      label: sector.name,
+      value: sector.id,
+    })) ?? [];
+
+  const inboxesOptions =
+    inboxes?.map((inbox) => {
+      const isWhatsapp =
+        inbox.integrationType.toLowerCase() === IntegrationType.WHATSAPP;
+      const IconName = isWhatsapp ? 'IconBrandWhatsapp' : 'IconBrandMessenger';
+      const integration = isWhatsapp
+        ? whatsappIntegrations.find((w) => w.id === inbox.whatsappIntegrationId)
+        : null;
+
+      return {
+        Icon: getIcon(IconName),
+        label: integration?.name ?? `${inbox.integrationType} (${inbox.id})`,
+        value: inbox.id,
+      };
+    }) ?? [];
+
+  useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (activeAgent) {
+      reset({
+        id: activeAgent.id,
+        isAdmin: activeAgent.isAdmin ?? false,
+        memberId: activeAgent.memberId,
+        sectorIds: activeAgent.sectors?.map((sector) => sector.id) ?? [],
+        inboxesIds: activeAgent.inboxes?.map((inbox) => inbox.id) ?? [],
+        workspaceId: activeAgent.workspace.id ?? '',
+      });
+    }
+  }, [activeAgent, reset]);
+
+  useEffect(() => {
+    refetchSectors();
+    refecthInboxes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const selectedSectors =
+    activeAgent?.sectors?.map((sector) => sector.id) ?? [];
+  const selectedInboxes = activeAgent?.inboxes?.map((inbox) => inbox.id) ?? [];
 
   return (
-    <Section>
-      <div style={{ overflow: 'visible' }}>
+    <>
+      <StyledSection>
+        <Icon />
         <H2Title
-          title={t`About`}
-          description={t`Define this agent's properties`}
-        />
-        <StyledForm>
-          <StyledFormRow>
+          title={'Admin permissions'}
+          adornment={
             <Controller
-              name="workspaceMemberId"
-              control={form.control}
-              render={({ field }) => (
-                <FormSelectFieldInput
-                  key={`workspace-member-${field.value}`}
-                  defaultValue={field.value}
-                  label={t`Workspace Member`}
-                  options={memberOptions}
-                  readonly={isEditMode}
-                  onChange={(value) => {
-                    if (!value) return;
-                    field.onChange(value);
-                  }}
-                />
-              )}
-            />
-
-            <Controller
-              name="sectorId"
-              control={form.control}
-              render={({ field }) => (
-                <FormSelectFieldInput
-                  key={`sector-${field.value}`}
-                  defaultValue={field.value}
-                  label={t`Sector`}
-                  options={sectorOptions}
-                  onChange={(value) => {
-                    if (!value) return;
-                    field.onChange(value);
-                  }}
-                />
-              )}
-            />
-          </StyledFormRow>
-          <StyledFormRow>
-            <Controller
+              control={control}
               name="isAdmin"
-              control={form.control}
-              render={({ field }) => (
-                <div>
-                  <Label
-                    style={{ marginBottom: theme.spacing(1) }}
-                  >{t`Is Admin`}</Label>
-                  <Toggle
-                    value={field.value ?? false}
-                    onChange={(value) => field.onChange(value)}
-                  />
-                </div>
+              render={({ field: { onChange, value } }) => (
+                <Toggle value={value} onChange={onChange} />
               )}
             />
-          </StyledFormRow>
-        </StyledForm>
-      </div>
-    </Section>
+          }
+          description={
+            'This agent will be able to view all the chats in the service center'
+          }
+        />
+      </StyledSection>
+      <Section>
+        <Controller
+          control={control}
+          name="memberId"
+          render={({ field }) => (
+            <Select
+              disabled={disabled}
+              dropdownId="member"
+              label={'Member'}
+              options={[
+                {
+                  label: 'Choose a member',
+                  value: '',
+                },
+                ...memberOptions,
+              ]}
+              value={field.value}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
+            />
+          )}
+        />
+      </Section>
+      <Section>
+        <Controller
+          name="sectorIds"
+          control={control}
+          render={({ field: { onChange } }) => {
+            return (
+              <FormMultiSelectFieldInput
+                label="Select Sectors"
+                options={sectorsOptions}
+                defaultValue={selectedSectors}
+                onChange={onChange}
+              />
+            );
+          }}
+        />
+      </Section>
+      <Section>
+        <Controller
+          name="inboxesIds"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <FormMultiSelectFieldInput
+              label="Select Inboxes"
+              options={inboxesOptions}
+              defaultValue={selectedInboxes}
+              onChange={onChange}
+            />
+          )}
+        />
+      </Section>
+    </>
   );
-}
+};

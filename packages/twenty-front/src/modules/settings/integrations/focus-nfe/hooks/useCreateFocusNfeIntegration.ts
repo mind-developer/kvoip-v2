@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 
 import { CREATE_FOCUS_NFE_INTEGRATION } from '@/settings/integrations/focus-nfe/graphql/mutation/createFocusNfeIntegration';
 
-import { type CreateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/CreateFocusNfeIntegrationInput';
+import { CreateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/CreateFocusNfeIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 

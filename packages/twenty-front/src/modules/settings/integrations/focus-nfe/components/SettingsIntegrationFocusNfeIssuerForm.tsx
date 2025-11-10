@@ -3,7 +3,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
-import { type IssuerFormValues } from '~/types/Issuer';
+import { IssuerFormValues } from '~/types/Issuer';
 
 const StyledFormContainer = styled.div`
   display: flex;

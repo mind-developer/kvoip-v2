@@ -1,10 +1,5 @@
 export interface RetornoEstrutura {
-  id?: number | RetornoEstruturaId;
+  id?: number;
   status: boolean;
   erro?: string;
 }
-
-export interface RetornoEstruturaId {
-  $value?: number | string;
-}
-  

@@ -1,5 +1,5 @@
-import { type Node } from '@xyflow/react';
-import { type NewConditionalState } from './LogicNodeDataType';
+import { Node } from '@xyflow/react';
+import { NewConditionalState } from './LogicNodeDataType';
 
 export type GenericNode = Node & {
   id: string;

@@ -1,10 +1,11 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, IconEdit } from 'twenty-ui/display';
@@ -76,15 +77,14 @@ export const ServiceCenterServiceLevelAgreement = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  const whatsappIntegrations = useFindManyRecords({
-    objectNameSingular: 'whatsappIntegration',
-  }).records;
+  const { whatsappIntegrations, refetchWhatsapp } =
+    useFindAllWhatsappIntegrations();
   // const { messengerIntegrations, refetchMessenger } =
   //   useGetAllMessengerIntegrations();
 
-  // useEffect(() => {
-  //   refetchWhatsapp();
-  // }, [refetchWhatsapp]);
+  useEffect(() => {
+    refetchWhatsapp();
+  }, [refetchWhatsapp]);
 
   const waList = (whatsappIntegrations || []).filter(
     (integration) => integration.disabled !== true,

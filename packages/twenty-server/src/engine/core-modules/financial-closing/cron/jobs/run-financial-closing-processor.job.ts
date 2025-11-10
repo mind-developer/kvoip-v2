@@ -1,5 +1,4 @@
-import { i18n } from '@lingui/core';
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { Logger, Scope } from '@nestjs/common';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
 import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
@@ -79,7 +78,7 @@ export class RunFinancialClosingJobProcessor {
       );
 
     let newExecutionLog = financialClosingExecutionsRepository.create({
-      name: `Execução do fechamento financeiro` + ': ' + financialClosing.id,
+      name: msg`Execution of financial closing` + ' ' + financialClosing.id,
       executedAt: new Date(),
       billingModelIds: financialClosing.billingModelIds,
       financialClosingId: financialClosing.id,
@@ -89,20 +88,14 @@ export class RunFinancialClosingJobProcessor {
       await financialClosingExecutionsRepository.save(newExecutionLog);
 
     this.logger.log(
-      `newExecutionLog i18n: ${JSON.stringify(i18n._('Starting closing execution'), null, 2)}`,
-    );
-    this.logger.log(
-      `newExecutionLog T: ${JSON.stringify(t`Starting closing execution`, null, 2)}`,
-    );
-    this.logger.log(
-      `newExecutionLog msg: ${JSON.stringify(msg`Starting closing execution`, null, 2)}`,
+      `newExecutionLog: ${JSON.stringify(newExecutionLog, null, 2)}`,
     );
 
     await addFinancialClosingExecutionLog(
       newExecutionLog,
       financialClosingExecutionsRepository,
       'info',
-      `Início da execução do fechamento financeiro` + ': ' + financialClosing.id,
+      msg`Starting closing execution` + ' ' + financialClosing.id,
     );
 
     try {
@@ -134,7 +127,7 @@ export class RunFinancialClosingJobProcessor {
       for (const company of companies) {
         let newCompanyExecution =
           companyFinancialClosingExecutionsRepository.create({
-            name: `Execução do fechamento financeiro` + ' ' + financialClosing.id + ' - ' + company.name,
+            name: msg`Closing execution` + ' ' + financialClosing.id + ' - ' + company.name,
             executedAt: new Date(),
             financialClosingExecutionId: newExecutionLog.id,
             companyId: company.id,
@@ -184,7 +177,7 @@ export class RunFinancialClosingJobProcessor {
             newExecutionLog,
             financialClosingExecutionsRepository,
             'warn',
-            `Erro ao gerar a cobrança para a empresa` + ' ' + company.name + ' (' + company.id + ')',
+            msg`Error to generate charge for the company` + ' ' + company.name + ' (' + company.id + ')',
           );
         }
       }
@@ -243,7 +236,7 @@ export class RunFinancialClosingJobProcessor {
         newExecutionLog,
         financialClosingExecutionsRepository,
         'error',
-        `Erro fatal na execução do fechamento financeiro` + ': ' + error.message,
+        msg`Fatal error in closing execution` + ': ' + error.message,
         {
           status: FinancialClosingExecutionStatusEnum.ERROR,
         },

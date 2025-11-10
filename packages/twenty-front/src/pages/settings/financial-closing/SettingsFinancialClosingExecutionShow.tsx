@@ -1,4 +1,3 @@
-/* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 
@@ -11,7 +10,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CompanyFinancialClosingExecutionsTable } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionsTable';
 import { FinancialClosingExecutionDetailsCard } from '@/settings/financial-closing/components/FinancialClosingExecutionDetailsCard';
 import { FinancialClosingExecutionLogsList } from '@/settings/financial-closing/components/FinancialClosingExecutionLogsList';
-import { type FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
+import { FinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/FinancialClosingExecution';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -46,7 +45,8 @@ const StyledFormSectionLogs = styled(Section)`
 
 export const SettingsFinancialClosingExecutionShow = () => {
   const { t } = useLingui();
-
+  const theme = useTheme();
+  const navigate = useNavigate();
   const { financialClosingExecutionId } = useParams<{
     financialClosingExecutionId: string;
   }>();

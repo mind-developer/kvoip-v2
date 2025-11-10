@@ -32,6 +32,7 @@ export const groupLinkLogsData = (
       },
     };
 
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(log?.utmSource))
       sourceKeyColors = {
         ...sourceKeyColors,

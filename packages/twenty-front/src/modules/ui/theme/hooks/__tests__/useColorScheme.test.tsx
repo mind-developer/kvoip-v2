@@ -3,7 +3,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { type MockWorkspaceMember } from '~/testing/mock-data/workspace-members';
+import { MockWorkspaceMember } from '~/testing/mock-data/workspace-members';
 
 const updateOneRecordMock = jest.fn();
 

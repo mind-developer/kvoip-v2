@@ -6,14 +6,15 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ServiceCenterTabContent } from '@/settings/service-center/agents/components/ServiceCenterTabContent';
 import { ServiceCenterTabList } from '@/settings/service-center/agents/components/ServiceCenterTabList';
 import { SettingsServiceCenterFilterDropdown } from '@/settings/service-center/agents/components/SettingsServiceCenterFilterDropdown';
-import { type Agent } from '@/settings/service-center/agents/types/Agent';
+import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { type Sector } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -52,18 +53,15 @@ export const ServiceCenterTabs = ({
   // const { t } = useTranslation();
 
   const isMobile = useIsMobile() || isRightDrawer;
-  const sectors = useFindManyRecords<Sector & { __typename: string }>({
-    objectNameSingular: 'sector',
-  }).records;
+  const { agents, refetch } = useFindAllAgents();
+  const { sectors } = useFindAllSectors();
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const [agents, setAgents] = useState<Agent[]>(
-    useFindManyRecords<Agent & { __typename: string }>({
-      objectNameSingular: 'agent',
-    }).records,
-  );
+  const [agentsWithWorkspaceMembers, setAgentsWithWorkspaceMembers] = useState<
+    Agent[]
+  >([]);
   const [selectedSectorId, setSelectedSectorId] = useState<string | null>(null);
 
   const tabs = [
@@ -112,9 +110,21 @@ export const ServiceCenterTabs = ({
         }),
       );
 
-      setAgents(filteredByIntegration);
+      const agentsData = filteredByIntegration.map((agent) => ({
+        ...agent,
+        workspaceMember: workspaceMembers.find(
+          (member) => member.id === agent.memberId,
+        ),
+      }));
+
+      setAgentsWithWorkspaceMembers(agentsData);
     }
   }, [agents, workspaceMembers, selectedSectorId, activeTabId]);
+
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledShowServiceCenterTabs isMobile={isMobile}>
@@ -137,8 +147,11 @@ export const ServiceCenterTabs = ({
         />
       </StyledTabListContainer>
 
-      {activeTabId && agents.length > 0 && (
-        <ServiceCenterTabContent agents={agents} />
+      {activeTabId && agentsWithWorkspaceMembers.length > 0 && (
+        <ServiceCenterTabContent
+          agents={agentsWithWorkspaceMembers}
+          refetchAgents={refetch}
+        />
       )}
     </StyledShowServiceCenterTabs>
   );

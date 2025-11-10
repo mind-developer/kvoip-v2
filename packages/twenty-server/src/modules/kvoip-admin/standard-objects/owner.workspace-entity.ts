@@ -8,7 +8,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { OWNER_STANDARD_FIELD_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-field-ids.constant';
 import { KVOIP_ADMIN_STANDARD_OBJECT_IDS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-ids.constant';
-import { KVOIP_ADMIN_STANDARD_OBJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
+import { KVOIP_ADMIN_STANRD_BOJECT_ICONS } from 'src/engine/core-modules/kvoip-admin/standard-objects/constants/kvoip-admin-standard-object-icons.constant';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
@@ -41,14 +41,13 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
 ];
 
-// TODO: Remvoe this entity after migration to person
 @WorkspaceEntity({
   standardId: KVOIP_ADMIN_STANDARD_OBJECT_IDS.owner,
   namePlural: 'owners',
   labelSingular: msg`Owner`,
   labelPlural: msg`Owner`,
   description: msg`The person who is responsible for managing the workspace and its resources.`,
-  icon: KVOIP_ADMIN_STANDARD_OBJECT_ICONS.owner,
+  icon: KVOIP_ADMIN_STANRD_BOJECT_ICONS.owner,
   shortcut: 'P',
   labelIdentifierStandardId: OWNER_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: OWNER_STANDARD_FIELD_IDS.avatarUrl,

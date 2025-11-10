@@ -1,24 +1,15 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-
-@ObjectType()
-class EncaminhamentoDestino {
-  @Field(() => Int, { nullable: true })
-  tipo?: number;
-
-  @Field({ nullable: true })
-  destino?: string;
-}
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 class Encaminhamento {
-  @Field(() => Int, { nullable: true })
-  encaminhamento_tipo?: number;
+  @Field({ nullable: true })
+  encaminhamento_tipo?: string;
 
-  @Field(() => [EncaminhamentoDestino], { nullable: true })
-  encaminhamento_destino?: EncaminhamentoDestino[];
+  @Field(() => [String], { nullable: true })
+  encaminhamento_destino?: string[];
 
-  @Field(() => [EncaminhamentoDestino], { nullable: true })
-  encaminhamento_destinos?: EncaminhamentoDestino[];
+  @Field(() => [String], { nullable: true })
+  encaminhamento_destinos?: string[];
 }
 
 @ObjectType()

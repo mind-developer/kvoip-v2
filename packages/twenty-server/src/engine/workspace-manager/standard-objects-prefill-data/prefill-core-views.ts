@@ -18,6 +18,7 @@ import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-worksp
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { chargesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charges-all-views';
+import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { invoiceAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/invoice-all-views';
@@ -66,6 +67,7 @@ export const prefillCoreViews = async ({
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
+    chatbotsAllView(objectMetadataItems),
     supportAllView(objectMetadataItems),
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),

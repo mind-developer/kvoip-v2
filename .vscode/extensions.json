@@ -15,8 +15,6 @@
     "unifiedjs.vscode-mdx",
     "xyc.vscode-mdx-preview",
     "yoavbls.pretty-ts-errors",
-    "ms-playwright.playwright",
-    "aaron-bond.better-comments",
-    "Gruntfuggly.todo-tree"
+    "ms-playwright.playwright"
   ]
 }

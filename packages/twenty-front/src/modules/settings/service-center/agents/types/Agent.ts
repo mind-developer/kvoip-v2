@@ -1,16 +1,21 @@
-export type Agent = {
-  __typename: 'Agent';
+import { Inbox } from '@/settings/service-center/inboxes/types/InboxType';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+
+export interface Agent {
   id: string;
   isAdmin: boolean;
   isActive?: boolean;
-  sectorId?: string;
-};
-
-export type CreateAgent = {
-  __typename?: 'Agent';
-  isAdmin: boolean;
-  isActive: boolean;
-  sectorId: string | null;
-  workspaceMemberId: string | null;
-  inboxes: string[] | null;
-};
+  memberId: string;
+  inboxesIds?: string[];
+  sectorIds: string[];
+  sectors?: Sector[];
+  inboxes?: Inbox[];
+  createdAt: string;
+  updatedAt: string;
+  workspace: {
+    id: string;
+    displayName: string;
+  };
+  workspaceMember?: WorkspaceMember;
+}

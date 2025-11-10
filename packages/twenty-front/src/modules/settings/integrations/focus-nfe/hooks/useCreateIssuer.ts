@@ -5,7 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { type IssuerFormValues } from '~/types/Issuer'; // Using IssuerFormValues for input
+import { IssuerFormValues } from '~/types/Issuer'; // Using IssuerFormValues for input
 
 interface CreateIssuerHookResponse {
   createIssuer: (input: IssuerFormValues) => Promise<void>;

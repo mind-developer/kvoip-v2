@@ -1,4 +1,4 @@
-import { type IWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/WhatsappIntegration';
+import { IWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/WhatsappIntegration';
 
 export type CreateWhatsappIntegrationInput = Omit<
   IWhatsappIntegration,

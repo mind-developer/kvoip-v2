@@ -1,5 +1,5 @@
 import { UPDATE_FOCUS_NFE_INTEGRATION } from '@/settings/integrations/focus-nfe/graphql/mutation/updateFocusNfeIntegration';
-import { type UpdateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/UpdateFocusNfeIntegrationInput';
+import { UpdateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/UpdateFocusNfeIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
