@@ -507,6 +507,22 @@ export class ChatMessageManagerService {
         return null;
       }
 
+      // Cancel abandonment if chatbot sends a message - must be done before handleAbandonment
+      if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
+        await this.cancelScheduledAbandonment(clientChat.id);
+        if (clientChat.status === ClientChatStatus.ABANDONED) {
+          await this.updateChat(
+            clientChat.id,
+            {
+              status: ClientChatStatus.CHATBOT,
+            },
+            workspaceId,
+          );
+          // Update clientChat object to reflect the change
+          clientChat.status = ClientChatStatus.CHATBOT;
+        }
+      }
+
       if (
         clientChat.sector.abandonmentInterval &&
         message.event !== ClientChatMessageEvent.ABANDONED
