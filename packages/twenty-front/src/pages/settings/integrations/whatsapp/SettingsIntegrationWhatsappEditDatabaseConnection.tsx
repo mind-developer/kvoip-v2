@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { type WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm';
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
-import { useUpdateWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useUpdateWhatsappIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -28,6 +28,7 @@ export const settingsEditIntegrationWhatsappConnectionFormSchema = z.object({
   accessToken: z.string().min(1),
   appId: z.string(),
   appKey: z.string(),
+  apiType: z.string(),
 });
 
 export type SettingsEditIntegrationWhatsappConnectionFormValues = z.infer<
@@ -42,8 +43,6 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  const { updateWhatsappIntegration } = useUpdateWhatsappIntegration();
-
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
     ({ from: { key } }) => key === 'whatsapp',
@@ -51,7 +50,11 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
 
   const { connectionId } = useParams<{ connectionId?: string }>();
 
-  const { whatsappIntegrations } = useFindAllWhatsappIntegrations();
+  const whatsappIntegrations = useFindManyRecords<
+    WhatsappIntegration & { __typename: string }
+  >({
+    objectNameSingular: 'whatsappIntegration',
+  }).records;
   const activeConnection = whatsappIntegrations.find(
     (wa) => wa.id === connectionId,
   );
@@ -80,6 +83,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
         businessAccountId: activeConnection?.businessAccountId,
         appId: activeConnection?.appId,
         appKey: activeConnection?.appKey,
+        apiType: activeConnection?.apiType,
       },
     });
 
@@ -89,15 +93,16 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      await updateWhatsappIntegration({
-        id: formValues.id,
-        name: formValues.name,
-        phoneId: formValues.phoneId,
-        businessAccountId: formValues.businessAccountId,
-        accessToken: formValues.accessToken,
-        appId: formValues.appId,
-        appKey: formValues.appKey,
-      });
+      // await updateWhatsappIntegration({
+      //   id: formValues.id,
+      //   name: formValues.name,
+      //   phoneId: formValues.phoneId,
+      //   businessAccountId: formValues.businessAccountId,
+      //   accessToken: formValues.accessToken,
+      //   appId: formValues.appId,
+      //   appKey: formValues.appKey,
+      //   apiType: formValues.apiType,
+      // });
 
       navigate(SettingsPath.IntegrationWhatsappDatabase);
     } catch (error) {

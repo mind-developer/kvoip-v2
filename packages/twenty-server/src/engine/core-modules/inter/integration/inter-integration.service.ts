@@ -90,6 +90,9 @@ export class InterIntegrationService {
       },
     );
 
+    this.logger.log(`Atualizando webhook para a integração: ${updatedIntegration.id}`);
+    this.logger.log(`updatedIntegration: ${JSON.stringify(updatedIntegration, null, 2)}`);
+    
     await this.subscriptionWebhook(updatedIntegration, integration.workspace.id, updatedIntegration.id);
 
     return this.interIntegrationRepository.save(updatedIntegration);
@@ -200,6 +203,9 @@ export class InterIntegrationService {
 
       const writeAccessToken = await this.getOAuthToken(integration);
 
+
+      this.logger.log(`writeAccessToken: ${writeAccessToken}`);
+      
       if (!writeAccessToken) {
         this.logger.error('Failed to obtain OAuth token for write');
         return;

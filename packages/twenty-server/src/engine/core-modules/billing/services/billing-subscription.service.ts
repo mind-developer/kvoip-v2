@@ -107,6 +107,7 @@ export class BillingSubscriptionService {
     const currentChargeFileLink = currentCharge?.interBillingChargeFilePath
       ? this.interService.getFileLinkFromPath(
           currentCharge?.interBillingChargeFilePath,
+          currentSubscription.workspaceId,
         )
       : null;
 

@@ -1,14 +1,15 @@
 /* eslint-disable @nx/workspace-no-state-useref */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
-import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { chatbotFlowNodes } from '@/chatbot/state/chatbotFlowState';
 import { renameFile } from '@/chatbot/utils/renameFile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
-import { Node } from '@xyflow/react';
+import { type Node } from '@xyflow/react';
 import { useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { H3Title, Label } from 'twenty-ui/display';
@@ -69,44 +70,39 @@ export const ChatbotFlowFileEventForm = ({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { updateFlow } = useUpdateChatbotFlow();
-  const { uploadFileToBucket } = useUploadFileToBucket();
   const { deleteSelectedNode } = useDeleteSelectedNode();
-
-  const chatbotFlow = useGetChatbotFlowState();
+  const setChatbotFlowNodes = useSetRecoilState(chatbotFlowNodes);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const chatbotFlow = useGetChatbotFlowState();
 
   const handleSendFile = async (file: File) => {
-    if (!selectedNode || !chatbotFlow) return;
+    if (!selectedNode) return;
 
     setFile(undefined);
 
-    const url = await uploadFileToBucket({ file, type: 'document' });
+    const attachment = await uploadAttachmentFile(file, {
+      targetObjectNameSingular: CoreObjectNameSingular.Chatbot,
+      id: chatbotFlow?.chatbotId,
+    });
 
-    if (url && selectedNode) {
-      setFile(url);
+    if (attachment && selectedNode) {
+      setFile(attachment.attachmentAbsoluteURL);
 
       const updatedNode = {
         ...selectedNode,
         data: {
           ...selectedNode.data,
-          fileUrl: url,
+          fileUrl: attachment.attachmentAbsoluteURL,
         },
       };
 
-      const updatedNodes = chatbotFlow.nodes.map((node) =>
-        node.id === selectedNode.id ? updatedNode : node,
+      setChatbotFlowNodes((nodes) =>
+        nodes.map((node) => (node.id === selectedNode.id ? updatedNode : node)),
       );
-
-      updateFlow({
-        chatbotId: chatbotFlow.chatbotId,
-        nodes: updatedNodes,
-        viewport: { x: 0, y: 0, zoom: 0 },
-      });
-
-      setChatbotFlowSelectedNode(updatedNode);
+      setChatbotFlowSelectedNode([updatedNode]);
     }
   };
 

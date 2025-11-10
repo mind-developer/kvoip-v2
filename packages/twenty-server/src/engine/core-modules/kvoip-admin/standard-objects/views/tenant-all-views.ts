@@ -35,7 +35,7 @@ export const tenantAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
       {
         fieldMetadataId:
           tenantObjectMetadata.fields.find(
-            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.owner,
+            (field) => field.standardId === TENANT_STANDARD_FIELD_IDS.person,
           )?.id ?? '',
         position: 1,
         isVisible: true,

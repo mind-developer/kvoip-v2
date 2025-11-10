@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import {
   SettingsFinancialClosingForm,
 } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useCreateFinancialClosing } from '@/settings/financial-closing/hooks/useCreateFinancialClosing';
-import { CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
+import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -41,8 +42,8 @@ export const SettingsFinancialClosingNew = () => {
       name: '',
       lastDayMonth: false,
       time: '00:00',
-      day: undefined, // Campo obrigatório - precisa ser preenchido
-      billingModelIds: [], // Campo obrigatório - precisa ser preenchido
+      day: undefined, 
+      billingModelIds: [],
       workspaceId: currentWorkspace?.id,
     },
   });

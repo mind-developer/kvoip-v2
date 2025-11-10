@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export interface FinancialClosingExecution {
   __typename: 'FinancialClosingExecution';
   id: string;
@@ -11,7 +12,7 @@ export interface FinancialClosingExecution {
   completedCostIdentification: boolean;
   completedBoletoIssuance: boolean;
   completedInvoiceIssuance: boolean;
-  billingModelIds: string[]; 
+  billingModelIds: string[];
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

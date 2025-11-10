@@ -7,7 +7,7 @@ import { ChargeAction, ChargeEntityType, ChargeWorkspaceEntity } from 'src/modul
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 
 @Injectable()
 export class FinancialClosingChargeService {
@@ -134,14 +134,14 @@ export class FinancialClosingChargeService {
       await chargeRepository.save(charge);
 
       this.logger.log(
-        msg`Charge issued for company` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
+        `Cobrança emitida para a empresa` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
       );
 
       return charge;
 
     } catch (err) {
       this.logger.error(
-        msg`Error to emit charge for company` + ' ' + company.name + ': ' + err.message,
+        `Erro ao emitir a cobrança para a empresa` + ' ' + company.name + ': ' + err.message,
         err.stack,
       );
       throw err;

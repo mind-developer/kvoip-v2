@@ -17,6 +17,7 @@ import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -35,8 +36,10 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -210,6 +213,19 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   charge: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.chats,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Chats`,
+    description: msg`Chats linked to the person`,
+    icon: 'IconChat',
+    inverseSideTarget: () => ClientChatWorkspaceEntity,
+    inverseSideFieldKey: 'person',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  chats: Relation<ClientChatWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.support,
     type: RelationType.ONE_TO_MANY,
     label: msg`Support`,
@@ -220,6 +236,19 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   support: Relation<SupportWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.tenants,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Workspaces`,
+    description: msg`Workspaces linked to the person`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => TenantWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceGate({ featureFlag: 'IS_KVOIP_ADMIN' })
+  @WorkspaceIsNullable()
+  tenants: Relation<TenantWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,

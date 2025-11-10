@@ -1,7 +1,11 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { IconBrandWhatsapp, IconMessageCircle } from '@tabler/icons-react';
+import {
+  ChatIntegrationProvider,
+  ConnectedAccountProvider,
+} from 'twenty-shared/types';
 
 import { useMemo } from 'react';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   IconApi,
@@ -33,6 +37,10 @@ const PROVIDORS_ICON_MAPPING = {
     [ConnectedAccountProvider.GOOGLE]: IconGoogleCalendar,
     default: IconCalendar,
   },
+  CHAT: {
+    [ChatIntegrationProvider.WHATSAPP]: IconBrandWhatsapp,
+    default: IconMessageCircle,
+  },
 };
 
 export const ActorDisplay = ({
@@ -62,6 +70,8 @@ export const ActorDisplay = ({
         return IconSettingsAutomation;
       case 'WEBHOOK':
         return IconWebhook;
+      case 'CHAT':
+        return PROVIDORS_ICON_MAPPING.CHAT[context?.chatProvider ?? 'default'];
       default:
         return undefined;
     }

@@ -6,8 +6,8 @@ import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import styled from '@emotion/styled';
 import {
   Handle,
-  Node,
-  NodeProps,
+  type Node,
+  type NodeProps,
   Position,
   useNodeConnections,
   useNodeId,
@@ -44,7 +44,8 @@ function ImageNode({
   }>
 >) {
   const nodeId = useNodeId();
-  const node = useNodes().filter((filterNodes) => filterNodes.id === nodeId)[0];
+  const allNodes = useNodes();
+  const node = allNodes.filter((filterNodes) => filterNodes.id === nodeId)[0];
   const { updateNodeData } = useReactFlow();
   const { saveDataValue } = useHandleNodeValue();
 
@@ -66,35 +67,67 @@ function ImageNode({
   };
 
   useEffect(() => {
+    /* @kvoip-woulz proprietary:begin */
+    const currentNode = allNodes.find((n) => n.id === id);
+    const currentNodeData = currentNode?.data || data;
+    /* @kvoip-woulz proprietary:end */
+
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
       const sourceHandle = connection.sourceHandle || '';
-      const nodeId = connection.source;
+      const sourceNodeId = connection.source;
 
+      /* @kvoip-woulz proprietary:begin */
+      const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
+      const sourceNodeData = sourceNode?.data || {};
+      /* @kvoip-woulz proprietary:end */
+
+      // Update current node with incoming connection info
       updateNodeData(id, {
-        ...data,
+        ...currentNodeData,
         incomingEdgeId: sourceHandle,
-        incomingNodeId: nodeId,
+        incomingNodeId: sourceNodeId,
+      });
+
+      // Update source node with outgoing connection info
+      updateNodeData(sourceNodeId!, {
+        ...sourceNodeData,
+        outgoingEdgeId: sourceHandle,
+        outgoingNodeId: id,
       });
     }
 
     if (sourceConnections.length > 0) {
       const connection = sourceConnections[0];
       const sourceHandle = connection.sourceHandle;
-      const nodeId = connection.target;
+      const targetNodeId = connection.target;
 
+      /* @kvoip-woulz proprietary:begin */
+      const targetNode = allNodes.find((n) => n.id === targetNodeId);
+      const targetNodeData = targetNode?.data || {};
+      /* @kvoip-woulz proprietary:end */
+
+      // Update current node with outgoing connection info
       updateNodeData(id, {
-        ...data,
+        ...currentNodeData,
         outgoingEdgeId: sourceHandle,
-        outgoingNodeId: nodeId,
+        outgoingNodeId: targetNodeId,
+      });
+
+      // Update target node with incoming connection info
+      updateNodeData(targetNodeId!, {
+        ...targetNodeData,
+        incomingEdgeId: sourceHandle,
+        incomingNodeId: id,
       });
     }
-  }, [targetConnections, sourceConnections]);
+  }, [targetConnections, sourceConnections, allNodes, id]);
 
   return (
     <BaseNode
       icon={'IconPhoto'}
-      title={data.title ?? 'Node title'}
+      nodeId={node?.id}
+      isInitialNode={node?.data.nodeStart as boolean}
       nodeTypeDescription="Image node"
       onTitleChange={handleTitleChange}
       onTitleBlur={() => {

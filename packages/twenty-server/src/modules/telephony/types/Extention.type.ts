@@ -5,7 +5,7 @@ export type ExtetionBody = {
     numero: string | undefined;
     senha_sip: string | undefined;
     caller_id_externo: string | undefined;
-    cliente_id: number;
+    cliente_id: number | string;
     grupo_ramais: string;
     centro_custo: string;
     dupla_autenticacao_ip_permitido: string;

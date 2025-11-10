@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Pill } from 'twenty-ui/components';
-import { IconChevronRight, IconComponent } from 'twenty-ui/display';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsNavigationCardProps = {
@@ -18,6 +18,7 @@ type SettingsNavigationCardProps = {
 const StyledCard = styled(Card)`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledCardContent = styled(CardContent)`

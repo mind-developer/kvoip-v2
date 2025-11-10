@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 
 import { GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/query/getFocusNfeIntegrationsByWorkspace';
-import { FindFocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FindFocusNfeIntegrationInput';
+import { type FindFocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FindFocusNfeIntegrationInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type GetAllFocusNfeIntegrationsByWorkspace = {

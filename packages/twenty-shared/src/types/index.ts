@@ -9,6 +9,22 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export type { ClientChat, InternalChat } from './Chat';
+export { ClientChatStatus } from './Chat';
+export { ChatIntegrationProvider } from './ChatIntegrationProviders';
+export type {
+  ChatMessage,
+  Reaction,
+  InternalChatMessage,
+  ClientChatMessage,
+} from './ChatMessage';
+export {
+  ChatMessageFromType,
+  ChatMessageToType,
+  ChatMessageType,
+  ChatMessageDeliveryStatus,
+  ClientChatMessageEvent,
+} from './ChatMessage';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';

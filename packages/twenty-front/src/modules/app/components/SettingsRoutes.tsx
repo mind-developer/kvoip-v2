@@ -1,10 +1,14 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { ChatbotFlow } from '@/chatbot/components/ChatbotFlow';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { PermissionFlagType } from '~/generated/graphql';
+import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
+import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
+import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
 import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
 import { SettingsIntegrationFocusNfeEditIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditIssuer';
 import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
@@ -16,21 +20,7 @@ import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
-import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
-import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/SettingsServiceCenterAgents';
-import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
-import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
-import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
-import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
-import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
-import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterNewTelephonyExtension';
-import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
-import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
-import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
-import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
-import { SettingsFinancialClosingEdit } from '~/pages/settings/financial-closing/SettingsFinancialClosingEdit';
-import { SettingsFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsFinancialClosingExecutionShow';
-import { SettingsCompanyFinancialClosingExecutionShow } from '~/pages/settings/financial-closing/SettingsCompanyFinancialClosingExecutionShow';
+import { SettingsServiceCenterLinkTelephonyExtension } from '~/pages/settings/service-center/telephony/SettingsServiceCenterLinkTelephonyExtension';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -195,21 +185,27 @@ const SettingsWorkspaceMembers = lazy(() =>
 );
 
 const SettingsFinancialClosing = lazy(() =>
-  import('~/pages/settings/financial-closing/SettingsFinancialClosing').then((module) => ({
-    default: module.SettingsFinancialClosing,
-  })),
+  import('~/pages/settings/financial-closing/SettingsFinancialClosing').then(
+    (module) => ({
+      default: module.SettingsFinancialClosing,
+    }),
+  ),
 );
 
 const SettingsFinancialClosingExecutions = lazy(() =>
-  import('~/pages/settings/financial-closing/SettingsFinancialClosingExecutions').then((module) => ({
+  import(
+    '~/pages/settings/financial-closing/SettingsFinancialClosingExecutions'
+  ).then((module) => ({
     default: module.SettingsFinancialClosingExecutions,
   })),
 );
 
 const SettingsFinancialClosingNew = lazy(() =>
-  import('~/pages/settings/financial-closing/SettingsFinancialClosingNew').then((module) => ({
-    default: module.SettingsFinancialClosingNew,
-  })),
+  import('~/pages/settings/financial-closing/SettingsFinancialClosingNew').then(
+    (module) => ({
+      default: module.SettingsFinancialClosingNew,
+    }),
+  ),
 );
 
 const SettingsProfile = lazy(() =>
@@ -435,6 +431,127 @@ const SettingsRoleAddObjectLevel = lazy(() =>
   ),
 );
 
+// Service Center lazy imports
+const SettingsServiceCenter = lazy(() =>
+  import('~/pages/settings/service-center/SettingsServiceCenter').then(
+    (module) => ({
+      default: module.SettingsServiceCenter,
+    }),
+  ),
+);
+
+const SettingsServiceCenterAgents = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterAgents'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterAgents,
+  })),
+);
+
+const SettingsServiceCenterEditAgent = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterEditAgent'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditAgent,
+  })),
+);
+
+const SettingsServiceCenterNewAgent = lazy(() =>
+  import(
+    '~/pages/settings/service-center/agents/SettingsServiceCenterNewAgent'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewAgent,
+  })),
+);
+
+const SettingsServiceCenterChatbots = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterChatbots'
+  ).then((module) => ({
+    default: module.default,
+  })),
+);
+
+const SettingsServiceCenterCreateChatbot = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterCreateChatbot'
+  ).then((module) => ({
+    default: module.default,
+  })),
+);
+
+const SettingsServiceCenterEditChatbot = lazy(() =>
+  import(
+    '~/pages/settings/service-center/chatbots/SettingsServiceCenterEditChatbot'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditChatbot,
+  })),
+);
+
+const SettingsServiceCenterEditSector = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterEditSector'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditSector,
+  })),
+);
+
+const SettingsServiceCenterNewSector = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterNewSector'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewSector,
+  })),
+);
+
+const SettingsServiceCenterSectors = lazy(() =>
+  import(
+    '~/pages/settings/service-center/sectors/SettingsServiceCenterSectors'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterSectors,
+  })),
+);
+
+const SettingsServiceCenterEditServiceLevel = lazy(() =>
+  import(
+    '~/pages/settings/service-center/service-level/SettingsServiceCenterEditServiceLevel'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterEditServiceLevel,
+  })),
+);
+
+const SettingsServiceCenterServiceLevel = lazy(() =>
+  import(
+    '~/pages/settings/service-center/service-level/SettingsServiceCenterServiceLevel'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterServiceLevel,
+  })),
+);
+
+const SettingsServiceCenterNewTelephonyExtension = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterNewTelephonyExtension'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterNewTelephonyExtension,
+  })),
+);
+
+const SettingsServiceCenterTelephony = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephony'
+  ).then((module) => ({
+    default: module.SettingsServiceCenterTelephony,
+  })),
+);
+
+const SettingsTelephonyEdit = lazy(() =>
+  import(
+    '~/pages/settings/service-center/telephony/SettingsServiceCenterTelephonyEdit'
+  ).then((module) => ({
+    default: module.SettingsTelephonyEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
@@ -523,10 +640,6 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterTelephony />}
       />
       <Route
-        path={SettingsPath.ServiceCenterNewTelephonyExtension}
-        element={<SettingsServiceCenterNewTelephonyExtension />}
-      />
-      <Route
         path={SettingsPath.EditTelephony}
         element={<SettingsTelephonyEdit />}
       />
@@ -539,12 +652,12 @@ export const SettingsRoutes = ({
         element={<SettingsServiceCenterEditAgent />}
       />
       <Route
-        path={SettingsPath.ServiceCenterTelephony}
-        element={<SettingsServiceCenterTelephony />}
-      />
-      <Route
         path={SettingsPath.ServiceCenterNewTelephonyExtension}
         element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterLinkTelephonyExtension}
+        element={<SettingsServiceCenterLinkTelephonyExtension />}
       />
       <Route
         path={SettingsPath.EditTelephony}
@@ -558,6 +671,19 @@ export const SettingsRoutes = ({
         path={SettingsPath.ServiceCenterNewSector}
         element={<SettingsServiceCenterNewSector />}
       />
+      <Route
+        path={SettingsPath.Chatbots}
+        element={<SettingsServiceCenterChatbots />}
+      />
+      <Route
+        path={SettingsPath.ChatbotsCreate}
+        element={<SettingsServiceCenterCreateChatbot />}
+      />
+      <Route
+        path={SettingsPath.ChatbotsEdit}
+        element={<SettingsServiceCenterEditChatbot />}
+      />
+      <Route path={SettingsPath.ChatbotFlow} element={<ChatbotFlow />} />
       <Route
         path={SettingsPath.ServiceCenterEditSector}
         element={<SettingsServiceCenterEditSector />}
@@ -829,7 +955,6 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
       </Route>
 
-
       {/* Kvoip : TO-DO */}
       <Route
         path={SettingsPath.FinancialClosing}
@@ -855,7 +980,6 @@ export const SettingsRoutes = ({
         path={SettingsPath.CompanyFinancialClosingExecution}
         element={<SettingsCompanyFinancialClosingExecutionShow />}
       />
-      
     </Routes>
   </Suspense>
 );

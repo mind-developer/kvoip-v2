@@ -10,8 +10,10 @@ export const TENANT_STANDARD_FIELD_IDS = {
   subscriptions: '7128fb62-353d-488b-bd19-928d6eaf3256',
   company: '269af23b-1e82-47d8-b521-489cf835222d',
   timelineActivities: '30303030-2c96-44ab-bba2-110fcef4df0f',
+  person: '30303030-bc51-40b6-bcf0-ffc9febd57e5',
 };
 
+// TODO: Remvoe this field after migration to person
 export const OWNER_STANDARD_FIELD_IDS = {
   name: '20202020-22f1-449e-aa30-268b0cc09f83',
   emails: '20202020-4c3a-47b3-8177-477496ec055a',

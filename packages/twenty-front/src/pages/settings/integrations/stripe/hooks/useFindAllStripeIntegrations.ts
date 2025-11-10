@@ -3,7 +3,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 import { GET_ALL_STRIPE_INTEGRATIONS } from '~/pages/settings/integrations/stripe/graphql/query/getAllStripeIntegratons';
-import { FindStripeIntegration } from '../types/StripeIntegration';
+import { type FindStripeIntegration } from '../types/StripeIntegration';
 
 type FindAllStripeIntegrations = {
   stripeIntegrations: FindStripeIntegration[];

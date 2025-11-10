@@ -1,56 +1,47 @@
+/* @kvoip-woulz proprietary */
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ChatMessageManagerResolver } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.resolver';
 import { ChatMessageManagerService } from 'src/engine/core-modules/chat-message-manager/chat-message-manager.service';
-import { SaveChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-save.job';
-import { SendChatMessageJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-send.job';
-import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
-import { ChatbotFlowService } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.service';
-import { ConditionalInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ConditionalInputHandler';
-import { FileInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/FileInputHandler';
-import { ImageInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/ImageInputHandler';
-import { TextInputHandler } from 'src/engine/core-modules/chatbot-flow/engine/handlers/TextInputHandler';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
-import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
+import { ChatMessageManagerSetAbandonedCronJob } from 'src/engine/core-modules/chat-message-manager/jobs/chat-message-manager-set-abandoned.cron.job';
+import { MediaHelperService } from 'src/engine/core-modules/chat-message-manager/services/media-helper.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
-import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
-import { Sector } from 'src/engine/core-modules/sector/sector.entity';
-import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
+import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ClientChatMessageModule } from 'src/modules/client-chat-message/client-chat-message.module';
+import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([
-          Workspace,
-          Inbox,
-          Sector,
-          WorkspaceAgent,
-          ChatbotFlow,
-          WhatsappIntegration,
-        ]),
+        NestjsQueryTypeOrmModule.forFeature([Workspace]),
         TypeORMModule,
       ],
     }),
     MessageQueueModule,
+    ClientChatMessageModule,
+    RedisClientModule,
   ],
   providers: [
+    ChatMessageManagerResolver,
     ChatMessageManagerService,
-    WhatsAppService,
-    GoogleStorageService,
-    FirebaseService,
-    ChatbotFlowService,
-    TextInputHandler,
-    ImageInputHandler,
-    ConditionalInputHandler,
-    FileInputHandler,
-    SaveChatMessageJob,
-    SendChatMessageJob,
+    ClientChatMessageService,
+    FileService,
+    JwtService,
+    JwtWrapperService,
+    ChatMessageManagerSetAbandonedCronJob,
+    MediaHelperService,
   ],
-  exports: [ChatMessageManagerService],
+  exports: [
+    ChatMessageManagerService,
+    ChatMessageManagerSetAbandonedCronJob,
+    MediaHelperService,
+  ],
 })
 export class ChatMessageManagerModule {}

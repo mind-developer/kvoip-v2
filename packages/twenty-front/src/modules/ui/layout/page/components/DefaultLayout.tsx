@@ -1,4 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -20,6 +21,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -59,10 +61,18 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledWebSoftphoneContainer = styled.div`
-  position: absolute;
-  bottom: 100px;
-  right: 20px;
-  z-index: 100;
+  position: fixed;       
+  top: 0;
+  left: 0;
+  width: 100vw;         
+  height: 100vh; 
+  pointer-events: none;
+  z-index: 30; /* Abaixo do modal (40) e dropdowns (50) */
+  
+  /* Permitir eventos de clique no WebSoftphone e seus modais */
+  > * {
+    pointer-events: auto;
+  }
 `;
 
 export const DefaultLayout = () => {
@@ -77,6 +87,9 @@ export const DefaultLayout = () => {
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
   const isOnboarding = useIsOnboarding();
+  /* @kvoip-woulz proprietary:begin */
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  /* @kvoip-woulz proprietary:end */
 
   return (
     <>
@@ -142,11 +155,17 @@ export const DefaultLayout = () => {
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
-      {!isOnboarding && (
+
+      {/* @kvoip-woulz proprietary:begin */}
+
+      {!isOnboarding && currentWorkspaceMember && (
         <StyledWebSoftphoneContainer>
           <WebSoftphone />
         </StyledWebSoftphoneContainer>
       )}
+
+      {/* @kvoip-woulz proprietary:end */}
+
     </>
   );
 };

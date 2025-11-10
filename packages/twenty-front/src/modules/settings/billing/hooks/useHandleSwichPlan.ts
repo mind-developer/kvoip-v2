@@ -29,7 +29,6 @@ export const useHandleSwichPlan = () => {
         },
       });
 
-      // eslint-disable-next-line no-console
       console.error('Error changing plan', error);
     },
     refetchQueries: [GET_CURRENT_USER],

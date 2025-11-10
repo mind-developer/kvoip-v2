@@ -1,4 +1,4 @@
-import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import { SelectStatus } from '@/settings/service-center/components/SelectStatus';
 import styled from '@emotion/styled';
 import {

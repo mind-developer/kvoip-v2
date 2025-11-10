@@ -2,10 +2,17 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
-import { SelectOption } from 'twenty-ui/input';
-import { useEffect } from 'react';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Select } from '@/ui/input/components/Select';
+import {
+  IconBrandMeta,
+  IconDeviceMobileMessage,
+  IconUserScan,
+} from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { useIcons } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { type SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -15,20 +22,28 @@ const StyledInputsContainer = styled.div`
 
 type SettingsIntegrationWhatsappDatabaseConnectionFormProps = {
   disabled?: boolean;
+  sectors?: (Omit<Sector, 'icon'> & {
+    __typename: string;
+    icon: string;
+  })[];
 };
 
-const tipoApiOptions: SelectOption<string>[] = [
+const apiTypeOptions: SelectOption<string>[] = [
   {
+    Icon: IconDeviceMobileMessage,
     label: 'Baileys',
     value: 'Baileys',
   },
   {
+    Icon: IconBrandMeta,
     label: 'MetaAPI',
     value: 'MetaAPI',
   },
 ];
 
-const getFormFields = (): {
+const getFormFields = (
+  sectorOptions: SelectOption[],
+): {
   name: keyof SettingsIntegrationWhatsappConnectionFormValues;
   label: string;
   type?: string;
@@ -40,21 +55,30 @@ const getFormFields = (): {
 }[] => {
   return [
     {
-      name: 'tipoApi',
+      name: 'sectorId',
+      label: 'Default sector (members will receive all new messages)',
+      placeholder: 'Select a sector',
+      isSelect: true,
+      options: sectorOptions,
+      showForBaileys: true,
+      showForMetaAPI: true,
+    },
+    {
+      name: 'apiType',
       label: 'API Type',
       placeholder: 'Select API Type',
       isSelect: true,
-      options: tipoApiOptions,
+      options: apiTypeOptions,
       showForBaileys: true,
       showForMetaAPI: true,
     },
     {
       name: 'name',
-      label: 'Inbox name',
-      placeholder: 'Integration name',
+      label: 'Integration name',
+      placeholder: 'Name',
       type: 'text',
       showForBaileys: true,
-      showForMetaAPI: true
+      showForMetaAPI: true,
     },
     {
       name: 'phoneId',
@@ -101,70 +125,96 @@ const getFormFields = (): {
 
 export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
   disabled,
+  sectors = [],
 }: SettingsIntegrationWhatsappDatabaseConnectionFormProps) => {
+  const { getIcon } = useIcons();
   const { control, watch, setValue } =
     useFormContext<SettingsIntegrationWhatsappConnectionFormValues>();
-  const formFields = getFormFields();
-  const selectedTipoApi = watch('tipoApi');
-  const inboxName = watch('name');
-  //
-  // Auto-preenchimento dos campos ocultos para Baileys
+  const selectedApiType = watch('apiType');
+  
+  const sectorOptions: SelectOption[] =
+    sectors.length > 0
+      ? sectors.map((sector) => ({
+          Icon: sector.icon ? getIcon(sector.icon) : IconUserScan,
+          label: sector.name,
+          value: sector.id,
+        }))
+      : [
+          {
+            Icon: IconUserScan,
+            label: 'No sectors available',
+            value: 'no-sectors',
+            disabled: true,
+          },
+        ];
+  
+  const formFields = getFormFields(sectorOptions);
   useEffect(() => {
-    if (selectedTipoApi === 'Baileys' && inboxName) {
-      setValue('phoneId', inboxName);
-      setValue('businessAccountId', inboxName);
-      setValue('accessToken', inboxName);
-      setValue('appId', inboxName);
-      setValue('appKey', inboxName);
+    if (selectedApiType === 'Baileys') {
+      setValue('phoneId', '');
+      setValue('businessAccountId', '');
+      setValue('accessToken', '');
+      setValue('appId', '');
+      setValue('appKey', '');
     }
+  }, [selectedApiType, setValue]);
 
-  }, [selectedTipoApi, inboxName, setValue]);
+  // Set default sector when sectors are loaded
+  useEffect(() => {
+    if (sectors.length > 0) {
+      const currentSectorId = watch('sectorId');
+      if (!currentSectorId || currentSectorId === '') {
+        setValue('sectorId', sectors[0].id);
+      }
+    }
+  }, [sectors, setValue, watch]);
 
   if (!formFields) return null;
 
-  const visibleFields = formFields.filter(field => {
-    if (!selectedTipoApi) return true; // Mostrar todos se nenhum tipo selecionado
-    if (selectedTipoApi === 'Baileys') return field.showForBaileys;
-    if (selectedTipoApi === 'MetaAPI') return field.showForMetaAPI;
+  const visibleFields = formFields.filter((field) => {
+    if (!selectedApiType) return true;
+    if (selectedApiType === 'Baileys') return field.showForBaileys;
+    if (selectedApiType === 'MetaAPI') return field.showForMetaAPI;
     return true;
   });
 
   return (
     <StyledInputsContainer>
-      {visibleFields.map(({ name, label, type, placeholder, isSelect, options }) => (
-        <Controller
-          key={name}
-          name={name}
-          control={control}
-          render={({ field: { onChange, value } }) => {
-            if (isSelect && options) {
+      {visibleFields.map(
+        ({ name, label, type, placeholder, isSelect, options }) => (
+          <Controller
+            key={name}
+            name={name}
+            control={control}
+            render={({ field: { onChange, value } }) => {
+              if (isSelect && options) {
+                return (
+                  <Select
+                    label={label}
+                    value={value}
+                    onChange={onChange}
+                    options={options}
+                    dropdownId={`api-type-select-${name}`}
+                    fullWidth
+                  />
+                );
+              }
               return (
-                <Select
+                <TextInput
+                  autoComplete="new-password"
                   label={label}
                   value={value}
                   onChange={onChange}
-                  options={options}
-                  dropdownId={`tipo-api-select-${name}`}
                   fullWidth
+                  type={type}
                   disabled={disabled}
+                  placeholder={placeholder}
                 />
               );
-            }
-            return (
-              <TextInput
-                autoComplete="new-password"
-                label={label}
-                value={value}
-                onChange={onChange}
-                fullWidth
-                type={type}
-                disabled={disabled}
-                placeholder={placeholder}
-              />
-            );
-          }}
-        />
-      ))}
+            }}
+          />
+        ),
+      )}
     </StyledInputsContainer>
   );
 };

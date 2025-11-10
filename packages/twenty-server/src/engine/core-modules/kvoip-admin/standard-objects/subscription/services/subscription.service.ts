@@ -125,9 +125,11 @@ export class SubscriptionService {
   async handleSubscriptionUpsert({
     id,
     stripeSubscriptionId,
+    interBillingChargeId,
   }: {
     id?: string;
     stripeSubscriptionId?: string;
+    interBillingChargeId?: string;
   }) {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       {
@@ -137,6 +139,9 @@ export class SubscriptionService {
           },
           {
             stripeSubscriptionId,
+          },
+          {
+            interBillingChargeId,
           },
         ],
         relations: {
