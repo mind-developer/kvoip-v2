@@ -12,7 +12,7 @@ import { IconX, Label, useIcons } from 'twenty-ui/display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
-  border: 2px solid ${({ theme }) => theme.border.color.medium};
+  border: 1.5px solid ${({ theme }) => theme.border.color.strong};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   min-width: 270px;
@@ -20,18 +20,14 @@ const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  /* @kvoip-woulz proprietary:begin */
+  overflow-x: visible;
+  position: relative;
   &:hover {
     border-color: ${({ theme, isSelected }) =>
       isSelected ? theme.color.blue40 : theme.color.blue20};
   }
-  /* @kvoip-woulz proprietary:end */
   ${({ theme, isSelected }) =>
-    isSelected
-      ? `
-    border-color: ${theme.color.blue40};
-  `
-      : ''}
+    isSelected ? `border-color: ${theme.color.blue40};` : ''}
 `;
 
 const StyledHeader = styled.div`
@@ -149,7 +145,7 @@ const BaseNode = ({
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative', overflowX: 'visible' }}>
       {isInitialNode && <StyledNodeType variant="small">Start</StyledNodeType>}
       <StyledBaseNodeWrapper className="nopan" isSelected={isSelected}>
         <StyledHeader>

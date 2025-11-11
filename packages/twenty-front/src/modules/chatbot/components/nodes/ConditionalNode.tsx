@@ -12,6 +12,7 @@ import {
   useNodeConnections,
   useNodes,
   useReactFlow,
+  useUpdateNodeInternals,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
 import { ChatbotFlowConditionalEventForm } from '../actions/ChatbotFlowConditionalEventForm';
@@ -22,6 +23,8 @@ const StyledDiv = styled.div`
   justify-content: center;
   width: 100%;
   gap: 12px;
+  overflow-x: visible;
+  position: relative;
 `;
 
 const StyledLogicNodeWrapper = styled.div`
@@ -30,6 +33,7 @@ const StyledLogicNodeWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   position: relative;
+  overflow-x: visible;
 `;
 
 function ConditionalNode({
@@ -44,6 +48,7 @@ function ConditionalNode({
 
   const { updateNodeData } = useReactFlow();
   const { handleIncomingConnection } = useHandleNodeValue();
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const targetConnections = useNodeConnections({
     id,
@@ -54,6 +59,20 @@ function ConditionalNode({
     id,
     handleType: 'source',
   });
+
+  const baseLogic = data.logic as NewConditionalState | undefined;
+  const logicNodeDataLength = baseLogic?.logicNodeData.length ?? 0;
+
+  /* @kvoip-woulz proprietary:begin */
+  // Update handle positions when the number of conditions changes (node resize)
+  useEffect(() => {
+    // Use setTimeout to ensure DOM has updated after state changes
+    const timeoutId = setTimeout(() => {
+      updateNodeInternals(id);
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [id, logicNodeDataLength, updateNodeInternals]);
+  /* @kvoip-woulz proprietary:end */
 
   useEffect(() => {
     const currentNode = allNodes.find((n) => n.id === id);

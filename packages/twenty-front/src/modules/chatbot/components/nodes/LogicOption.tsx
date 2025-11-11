@@ -28,7 +28,9 @@ const StyledLogicNodeWrapper = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
   position: relative;
-  margin-right: 5px;
+  width: 100%;
+  align-items: center;
+  min-height: 40px;
 `;
 
 const StyledSelect = styled(Select)`
@@ -117,7 +119,13 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   };
 
   return (
-    <div>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        minHeight: '40px',
+      }}
+    >
       <StyledOptionLabel>{condition.option}.</StyledOptionLabel>
       <StyledLogicNodeWrapper>
         {showDeleteButton && (
@@ -160,6 +168,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               type="source"
               position={Position.Right}
               isConnectable={true}
+              style={{ height: 10, width: 10 }}
             />
           </>
         )}

@@ -7,6 +7,7 @@ export const initialNodes: GenericNode[] = [
     id: '1',
     type: 'text',
     data: {
+      title: 'Start',
       nodeStart: true,
       outgoingEdgeId: '',
     },
@@ -17,6 +18,7 @@ export const initialNodes: GenericNode[] = [
     id: '2',
     type: 'conditional',
     data: {
+      title: 'Conditional',
       logic: {
         logicNodes: [0],
         logicNodeData: [

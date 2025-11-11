@@ -139,8 +139,9 @@ const StyledActiveChatbotWarning = styled.div`
   align-items: center;
   height: 20px;
   width: 100%;
-  background-color: ${({ theme }) => theme.color.yellow20};
-  color: ${({ theme }) => theme.font.color};
+  background-color: ${({ theme }) =>
+    theme.name === 'light' ? theme.color.yellow20 : theme.color.yellow80};
+  color: ${({ theme }) => theme.font.color.primary};
   border: 1px dashed ${({ theme }) => theme.border.color.strong};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(1)};
@@ -339,7 +340,6 @@ export const BotDiagramBase = ({
       const currentNodes = nodes ?? initialNodes;
       const currentEdges = edges ?? initialEdges;
 
-      /* @kvoip-woulz proprietary:begin */
       // Check if we're deleting a start node
       const removeChanges = changes.filter(
         (change) => change.type === 'remove',
@@ -358,7 +358,6 @@ export const BotDiagramBase = ({
             const isDeletingStartNode = nodeToDelete?.data?.nodeStart === true;
 
             if (isDeletingStartNode && finalNodes.length > 0) {
-              // Find the first node connected to the deleted start node
               const outgoingEdges = currentEdges.filter(
                 (edge) => edge.source === removeChange.id,
               );
@@ -385,7 +384,6 @@ export const BotDiagramBase = ({
           }
         }
       }
-      /* @kvoip-woulz proprietary:end */
 
       const shouldSave = changes.some(
         (change) =>
@@ -470,7 +468,7 @@ export const BotDiagramBase = ({
       // Center the viewport when toggling
       if (reactFlow.viewportInitialized) {
         setTimeout(() => {
-          reactFlow.fitView({ padding: 0.2, duration: 0 });
+          reactFlow.fitView({ padding: 1, duration: 0 });
         }, 0);
       }
       return newMode;
@@ -508,7 +506,15 @@ export const BotDiagramBase = ({
         multiSelectionKeyCode={'shift'}
       >
         <Controls position="top-right" />
-        <Background bgColor={theme.background.primary} size={2} />
+        <Background
+          bgColor={theme.background.quaternary}
+          color={
+            theme.name === 'light'
+              ? theme.background.invertedPrimary
+              : theme.font.color.extraLight
+          }
+          size={2}
+        />
       </ReactFlow>
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
