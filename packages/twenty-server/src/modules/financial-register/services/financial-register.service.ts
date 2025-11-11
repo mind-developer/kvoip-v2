@@ -14,9 +14,6 @@ import { InterApiService } from 'src/modules/charges/inter/services/inter-api.se
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import {
   AccountPayableWorkspaceEntity,
-  /* @kvoip-woulz proprietary:begin */
-  PayablePaymentType,
-  /* @kvoip-woulz proprietary:end */
   PayableStatus,
 } from '../standard-objects/account-payable.workspace-entity';
 import {
@@ -47,7 +44,7 @@ export interface CreatePayableInput {
   amount: number;
   dueDate: Date;
   /* @kvoip-woulz proprietary:begin */
-  paymentType?: PayablePaymentType;
+  paymentType?: string;
   /* @kvoip-woulz proprietary:end */
   barcode?: string;
   message?: string;
@@ -228,7 +225,7 @@ export class FinancialRegisterService {
       dueDate: input.dueDate.toISOString(),
       companyId: input.companyId,
       /* @kvoip-woulz proprietary:begin */
-      paymentType: input.paymentType ?? null,
+      paymentType: input.paymentType,
       /* @kvoip-woulz proprietary:end */
       barcode: input.barcode,
       message: input.message,

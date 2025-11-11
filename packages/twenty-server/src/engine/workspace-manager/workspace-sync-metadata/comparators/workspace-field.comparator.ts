@@ -11,6 +11,9 @@ import { type ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
+/* @kvoip-woulz proprietary:begin */
+import { ACCOUNT_PAYABLE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+/* @kvoip-woulz proprietary:end */
 
 const commonFieldPropertiesToIgnore = [
   'id',
@@ -36,6 +39,14 @@ const fieldPropertiesToStringify = ['defaultValue'] as const;
 const shouldNotOverrideDefaultValue = (
   fieldMetadata: FieldMetadataEntity | ComputedPartialFieldMetadata,
 ) => {
+  /* @kvoip-woulz proprietary:begin */
+  if (
+    fieldMetadata.standardId === ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.paymentType
+  ) {
+    return false;
+  }
+  /* @kvoip-woulz proprietary:end */
+
   return [
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.SELECT,

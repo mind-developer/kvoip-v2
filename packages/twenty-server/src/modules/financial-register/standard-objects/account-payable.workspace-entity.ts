@@ -64,20 +64,6 @@ registerEnumType(PayableStatus, {
   description: 'Status of the account payable',
 });
 
-/* @kvoip-woulz proprietary:begin */
-export enum PayablePaymentType {
-  PIX = 'pix',
-  TED = 'ted',
-  BOLETO = 'boleto',
-  OTHER = 'other',
-}
-
-registerEnumType(PayablePaymentType, {
-  name: 'PayablePaymentType',
-  description: 'Payment method used to settle the payable',
-});
-/* @kvoip-woulz proprietary:end */
-
 // ============================================
 // WORKSPACE ENTITY
 // ============================================
@@ -208,40 +194,19 @@ export class AccountPayableWorkspaceEntity extends BaseWorkspaceEntity {
   /* @kvoip-woulz proprietary:begin */
   @WorkspaceField({
     standardId: ACCOUNT_PAYABLE_STANDARD_FIELD_IDS.paymentType,
-    type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
     label: msg`Payment Type`,
-    description: msg`Payment method to settle this payable`,
+    description: msg`Payment type (PIX, TED, Boleto, etc.)`,
     icon: 'IconCreditCard',
-    defaultValue: "'" + PayablePaymentType.OTHER + "'",
-    options: [
-      {
-        value: PayablePaymentType.PIX,
-        label: 'PIX',
-        position: 0,
-        color: 'blue',
+    settings: {
+      validation: {
+        ...TEXT_VALIDATION_PATTERNS.PAYMENT_TYPE,
+        errorMessage: msg`Invalid payment type`,
       },
-      {
-        value: PayablePaymentType.TED,
-        label: 'TED',
-        position: 1,
-        color: 'green',
-      },
-      {
-        value: PayablePaymentType.BOLETO,
-        label: 'Boleto',
-        position: 2,
-        color: 'purple',
-      },
-      {
-        value: PayablePaymentType.OTHER,
-        label: 'Other',
-        position: 3,
-        color: 'gray',
-      },
-    ],
+    },
   })
   @WorkspaceIsNullable()
-  paymentType: PayablePaymentType | null;
+  paymentType: string | null;
   /* @kvoip-woulz proprietary:end */
 
   @WorkspaceField({

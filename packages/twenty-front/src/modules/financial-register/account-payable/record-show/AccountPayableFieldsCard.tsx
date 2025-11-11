@@ -4,6 +4,9 @@ import { Fragment, useCallback, useMemo, useState } from 'react';
 
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+/* @kvoip-woulz proprietary:begin */
+import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
+/* @kvoip-woulz proprietary:end */
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -39,6 +42,9 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+/* @kvoip-woulz proprietary:begin */
+import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
+/* @kvoip-woulz proprietary:end */
 /* @kvoip-woulz proprietary:begin */
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -215,12 +221,16 @@ const StyledDraftTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDraftActionsContainer = styled.div`
+const StyledDraftSummaryCard = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  overflow: hidden;
+`;
+
+const StyledDraftSummaryTitleContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -294,11 +304,15 @@ const StyledDraftActionsButton = styled(StyledActionsButton)`
 
 const StyledButtonContainer = styled.div`
   display: flex;
+  /* @kvoip-woulz proprietary:begin */
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  align-items: stretch;
+  /* @kvoip-woulz proprietary:end */
   padding: ${({ theme }) => theme.spacing(2)} 0;
   margin-top: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   justify-content: center;
-  align-items: center;
 `;
 
 const StyledSaveButton = styled(Button)`
@@ -306,6 +320,12 @@ const StyledSaveButton = styled(Button)`
   border-width: 2px !important;
   flex: 1;
 `;
+
+/* @kvoip-woulz proprietary:begin */
+const StyledActionsDropdownWrapper = styled.div`
+  width: 100%;
+`;
+/* @kvoip-woulz proprietary:end */
 
 export const AccountPayableFieldsCard = ({
   objectNameSingular,
@@ -416,6 +436,11 @@ const AccountPayablePersistedFieldsCard = ({
   const handleActionSelection = (action: ActionDropdownItem) => {
     if (action.confirmation) {
       setPendingAction(action);
+      /* @kvoip-woulz proprietary:begin */
+      toggleDropdown({
+        dropdownComponentInstanceIdFromProps: actionsDropdownId,
+      });
+      /* @kvoip-woulz proprietary:end */
       openModal(actionsModalId);
     } else {
       action.onSelect();
@@ -430,16 +455,16 @@ const AccountPayablePersistedFieldsCard = ({
       pendingAction.onSelect();
     }
     setPendingAction(null);
-    toggleDropdown({
-      dropdownComponentInstanceIdFromProps: actionsDropdownId,
-    });
+    /* @kvoip-woulz proprietary:begin */
+    /* Dropdown already closed when modal opened */
+    /* @kvoip-woulz proprietary:end */
   };
 
   const handleClosePendingAction = () => {
     setPendingAction(null);
-    toggleDropdown({
-      dropdownComponentInstanceIdFromProps: actionsDropdownId,
-    });
+    /* @kvoip-woulz proprietary:begin */
+    /* Dropdown already closed when modal opened */
+    /* @kvoip-woulz proprietary:end */
   };
 
   const handleMouseEnter = useCallback(
@@ -1108,6 +1133,11 @@ const AccountPayableDraftFieldsCardInner = ({
   const handleActionSelection = (action: ActionDropdownItem) => {
     if (action.confirmation) {
       setPendingAction(action);
+      /* @kvoip-woulz proprietary:begin */
+      toggleDropdown({
+        dropdownComponentInstanceIdFromProps: actionsDropdownId,
+      });
+      /* @kvoip-woulz proprietary:end */
       openModal(actionsModalId);
     } else {
       action.onSelect();
@@ -1122,16 +1152,16 @@ const AccountPayableDraftFieldsCardInner = ({
       pendingAction.onSelect();
     }
     setPendingAction(null);
-    toggleDropdown({
-      dropdownComponentInstanceIdFromProps: actionsDropdownId,
-    });
+    /* @kvoip-woulz proprietary:begin */
+    /* Dropdown already closed when modal opened */
+    /* @kvoip-woulz proprietary:end */
   };
 
   const handleClosePendingAction = () => {
     setPendingAction(null);
-    toggleDropdown({
-      dropdownComponentInstanceIdFromProps: actionsDropdownId,
-    });
+    /* @kvoip-woulz proprietary:begin */
+    /* Dropdown already closed when modal opened */
+    /* @kvoip-woulz proprietary:end */
   };
 
   const handleSave = useCallback(async () => {
@@ -1241,6 +1271,23 @@ const AccountPayableDraftFieldsCardInner = ({
     (draftValues[headerFieldName] as string | undefined) ?? '';
 
   const headerFieldLabel = labelIdentifierFieldMetadataItem?.label ?? 'Title';
+
+  /* @kvoip-woulz proprietary:begin */
+  const { Icon: draftObjectIcon, IconColor: draftObjectIconColor } =
+    useGetStandardObjectIcon(objectNameSingular);
+
+  const draftCreatedAt = useMemo(() => new Date().toISOString(), []);
+
+  const draftAvatarPlaceholder = useMemo(() => {
+    const trimmed = headerFieldValue.trim();
+
+    if (trimmed.length > 0) {
+      return trimmed;
+    }
+
+    return headerFieldLabel;
+  }, [headerFieldLabel, headerFieldValue]);
+  /* @kvoip-woulz proprietary:end */
 
   const handleHeaderFieldChange = useCallback(
     (newValue: string) => {
@@ -1580,72 +1627,38 @@ const AccountPayableDraftFieldsCardInner = ({
             />
           </StyledDraftTabListContainer>
         )}
-        <StyledDraftActionsContainer>
-          <Dropdown
-            dropdownId={actionsDropdownId}
-            dropdownPlacement="bottom-end"
-            clickableComponent={
-              <StyledDraftActionsButton
-                variant="secondary"
-                accent="default"
-                title="Actions"
-                Icon={IconChevronDown}
-                justify="center"
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
-                    <MenuItem
-                      key={action.id}
-                      text={action.label}
-                      LeftIcon={action.icon}
-                      onClick={() => handleActionSelection(action)}
-                    />
-                  ))}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
+        <StyledDraftSummaryCard>
+          <ShowPageSummaryCard
+            id={draftRecordId}
+            avatarPlaceholder={draftAvatarPlaceholder}
+            avatarType="rounded"
+            date={draftCreatedAt}
+            icon={draftObjectIcon}
+            iconColor={draftObjectIconColor}
+            loading={false}
+            isMobile={isInRightDrawer}
+            title={
+              <StyledDraftSummaryTitleContainer>
+                <StyledTitleFieldContent>
+                  <StyledTitleTextInput
+                    value={headerFieldValue}
+                    onChange={handleHeaderFieldChange}
+                    placeholder={headerFieldLabel}
+                    autoFocus
+                    fullWidth
+                    autoGrow
+                    inheritFontStyles
+                    sizeVariant="md"
+                    onFocus={clearHoverState}
+                    onMouseEnter={clearHoverState}
+                    spellCheck={false}
+                  />
+                </StyledTitleFieldContent>
+              </StyledDraftSummaryTitleContainer>
             }
           />
-          {pendingAction !== null && (
-            <ConfirmationModal
-              modalId={actionsModalId}
-              title={pendingAction.confirmation?.title ?? ''}
-              subtitle={pendingAction.confirmation?.subtitle ?? ''}
-              confirmButtonText={
-                pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
-              }
-              onConfirmClick={handleConfirmPendingAction}
-              onClose={handleClosePendingAction}
-            />
-          )}
-        </StyledDraftActionsContainer>
+        </StyledDraftSummaryCard>
         <PropertyBox>
-          {/* @kvoip-woulz proprietary:end */}
-          <StyledCardHeader>
-            <StyledTitleFieldContainer>
-              <StyledTitleFieldContent>
-                {/* @kvoip-woulz proprietary:begin */}
-                <StyledTitleTextInput
-                  value={headerFieldValue}
-                  onChange={handleHeaderFieldChange}
-                  placeholder={headerFieldLabel}
-                  autoFocus
-                  fullWidth
-                  autoGrow
-                  inheritFontStyles
-                  sizeVariant="md"
-                  onFocus={clearHoverState}
-                  onMouseEnter={clearHoverState}
-                  spellCheck={false}
-                />
-                {/* @kvoip-woulz proprietary:end */}
-              </StyledTitleFieldContent>
-            </StyledTitleFieldContainer>
-          </StyledCardHeader>
-          <StyledCardHeaderDivider />
-          {/* @kvoip-woulz proprietary:begin */}
           <StyledFieldsSectionsContainer>
             {renderDraftSection(
               'Essential Fields',
@@ -1670,9 +1683,37 @@ const AccountPayableDraftFieldsCardInner = ({
               ),
             )}
           </StyledFieldsSectionsContainer>
-          {/* @kvoip-woulz proprietary:end */}
 
           <StyledButtonContainer>
+            <StyledActionsDropdownWrapper>
+              <Dropdown
+                dropdownId={actionsDropdownId}
+                dropdownPlacement="bottom-end"
+                clickableComponent={
+                  <StyledDraftActionsButton
+                    variant="secondary"
+                    accent="default"
+                    title="Actions"
+                    Icon={IconChevronDown}
+                    justify="center"
+                  />
+                }
+                dropdownComponents={
+                  <DropdownContent>
+                    <DropdownMenuItemsContainer>
+                      {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
+                        <MenuItem
+                          key={action.id}
+                          text={action.label}
+                          LeftIcon={action.icon}
+                          onClick={() => handleActionSelection(action)}
+                        />
+                      ))}
+                    </DropdownMenuItemsContainer>
+                  </DropdownContent>
+                }
+              />
+            </StyledActionsDropdownWrapper>
             <StyledSaveButton
               variant="secondary"
               accent="blue"
@@ -1685,7 +1726,18 @@ const AccountPayableDraftFieldsCardInner = ({
               disabled={!areRequiredFieldsFilled || saving || createLoading}
             />
           </StyledButtonContainer>
-          {/* @kvoip-woulz proprietary:begin */}
+          {pendingAction !== null && (
+            <ConfirmationModal
+              modalId={actionsModalId}
+              title={pendingAction.confirmation?.title ?? ''}
+              subtitle={pendingAction.confirmation?.subtitle ?? ''}
+              confirmButtonText={
+                pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
+              }
+              onConfirmClick={handleConfirmPendingAction}
+              onClose={handleClosePendingAction}
+            />
+          )}
         </PropertyBox>
       </StyledDraftLayout>
       {/* @kvoip-woulz proprietary:end */}
