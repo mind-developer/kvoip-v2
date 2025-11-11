@@ -2,8 +2,10 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction } from 'react';
 import {
   ChatIntegrationProvider,
@@ -23,6 +25,8 @@ interface UploadMediaPopupProps {
 interface LabelProps {
   isImage?: boolean;
 }
+
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB
 
 const StyledMainContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -66,7 +70,8 @@ export const UploadMediaPopup = ({
 }: UploadMediaPopupProps) => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { sendClientChatMessage } = useSendClientChatMessage();
-
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const theme = useTheme();
 
@@ -121,10 +126,16 @@ export const UploadMediaPopup = ({
         Image
         <StyledInput
           type="file"
-          accept=".bmp,.csv,.odt,.doc,.docx,.htm,.html,.jpg,.jpeg,.pdf,.ppt,.pptx,.txt,.xls,.xlsx"
+          accept="image/*"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
+              if (file.size > MAX_FILE_SIZE) {
+                enqueueErrorSnackBar({
+                  message: t`File size exceeds the maximum limit of 16MB`,
+                });
+                return;
+              }
               handleSendFile(file, ChatMessageType.IMAGE);
               setIsUploadMediaPopupOpen(false);
             }
@@ -151,6 +162,12 @@ export const UploadMediaPopup = ({
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
+                if (file.size > MAX_FILE_SIZE) {
+                  enqueueErrorSnackBar({
+                    message: t`File size exceeds the maximum limit of 16MB`,
+                  });
+                  return;
+                }
                 handleSendFile(file, ChatMessageType.VIDEO);
                 setIsUploadMediaPopupOpen(false);
               }
@@ -168,9 +185,16 @@ export const UploadMediaPopup = ({
         Document
         <StyledInput
           type="file"
+          accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
+              if (file.size > MAX_FILE_SIZE) {
+                enqueueErrorSnackBar({
+                  message: t`File size exceeds the maximum limit of 16MB`,
+                });
+                return;
+              }
               handleSendFile(file, ChatMessageType.DOCUMENT);
               setIsUploadMediaPopupOpen(false);
             }

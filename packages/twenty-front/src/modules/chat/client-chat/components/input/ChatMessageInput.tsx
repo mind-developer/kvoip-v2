@@ -222,6 +222,7 @@ export const ChatMessageInput = memo(
               onChange={onInputChange}
               value={newMessage}
               onKeyDown={onInputKeyDown}
+              maxLength={4096}
             />
           </div>
         )}
