@@ -1,6 +1,9 @@
 /* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
 import { Fragment, useCallback, useMemo, useState } from 'react';
+/* @kvoip-woulz proprietary:begin */
+import { useRecoilValue } from 'recoil';
+/* @kvoip-woulz proprietary:end */
 
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -9,6 +12,9 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 /* @kvoip-woulz proprietary:end */
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+/* @kvoip-woulz proprietary:begin */
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+/* @kvoip-woulz proprietary:end */
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -16,15 +22,30 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordCreateField } from '@/object-record/record-create/components/RecordCreateField';
 import { RecordCreateProvider } from '@/object-record/record-create/components/RecordCreateProvider';
+/* @kvoip-woulz proprietary:begin */
+import { type PersistFieldValueParams } from '@/object-record/record-create/contexts/RecordCreateContext';
+/* @kvoip-woulz proprietary:end */
 import { useCreateFormFields } from '@/object-record/record-create/hooks/useCreateFormFields';
 import { useRecordCreateContext } from '@/object-record/record-create/hooks/useRecordCreateContext';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
+/* @kvoip-woulz proprietary:begin */
+import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
+import { RecordDetailRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsList';
+import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
+import { RecordDetailRelationSectionDropdownToOne } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdownToOne';
+/* @kvoip-woulz proprietary:end */
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+/* @kvoip-woulz proprietary:begin */
+import {
+  FieldInputEventContext,
+  type FieldInputEvent,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+/* @kvoip-woulz proprietary:end */
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -32,6 +53,12 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+/* @kvoip-woulz proprietary:begin */
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+/* @kvoip-woulz proprietary:end */
+/* @kvoip-woulz proprietary:begin */
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+/* @kvoip-woulz proprietary:end */
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { AppPath } from '@/types/AppPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -69,7 +96,6 @@ import {
   IconHome,
   IconMail,
   IconNotes,
-  IconPaperclip,
 } from 'twenty-ui/display';
 /* @kvoip-woulz proprietary:end */
 import { Button } from 'twenty-ui/input';
@@ -210,7 +236,7 @@ const StyledFieldsSectionTitle = styled.div`
 const StyledDraftLayout = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledDraftTabListContainer = styled.div`
@@ -221,17 +247,158 @@ const StyledDraftTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDraftSummaryCard = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  overflow: hidden;
-`;
-
 const StyledDraftSummaryTitleContainer = styled.div`
   display: flex;
   width: 100%;
+  justify-content: center;
 `;
+
+const StyledDraftSummaryTitleContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+  max-width: 420px;
+`;
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
+const StyledDraftRelationSectionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledDraftRelationPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
+`;
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
+const RELATION_FIELDS_RENDERED_AS_INPUTS = new Set(['company']);
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
+type DraftRelationSectionProps = {
+  draftRecordId: string;
+  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
+  position: number;
+  instanceId: string;
+  persistFieldValue: (params: PersistFieldValueParams) => void;
+};
+
+const AccountPayableDraftRelationSection = ({
+  draftRecordId,
+  fieldMetadataItem,
+  objectMetadataItem,
+  position,
+  instanceId,
+  persistFieldValue,
+}: DraftRelationSectionProps) => {
+  const fieldDefinition = useMemo(
+    () =>
+      formatFieldMetadataItemAsColumnDefinition({
+        field: fieldMetadataItem,
+        position,
+        objectMetadataItem,
+      }),
+    [fieldMetadataItem, objectMetadataItem, position],
+  );
+
+  if (!fieldDefinition) {
+    return null;
+  }
+
+  const anchorId = getRecordFieldInputInstanceId({
+    recordId: draftRecordId,
+    fieldName: fieldMetadataItem.name,
+    prefix: instanceId,
+  });
+
+  const fieldContextValue = useMemo(
+    () => ({
+      recordId: draftRecordId,
+      fieldDefinition,
+      isLabelIdentifier: false,
+      isDisplayModeFixHeight: true,
+      isRecordFieldReadOnly: false,
+      anchorId,
+    }),
+    [anchorId, draftRecordId, fieldDefinition],
+  );
+
+  const fieldName = fieldMetadataItem.name;
+
+  const fieldValue = useRecoilValue<
+    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
+  >(recordStoreFamilySelector({ recordId: draftRecordId, fieldName }));
+
+  const relationType = fieldMetadataItem.relation?.type;
+
+  const relationRecords = useMemo(() => {
+    if (relationType === RelationType.MANY_TO_ONE) {
+      return fieldValue && typeof fieldValue === 'object'
+        ? ([fieldValue] as ObjectRecord[])
+        : [];
+    }
+
+    if (Array.isArray(fieldValue)) {
+      return fieldValue as ObjectRecord[];
+    }
+
+    return [];
+  }, [fieldValue, relationType]);
+
+  const handleSubmit = useCallback<FieldInputEvent>(
+    ({ newValue }) => {
+      persistFieldValue({
+        fieldDefinition,
+        value: newValue,
+      });
+    },
+    [fieldDefinition, persistFieldValue],
+  );
+
+  const placeholderText =
+    relationType === RelationType.MANY_TO_ONE
+      ? 'Link a record using the edit button.'
+      : 'Save this record to manage related records.';
+
+  return (
+    <FieldContext.Provider value={fieldContextValue}>
+      <FieldInputEventContext.Provider
+        value={{
+          onSubmit: handleSubmit,
+        }}
+      >
+        <RecordDetailSectionContainer
+          title={fieldDefinition.label}
+          areRecordsAvailable={relationRecords.length > 0}
+          hideRightAdornmentOnMouseLeave={false}
+          rightAdornment={
+            relationType === RelationType.MANY_TO_ONE ? (
+              <RecordDetailRelationSectionDropdownToOne />
+            ) : undefined
+          }
+        >
+          {relationRecords.length > 0 ? (
+            <RecordDetailRelationRecordsList
+              relationRecords={relationRecords}
+            />
+          ) : (
+            <StyledDraftRelationPlaceholder>
+              {placeholderText}
+            </StyledDraftRelationPlaceholder>
+          )}
+        </RecordDetailSectionContainer>
+      </FieldInputEventContext.Provider>
+    </FieldContext.Provider>
+  );
+};
 /* @kvoip-woulz proprietary:end */
 
 const StyledTitleFieldContainer = styled.div`
@@ -494,14 +661,14 @@ const AccountPayablePersistedFieldsCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  /* @kvoip-woulz proprietary:begin */
   const relationFieldMetadataItems = useMemo(
     () =>
-      objectMetadataItem.fields
+      (boxedRelationFieldMetadataItems ?? [])
         .filter(
           (fieldMetadataItem) =>
-            fieldMetadataItem.type === FieldMetadataType.RELATION &&
-            fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE &&
-            fieldMetadataItem.isSystem !== true,
+            fieldMetadataItem.isSystem !== true &&
+            !RELATION_FIELDS_RENDERED_AS_INPUTS.has(fieldMetadataItem.name),
         )
         .sort((fieldA, fieldB) => {
           const positionA =
@@ -511,8 +678,9 @@ const AccountPayablePersistedFieldsCard = ({
 
           return positionA - positionB;
         }),
-    [fieldPositions, objectMetadataItem.fields],
+    [boxedRelationFieldMetadataItems, fieldPositions],
   );
+  /* @kvoip-woulz proprietary:end */
 
   const relationJoinColumnFieldNames = useMemo(
     () =>
@@ -546,7 +714,10 @@ const AccountPayablePersistedFieldsCard = ({
             return false;
           }
 
-          if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+          if (
+            fieldMetadataItem.type === FieldMetadataType.RELATION &&
+            !RELATION_FIELDS_RENDERED_AS_INPUTS.has(fieldMetadataItem.name)
+          ) {
             return false;
           }
 
@@ -603,10 +774,12 @@ const AccountPayablePersistedFieldsCard = ({
   ]);
 
   /* @kvoip-woulz proprietary:begin */
+  /* @kvoip-woulz proprietary:begin */
   const relationFieldNameSet = useMemo(
     () => new Set<string>(relationFieldMetadataItems.map(({ name }) => name)),
     [relationFieldMetadataItems],
   );
+  /* @kvoip-woulz proprietary:end */
 
   const requiredFieldNameSet = useMemo(
     () => new Set<string>(ACCOUNT_PAYABLE_REQUIRED_FIELDS),
@@ -846,6 +1019,38 @@ const AccountPayablePersistedFieldsCard = ({
             objectRecordId={objectRecordId}
             objectNameSingular={objectNameSingular}
           />
+
+          {/* @kvoip-woulz proprietary:begin */}
+          {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+            <FieldContext.Provider
+              key={objectRecordId + fieldMetadataItem.id}
+              value={{
+                recordId: objectRecordId,
+                isLabelIdentifier: false,
+                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                  field: fieldMetadataItem,
+                  position: index,
+                  objectMetadataItem,
+                }),
+                useUpdateRecord: useUpdateOneObjectRecordMutation,
+                isDisplayModeFixHeight: true,
+                isRecordFieldReadOnly: isRecordFieldReadOnly({
+                  isRecordReadOnly,
+                  objectPermissions,
+                  fieldMetadataItem: {
+                    id: fieldMetadataItem.id,
+                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                  },
+                }),
+              }}
+            >
+              <RecordDetailRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            </FieldContext.Provider>
+          ))}
+          {/* @kvoip-woulz proprietary:end */}
+
           <RecordFieldListCellHoveredPortal
             objectMetadataItem={objectMetadataItem}
             recordId={objectRecordId}
@@ -951,6 +1156,39 @@ const AccountPayableDraftFieldsCardInner = ({
       objectNameSingular,
     });
 
+  /* @kvoip-woulz proprietary:begin */
+  const {
+    boxedRelationFieldMetadataItems: draftBoxedRelationFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
+    objectNameSingular,
+  });
+
+  const draftRelationSections = useMemo(
+    () =>
+      (draftBoxedRelationFieldMetadataItems ?? []).filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.isActive !== false &&
+          !RELATION_FIELDS_RENDERED_AS_INPUTS.has(fieldMetadataItem.name),
+      ),
+    [draftBoxedRelationFieldMetadataItems],
+  );
+
+  const draftRelationFieldItems = useMemo(
+    () =>
+      draftRelationSections
+        .map((fieldMetadataItem, index) => {
+          const fieldConfig = getRenderableField(fieldMetadataItem.name);
+
+          return {
+            fieldMetadataItem,
+            position: fieldConfig?.position ?? index,
+          };
+        })
+        .sort((fieldA, fieldB) => fieldA.position - fieldB.position),
+    [draftRelationSections, getRenderableField],
+  );
+  /* @kvoip-woulz proprietary:end */
+
   const clearHoverState = useCallback(() => {
     setRecordFieldListHoverPosition(null);
   }, [setRecordFieldListHoverPosition]);
@@ -989,7 +1227,12 @@ const AccountPayableDraftFieldsCardInner = ({
 
   const relationFieldNames = useMemo(
     () =>
-      relationFieldConfigs.map(({ relationFieldName }) => relationFieldName),
+      relationFieldConfigs
+        .map(({ relationFieldName }) => relationFieldName)
+        .filter(
+          (relationFieldName) =>
+            !RELATION_FIELDS_RENDERED_AS_INPUTS.has(relationFieldName),
+        ),
     [relationFieldConfigs],
   );
 
@@ -1005,7 +1248,8 @@ const AccountPayableDraftFieldsCardInner = ({
     objectMetadataItem.fields.forEach((fieldMetadataItem) => {
       if (
         fieldMetadataItem.type === FieldMetadataType.RELATION &&
-        fieldMetadataItem.isActive !== false
+        fieldMetadataItem.isActive !== false &&
+        !RELATION_FIELDS_RENDERED_AS_INPUTS.has(fieldMetadataItem.name)
       ) {
         names.add(fieldMetadataItem.name);
       }
@@ -1059,7 +1303,7 @@ const AccountPayableDraftFieldsCardInner = ({
       tabs.push({
         id: 'files',
         title: 'Files',
-        Icon: IconPaperclip,
+        Icon: IconFileImport,
         ...disabledTabConfig,
       });
     }
@@ -1331,7 +1575,10 @@ const AccountPayableDraftFieldsCardInner = ({
             return false;
           }
 
-          if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+          if (
+            fieldMetadataItem.type === FieldMetadataType.RELATION &&
+            !RELATION_FIELDS_RENDERED_AS_INPUTS.has(name)
+          ) {
             return false;
           }
 
@@ -1398,6 +1645,10 @@ const AccountPayableDraftFieldsCardInner = ({
   const orderedRelationFieldItems = useMemo(
     () =>
       relationFieldConfigs
+        .filter(
+          ({ relationFieldName }) =>
+            !RELATION_FIELDS_RENDERED_AS_INPUTS.has(relationFieldName),
+        )
         .map((config) => {
           const fieldConfig = getRenderableField(config.relationFieldName);
 
@@ -1472,15 +1723,6 @@ const AccountPayableDraftFieldsCardInner = ({
     () =>
       orderedRelationFieldItems.filter(({ relationFieldName }) =>
         requiredFieldNamesSet.has(relationFieldName),
-      ),
-    [orderedRelationFieldItems, requiredFieldNamesSet],
-  );
-
-  const connectionRelationFieldItems = useMemo(
-    () =>
-      orderedRelationFieldItems.filter(
-        ({ relationFieldName }) =>
-          !requiredFieldNamesSet.has(relationFieldName),
       ),
     [orderedRelationFieldItems, requiredFieldNamesSet],
   );
@@ -1627,62 +1869,65 @@ const AccountPayableDraftFieldsCardInner = ({
             />
           </StyledDraftTabListContainer>
         )}
-        <StyledDraftSummaryCard>
-          <ShowPageSummaryCard
-            id={draftRecordId}
-            avatarPlaceholder={draftAvatarPlaceholder}
-            avatarType="rounded"
-            date={draftCreatedAt}
-            icon={draftObjectIcon}
-            iconColor={draftObjectIconColor}
-            loading={false}
-            isMobile={isInRightDrawer}
-            title={
-              <StyledDraftSummaryTitleContainer>
-                <StyledTitleFieldContent>
-                  <StyledTitleTextInput
-                    value={headerFieldValue}
-                    onChange={handleHeaderFieldChange}
-                    placeholder={headerFieldLabel}
-                    autoFocus
-                    fullWidth
-                    autoGrow
-                    inheritFontStyles
-                    sizeVariant="md"
-                    onFocus={clearHoverState}
-                    onMouseEnter={clearHoverState}
-                    spellCheck={false}
-                  />
-                </StyledTitleFieldContent>
-              </StyledDraftSummaryTitleContainer>
-            }
-          />
-        </StyledDraftSummaryCard>
+        <ShowPageSummaryCard
+          id={draftRecordId}
+          avatarPlaceholder={draftAvatarPlaceholder}
+          avatarType="rounded"
+          date={draftCreatedAt}
+          icon={draftObjectIcon}
+          iconColor={draftObjectIconColor}
+          loading={false}
+          isMobile={isInRightDrawer}
+          title={
+            <StyledDraftSummaryTitleContainer>
+              <StyledDraftSummaryTitleContent>
+                <StyledTitleTextInput
+                  value={headerFieldValue}
+                  onChange={handleHeaderFieldChange}
+                  placeholder={headerFieldLabel}
+                  autoFocus
+                  fullWidth
+                  autoGrow
+                  inheritFontStyles
+                  sizeVariant="md"
+                  onFocus={clearHoverState}
+                  onMouseEnter={clearHoverState}
+                  spellCheck={false}
+                />
+              </StyledDraftSummaryTitleContent>
+            </StyledDraftSummaryTitleContainer>
+          }
+        />
         <PropertyBox>
           <StyledFieldsSectionsContainer>
             {renderDraftSection(
               'Essential Fields',
               essentialBaseFieldNames,
-              essentialRelationFieldItems.map(
-                ({ relationFieldName, label }) => ({
-                  relationFieldName,
-                  label,
-                }),
-              ),
+              [],
             )}
             {renderDraftSection('Optional Fields', optionalBaseFieldNames)}
             {renderDraftSection('Additional Fields', additionalBaseFieldNames)}
-            {renderDraftSection(
-              'Connections & Integrations',
-              [],
-              connectionRelationFieldItems.map(
-                ({ relationFieldName, label }) => ({
-                  relationFieldName,
-                  label,
-                }),
-              ),
-            )}
           </StyledFieldsSectionsContainer>
+
+          {/* @kvoip-woulz proprietary:begin */}
+          {draftRelationFieldItems.length > 0 && (
+            <StyledDraftRelationSectionsContainer>
+              {draftRelationFieldItems.map(
+                ({ fieldMetadataItem, position }) => (
+                  <AccountPayableDraftRelationSection
+                    key={`${instanceId}-draft-relation-${fieldMetadataItem.id}`}
+                    draftRecordId={draftRecordId}
+                    fieldMetadataItem={fieldMetadataItem}
+                    objectMetadataItem={objectMetadataItem}
+                    position={position}
+                    instanceId={instanceId}
+                    persistFieldValue={persistFieldValue}
+                  />
+                ),
+              )}
+            </StyledDraftRelationSectionsContainer>
+          )}
+          {/* @kvoip-woulz proprietary:end */}
 
           <StyledButtonContainer>
             <StyledActionsDropdownWrapper>
