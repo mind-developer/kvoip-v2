@@ -140,7 +140,7 @@ const StyledActiveChatbotWarning = styled.div`
   height: 20px;
   width: 100%;
   background-color: ${({ theme }) => theme.color.yellow20};
-  color: ${({ theme }) => theme.background.primaryInverted};
+  color: ${({ theme }) => theme.font.color};
   border: 1px dashed ${({ theme }) => theme.border.color.strong};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(1)};

@@ -28,9 +28,7 @@ const TextNode = ({
   }>
 >) => {
   const allNodes = useNodes();
-  const node: GenericNode = allNodes.filter(
-    (filterNode) => filterNode.id === id,
-  )[0];
+  const node = allNodes.find((node) => node.id === id) as GenericNode;
 
   const { updateNodeData } = useReactFlow();
   const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();

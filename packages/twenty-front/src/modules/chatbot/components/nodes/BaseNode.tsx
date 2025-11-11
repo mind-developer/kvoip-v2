@@ -128,7 +128,7 @@ const BaseNode = ({
   const Icon = getIcon(icon);
   const { deleteNode } = useHandleNodeValue();
 
-  const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
+  const node = useNodes().find((node) => node.id === nodeId);
   const chatbotFlowSelectedNodes = useRecoilValue(chatbotFlowSelectedNodeState);
   const theme = useTheme();
   const iconHeader = (

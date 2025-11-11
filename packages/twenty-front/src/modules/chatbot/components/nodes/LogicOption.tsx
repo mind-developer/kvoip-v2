@@ -11,7 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconTrash, Label, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -70,6 +70,10 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
     condition.recordType ?? '',
   );
 
+  useEffect(() => {
+    setRecordType(condition.recordType ?? '');
+  }, [condition.recordType]);
+
   if (!sectors) return null;
 
   const sectorsOptions = [
@@ -91,7 +95,11 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   const handleTextBlur = () => {
     const trimmed = localMessage.trim();
     if (trimmed !== (condition.message ?? '').trim()) {
-      const updated = { ...condition, message: trimmed, recordType };
+      const updated = {
+        ...condition,
+        message: trimmed,
+        recordType: condition.recordType ?? recordType,
+      };
       onUpdate(updated);
     }
   };
@@ -102,7 +110,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
       const updated = {
         ...condition,
         sectorId: val.toString(),
-        recordType,
+        recordType: condition.recordType ?? recordType,
       };
       onUpdate(updated);
     }
@@ -123,7 +131,11 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
           dropdownId={`select-record-type-${condition.option}`}
           options={recordTypeOptions}
           value={recordType}
-          onChange={(val) => setRecordType(val?.toString() as RecordType)}
+          onChange={(val) => {
+            const newRecordType = val?.toString() as RecordType;
+            setRecordType(newRecordType);
+            onUpdate({ ...condition, recordType: newRecordType });
+          }}
         />
         <StyledSelect
           label="Comparison"
