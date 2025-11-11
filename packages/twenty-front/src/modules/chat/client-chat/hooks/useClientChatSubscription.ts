@@ -38,6 +38,8 @@ export const useClientChatSubscription = ({
       url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       headers: {
         Authorization: token ? `Bearer ${token}` : '',
+        'X-Accel-Buffering': 'no',
+        // Connection: 'keep-alive',
       },
     });
   }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);

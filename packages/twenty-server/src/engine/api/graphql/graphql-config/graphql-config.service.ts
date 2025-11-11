@@ -74,6 +74,7 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
       include: [CoreEngineModule],
+      subscriptions: true,
       conditionalSchema: async (context) => {
         let user: User | null | undefined;
         let workspace: Workspace | undefined;

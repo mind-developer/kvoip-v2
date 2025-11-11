@@ -62,6 +62,7 @@ export const ChatbotFlow = () => {
           nodeTypes={types}
           tagColor={tagProps.color}
           tagText={tagProps.text}
+          chatbotStatus={chatbot[0]?.status ?? 'DEACTIVATED'}
         />
       </ReactFlowProvider>
     );

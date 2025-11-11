@@ -1,0 +1,31 @@
+---
+description: Git commit
+alwaysApply: false
+---
+
+Git commits will follow a specific pattern of [type]([branch suffix]): [short change description].
+
+## Examples
+
+1. A file was modified in branch fix/meta, fixing an axios connection issue.
+   commit message:
+
+   > "fix(meta): fix axios connection failure"
+
+2. A piece of code in branch dev was refactored to work with a new library.
+   commit message:
+
+   > "refactor(dev): refactor form to use zod"
+
+3. A styling issue in branch feat/comments was adjusted
+
+   > "style(comments): fix button positioning"
+
+## Rules
+
+1. Keep messages concise
+2. Keep commits atomic
+3. If unsure about how to format a commit message, check git logs.
+4. if unsure after checking git logs, confirm with user and list numbered formatting options that you think might be valid.
+5. NEVER change code, run lints or do any operation that could change code before commiting without user permission. Git requests should never alter code in any way whatsoever unless requested.
+6. You can prefix the commit description with emojis describing the changes, but it is not required and undesirable if no emoji is sufficiently descriptive of the change.

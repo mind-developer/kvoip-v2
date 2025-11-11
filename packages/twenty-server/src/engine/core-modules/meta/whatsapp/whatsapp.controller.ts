@@ -51,14 +51,6 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    console.log(
-      'WEBHOOK VERIFICATION',
-      JSON.stringify(
-        { workspaceId, id, mode, challenge, verifyToken },
-        null,
-        2,
-      ),
-    );
     const whatsappIntegrationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -97,7 +89,6 @@ export class WhatsappController {
     try {
       const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
       const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
-      console.log('messages', JSON.stringify(messages, null, 2));
 
       if (statuses) {
         for (const status of statuses) {
@@ -116,20 +107,22 @@ export class WhatsappController {
         return true;
       }
 
+      if (!messages) {
+        this.logger.warn('No messages found in body');
+        return;
+      }
+
       for (const msg of messages) {
         try {
           msg.type = msg.type.toUpperCase();
 
           const mediaId = extractMediaId(msg);
-          this.logger.warn('mediaId', mediaId);
           const { isBase64Media, base64String, mimeType } =
             extractBase64MediaInfo(msg);
 
           let fileUrl: string | null = null;
-          this.logger.warn(isBase64Media);
 
           if (mediaId?.id) {
-            this.logger.warn(`Downloading media with ID: ${mediaId}`);
             fileUrl =
               (await this.whatsappService.downloadMedia(
                 mediaId.id,
@@ -180,6 +173,7 @@ export class WhatsappController {
             deliveryStatus: msg.status,
             senderPhoneNumber:
               body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+            repliesTo: msg.context?.id ?? null,
           };
 
           await this.whatsappService.saveMessage(

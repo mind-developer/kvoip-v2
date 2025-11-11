@@ -16,6 +16,7 @@ export type ProcessParams = {
   sectors: { id: string; name: string }[];
   node: FlowNode;
   context: { incomingMessage: string };
+  askedNodes?: Set<string>; // Estado compartilhado por executor (chat)
 };
 
 export type FlowNode = Omit<Node, 'data'> & {

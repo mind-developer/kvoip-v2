@@ -102,7 +102,7 @@ export const ChatbotFlowFileEventForm = ({
       setChatbotFlowNodes((nodes) =>
         nodes.map((node) => (node.id === selectedNode.id ? updatedNode : node)),
       );
-      setChatbotFlowSelectedNode(updatedNode);
+      setChatbotFlowSelectedNode([updatedNode]);
     }
   };
 

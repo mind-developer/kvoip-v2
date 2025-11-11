@@ -90,11 +90,18 @@ export class InterIntegrationService {
       },
     );
 
+<<<<<<< HEAD
     await this.subscriptionWebhook(
       updatedIntegration,
       integration.workspace.id,
       updatedIntegration.id,
     );
+=======
+    this.logger.log(`Atualizando webhook para a integração: ${updatedIntegration.id}`);
+    this.logger.log(`updatedIntegration: ${JSON.stringify(updatedIntegration, null, 2)}`);
+    
+    await this.subscriptionWebhook(updatedIntegration, integration.workspace.id, updatedIntegration.id);
+>>>>>>> a45259e4e08bc6275f8cc5a6195d0c758782d55d
 
     return this.interIntegrationRepository.save(updatedIntegration);
   }
@@ -209,6 +216,9 @@ export class InterIntegrationService {
   ) {
     try {
       const writeAccessToken = await this.getOAuthToken(integration);
+
+
+      this.logger.log(`writeAccessToken: ${writeAccessToken}`);
 
       if (!writeAccessToken) {
         this.logger.error('Failed to obtain OAuth token for write');
@@ -429,6 +439,10 @@ export class InterIntegrationService {
     const baseUrl =
       process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
+
+    this.logger.log(`webhookUrl: ${webhookUrl}`);
+    this.logger.log(`accessToken: ${accessToken}`);
+    this.logger.log(`integration: ${JSON.stringify(integration, null, 2)}`);
 
     try {
       const config: AxiosRequestConfig = {

@@ -1,11 +1,11 @@
 import AudioMessage from '@/chat/client-chat/components/message/AudioMessage';
-import { CachedAvatarComponent } from '@/chat/client-chat/components/message/CachedAvatarComponent';
 import DocumentMessage from '@/chat/client-chat/components/message/DocumentMessage';
 import EventMessage from '@/chat/client-chat/components/message/EventMessage';
 import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
 import { StickerMessage } from '@/chat/client-chat/components/message/StickerMessage';
 import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -26,13 +26,15 @@ const StyledMessageEvent = styled(motion.div)`
   padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledMessageContainer = styled.div<{ fromMe: boolean }>`
+const StyledMessageContainer = styled.div<{
+  fromMe: boolean;
+  isHighlighted: boolean;
+}>`
   display: flex;
   flex-direction: ${({ fromMe }) => (fromMe ? 'row-reverse' : 'row')};
   align-items: center;
   width: 100%;
   justify-content: flex-start;
-  border-radius: ${({ theme }) => theme.border.radius.md};
   transition: all 0.15s;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
@@ -58,7 +60,6 @@ const StyledNameAndTimeContainer = styled.div<{ isSystemMessage: boolean }>`
   flex-direction: ${({ isSystemMessage }) =>
     isSystemMessage ? 'row-reverse' : 'row'};
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDateContainer = styled.div`
@@ -97,24 +98,26 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
 `;
 
 type ChatMessageRendererProps = {
-  replyingTo: string | null;
   message: ClientChatMessage;
   index: number;
   isLastOfRow: boolean;
   onImageClick: (imageSrc: string) => void;
   animateDelay: number;
-  setIsReplyingTo: (messageId: string) => void;
+  setReplyingTo: (messageId: string | null) => void;
+  onScrollToMessage: (messageId: string) => void;
+  isHighlighted: boolean;
 };
 
 export const ChatMessageRenderer = memo(
   ({
-    replyingTo,
     message,
     index,
-    isLastOfRow,
     onImageClick,
     animateDelay,
-    setIsReplyingTo,
+    setReplyingTo,
+    onScrollToMessage,
+    isHighlighted,
+    isLastOfRow,
   }: ChatMessageRendererProps) => {
     const theme = useTheme();
 
@@ -239,19 +242,12 @@ export const ChatMessageRenderer = memo(
       <StyledMessageContainer
         key={message.providerMessageId || `message-${index}`}
         fromMe={message.fromType !== ChatMessageFromType.PERSON}
+        data-message-id={
+          (message as ClientChatMessage & { id?: string }).id ||
+          message.providerMessageId
+        }
+        isHighlighted={isHighlighted}
       >
-        <StyledAvatarMessage style={{ opacity: isLastOfRow ? 1 : 0 }}>
-          <CachedAvatarComponent
-            senderId={message.from}
-            senderType={
-              message.fromType as
-                | ChatMessageFromType.PERSON
-                | ChatMessageFromType.AGENT
-                | ChatMessageFromType.CHATBOT
-            }
-            animateDelay={animateDelay}
-          />
-        </StyledAvatarMessage>
         <StyledContainer
           isSystemMessage={message.fromType !== ChatMessageFromType.PERSON}
         >
@@ -260,9 +256,13 @@ export const ChatMessageRenderer = memo(
           >
             <MessageBubble
               time={message.createdAt ?? ''}
-              message={message}
+              message={message as ClientChatMessage & ObjectRecord}
               hasTail={isLastOfRow}
               animateDelay={animateDelay}
+              setReplyingTo={setReplyingTo}
+              isReply={false}
+              onScrollToMessage={onScrollToMessage}
+              isHighlighted={isHighlighted}
             >
               {renderedContent}
             </MessageBubble>

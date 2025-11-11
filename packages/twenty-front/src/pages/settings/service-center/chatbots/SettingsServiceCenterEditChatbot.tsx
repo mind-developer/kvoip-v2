@@ -24,6 +24,7 @@ type Chatbot = {
   id: string;
   name: string;
   status: 'ACTIVE' | 'DRAFT' | 'DISABLED';
+  whatsappIntegrations?: Array<{ id: string; name: string }>;
   whatsappIntegrationIds?: string[];
 };
 
