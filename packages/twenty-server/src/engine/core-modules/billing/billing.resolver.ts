@@ -186,7 +186,7 @@ export class BillingResolver {
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
 
-    const bankSlipFileLink =
+    const charge =
       await this.billingSubscriptionService.updateOneTimePaymentSubscription({
         subscription: currentSubscription,
         user,
@@ -194,7 +194,15 @@ export class BillingResolver {
       });
 
     return {
-      bankSlipFileLink,
+      /**
+       * Note: This will fail since the attachments links needs to be signed url using
+       * workspace id.
+       * Attachments links inside the object record pages a handled at run time using gql
+       * query result getters.
+       * more at `packages/twenty-server/src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler.ts`
+       */
+      // TODO: We need to handle this link manually since it's not a signed url here.
+      bankSlipFileLink: charge.attachments?.[0]?.fullPath,
     };
   }
 

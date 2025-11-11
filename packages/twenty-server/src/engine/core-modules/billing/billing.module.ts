@@ -35,7 +35,9 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { InterModule } from 'src/engine/core-modules/inter/inter.module';
+/* @kvoip-woulz proprietary:begin */
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
+/* @kvoip-woulz proprietary:end */
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -44,11 +46,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 @Module({
   imports: [
-    InterModule,
     FeatureFlagModule,
     StripeModule,
     FileUploadModule,
     FileModule,
+    /* @kvoip-woulz proprietary:begin */
+    PaymentModule,
+    /* @kvoip-woulz proprietary:end */
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,

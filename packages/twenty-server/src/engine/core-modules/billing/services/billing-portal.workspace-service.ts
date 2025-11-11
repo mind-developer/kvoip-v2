@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -33,8 +32,12 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
-import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+/* @kvoip-woulz proprietary:begin */
+import { PaymentService } from 'src/engine/core-modules/payment/services/payment.service';
+/* @kvoip-woulz proprietary:end */
+import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
@@ -43,7 +46,9 @@ import { assert } from 'src/utils/assert';
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
   constructor(
-    private readonly interService: InterService,
+    /* @kvoip-woulz proprietary:begin */
+    private readonly paymentService: PaymentService,
+    /* @kvoip-woulz proprietary:end */
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
@@ -211,14 +216,28 @@ export class BillingPortalWorkspaceService {
       if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
         throw new InternalServerErrorException('Plan price not found');
 
-      await this.interService.createBolepixCharge({
-        planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+      // Assuming that the payment service will handle the bank slip file generation
+      // and sending through email.
+      await this.paymentService.createCharge({
         workspaceId: workspace.id,
-        locale: locale || SOURCE_LOCALE,
-        userEmail: user.email,
-        ...(interChargeData as InterCreateChargeDto),
-        customer,
-        planKey: plan,
+        chargeDto: {
+          amount: getPriceFromStripeDecimal(
+            billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+          ),
+          paymentMethod: PaymentMethod.BOLEPIX,
+          payerInfo: {
+            name: customer.name,
+            email: user.email,
+            taxId: customer.document,
+            address: {
+              city: customer.city,
+              state: customer.stateUnity,
+              zipCode: customer.cep,
+              street: customer.address,
+            },
+          },
+        },
+        provider: PaymentProvider.INTER,
       });
 
       const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
