@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import {
   GraphqlQueryRunnerException,
@@ -28,8 +27,6 @@ type UpdateData = {
 export class TicketCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
-  private readonly logger = new Logger(TicketCreateOnePreQueryHook.name);
-
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
@@ -39,7 +36,6 @@ export class TicketCreateOnePreQueryHook
     objectName: string,
     payload: CreateOneResolverArgs<UpdateData>,
   ): Promise<CreateOneResolverArgs<UpdateData>> {
-    this.logger.log(`entrou no create one ${JSON.stringify(payload)}`);
     if (!isDefined(payload.data)) {
       throw new GraphqlQueryRunnerException(
         'Payload data is required',
@@ -57,13 +53,7 @@ export class TicketCreateOnePreQueryHook
       workspaceMemberId,
     );
 
-    // if (isEnding) {
-    //   updatedData.data.closedBy = this.buildActorMetadata(workspaceMember);
-    // } else {
-    //   updatedData.data.closedBy = undefined;
-    // }
-
-    const updatedData = {
+    return {
       ...payload,
       data: {
         ...payload.data,
@@ -71,12 +61,6 @@ export class TicketCreateOnePreQueryHook
         closedBy: this.buildActorMetadata(workspaceMember, true),
       },
     };
-
-    // updatedData.data.lastUpdatedBy = this.buildActorMetadata(workspaceMember);
-
-    this.logger.log(`updatedData ${JSON.stringify(updatedData)}`);
-
-    return updatedData;
   }
 
   private async findWorkspaceMember(

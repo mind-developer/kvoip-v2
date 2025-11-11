@@ -1,5 +1,4 @@
 /* @kvoip-woulz proprietary:begin */
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import {
   GraphqlQueryRunnerException,
@@ -29,8 +28,6 @@ type UpdateData = {
 export class TicketUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
-  private readonly logger = new Logger(TicketUpdateOnePreQueryHook.name);
-
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
