@@ -19,7 +19,7 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.noteTarget,
@@ -95,21 +95,23 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('opportunity')
   opportunityId: string | null;
 
+  /* @kvoip-woulz proprietary:begin */
   @WorkspaceRelation({
-    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.support,
+    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.ticket,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Support`,
-    description: msg`NoteTarget support`,
+    label: msg`Ticket`,
+    description: msg`NoteTarget ticket`,
     icon: 'IconBuildingSkyscraper',
-    inverseSideTarget: () => SupportWorkspaceEntity,
+    inverseSideTarget: () => TicketWorkspaceEntity,
     inverseSideFieldKey: 'noteTargets',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  support: Relation<SupportWorkspaceEntity> | null;
+  ticket: Relation<TicketWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('support')
-  supportId: string | null;
+  @WorkspaceJoinColumn('ticket')
+  ticketId: string | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
