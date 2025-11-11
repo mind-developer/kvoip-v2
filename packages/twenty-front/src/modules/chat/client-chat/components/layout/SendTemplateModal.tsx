@@ -239,7 +239,8 @@ const StyledCard = styled(Card)<{
       background-color: transparent;
       box-shadow: none;
     `}
-  min-height: 180px;
+  max-height: 180px;
+  max-width: 180px;
 `;
 
 const StyledTag = styled(Tag)`

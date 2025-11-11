@@ -7,7 +7,7 @@ import { ChargeAction, ChargeEntityType, ChargeWorkspaceEntity } from 'src/modul
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 
 @Injectable()
 export class FinancialClosingChargeService {

@@ -21,6 +21,7 @@ const getFromMeFromType = (clientChat: ClientChatWorkspaceEntity) => {
 export const whatsAppMessageToClientChatMessage = (
   whatsappMessage: FormattedWhatsAppMessage,
   clientChat: ClientChatWorkspaceEntity,
+  repliesToId: string | null,
 ): ClientChatMessageNoBaseFields => {
   if (!clientChat.whatsappIntegrationId) {
     throw new Error(
@@ -30,7 +31,6 @@ export const whatsAppMessageToClientChatMessage = (
   return {
     clientChatId: clientChat.id,
     reactions: null,
-    repliesTo: null,
     templateId: null,
     templateLanguage: null,
     templateName: null,
@@ -74,5 +74,6 @@ export const whatsAppMessageToClientChatMessage = (
     deliveryStatus: whatsappMessage.deliveryStatus,
     edited: false,
     event: null,
+    repliesTo: repliesToId,
   };
 };

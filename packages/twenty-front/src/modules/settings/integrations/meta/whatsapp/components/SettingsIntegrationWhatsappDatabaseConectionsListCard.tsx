@@ -5,13 +5,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';
-import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
+import { IconPencil, IconPlus, IconPointFilled, IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
 
@@ -21,6 +22,7 @@ type SettingsIntegrationWhatsappDatabaseConectionsListCardProps = {
 
 enum ChangeType {
   DisableWhatsapp = 'DISABLE_WHATSAPP',
+  DeleteWhatsapp = 'DELETE_WHATSAPP',
 }
 
 const StyledDatabaseLogo = styled.img`
@@ -81,20 +83,27 @@ const StyledButton = styled.button`
 `;
 
 export const CONFIRM_DISABLE_INBOX_MODAL_ID = 'confirm-disable-inbox-modal';
+export const CONFIRM_DELETE_INBOX_MODAL_ID = 'confirm-delete-inbox-modal';
 
 export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   integration,
 }: SettingsIntegrationWhatsappDatabaseConectionsListCardProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const [changeType, setChangeType] = useState<ChangeType>();
   const [selectedIntegrationId, setSelectedIntegrationId] =
     useState<string>('');
+  const [selectedIntegrationName, setSelectedIntegrationName] =
+    useState<string>('');
 
-  const whatsappIntegrations = useFindManyRecords<
-    WhatsappIntegration & { __typename: string }
-  >({ objectNameSingular: 'whatsappIntegration' }).records;
+  const { records: whatsappIntegrations } = useFindManyRecords({
+    objectNameSingular: 'whatsappIntegration',
+  });
+
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: 'whatsappIntegration',
+  });
 
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);
@@ -102,11 +111,29 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
     openModal(CONFIRM_DISABLE_INBOX_MODAL_ID);
   };
 
-  const handleConfirmChange = () => {
+  const handleDeleteIntegration = (
+    integrationId: string,
+    integrationName: string,
+  ) => {
+    setChangeType(ChangeType.DeleteWhatsapp);
+    setSelectedIntegrationId(integrationId);
+    setSelectedIntegrationName(integrationName);
+    openModal(CONFIRM_DELETE_INBOX_MODAL_ID);
+  };
+
+  const handleConfirmChange = async () => {
     switch (changeType) {
       case ChangeType.DisableWhatsapp:
         // toggleWhatsappIntegrationDisable(selectedIntegrationId);
         // refetchWhatsapp();
+        return;
+      case ChangeType.DeleteWhatsapp:
+        try {
+          await deleteOneRecord(selectedIntegrationId);
+          closeModal(CONFIRM_DELETE_INBOX_MODAL_ID);
+        } catch (error) {
+          console.error('Error deleting integration:', error);
+        }
         return;
       default:
         return;
@@ -161,6 +188,17 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
                     size="medium"
                     Icon={IconPencil}
                   />
+                  <IconButton
+                    onClick={() =>
+                      handleDeleteIntegration(
+                        whatsappIntegration.id,
+                        whatsappIntegration.name,
+                      )
+                    }
+                    variant="tertiary"
+                    size="medium"
+                    Icon={IconTrash}
+                  />
                 </StyledDiv>
               </StyledCard>
             ))}
@@ -181,6 +219,17 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
         }
         onConfirmClick={handleConfirmChange}
         confirmButtonText="Continue"
+      />
+      <ConfirmationModal
+        modalId={CONFIRM_DELETE_INBOX_MODAL_ID}
+        title={`Delete Connection`}
+        subtitle={
+          <>
+            {`This action cannot be undone. This will permanently delete the connection "${selectedIntegrationName}" and all associated data.`}
+          </>
+        }
+        onConfirmClick={handleConfirmChange}
+        confirmButtonText="Delete"
       />
     </>
   );

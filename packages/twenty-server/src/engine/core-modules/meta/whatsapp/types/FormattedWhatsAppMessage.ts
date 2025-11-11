@@ -15,4 +15,5 @@ export type FormattedWhatsAppMessage = {
   type: ChatMessageType;
   deliveryStatus: ChatMessageDeliveryStatus;
   attachmentUrl: string | null;
+  repliesTo: string | null;
 };

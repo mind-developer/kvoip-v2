@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ZodError, type z } from 'zod';
+import { ZodError, type z, isDirty } from 'zod';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -55,7 +55,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   ) => {
     /* @kvoip-woulz proprietary:begin */
     // TODO: Modificado para corrigir erro na versao 1.5.3x1.0, antes puxava diretamente do zod a prop .isDirty.
-    if (!formConfig.formState.isDirty) {
+    if (!isDirty) {
     /* @kvoip-woulz proprietary:end */
       return;
     }
@@ -68,14 +68,11 @@ export const SettingsDataModelObjectIdentifiersForm = ({
 
       formConfig.reset(undefined, { keepValues: true });
     } catch (error) {
-      console.log('error teste juliano', error);
       if (error instanceof ZodError) {
-        console.log('error teste juliano 2');
-        // enqueueErrorSnackBar({
-        //   message: error.issues[0].message,
-        // });
+        enqueueErrorSnackBar({
+          message: error.issues[0].message,
+        });
       } else {
-        console.log('error teste juliano 3');
         enqueueErrorSnackBar({
           apolloError: error instanceof ApolloError ? error : undefined,
         });

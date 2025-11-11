@@ -2,6 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { StyledOption } from '@/chatbot/components/ui/StyledOption';
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { GenericNode } from '@/chatbot/types/GenericNode';
 import { renameFile } from '@/chatbot/utils/renameFile';
 import styled from '@emotion/styled';
@@ -41,6 +42,7 @@ function FileNode({
   }>
 >) {
   const { updateNodeData } = useReactFlow();
+  const { handleIncomingConnection } = useHandleNodeValue();
   const allNodes = useNodes();
   const thisNode: GenericNode = allNodes.filter(
     (filterNodes) => filterNodes.id === id,
@@ -72,6 +74,9 @@ function FileNode({
       /* @kvoip-woulz proprietary:begin */
       const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
       const sourceNodeData = sourceNode?.data || {};
+
+      // If the start node receives an incoming connection, set the previous node as the new start node
+      handleIncomingConnection(id, sourceNodeId, allNodes);
       /* @kvoip-woulz proprietary:end */
 
       // Update current node with incoming connection info

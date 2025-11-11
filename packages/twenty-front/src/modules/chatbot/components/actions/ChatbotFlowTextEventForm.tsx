@@ -154,7 +154,7 @@ export const ChatbotFlowTextEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
     setChatbotFlowNodes(updatedNodes);
-    setChatbotFlowSelectedNode(updatedNode);
+    setChatbotFlowSelectedNode([updatedNode]);
   };
 
   return (

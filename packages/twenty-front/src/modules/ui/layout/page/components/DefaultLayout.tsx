@@ -158,7 +158,7 @@ export const DefaultLayout = () => {
 
       {/* @kvoip-woulz proprietary:begin */}
 
-      {!isOnboarding && !currentWorkspaceMember && (
+      {!isOnboarding && currentWorkspaceMember && (
         <StyledWebSoftphoneContainer>
           <WebSoftphone />
         </StyledWebSoftphoneContainer>

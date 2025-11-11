@@ -21,6 +21,7 @@ import { whatsAppMessageToClientChatMessage } from 'src/engine/core-modules/meta
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
+import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
@@ -177,10 +178,25 @@ export class WhatsAppService {
         });
       }
 
+      let repliesToMessage = null;
+      if (message.repliesTo) {
+        repliesToMessage = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+            workspaceId,
+            'clientChatMessage',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { providerMessageId: message.repliesTo } });
+      }
+
       if (!clientChat) throw new InternalServerError('Client chat not found');
 
       await this.chatMessageManagerService.saveMessage(
-        whatsAppMessageToClientChatMessage(message, clientChat),
+        whatsAppMessageToClientChatMessage(
+          message,
+          clientChat,
+          repliesToMessage?.id ?? null,
+        ),
         workspaceId,
       );
 
@@ -197,7 +213,8 @@ export class WhatsAppService {
         clientChat.status === ClientChatStatus.UNASSIGNED ||
         (clientChat.status === ClientChatStatus.CHATBOT &&
           !message.fromMe &&
-          whatsappIntegration?.chatbotId)
+          whatsappIntegration?.chatbotId) ||
+        clientChat.status === ClientChatStatus.FINISHED
       ) {
         const chatbot = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
@@ -247,10 +264,18 @@ export class WhatsAppService {
         const executorKey = clientChat.id;
         let executor = this.ChatbotRunnerService.getExecutor(executorKey);
         if (executor) {
-          console.log('executor found');
+          this.logger.log('chatbot executor found', {
+            executorKey,
+            currentNodeId: (executor as any).currentNodeId,
+          });
           await executor.runFlow(message.textBody ?? '');
+          // O executor se auto-remove quando o fluxo termina
           return true;
         }
+        this.logger.log('chatbot executor not found, creating new one', {
+          executorKey,
+          messageText: message.textBody,
+        });
 
         this.chatMessageManagerService.sendMessage(
           {
@@ -261,7 +286,7 @@ export class WhatsAppService {
           integrationId,
         );
 
-        console.log('getting sectors');
+        this.logger.log('getting sectors');
         const sectors = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
             workspaceId,
@@ -282,7 +307,15 @@ export class WhatsAppService {
           },
           sectors: sectors,
           onFinish: (_, sectorId: string) => {
-            console.log('onFinish', _, sectorId);
+            this.chatMessageManagerService.sendMessage(
+              {
+                ...baseEventMessage,
+                event: ClientChatMessageEvent.CHATBOT_END,
+              },
+              workspaceId,
+              integrationId,
+            );
+            this.logger.log('onFinish');
             if (sectorId) {
               this.chatMessageManagerService.sendMessage(
                 {
@@ -301,21 +334,13 @@ export class WhatsAppService {
             //     status: ClientChatStatus.ASSIGNED,
             //   }, workspaceId);
             // }
-            this.chatMessageManagerService.sendMessage(
-              {
-                ...baseEventMessage,
-                event: ClientChatMessageEvent.CHATBOT_END,
-              },
-              workspaceId,
-              integrationId,
-            );
           },
         });
-        this.ChatbotRunnerService.clearExecutor(executorKey);
         await executor.runFlow(message.textBody ?? '');
+        // O executor se auto-remove quando o fluxo termina
       }
     } catch (error) {
-      console.log('error', error);
+      this.logger.error('error', error);
       this.logger.error(error);
     }
   }
