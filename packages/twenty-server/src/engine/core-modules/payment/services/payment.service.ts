@@ -1,10 +1,15 @@
 /* @kvoip-woulz proprietary */
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { CreateChargeDto } from 'src/engine/core-modules/payment/dtos/create-charge.dto';
 import { supportsPaymentMethod } from 'src/engine/core-modules/payment/utils/suports-payment-method.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { PAYMENT_PROVIDER_TOKENS } from '../constants/payment-provider-tokens';
 import { ChargeStatus } from '../enums/charge-status.enum';
@@ -13,7 +18,6 @@ import { PaymentProvider } from '../enums/payment-provider.enum';
 import { PaymentMethodNotSupportedException } from '../exceptions/payment-method-not-supported.exception';
 import type { ListChargesResponse } from '../interfaces/payment-provider.interface';
 import {
-  BankSlipResponse,
   CancelChargeResponse,
   CreateChargeResponse,
   IPaymentProvider,
@@ -37,6 +41,9 @@ export class PaymentService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @Inject(PAYMENT_PROVIDER_TOKENS[PaymentProvider.INTER])
     private readonly interProvider: IPaymentProvider,
+    private readonly fileUploadService: FileUploadService,
+    private readonly fileService: FileService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   /**
@@ -167,22 +174,123 @@ export class PaymentService {
   }
 
   /**
-   * Retrieves bank slip file for a charge
+   * Retrieves bank slip file for a charge, stores it using the file system,
+   * and adds it as an attachment to the ChargeWorkspaceEntity
    */
   async getBankSlipFile({
     workspaceId,
     chargeId,
     provider,
     integrationId,
-  }: PaymentServiceGetBankSlipFileParams): Promise<BankSlipResponse> {
+  }: PaymentServiceGetBankSlipFileParams): Promise<{
+    charge: ChargeWorkspaceEntity;
+    attachment: AttachmentWorkspaceEntity;
+    signedFileUrl: string;
+  }> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    // TODO: Receive a base64 string and sotre it as an attached file to the charge using the file service
-    return paymentProvider.getBankSlipFile({
+    // Get the bank slip file from the payment provider
+    const bankSlipResponse = await paymentProvider.getBankSlipFile({
       workspaceId,
       integrationId,
       chargeId,
     });
+
+    if (!bankSlipResponse.fileBuffer) {
+      throw new Error(
+        'Bank slip file buffer is required but was not provided by the payment provider',
+      );
+    }
+
+    // Get charge repository
+    const chargeRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
+        workspaceId,
+        'charge',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    // Find the charge
+    const charge = await chargeRepository.findOne({
+      where: { id: chargeId },
+    });
+
+    if (!charge) {
+      throw new NotFoundException(`Charge ${chargeId} not found`);
+    }
+
+    const fileName =
+      bankSlipResponse.fileName ||
+      `bank-slip-${charge.requestCode || chargeId}.pdf`;
+
+    const { files } = await this.fileUploadService.uploadFile({
+      file: bankSlipResponse.fileBuffer,
+      fileFolder: FileFolder.ChargeBill,
+      workspaceId,
+      filename: fileName,
+      mimeType: 'application/pdf',
+    });
+
+    if (!files.length) {
+      throw new Error('Failed to upload bank slip file');
+    }
+
+    // Extract fullPath from the uploaded file path (remove token query parameter)
+    const extractFullPathFromFilePath = (path: string): string => {
+      const matchRegex = /([^?]+)/;
+      return path.match(matchRegex)?.[1] || path;
+    };
+
+    const fullPath = extractFullPathFromFilePath(files[0].path);
+
+    // Get attachment repository
+    const attachmentRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+        workspaceId,
+        'attachment',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    // Create attachment entity linked to the charge
+    const attachment = attachmentRepository.create({
+      name: fileName,
+      fullPath,
+      type: 'application/pdf',
+      chargeId: charge.id,
+    });
+
+    // Save the attachment
+    const savedAttachment = await attachmentRepository.save(attachment);
+
+    // Reload charge with attachment relation
+    const chargeWithAttachment = await chargeRepository.findOne({
+      where: { id: chargeId },
+      relations: ['attachments'],
+    });
+
+    if (!chargeWithAttachment) {
+      throw new NotFoundException(
+        `Charge ${chargeId} not found after attachment creation`,
+      );
+    }
+
+    const signedPath = this.fileService.signFileUrl({
+      url: savedAttachment.fullPath,
+      workspaceId,
+    });
+
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    // This link is used to access the file link directly outside the
+    // object record page
+    // Note: Attachment links expires
+    const signedFileUrl = `${serverUrl}/files/${signedPath}`;
+
+    return {
+      charge: chargeWithAttachment,
+      attachment: savedAttachment,
+      signedFileUrl,
+    };
   }
 
   /**
@@ -415,8 +523,8 @@ export class PaymentService {
       price: chargeDto.amount,
       quantity: 1,
       taxId: chargeDto.payerInfo.taxId,
+      requestCode: response.externalChargeId,
       // TODO: Add other fields based on your ChargeWorkspaceEntity structure
-      // requestCode: response.externalChargeId,
       // status: response.status,
       // paymentMethod: response.paymentMethod,
       // dueDate: response.dueDate,

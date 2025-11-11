@@ -13,6 +13,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { APP_LOCALES } from 'twenty-shared/translations';
 
+// TODO: Move this job to the payment module
 export type ProcessBolepixChargeJobData = {
   interChargeCode: string;
   workspaceId: string;

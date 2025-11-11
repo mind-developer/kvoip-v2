@@ -35,9 +35,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 /* @kvoip-woulz proprietary:begin */
 import { PaymentService } from 'src/engine/core-modules/payment/services/payment.service';
 /* @kvoip-woulz proprietary:end */
+import { BillingPaymentService } from 'src/engine/core-modules/billing/services/billing-payment.service';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
-import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
-import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
@@ -53,6 +52,7 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingPaymentService: BillingPaymentService,
     @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem)
@@ -160,6 +160,7 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
     successUrlPath?: string;
   } & Pick<
+    /* @kvoip-woulz proprietary:begin */
     BillingPortalCheckoutSessionParameters,
     | 'paymentProvider'
     | 'interChargeData'
@@ -167,6 +168,7 @@ export class BillingPortalWorkspaceService {
     | 'chargeType'
     | 'user'
     | 'plan'
+    /* @kvoip-woulz proprietary:end */
   >) {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
@@ -174,6 +176,7 @@ export class BillingPortalWorkspaceService {
 
     const cancelUrl = frontBaseUrl.toString();
 
+    /* @kvoip-woulz proprietary:begin */
     if (paymentProvider === BillingPaymentProviders.Inter) {
       if (!isDefined(interChargeData))
         throw new BillingException(
@@ -216,28 +219,24 @@ export class BillingPortalWorkspaceService {
       if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
         throw new InternalServerErrorException('Plan price not found');
 
-      // Assuming that the payment service will handle the bank slip file generation
-      // and sending through email.
-      await this.paymentService.createCharge({
+      await this.billingPaymentService.createChargeAndDispatchBolepixJob({
         workspaceId: workspace.id,
-        chargeDto: {
-          amount: getPriceFromStripeDecimal(
-            billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
-          ),
-          paymentMethod: PaymentMethod.BOLEPIX,
-          payerInfo: {
-            name: customer.name,
-            email: user.email,
-            taxId: customer.document,
-            address: {
-              city: customer.city,
-              state: customer.stateUnity,
-              zipCode: customer.cep,
-              street: customer.address,
-            },
+        amount: getPriceFromStripeDecimal(
+          billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+        ),
+        payerInfo: {
+          name: customer.name,
+          email: user.email,
+          taxId: customer.document,
+          address: {
+            city: customer.city,
+            state: customer.stateUnity,
+            zipCode: customer.cep,
+            street: customer.address,
           },
         },
-        provider: PaymentProvider.INTER,
+        userEmail: user.email,
+        locale,
       });
 
       const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
@@ -252,6 +251,7 @@ export class BillingPortalWorkspaceService {
         stripeSubscriptionLineItems,
       };
     }
+    /* @kvoip-woulz proprietary:end */
 
     if (successUrlPath) {
       frontBaseUrl.pathname = successUrlPath;

@@ -1,7 +1,12 @@
 /* @kvoip-woulz proprietary */
 import { NotFoundException } from '@nestjs/common';
 
+import type { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import type { FileService } from 'src/engine/core-modules/file/services/file.service';
+import type { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import type { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import type { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import type { CreateChargeDto } from '../../dtos/create-charge.dto';
 import { ChargeStatus } from '../../enums/charge-status.enum';
@@ -29,13 +34,23 @@ describe('PaymentService', () => {
     update: jest.Mock;
     findOne: jest.Mock;
   };
+  let mockAttachmentRepository: {
+    create: jest.Mock;
+    save: jest.Mock;
+  };
   let mockProvider: jest.Mocked<IPaymentProvider>;
+  let mockFileUploadService: jest.Mocked<FileUploadService>;
+  let mockFileService: jest.Mocked<FileService>;
+  let mockTwentyConfigService: jest.Mocked<TwentyConfigService>;
   let capabilities: PaymentProviderCapabilities;
 
   const workspaceId = 'workspace-id';
   const integrationId = 'integration-id';
   const chargeId = 'charge-id';
-  const chargeEntity = { id: 'charge-entity-id' } as ChargeWorkspaceEntity;
+  const chargeEntity = {
+    id: 'charge-entity-id',
+    requestCode: 'external-charge-id',
+  } as ChargeWorkspaceEntity;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -47,9 +62,43 @@ describe('PaymentService', () => {
       findOne: jest.fn().mockResolvedValue(chargeEntity),
     };
 
-    mockORMManager = {
-      getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepository),
+    const mockAttachment = {
+      id: 'attachment-id',
+      name: 'bank-slip.pdf',
+      fullPath: 'charge-bill/bank-slip.pdf',
+      type: 'application/pdf',
+      chargeId: chargeId,
+    } as AttachmentWorkspaceEntity;
+
+    mockAttachmentRepository = {
+      create: jest.fn().mockReturnValue(mockAttachment),
+      save: jest.fn().mockResolvedValue(mockAttachment),
     };
+
+    mockORMManager = {
+      getRepositoryForWorkspace: jest
+        .fn()
+        .mockImplementation((workspaceId, entityName) => {
+          if (entityName === 'attachment') {
+            return Promise.resolve(mockAttachmentRepository);
+          }
+          return Promise.resolve(mockRepository);
+        }),
+    };
+
+    mockFileUploadService = {
+      uploadFile: jest.fn().mockResolvedValue({
+        files: [{ path: 'charge-bill/bank-slip.pdf?token=abc123' }],
+      }),
+    } as unknown as jest.Mocked<FileUploadService>;
+
+    mockFileService = {
+      signFileUrl: jest.fn().mockReturnValue('charge-bill/token/bank-slip.pdf'),
+    } as unknown as jest.Mocked<FileService>;
+
+    mockTwentyConfigService = {
+      get: jest.fn().mockReturnValue('https://example.com'),
+    } as unknown as jest.Mocked<TwentyConfigService>;
 
     capabilities = {
       boleto: false,
@@ -111,6 +160,9 @@ describe('PaymentService', () => {
     service = new PaymentService(
       mockORMManager as TwentyORMGlobalManager,
       mockProvider,
+      mockFileUploadService,
+      mockFileService,
+      mockTwentyConfigService,
     );
   });
 
@@ -279,11 +331,30 @@ describe('PaymentService', () => {
   });
 
   describe('getBankSlipFile', () => {
-    it('delegates to payment provider', async () => {
-      const response: BankSlipResponse = {
-        fileUrl: 'https://example.com',
+    it('retrieves bank slip file, uploads it, creates attachment and returns signed URL', async () => {
+      const bankSlipResponse: BankSlipResponse = {
+        fileBuffer: Buffer.from('pdf content'),
+        fileName: 'bank-slip.pdf',
+        fileUrl: 'https://example.com/bank-slip.pdf',
       };
-      mockProvider.getBankSlipFile.mockResolvedValueOnce(response);
+      mockProvider.getBankSlipFile.mockResolvedValueOnce(bankSlipResponse);
+
+      const mockAttachment = {
+        id: 'attachment-id',
+        name: 'bank-slip.pdf',
+        fullPath: 'charge-bill/bank-slip.pdf',
+        type: 'application/pdf',
+        chargeId: chargeId,
+      } as AttachmentWorkspaceEntity;
+
+      mockAttachmentRepository.save.mockResolvedValueOnce(mockAttachment);
+
+      const chargeWithAttachment = {
+        ...chargeEntity,
+        attachments: [mockAttachment],
+      };
+      mockRepository.findOne.mockResolvedValueOnce(chargeEntity);
+      mockRepository.findOne.mockResolvedValueOnce(chargeWithAttachment);
 
       const result = await service.getBankSlipFile({
         workspaceId,
@@ -297,7 +368,62 @@ describe('PaymentService', () => {
         integrationId,
         chargeId,
       });
-      expect(result).toBe(response);
+      expect(mockFileUploadService.uploadFile).toHaveBeenCalledWith({
+        file: bankSlipResponse.fileBuffer,
+        fileFolder: FileFolder.ChargeBill,
+        workspaceId,
+        filename: 'bank-slip.pdf',
+        mimeType: 'application/pdf',
+      });
+      expect(mockAttachmentRepository.create).toHaveBeenCalled();
+      expect(mockAttachmentRepository.save).toHaveBeenCalled();
+      expect(mockFileService.signFileUrl).toHaveBeenCalledWith({
+        url: 'charge-bill/bank-slip.pdf',
+        workspaceId,
+      });
+      expect(mockTwentyConfigService.get).toHaveBeenCalledWith('SERVER_URL');
+      expect(result).toHaveProperty('charge');
+      expect(result).toHaveProperty('attachment');
+      expect(result).toHaveProperty('signedFileUrl');
+      expect(result.signedFileUrl).toBe(
+        'https://example.com/files/charge-bill/token/bank-slip.pdf',
+      );
+    });
+
+    it('throws error when bank slip file buffer is missing', async () => {
+      const bankSlipResponse: BankSlipResponse = {
+        fileUrl: 'https://example.com/bank-slip.pdf',
+      };
+      mockProvider.getBankSlipFile.mockResolvedValueOnce(bankSlipResponse);
+
+      await expect(
+        service.getBankSlipFile({
+          workspaceId,
+          chargeId,
+          provider: PaymentProvider.INTER,
+          integrationId,
+        }),
+      ).rejects.toThrow(
+        'Bank slip file buffer is required but was not provided by the payment provider',
+      );
+    });
+
+    it('throws NotFoundException when charge does not exist', async () => {
+      const bankSlipResponse: BankSlipResponse = {
+        fileBuffer: Buffer.from('pdf content'),
+        fileName: 'bank-slip.pdf',
+      };
+      mockProvider.getBankSlipFile.mockResolvedValueOnce(bankSlipResponse);
+      mockRepository.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        service.getBankSlipFile({
+          workspaceId,
+          chargeId,
+          provider: PaymentProvider.INTER,
+          integrationId,
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 
