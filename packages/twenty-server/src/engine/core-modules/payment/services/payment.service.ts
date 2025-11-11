@@ -97,6 +97,8 @@ export class PaymentService {
         if (!chargeDto.dueDate) {
           throw new Error('Due date is required for boleto payments');
         }
+        // TODO: We should check if there is already a pending charge using boleto
+        // since this could cause unecessary boleto charges to be created.
         response = await paymentProvider.createBoletoCharge({
           workspaceId,
           integrationId,
@@ -107,7 +109,6 @@ export class PaymentService {
           metadata: chargeDto.metadata,
         });
         break;
-
       case PaymentMethod.BOLEPIX:
         response = await paymentProvider.createBolepixCharge({
           workspaceId,

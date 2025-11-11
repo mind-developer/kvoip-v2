@@ -12,19 +12,19 @@ export type CardData = {
 };
 
 export type CustomerAddress = {
+  zipCode: string;
   street: string;
-  number: string;
-  complement?: string;
-  neighborhood: string;
   city: string;
   state: string;
-  zipCode: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
 };
 
 export type Customer = {
   name: string;
   email: string;
-  taxId: string;
+  taxId: string; // CPF or CNPJ
   phone?: string;
   address?: CustomerAddress;
 };
