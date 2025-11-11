@@ -205,11 +205,6 @@ const StyledCardHeader = styled.div`
   width: 100%;
 `;
 
-const StyledCardHeaderActions = styled.div`
-  margin-left: auto;
-  display: flex;
-`;
-
 const StyledCardHeaderDivider = styled.div`
   height: 1px;
   width: 100%;
@@ -954,7 +949,24 @@ const AccountPayablePersistedFieldsCard = ({
               <StyledTitleFieldContainer>
                 {renderField(headerFieldName)}
               </StyledTitleFieldContainer>
-              <StyledCardHeaderActions>
+            </StyledCardHeader>
+            <StyledCardHeaderDivider />
+
+            {/* @kvoip-woulz proprietary:begin */}
+            <StyledFieldsSectionsContainer>
+              {renderFieldsSection('Essential Fields', essentialFieldNames)}
+              {renderFieldsSection('Optional Fields', optionalFieldNames)}
+              {renderFieldsSection('Additional Fields', additionalFieldNames)}
+              {renderFieldsSection(
+                'Connections & Integrations',
+                connectionFieldNames,
+              )}
+            </StyledFieldsSectionsContainer>
+            {/* @kvoip-woulz proprietary:end */}
+
+            {/* @kvoip-woulz proprietary:begin */}
+            <StyledButtonContainer>
+              <StyledActionsDropdownWrapper>
                 <Dropdown
                   dropdownId={actionsDropdownId}
                   dropdownPlacement="bottom-end"
@@ -982,32 +994,20 @@ const AccountPayablePersistedFieldsCard = ({
                     </DropdownContent>
                   }
                 />
-              </StyledCardHeaderActions>
-              {pendingAction && (
-                <ConfirmationModal
-                  modalId={actionsModalId}
-                  title={pendingAction.confirmation?.title ?? ''}
-                  subtitle={pendingAction.confirmation?.subtitle ?? ''}
-                  confirmButtonText={
-                    pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
-                  }
-                  onConfirmClick={handleConfirmPendingAction}
-                  onClose={handleClosePendingAction}
-                />
-              )}
-            </StyledCardHeader>
-            <StyledCardHeaderDivider />
-
-            {/* @kvoip-woulz proprietary:begin */}
-            <StyledFieldsSectionsContainer>
-              {renderFieldsSection('Essential Fields', essentialFieldNames)}
-              {renderFieldsSection('Optional Fields', optionalFieldNames)}
-              {renderFieldsSection('Additional Fields', additionalFieldNames)}
-              {renderFieldsSection(
-                'Connections & Integrations',
-                connectionFieldNames,
-              )}
-            </StyledFieldsSectionsContainer>
+              </StyledActionsDropdownWrapper>
+            </StyledButtonContainer>
+            {pendingAction && (
+              <ConfirmationModal
+                modalId={actionsModalId}
+                title={pendingAction.confirmation?.title ?? ''}
+                subtitle={pendingAction.confirmation?.subtitle ?? ''}
+                confirmButtonText={
+                  pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
+                }
+                onConfirmClick={handleConfirmPendingAction}
+                onClose={handleClosePendingAction}
+              />
+            )}
             {/* @kvoip-woulz proprietary:end */}
           </>
         )}
