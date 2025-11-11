@@ -1,5 +1,6 @@
 import { CachedAvatarComponent } from '@/chat/client-chat/components/message/CachedAvatarComponent';
 import { MessageQuotePreview } from '@/chat/client-chat/components/message/MessageQuotePreview';
+import { BUBBLE_COLOR } from '@/chat/client-chat/constants/BUBBLE_COLOR';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -14,6 +15,7 @@ import {
 import { motion } from 'framer-motion';
 import { useState, type ReactNode } from 'react';
 import {
+  ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageType,
@@ -33,6 +35,7 @@ const StyledMessageBubble = styled(motion.div)<{
   isHighlighted: boolean;
   themeName: string;
   hasQuotePreview: boolean;
+  provider: ChatIntegrationProvider;
 }>`
   ${({ type, isReply, hasQuotePreview }) =>
     isReply
@@ -41,7 +44,7 @@ const StyledMessageBubble = styled(motion.div)<{
         ? 'min-width: fit-content;'
         : type === ChatMessageType.IMAGE
           ? 'max-width: 240px;'
-          : ''}
+          : 'max-width: 300px;'}
   ${({ type, isReply, hasQuotePreview }) =>
     isReply || hasQuotePreview
       ? ''
@@ -49,15 +52,17 @@ const StyledMessageBubble = styled(motion.div)<{
         ? 'max-width: 300px;'
         : ''}
   position: relative;
+  text-overflow: '-';
+  overflow: hidden;
+  white-space: pre-wrap;
 
-  background: ${({ fromMe, theme, type }) => {
+  background: ${({ fromMe, theme, type, provider }) => {
     if (type === ChatMessageType.STICKER) {
       return 'transparent';
     }
     return fromMe
-      ? theme.name === 'dark'
-        ? '#274238'
-        : '#bdffcc'
+      ? (BUBBLE_COLOR[provider]?.[theme.name as 'light' | 'dark'] ??
+          theme.background.primary)
       : theme.background.quaternary;
   }};
   ${({ type }) =>
@@ -317,6 +322,7 @@ export const MessageBubble = ({
         </div>
       )}
       <StyledMessageBubble
+        provider={message.provider}
         isReply={isReply}
         isHighlighted={isHighlighted ?? false}
         themeName={theme.name}
