@@ -148,7 +148,9 @@ export class ChatMessageManagerService {
       await this.clientChatMessageService.publishChatUpdated(
         updatedClientChat,
         updatedClientChat.sectorId,
-        'all',
+        updatedClientChat.status === ClientChatStatus.FINISHED
+          ? 'admin'
+          : 'all',
       );
     }
   }

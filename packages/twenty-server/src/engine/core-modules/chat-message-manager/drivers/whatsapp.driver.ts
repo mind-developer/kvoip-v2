@@ -1,5 +1,5 @@
 /* @kvoip-woulz proprietary */
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -20,6 +20,7 @@ import {
 
 export class WhatsAppDriver implements ChatProviderDriver {
   private readonly META_API_URL: string;
+  private readonly logger = new Logger(WhatsAppDriver.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -41,6 +42,11 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (lower.endsWith('.mp4')) return 'video/mp4';
     if (lower.endsWith('.mov')) return 'video/quicktime';
     if (lower.endsWith('.webm')) return 'audio/webm';
+    /* @kvoip-woulz proprietary:begin */
+    if (lower.endsWith('.xls')) return 'application/vnd.ms-excel';
+    if (lower.endsWith('.xlsx'))
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    /* @kvoip-woulz proprietary:end */
     return 'application/octet-stream';
   }
 
@@ -183,7 +189,9 @@ export class WhatsAppDriver implements ChatProviderDriver {
       const response = await axios.post(baileysUrl, { fields });
       return response.data.messages[0].id;
     } catch (error) {
-      throw new InternalServerErrorException(JSON.stringify(error, null, 2));
+      throw new InternalServerErrorException(
+        error.response?.data?.error?.message || 'Could not send message',
+      );
     }
   }
 

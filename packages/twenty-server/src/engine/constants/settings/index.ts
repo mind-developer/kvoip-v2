@@ -7,7 +7,7 @@ export const settings: Settings = {
       'workspace-logo': ['original'],
       'person-picture': ['original'],
     },
-    maxFileSize: '10MB',
+    maxFileSize: '16MB' /* @kvoip-woulz proprietary */,
   },
   minLengthOfStringForDuplicateCheck: 3,
   maxVisibleViewFields: 30,
