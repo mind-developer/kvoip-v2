@@ -207,9 +207,8 @@ export const SendTemplateModal = (): React.ReactNode => {
 };
 
 const StyledTemplateList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing(2)};
@@ -240,7 +239,6 @@ const StyledCard = styled(Card)<{
       box-shadow: none;
     `}
   max-height: 180px;
-  max-width: 180px;
 `;
 
 const StyledTag = styled(Tag)`
@@ -261,6 +259,8 @@ const StyledTemplateHeader = styled.div`
 
 const StyledCheckmark = styled(Checkmark)<{ color: string }>`
   background-color: ${({ color }) => color};
+  height: 16px;
+  width: 16px;
 `;
 
 const TemplateList = memo(
@@ -305,12 +305,12 @@ const TemplateList = memo(
                 }
               >
                 <StyledTemplateHeader>
-                  <H2Title title={template.name} />
                   <StyledCheckmark
                     color={template.status === 'APPROVED' ? 'green' : 'red'}
                   />
+                  <H2Title title={template.name} />
                 </StyledTemplateHeader>
-                <p>
+                <p style={{ margin: 0, marginBottom: 8 }}>
                   {template.components
                     .map((component) => component.text)
                     .join(', ')}

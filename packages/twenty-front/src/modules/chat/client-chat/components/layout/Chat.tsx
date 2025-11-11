@@ -2,6 +2,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { ChatMessageInput } from '@/chat/client-chat/components/input/ChatMessageInput';
 import { ChatHeader } from '@/chat/client-chat/components/layout/ChatHeader';
 import { ChatMessageRenderer } from '@/chat/client-chat/components/message/ChatMessageRenderer';
+import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
 import { MODAL_IMAGE_POPUP } from '@/chat/client-chat/constants/modalImagePopup';
 import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useClientChatMessages } from '@/chat/client-chat/hooks/useClientChatMessages';
@@ -11,6 +12,7 @@ import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -141,6 +143,8 @@ const StyledModalImage = styled.img`
 
 const CHAT_FOCUS_ID = 'chat-component';
 
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB /* @kvoip-woulz proprietary */
+
 export const Chat = () => {
   const { t } = useLingui();
   const { chatId } = useParams() || '';
@@ -182,6 +186,7 @@ export const Chat = () => {
   const [highlightedMessageId, setHighlightedMessageId] = useState<
     string | null
   >(null);
+  const { openModal } = useModal();
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const userScrolledUpRef = useRef<boolean>(false);
@@ -364,15 +369,23 @@ export const Chat = () => {
       });
       setRecordingState('none');
       setAudioStream(null);
-      const attachment = await uploadAttachmentFile(
-        new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
-          type: 'audio/webm',
-        }),
-        {
-          targetObjectNameSingular: 'person',
-          id: selectedChat?.person!.id || '',
-        },
-      );
+      const audioFile = new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
+        type: 'audio/webm',
+      });
+      if (audioFile.size > MAX_FILE_SIZE) {
+        enqueueErrorSnackBar({
+          message: t`Audio file size exceeds the maximum limit of 16MB`,
+          options: {
+            detailedMessage: t`The audio file is ${(audioFile.size / (1024 * 1024)).toFixed(2)}MB, which exceeds the 16MB limit.`,
+          },
+        });
+        return;
+      }
+      /* @kvoip-woulz proprietary:end */
+      const attachment = await uploadAttachmentFile(audioFile, {
+        targetObjectNameSingular: 'person',
+        id: selectedChat?.person!.id || '',
+      });
       sendClientChatMessage({
         clientChatId: chatId!,
         from: workspaceMemberWithAgent?.agent?.id || '',
@@ -387,7 +400,7 @@ export const Chat = () => {
         textBody: null,
       });
     },
-    [selectedChat, chatId, workspaceMemberWithAgent],
+    [selectedChat, chatId, workspaceMemberWithAgent, enqueueErrorSnackBar, t],
   );
 
   const handleStartRecording = useCallback(async () => {
@@ -578,6 +591,13 @@ export const Chat = () => {
 
   const handleInputKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (messageInput.length >= 4096) {
+        enqueueErrorSnackBar({
+          message: t`Message length exceeds the maximum limit of 4096 characters`,
+        });
+        setMessageInput(messageInput.slice(0, 4096));
+        return;
+      }
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         if (messageInput.length > 0 || recordingState !== 'none') {
@@ -590,7 +610,8 @@ export const Chat = () => {
 
   const handleInputChange = useCallback(
     (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setMessageInput(ev.target.value);
+      const value = ev.target.value.slice(0, 4096);
+      setMessageInput(value);
     },
     [],
   );
@@ -641,7 +662,9 @@ export const Chat = () => {
 
   const renderedMessages = useMemo(() => {
     return dbMessages.map((message: ClientChatMessage, index: number) => {
-      const lastOfRow = dbMessages[index + 1]?.from !== message.from;
+      const lastOfRow =
+        dbMessages[index + 1]?.from !== message.from ||
+        dbMessages[index + 1]?.type === ChatMessageType.EVENT;
       const messageId =
         (message as ClientChatMessage & { id?: string }).id ||
         message.providerMessageId;
@@ -685,7 +708,7 @@ export const Chat = () => {
           accent="blue"
           size="medium"
           onClick={() => {
-            alert('not implemented');
+            openModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
           }}
         />
       );
