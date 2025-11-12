@@ -160,6 +160,7 @@ export class WhatsappController {
           this.logger.warn(`Sender phone number: ${msg.from}`);
           const phoneInput =
             msg.from ?? body.entry[0].changes[0].value?.contacts[0]?.pn ?? null;
+          this.logger.warn(`Phone input: ${phoneInput}`);
           const senderPhoneNumber = phoneInput
             ? normalizePhoneNumber(phoneInput)
             : null;
@@ -189,8 +190,9 @@ export class WhatsappController {
             type: msg.type,
             deliveryStatus: msg.status,
             senderPhoneNumber:
+              '+' +
               senderPhoneNumber.primaryPhoneCallingCode +
-              senderPhoneNumber.primaryPhoneNumber.replace('+', ''),
+              senderPhoneNumber.primaryPhoneNumber,
             repliesTo: msg.context?.id ?? null,
           };
 
