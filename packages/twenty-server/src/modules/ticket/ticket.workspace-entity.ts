@@ -1,4 +1,4 @@
-/* @kvoip-woulz proprietary:begin */
+/* @kvoip-woulz proprietary */
 import { Field, registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -23,6 +23,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TICKET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -31,6 +32,7 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -77,7 +79,7 @@ export const SEARCH_FIELDS_FOR_TICKET: FieldTypeAndNameMetadata[] = [
   namePlural: 'tickets',
   labelSingular: msg`Ticket`,
   labelPlural: msg`Tickets`,
-  icon: 'IconHelpCircle',
+  icon: STANDARD_OBJECT_ICONS.ticket,
   labelIdentifierStandardId: TICKET_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
@@ -87,10 +89,10 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Name of the ticket`,
-    icon: 'IconSettings',
+    icon: STANDARD_OBJECT_ICONS.ticket,
   })
   @WorkspaceIsNullable()
-  name: string;
+  name: string | null;
 
   @WorkspaceField({
     standardId: TICKET_STANDARD_FIELD_IDS.statuses,
@@ -109,7 +111,7 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Solution`,
     description: msg`Solution of the ticket`,
-    icon: 'IconStatusChange',
+    icon: 'IconArticle',
   })
   @WorkspaceIsNullable()
   solution: string | null;
@@ -119,7 +121,7 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Ticket Number`,
     description: msg`Ticket number`,
-    icon: 'IconStatusChange',
+    icon: 'IconNumber',
   })
   @WorkspaceIsNullable()
   ticketNumber: string | null;
@@ -128,7 +130,7 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: TICKET_STANDARD_FIELD_IDS.closedBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Closed By`,
-    icon: 'IconCreativeCommonsSa',
+    icon: 'IconCreativeCommonsBy',
     description: msg`Workspace member who closed the ticket`,
   })
   @WorkspaceIsNullable()
@@ -139,7 +141,7 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: TICKET_STANDARD_FIELD_IDS.lastUpdatedBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Last Updated By`,
-    icon: 'IconCreativeCommonsSa',
+    icon: 'IconCreativeCommonsBy',
     description: msg`Workspace member who last updated the ticket`,
   })
   @WorkspaceIsNullable()
@@ -159,35 +161,12 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
-  // @WorkspaceField({
-  //   standardId: TICKET_STANDARD_FIELD_IDS.stage,
-  //   type: FieldMetadataType.SELECT,
-  //   label: msg`Stage`,
-  //   description: msg`Opportunity stage`,
-  //   icon: 'IconProgressCheck',
-  //   options: [
-  //     { value: 'NEW', label: 'New', position: 0, color: 'red' },
-  //     { value: 'SCREENING', label: 'Screening', position: 1, color: 'purple' },
-  //     { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
-  //     {
-  //       value: 'PROPOSAL',
-  //       label: 'Proposal',
-  //       position: 3,
-  //       color: 'turquoise',
-  //     },
-  //     { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
-  //   ],
-  //   defaultValue: "'NEW'",
-  // })
-  // @WorkspaceFieldIndex()
-  // stage: string;
-
   @WorkspaceRelation({
     standardId: TICKET_STANDARD_FIELD_IDS.opportunity,
     type: RelationType.MANY_TO_ONE,
     label: msg`Lead Name`,
     description: msg`Lead name of the ticket`,
-    icon: 'IconUser',
+    icon: STANDARD_OBJECT_ICONS.opportunity,
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'ticket',
   })
@@ -202,7 +181,7 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
     type: RelationType.MANY_TO_ONE,
     label: msg`Sector`,
     description: msg`Sector of the ticket`,
-    icon: 'IconUser',
+    icon: STANDARD_OBJECT_ICONS.sector,
     inverseSideTarget: () => SectorWorkspaceEntity,
     inverseSideFieldKey: 'ticket',
   })
@@ -211,25 +190,6 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('sector')
   sectorId: string;
-
-  // @WorkspaceField({
-  //   standardId: TICKET_STANDARD_FIELD_IDS.emails,
-  //   type: FieldMetadataType.EMAILS,
-  //   label: msg`Emails`,
-  //   description: msg`Contact’s Emails`,
-  //   icon: 'IconMail',
-  // })
-  // @WorkspaceIsUnique()
-  // emails: EmailsMetadata;
-
-  // @WorkspaceField({
-  //   standardId: TICKET_STANDARD_FIELD_IDS.phones,
-  //   type: FieldMetadataType.PHONES,
-  //   label: msg`Phones`,
-  //   description: msg`Contact’s phone numbers`,
-  //   icon: 'IconPhone',
-  // })
-  // phones: PhonesMetadata;
 
   @WorkspaceRelation({
     standardId: TICKET_STANDARD_FIELD_IDS.noteTargets,
@@ -253,20 +213,20 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
-  // @WorkspaceRelation({
-  //   standardId: TICKET_STANDARD_FIELD_IDS.person,
-  //   type: RelationType.MANY_TO_ONE,
-  //   label: msg`Contact`,
-  //   description: msg`Person linked to the support`,
-  //   icon: 'IconUser',
-  //   inverseSideTarget: () => PersonWorkspaceEntity,
-  //   inverseSideFieldKey: 'support',
-  // })
-  // @WorkspaceIsNullable()
-  // person: Relation<PersonWorkspaceEntity> | null;
+  @WorkspaceRelation({
+    standardId: TICKET_STANDARD_FIELD_IDS.person,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Contact`,
+    description: msg`Person linked to the support`,
+    icon: 'IconUser',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'ticket',
+  })
+  @WorkspaceIsNullable()
+  person: Relation<PersonWorkspaceEntity> | null;
 
-  // @WorkspaceJoinColumn('person')
-  // personId: string;
+  @WorkspaceJoinColumn('person')
+  personId: string;
 
   @WorkspaceRelation({
     standardId: TICKET_STANDARD_FIELD_IDS.timelineActivities,
@@ -298,4 +258,3 @@ export class TicketWorkspaceEntity extends BaseWorkspaceEntity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   searchVector: any;
 }
-/* @kvoip-woulz proprietary:end */

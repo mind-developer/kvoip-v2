@@ -204,6 +204,10 @@ export const CHARGE_STANDARD_FIELD_IDS = {
 export const TICKET_STANDARD_FIELD_IDS = {
   name: '5217e7f5-bd7a-4af5-8bbd-ec21c5f7d3af',
   statuses: '885031ad-d3e8-47c5-8d56-ce9759e96a45',
+  noteTargets: 'a4ad3074-5c0b-4448-93ed-53faf5762988',
+  position: 'ad171f33-970a-4efc-b628-b54295fb2e84',
+  timelineActivities: '4c8bf8da-92c4-421c-b267-6229095245f3',
+  searchVector: '78a63bbb-83d8-472b-bd90-162c43f4f414',
   /* @kvoip-woulz proprietary:begin */
   solution: '329994fa-4d88-4c72-bb0f-1bdd207b4993',
   ticketNumber: 'ead8bde3-b543-4553-b589-f421066ececf',
@@ -212,11 +216,8 @@ export const TICKET_STANDARD_FIELD_IDS = {
   sector: '2a0b5bf4-c8c4-4139-911b-f0072ebe3db3',
   attachments: '9db58c17-90c9-49c2-be48-6d93c0355e63',
   opportunity: '1e2868cd-7168-4844-94c2-c32e5a123074',
+  person: 'adfabc19-1b42-4385-8306-5ddfea9bd13c',
   /* @kvoip-woulz proprietary:end */
-  noteTargets: 'a4ad3074-5c0b-4448-93ed-53faf5762988',
-  position: 'ad171f33-970a-4efc-b628-b54295fb2e84',
-  timelineActivities: '4c8bf8da-92c4-421c-b267-6229095245f3',
-  searchVector: '78a63bbb-83d8-472b-bd90-162c43f4f414',
 } as const;
 
 export const PRODUCT_STANDARD_FIELD_IDS = {
@@ -984,6 +985,13 @@ export const CLIENT_CHAT_CONFIG_STANDARD_FIELD_IDS = {
   abandonmentInterval: '2f307b17-e423-4ff6-a3ea-bd83e47f0942',
   sectors: '3a2b308d-a2a8-402b-a9d7-7c008cddb310',
 } as const;
+
+/* @kvoip-woulz proprietary:begin */
+export const SUBJECT_STANDARD_FIELD_IDS = {
+  name: '0f2323bc-1c92-4dd6-9d11-00761aebb853',
+  icon: 'd6542530-de4d-453c-85de-b1a6ade18efa',
+} as const;
+/* @kvoip-woulz proprietary:end */
 
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,

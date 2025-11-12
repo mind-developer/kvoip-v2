@@ -1,4 +1,4 @@
-/* @kvoip-woulz proprietary:begin */
+/* @kvoip-woulz proprietary */
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TICKET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -99,7 +99,15 @@ export const ticketAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         isVisible: true,
         size: 150,
       },
+      {
+        fieldMetadataId:
+          ticketObjectMetadata.fields.find(
+            (field) => field.standardId === TICKET_STANDARD_FIELD_IDS.person,
+          )?.id ?? '',
+        position: 8,
+        isVisible: true,
+        size: 150,
+      },
     ],
   };
 };
-/* @kvoip-woulz proprietary:end */
