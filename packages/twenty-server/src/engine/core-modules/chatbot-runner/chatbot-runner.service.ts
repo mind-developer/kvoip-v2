@@ -7,7 +7,6 @@ import {
   CreateExecutorInput,
   ExecutorInput,
 } from 'src/engine/core-modules/chatbot-runner/types/CreateExecutorInput';
-import { NewConditionalState } from 'src/engine/core-modules/chatbot-runner/types/LogicNodeDataType';
 import { FlowNode } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
 import { NodeTypes } from 'src/engine/core-modules/chatbot-runner/types/NodeTypes';
 
@@ -69,14 +68,12 @@ export class ChatbotRunnerService {
 }
 class ExecuteFlow {
   currentNodeId: string | undefined;
-  chosenInput: string | undefined;
-  askedNodes: Set<string>; // Estado por executor (chat)
+  private askedNodes: Set<string> = new Set<string>(); // Estado por executor (chat)
   private readonly logger = new Logger(ExecuteFlow.name);
   constructor(private i: ExecutorInput) {
     this.currentNodeId = this.i.chatbot.flowNodes.find(
       (node) => node.data?.nodeStart,
     )?.id;
-    this.askedNodes = new Set<string>(); // Inicializa o estado por executor
   }
 
   public async runFlow(incomingMessage: string) {
@@ -107,12 +104,11 @@ class ExecuteFlow {
         `ExecuteFlow: Chamando handler.process para node ${currentNode.id} (tipo: ${currentNode.type})`,
       );
       const nextNodeId = await handler.process({
+        workspaceId: this.i.workspaceId,
         provider: this.i.provider,
         providerIntegrationId: this.i.providerIntegrationId,
-        workspaceId: this.i.workspaceId,
         clientChat: this.i.clientChat,
-        chatbotName: this.i.chatbotName,
-        sectors: this.i.sectors,
+        chatbot: this.i.chatbot,
         node: currentNode,
         context: {
           incomingMessage,
@@ -122,37 +118,22 @@ class ExecuteFlow {
       this.logger.log(
         `ExecuteFlow: Handler retornou nextNodeId=${nextNodeId} para node ${currentNode.id} (tipo: ${currentNode.type})`,
       );
-      if (currentNode.type === NodeTypes.CONDITIONAL) {
-        const logic = currentNode.data?.logic as NewConditionalState;
-        if (logic?.logicNodeData && nextNodeId) {
-          const matchedCondition = logic.logicNodeData.find(
-            (condition) => condition.outgoingNodeId === nextNodeId,
-          );
-          if (matchedCondition) {
-            this.chosenInput = matchedCondition.sectorId;
-          }
-        }
-        if (!nextNodeId) {
-          this.logger.log(
-            `ExecuteFlow: Nó CONDITIONAL retornou null, aguardando resposta do usuário - mantendo executor ativo`,
-          );
-          // Não chama onFinish aqui - o executor deve permanecer ativo para processar a próxima mensagem
-          return null;
-        }
+      if (currentNode.type === NodeTypes.CONDITIONAL && !nextNodeId) {
+        this.logger.log(
+          `ExecuteFlow: Nó CONDITIONAL retornou null, aguardando resposta do usuário - mantendo executor ativo`,
+        );
+        return null;
       }
       if (!nextNodeId) {
         // Fluxo terminou - não há mais nós para executar
         this.logger.log(
           `ExecuteFlow: Fluxo terminou no node ${currentNode.id} (tipo: ${currentNode.type})`,
         );
-        if (
-          this.i.onFinish &&
-          ['text', 'image', 'file', 'conditional'].includes(currentNode.type)
-        ) {
+        if (this.i.onFinish) {
           this.logger.log(
             `ExecuteFlow: Chamando onFinish para node ${currentNode.id}`,
           );
-          this.i.onFinish(currentNode, this.chosenInput);
+          this.i.onFinish();
         }
         // Limpar currentNodeId para indicar que o fluxo terminou
         this.currentNodeId = undefined;

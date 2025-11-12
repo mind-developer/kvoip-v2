@@ -6,11 +6,14 @@ import {
   NodeHandler,
   ProcessParams,
 } from 'src/engine/core-modules/chatbot-runner/types/NodeHandler';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import {
   ChatMessageDeliveryStatus,
   ChatMessageFromType,
   ChatMessageToType,
   ChatMessageType,
+  ClientChatMessageEvent,
 } from 'twenty-shared/types';
 
 @Injectable()
@@ -32,7 +35,22 @@ export class ConditionalInputHandler implements NodeHandler {
     }
   }
 
-  constructor(private chatMessageManagerService: ChatMessageManagerService) {}
+  constructor(
+    private chatMessageManagerService: ChatMessageManagerService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
+
+  private async getSectors(
+    workspaceId: string,
+  ): Promise<SectorWorkspaceEntity[]> {
+    return await (
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
+        workspaceId,
+        'sector',
+        { shouldBypassPermissionChecks: true },
+      )
+    ).find();
+  }
 
   async process(params: ProcessParams): Promise<string | null> {
     const {
@@ -40,11 +58,10 @@ export class ConditionalInputHandler implements NodeHandler {
       providerIntegrationId,
       provider,
       clientChat,
-      chatbotName,
-      workspaceId,
-      sectors,
+      chatbot,
       context,
       askedNodes,
+      workspaceId,
     } = params;
     const logic = node.data?.logic as NewConditionalState | undefined;
 
@@ -58,6 +75,7 @@ export class ConditionalInputHandler implements NodeHandler {
 
     const input = context.incomingMessage.toLowerCase().trim();
     const prompt = typeof node.data?.text === 'string' ? node.data.text : '';
+    const sectors = await this.getSectors(workspaceId);
 
     if (!askedNodesSet.has(nodeId)) {
       askedNodesSet.add(nodeId);
@@ -70,7 +88,7 @@ export class ConditionalInputHandler implements NodeHandler {
           textBody: prompt,
           clientChatId: clientChat.id,
           to: clientChat.providerContactId,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           toType: ChatMessageToType.PERSON,
           provider: provider,
@@ -118,7 +136,7 @@ export class ConditionalInputHandler implements NodeHandler {
           textBody: optionsList,
           clientChatId: clientChat.id,
           to: clientChat.providerContactId,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           toType: ChatMessageToType.PERSON,
           provider: provider,
@@ -166,6 +184,41 @@ export class ConditionalInputHandler implements NodeHandler {
 
       if (matched) {
         askedNodesSet.delete(nodeId);
+
+        /* @kvoip-woulz proprietary:begin */
+        // Se a condição correspondida é do tipo 'sectors' e tem um sectorId, envia evento de transferência
+        if (d.recordType === 'sectors' && d.sectorId) {
+          const transferMessage: Omit<
+            ClientChatMessageNoBaseFields,
+            'providerMessageId'
+          > = {
+            type: ChatMessageType.EVENT,
+            textBody: null,
+            clientChatId: clientChat.id,
+            to: d.sectorId,
+            from: clientChat.sectorId ?? '',
+            fromType: ChatMessageFromType.SECTOR,
+            toType: ChatMessageToType.SECTOR,
+            provider: provider,
+            caption: null,
+            deliveryStatus: ChatMessageDeliveryStatus.SENT,
+            edited: false,
+            attachmentUrl: null,
+            event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
+            reactions: null,
+            repliesTo: null,
+            templateId: null,
+            templateLanguage: null,
+            templateName: null,
+          };
+          await this.chatMessageManagerService.sendMessage(
+            transferMessage,
+            workspaceId,
+            providerIntegrationId,
+          );
+        }
+        /* @kvoip-woulz proprietary:end */
+
         const conditionOutgoingNodeId =
           d.outgoingNodeId && d.outgoingNodeId.trim() !== ''
             ? d.outgoingNodeId

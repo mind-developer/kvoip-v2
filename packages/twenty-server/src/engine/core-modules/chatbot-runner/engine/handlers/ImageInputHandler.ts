@@ -22,7 +22,7 @@ export class ImageInputHandler implements NodeHandler {
       providerIntegrationId,
       provider,
       clientChat,
-      chatbotName,
+      chatbot,
       workspaceId,
     } = params;
     const image =
@@ -33,7 +33,7 @@ export class ImageInputHandler implements NodeHandler {
       const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
         {
           clientChatId: clientChat.id,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           to: clientChat.person.id,
           toType: ChatMessageToType.PERSON,

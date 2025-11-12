@@ -25,7 +25,7 @@ export class TextInputHandler implements NodeHandler {
       node,
       providerIntegrationId,
       provider,
-      chatbotName,
+      chatbot,
       workspaceId,
       clientChat,
     } = params;
@@ -38,7 +38,7 @@ export class TextInputHandler implements NodeHandler {
       const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
         {
           clientChatId: clientChat.id,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           to: clientChat.person.id,
           toType: ChatMessageToType.PERSON,
