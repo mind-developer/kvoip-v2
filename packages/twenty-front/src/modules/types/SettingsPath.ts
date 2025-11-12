@@ -32,6 +32,7 @@ export enum SettingsPath {
   ServiceCenterLinkTelephonyExtension = 'service-center/telephony/link/:extensionNumber',
   EditTelephony = 'service-center/telephony/:telephonySlug/edit',
   ServiceCenterServiceLevel = 'service-center/sla',
+  ServiceCenterSubjects = 'service-center/subjects',
   ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
   Chatbots = 'chatbots/',
   ChatbotsCreate = 'chatbots/create',

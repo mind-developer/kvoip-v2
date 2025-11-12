@@ -36,6 +36,7 @@ import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
 import {
+  IconCone,
   IconHeadset,
   IconIdBadge2,
   IconMessageCircleCog,
@@ -169,6 +170,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               label: 'Service Level',
               path: SettingsPath.ServiceCenterServiceLevel,
               Icon: IconMessageCircleCog,
+              indentationLevel: 2,
+            },
+            {
+              label: 'Subjects',
+              path: SettingsPath.ServiceCenterSubjects,
+              Icon: IconCone,
               indentationLevel: 2,
             },
           ],

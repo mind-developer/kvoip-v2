@@ -45,5 +45,8 @@ export const STANDARD_OBJECT_ICONS = {
   workspaceMember: 'IconUserCircle',
   chatbot: 'IconSettingsAutomation',
   chat: 'IconChat',
+  ticket: 'IconTicket',
+  sector: 'IconIdBadge2',
+  ticketSubject: 'IconCone',
   ...KVOIP_ADMIN_STANDARD_OBJECT_ICONS,
 } as const;

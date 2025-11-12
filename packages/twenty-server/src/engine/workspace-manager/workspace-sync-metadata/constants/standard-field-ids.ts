@@ -990,6 +990,10 @@ export const CLIENT_CHAT_CONFIG_STANDARD_FIELD_IDS = {
 export const SUBJECT_STANDARD_FIELD_IDS = {
   name: '0f2323bc-1c92-4dd6-9d11-00761aebb853',
   icon: 'd6542530-de4d-453c-85de-b1a6ade18efa',
+  ticketSubject: 'ad82b159-1415-42ab-a7a0-d78bc958037c',
+  parentTicketSubjects: 'aaa7a31f-9355-4df3-b94f-f49f531473e9',
+  description: 'd02ebaa7-4af9-4667-a302-a0dbc9ca5869',
+  color: 'b0f3378e-76f0-482e-a9ac-572a35b31c0a',
 } as const;
 /* @kvoip-woulz proprietary:end */
 
