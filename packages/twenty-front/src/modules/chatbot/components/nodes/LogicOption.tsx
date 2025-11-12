@@ -21,6 +21,7 @@ interface LogicOptionProps {
   onDelete: () => void;
   onUpdate: (updates: NewLogicNodeData) => void;
   showDeleteButton?: boolean;
+  isConnectable?: boolean;
 }
 
 const StyledLogicNodeWrapper = styled.div`
@@ -59,6 +60,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   onDelete,
   onUpdate,
   showDeleteButton = true,
+  isConnectable = true,
 }) => {
   const { getIcon } = useIcons();
   const { records: sectors } = useFindManyRecords<
@@ -167,7 +169,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               id={`b-${condition.option}`}
               type="source"
               position={Position.Right}
-              isConnectable={true}
+              isConnectable={isConnectable}
               style={{ height: 10, width: 10 }}
             />
           </>
@@ -185,7 +187,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               id={`b-${condition.option}`}
               type="source"
               position={Position.Right}
-              isConnectable={true}
+              isConnectable={isConnectable}
               style={{ height: 10, width: 10 }}
             />
           </>

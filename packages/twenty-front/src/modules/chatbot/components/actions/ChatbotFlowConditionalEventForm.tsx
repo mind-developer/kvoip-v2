@@ -11,12 +11,14 @@ import {
 } from '@/chatbot/types/LogicNodeDataType';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
+import { useUpdateNodeInternals } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 type ChatbotFlowConditionalEventFormProps = {
   selectedNode: GenericNode;
+  isConnectable?: boolean;
 };
 
 const initialState: NewConditionalState = {
@@ -40,6 +42,7 @@ const StyledStepBody = styled.div`
 
 export const ChatbotFlowConditionalEventForm = ({
   selectedNode,
+  isConnectable = true,
 }: ChatbotFlowConditionalEventFormProps) => {
   const initialText = selectedNode.data?.text ?? '';
 
@@ -49,6 +52,8 @@ export const ChatbotFlowConditionalEventForm = ({
 
   const { deleteSelectedNode } = useDeleteSelectedNode();
   const { saveDataValue } = useHandleNodeValue();
+
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const nodeData =
     (selectedNode.data.logic as NewConditionalState) ?? initialState;
@@ -118,6 +123,7 @@ export const ChatbotFlowConditionalEventForm = ({
     const updated = { ...nodeData, logicNodeData: newData };
 
     saveDataValue('logic', updated, selectedNode);
+    updateNodeInternals(selectedNode.id);
   };
 
   const deleteCondition = (index: number) => {
@@ -157,6 +163,7 @@ export const ChatbotFlowConditionalEventForm = ({
               onDelete={() => deleteCondition(index)}
               onUpdate={(updates) => updateCondition(index, updates)}
               showDeleteButton={nodeData.logicNodes.length > 1}
+              isConnectable={isConnectable}
             />
           );
         })}

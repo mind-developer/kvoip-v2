@@ -275,11 +275,7 @@ export const BotDiagramBase = ({
   // Callback to update edges and save with current nodes atomically
   const updateEdgesAndSave = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (
-        newEdges: Edge[],
-        shouldSave: boolean,
-        saveType: 'nodes' | 'edges',
-      ) => {
+      async (newEdges: Edge[], shouldSave: boolean) => {
         set(chatbotFlowEdges, newEdges);
         if (shouldSave && chatbotId && rfInstance) {
           // Read current nodes from snapshot atomically
@@ -294,14 +290,14 @@ export const BotDiagramBase = ({
               }),
               flowEdges: newEdges,
             },
-          }).then(() => {
-            enqueueInfoSnackBar({
-              message: saveType === 'nodes' ? 'Nodes saved' : 'Edges saved',
+          }).catch(() => {
+            enqueueErrorSnackBar({
+              message: t`Your changes could not be saved. Please try again.`,
             });
           });
         }
       },
-    [chatbotId, enqueueInfoSnackBar, updateOneRecord, rfInstance],
+    [chatbotId, enqueueErrorSnackBar, t, updateOneRecord, rfInstance],
   );
 
   useEffect(() => {
@@ -402,7 +398,7 @@ export const BotDiagramBase = ({
         structuredClone(newEdgesState),
         structuredClone(currentEdges),
       );
-      updateEdgesAndSave(appliedEdgeChanges, !!rfInstance, 'edges');
+      updateEdgesAndSave(appliedEdgeChanges, !!rfInstance);
     },
     [edges, rfInstance, updateEdgesAndSave],
   );

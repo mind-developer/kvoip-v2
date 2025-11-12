@@ -63,17 +63,6 @@ function ConditionalNode({
   const baseLogic = data.logic as NewConditionalState | undefined;
   const logicNodeDataLength = baseLogic?.logicNodeData.length ?? 0;
 
-  /* @kvoip-woulz proprietary:begin */
-  // Update handle positions when the number of conditions changes (node resize)
-  useEffect(() => {
-    // Use setTimeout to ensure DOM has updated after state changes
-    const timeoutId = setTimeout(() => {
-      updateNodeInternals(id);
-    }, 0);
-    return () => clearTimeout(timeoutId);
-  }, [id, logicNodeDataLength, updateNodeInternals]);
-  /* @kvoip-woulz proprietary:end */
-
   useEffect(() => {
     const currentNode = allNodes.find((n) => n.id === id);
     const currentNodeData = currentNode?.data || data;
@@ -128,8 +117,14 @@ function ConditionalNode({
       ...currentNode.data,
       logic: updatedLogic,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceConnections, id]);
+
+  useEffect(() => {
+    const baseLogic = data.logic as NewConditionalState | undefined;
+    if (baseLogic?.logicNodeData.length) {
+      updateNodeInternals(id);
+    }
+  }, [data.logic]);
 
   if (!thisNode) return null;
 
@@ -155,7 +150,10 @@ function ConditionalNode({
       />
       <StyledDiv>
         <StyledLogicNodeWrapper>
-          <ChatbotFlowConditionalEventForm selectedNode={thisNode} />
+          <ChatbotFlowConditionalEventForm
+            selectedNode={thisNode}
+            isConnectable={isConnectable}
+          />
         </StyledLogicNodeWrapper>
       </StyledDiv>
     </BaseNode>
