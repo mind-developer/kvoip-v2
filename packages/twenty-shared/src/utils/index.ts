@@ -52,6 +52,8 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
+export type { NormalizedPhoneNumber } from './validation/phones-value/normalizePhoneNumber';
+export { normalizePhoneNumber } from './validation/phones-value/normalizePhoneNumber';
 export type {
   TextValidationPatternKey,
   DynamicMaskFunction,
