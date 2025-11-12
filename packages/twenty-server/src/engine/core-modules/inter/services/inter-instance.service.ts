@@ -101,10 +101,15 @@ export class InterInstanceService {
       );
     }
 
+    // TODO: We should encrypt the certificate and private key before storing
+    // them in the database.
+    const cert = this.formatCertificate(integration.certificate);
+    const key = this.formatCertificate(integration.privateKey);
+
     const httpsAgent = new https.Agent({
       rejectUnauthorized: false,
-      cert: Buffer.from(integration.certificate, 'utf-8'),
-      key: Buffer.from(integration.privateKey, 'utf-8'),
+      cert,
+      key,
     });
 
     const interApiInstance = axios.create({
@@ -119,6 +124,10 @@ export class InterInstanceService {
     );
 
     return interApiInstance;
+  }
+
+  private formatCertificate(input: string): string {
+    return input.replace(/\\n/g, '\n');
   }
 
   /**
