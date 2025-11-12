@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { isDefined } from 'class-validator';
 import {
   GraphqlQueryRunnerException,

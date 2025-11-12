@@ -72,6 +72,7 @@ export const STANDARD_OBJECT_IDS = {
   clientChatConfig: 'fc27439b-7f26-4745-a643-704bed272e06',
   /* @kvoip-woulz proprietary:begin */
   ticket: '7bd330f2-29fa-4191-ae86-10554ca66048',
+  subject: 'ca0c7db8-c646-469b-b8ba-c701ca1858c6',
   /* @kvoip-woulz proprietary:end */
   ...KVOIP_ADMIN_STANDARD_OBJECT_IDS,
 } as const;

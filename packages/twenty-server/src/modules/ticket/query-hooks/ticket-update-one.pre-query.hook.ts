@@ -1,4 +1,4 @@
-/* @kvoip-woulz proprietary:begin */
+/* @kvoip-woulz proprietary */
 import { isDefined } from 'class-validator';
 import {
   GraphqlQueryRunnerException,
@@ -100,4 +100,3 @@ export class TicketUpdateOnePreQueryHook
     };
   }
 }
-/* @kvoip-woulz proprietary:end */

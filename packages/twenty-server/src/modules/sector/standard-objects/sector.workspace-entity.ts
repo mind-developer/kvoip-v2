@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { msg } from '@lingui/core/macro';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -26,13 +27,11 @@ import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integra
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
-/* @kvoip-woulz proprietary:begin */
 const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_SECTOR: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
-/* @kvoip-woulz proprietary:end */
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.sector,
@@ -40,7 +39,7 @@ export const SEARCH_FIELDS_FOR_SECTOR: FieldTypeAndNameMetadata[] = [
   labelSingular: msg`Sector`,
   labelPlural: msg`Sectors`,
   description: msg`Sectors on this Workspace`,
-  icon: 'IconIdBadge2',
+  icon: STANDARD_OBJECT_ICONS.sector,
   labelIdentifierStandardId: SECTOR_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
