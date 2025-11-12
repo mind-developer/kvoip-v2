@@ -240,7 +240,7 @@ export const Chat = () => {
         });
       };
 
-      if (behavior === 'smooth') {
+      if (behavior === 'instant') {
         container.scrollTo({
           top: container.scrollHeight,
           left: 0,

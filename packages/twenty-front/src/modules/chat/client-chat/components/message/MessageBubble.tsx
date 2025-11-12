@@ -53,7 +53,6 @@ const StyledMessageBubble = styled(motion.div)<{
         : ''}
   position: relative;
   text-overflow: '-';
-  overflow: hidden;
   white-space: pre-wrap;
 
   background: ${({ fromMe, theme, type, provider }) => {
@@ -135,7 +134,7 @@ const StyledMessageBubble = styled(motion.div)<{
         : 'column'};
   gap: ${({ theme }) => theme.spacing(2)};
 
-  ${({ hasTail, fromMe, theme, type, isReply }) =>
+  ${({ hasTail, fromMe, theme, type, isReply, provider }) =>
     !hasTail || type === ChatMessageType.STICKER || isReply
       ? ''
       : `
@@ -152,8 +151,8 @@ const StyledMessageBubble = styled(motion.div)<{
     background: ${
       fromMe
         ? theme.name === 'dark'
-          ? '#274238'
-          : '#bdffcc'
+          ? BUBBLE_COLOR[provider]?.[theme.name as 'light' | 'dark']
+          : BUBBLE_COLOR[provider]?.light
         : theme.background.quaternary
     };
     border-bottom-${fromMe ? 'left' : 'right'}-radius: 15px;
@@ -242,9 +241,12 @@ const StyledCloseButton = styled(IconButton)`
 
 const StyledAvatarWrapper = styled.div<{
   isHidden: boolean;
+  fromMe: boolean;
 }>`
   opacity: ${({ isHidden }) => (isHidden ? 0 : 1)};
   z-index: ${({ isHidden }) => (isHidden ? 0 : 1)};
+  margin-left: ${({ theme, fromMe }) => (fromMe ? theme.spacing(1) : 0)};
+  margin-right: ${({ theme, fromMe }) => (fromMe ? 0 : theme.spacing(1))};
 `;
 
 export const MessageBubble = ({
@@ -416,7 +418,7 @@ export const MessageBubble = ({
           )}
       </StyledMessageBubble>
       {!isReply && (
-        <StyledAvatarWrapper isHidden={!hasTail}>
+        <StyledAvatarWrapper isHidden={!hasTail} fromMe={fromMe}>
           <CachedAvatarComponent
             senderId={message.from}
             senderType={

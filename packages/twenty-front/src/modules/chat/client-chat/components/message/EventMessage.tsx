@@ -65,7 +65,7 @@ export default function EventMessage({
     case ClientChatMessageEvent.ABANDONED:
       return (
         <EventWrapper message={message}>
-          <AbandonedDescription />
+          <AbandonedDescription message={message} />
         </EventWrapper>
       );
   }
@@ -233,12 +233,21 @@ function TransferToSectorDescription({
   );
 }
 
-function AbandonedDescription() {
+function AbandonedDescription({ message }: { message: ClientChatMessage }) {
+  const { record: sector } = useFindOneRecord<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    objectRecordId: message.from,
+    recordGqlFields: {
+      name: true,
+      icon: true,
+      abandonmentInterval: true,
+    },
+  });
   return (
     <StyledEventDescription>
       <StyledEventDescriptionText variant="bold">
         <IconZzz size={13} />{' '}
-        {t`Service moved to abandoned due to inactivity from agent`}
+        {t`After ${sector?.abandonmentInterval} ${sector?.abandonmentInterval === 1 ? t`minute` : t`minutes`} of inactivity, the service was moved to the abandoned inbox.`}
       </StyledEventDescriptionText>
     </StyledEventDescription>
   );

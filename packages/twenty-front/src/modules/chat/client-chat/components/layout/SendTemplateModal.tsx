@@ -17,6 +17,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconBrandMeta, IconX } from '@tabler/icons-react';
+import { getCountryCallingCode, type CountryCode } from 'libphonenumber-js';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Tag } from 'twenty-ui/components';
 import { Checkmark, H2Title } from 'twenty-ui/display';
@@ -95,14 +96,26 @@ export const SendTemplateModal = (): React.ReactNode => {
     [templates, selectedTemplateId],
   );
 
-  const { sendTemplateMessage } = useSendTemplateMessage(
-    selectedCountryCode
-      ? `${selectedCountryCode}${selectedPhoneNumber?.toString().replace('+', '') ?? null}`
-      : null,
-    selectedIntegrationId,
-    selectedTemplateId,
-    selectedTemplate,
+  const selectedCallingCode = useMemo(() => {
+    if (!selectedCountryCode) {
+      return null;
+    }
+    try {
+      return `+${getCountryCallingCode(selectedCountryCode as CountryCode)}`;
+    } catch {
+      return null;
+    }
+  }, [selectedCountryCode]);
+
+  const formattedPhoneNumber = useMemo(
+    () =>
+      selectedPhoneNumber && selectedCallingCode
+        ? `${selectedCallingCode}${selectedPhoneNumber?.toString() ?? ''}`
+        : null,
+    [selectedPhoneNumber, selectedCallingCode],
   );
+
+  const { sendTemplateMessage } = useSendTemplateMessage();
 
   const isModalOpen = useRecoilComponentValue(
     isModalOpenedComponentState,
@@ -117,14 +130,14 @@ export const SendTemplateModal = (): React.ReactNode => {
     if (!selectedPhoneNumber || !selectedIntegrationId || !selectedTemplateId) {
       return;
     }
+    alert('formattedPhoneNumber: ' + formattedPhoneNumber);
     await sendTemplateMessage({
-      selectedPhoneNumber: selectedPhoneNumber.toString(),
+      selectedPhoneNumber: formattedPhoneNumber,
       selectedIntegrationId,
       selectedTemplateId,
       selectedTemplate,
-      onSuccess: () => {
+      onCompleted: () => {
         setSelectedPhoneNumber(null);
-        setSelectedIntegrationId('');
         setSelectedTemplateId(null);
       },
     });
@@ -134,9 +147,7 @@ export const SendTemplateModal = (): React.ReactNode => {
     selectedTemplate,
     selectedTemplateId,
     sendTemplateMessage,
-    setSelectedIntegrationId,
-    setSelectedPhoneNumber,
-    setSelectedTemplateId,
+    formattedPhoneNumber,
   ]);
 
   const onClose = useCallback(() => {
@@ -184,7 +195,7 @@ export const SendTemplateModal = (): React.ReactNode => {
       </StyledTemplateListContainer>
       <StyledFooter>
         <StyledFormCountryCodeSelectInput
-          label={t`Recipient's country`}
+          label={t`Recipient's calling code`}
           selectedCountryCode={selectedCountryCode ?? ''}
           onChange={(countryCode) => setSelectedCountryCode(countryCode)}
         />

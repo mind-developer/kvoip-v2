@@ -34,16 +34,18 @@ const StyledChatNavigationDrawerWrapper = styled.div<{ width: number }>`
   position: relative;
   width: ${({ width }) => width}px;
   flex-shrink: 0;
+  height: 100%;
+  min-height: 100dvh;
 `;
 
 const StyledChatNavigationDrawerContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
-  min-height: max-content;
+  height: 100%;
   width: 100%;
   padding: 0 ${({ theme }) => theme.spacing(3)};
-  overflow-y: scroll;
+  overflow: hidden;
 `;
 
 const StyledResizeHandle = styled.div`
@@ -100,13 +102,14 @@ const StyledTabListContainer = styled.div`
   width: 100%;
 `;
 
-const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
+const StyledChatsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)} 0;
-  height: 80dvh;
-  overflow-y: ${({ isScrollable }) => (isScrollable ? 'scroll' : 'unset')};
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 export const ChatNavigationDrawer = () => {
@@ -471,9 +474,7 @@ export const ChatNavigationDrawer = () => {
             width={tabListContainerWidth}
           />
         </StyledTabListContainer>
-        <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
-          {renderClientChats}
-        </StyledChatsContainer>
+        <StyledChatsContainer>{renderClientChats}</StyledChatsContainer>
       </StyledChatNavigationDrawerContainer>
       <StyledResizeHandle
         onMouseDown={(e) => {

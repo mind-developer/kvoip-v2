@@ -230,7 +230,8 @@ export const ChatMessageRenderer = memo(
             key={message.providerMessageId || `text-${index}`}
             isSystemMessage={message.fromType !== ChatMessageFromType.PERSON}
           >
-            {message.fromType === ChatMessageFromType.AGENT
+            {message.fromType === ChatMessageFromType.AGENT &&
+            message.templateId === null //template messages don't have agent names
               ? (message.textBody ?? '')?.split('\n').slice(1).join('\n')
               : (message.textBody ?? '').split('\n').join('\n')}
           </StyledMessage>
