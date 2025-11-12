@@ -29,6 +29,7 @@ const StyledImage = styled.img`
   display: flex;
   object-fit: cover;
   max-width: 270px;
+  max-height: 170px;
   width: 100%;
 `;
 

@@ -369,24 +369,60 @@ export const BotDiagramBase = ({
               // Use the first connected node if found, otherwise use the first node in the array
               const newStartNode = nextStartNode ?? finalNodes[0];
 
-              finalNodes = finalNodes.map((node) => ({
-                ...node,
-                data: {
-                  ...node.data,
-                  nodeStart: node.id === newStartNode.id,
-                },
-              }));
+              // Only update nodes that actually need to change
+              const needsUpdate = finalNodes.some(
+                (node) =>
+                  (node.id === newStartNode.id &&
+                    node.data.nodeStart !== true) ||
+                  (node.id !== newStartNode.id && node.data.nodeStart === true),
+              );
+
+              if (needsUpdate) {
+                finalNodes = finalNodes.map((node) => ({
+                  ...node,
+                  data: {
+                    ...node.data,
+                    nodeStart: node.id === newStartNode.id,
+                  },
+                }));
+              } else {
+                // No changes needed, use original nodes to avoid unnecessary updates
+                finalNodes = currentNodes;
+              }
             }
           }
         }
       }
 
-      const shouldSave = changes.some(
-        (change) =>
-          (change.type === 'position' && !change.dragging) ||
-          change.type === 'remove',
+      const isDragging = changes.some(
+        (change) => change.type === 'position' && change.dragging,
       );
-      updateNodesAndSave(finalNodes, shouldSave);
+
+      // Check if there are position changes (need to update state even during drag)
+      const hasPositionChanges = changes.some(
+        (change) => change.type === 'position',
+      );
+
+      // Only update if nodes actually changed (ignore selection changes)
+      // But always update if there are position changes (even during drag)
+      const nodesChanged =
+        hasPositionChanges ||
+        finalNodes.length !== currentNodes.length ||
+        finalNodes.some((node) => {
+          const current = currentNodes.find((n) => n.id === node.id);
+          if (!current) return true;
+          // Compare key properties, ignoring selection changes
+          // Position changes are always applied (for visual updates)
+          return (
+            current.data.nodeStart !== node.data.nodeStart ||
+            JSON.stringify(current.data) !== JSON.stringify(node.data)
+          );
+        });
+
+      if (nodesChanged) {
+        // Update state always, but only save to DB when not dragging
+        updateNodesAndSave(finalNodes, !isDragging);
+      }
     },
     [nodes, edges, updateNodesAndSave],
   );
@@ -405,13 +441,16 @@ export const BotDiagramBase = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
+      console.log('connection', connection);
       const targetAlreadyConnected = edges.some(
         (edge) => edge.target === connection.target,
       );
 
       if (!targetAlreadyConnected) {
         setEdges((eds) => addEdge(connection, eds));
+        return;
       }
+      alert('Target already connected');
     },
     [edges, setEdges],
   );

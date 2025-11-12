@@ -157,13 +157,14 @@ export const ChatbotFlowConditionalEventForm = ({
           const condition = nodeData.logicNodeData[index];
           return (
             <LogicOption
-              key={condition?.option || index}
+              key={`${condition?.option || index}-${selectedNode.id}`}
               nodeIndex={index}
               condition={condition}
               onDelete={() => deleteCondition(index)}
               onUpdate={(updates) => updateCondition(index, updates)}
               showDeleteButton={nodeData.logicNodes.length > 1}
               isConnectable={isConnectable}
+              nodeId={selectedNode.id}
             />
           );
         })}

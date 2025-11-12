@@ -22,6 +22,7 @@ interface LogicOptionProps {
   onUpdate: (updates: NewLogicNodeData) => void;
   showDeleteButton?: boolean;
   isConnectable?: boolean;
+  nodeId: string;
 }
 
 const StyledLogicNodeWrapper = styled.div`
@@ -61,6 +62,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   onUpdate,
   showDeleteButton = true,
   isConnectable = true,
+  nodeId,
 }) => {
   const { getIcon } = useIcons();
   const { records: sectors } = useFindManyRecords<
@@ -138,7 +140,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
         )}
         <StyledSelect
           label="Record"
-          dropdownId={`select-record-type-${condition.option}`}
+          dropdownId={`select-record-type-${condition.option}-${nodeId}`}
           options={recordTypeOptions}
           value={recordType}
           onChange={(val) => {
@@ -149,7 +151,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
         />
         <StyledSelect
           label="Comparison"
-          dropdownId={`select-comparison-condition-${condition.option}`}
+          dropdownId={`select-comparison-condition-${condition.option}-${nodeId}`}
           options={comparisonOptions}
           value={condition.comparison}
           onChange={(val) => {
@@ -160,17 +162,10 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
           <>
             <StyledSelect
               label="Options"
-              dropdownId={`select-sector-condition-${condition.option}`}
+              dropdownId={`select-sector-condition-${condition.option}-${nodeId}`}
               options={sectorsOptions}
               value={condition.sectorId}
               onChange={handleSector}
-            />
-            <Handle
-              id={`b-${condition.option}`}
-              type="source"
-              position={Position.Right}
-              isConnectable={isConnectable}
-              style={{ height: 10, width: 10 }}
             />
           </>
         )}
@@ -184,7 +179,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               disabled={localMessage.length > 40}
             />
             <Handle
-              id={`b-${condition.option}`}
+              id={`b-${condition.option}-${nodeId}`}
               type="source"
               position={Position.Right}
               isConnectable={isConnectable}

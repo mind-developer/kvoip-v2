@@ -11,6 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   IconEaseInOutControlPoints,
   IconPlus,
+  IconPointFilled,
   IconRobot,
   IconSearch,
 } from '@tabler/icons-react';
@@ -65,6 +66,34 @@ const StyledTextInput = styled(TextInput)`
   width: 100%;
 `;
 
+const StyledLiveIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconPointFilled = styled(IconPointFilled)`
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) => theme.color.green30};
+  border-radius: 50%;
+  height: 14px;
+  width: 14px;
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+  }
+  animation: pulse 0.5s ease alternate infinite;
+`;
+
 export default function SettingsServiceCenterChatbots() {
   const theme = useTheme();
   const { t } = useLingui();
@@ -76,6 +105,10 @@ export default function SettingsServiceCenterChatbots() {
   });
   const [filteredChatbots, setFilteredChatbots] = useState<Chatbot[]>(chatbots);
   const [searchByChatbotName, setSearchByChatbotName] = useState('');
+  const { records: whatsappIntegrations } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    recordGqlFields: { id: true, name: true, chatbot: { id: true } },
+  });
 
   function filterChatbots({ name }: { name: string }): Chatbot[] {
     return chatbots.filter((chatbot) =>
@@ -136,10 +169,35 @@ export default function SettingsServiceCenterChatbots() {
                   title={chatbot.name}
                   Status={
                     <>
-                      <StyledTag
-                        color={statusProps.color}
-                        text={statusProps.text}
-                      />
+                      {whatsappIntegrations.some(
+                        (integration) =>
+                          integration.chatbot?.id === chatbot.id &&
+                          chatbot.status === 'ACTIVE',
+                      ) ? (
+                        <StyledLiveIndicator
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginRight: theme.spacing(1),
+                          }}
+                        >
+                          <StyledIconPointFilled
+                            size={16}
+                            color={
+                              theme.name === 'dark'
+                                ? theme.color.green40
+                                : theme.color.green50
+                            }
+                          />
+                          <p style={{ margin: 0, padding: 0 }}>{t`Live`}</p>
+                        </StyledLiveIndicator>
+                      ) : (
+                        <StyledTag
+                          color={statusProps.color}
+                          text={statusProps.text}
+                          variant="outline"
+                        />
+                      )}
                       <Button
                         title="Edit flow"
                         Icon={IconEaseInOutControlPoints}
