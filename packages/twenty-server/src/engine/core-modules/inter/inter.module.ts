@@ -27,14 +27,17 @@ import { InterApiClientService } from 'src/engine/core-modules/inter/services/in
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { InterWebhookService } from 'src/engine/core-modules/inter/services/inter-webhook.service';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 
+// Move this module to the payment module
 @Module({
   imports: [
     CacheStorageModule,
     EmailModule,
     FileModule,
     FileUploadModule,
+    forwardRef(() => PaymentModule),
     forwardRef(() => FinancialClosingModule),
     HttpModule,
     MessageQueueModule,

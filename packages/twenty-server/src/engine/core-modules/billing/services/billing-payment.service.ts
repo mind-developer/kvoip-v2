@@ -82,12 +82,11 @@ export class BillingPaymentService {
     }
 
     const interChargeCode = charge.requestCode;
-    const chargeCode = charge.id;
 
     const jobData: ProcessBolepixChargeJobData = {
       interChargeCode,
       workspaceId,
-      chargeCode,
+      chargeId: charge.id,
       userEmail,
       locale: locale ?? APP_LOCALES['pt-BR'],
     };

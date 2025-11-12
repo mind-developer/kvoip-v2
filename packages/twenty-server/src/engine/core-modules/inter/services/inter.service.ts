@@ -169,7 +169,7 @@ export class InterService {
     const jobData: ProcessBolepixChargeJobData = {
       interChargeCode,
       workspaceId,
-      chargeCode,
+      chargeId: chargeCode,
       userEmail,
       locale,
     };
