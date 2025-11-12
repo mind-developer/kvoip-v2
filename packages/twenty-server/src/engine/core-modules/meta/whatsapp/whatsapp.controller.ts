@@ -19,6 +19,7 @@ import {
   extractMediaId,
   processBase64Media,
 } from 'src/engine/core-modules/meta/whatsapp/utils/mediaUtils';
+import { normalizePhoneNumber } from 'twenty-shared/utils';
 
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -156,6 +157,22 @@ export class WhatsappController {
               })
             ).fullPath;
           }
+          this.logger.warn(`Sender phone number: ${msg.from}`);
+          const phoneInput =
+            msg.from ?? body.entry[0].changes[0].value?.contacts[0]?.pn ?? null;
+          const senderPhoneNumber = phoneInput
+            ? normalizePhoneNumber(phoneInput)
+            : null;
+
+          if (!senderPhoneNumber) {
+            this.logger.error(
+              `Failed to normalize phone number: ${phoneInput}`,
+            );
+            throw new HttpException(
+              `Invalid phone number format: ${phoneInput}`,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
 
           const message: FormattedWhatsAppMessage = {
             id: msg.id,
@@ -172,7 +189,8 @@ export class WhatsappController {
             type: msg.type,
             deliveryStatus: msg.status,
             senderPhoneNumber:
-              body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+              senderPhoneNumber.primaryPhoneCallingCode +
+              senderPhoneNumber.primaryPhoneNumber.replace('+', ''),
             repliesTo: msg.context?.id ?? null,
           };
 

@@ -17,6 +17,7 @@ import {
   ChatMessageType,
   ClientChatMessage,
 } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 export class WhatsAppDriver implements ChatProviderDriver {
   private readonly META_API_URL: string;
@@ -240,13 +241,15 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (!template) {
       throw new Error('Template not found');
     }
+    this.logger.log({ template });
     const message = {
       ...clientChatMessage,
       textBody: template.components
         .map((component: any) => component.text)
         .join(' '),
       type: ChatMessageType.TEXT,
-      deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+      deliveryStatus: ChatMessageDeliveryStatus.SENT,
+      providerMessageId: template.id + '-' + v4(),
     };
 
     await (

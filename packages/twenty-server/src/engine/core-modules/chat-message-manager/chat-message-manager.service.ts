@@ -66,6 +66,7 @@ export class ChatMessageManagerService {
       ObjectRecordCreateEvent<ClientChatWorkspaceEntity>
     >,
   ) {
+    this.logger.warn('Client chat created:', event.events[0].properties.after);
     const clientChat = event.events[0].properties.after;
     const person = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
