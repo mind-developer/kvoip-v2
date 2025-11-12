@@ -509,33 +509,12 @@ export class ChatMessageManagerService {
         return null;
       }
 
-      // Cancel abandonment if chatbot sends a message - must be done before handleAbandonment
-      if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
-        await this.cancelScheduledAbandonment(clientChat.id);
-        if (clientChat.status === ClientChatStatus.ABANDONED) {
-          await this.updateChat(
-            clientChat.id,
-            {
-              status: ClientChatStatus.CHATBOT,
-            },
-            workspaceId,
-          );
-          // Update clientChat object to reflect the change
-          clientChat.status = ClientChatStatus.CHATBOT;
-        }
-      }
-
-      if (
-        clientChat.sector.abandonmentInterval &&
-        message.event !== ClientChatMessageEvent.ABANDONED
-      ) {
+      if (message.event !== ClientChatMessageEvent.ABANDONED) {
         await this.handleAbandonment(
           {
-            chatId: clientChat.id,
-            workspaceId: workspaceId,
-            clientChat,
+            clientChatId: clientChat.id,
+            workspaceId,
           },
-          clientChat.sector.abandonmentInterval,
           clientChatMessage,
         );
       }
@@ -686,18 +665,19 @@ export class ChatMessageManagerService {
     }
   }
 
-  async executeAbandonment(
-    chatId: string,
-    workspaceId: string,
-    clientChat: ClientChatWorkspaceEntity,
-  ): Promise<void> {
+  async executeAbandonment(chatId: string, workspaceId: string): Promise<void> {
+    const clientChat = await this.getChatByClientChatId(chatId, workspaceId);
+    if (!clientChat || !clientChat.sector || !clientChat.agent) {
+      this.logger.error('Client chat or sector or agent not found');
+      return;
+    }
     await this.sendMessage(
       {
         clientChatId: chatId,
         event: ClientChatMessageEvent.ABANDONED,
-        from: clientChat.sectorId ?? '',
+        from: clientChat.sector.id,
         fromType: ChatMessageFromType.SECTOR,
-        to: clientChat.agentId ?? '',
+        to: clientChat.agent.id,
         toType: ChatMessageToType.AGENT,
         textBody: null,
         type: ChatMessageType.EVENT,
@@ -721,92 +701,98 @@ export class ChatMessageManagerService {
   }
 
   async scheduleAbandonment(
-    jobData: ChatMessageManagerSetAbandonedCronJobData,
+    data: ChatMessageManagerSetAbandonedCronJobData,
     abandonmentInterval: number,
   ): Promise<void> {
-    this.messageQueueService.addCron({
-      jobName: this.JOB_NAME,
-      data: jobData,
-      options: {
-        id: jobData.chatId,
-        repeat: {
-          pattern: `*/${abandonmentInterval} * * * *`,
-          limit: 1,
+    this.messageQueueService.addCron<ChatMessageManagerSetAbandonedCronJobData>(
+      {
+        jobName: this.JOB_NAME,
+        data,
+        options: {
+          id: data.clientChatId,
+          repeat: {
+            pattern: `*/${abandonmentInterval} * * * *`,
+            limit: 1,
+          },
         },
       },
-    });
+    );
     this.logger.warn(
-      `Scheduled abandonment for chat ${jobData.chatId} with interval ${abandonmentInterval}`,
+      `Scheduled abandonment for chat ${data.clientChatId} with interval ${abandonmentInterval}`,
     );
   }
 
-  async cancelScheduledAbandonment(chatId: string): Promise<void> {
+  async cancelScheduledAbandonment(clientChatId: string): Promise<void> {
     this.messageQueueService.removeCron({
       jobName: this.JOB_NAME,
-      jobId: chatId,
+      jobId: clientChatId,
     });
-    this.logger.warn(`Cancelled abandonment for chat ${chatId}`);
+    this.logger.warn(`Cancelled abandonment for chat ${clientChatId}`);
   }
 
-  async hasJobScheduled(chatId: string): Promise<boolean> {
+  async hasJobScheduled(clientChatId: string): Promise<boolean> {
     const jobs = await this.queue.getJobs();
-    this.logger.warn('Jobs: ' + JSON.stringify(jobs));
     const job = jobs.find(
       (job: Job<ChatMessageManagerSetAbandonedCronJobData>) =>
-        job.name === this.JOB_NAME && job.data.chatId === chatId,
+        job.name === this.JOB_NAME && job.data.clientChatId === clientChatId,
     );
-    this.logger.warn('Job: ' + JSON.stringify(job));
     return !!job;
   }
 
   async handleAbandonment(
-    jobData: ChatMessageManagerSetAbandonedCronJobData,
-    abandonmentInterval: number,
-    clientChatMessage: ClientChatMessage,
+    data: ChatMessageManagerSetAbandonedCronJobData,
+    clientChatMessage: ClientChatMessageNoBaseFields,
   ): Promise<void> {
-    this.logger.warn(
-      'Handling abandonment scheduling for chat',
-      jobData.chatId,
+    const clientChat = await this.getChatByClientChatId(
+      data.clientChatId,
+      data.workspaceId,
     );
+    if (!clientChat) {
+      this.logger.error('Client chat not found');
+      return;
+    }
+    if (!clientChat.sector.abandonmentInterval) {
+      this.logger.error('Abandonment interval not found for sector');
+      return;
+    }
     if (
-      jobData.clientChat.status === ClientChatStatus.CHATBOT ||
-      jobData.clientChat.status === ClientChatStatus.UNASSIGNED
+      clientChat.status === ClientChatStatus.CHATBOT ||
+      clientChat.status === ClientChatStatus.UNASSIGNED ||
+      clientChatMessage.fromType === ChatMessageFromType.AGENT
     ) {
       //cancel if any
-      await this.cancelScheduledAbandonment(jobData.chatId);
-      return;
-    }
-    if (clientChatMessage.fromType === ChatMessageFromType.AGENT) {
-      await this.cancelScheduledAbandonment(jobData.chatId);
-      return;
-    }
-    if (clientChatMessage.fromType === ChatMessageFromType.CHATBOT) {
-      await this.cancelScheduledAbandonment(jobData.chatId);
+      await this.cancelScheduledAbandonment(clientChat.id);
       return;
     }
     if (clientChatMessage.fromType === ChatMessageFromType.PERSON) {
-      if (await this.hasJobScheduled(jobData.chatId)) {
+      if (await this.hasJobScheduled(clientChat.id)) {
         //there is already a job scheduled for this chat. do nothing.
         this.logger.warn(
-          `Abandonment job already scheduled for chat ${jobData.chatId}. Doing nothing...`,
+          `Abandonment job already scheduled for chat ${clientChat.id}. Doing nothing...`,
         );
         return;
       }
       //last message was from person, and there was no job scheduled for this chat. schedule a new job.
-      this.logger.warn(`Scheduling abandonment for chat ${jobData.chatId}`);
-      await this.scheduleAbandonment(jobData, abandonmentInterval);
+      this.logger.warn(`Scheduling abandonment for chat ${clientChat.id}`);
+      await this.scheduleAbandonment(
+        data,
+        clientChat.sector.abandonmentInterval,
+      );
       return;
     }
     if (clientChatMessage.event === ClientChatMessageEvent.TRANSFER_TO_AGENT) {
-      if (await this.hasJobScheduled(jobData.chatId)) {
-        await this.cancelScheduledAbandonment(jobData.chatId);
-        await this.scheduleAbandonment(jobData, abandonmentInterval);
+      if (await this.hasJobScheduled(clientChat.id)) {
+        await this.cancelScheduledAbandonment(clientChat.id);
+        await this.scheduleAbandonment(
+          data,
+          clientChat.sector.abandonmentInterval,
+        );
       }
       //last message was transfer, and there was no job scheduled for this chat. do nothing
       return;
     }
     this.logger.warn(
-      `Abandonment job already scheduled for chat ${jobData.chatId}. Doing nothing...`,
+      `Abandonment job already scheduled for chat ${clientChat.id}. Doing nothing...`,
     );
     return;
   }
