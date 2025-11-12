@@ -82,7 +82,6 @@ export class RunCompanyFinancialClosingJobProcessor {
           {
             chargeId: charge.id,
             completedBoletoIssuance: true,
-            // status: FinancialClosingExecutionStatusEnum.SUCCESS,
           },
         );
 

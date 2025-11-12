@@ -49,7 +49,7 @@ export class RunFinancialClosingJobProcessor {
     private readonly messageQueueService: MessageQueueService,
     private readonly financialClosingService: FinancialClosingService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {} 
 
   @Process(RunFinancialClosingJobProcessor.name)
   async handle(data: RunFinancialClosingJob): Promise<void> {
@@ -87,16 +87,6 @@ export class RunFinancialClosingJobProcessor {
 
     newExecutionLog =
       await financialClosingExecutionsRepository.save(newExecutionLog);
-
-    this.logger.log(
-      `newExecutionLog i18n: ${JSON.stringify(i18n._('Starting closing execution'), null, 2)}`,
-    );
-    this.logger.log(
-      `newExecutionLog T: ${JSON.stringify(t`Starting closing execution`, null, 2)}`,
-    );
-    this.logger.log(
-      `newExecutionLog msg: ${JSON.stringify(msg`Starting closing execution`, null, 2)}`,
-    );
 
     await addFinancialClosingExecutionLog(
       newExecutionLog,

@@ -7,7 +7,10 @@ import { ChargeAction, ChargeEntityType, ChargeWorkspaceEntity } from 'src/modul
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosing } from './financial-closing.entity';
 import { CompanyValidationUtils } from './utils/company-validation.utils';
-import { msg, t } from '@lingui/core/macro';
+import { PaymentService } from 'src/engine/core-modules/payment/services/payment.service';
+import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
+import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class FinancialClosingChargeService {
@@ -16,6 +19,7 @@ export class FinancialClosingChargeService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly interApiService: InterApiService,
+    private readonly paymentService: PaymentService
   ) {}
 
   // Função publica generica para validação de campos obrigatórios
@@ -96,48 +100,89 @@ export class FinancialClosingChargeService {
     };
 
     try {     
+      // const today = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
 
-      const today = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      // let charge = chargeRepository.create({
+      //   name: `Fechamento Automático - ${financialClosing.name} - ${today} - ${company.name}`,
+      //   price: amountToBeCharged,
+      //   quantity: 1,
+      //   entityType: company.cpfCnpj?.replace(/\D/g, '').length === 11 
+      //     ? ChargeEntityType.INDIVIDUAL
+      //     : ChargeEntityType.COMPANY,
+      //   chargeAction: ChargeAction.ISSUE,
+      //   company: company,
+      // });
 
-      let charge = chargeRepository.create({
-        name: `Fechamento Automático - ${financialClosing.name} - ${today} - ${company.name}`,
-        price: amountToBeCharged,
-        quantity: 1,
-        entityType: company.cpfCnpj?.replace(/\D/g, '').length === 11 
-          ? ChargeEntityType.INDIVIDUAL
-          : ChargeEntityType.COMPANY,
-        chargeAction: ChargeAction.ISSUE,
-        company: company,
+      // charge = await chargeRepository.save(charge);
+
+      // // 2. Emitir cobrança na API do Inter
+
+      // const response =
+      //   await this.interApiService.issueChargeAndStoreAttachment(
+      //     workspaceId,
+      //     attachmentRepository,
+      //     {
+      //       id: charge.id,
+      //       authorId: company.id,
+      //       seuNumero: numberCharge,
+      //       valorNominal: amountToBeCharged,
+      //       dataVencimento: getSlipDueDay(),
+      //       numDiasAgenda: 60, // Número de dias corridos após o vencimento para o cancelamento efetivo automático da cobrança. (de 0 até 60)
+      //       pagador: { ...client },
+      //       mensagem: { linha1: '-' },
+      //     },
+      //   );
+
+      // // 3. Atualizar objeto charge com requestCode oficial da API (se diferente)
+      // charge.requestCode = response.codigoSolicitacao;
+      // await chargeRepository.save(charge);
+
+      // this.logger.log(
+      //   `Cobrança emitida para a empresa` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
+      // );
+
+      // return charge;
+
+
+      const payerInfo = {
+        name: company.name,
+        email: company.emails.primaryEmail,
+        taxId: company.cpfCnpj!,
+        address: {
+          city: company.address.addressCity,
+          state: company.address.addressState,
+          zipCode: company.address.addressPostcode,
+          street: company.address.addressStreet1,
+        }, 
+      }
+
+      const chargeObj = {
+        workspaceId: workspaceId,
+        paymentMethod: PaymentMethod.BOLEPIX,
+        amount: amountToBeCharged,
+        payerInfo: payerInfo,
+        description: 'Teste',
+        // dueDate: getSlipDueDay,
+        dueDate: addDays(new Date(Date.now()), 10), 
+        // metadata: {
+
+        // }
+      }
+
+      const charge = await this.paymentService.createCharge({
+        workspaceId: workspaceId,
+        chargeDto: chargeObj,
+        provider: PaymentProvider.INTER, 
+        // integrationId: 'teste', // Refazer isso
       });
 
-      charge = await chargeRepository.save(charge);
+      const { charge: updatedCharge } = await this.paymentService.getBankSlipFile({
+        workspaceId: workspaceId,
+        chargeId: charge.id,
+        provider: PaymentProvider.INTER,
+      });
 
-      // 2. Emitir cobrança na API do Inter
-      const response =
-        await this.interApiService.issueChargeAndStoreAttachment(
-          workspaceId,
-          attachmentRepository,
-          {
-            id: charge.id,
-            authorId: company.id,
-            seuNumero: numberCharge,
-            valorNominal: amountToBeCharged,
-            dataVencimento: getSlipDueDay(),
-            numDiasAgenda: 60, // Número de dias corridos após o vencimento para o cancelamento efetivo automático da cobrança. (de 0 até 60)
-            pagador: { ...client },
-            mensagem: { linha1: '-' },
-          },
-        );
-
-      // 3. Atualizar objeto charge com requestCode oficial da API (se diferente)
-      charge.requestCode = response.codigoSolicitacao;
-      await chargeRepository.save(charge);
-
-      this.logger.log(
-        `Cobrança emitida para a empresa` + ' ' + company.name + ' (Code: ' + response.codigoSolicitacao + ')',
-      );
-
-      return charge;
+      return updatedCharge;
 
     } catch (err) {
       this.logger.error(

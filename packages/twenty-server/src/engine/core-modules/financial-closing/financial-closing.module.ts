@@ -14,6 +14,7 @@ import { FinancialClosing } from 'src/engine/core-modules/financial-closing/fina
 import { FinancialClosingResolver } from 'src/engine/core-modules/financial-closing/financial-closing.resolver';
 import { FinancialClosingService } from 'src/engine/core-modules/financial-closing/financial-closing.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
@@ -32,6 +33,7 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
     }),
     FileModule,
     FileUploadModule,
+    PaymentModule,
   ],
   exports: [
     FinancialClosingService,
