@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InterCustomerType } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
+// import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { ChargeAction, ChargeEntityType, ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FinancialClosing } from './financial-closing.entity';
@@ -18,7 +18,7 @@ export class FinancialClosingChargeService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly interApiService: InterApiService,
+    // private readonly interApiService: InterApiService,
     private readonly paymentService: PaymentService
   ) {}
 
@@ -169,6 +169,9 @@ export class FinancialClosingChargeService {
         // }
       }
 
+      this.logger.log(`Creating charge for company ${company.name} with amount ${amountToBeCharged}`);
+      this.logger.log(`Charge object -------------------------------------------------: ${JSON.stringify(chargeObj, null, 2)}`);
+
       const charge = await this.paymentService.createCharge({
         workspaceId: workspaceId,
         chargeDto: chargeObj,
@@ -176,19 +179,20 @@ export class FinancialClosingChargeService {
         // integrationId: 'teste', // Refazer isso
       });
 
-      const { charge: updatedCharge } = await this.paymentService.getBankSlipFile({
-        workspaceId: workspaceId,
-        chargeId: charge.id,
-        provider: PaymentProvider.INTER,
-      });
+      // const { charge: updatedCharge } = await this.paymentService.getBankSlipFile({
+      //   workspaceId: workspaceId,
+      //   chargeId: charge.id,
+      //   provider: PaymentProvider.INTER,
+      // });
 
-      return updatedCharge;
+      // return updatedCharge;
+      return charge;
 
     } catch (err) {
-      this.logger.error(
-        `Erro ao emitir a cobrança para a empresa` + ' ' + company.name + ': ' + err.message,
-        err.stack,
-      );
+      // this.logger.error(
+      //   `Erro ao emitir a cobrança para a empresa` + ' ' + company.name + ': ' + err.message,
+      //   err.stack,
+      // );
       throw err;
     }
   }

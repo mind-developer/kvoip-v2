@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -33,7 +33,7 @@ import { FocusNFeService } from 'src/modules/focus-nfe/focus-nfe.service';
     }),
     FileModule,
     FileUploadModule,
-    PaymentModule,
+    forwardRef(() => PaymentModule),
   ],
   exports: [
     FinancialClosingService,
