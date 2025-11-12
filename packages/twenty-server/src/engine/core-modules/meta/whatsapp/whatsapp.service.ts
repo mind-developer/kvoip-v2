@@ -24,7 +24,6 @@ import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/cha
 import { ClientChatMessageWorkspaceEntity } from 'src/modules/client-chat-message/standard-objects/client-chat-message.workspace-entity';
 import { ClientChatWorkspaceEntity } from 'src/modules/client-chat/standard-objects/client-chat.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
 import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import {
   ChatIntegrationProvider,
@@ -269,7 +268,6 @@ export class WhatsAppService {
             currentNodeId: (executor as any).currentNodeId,
           });
           await executor.runFlow(message.textBody ?? '');
-          // O executor se auto-remove quando o fluxo termina
           return true;
         }
         this.logger.log('chatbot executor not found, creating new one', {
@@ -286,58 +284,15 @@ export class WhatsAppService {
           integrationId,
         );
 
-        this.logger.log('getting sectors');
-        const sectors = await (
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<SectorWorkspaceEntity>(
-            workspaceId,
-            'sector',
-            { shouldBypassPermissionChecks: true },
-          )
-        ).find();
-
         executor = this.ChatbotRunnerService.createExecutor({
           provider: ChatIntegrationProvider.WHATSAPP,
           providerIntegrationId: integrationId,
           clientChat,
           workspaceId,
-          chatbotName: chatbot?.name || 'Chatbot',
-          chatbot: {
-            ...chatbot,
-            workspace: { id: workspaceId },
-          },
-          sectors: sectors,
-          onFinish: (_, sectorId: string) => {
-            this.chatMessageManagerService.sendMessage(
-              {
-                ...baseEventMessage,
-                event: ClientChatMessageEvent.CHATBOT_END,
-              },
-              workspaceId,
-              integrationId,
-            );
-            this.logger.log('onFinish');
-            if (sectorId) {
-              this.chatMessageManagerService.sendMessage(
-                {
-                  ...baseEventMessage,
-                  event: ClientChatMessageEvent.TRANSFER_TO_SECTOR,
-                },
-                workspaceId,
-                integrationId,
-              );
-              return;
-            }
-            // if (agentId) {
-            //   this.chatMessageManagerService.updateChat({
-            //     ...clientChat,
-            //     agentId: agentId,
-            //     status: ClientChatStatus.ASSIGNED,
-            //   }, workspaceId);
-            // }
-          },
+          chatbot,
+          onFinish: () => {},
         });
         await executor.runFlow(message.textBody ?? '');
-        // O executor se auto-remove quando o fluxo termina
       }
     } catch (error) {
       this.logger.error('error', error);
