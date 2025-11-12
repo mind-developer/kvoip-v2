@@ -39,6 +39,7 @@ import { StripeSubscriptionService } from 'src/engine/core-modules/billing/strip
 import type { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-workspace';
 import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
 import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
 import { PaymentService } from 'src/engine/core-modules/payment/services/payment.service';
@@ -622,7 +623,8 @@ export class BillingSubscriptionService {
       );
 
     const charge = await this.paymentService.createCharge({
-      workspaceId: subscription.workspaceId,
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+      provider: PaymentProvider.INTER,
       chargeDto: {
         // TODO: We should use standard decimal format for the amount on our plans prices
         amount: getPriceFromStripeDecimal(
@@ -641,10 +643,15 @@ export class BillingSubscriptionService {
           },
         },
       },
+    });
+
+    const { signedFileUrl } = await this.paymentService.getBankSlipFile({
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+      chargeId: charge.id,
       provider: PaymentProvider.INTER,
     });
 
-    return charge;
+    return signedFileUrl;
   }
 
   private getTrialPeriodFreeWorkflowCredits(

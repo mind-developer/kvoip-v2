@@ -22,6 +22,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingPaymentService } from 'src/engine/core-modules/billing/services/billing-payment.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
@@ -88,8 +89,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
+    /* @kvoip-woulz proprietary:begin */
     CheckExpiredSubscriptionsCronCommand,
     KvoipAdminService,
+    BillingPaymentService,
+    /* @kvoip-woulz proprietary:end */
   ],
   exports: [
     BillingSubscriptionService,

@@ -40,6 +40,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
+/**
+ * @deprecated Use the PaymentService instead
+ */
 export class InterService {
   private readonly logger = new Logger(InterService.name);
 
