@@ -189,19 +189,6 @@ export class PaymentService {
   }> {
     const paymentProvider = this.getPaymentProvider(provider);
 
-    // Get the bank slip file from the payment provider
-    const bankSlipResponse = await paymentProvider.getBankSlipFile({
-      workspaceId,
-      integrationId,
-      chargeId,
-    });
-
-    if (!bankSlipResponse.fileBuffer) {
-      throw new Error(
-        'Bank slip file buffer is required but was not provided by the payment provider',
-      );
-    }
-
     // Get charge repository
     const chargeRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
@@ -217,6 +204,19 @@ export class PaymentService {
 
     if (!charge) {
       throw new NotFoundException(`Charge ${chargeId} not found`);
+    }
+
+    // Get the bank slip file from the payment provider
+    const bankSlipResponse = await paymentProvider.getBankSlipFile({
+      workspaceId,
+      integrationId,
+      chargeId: charge.requestCode,
+    });
+
+    if (!bankSlipResponse.fileBuffer) {
+      throw new Error(
+        'Bank slip file buffer is required but was not provided by the payment provider',
+      );
     }
 
     const fileName =
