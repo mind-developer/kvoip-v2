@@ -1,6 +1,16 @@
 /* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import {
+  Fragment,
+  useCallback,
+  /* @kvoip-woulz proprietary:begin */
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+/* @kvoip-woulz proprietary:begin */
+import { Attachments } from '@/activities/files/components/Attachments';
+/* @kvoip-woulz proprietary:end */
 /* @kvoip-woulz proprietary:begin */
 import { useRecoilValue } from 'recoil';
 /* @kvoip-woulz proprietary:end */
@@ -74,7 +84,11 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 /* @kvoip-woulz proprietary:end */
 /* @kvoip-woulz proprietary:begin */
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+/* @kvoip-woulz proprietary:end */
+/* @kvoip-woulz proprietary:begin */
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 /* @kvoip-woulz proprietary:end */
 import {
   FieldMetadataType,
@@ -308,6 +322,15 @@ const StyledDraftSummaryTitleContent = styled.div`
 /* @kvoip-woulz proprietary:end */
 
 /* @kvoip-woulz proprietary:begin */
+const StyledDraftFilesContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+`;
+/* @kvoip-woulz proprietary:end */
+
+/* @kvoip-woulz proprietary:begin */
 const StyledDraftRelationSectionsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -517,25 +540,52 @@ const StyledDraftActionsButton = styled(StyledActionsButton)`
 const StyledButtonContainer = styled.div`
   display: flex;
   /* @kvoip-woulz proprietary:begin */
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  flex-direction: row;
   align-items: stretch;
-  /* @kvoip-woulz proprietary:end */
-  padding: ${({ theme }) => theme.spacing(2)} 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
+  flex-wrap: nowrap;
   justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  margin: ${({ theme }) => `${theme.spacing(2)} auto ${theme.spacing(0)}`};
+  /* @kvoip-woulz proprietary:end */
+  padding: ${({ theme }) => theme.spacing(0)} 0;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSaveButton = styled(Button)`
-  width: 100%;
   border-width: 2px !important;
-  flex: 1;
+  /* @kvoip-woulz proprietary:begin */
+  flex: 0 0 ${({ theme }) => theme.spacing(28)};
+  min-width: ${({ theme }) => theme.spacing(24)};
+  max-width: ${({ theme }) => theme.spacing(30)};
+  width: 100%;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 35px;
+  /* @kvoip-woulz proprietary:end */
 `;
 
 /* @kvoip-woulz proprietary:begin */
 const StyledActionsDropdownWrapper = styled.div`
-  width: 100%;
+  display: flex;
+  flex: 0 0 ${({ theme }) => theme.spacing(28)};
+  min-width: ${({ theme }) => theme.spacing(24)};
+  max-width: ${({ theme }) => theme.spacing(30)};
+  align-self: stretch;
+  justify-content: center;
+  min-height: 44px;
+
+  & > * {
+    width: 100%;
+    display: flex;
+  }
+
+  button {
+    width: 100%;
+    min-height: 35px;
+  }
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -1193,6 +1243,10 @@ const AccountPayableDraftFieldsCardInner = ({
   const actionsModalId = `${instanceId}-actions-modal`;
   /* @kvoip-woulz proprietary:begin */
   const tabListComponentId = useMemo(() => `${instanceId}-tabs`, [instanceId]);
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    tabListComponentId,
+  );
   /* @kvoip-woulz proprietary:end */
 
   const setRecordFieldListHoverPosition = useSetRecoilComponentState(
@@ -1354,7 +1408,6 @@ const AccountPayableDraftFieldsCardInner = ({
         id: 'files',
         title: 'Files',
         Icon: IconPaperclip,
-        ...disabledTabConfig,
       });
     }
 
@@ -1384,6 +1437,26 @@ const AccountPayableDraftFieldsCardInner = ({
     supportsNotesTab,
     supportsTasksTab,
   ]);
+  /* @kvoip-woulz proprietary:end */
+
+  /* @kvoip-woulz proprietary:begin */
+  const currentTabId = activeTabId ?? draftTabs[0]?.id ?? 'home';
+  const isHomeTabActive = currentTabId === 'home';
+  const isFilesTabActive = currentTabId === 'files';
+
+  const attachmentsTargetableObject = useMemo(
+    () => ({
+      id: draftRecordId,
+      targetObjectNameSingular: objectNameSingular,
+    }),
+    [draftRecordId, objectNameSingular],
+  );
+
+  useEffect(() => {
+    if (currentTabId !== 'home') {
+      clearHoverState();
+    }
+  }, [clearHoverState, currentTabId]);
   /* @kvoip-woulz proprietary:end */
 
   const relationFieldPriorityMap = useMemo(() => {
@@ -1919,123 +1992,134 @@ const AccountPayableDraftFieldsCardInner = ({
             />
           </StyledDraftTabListContainer>
         )}
-        <StyledDraftSummaryCardContainer isInRightDrawer={isInRightDrawer}>
-          <ShowPageSummaryCard
-            id={draftRecordId}
-            avatarPlaceholder={draftAvatarPlaceholder}
-            avatarType="rounded"
-            date={draftCreatedAt}
-            icon={draftObjectIcon}
-            iconColor={draftObjectIconColor}
-            loading={false}
-            isMobile={isInRightDrawer}
-            title={
-              <StyledDraftSummaryTitleContainer>
-                <StyledDraftSummaryTitleContent>
-                  <StyledTitleTextInput
-                    value={headerFieldValue}
-                    onChange={handleHeaderFieldChange}
-                    placeholder={headerFieldLabel}
-                    autoFocus
-                    fullWidth
-                    autoGrow
-                    inheritFontStyles
-                    sizeVariant="md"
-                    onFocus={clearHoverState}
-                    onMouseEnter={clearHoverState}
-                    spellCheck={false}
-                  />
-                </StyledDraftSummaryTitleContent>
-              </StyledDraftSummaryTitleContainer>
-            }
-          />
-        </StyledDraftSummaryCardContainer>
-        <StyledFormPropertyBox>
-          <StyledFieldsSectionsContainer>
-            {renderDraftSection(
-              'Essential Fields',
-              essentialBaseFieldNames,
-              [],
-            )}
-            {renderDraftSection('Optional Fields', optionalBaseFieldNames)}
-            {renderDraftSection('Additional Fields', additionalBaseFieldNames)}
-          </StyledFieldsSectionsContainer>
-
-          {/* @kvoip-woulz proprietary:begin */}
-          {draftRelationFieldItems.length > 0 && (
-            <StyledDraftRelationSectionsContainer>
-              {draftRelationFieldItems.map(
-                ({ fieldMetadataItem, position }) => (
-                  <AccountPayableDraftRelationSection
-                    key={`${instanceId}-draft-relation-${fieldMetadataItem.id}`}
-                    draftRecordId={draftRecordId}
-                    fieldMetadataItem={fieldMetadataItem}
-                    objectMetadataItem={objectMetadataItem}
-                    position={position}
-                    instanceId={instanceId}
-                    persistFieldValue={persistFieldValue}
-                  />
-                ),
-              )}
-            </StyledDraftRelationSectionsContainer>
-          )}
-          {/* @kvoip-woulz proprietary:end */}
-
-          <StyledButtonContainer>
-            <StyledActionsDropdownWrapper>
-              <Dropdown
-                dropdownId={actionsDropdownId}
-                dropdownPlacement="bottom-end"
-                clickableComponent={
-                  <StyledDraftActionsButton
-                    variant="secondary"
-                    accent="default"
-                    title="Actions"
-                    Icon={IconChevronDown}
-                    justify="center"
-                  />
-                }
-                dropdownComponents={
-                  <DropdownContent>
-                    <DropdownMenuItemsContainer>
-                      {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
-                        <MenuItem
-                          key={action.id}
-                          text={action.label}
-                          LeftIcon={action.icon}
-                          onClick={() => handleActionSelection(action)}
-                        />
-                      ))}
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
+        {isHomeTabActive && (
+          <>
+            <StyledDraftSummaryCardContainer isInRightDrawer={isInRightDrawer}>
+              <ShowPageSummaryCard
+                id={draftRecordId}
+                avatarPlaceholder={draftAvatarPlaceholder}
+                avatarType="rounded"
+                date={draftCreatedAt}
+                icon={draftObjectIcon}
+                iconColor={draftObjectIconColor}
+                loading={false}
+                isMobile={isInRightDrawer}
+                title={
+                  <StyledDraftSummaryTitleContainer>
+                    <StyledDraftSummaryTitleContent>
+                      <StyledTitleTextInput
+                        value={headerFieldValue}
+                        onChange={handleHeaderFieldChange}
+                        placeholder={headerFieldLabel}
+                        autoFocus
+                        fullWidth
+                        autoGrow
+                        inheritFontStyles
+                        sizeVariant="md"
+                        onFocus={clearHoverState}
+                        onMouseEnter={clearHoverState}
+                        spellCheck={false}
+                      />
+                    </StyledDraftSummaryTitleContent>
+                  </StyledDraftSummaryTitleContainer>
                 }
               />
-            </StyledActionsDropdownWrapper>
-            <StyledSaveButton
-              variant="secondary"
-              accent="blue"
-              title="Save"
-              Icon={IconDeviceFloppy}
-              justify="center"
-              onClick={handleSave}
-              fullWidth
-              isLoading={saving || createLoading}
-              disabled={!areRequiredFieldsFilled || saving || createLoading}
-            />
-          </StyledButtonContainer>
-          {pendingAction !== null && (
-            <ConfirmationModal
-              modalId={actionsModalId}
-              title={pendingAction.confirmation?.title ?? ''}
-              subtitle={pendingAction.confirmation?.subtitle ?? ''}
-              confirmButtonText={
-                pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
-              }
-              onConfirmClick={handleConfirmPendingAction}
-              onClose={handleClosePendingAction}
-            />
-          )}
-        </StyledFormPropertyBox>
+            </StyledDraftSummaryCardContainer>
+            <StyledFormPropertyBox>
+              <StyledFieldsSectionsContainer>
+                {renderDraftSection(
+                  'Essential Fields',
+                  essentialBaseFieldNames,
+                  [],
+                )}
+                {renderDraftSection('Optional Fields', optionalBaseFieldNames)}
+                {renderDraftSection(
+                  'Additional Fields',
+                  additionalBaseFieldNames,
+                )}
+              </StyledFieldsSectionsContainer>
+
+              {draftRelationFieldItems.length > 0 && (
+                <StyledDraftRelationSectionsContainer>
+                  {draftRelationFieldItems.map(
+                    ({ fieldMetadataItem, position }) => (
+                      <AccountPayableDraftRelationSection
+                        key={`${instanceId}-draft-relation-${fieldMetadataItem.id}`}
+                        draftRecordId={draftRecordId}
+                        fieldMetadataItem={fieldMetadataItem}
+                        objectMetadataItem={objectMetadataItem}
+                        position={position}
+                        instanceId={instanceId}
+                        persistFieldValue={persistFieldValue}
+                      />
+                    ),
+                  )}
+                </StyledDraftRelationSectionsContainer>
+              )}
+            </StyledFormPropertyBox>
+
+            <StyledButtonContainer>
+              <StyledActionsDropdownWrapper>
+                <Dropdown
+                  dropdownId={actionsDropdownId}
+                  dropdownPlacement="bottom-end"
+                  clickableComponent={
+                    <StyledDraftActionsButton
+                      variant="secondary"
+                      accent="default"
+                      title="Actions"
+                      Icon={IconChevronDown}
+                      justify="center"
+                    />
+                  }
+                  dropdownComponents={
+                    <DropdownContent>
+                      <DropdownMenuItemsContainer>
+                        {ACCOUNT_PAYABLE_ACTION_ITEMS.map((action) => (
+                          <MenuItem
+                            key={action.id}
+                            text={action.label}
+                            LeftIcon={action.icon}
+                            onClick={() => handleActionSelection(action)}
+                          />
+                        ))}
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  }
+                />
+              </StyledActionsDropdownWrapper>
+              <StyledSaveButton
+                variant="primary"
+                accent="blue"
+                title="Save"
+                Icon={IconDeviceFloppy}
+                justify="center"
+                onClick={handleSave}
+                fullWidth
+                isLoading={saving || createLoading}
+                disabled={!areRequiredFieldsFilled || saving || createLoading}
+              />
+            </StyledButtonContainer>
+            {pendingAction !== null && (
+              <ConfirmationModal
+                modalId={actionsModalId}
+                title={pendingAction.confirmation?.title ?? ''}
+                subtitle={pendingAction.confirmation?.subtitle ?? ''}
+                confirmButtonText={
+                  pendingAction.confirmation?.confirmButtonText ?? 'Confirm'
+                }
+                onConfirmClick={handleConfirmPendingAction}
+                onClose={handleClosePendingAction}
+              />
+            )}
+          </>
+        )}
+
+        {isFilesTabActive && supportsFilesTab && (
+          <StyledDraftFilesContainer>
+            <Attachments targetableObject={attachmentsTargetableObject} />
+          </StyledDraftFilesContainer>
+        )}
       </StyledDraftLayout>
       {/* @kvoip-woulz proprietary:end */}
 
