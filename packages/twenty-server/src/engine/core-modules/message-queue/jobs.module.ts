@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,6 +23,7 @@ import { ProcessBolepixChargeJob } from 'src/engine/core-modules/inter/jobs/proc
 /* @kvoip-woulz proprietary:end */
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -87,6 +88,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ClientChatMessageModule,
     ChatMessageManagerModule,
     InterModule,
+    forwardRef(() => PaymentModule),
     /* @kvoip-woulz proprietary:end */
   ],
   providers: [
