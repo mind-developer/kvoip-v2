@@ -6,6 +6,7 @@ import FormData from 'form-data';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
 import { MediaHelperService } from 'src/engine/core-modules/chat-message-manager/services/media-helper.service';
 import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
+import { parseAddressingMode } from 'src/engine/core-modules/meta/whatsapp/utils/parseAddressingMode';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
@@ -146,10 +147,22 @@ export class WhatsAppDriver implements ChatProviderDriver {
         const caption = fields[fields.type]?.caption;
         fields[fields.type] = { id: mediaId, ...(caption ? { caption } : {}) };
       }
-      const primaryAddressingMode = fields.to
-        .split('&')[0]
-        .replace('primary=', '');
-      fields.to = primaryAddressingMode;
+      /* @kvoip-woulz proprietary:begin */
+      let primaryAddressingMode: string;
+      if (apiType === 'MetaAPI') {
+        fields.to = clientChat.providerContactId;
+        primaryAddressingMode = clientChat.providerContactId;
+      } else {
+        const addressingInfo = parseAddressingMode(fields.to);
+        if (addressingInfo.primaryType === 'lid') {
+          primaryAddressingMode = addressingInfo.lid;
+          fields.to = addressingInfo.lid;
+        } else {
+          primaryAddressingMode = addressingInfo.phoneNumber;
+          fields.to = addressingInfo.phoneNumber;
+        }
+      }
+      /* @kvoip-woulz proprietary:end */
       if (clientChatMessage.repliesTo) {
         const repliesToMessage = await (
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
@@ -201,9 +214,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     workspaceId: string,
     providerIntegrationId: string,
   ) {
-    const primaryAddressingMode = clientChatMessage.to
-      .split('&')[0]
-      .replace('primary=', '');
     const clientChat = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
         workspaceId,
@@ -213,7 +223,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (!clientChat) {
       throw new Error('Client chat not found');
     }
-    clientChatMessage.to = primaryAddressingMode;
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,

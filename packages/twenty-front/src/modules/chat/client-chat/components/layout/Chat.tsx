@@ -52,10 +52,12 @@ const StyledMessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};
-  max-width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  align-self: center;
+  width: 100%;
+  max-width: 700px;
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
   padding-right: ${({ theme }) => theme.spacing(1.5)};
@@ -143,7 +145,7 @@ const StyledModalImage = styled.img`
 
 const CHAT_FOCUS_ID = 'chat-component';
 
-const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB /* @kvoip-woulz proprietary */
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB
 
 export const Chat = () => {
   const { t } = useLingui();
