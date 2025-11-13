@@ -2911,6 +2911,7 @@ export enum PermissionFlagType {
   CLIENT_CHAT = 'CLIENT_CHAT',
   INTERNAL_CHAT = 'INTERNAL_CHAT',
   FINANCIAL_CLOSING = 'FINANCIAL_CLOSING',
+  TRACEABLE_LINKS = 'TRACEABLE_LINKS',
 }
 
 export enum PermissionsOnAllObjectRecords {
