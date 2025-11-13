@@ -4,7 +4,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { ChargeType } from 'src/engine/core-modules/billing/enums/billing-charge-type.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
-import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
+import { BillingCreateChargeDto } from 'src/engine/core-modules/inter/dtos/billing-create-charge.dto';
 
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
@@ -19,7 +19,7 @@ export type BillingPortalCheckoutSessionParameters = {
   plan: BillingPlanKey;
   requirePaymentMethod?: boolean;
   paymentProvider?: BillingPaymentProviders;
-  interChargeData?: InterCreateChargeDto;
+  interChargeData?: BillingCreateChargeDto;
   locale?: keyof typeof APP_LOCALES;
   chargeType?: ChargeType;
 };
