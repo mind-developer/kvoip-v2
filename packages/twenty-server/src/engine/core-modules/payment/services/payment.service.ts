@@ -530,9 +530,9 @@ export class PaymentService {
       // dueDate: response.dueDate,
     });
 
-    await chargeRepository.save(charge);
+    const savedCharge = await chargeRepository.save(charge);
 
-    return charge;
+    return savedCharge;
   }
 
   /**
