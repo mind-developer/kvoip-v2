@@ -87,6 +87,7 @@ import {
   IconDeviceFloppy,
   IconFileImport,
   IconFileText,
+  IconPaperclip,
   type IconComponent,
 } from 'twenty-ui/display';
 /* @kvoip-woulz proprietary:begin */
@@ -100,6 +101,9 @@ import {
 /* @kvoip-woulz proprietary:end */
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+/* @kvoip-woulz proprietary:begin */
+import { Section } from 'twenty-ui/layout';
+/* @kvoip-woulz proprietary:end */
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
@@ -156,31 +160,49 @@ const ACCOUNT_PAYABLE_ACTION_ITEMS: ActionDropdownItem[] = [
   },
 ];
 
-const StyledFieldsGreyBox = styled.div`
+/* @kvoip-woulz proprietary:begin */
+const StyledFieldsSection = styled(Section)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) =>
+    `${theme.spacing(3)} ${theme.spacing(2)} ${theme.spacing(3)} ${theme.spacing(3)}`};
   background: ${({ theme }) => theme.background.secondary};
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+
+  &:first-of-type {
+    border-top: none;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 `;
 
 const StyledFieldsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
+/* @kvoip-woulz proprietary:end */
 
 const StyledRelationSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  /* @kvoip-woulz proprietary:begin */
+  margin-top: ${({ theme }) => theme.spacing(1)}; //does not change anything
+  /* @kvoip-woulz proprietary:end */
 `;
 
 const StyledRelationFieldsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  /* @kvoip-woulz proprietary:begin */
+  gap: ${({ theme }) => theme.spacing(2)}; does not change anything
+  /* @kvoip-woulz proprietary:end */
 `;
 
 const StyledRelationFieldItem = styled.div`
@@ -213,39 +235,66 @@ const StyledCardHeaderDivider = styled.div`
 `;
 
 /* @kvoip-woulz proprietary:begin */
+const StyledFormPropertyBox = styled(PropertyBox)`
+  gap: 0;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledFieldsSectionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: 0;
 `;
 
 const StyledFieldsSectionTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 /* @kvoip-woulz proprietary:end */
 
 /* @kvoip-woulz proprietary:begin */
-const StyledDraftLayout = styled.div`
+const StyledDraftLayout = styled.div<{ isInRightDrawer: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `-${theme.spacing(1)}` : '0'};
 `;
 
-const StyledDraftTabListContainer = styled.div`
+const StyledDraftTabListContainer = styled.div<{
+  isInRightDrawer: boolean;
+}>`
   width: 100%;
+  margin-top: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `-${theme.spacing(3)}` : '0'};
+  margin-left: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `-${theme.spacing(2)}` : '0'};
 `;
 
 const StyledDraftTabList = styled(TabList)`
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(0)};
+`;
+
+const StyledDraftSummaryCardContainer = styled.div<{
+  isInRightDrawer: boolean;
+}>`
+  width: 100%;
+  margin-left: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `-${theme.spacing(5)}` : '0'};
+  margin-top: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `-${theme.spacing(1)}` : '0'};
 `;
 
 const StyledDraftSummaryTitleContainer = styled.div`
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDraftSummaryTitleContent = styled.div`
@@ -254,6 +303,7 @@ const StyledDraftSummaryTitleContent = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   max-width: 420px;
+  align-items: flex-start;
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -268,7 +318,7 @@ const StyledDraftRelationSectionsContainer = styled.div`
 const StyledDraftRelationPlaceholder = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 /* @kvoip-woulz proprietary:end */
 
@@ -928,19 +978,19 @@ const AccountPayablePersistedFieldsCard = ({
     }
 
     return (
-      <StyledFieldsGreyBox key={title}>
+      <StyledFieldsSection key={title}>
         <StyledFieldsSectionTitle>{title}</StyledFieldsSectionTitle>
         <StyledFieldsList>
           {fieldNames.map((fieldName) => renderField(fieldName))}
         </StyledFieldsList>
-      </StyledFieldsGreyBox>
+      </StyledFieldsSection>
     );
   };
   /* @kvoip-woulz proprietary:end */
 
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
-      <PropertyBox>
+      <StyledFormPropertyBox>
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
         ) : (
@@ -1011,7 +1061,7 @@ const AccountPayablePersistedFieldsCard = ({
             {/* @kvoip-woulz proprietary:end */}
           </>
         )}
-      </PropertyBox>
+      </StyledFormPropertyBox>
 
       {!isPrefetchLoading && (
         <>
@@ -1303,7 +1353,7 @@ const AccountPayableDraftFieldsCardInner = ({
       tabs.push({
         id: 'files',
         title: 'Files',
-        Icon: IconFileImport,
+        Icon: IconPaperclip,
         ...disabledTabConfig,
       });
     }
@@ -1814,7 +1864,7 @@ const AccountPayableDraftFieldsCardInner = ({
     }
 
     return (
-      <StyledFieldsGreyBox key={title}>
+      <StyledFieldsSection key={title}>
         <StyledFieldsSectionTitle>{title}</StyledFieldsSectionTitle>
         {baseFieldNames.length > 0 && (
           <StyledFieldsList>
@@ -1849,7 +1899,7 @@ const AccountPayableDraftFieldsCardInner = ({
             </StyledRelationFieldsList>
           </StyledRelationSection>
         )}
-      </StyledFieldsGreyBox>
+      </StyledFieldsSection>
     );
   };
   /* @kvoip-woulz proprietary:end */
@@ -1857,9 +1907,9 @@ const AccountPayableDraftFieldsCardInner = ({
   return (
     <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
       {/* @kvoip-woulz proprietary:begin */}
-      <StyledDraftLayout>
+      <StyledDraftLayout isInRightDrawer={isInRightDrawer}>
         {draftTabs.length > 1 && (
-          <StyledDraftTabListContainer>
+          <StyledDraftTabListContainer isInRightDrawer={isInRightDrawer}>
             <StyledDraftTabList
               behaveAsLinks={false}
               loading={false}
@@ -1869,36 +1919,38 @@ const AccountPayableDraftFieldsCardInner = ({
             />
           </StyledDraftTabListContainer>
         )}
-        <ShowPageSummaryCard
-          id={draftRecordId}
-          avatarPlaceholder={draftAvatarPlaceholder}
-          avatarType="rounded"
-          date={draftCreatedAt}
-          icon={draftObjectIcon}
-          iconColor={draftObjectIconColor}
-          loading={false}
-          isMobile={isInRightDrawer}
-          title={
-            <StyledDraftSummaryTitleContainer>
-              <StyledDraftSummaryTitleContent>
-                <StyledTitleTextInput
-                  value={headerFieldValue}
-                  onChange={handleHeaderFieldChange}
-                  placeholder={headerFieldLabel}
-                  autoFocus
-                  fullWidth
-                  autoGrow
-                  inheritFontStyles
-                  sizeVariant="md"
-                  onFocus={clearHoverState}
-                  onMouseEnter={clearHoverState}
-                  spellCheck={false}
-                />
-              </StyledDraftSummaryTitleContent>
-            </StyledDraftSummaryTitleContainer>
-          }
-        />
-        <PropertyBox>
+        <StyledDraftSummaryCardContainer isInRightDrawer={isInRightDrawer}>
+          <ShowPageSummaryCard
+            id={draftRecordId}
+            avatarPlaceholder={draftAvatarPlaceholder}
+            avatarType="rounded"
+            date={draftCreatedAt}
+            icon={draftObjectIcon}
+            iconColor={draftObjectIconColor}
+            loading={false}
+            isMobile={isInRightDrawer}
+            title={
+              <StyledDraftSummaryTitleContainer>
+                <StyledDraftSummaryTitleContent>
+                  <StyledTitleTextInput
+                    value={headerFieldValue}
+                    onChange={handleHeaderFieldChange}
+                    placeholder={headerFieldLabel}
+                    autoFocus
+                    fullWidth
+                    autoGrow
+                    inheritFontStyles
+                    sizeVariant="md"
+                    onFocus={clearHoverState}
+                    onMouseEnter={clearHoverState}
+                    spellCheck={false}
+                  />
+                </StyledDraftSummaryTitleContent>
+              </StyledDraftSummaryTitleContainer>
+            }
+          />
+        </StyledDraftSummaryCardContainer>
+        <StyledFormPropertyBox>
           <StyledFieldsSectionsContainer>
             {renderDraftSection(
               'Essential Fields',
@@ -1983,7 +2035,7 @@ const AccountPayableDraftFieldsCardInner = ({
               onClose={handleClosePendingAction}
             />
           )}
-        </PropertyBox>
+        </StyledFormPropertyBox>
       </StyledDraftLayout>
       {/* @kvoip-woulz proprietary:end */}
 
