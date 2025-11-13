@@ -3,4 +3,5 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 export const OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS = {
   apiKey: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
   webhook: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+  traceable: PermissionFlagType.TRACEABLE_LINKS,
 } as const;
