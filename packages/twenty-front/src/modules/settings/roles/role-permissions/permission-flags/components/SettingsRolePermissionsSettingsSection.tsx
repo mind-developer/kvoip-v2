@@ -5,6 +5,7 @@ import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { IconHash, IconLink, IconMessageCircle } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
@@ -90,13 +91,30 @@ export const SettingsRolePermissionsSettingsSection = ({
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
       },
-      
       /* @kvoip-woulz proprietary:begin */
+      {
+        key: PermissionFlagType.CLIENT_CHAT,
+        name: t`Client Chat`,
+        description: t`Manage client chat settings`,
+        Icon: IconMessageCircle,
+      },
+      {
+        key: PermissionFlagType.INTERNAL_CHAT,
+        name: t`Internal Chat`,
+        description: t`Manage internal chat settings`,
+        Icon: IconHash,
+      },
       {
         key: PermissionFlagType.FINANCIAL_CLOSING,
         name: t`Financial Closing`,
         description: t`Manage financial closings`,
         Icon: IconCalendarEvent,
+      },
+      {
+        key: PermissionFlagType.TRACEABLE_LINKS,
+        name: t`Traceable Links`,
+        description: t`Manage traceable links`,
+        Icon: IconLink,
       },
       /* @kvoip-woulz proprietary:end */
     ];
