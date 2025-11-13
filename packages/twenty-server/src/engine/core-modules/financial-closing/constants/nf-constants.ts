@@ -1,4 +1,3 @@
-
 // Códigos de Unidade de Medida
 export enum UnitOfMeasureEnum {
   UN = '4', // Unidade
@@ -47,10 +46,35 @@ export const NF_TEXTS = {
 } as const;
 
 // Estados válidos do Brasil
+// TODO-WOULZ: Move this to twenty shared package
 export const BRAZILIAN_STATES = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
-  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ] as const;
 
 // Labels simples para CST ICMS/CSOSN
