@@ -7,7 +7,7 @@ export const CHECKOUT_SESSION = gql`
     $plan: BillingPlanKey!
     $requirePaymentMethod: Boolean!
     $paymentProvider: BillingPaymentProviders
-    $interChargeData: InterCreateChargeDto
+    $interChargeData: BillingCreateChargeDto
   ) {
     checkoutSession(
       recurringInterval: $recurringInterval

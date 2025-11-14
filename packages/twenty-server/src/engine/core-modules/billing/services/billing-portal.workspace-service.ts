@@ -220,7 +220,6 @@ export class BillingPortalWorkspaceService {
         throw new InternalServerErrorException('Plan price not found');
 
       await this.billingPaymentService.createChargeAndDispatchBolepixJob({
-        workspaceId: workspace.id,
         amount: getPriceFromStripeDecimal(
           billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
         ),

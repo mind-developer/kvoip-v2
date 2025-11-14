@@ -38,7 +38,6 @@ export class BillingPaymentService {
    * needed in other places if so, move this to a new method in the payment service.
    */
   async createChargeAndDispatchBolepixJob({
-    workspaceId,
     amount,
     payerInfo,
     userEmail,
@@ -48,7 +47,6 @@ export class BillingPaymentService {
     expirationMinutes,
     metadata,
   }: {
-    workspaceId: string;
     amount: number;
     payerInfo: Customer;
     userEmail: string;
@@ -85,7 +83,7 @@ export class BillingPaymentService {
 
     const jobData: ProcessBolepixChargeJobData = {
       interChargeCode,
-      workspaceId,
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
       chargeId: charge.id,
       userEmail,
       locale: locale ?? APP_LOCALES['pt-BR'],
@@ -97,7 +95,7 @@ export class BillingPaymentService {
     );
 
     this.logger.log(
-      `Successfully created charge ${charge.id} and dispatched bolepix processing job for workspace: ${workspaceId}`,
+      `Successfully created charge ${charge.id} and dispatched bolepix processing job`,
     );
 
     return charge;

@@ -254,6 +254,16 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
+export type BillingCreateChargeDto = {
+  address: Scalars['String'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cpfCnpj: Scalars['String'];
+  legalEntity: InterCustomerType;
+  name: Scalars['String'];
+  stateUnity: InterCustomerUf;
+};
+
 export type BillingEndTrialPeriodOutput = {
   __typename?: 'BillingEndTrialPeriodOutput';
   /** Boolean that confirms if a payment method was found */
@@ -270,6 +280,11 @@ export type BillingMeteredProductUsageOutput = {
   productKey: BillingProductKey;
   unitPriceCents: Scalars['Float'];
   usedCredits: Scalars['Float'];
+};
+
+export type BillingPaySubscriptionOutput = {
+  __typename?: 'BillingPaySubscriptionOutput';
+  success: Scalars['Boolean'];
 };
 
 /** The different billing payment providers available */
@@ -498,6 +513,13 @@ export type ClientMessageEventDto = {
   clientChatMessage: Scalars['JSON'];
   clientChatMessageEventDate: Scalars['DateTime'];
   event: ClientMessageEvent;
+};
+
+export type Component = {
+  __typename?: 'Component';
+  format?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
 };
 
 export type ComputeStepOutputSchemaInput = {
@@ -1146,6 +1168,16 @@ export type DeletedWorkspaceMember = {
   userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
+export type DevOnlyMutations = {
+  __typename?: 'DevOnlyMutations';
+  paySubscription: BillingPaySubscriptionOutput;
+};
+
+
+export type DevOnlyMutationsPaySubscriptionArgs = {
+  interChargeCode: Scalars['String'];
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
@@ -1449,6 +1481,10 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+export type GetWhatsappTemplatesInput = {
+  integrationId: Scalars['String'];
+};
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1577,16 +1613,6 @@ export enum IndexType {
 export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
   uri: Scalars['String'];
-};
-
-export type InterCreateChargeDto = {
-  address: Scalars['String'];
-  cep: Scalars['String'];
-  city: Scalars['String'];
-  cpfCnpj: Scalars['String'];
-  legalEntity: InterCustomerType;
-  name: Scalars['String'];
-  stateUnity: InterCustomerUf;
 };
 
 /** Tipos de pessoa para o cliente Inter */
@@ -1806,6 +1832,7 @@ export type Mutation = {
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
   destroyPageLayoutTab: Scalars['Boolean'];
+  devOnly: DevOnlyMutations;
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1839,6 +1866,7 @@ export type Mutation = {
   saveBillingPlanId: BillingPlans;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   saveStripeAccountId: StripeIntegration;
+  sendClientChatMessage: SendClientChatMessageResponse;
   sendInvitations: SendInvitationsOutput;
   setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
@@ -1928,7 +1956,7 @@ export type MutationAuthorizeAppArgs = {
 };
 
 export type MutationCheckoutSessionArgs = {
-  interChargeData?: InputMaybe<InterCreateChargeDto>;
+  interChargeData?: InputMaybe<BillingCreateChargeDto>;
   paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -2290,6 +2318,13 @@ export type MutationInitiateOtpProvisioningArgs = {
   origin: Scalars['String'];
 };
 
+
+export type MutationLinkMemberToExtensionArgs = {
+  memberId: Scalars['ID'];
+  numberExtension: Scalars['String'];
+};
+
+
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
 };
@@ -2355,6 +2390,12 @@ export type MutationSaveStripeAccountIdArgs = {
   accountId: Scalars['String'];
   workspaceId: Scalars['String'];
 };
+
+
+export type MutationSendClientChatMessageArgs = {
+  input: SendClientChatMessageInput;
+};
+
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
@@ -3063,6 +3104,7 @@ export type Query = {
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   getUserSoftfone?: Maybe<TelephonyExtension>;
+  getWhatsappTemplates: WhatsappTemplatesResponse;
   index: Index;
   indexMetadatas: IndexConnection;
   interIntegrationById?: Maybe<InterIntegration>;
@@ -3127,9 +3169,22 @@ export type QueryFindAllExternalExtensionsArgs = {
   workspaceId: Scalars['ID'];
 };
 
+export type QueryFindAllExternalExtensionsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryFindAllTelephonyIntegrationArgs = {
   workspaceId: Scalars['ID'];
 };
+
+
+export type QueryFindAllTelephonyIntegrationPaginatedArgs = {
+  limit?: Scalars['Int'];
+  page?: Scalars['Int'];
+  workspaceId: Scalars['ID'];
+};
+
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
@@ -3231,6 +3286,13 @@ export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
 };
 
+
+export type QueryGetExternalExtensionArgs = {
+  extNum?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String'];
 };
@@ -3279,6 +3341,13 @@ export type QueryGetServerlessFunctionSourceCodeArgs = {
 export type QueryGetStripeIntegrationByIdArgs = {
   id: Scalars['String'];
 };
+
+
+export type QueryGetTelephonyByMemberArgs = {
+  memberId: Scalars['ID'];
+  workspaceId: Scalars['ID'];
+};
+
 
 export type QueryGetTelephonyCallFlowsArgs = {
   workspaceId: Scalars['ID'];
@@ -3336,6 +3405,12 @@ export type QueryGetUserSoftfoneArgs = {
   extNum?: InputMaybe<Scalars['String']>;
   workspaceId: Scalars['ID'];
 };
+
+
+export type QueryGetWhatsappTemplatesArgs = {
+  input: GetWhatsappTemplatesInput;
+};
+
 
 export type QueryInterIntegrationByIdArgs = {
   integrationId: Scalars['String'];
@@ -3546,6 +3621,34 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
+};
+
+export type SendClientChatMessageInput = {
+  attachmentUrl?: InputMaybe<Scalars['String']>;
+  caption?: InputMaybe<Scalars['String']>;
+  clientChatId: Scalars['String'];
+  deliveryStatus: Scalars['String'];
+  edited?: InputMaybe<Scalars['String']>;
+  event?: InputMaybe<Scalars['String']>;
+  from: Scalars['String'];
+  fromType: Scalars['String'];
+  provider: Scalars['String'];
+  providerIntegrationId: Scalars['String'];
+  reactions?: InputMaybe<Scalars['JSON']>;
+  repliesTo?: InputMaybe<Scalars['String']>;
+  templateId?: InputMaybe<Scalars['String']>;
+  templateLanguage?: InputMaybe<Scalars['String']>;
+  templateName?: InputMaybe<Scalars['String']>;
+  textBody?: InputMaybe<Scalars['String']>;
+  to: Scalars['String'];
+  toType: Scalars['String'];
+  type: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
+export type SendClientChatMessageResponse = {
+  __typename?: 'SendClientChatMessageResponse';
+  messageId: Scalars['String'];
 };
 
 export type SendInvitationsOutput = {
@@ -3930,6 +4033,17 @@ export type TelephonyWorkspaceEntity = {
   recordCalls?: Maybe<Scalars['Boolean']>;
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+};
+
+export type Template = {
+  __typename?: 'Template';
+  category: Scalars['String'];
+  components: Array<Component>;
+  id: Scalars['String'];
+  language: Scalars['String'];
+  name: Scalars['String'];
+  parameter_format: Scalars['String'];
+  status: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -4538,6 +4652,11 @@ export type Webhook = {
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
+};
+
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
 };
 
 export type WorkerQueueMetrics = {

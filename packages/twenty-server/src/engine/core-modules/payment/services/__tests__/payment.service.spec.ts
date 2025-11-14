@@ -119,7 +119,6 @@ describe('PaymentService', () => {
     };
 
     const defaultChargeResponse: CreateChargeResponse = {
-      chargeId: 'provider-charge-id',
       externalChargeId: 'external-charge-id',
       status: ChargeStatus.PENDING,
       paymentMethod: PaymentMethod.BOLETO,
@@ -134,18 +133,18 @@ describe('PaymentService', () => {
       createCardCharge: jest.fn().mockResolvedValue(defaultChargeResponse),
       getBankSlipFile: jest.fn().mockResolvedValue({} as BankSlipResponse),
       getChargeStatus: jest.fn().mockResolvedValue({
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         externalChargeId: 'external',
         status: ChargeStatus.PENDING,
       } as PaymentStatusResponse),
       cancelCharge: jest.fn().mockResolvedValue({
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         externalChargeId: 'external',
         status: ChargeStatus.CANCELLED,
       } as CancelChargeResponse),
       refundCharge: jest.fn().mockResolvedValue({
         refundId: 'refund-id',
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         amount: 50,
         status: ChargeStatus.REFUNDED,
       } as RefundResponse),
@@ -430,7 +429,7 @@ describe('PaymentService', () => {
   describe('getChargeStatus', () => {
     it('returns status from provider', async () => {
       const response: PaymentStatusResponse = {
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         externalChargeId: 'external',
         status: ChargeStatus.PAID,
       };
@@ -471,7 +470,7 @@ describe('PaymentService', () => {
       capabilities.cancellation = true;
 
       const response: CancelChargeResponse = {
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         externalChargeId: 'ext',
         status: ChargeStatus.CANCELLED,
       };
@@ -488,7 +487,7 @@ describe('PaymentService', () => {
       expect(mockProvider.cancelCharge).toHaveBeenCalledWith({
         workspaceId,
         integrationId,
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         reason: 'Customer request',
       });
       expect(mockRepository.update).toHaveBeenCalledWith(chargeId, {});
@@ -535,7 +534,7 @@ describe('PaymentService', () => {
 
       const response: RefundResponse = {
         refundId: 'refund-id',
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         amount: 40,
         status: ChargeStatus.REFUNDED,
       };
@@ -565,7 +564,6 @@ describe('PaymentService', () => {
   describe('updateCharge', () => {
     it('delegates update to provider', async () => {
       const response: CreateChargeResponse = {
-        chargeId,
         externalChargeId: 'external',
         status: ChargeStatus.PROCESSING,
         paymentMethod: PaymentMethod.BOLETO,
@@ -623,7 +621,7 @@ describe('PaymentService', () => {
   describe('syncChargeStatus', () => {
     it('updates existing charge entity with provider status', async () => {
       const statusResponse: PaymentStatusResponse = {
-        chargeId,
+        charge: {} as ChargeWorkspaceEntity,
         externalChargeId: 'external',
         status: ChargeStatus.PAID,
       };
