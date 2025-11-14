@@ -112,7 +112,7 @@ const StyledTemplateName = styled.div`
 `;
 
 const StyledLink = styled.a`
-  color: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.color.blue40};
   text-decoration: underline;
   &:hover {
     opacity: 0.8;
@@ -134,19 +134,19 @@ const StyledStrikethrough = styled.del`
 `;
 
 const StyledUl = styled.ul`
-  margin: ${({ theme }) => theme.spacing(1)} 0;
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   list-style-type: disc;
 `;
 
 const StyledOl = styled.ol`
-  margin: ${({ theme }) => theme.spacing(1)} 0;
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   list-style-type: decimal;
 `;
 
 const StyledLi = styled.li`
-  margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  margin: ${({ theme }) => theme.spacing(0.25)} 0;
 `;
 
 type ChatMessageRendererProps = {
