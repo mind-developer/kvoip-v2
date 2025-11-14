@@ -16,7 +16,7 @@ import {
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
+import { BillingCreateChargeDto } from 'src/engine/core-modules/inter/dtos/billing-create-charge.dto';
 
 @ArgsType()
 export class BillingCheckoutSessionInput {
@@ -47,10 +47,10 @@ export class BillingCheckoutSessionInput {
   @IsOptional()
   paymentProvider: BillingPaymentProviders;
 
-  @Field(() => InterCreateChargeDto, { nullable: true })
+  @Field(() => BillingCreateChargeDto, { nullable: true })
   @IsNotEmpty()
   @ValidateNested()
   @ValidateIf((data) => data.paymentProvider === BillingPaymentProviders.Inter)
-  @Type(() => InterCreateChargeDto)
-  interChargeData: InterCreateChargeDto;
+  @Type(() => BillingCreateChargeDto)
+  interChargeData: BillingCreateChargeDto;
 }

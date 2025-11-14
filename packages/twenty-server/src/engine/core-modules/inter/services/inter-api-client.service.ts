@@ -1,7 +1,11 @@
 /* @kvoip-woulz proprietary */
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 import { AxiosInstance, AxiosResponse } from 'axios';
+import { plainToInstance } from 'class-transformer';
+import { type ValidationError, validate } from 'class-validator';
+
+import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 
 import { InterApiException } from 'src/engine/core-modules/inter/exceptions/inter-api.exception';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
@@ -27,6 +31,48 @@ export class InterApiClientService {
   }
 
   /**
+   * Validates charge data against InterCreateChargeDto
+   * @param chargeData Charge request data to validate
+   * @throws BadRequestException if validation fails
+   */
+  private async validateChargeData(
+    chargeData: InterChargeRequest,
+  ): Promise<void> {
+    const dto = plainToInstance(InterCreateChargeDto, chargeData);
+    const errors = await validate(dto, {
+      whitelist: true,
+      forbidNonWhitelisted: false,
+    });
+
+    if (errors.length > 0) {
+      const errorMessages = this.formatValidationErrors(errors);
+      throw new BadRequestException(
+        `Invalid charge data: ${errorMessages.join(', ')}`,
+      );
+    }
+  }
+
+  /**
+   * Formats validation errors into readable messages
+   * @param errors Array of validation errors
+   * @returns Array of formatted error messages
+   */
+  private formatValidationErrors(errors: ValidationError[]): string[] {
+    return errors.flatMap((error) => {
+      if (error.constraints) {
+        return Object.values(error.constraints);
+      }
+
+      if (error.children && error.children.length > 0) {
+        const childMessages = this.formatValidationErrors(error.children);
+        return childMessages.map((msg) => `${error.property}: ${msg}`);
+      }
+
+      return [];
+    });
+  }
+
+  /**
    * Cria uma cobrança (bolepix) na Inter
    * POST /cobranca/v3/cobrancas
    * @param chargeData Charge request data
@@ -38,6 +84,8 @@ export class InterApiClientService {
   ): Promise<InterChargeResponse> {
     try {
       this.logger.log(`Creating charge with code: ${chargeData.seuNumero}`);
+
+      await this.validateChargeData(chargeData);
 
       const axiosInstance = this.getAxiosInstance(integration);
       const response = await axiosInstance.post<
@@ -52,6 +100,11 @@ export class InterApiClientService {
         chargeCode: chargeData.seuNumero,
         error,
       });
+
+      // Re-throw BadRequestException for validation errors
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
 
       throw InterApiException.fromAxiosError(error);
     }

@@ -1,4 +1,5 @@
 /* @kvoip-woulz proprietary */
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { ChargeStatus } from '../enums/charge-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 
@@ -67,26 +68,26 @@ export type CreateCardChargeParams = WorkspaceScopedParams & {
 };
 
 export type GetBankSlipFileParams = WorkspaceScopedParams & {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
 };
 
 export type GetChargeStatusParams = WorkspaceScopedParams & {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
 };
 
 export type CancelChargeParams = WorkspaceScopedParams & {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   reason?: string;
 };
 
 export type RefundChargeParams = WorkspaceScopedParams & {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   amount?: number;
   reason?: string;
 };
 
 export type UpdateChargeParams = WorkspaceScopedParams & {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   updates: Partial<{
     amount: number;
     dueDate: Date;
@@ -106,7 +107,6 @@ export type ListChargesParams = WorkspaceScopedParams & {
 };
 
 export type CreateChargeResponse = {
-  chargeId: string;
   externalChargeId: string;
   status: ChargeStatus;
   paymentMethod: PaymentMethod;
@@ -128,7 +128,7 @@ export type BankSlipResponse = {
 };
 
 export type PaymentStatusResponse = {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   externalChargeId: string;
   status: ChargeStatus;
   paidAt?: Date;
@@ -139,7 +139,7 @@ export type PaymentStatusResponse = {
 
 export type RefundResponse = {
   refundId: string;
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   amount: number;
   status: ChargeStatus;
   refundedAt?: Date;
@@ -147,7 +147,7 @@ export type RefundResponse = {
 };
 
 export type CancelChargeResponse = {
-  chargeId: string;
+  charge: ChargeWorkspaceEntity;
   externalChargeId: string;
   status: ChargeStatus;
   cancelledAt?: Date;

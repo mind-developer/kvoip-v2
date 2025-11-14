@@ -133,7 +133,6 @@ export class InterPaymentProviderService implements IPaymentProvider {
     }
 
     return {
-      chargeId: chargeCode,
       externalChargeId: response.codigoSolicitacao,
       status: ChargeStatus.PENDING,
       paymentMethod: PaymentMethod.BOLEPIX,
@@ -142,6 +141,7 @@ export class InterPaymentProviderService implements IPaymentProvider {
       metadata: {
         ...metadata,
         interChargeCode: response.codigoSolicitacao,
+        internalChargeId: chargeCode,
         integrationId: integration.id,
         expirationMinutes,
       },
@@ -183,13 +183,13 @@ export class InterPaymentProviderService implements IPaymentProvider {
     );
 
     const pdfBase64 = await this.interApiClient.getChargePdf(
-      params.chargeId,
+      params.charge.requestCode,
       integration,
     );
 
     return {
       fileBuffer: Buffer.from(pdfBase64, 'base64'),
-      fileName: `inter-bolepix-${params.chargeId}.pdf`,
+      fileName: `inter-bolepix-${params.charge.requestCode}.pdf`,
     };
   }
 

@@ -10,6 +10,7 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { CreateChargeDto } from 'src/engine/core-modules/payment/dtos/create-charge.dto';
 import { supportsPaymentMethod } from 'src/engine/core-modules/payment/utils/suports-payment-method.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { PAYMENT_PROVIDER_TOKENS } from '../constants/payment-provider-tokens';
 import { ChargeStatus } from '../enums/charge-status.enum';
@@ -189,34 +190,19 @@ export class PaymentService {
   }> {
     const paymentProvider = this.getPaymentProvider(provider);
 
+    const charge = await this.findOneChargeEntityOrThrow(workspaceId, chargeId);
+
     // Get the bank slip file from the payment provider
     const bankSlipResponse = await paymentProvider.getBankSlipFile({
       workspaceId,
       integrationId,
-      chargeId,
+      charge,
     });
 
     if (!bankSlipResponse.fileBuffer) {
       throw new Error(
         'Bank slip file buffer is required but was not provided by the payment provider',
       );
-    }
-
-    // Get charge repository
-    const chargeRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
-        workspaceId,
-        'charge',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    // Find the charge
-    const charge = await chargeRepository.findOne({
-      where: { id: chargeId },
-    });
-
-    if (!charge) {
-      throw new NotFoundException(`Charge ${chargeId} not found`);
     }
 
     const fileName =
@@ -262,17 +248,10 @@ export class PaymentService {
     // Save the attachment
     const savedAttachment = await attachmentRepository.save(attachment);
 
-    // Reload charge with attachment relation
-    const chargeWithAttachment = await chargeRepository.findOne({
-      where: { id: chargeId },
-      relations: ['attachments'],
-    });
-
-    if (!chargeWithAttachment) {
-      throw new NotFoundException(
-        `Charge ${chargeId} not found after attachment creation`,
-      );
-    }
+    const chargeWithAttachment = await this.findOneChargeEntityOrThrow(
+      workspaceId,
+      chargeId,
+    );
 
     const signedPath = this.fileService.signFileUrl({
       url: savedAttachment.fullPath,
@@ -304,10 +283,21 @@ export class PaymentService {
   }: PaymentServiceGetChargeStatusParams): Promise<PaymentStatusResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
+    const chargeRepository =
+      await this.getChargeWorkspaceRepository(workspaceId);
+
+    const charge = await chargeRepository.findOne({
+      where: { id: chargeId },
+    });
+
+    if (!charge) {
+      throw new NotFoundException(`Charge ${chargeId} not found`);
+    }
+
     return paymentProvider.getChargeStatus({
       workspaceId,
       integrationId,
-      chargeId,
+      charge,
     });
   }
 
@@ -330,10 +320,12 @@ export class PaymentService {
       );
     }
 
+    const charge = await this.findOneChargeEntityOrThrow(workspaceId, chargeId);
+
     const response = await paymentProvider.cancelCharge({
       workspaceId,
       integrationId,
-      chargeId,
+      charge,
       reason,
     });
 
@@ -370,10 +362,12 @@ export class PaymentService {
       throw new Error(`Provider ${provider} does not support partial refunds`);
     }
 
+    const charge = await this.findOneChargeEntityOrThrow(workspaceId, chargeId);
+
     const response = await paymentProvider.refundCharge({
       workspaceId,
       integrationId,
-      chargeId,
+      charge,
       amount,
       reason,
     });
@@ -396,10 +390,12 @@ export class PaymentService {
   }: PaymentServiceUpdateChargeParams): Promise<CreateChargeResponse> {
     const paymentProvider = this.getPaymentProvider(provider);
 
+    const charge = await this.findOneChargeEntityOrThrow(workspaceId, chargeId);
+
     return paymentProvider.updateCharge({
       workspaceId,
       integrationId,
-      chargeId,
+      charge,
       updates,
     });
   }
@@ -536,6 +532,38 @@ export class PaymentService {
   }
 
   /**
+   * Finds a charge entity by id
+   */
+  private async findOneChargeEntity(
+    workspaceId: string,
+    chargeId: string,
+  ): Promise<ChargeWorkspaceEntity | null> {
+    const chargeRepository =
+      await this.getChargeWorkspaceRepository(workspaceId);
+
+    return await chargeRepository.findOne({
+      where: { id: chargeId },
+      relations: ['attachments'],
+    });
+  }
+
+  /**
+   * Finds a charge entity by id or throws an error if not found
+   */
+  private async findOneChargeEntityOrThrow(
+    workspaceId: string,
+    chargeId: string,
+  ): Promise<ChargeWorkspaceEntity> {
+    const charge = await this.findOneChargeEntity(workspaceId, chargeId);
+
+    if (!charge) {
+      throw new NotFoundException(`Charge ${chargeId} not found`);
+    }
+
+    return charge;
+  }
+
+  /**
    * Updates the status of a charge
    */
   private async updateChargeStatus(
@@ -554,5 +582,27 @@ export class PaymentService {
       // TODO: Implement update charge status
       // status,  // This would need to match your actual entity field
     });
+  }
+
+  /**
+   * Gets the charge workspace repository
+   */
+  private async getChargeWorkspaceRepository(
+    workspaceId: string,
+  ): Promise<WorkspaceRepository<ChargeWorkspaceEntity>> {
+    const chargeRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChargeWorkspaceEntity>(
+        workspaceId,
+        'charge',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!chargeRepository) {
+      throw new NotFoundException(
+        `Charge repository not found for workspace ${workspaceId}`,
+      );
+    }
+
+    return chargeRepository;
   }
 }
