@@ -34,8 +34,8 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
-import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -236,20 +236,22 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('chatbot')
   chatbotId: string | null;
 
+  /* @kvoip-woulz proprietary:begin */
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.support,
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.ticket,
     type: RelationType.MANY_TO_ONE,
-    label: msg`Support`,
-    description: msg`Support linked to the event`,
+    label: msg`Ticket`,
+    description: msg`Ticket linked to the event`,
     icon: 'IconHelpCircle',
-    inverseSideTarget: () => SupportWorkspaceEntity,
+    inverseSideTarget: () => TicketWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  support: Relation<SupportWorkspaceEntity> | null;
+  ticket: Relation<TicketWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('support')
-  supportId: string | null;
+  @WorkspaceJoinColumn('ticket')
+  ticketId: string | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.integration,

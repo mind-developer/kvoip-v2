@@ -35,20 +35,74 @@ const MIME_TYPE_MAPPING: Record<
   webp: 'image/webp',
 };
 
-const StyledDocViewer = styled(DocViewer)`
+const StyledDocViewerContainer = styled.div`
   overflow: hidden;
+  position: relative;
+  max-height: 180px;
+  width: 290px;
+  border-radius: 12px;
+  contain: layout style paint;
+  isolation: isolate;
+  display: block;
+  transform: translateZ(0);
+`;
+
+const StyledDocViewer = styled(DocViewer)`
+  overflow: hidden !important;
+  position: relative;
+  max-height: 180px !important;
+  height: 180px !important;
+  width: 290px !important;
+  display: block;
+
   #pdf-controls {
     display: none;
   }
+
   user-select: none;
+
   &:hover {
     cursor: initial;
   }
-  overflow: 'hidden';
+
   z-index: 1;
-  position: 'inherit';
   border: none;
   border-radius: 12px;
+
+  /* Force all direct children to respect container bounds */
+  > * {
+    overflow: hidden !important;
+    max-height: 180px !important;
+    position: relative !important;
+  }
+
+  /* Specific styles for DocViewer internal elements */
+  > div {
+    overflow: hidden !important;
+    max-height: 180px !important;
+    position: relative !important;
+  }
+
+  iframe {
+    overflow: hidden !important;
+    max-height: 180px !important;
+    height: 180px !important;
+    position: relative !important;
+    display: block !important;
+  }
+
+  /* Prevent any absolute positioned elements from escaping */
+  [style*='position: absolute'],
+  [style*='position:fixed'] {
+    max-height: 180px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+  }
+
+  /* Ensure all nested elements respect bounds */
+  * {
+    max-height: 180px !important;
+  }
 `;
 
 function DocumentMessage({
@@ -73,36 +127,38 @@ function DocumentMessage({
 
   if (mimeType)
     return (
-      <StyledDocViewer
-        documents={[
-          {
-            uri: documentUrl,
-            fileName: fileName,
-            fileType: mimeType,
-          },
-        ]}
-        pluginRenderers={DocViewerRenderers}
-        config={{
-          header: {
-            // disableHeader: true,
-            disableFileName: true,
-            retainURLParams: false,
-            overrideComponent: (currentDocument) => (
-              <Header fromMe={fromMe} currentDocument={currentDocument} />
-            ),
-          },
-          pdfVerticalScrollByDefault: true,
-          pdfZoom: {
-            defaultZoom: 1,
-            zoomJump: 0.1,
-          },
-        }}
-        style={{
-          width: 290,
-          height: 180,
-          // borderRadius: 12,
-        }}
-      />
+      <StyledDocViewerContainer>
+        <StyledDocViewer
+          documents={[
+            {
+              uri: documentUrl,
+              fileName: fileName,
+              fileType: mimeType,
+            },
+          ]}
+          pluginRenderers={DocViewerRenderers}
+          config={{
+            header: {
+              // disableHeader: true,
+              disableFileName: true,
+              retainURLParams: false,
+              overrideComponent: (currentDocument) => (
+                <Header fromMe={fromMe} currentDocument={currentDocument} />
+              ),
+            },
+            pdfVerticalScrollByDefault: true,
+            pdfZoom: {
+              defaultZoom: 1,
+              zoomJump: 0.1,
+            },
+          }}
+          style={{
+            width: 290,
+            height: 180,
+            // borderRadius: 12,
+          }}
+        />
+      </StyledDocViewerContainer>
     );
   return (
     <p style={{ margin: 0, color: theme.font.color.primary }}>

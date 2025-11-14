@@ -135,12 +135,12 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Request Code`,
     description: msg`Charge request code`,
     icon: 'IconSettings',
-    settings: {
-      validation: {
-        ...TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
-        errorMessage: msg`Follow the format: REQ-123`,
-      },
-    },
+    // settings: {
+    //   validation: {
+    //     ...TEXT_VALIDATION_PATTERNS.REQUEST_CODE,
+    //     errorMessage: msg`Follow the format: REQ-123`,
+    //   },
+    // },
   })
   @WorkspaceIsNullable()
   requestCode: string;
@@ -215,6 +215,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   entityType: ChargeEntityType;
 
+  // remover
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
@@ -226,6 +227,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
+  // remover
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.integration,
     type: RelationType.MANY_TO_ONE,
@@ -241,20 +243,29 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('integration')
   integrationId: string | null;
 
-  @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.product,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Product`,
-    description: msg`Product linked to this charge`,
-    icon: 'IconClipboardList',
-    inverseSideTarget: () => ProductWorkspaceEntity,
-    inverseSideFieldKey: 'charges',
-  })
-  @WorkspaceIsNullable()
-  product: Relation<ProductWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('product')
-  productId: string | null;
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.bankIntegrationType,
+    type: FieldMetadataType.TEXT,
+    label: msg`Bank Integration Type`,
+    description: msg`Bank integration type`,
+    icon: 'IconReportMoney',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  bankIntegrationType: string | null;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.bankIntegrationReference,
+    type: FieldMetadataType.TEXT,
+    label: msg`Bank Integration Reference`,
+    description: msg`Bank integration reference`,
+    icon: 'IconReportMoney',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  bankIntegrationReference: string | null;
+
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
@@ -282,7 +293,25 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceFieldIndex()
   chargeAction: ChargeAction;
 
-  //Relations
+
+  //Relations --------------------------------------------------------------------------------------
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Product`,
+    description: msg`Product linked to this charge`,
+    icon: 'IconClipboardList',
+    inverseSideTarget: () => ProductWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  product: Relation<ProductWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('product')
+  productId: string | null;
+
+
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
@@ -297,6 +326,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.person,
@@ -313,6 +343,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('person')
   personId: string;
 
+
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.invoices,
     type: RelationType.ONE_TO_MANY,
@@ -324,6 +355,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   invoices: Relation<InvoiceWorkspaceEntity[]> | null;
+
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
@@ -338,6 +370,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
+
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
@@ -349,6 +382,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
+
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.companyFinancialClosingExecutions,
@@ -364,6 +398,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   companyFinancialClosingExecutions: Relation<
     CompanyFinancialClosingExecutionWorkspaceEntity[]
   > | null;
+  
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.searchVector,

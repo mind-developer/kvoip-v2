@@ -1,4 +1,5 @@
-import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import { Logger, Scope } from '@nestjs/common';
 import { RunCompanyFinancialClosingJobProcessor } from 'src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job';
 import { FinancialClosing } from 'src/engine/core-modules/financial-closing/financial-closing.entity';
@@ -48,7 +49,7 @@ export class RunFinancialClosingJobProcessor {
     private readonly messageQueueService: MessageQueueService,
     private readonly financialClosingService: FinancialClosingService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {} 
 
   @Process(RunFinancialClosingJobProcessor.name)
   async handle(data: RunFinancialClosingJob): Promise<void> {
@@ -86,10 +87,6 @@ export class RunFinancialClosingJobProcessor {
 
     newExecutionLog =
       await financialClosingExecutionsRepository.save(newExecutionLog);
-
-    this.logger.log(
-      `newExecutionLog: ${JSON.stringify(newExecutionLog, null, 2)}`,
-    );
 
     await addFinancialClosingExecutionLog(
       newExecutionLog,

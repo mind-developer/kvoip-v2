@@ -6,7 +6,6 @@ import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { ChatbotFlow } from '@/chatbot/components/ChatbotFlow';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';

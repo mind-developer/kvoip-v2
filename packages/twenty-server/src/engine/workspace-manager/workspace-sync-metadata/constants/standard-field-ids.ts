@@ -51,6 +51,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   financialRegister: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f6a', // @deprecated
   accountReceivable: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f7b',
   accountPayable: '20202020-aeb2-4c3d-9f5a-2e7b4d8c1f8c',
+  ticket: '6936200c-af09-4932-b29c-90d940ac98c6',
   /* @kvoip-woulz proprietary:end */
 } as const;
 
@@ -184,39 +185,55 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 
 export const CHARGE_STANDARD_FIELD_IDS = {
   name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c66',
-  company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
-  contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
-  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
-  price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
-  createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
-  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
-  discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
+  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d', // ?
+  discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e', // ?
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
   entityType: '20202020-a1b2-4c3d-8e4f-5f6a7b8c9d01',
-  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
-  paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
-  activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
-  chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d',
+  chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d', // ?
   requestCode: '20202020-4a2d-4f1c-9e3b-5d8c6b2a1f7e',
-  position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
+
+  // creio que tenha que remover
+  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
+  price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
+  activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
+  paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
+  contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
+  createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
+
+  // novos
+  externalCpfCnpj: 'af533cac-1e86-42f4-b3c4-e604dd0af6fa', // ?
+  value: 'd18294d4-656a-4caa-892a-fb0bb750ea95', // rename com price
+  bankIntegrationType: 'a27e7a99-d559-45c9-a7dc-a15a6170b96c', 
+  bankIntegrationReference: '650da294-961d-475f-ac81-ce9518d6595c',
+
+  // relations
+  company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
+  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
   attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
   person: '20202020-3213-4ddf-9494-6422bcff8d7c',
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
-  searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
   invoices: 'c3a90d91-f458-4331-8d55-ff86a066191d',
   companyFinancialClosingExecutions: '8eecb7cc-889b-4192-90d9-32626d021c9e',
+  
+  position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
+  searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
 } as const;
 
-export const SUPPORT_STANDARD_FIELD_IDS = {
+export const TICKET_STANDARD_FIELD_IDS = {
   name: '5217e7f5-bd7a-4af5-8bbd-ec21c5f7d3af',
   statuses: '885031ad-d3e8-47c5-8d56-ce9759e96a45',
-  stage: 'a7b70e6e-6f17-4ad4-81a6-1783d9bd09bc',
-  emails: 'a4f41a54-293b-40f0-879f-68e706ad1328',
-  phones: '852115fc-0aa4-4b90-bc28-d2f33778e33b',
+  /* @kvoip-woulz proprietary:begin */
+  solution: '329994fa-4d88-4c72-bb0f-1bdd207b4993',
+  ticketNumber: 'ead8bde3-b543-4553-b589-f421066ececf',
+  closedBy: '584c940c-e834-44ab-9ca8-b3e0b3abd059',
+  lastUpdatedBy: '74d23c9d-659a-4b8c-9c1d-737ebfbba3a2',
+  sector: '2a0b5bf4-c8c4-4139-911b-f0072ebe3db3',
+  attachments: '9db58c17-90c9-49c2-be48-6d93c0355e63',
+  opportunity: '1e2868cd-7168-4844-94c2-c32e5a123074',
+  /* @kvoip-woulz proprietary:end */
   noteTargets: 'a4ad3074-5c0b-4448-93ed-53faf5762988',
   position: 'ad171f33-970a-4efc-b628-b54295fb2e84',
-  person: '918887f8-37c5-4747-abe4-dd0e9491a1d5',
   timelineActivities: '4c8bf8da-92c4-421c-b267-6229095245f3',
   searchVector: '78a63bbb-83d8-472b-bd90-162c43f4f414',
 } as const;
@@ -480,6 +497,10 @@ export const SECTOR_FIELD_IDS = {
   chats: 'c0fbe592-435b-4d65-bf31-5010fb224207',
   whatsappIntegrations: 'f12979a9-a1a3-4091-b536-0d4345d58f70',
   abandonmentInterval: '3d3f4bd0-1f85-4b09-a5c5-e646f2d2a51f',
+  /* @kvoip-woulz proprietary:begin */
+  ticket: '2406c863-b1c0-46be-a316-2060e99888b2',
+  searchVector: 'c34e736a-65ba-4ffc-88b1-f8849fe3b502',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const AGENT_FIELD_IDS = {
@@ -603,7 +624,6 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
-  support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   invoice: '031ea6a7-4f37-4205-9808-45f3ee2cd6d6',
   tenant: '30303030-390e-4271-8f14-03957ae27f6e',
   sector: 'fdc30f60-8b52-4f47-91b6-c9eab146f5e6',
@@ -612,6 +632,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   financialRegister: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a4b', // @deprecated
   accountReceivable: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a5c',
   accountPayable: '20202020-bcd3-4e5f-a1b2-8c9d7e6f5a6d',
+  ticket: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
   /* @kvoip-woulz proprietary:end */
 } as const;
 
@@ -729,8 +750,10 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
-  support: 'ddb83ecc-e243-4842-8190-ba15dceddcd6',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
+  /* @kvoip-woulz proprietary:begin */
+  ticket: 'ddb83ecc-e243-4842-8190-ba15dceddcd6',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const OPPORTUNITY_STANDARD_FIELD_IDS = {
@@ -751,6 +774,9 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
+  /* @kvoip-woulz proprietary:begin */
+  ticket: '36b9f864-0e55-4be4-b69d-938b65813e3d',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const PERSON_STANDARD_FIELD_IDS = {
@@ -779,9 +805,12 @@ export const PERSON_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
-  support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
   tenants: '30303030-186c-4f04-b9dc-8d0ed02ba764',
   chats: '2f828aa3-a5b0-4fcf-85a9-fe90989b1367',
+  /* @kvoip-woulz proprietary:begin */
+  ticket: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
+  leadName: '5f7fa573-3a9d-4caa-9452-898074fa0489',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const CLIENT_CHAT_MESSAGE_STANDARD_FIELD_IDS = {
@@ -1022,6 +1051,9 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
   telephonies: '2e371500-a9e7-4fcd-ac16-660efa2462c3',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+  /* @kvoip-woulz proprietary:begin */
+  ticket: '79a499aa-fd92-4e58-a93e-6ed7c61dd44d',
+  /* @kvoip-woulz proprietary:end */
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

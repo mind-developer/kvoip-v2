@@ -17,7 +17,6 @@ export class TextInputHandler implements NodeHandler {
   constructor(private chatMessageManagerService: ChatMessageManagerService) {}
 
   async process(params: ProcessParams): Promise<string | null> {
-    console.log('TextInputHandler.process called');
     console.log(
       'TextInputHandler.process - node:',
       JSON.stringify(params.node, null, 2),
@@ -26,23 +25,20 @@ export class TextInputHandler implements NodeHandler {
       node,
       providerIntegrationId,
       provider,
-      chatbotName,
+      chatbot,
       workspaceId,
       clientChat,
     } = params;
-    /* @kvoip-woulz proprietary:begin */
     const text = typeof node.data?.text === 'string' ? node.data.text : null;
-    /* @kvoip-woulz proprietary:end */
     console.log('TextInputHandler.process - text found:', text);
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (text) {
       const formattedText = text.replace(/\n{2,}/g, '\n\n').trim();
-      console.log('clientChat', clientChat);
       const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
         {
           clientChatId: clientChat.id,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           to: clientChat.person.id,
           toType: ChatMessageToType.PERSON,
@@ -60,7 +56,6 @@ export class TextInputHandler implements NodeHandler {
           templateLanguage: null,
           templateName: null,
         };
-      console.log(this.chatMessageManagerService);
       await this.chatMessageManagerService.sendMessage(
         message,
         workspaceId,

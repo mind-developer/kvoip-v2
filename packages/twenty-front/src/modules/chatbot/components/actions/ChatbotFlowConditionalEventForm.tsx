@@ -11,12 +11,14 @@ import {
 } from '@/chatbot/types/LogicNodeDataType';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
+import { useUpdateNodeInternals } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 type ChatbotFlowConditionalEventFormProps = {
   selectedNode: GenericNode;
+  isConnectable?: boolean;
 };
 
 const initialState: NewConditionalState = {
@@ -29,28 +31,32 @@ const StyledStepBody = styled.div`
   flex: 1 1 auto;
   flex-direction: column;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: visible;
   row-gap: ${({ theme }) => theme.spacing(4)};
+  position: relative;
+  width: 100%;
+  padding-right: 25px;
+  margin-right: -25px;
 `;
 
 export const ChatbotFlowConditionalEventForm = ({
   selectedNode,
+  isConnectable = true,
 }: ChatbotFlowConditionalEventFormProps) => {
   const initialText = selectedNode.data?.text ?? '';
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [text, setText] = useState<string>(initialText);
-  const [nodeData, setNodeData] = useState<NewConditionalState>(initialState);
 
   const { deleteSelectedNode } = useDeleteSelectedNode();
   const { saveDataValue } = useHandleNodeValue();
 
-  useEffect(() => {
-    if (selectedNode.data.logic) {
-      setNodeData(selectedNode.data.logic);
-    }
-  }, [selectedNode.data.logic]);
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  const nodeData =
+    (selectedNode.data.logic as NewConditionalState) ?? initialState;
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -61,9 +67,24 @@ export const ChatbotFlowConditionalEventForm = ({
 
   useEffect(() => {
     if (!selectedNode.data.logic) {
-      addCondition();
+      const newIndex = initialState.logicNodes.length;
+
+      const newCondition: NewLogicNodeData = {
+        option: `${newIndex + 1}`,
+        comparison: '==',
+        sectorId: '',
+        conditionValue: '||',
+        recordType: '',
+      };
+
+      const updated = {
+        logicNodes: [...initialState.logicNodes, newIndex],
+        logicNodeData: [...initialState.logicNodeData, newCondition],
+      };
+
+      saveDataValue('logic', updated, selectedNode);
     }
-  }, [selectedNode.data.logic]);
+  }, [selectedNode.data.logic, saveDataValue, selectedNode]);
 
   const handleInputChange = (e: string) => {
     if (e.length > 4000) {
@@ -102,6 +123,7 @@ export const ChatbotFlowConditionalEventForm = ({
     const updated = { ...nodeData, logicNodeData: newData };
 
     saveDataValue('logic', updated, selectedNode);
+    updateNodeInternals(selectedNode.id);
   };
 
   const deleteCondition = (index: number) => {
@@ -132,17 +154,18 @@ export const ChatbotFlowConditionalEventForm = ({
           onBlur={handleTextBlur}
         />
         {nodeData.logicNodes.map((_, index) => {
+          const condition = nodeData.logicNodeData[index];
           return (
-            <>
-              <LogicOption
-                key={index}
-                nodeIndex={index}
-                condition={nodeData.logicNodeData[index]}
-                onDelete={() => deleteCondition(index)}
-                onUpdate={(updates) => updateCondition(index, updates)}
-                showDeleteButton={nodeData.logicNodes.length > 1}
-              />
-            </>
+            <LogicOption
+              key={`${condition?.option || index}-${selectedNode.id}`}
+              nodeIndex={index}
+              condition={condition}
+              onDelete={() => deleteCondition(index)}
+              onUpdate={(updates) => updateCondition(index, updates)}
+              showDeleteButton={nodeData.logicNodes.length > 1}
+              isConnectable={isConnectable}
+              nodeId={selectedNode.id}
+            />
           );
         })}
         <Button

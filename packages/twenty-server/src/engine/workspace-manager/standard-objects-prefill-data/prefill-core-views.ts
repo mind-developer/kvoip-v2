@@ -32,10 +32,10 @@ import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-obje
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { productsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/products-all-views';
-import { supportAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/support-all-views';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { ticketAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/ticket-all-views';
 import { tracaebleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/traceable-all-views';
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
@@ -72,7 +72,7 @@ export const prefillCoreViews = async ({
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
-    supportAllView(objectMetadataItems),
+    ticketAllView(objectMetadataItems),
     tracaebleAllView(objectMetadataItems),
     productsAllView(objectMetadataItems),
     invoiceAllView(objectMetadataItems),

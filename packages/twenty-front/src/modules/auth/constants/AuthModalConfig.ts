@@ -29,4 +29,11 @@ export const AUTH_MODAL_CONFIG: {
     variant: 'primary',
     showScrollWrapper: false,
   },
+  /* @kvoip-woulz proprietary:begin */
+  [AppPath.Recharge]: {
+    size: 'large',
+    variant: 'primary',
+    showScrollWrapper: true,
+  },
+  /* @kvoip-woulz proprietary:end */
 };

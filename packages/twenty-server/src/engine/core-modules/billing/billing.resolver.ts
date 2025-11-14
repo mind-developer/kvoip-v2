@@ -186,7 +186,7 @@ export class BillingResolver {
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
 
-    const bankSlipFileLink =
+    const signedFileUrl =
       await this.billingSubscriptionService.updateOneTimePaymentSubscription({
         subscription: currentSubscription,
         user,
@@ -194,7 +194,7 @@ export class BillingResolver {
       });
 
     return {
-      bankSlipFileLink,
+      bankSlipFileLink: signedFileUrl,
     };
   }
 

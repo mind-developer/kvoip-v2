@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -11,10 +12,12 @@ import { useLingui } from '@lingui/react/macro';
 import {
   IconEaseInOutControlPoints,
   IconPlus,
+  IconPointFilled,
   IconRobot,
   IconSearch,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { H2Title } from 'twenty-ui/display';
@@ -65,17 +68,106 @@ const StyledTextInput = styled(TextInput)`
   width: 100%;
 `;
 
+const StyledLiveIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconPointFilled = styled(IconPointFilled)`
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) =>
+    theme.name === 'dark' ? theme.color.green70 : theme.color.green30};
+  border-radius: 50%;
+  height: 14px;
+  width: 14px;
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+  }
+  animation: pulse 0.5s ease alternate infinite;
+`;
+
+const StyledSkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const ChatbotsSkeletonLoader = () => {
+  const theme = useTheme();
+  const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
+    id: `skeleton-chatbot-${index}`,
+  }));
+
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <StyledSkeletonContainer>
+        {skeletonItems.map(({ id }) => (
+          <Skeleton
+            key={id}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.xl}
+            width="100%"
+          />
+        ))}
+      </StyledSkeletonContainer>
+    </SkeletonTheme>
+  );
+};
+
 export default function SettingsServiceCenterChatbots() {
   const theme = useTheme();
   const { t } = useLingui();
   const navigate = useNavigate();
-  const { records: chatbots } = useFindManyRecords<
+  const { records: chatbots, loading: chatbotsLoading } = useFindManyRecords<
     Chatbot & { __typename: string }
   >({
     objectNameSingular: CoreObjectNameSingular.Chatbot,
   });
   const [filteredChatbots, setFilteredChatbots] = useState<Chatbot[]>(chatbots);
   const [searchByChatbotName, setSearchByChatbotName] = useState('');
+  const {
+    records: whatsappIntegrations,
+    loading: whatsappIntegrationsLoading,
+  } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.WhatsappIntegration,
+    recordGqlFields: { id: true, name: true, chatbot: { id: true } },
+  });
+
+  const isLoading = chatbotsLoading || whatsappIntegrationsLoading;
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    if (isLoading) {
+      timeoutId = setTimeout(() => {
+        setShowSkeleton(true);
+      }, 500);
+    } else {
+      setShowSkeleton(false);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isLoading]);
 
   function filterChatbots({ name }: { name: string }): Chatbot[] {
     return chatbots.filter((chatbot) =>
@@ -120,56 +212,85 @@ export default function SettingsServiceCenterChatbots() {
               setSearchByChatbotName(s);
             }}
           />
-          {chatbots.map((chatbot) => {
-            const statusProps = getChatbotStatusTagProps(chatbot.status);
-            return (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                }}
-              >
-                <StyledSettingsCard
-                  key={chatbot.id}
-                  title={chatbot.name}
-                  Status={
-                    <>
-                      <StyledTag
-                        color={statusProps.color}
-                        text={statusProps.text}
-                      />
-                      <Button
-                        title="Edit flow"
-                        Icon={IconEaseInOutControlPoints}
-                        variant="secondary"
-                        accent="default"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(
-                            getSettingsPath(SettingsPath.ChatbotFlow, {
-                              chatbotId: chatbot.id,
-                            }),
-                          );
-                        }}
-                      />
-                    </>
-                  }
-                  Icon={<IconRobot size={16} />}
-                  onClick={() => {
-                    navigate(
-                      getSettingsPath(SettingsPath.ChatbotsEdit, {
-                        chatbotSlug: chatbot.id,
-                      }),
-                    );
+          {showSkeleton ? (
+            <ChatbotsSkeletonLoader />
+          ) : (
+            chatbots.map((chatbot) => {
+              const statusProps = getChatbotStatusTagProps(chatbot.status);
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
                   }}
-                />
-              </div>
-            );
-          })}
-          {chatbots.length === 0 && (
+                >
+                  <StyledSettingsCard
+                    key={chatbot.id}
+                    title={chatbot.name}
+                    Status={
+                      <>
+                        {whatsappIntegrations.some(
+                          (integration) =>
+                            integration.chatbot?.id === chatbot.id &&
+                            chatbot.status === 'ACTIVE',
+                        ) ? (
+                          <StyledLiveIndicator
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginRight: theme.spacing(1),
+                            }}
+                          >
+                            <StyledIconPointFilled
+                              size={16}
+                              color={
+                                theme.name === 'dark'
+                                  ? theme.color.green40
+                                  : theme.color.green50
+                              }
+                            />
+                            <p style={{ margin: 0, padding: 0 }}>{t`Live`}</p>
+                          </StyledLiveIndicator>
+                        ) : (
+                          <StyledTag
+                            color={statusProps.color}
+                            text={statusProps.text}
+                            variant="outline"
+                          />
+                        )}
+                        <Button
+                          title="Edit flow"
+                          Icon={IconEaseInOutControlPoints}
+                          variant="secondary"
+                          accent="default"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(
+                              getSettingsPath(SettingsPath.ChatbotFlow, {
+                                chatbotId: chatbot.id,
+                              }),
+                            );
+                          }}
+                        />
+                      </>
+                    }
+                    Icon={<IconRobot size={16} />}
+                    onClick={() => {
+                      navigate(
+                        getSettingsPath(SettingsPath.ChatbotsEdit, {
+                          chatbotSlug: chatbot.id,
+                        }),
+                      );
+                    }}
+                  />
+                </div>
+              );
+            })
+          )}
+          {!showSkeleton && chatbots.length === 0 && (
             <Section>
               <div style={{ marginTop: theme.spacing(10) }}>
                 <AnimatedPlaceholderEmptyContainer>

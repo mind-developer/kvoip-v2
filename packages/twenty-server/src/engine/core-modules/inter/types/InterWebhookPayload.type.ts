@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
 
 interface InterWebhookBase {

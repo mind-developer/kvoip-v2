@@ -1,3 +1,5 @@
+/* @kvoip-woulz proprietary */
+import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
@@ -6,11 +8,11 @@ import { useNodes } from '@xyflow/react';
 import { type ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Label, useIcons } from 'twenty-ui/display';
+import { IconX, Label, useIcons } from 'twenty-ui/display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
-  border: 2px solid ${({ theme }) => theme.border.color.medium};
+  border: 1.5px solid ${({ theme }) => theme.border.color.strong};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   min-width: 270px;
@@ -18,15 +20,14 @@ const StyledBaseNodeWrapper = styled.div<{ isSelected: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
+  overflow-x: visible;
+  position: relative;
   &:hover {
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${({ theme, isSelected }) =>
+      isSelected ? theme.color.blue40 : theme.color.blue20};
   }
   ${({ theme, isSelected }) =>
-    isSelected
-      ? `
-    border-color: ${theme.color.blue40};
-  `
-      : ''}
+    isSelected ? `border-color: ${theme.color.blue40};` : ''}
 `;
 
 const StyledHeader = styled.div`
@@ -36,6 +37,7 @@ const StyledHeader = styled.div`
   color: ${({ theme }) => theme.background.primaryInverted};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(3)};
+  position: relative;
 
   p {
     margin: 0;
@@ -49,6 +51,31 @@ const StyledHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+`;
+
+const StyledDeleteButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.transparent.light};
+    color: ${({ theme }) => theme.color.red};
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 `;
 
@@ -95,9 +122,10 @@ const BaseNode = ({
 }) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(icon);
+  const { deleteNode } = useHandleNodeValue();
 
-  const node = useNodes().filter((filterNode) => filterNode.id === nodeId)[0];
-  const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
+  const node = useNodes().find((node) => node.id === nodeId);
+  const chatbotFlowSelectedNodes = useRecoilValue(chatbotFlowSelectedNodeState);
   const theme = useTheme();
   const iconHeader = (
     <Icon size={18} color={theme.color[iconColor ?? 'gray']} />
@@ -106,13 +134,20 @@ const BaseNode = ({
   const [customTitle, setCustomTitle] = useState<string>(
     node?.data.title as string,
   );
+
+  const isSelected = chatbotFlowSelectedNodes.some(
+    (selectedNode) => selectedNode.id === nodeId,
+  );
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    deleteNode(nodeId);
+  };
+
   return (
-    <div>
+    <div style={{ position: 'relative', overflowX: 'visible' }}>
       {isInitialNode && <StyledNodeType variant="small">Start</StyledNodeType>}
-      <StyledBaseNodeWrapper
-        className="nopan"
-        isSelected={chatbotFlowSelectedNode?.id === nodeId}
-      >
+      <StyledBaseNodeWrapper className="nopan" isSelected={isSelected}>
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
           <div>
@@ -132,6 +167,9 @@ const BaseNode = ({
             )}
             <StyledLabel>{nodeTypeDescription}</StyledLabel>
           </div>
+          <StyledDeleteButton onClick={handleDelete} aria-label="Delete node">
+            <IconX size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
+          </StyledDeleteButton>
         </StyledHeader>
         {children}
       </StyledBaseNodeWrapper>

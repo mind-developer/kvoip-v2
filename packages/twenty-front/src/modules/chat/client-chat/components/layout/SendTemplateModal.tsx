@@ -17,6 +17,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconBrandMeta, IconX } from '@tabler/icons-react';
+import { getCountryCallingCode, type CountryCode } from 'libphonenumber-js';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Tag } from 'twenty-ui/components';
 import { Checkmark, H2Title } from 'twenty-ui/display';
@@ -40,6 +41,7 @@ const StyledFooter = styled.div`
 
 const StyledFormCountryCodeSelectInput = styled(FormCountryCodeSelectInput)`
   max-width: 50px !important;
+  z-index: 1000;
 `;
 
 export const SendTemplateModal = (): React.ReactNode => {
@@ -95,14 +97,60 @@ export const SendTemplateModal = (): React.ReactNode => {
     [templates, selectedTemplateId],
   );
 
-  const { sendTemplateMessage } = useSendTemplateMessage(
-    selectedCountryCode
-      ? `${selectedCountryCode}${selectedPhoneNumber?.toString().replace('+', '') ?? null}`
-      : null,
-    selectedIntegrationId,
-    selectedTemplateId,
-    selectedTemplate,
+  const selectedCallingCode = useMemo(() => {
+    if (!selectedCountryCode) {
+      return null;
+    }
+    try {
+      return `+${getCountryCallingCode(selectedCountryCode as CountryCode)}`;
+    } catch {
+      return null;
+    }
+  }, [selectedCountryCode]);
+
+  const callingCodeDigits = useMemo(() => {
+    if (!selectedCountryCode) {
+      return null;
+    }
+    try {
+      return getCountryCallingCode(
+        selectedCountryCode as CountryCode,
+      ).toString();
+    } catch {
+      return null;
+    }
+  }, [selectedCountryCode]);
+
+  const handlePhoneNumberChange = useCallback(
+    (phoneNumber: number | null | string) => {
+      if (!phoneNumber || !callingCodeDigits) {
+        setSelectedPhoneNumber(phoneNumber);
+        return;
+      }
+
+      const phoneNumberString = phoneNumber.toString().trim();
+      const digitsOnly = phoneNumberString.replace(/\D/g, '');
+
+      // Se o número começa com o calling code, remove-o
+      if (digitsOnly.startsWith(callingCodeDigits)) {
+        const nationalNumber = digitsOnly.slice(callingCodeDigits.length);
+        setSelectedPhoneNumber(nationalNumber);
+      } else {
+        setSelectedPhoneNumber(phoneNumber);
+      }
+    },
+    [callingCodeDigits],
   );
+
+  const formattedPhoneNumber = useMemo(
+    () =>
+      selectedPhoneNumber && selectedCallingCode
+        ? `${selectedCallingCode}${selectedPhoneNumber?.toString() ?? ''}`
+        : null,
+    [selectedPhoneNumber, selectedCallingCode],
+  );
+
+  const { sendTemplateMessage } = useSendTemplateMessage();
 
   const isModalOpen = useRecoilComponentValue(
     isModalOpenedComponentState,
@@ -118,13 +166,12 @@ export const SendTemplateModal = (): React.ReactNode => {
       return;
     }
     await sendTemplateMessage({
-      selectedPhoneNumber: selectedPhoneNumber.toString(),
+      selectedPhoneNumber: formattedPhoneNumber,
       selectedIntegrationId,
       selectedTemplateId,
       selectedTemplate,
-      onSuccess: () => {
+      onCompleted: () => {
         setSelectedPhoneNumber(null);
-        setSelectedIntegrationId('');
         setSelectedTemplateId(null);
       },
     });
@@ -134,9 +181,7 @@ export const SendTemplateModal = (): React.ReactNode => {
     selectedTemplate,
     selectedTemplateId,
     sendTemplateMessage,
-    setSelectedIntegrationId,
-    setSelectedPhoneNumber,
-    setSelectedTemplateId,
+    formattedPhoneNumber,
   ]);
 
   const onClose = useCallback(() => {
@@ -184,15 +229,14 @@ export const SendTemplateModal = (): React.ReactNode => {
       </StyledTemplateListContainer>
       <StyledFooter>
         <StyledFormCountryCodeSelectInput
-          label={t`Recipient's country`}
+          label={t`Recipient's calling code`}
           selectedCountryCode={selectedCountryCode ?? ''}
           onChange={(countryCode) => setSelectedCountryCode(countryCode)}
         />
         <FormNumberFieldInput
           label={t`Recipient's phone number`}
           defaultValue={selectedPhoneNumber ?? ''}
-          onChange={(phoneNumber) => setSelectedPhoneNumber(phoneNumber)}
-          readonly={false}
+          onChange={handlePhoneNumberChange}
         />
         <Button
           disabled={
@@ -207,9 +251,8 @@ export const SendTemplateModal = (): React.ReactNode => {
 };
 
 const StyledTemplateList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing(2)};
@@ -239,7 +282,7 @@ const StyledCard = styled(Card)<{
       background-color: transparent;
       box-shadow: none;
     `}
-  min-height: 180px;
+  max-height: 180px;
 `;
 
 const StyledTag = styled(Tag)`
@@ -260,6 +303,8 @@ const StyledTemplateHeader = styled.div`
 
 const StyledCheckmark = styled(Checkmark)<{ color: string }>`
   background-color: ${({ color }) => color};
+  height: 16px;
+  width: 16px;
 `;
 
 const TemplateList = memo(
@@ -304,12 +349,12 @@ const TemplateList = memo(
                 }
               >
                 <StyledTemplateHeader>
-                  <H2Title title={template.name} />
                   <StyledCheckmark
                     color={template.status === 'APPROVED' ? 'green' : 'red'}
                   />
+                  <H2Title title={template.name} />
                 </StyledTemplateHeader>
-                <p>
+                <p style={{ margin: 0, marginBottom: 8 }}>
                   {template.components
                     .map((component) => component.text)
                     .join(', ')}

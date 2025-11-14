@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,8 @@ import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.mod
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CheckExpiredSubscriptionsJob } from 'src/engine/core-modules/billing/crons/jobs/billing-check-expired-subscriptions.job';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -15,8 +17,13 @@ import { ChatMessageManagerModule } from 'src/engine/core-modules/chat-message-m
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+/* @kvoip-woulz proprietary:begin */
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
+import { ProcessBolepixChargeJob } from 'src/engine/core-modules/inter/jobs/process-bolepix-charge.job';
+/* @kvoip-woulz proprietary:end */
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -45,7 +52,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, BillingSubscription]),
+    TypeOrmModule.forFeature([
+      Workspace,
+      BillingSubscription,
+      BillingCharge,
+      BillingCustomer,
+    ]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -72,8 +84,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MessageQueueModule,
     TriggerModule,
     ServerlessFunctionModule,
+    /* @kvoip-woulz proprietary:begin */
     ClientChatMessageModule,
     ChatMessageManagerModule,
+    InterModule,
+    forwardRef(() => PaymentModule),
+    /* @kvoip-woulz proprietary:end */
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
@@ -82,7 +98,10 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
+    /* @kvoip-woulz proprietary:begin */
     CheckExpiredSubscriptionsJob,
+    ProcessBolepixChargeJob,
+    /* @kvoip-woulz proprietary:end */
     FileService,
     JwtService,
     JwtWrapperService,

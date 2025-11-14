@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { Logger, Scope } from '@nestjs/common';
 import { TypeEmissionNFEnum } from 'src/engine/core-modules/financial-closing/constants/type-emission-nf.constants';
 import { CompanyFinancialClosingJobData } from 'src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job';
@@ -82,7 +82,6 @@ export class RunCompanyFinancialClosingJobProcessor {
           {
             chargeId: charge.id,
             completedBoletoIssuance: true,
-            // status: FinancialClosingExecutionStatusEnum.SUCCESS,
           },
         );
 

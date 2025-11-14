@@ -1,5 +1,8 @@
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import {
+  IconAlertCircle,
   IconMaximize,
   IconMinimize,
   IconPlayerPauseFilled,
@@ -20,7 +23,6 @@ const StyledVideoWrapper = styled.div<{ isPending: boolean }>`
 `;
 
 const StyledTime = styled.p`
-  color: ${({ theme }) => theme.font.color.inverted};
   min-width: 30px;
   @keyframes appear {
     0% {
@@ -61,6 +63,7 @@ const StyledVideo = styled.video`
   max-width: 240px;
   overflow: hidden;
   width: 300px;
+  height: 100%;
 `;
 
 const StyledOverlay = styled.div`
@@ -93,7 +96,7 @@ const StyledBottomBar = styled.div`
   justify-content: center;
   gap: 8px;
   padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px);
   pointer-events: auto;
   border-radius: ${({ theme }) => theme.spacing(3)};
@@ -101,14 +104,22 @@ const StyledBottomBar = styled.div`
 `;
 
 const StyledIconButton = styled(IconButton)`
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px);
   border: none;
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: 50%;
   aspect-ratio: 1/1;
-  height: 40px;
-  width: 40px;
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StyledError = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: 0px ${({ theme }) => theme.spacing(4)};
+  opacity: 0.5;
 `;
 
 const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
@@ -121,6 +132,9 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
   const [showControls, setShowControls] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const hideControlsTimeoutRef = useRef<number | null>(null);
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
+  const [loadFailed, setLoadFailed] = useState<boolean>();
 
   const videoRef = useRef<HTMLVideoElement | null>();
   const isPending =
@@ -231,78 +245,91 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
       onMouseMove={handleUserActivity}
       onTouchStart={handleUserActivity}
     >
-      <StyledVideo
-        src={message.attachmentUrl ?? ''}
-        ref={videoRef as LegacyRef<HTMLVideoElement>}
-        playsInline
-        muted={false}
-      />
-      <StyledOverlay
-        style={{
-          opacity: showControls ? 1 : 0,
-          transition: 'opacity 150ms ease',
-        }}
-      >
-        <StyledCenterControls>
-          <StyledIconButton
-            Icon={isPlaying ? IconPlayerPauseFilled : IconPlayerPlayFilled}
-            onClick={() => {
-              if (!videoRef.current) return;
-              if (!isPlaying) {
-                videoRef.current.play();
-                setIsPlaying(true);
-                return;
-              }
-              videoRef.current.pause();
-              setIsPlaying(false);
+      {!loadFailed ? (
+        <>
+          <StyledVideo
+            src={message.attachmentUrl ?? ''}
+            ref={videoRef as LegacyRef<HTMLVideoElement>}
+            playsInline
+            muted={false}
+            onError={() => setLoadFailed(true)}
+          />
+          <StyledOverlay
+            style={{
+              opacity: showControls ? 1 : 0,
+              transition: 'opacity 150ms ease',
             }}
-            variant="tertiary"
-            disabled={isPending}
-          />
-        </StyledCenterControls>
-        <StyledBottomBar>
-          <StyledScrubber
-            type="range"
-            min={0}
-            max={duration || 0}
-            value={currentTime}
-            step={0.01}
-            aria-valuenow={currentTime}
-            aria-valuemax={duration || 0}
-            aria-valuemin={0}
-            onChange={(e) => {
-              if (videoRef.current) {
-                const newTime = Number(e.target.value);
-                videoRef.current.currentTime = newTime;
-                setCurrentTime(newTime);
-                if (!userInteracted) setUserInteracted(true);
-              }
-            }}
-            disabled={isPending || !hasResolvedDuration || !isFinite(duration)}
-          />
-          <StyledIconButton
-            Icon={isFullscreen ? IconMinimize : IconMaximize}
-            onClick={toggleFullscreen}
-            variant="tertiary"
-            disabled={isPending}
-          />
-          {!isPending && (
-            <StyledTime>
-              {!isPlaying ? (
-                <>
-                  {Math.floor((duration ?? 0) / 60)}:
-                  {String((duration % 60).toFixed(0)).padStart(2, '0')}
-                </>
-              ) : (
-                <>
-                  {Math.floor(currentTime / 60)}:
-                  {String((currentTime % 60).toFixed(0)).padStart(2, '0')}
-                </>
+          >
+            <StyledCenterControls>
+              <StyledIconButton
+                Icon={isPlaying ? IconPlayerPauseFilled : IconPlayerPlayFilled}
+                onClick={() => {
+                  if (!videoRef.current) return;
+                  if (!isPlaying) {
+                    videoRef.current.play();
+                    setIsPlaying(true);
+                    return;
+                  }
+                  videoRef.current.pause();
+                  setIsPlaying(false);
+                }}
+                variant="tertiary"
+                disabled={isPending}
+                size="medium"
+              />
+            </StyledCenterControls>
+            <StyledBottomBar>
+              <StyledScrubber
+                type="range"
+                min={0}
+                max={duration || 0}
+                value={currentTime}
+                step={0.01}
+                aria-valuenow={currentTime}
+                aria-valuemax={duration || 0}
+                aria-valuemin={0}
+                onChange={(e) => {
+                  if (videoRef.current) {
+                    const newTime = Number(e.target.value);
+                    videoRef.current.currentTime = newTime;
+                    setCurrentTime(newTime);
+                    if (!userInteracted) setUserInteracted(true);
+                  }
+                }}
+                disabled={
+                  isPending || !hasResolvedDuration || !isFinite(duration)
+                }
+              />
+              <StyledIconButton
+                Icon={isFullscreen ? IconMinimize : IconMaximize}
+                onClick={toggleFullscreen}
+                variant="tertiary"
+                disabled={isPending}
+              />
+              {!isPending && (
+                <StyledTime>
+                  {!isPlaying ? (
+                    <>
+                      {Math.floor((duration ?? 0) / 60)}:
+                      {String((duration % 60).toFixed(0)).padStart(2, '0')}
+                    </>
+                  ) : (
+                    <>
+                      {Math.floor(currentTime / 60)}:
+                      {String((currentTime % 60).toFixed(0)).padStart(2, '0')}
+                    </>
+                  )}
+                </StyledTime>
               )}
-            </StyledTime>
-          )}
-        </StyledBottomBar>
-      </StyledOverlay>
+            </StyledBottomBar>
+          </StyledOverlay>
+        </>
+      ) : (
+        <StyledError>
+          <IconAlertCircle size={24} />
+          <p>{t`Failed to load video. The file may be too large or corrupted.`}</p>
+        </StyledError>
+      )}
     </StyledVideoWrapper>
   );
 };

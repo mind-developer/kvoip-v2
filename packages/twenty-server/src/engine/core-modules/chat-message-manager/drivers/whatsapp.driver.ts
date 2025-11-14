@@ -1,15 +1,12 @@
 /* @kvoip-woulz proprietary */
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
-import { execFile as _execFile } from 'child_process';
-import { ffmpegPath, ffprobePath } from 'ffmpeg-ffprobe-static';
 import FormData from 'form-data';
-import { promises as fs } from 'fs';
-import os from 'os';
-import path from 'path';
 import { ChatProviderDriver } from 'src/engine/core-modules/chat-message-manager/drivers/interfaces/chat-provider-driver-interface';
+import { MediaHelperService } from 'src/engine/core-modules/chat-message-manager/services/media-helper.service';
 import { getMessageFields } from 'src/engine/core-modules/meta/whatsapp/utils/getMessageFields';
+import { parseAddressingMode } from 'src/engine/core-modules/meta/whatsapp/utils/parseAddressingMode';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ClientChatMessageService } from 'src/modules/client-chat-message/client-chat-message.service';
@@ -21,15 +18,17 @@ import {
   ChatMessageType,
   ClientChatMessage,
 } from 'twenty-shared/types';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 
 export class WhatsAppDriver implements ChatProviderDriver {
   private readonly META_API_URL: string;
+  private readonly logger = new Logger(WhatsAppDriver.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly environmentService: TwentyConfigService,
     private readonly clientChatMessageManagerService: ClientChatMessageService,
+    private readonly mediaHelperService: MediaHelperService,
   ) {
     this.META_API_URL = this.environmentService.get('META_API_URL');
   }
@@ -45,6 +44,11 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (lower.endsWith('.mp4')) return 'video/mp4';
     if (lower.endsWith('.mov')) return 'video/quicktime';
     if (lower.endsWith('.webm')) return 'audio/webm';
+    /* @kvoip-woulz proprietary:begin */
+    if (lower.endsWith('.xls')) return 'application/vnd.ms-excel';
+    if (lower.endsWith('.xlsx'))
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    /* @kvoip-woulz proprietary:end */
     return 'application/octet-stream';
   }
 
@@ -71,87 +75,15 @@ export class WhatsAppDriver implements ChatProviderDriver {
       }
     })();
 
-    let uploadBuffer = Buffer.from(downloadResponse.data);
-    let uploadContentType = contentType;
-
-    const isWebmContent =
-      uploadContentType.includes('webm') ||
-      filenameFromUrl.toLowerCase().endsWith('.webm');
-
-    if (isWebmContent && ffmpegPath && ffprobePath) {
-      const execFile = (await import('node:util')).promisify(_execFile);
-
-      const tmpDir = os.tmpdir();
-      const inputPath = path.join(tmpDir, `${uuidv4()}.webm`);
-      await fs.writeFile(inputPath, uploadBuffer);
-
-      const probeArgs = [
-        '-v',
-        'error',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream=codec_type',
-        '-of',
-        'json',
-        inputPath,
-      ];
-      let hasVideo = false;
-      try {
-        const { stdout } = await execFile(ffprobePath as string, probeArgs);
-        const json = JSON.parse(stdout || '{}');
-        hasVideo = Array.isArray(json.streams) && json.streams.length > 0;
-      } catch {
-        hasVideo = false;
-      }
-
-      const outputExt = hasVideo ? '.mp4' : '.ogg';
-      const outputMime = hasVideo ? 'video/mp4' : 'audio/ogg; codecs=opus';
-      const outputPath = path.join(tmpDir, `${uuidv4()}${outputExt}`);
-
-      const ffmpegArgs = hasVideo
-        ? [
-            '-i',
-            inputPath,
-            '-c:v',
-            'libx264',
-            '-c:a',
-            'aac',
-            '-movflags',
-            '+faststart',
-            outputPath,
-          ]
-        : [
-            '-i',
-            inputPath,
-            '-vn',
-            '-c:a',
-            'libopus',
-            '-b:a',
-            '96k',
-            '-vbr',
-            'on',
-            '-application',
-            'voip',
-            outputPath,
-          ];
-
-      try {
-        await execFile(ffmpegPath as string, ffmpegArgs);
-        const converted = await fs.readFile(outputPath);
-        uploadBuffer = converted;
-        uploadContentType = outputMime;
-        filenameFromUrl = filenameFromUrl.replace(/\.webm$/i, outputExt);
-      } finally {
-        // cleanup
-        try {
-          await fs.unlink(inputPath);
-        } catch {}
-        try {
-          await fs.unlink(outputPath);
-        } catch {}
-      }
-    }
+    const convertedMedia =
+      await this.mediaHelperService.convertMediaForWhatsApp(
+        Buffer.from(downloadResponse.data),
+        contentType,
+        filenameFromUrl,
+      );
+    const uploadBuffer = convertedMedia.buffer;
+    const uploadContentType = convertedMedia.contentType;
+    filenameFromUrl = convertedMedia.filename;
 
     const formData = new FormData();
     formData.append('messaging_product', 'whatsapp');
@@ -177,7 +109,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     providerIntegrationId: string,
     clientChat: ClientChatWorkspaceEntity,
   ) {
-    console.log('clientChatMessage', clientChatMessage);
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
@@ -199,7 +130,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     };
 
     const fields = await getMessageFields(clientChatMessage, clientChat);
-    console.log('fields', JSON.stringify(fields, null, 2));
 
     try {
       // Se houver mídia por link, fazer upload para o Meta e trocar por id
@@ -217,20 +147,65 @@ export class WhatsAppDriver implements ChatProviderDriver {
         const caption = fields[fields.type]?.caption;
         fields[fields.type] = { id: mediaId, ...(caption ? { caption } : {}) };
       }
+      /* @kvoip-woulz proprietary:begin */
+      let primaryAddressingMode: string;
+      if (apiType === 'MetaAPI') {
+        fields.to = clientChat.providerContactId;
+        primaryAddressingMode = clientChat.providerContactId;
+      } else {
+        const addressingInfo = parseAddressingMode(fields.to);
+        if (addressingInfo.primaryType === 'lid') {
+          primaryAddressingMode = addressingInfo.lid;
+          fields.to = addressingInfo.lid;
+        } else {
+          primaryAddressingMode = addressingInfo.phoneNumber;
+          fields.to = addressingInfo.phoneNumber;
+        }
+      }
+      /* @kvoip-woulz proprietary:end */
+      if (clientChatMessage.repliesTo) {
+        const repliesToMessage = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+            workspaceId,
+            'clientChatMessage',
+          )
+        ).findOne({ where: { id: clientChatMessage.repliesTo } });
+
+        if (apiType === 'MetaAPI') {
+          if (repliesToMessage) {
+            fields.context = {
+              message_id: repliesToMessage.providerMessageId,
+            };
+          }
+          const response = await axios.post(metaUrl, fields, { headers });
+          return response.data.messages[0].id;
+        }
+        if (repliesToMessage) {
+          fields.quoted = {
+            key: {
+              remoteJid: primaryAddressingMode,
+              fromMe: false,
+              id: repliesToMessage.providerMessageId,
+              type: repliesToMessage.type,
+            },
+            message: {
+              conversation: clientChatMessage.textBody,
+            },
+          };
+        }
+      }
 
       if (apiType === 'MetaAPI') {
         const response = await axios.post(metaUrl, fields, { headers });
         return response.data.messages[0].id;
       }
-      const primaryAddressingMode = fields.to
-        .split('&')[0]
-        .replace('primary=', '');
-      fields.to = primaryAddressingMode;
 
       const response = await axios.post(baileysUrl, { fields });
       return response.data.messages[0].id;
     } catch (error) {
-      throw new InternalServerErrorException(JSON.stringify(error, null, 2));
+      throw new InternalServerErrorException(
+        error.response?.data?.error?.message || 'Could not send message',
+      );
     }
   }
 
@@ -239,9 +214,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     workspaceId: string,
     providerIntegrationId: string,
   ) {
-    const primaryAddressingMode = clientChatMessage.to
-      .split('&')[0]
-      .replace('primary=', '');
     const clientChat = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatWorkspaceEntity>(
         workspaceId,
@@ -251,7 +223,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (!clientChat) {
       throw new Error('Client chat not found');
     }
-    clientChatMessage.to = primaryAddressingMode;
     const integration = await (
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
         workspaceId,
@@ -279,30 +250,16 @@ export class WhatsAppDriver implements ChatProviderDriver {
     if (!template) {
       throw new Error('Template not found');
     }
+    this.logger.log({ template });
     const message = {
       ...clientChatMessage,
       textBody: template.components
         .map((component: any) => component.text)
         .join(' '),
       type: ChatMessageType.TEXT,
-      deliveryStatus: ChatMessageDeliveryStatus.DELIVERED,
+      deliveryStatus: ChatMessageDeliveryStatus.SENT,
+      providerMessageId: template.id + '-' + v4(),
     };
-
-    await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-        workspaceId,
-        'clientChatMessage',
-      )
-    ).save(message);
-
-    await this.clientChatMessageManagerService.publishMessageCreated(
-      {
-        ...message,
-        createdAt: new Date().toISOString(),
-      },
-      clientChatMessage.clientChatId,
-      workspaceId,
-    );
 
     const fields: any = {
       messaging_product: 'whatsapp',
@@ -325,6 +282,21 @@ export class WhatsAppDriver implements ChatProviderDriver {
 
     try {
       const response = await axios.post(url, fields, { headers });
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+        )
+      ).save(message);
+
+      await this.clientChatMessageManagerService.publishMessageCreated(
+        {
+          ...message,
+          createdAt: new Date().toISOString(),
+        },
+        clientChatMessage.clientChatId,
+        workspaceId,
+      );
       return response.data.messages[0].id;
     } catch (error) {
       const axiosErr = error as AxiosError<any>;
@@ -335,7 +307,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
         message: axiosErr.message,
       };
       throw new InternalServerErrorException(
-        `Failed to send template message: ${JSON.stringify(details)}`,
+        `Failed to send template message: ${JSON.stringify(details.data.error.message)}`,
       );
     }
   }

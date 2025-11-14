@@ -17,9 +17,8 @@ export class ChatMessageManagerSetAbandonedCronJob {
 
   @Process(ChatMessageManagerSetAbandonedCronJob.name)
   async handle({
-    chatId,
+    clientChatId,
     workspaceId,
-    clientChat,
   }: ChatMessageManagerSetAbandonedCronJobData) {
     if (!this.hasRunOnce) {
       this.hasRunOnce = true;
@@ -28,11 +27,11 @@ export class ChatMessageManagerSetAbandonedCronJob {
       );
       return;
     }
+    this.logger.warn(`Executing abandonment for chat ${clientChatId}`);
     this.chatMessageManagerService.executeAbandonment(
-      chatId,
+      clientChatId,
       workspaceId,
-      clientChat,
     );
-    this.logger.warn(`Chat ${chatId} marked as abandoned`);
+    this.logger.warn(`Chat ${clientChatId} marked as abandoned`);
   }
 }

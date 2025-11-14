@@ -5,6 +5,9 @@ export enum AppPath {
   SignInUp = '/welcome',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
+  // @kvoip-woulz proprietary:begin
+  Recharge = '/recharge',
+  // @kvoip-woulz proprietary:end
 
   // Onboarding
   CreateWorkspace = '/create/workspace',

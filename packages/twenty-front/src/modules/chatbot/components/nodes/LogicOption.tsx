@@ -11,7 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconTrash, Label, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -21,6 +21,8 @@ interface LogicOptionProps {
   onDelete: () => void;
   onUpdate: (updates: NewLogicNodeData) => void;
   showDeleteButton?: boolean;
+  isConnectable?: boolean;
+  nodeId: string;
 }
 
 const StyledLogicNodeWrapper = styled.div`
@@ -28,7 +30,9 @@ const StyledLogicNodeWrapper = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
   position: relative;
-  margin-right: 5px;
+  width: 100%;
+  align-items: center;
+  min-height: 40px;
 `;
 
 const StyledSelect = styled(Select)`
@@ -57,6 +61,8 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   onDelete,
   onUpdate,
   showDeleteButton = true,
+  isConnectable = true,
+  nodeId,
 }) => {
   const { getIcon } = useIcons();
   const { records: sectors } = useFindManyRecords<
@@ -69,6 +75,10 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   const [recordType, setRecordType] = useState<RecordType>(
     condition.recordType ?? '',
   );
+
+  useEffect(() => {
+    setRecordType(condition.recordType ?? '');
+  }, [condition.recordType]);
 
   if (!sectors) return null;
 
@@ -91,7 +101,11 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   const handleTextBlur = () => {
     const trimmed = localMessage.trim();
     if (trimmed !== (condition.message ?? '').trim()) {
-      const updated = { ...condition, message: trimmed, recordType };
+      const updated = {
+        ...condition,
+        message: trimmed,
+        recordType: condition.recordType ?? recordType,
+      };
       onUpdate(updated);
     }
   };
@@ -102,14 +116,20 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
       const updated = {
         ...condition,
         sectorId: val.toString(),
-        recordType,
+        recordType: condition.recordType ?? recordType,
       };
       onUpdate(updated);
     }
   };
 
   return (
-    <div>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        minHeight: '40px',
+      }}
+    >
       <StyledOptionLabel>{condition.option}.</StyledOptionLabel>
       <StyledLogicNodeWrapper>
         {showDeleteButton && (
@@ -120,14 +140,18 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
         )}
         <StyledSelect
           label="Record"
-          dropdownId={`select-record-type-${condition.option}`}
+          dropdownId={`select-record-type-${condition.option}-${nodeId}`}
           options={recordTypeOptions}
           value={recordType}
-          onChange={(val) => setRecordType(val?.toString() as RecordType)}
+          onChange={(val) => {
+            const newRecordType = val?.toString() as RecordType;
+            setRecordType(newRecordType);
+            onUpdate({ ...condition, recordType: newRecordType });
+          }}
         />
         <StyledSelect
           label="Comparison"
-          dropdownId={`select-comparison-condition-${condition.option}`}
+          dropdownId={`select-comparison-condition-${condition.option}-${nodeId}`}
           options={comparisonOptions}
           value={condition.comparison}
           onChange={(val) => {
@@ -138,16 +162,10 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
           <>
             <StyledSelect
               label="Options"
-              dropdownId={`select-sector-condition-${condition.option}`}
+              dropdownId={`select-sector-condition-${condition.option}-${nodeId}`}
               options={sectorsOptions}
               value={condition.sectorId}
               onChange={handleSector}
-            />
-            <Handle
-              id={`b-${condition.option}`}
-              type="source"
-              position={Position.Right}
-              isConnectable={true}
             />
           </>
         )}
@@ -161,10 +179,10 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
               disabled={localMessage.length > 40}
             />
             <Handle
-              id={`b-${condition.option}`}
+              id={`b-${condition.option}-${nodeId}`}
               type="source"
               position={Position.Right}
-              isConnectable={true}
+              isConnectable={isConnectable}
               style={{ height: 10, width: 10 }}
             />
           </>

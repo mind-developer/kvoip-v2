@@ -14,16 +14,16 @@ import { ChargeService } from 'src/modules/charges/services/charge.service';
 
 import { ChargeEventListener } from './charge.listener';
 
-import { InterApiService } from './inter/services/inter-api.service';
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 
 @Module({
   imports: [
     FileModule,
     FileUploadModule,
     TypeOrmModule.forFeature([InterIntegration, Workspace]),
+    InterModule,
   ],
   providers: [
-    InterApiService,
     ChargeEventListener,
     ChargeService,
     ChageEmmitBillJob,
@@ -31,6 +31,6 @@ import { InterApiService } from './inter/services/inter-api.service';
     ChargeEmmitYearlyBillCronJob,
     ChargeEmmitRecurrentBillsCronCommand,
   ],
-  exports: [InterApiService, ChargeEmmitRecurrentBillsCronCommand],
+  exports: [ChargeEmmitRecurrentBillsCronCommand],
 })
 export class ChargeModule {}

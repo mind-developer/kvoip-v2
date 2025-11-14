@@ -28,12 +28,10 @@ const TextNode = ({
   }>
 >) => {
   const allNodes = useNodes();
-  const node: GenericNode = allNodes.filter(
-    (filterNode) => filterNode.id === id,
-  )[0];
+  const node = allNodes.find((node) => node.id === id) as GenericNode;
 
   const { updateNodeData } = useReactFlow();
-  const { saveDataValue } = useHandleNodeValue();
+  const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();
 
   const [titleValue, setTitleValue] = useState<string>(data.title);
   const [textValue, setTextValue] = useState<string>(data.text ?? '');
@@ -59,6 +57,11 @@ const TextNode = ({
 
       const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
       const sourceNodeData = sourceNode?.data || {};
+
+      /* @kvoip-woulz proprietary:begin */
+      // If the start node receives an incoming connection, set the previous node as the new start node
+      handleIncomingConnection(id, sourceNodeId, allNodes);
+      /* @kvoip-woulz proprietary:end */
 
       // Update current node with incoming connection info
       updateNodeData(id, {

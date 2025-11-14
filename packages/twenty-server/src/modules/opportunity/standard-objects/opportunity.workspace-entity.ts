@@ -33,6 +33,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -170,6 +171,20 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.ticket,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Ticket`,
+    description: msg``,
+    icon: 'IconHelpCircle',
+    inverseSideTarget: () => TicketWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  ticket: Relation<TicketWorkspaceEntity[]> | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,

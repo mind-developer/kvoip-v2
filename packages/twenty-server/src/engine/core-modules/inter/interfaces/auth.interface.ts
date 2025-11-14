@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export interface GetAuthTokenInput {
   client_id: string;
   client_secret: string;

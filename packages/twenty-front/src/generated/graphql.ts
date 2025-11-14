@@ -2290,11 +2290,6 @@ export type MutationInitiateOtpProvisioningArgs = {
   origin: Scalars['String'];
 };
 
-export type MutationLinkMemberToExtensionArgs = {
-  memberId: Scalars['ID'];
-  numberExtension: Scalars['String'];
-};
-
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
 };
@@ -2921,6 +2916,9 @@ export enum PermissionFlagType {
   WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
+  CLIENT_CHAT = 'CLIENT_CHAT',
+  INTERNAL_CHAT = 'INTERNAL_CHAT',
+  FINANCIAL_CLOSING = 'FINANCIAL_CLOSING',
 }
 
 export enum PermissionsOnAllObjectRecords {
@@ -3133,12 +3131,6 @@ export type QueryFindAllTelephonyIntegrationArgs = {
   workspaceId: Scalars['ID'];
 };
 
-export type QueryFindAllTelephonyIntegrationPaginatedArgs = {
-  limit?: Scalars['Int'];
-  page?: Scalars['Int'];
-  workspaceId: Scalars['ID'];
-};
-
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -3239,11 +3231,6 @@ export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
 };
 
-export type QueryGetExternalExtensionArgs = {
-  extNum?: InputMaybe<Scalars['String']>;
-  workspaceId: Scalars['ID'];
-};
-
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String'];
 };
@@ -3291,11 +3278,6 @@ export type QueryGetServerlessFunctionSourceCodeArgs = {
 
 export type QueryGetStripeIntegrationByIdArgs = {
   id: Scalars['String'];
-};
-
-export type QueryGetTelephonyByMemberArgs = {
-  memberId: Scalars['ID'];
-  workspaceId: Scalars['ID'];
 };
 
 export type QueryGetTelephonyCallFlowsArgs = {
@@ -3704,14 +3686,6 @@ export type Subscription = {
   onClientChatEvent: ClientChatEventDto;
   onClientMessageEvent: ClientMessageEventDto;
   onDbEvent: OnDbEventDto;
-};
-
-export type SubscriptionOnClientChatEventArgs = {
-  input: OnChatEventInput;
-};
-
-export type SubscriptionOnClientMessageEventArgs = {
-  input: OnChatMessageEventInput;
 };
 
 export type SubscriptionOnClientChatEventArgs = {

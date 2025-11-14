@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/create-inter-integration.input';

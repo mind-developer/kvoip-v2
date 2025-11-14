@@ -1242,6 +1242,10 @@ export class ConfigVariables {
   @IsOptional()
   ONESIGNAL_APP_ID: string;
 
+  @IsString()
+  @IsOptional()
+  BAILEYS_SERVER_URL: string;
+
   // Google Cloud Storage
   @IsString()
   @IsOptional()

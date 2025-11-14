@@ -1,6 +1,6 @@
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { createClient } from 'graphql-sse';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type ClientChat } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ON_CLIENT_CHAT_EVENT } from '../graphql/subscriptions/onClientChatEvent';
@@ -31,6 +31,29 @@ export const useClientChatSubscription = ({
 }: UseClientChatSubscriptionArgs) => {
   const tokenPair = getTokenPair();
 
+  // Use refs to store the latest callback functions
+  const onChatCreatedRef = useRef(onChatCreated);
+  const onChatUpdatedRef = useRef(onChatUpdated);
+  const onChatDeletedRef = useRef(onChatDeleted);
+  const onErrorRef = useRef(onError);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    onChatCreatedRef.current = onChatCreated;
+  }, [onChatCreated]);
+
+  useEffect(() => {
+    onChatUpdatedRef.current = onChatUpdated;
+  }, [onChatUpdated]);
+
+  useEffect(() => {
+    onChatDeletedRef.current = onChatDeleted;
+  }, [onChatDeleted]);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
   const sseClient = useMemo(() => {
     const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
@@ -38,32 +61,34 @@ export const useClientChatSubscription = ({
       url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       headers: {
         Authorization: token ? `Bearer ${token}` : '',
+        'X-Accel-Buffering': 'no',
+        // Connection: 'keep-alive',
       },
     });
   }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
 
-  const handleData = (data: any) => {
+  const handleData = useCallback((data: any) => {
     try {
       const { event, clientChat } = data.onClientChatEvent;
 
       switch (event) {
         case ClientChatEvent.CREATED:
-          onChatCreated?.(clientChat);
+          onChatCreatedRef.current?.(clientChat);
           break;
         case ClientChatEvent.UPDATED:
-          onChatUpdated?.(clientChat);
+          onChatUpdatedRef.current?.(clientChat);
           break;
         case ClientChatEvent.DELETED:
-          onChatDeleted?.(clientChat);
+          onChatDeletedRef.current?.(clientChat);
           break;
         default:
           console.log('Untreated event:', event);
       }
     } catch (error) {
       console.error('Error onClientChatEvent', error);
-      onError?.(error);
+      onErrorRef.current?.(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (skip) {
@@ -87,5 +112,5 @@ export const useClientChatSubscription = ({
     return () => {
       unsubscribe();
     };
-  }, [sectorId, handleData, onError, skip, sseClient]);
+  }, [sectorId, handleData, skip, sseClient]);
 };

@@ -106,7 +106,8 @@ export class FocusNFeIntegrationService {
 
     const createdFocusNfeIntegration = focusNFeRepository.create({
       ...validatedInput,
-      token: await this.encryptText(validatedInput.token),
+      // token: await this.encryptText(validatedInput.token),
+      token: validatedInput.token,
       taxRegime: taxRegimeEnum,
     });
 
@@ -208,9 +209,12 @@ export class FocusNFeIntegrationService {
 
     const validatedInput = await this.validateInput(updateInput, workspaceId);
 
-    if (validatedInput.token) {
-      validatedInput.token = await this.encryptText(validatedInput.token);
-    }
+    // if (validatedInput.token) {
+    //   validatedInput.token = await this.encryptText(validatedInput.token);
+    // }
+
+    this.logger.log(`validatedInput: ${JSON.stringify(validatedInput, null, 2)}`);
+    this.logger.log(`tok: ${validatedInput.token}`);
 
     const taxRegimeEnum = this.convertToTaxRegimeEnum(validatedInput.taxRegime);
 
@@ -371,6 +375,12 @@ export class FocusNFeIntegrationService {
       event,
       url: `${webhookUrl}/focus-nfe/webhook/${workspaceId}/${integrationId}/${event}`,
     };
+
+    this.logger.log(`baseUrl: ${baseUrl}`);
+    this.logger.log(`token: ${token}`);
+    this.logger.log(`workspaceId: ${workspaceId}`);
+    this.logger.log(`integrationId: ${integrationId}`);
+    this.logger.log(`webhookUrl: ${webhookUrl}`);
 
     try {
       const response = await axios.post(`${baseUrl}/hooks`, webhook, {

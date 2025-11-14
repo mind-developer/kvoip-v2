@@ -30,6 +30,7 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -195,6 +196,24 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('opportunity')
   opportunityId: string | null;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.ticket,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Ticket`,
+    description: msg`Attachment ticket`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => TicketWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  ticket: Relation<TicketWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('ticket')
+  ticketId: string | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.invoice,

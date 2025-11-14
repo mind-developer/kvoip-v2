@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { BadRequestException } from '@nestjs/common';
 import { isValidBrazilianState } from 'src/engine/core-modules/financial-closing/constants/nf-constants';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';

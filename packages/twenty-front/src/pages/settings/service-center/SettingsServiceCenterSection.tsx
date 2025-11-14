@@ -7,7 +7,6 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconIdBadge2,
-  IconMailCog,
   IconPhone,
   IconRobot,
   IconUsers,
@@ -55,13 +54,6 @@ export const SettingsServiceCenterSection = () => {
         >
           <SettingsNavigationCard Icon={IconPhone} title={'Telephony'}>
             {'Manage your telephony extension settings'}
-          </SettingsNavigationCard>
-        </UndecoratedLink>
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.ServiceCenterServiceLevel)}
-        >
-          <SettingsNavigationCard Icon={IconMailCog} title={'Service Level'}>
-            {'Set the maximum response time for customer support in minutes.'}
           </SettingsNavigationCard>
         </UndecoratedLink>
       </StyledCardsContainer>

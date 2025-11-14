@@ -1,54 +1,122 @@
+/* @kvoip-woulz proprietary */
 import { ChatCard } from '@/chat/client-chat/components/layout/ChatCard';
 import { ChatNavigationDrawerHeader } from '@/chat/client-chat/components/layout/ChatNavigationDrawerHeader';
 import { ChatNavigationDrawerTabs } from '@/chat/client-chat/components/layout/ChatNavigationDrawerTabs';
 import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
+import { NoChats } from '@/chat/error-handler/components/NoChats';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   ChatMessageType,
   type ClientChat,
   ClientChatStatus,
 } from 'twenty-shared/types';
+import { AppTooltip, IconSearch, TooltipDelay } from 'twenty-ui/display';
 import { type WorkspaceMember } from '~/generated/graphql';
+
+const DRAWER_MIN_WIDTH = 250;
+const DRAWER_DEFAULT_WIDTH = 450;
+const DRAWER_WIDTH_STORAGE_KEY = 'chat-navigation-drawer-width';
+export const CHAT_MIN_WIDTH = 450;
+
+const StyledChatNavigationDrawerWrapper = styled.div<{ width: number }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: ${({ width }) => width}px;
+  flex-shrink: 0;
+  height: 100%;
+  min-height: 100dvh;
+`;
 
 const StyledChatNavigationDrawerContainer = styled.div`
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
-  min-height: max-content;
-  min-width: 450px;
-  padding: 0 ${({ theme }) => theme.spacing(3)};
-  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(3)};
+  overflow: hidden;
+`;
+
+const StyledResizeHandle = styled.div`
+  bottom: 0;
+  cursor: col-resize;
+  position: absolute;
+  right: -3px;
+  top: 0;
+  width: 5px;
+  z-index: 1;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.quaternary};
+    &::after {
+      content: '';
+      display: block;
+      background-color: ${({ theme }) => theme.background.invertedPrimary};
+      position: absolute;
+      right: calc(50% - 1.5px);
+      top: calc(50% - 18px);
+      width: 3px;
+      height: 36px;
+      border-radius: ${({ theme }) => theme.border.radius.xl};
+    }
+  }
+
+  &:active {
+    background-color: ${({ theme }) => theme.border.color.strong};
+    &::after {
+      content: '';
+      display: block;
+      background-color: ${({ theme }) => theme.background.invertedPrimary};
+      position: absolute;
+      right: calc(50% - 1.5px);
+      top: calc(50% - 18px);
+      width: 3px;
+      height: 36px;
+      border-radius: ${({ theme }) => theme.border.radius.xl};
+    }
+  }
 `;
 
 const StyledTabListContainer = styled.div`
   align-items: center;
   margin-top: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  min-width: 450px;
+  height: 32px;
+  width: 100%;
+  font-weight: ${({ theme }) => theme.font.weight.medium} !important;
 `;
 
-const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
+const StyledChatsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)} 0;
-  height: 80dvh;
-  overflow-y: ${({ isScrollable }) => (isScrollable ? 'scroll' : 'unset')};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+const StyledAppTooltip = styled(AppTooltip)`
+  padding: ${({ theme }) => theme.spacing(1)} !important;
+  background-color: ${({ theme }) => theme.color.blue} !important;
 `;
 
 export const ChatNavigationDrawer = () => {
@@ -61,6 +129,157 @@ export const ChatNavigationDrawer = () => {
     'chat-navigation-drawer-tabs',
   );
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
+
+  const [drawerWidth, setDrawerWidth] = useState(() => {
+    const stored = localStorage.getItem(DRAWER_WIDTH_STORAGE_KEY);
+    return stored
+      ? Math.max(parseInt(stored, 10), DRAWER_MIN_WIDTH)
+      : DRAWER_DEFAULT_WIDTH;
+  });
+
+  const [isResizing, setIsResizing] = useState(false);
+  const [initialPointerX, setInitialPointerX] = useState<number | null>(null);
+  const [initialWidth, setInitialWidth] = useState<number | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number | null>(null);
+  const [tabListContainerWidth, setTabListContainerWidth] = useState<
+    number | undefined
+  >(undefined);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const tabListContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      if (wrapperRef.current?.parentElement) {
+        setContainerWidth(wrapperRef.current.parentElement.clientWidth);
+      }
+    };
+
+    let resizeObserver: ResizeObserver | null = null;
+    let isCleanedUp = false;
+
+    const setupObserver = () => {
+      if (isCleanedUp) return;
+
+      updateContainerWidth();
+
+      // Set up ResizeObserver after ensuring ref is available
+      resizeObserver = new ResizeObserver(() => {
+        if (!isCleanedUp) {
+          updateContainerWidth();
+        }
+      });
+
+      if (wrapperRef.current?.parentElement && !isCleanedUp) {
+        resizeObserver.observe(wrapperRef.current.parentElement);
+      }
+
+      window.addEventListener('resize', updateContainerWidth);
+    };
+
+    // Initial update after ref is set
+    const timeoutId = setTimeout(setupObserver, 0);
+
+    return () => {
+      isCleanedUp = true;
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', updateContainerWidth);
+      resizeObserver?.disconnect();
+    };
+  }, []);
+
+  const maxDrawerWidth = useMemo(() => {
+    if (containerWidth === null) return null;
+    return Math.max(DRAWER_MIN_WIDTH, containerWidth - CHAT_MIN_WIDTH);
+  }, [containerWidth]);
+
+  useEffect(() => {
+    if (maxDrawerWidth !== null && drawerWidth > maxDrawerWidth) {
+      setDrawerWidth(maxDrawerWidth);
+    }
+  }, [maxDrawerWidth, drawerWidth]);
+
+  useEffect(() => {
+    localStorage.setItem(DRAWER_WIDTH_STORAGE_KEY, drawerWidth.toString());
+  }, [drawerWidth]);
+
+  useEffect(() => {
+    const updateTabListContainerWidth = () => {
+      if (tabListContainerRef.current) {
+        setTabListContainerWidth(tabListContainerRef.current.clientWidth);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateTabListContainerWidth();
+    });
+
+    const timeoutId = setTimeout(() => {
+      if (tabListContainerRef.current) {
+        updateTabListContainerWidth();
+        resizeObserver.observe(tabListContainerRef.current);
+      }
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const handleResizeStart = useCallback<PointerEventListener>(
+    ({ x }) => {
+      setIsResizing(true);
+      setInitialPointerX(x);
+      setInitialWidth(drawerWidth);
+    },
+    [drawerWidth],
+  );
+
+  const handleResizeMove = useCallback<PointerEventListener>(
+    ({ x }) => {
+      if (!isResizing || initialPointerX === null || initialWidth === null)
+        return;
+      const deltaX = x - initialPointerX;
+      let newWidth = initialWidth + deltaX;
+
+      // Enforce minimum width
+      newWidth = Math.max(DRAWER_MIN_WIDTH, newWidth);
+
+      // Enforce maximum width (leave at least CHAT_MIN_WIDTH for chat component)
+      if (maxDrawerWidth !== null) {
+        newWidth = Math.min(newWidth, maxDrawerWidth);
+      }
+
+      setDrawerWidth(newWidth);
+    },
+    [isResizing, initialPointerX, initialWidth, maxDrawerWidth],
+  );
+
+  const handleResizeEnd = useCallback<PointerEventListener>(() => {
+    setIsResizing(false);
+    setInitialPointerX(null);
+    setInitialWidth(null);
+  }, []);
+
+  const handleDoubleClick = useCallback(() => {
+    let resetWidth = DRAWER_DEFAULT_WIDTH;
+
+    // Enforce minimum width
+    resetWidth = Math.max(DRAWER_MIN_WIDTH, resetWidth);
+
+    // Enforce maximum width (leave at least CHAT_MIN_WIDTH for chat component)
+    if (maxDrawerWidth !== null) {
+      resetWidth = Math.min(resetWidth, maxDrawerWidth);
+    }
+
+    setDrawerWidth(resetWidth);
+  }, [maxDrawerWidth]);
+
+  useTrackPointer({
+    shouldTrackPointer: isResizing,
+    onMouseMove: handleResizeMove,
+    onMouseUp: handleResizeEnd,
+  });
 
   const agent = workspaceMemberWithAgent?.agent;
   const { records: workspaceMembers } = useFindManyRecords<
@@ -130,6 +349,8 @@ export const ChatNavigationDrawer = () => {
         return '📄 Document';
       case ChatMessageType.VIDEO:
         return '🎥 Video';
+      case ChatMessageType.STICKER:
+        return '🌠 Sticker';
       default:
         return t`Click to open chat`;
     }
@@ -168,6 +389,44 @@ export const ChatNavigationDrawer = () => {
       ).length,
     },
   ];
+  if (workspaceMemberWithAgent?.agent?.isAdmin) {
+    tabs.push({
+      id: ClientChatStatus.FINISHED,
+      title: 'Finished',
+      incomingMessages: clientChats.filter(
+        (chat) => chat.status === ClientChatStatus.FINISHED,
+      ).length,
+    });
+  }
+
+  const tabTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    totals[ClientChatStatus.ASSIGNED] = clientChats.filter(
+      (chat) =>
+        chat.status === ClientChatStatus.ASSIGNED && chat.agentId === agent?.id,
+    ).length;
+
+    totals[ClientChatStatus.UNASSIGNED] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.UNASSIGNED,
+    ).length;
+
+    totals[ClientChatStatus.ABANDONED] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.ABANDONED,
+    ).length;
+
+    totals[ClientChatStatus.CHATBOT] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.CHATBOT,
+    ).length;
+
+    if (workspaceMemberWithAgent?.agent?.isAdmin) {
+      totals[ClientChatStatus.FINISHED] = clientChats.filter(
+        (chat) => chat.status === ClientChatStatus.FINISHED,
+      ).length;
+    }
+
+    return totals;
+  }, [clientChats, agent?.id, workspaceMemberWithAgent?.agent?.isAdmin]);
 
   const renderClientChats = useMemo(() => {
     if (!workspaceMemberWithAgent) {
@@ -230,25 +489,67 @@ export const ChatNavigationDrawer = () => {
           unreadMessagesCount={chat.unreadMessagesCount ?? 0}
           sectorName={currentUserIsAdmin ? sectorName : undefined}
           sectorIcon={currentUserIsAdmin ? sectorIcon : undefined}
+          integrationName={chat.whatsappIntegration?.name}
         />
       );
     });
   }, [filteredClientChats, openChatId, agent?.isAdmin, activeTabId]);
 
   return (
-    <StyledChatNavigationDrawerContainer>
-      <ChatNavigationDrawerHeader
-        searchInput={searchInput}
-        setSearchInput={setSearchInput}
-        onSortClick={onSortClick}
-        sortDirection={sortDirection}
+    <StyledChatNavigationDrawerWrapper ref={wrapperRef} width={drawerWidth}>
+      <StyledChatNavigationDrawerContainer>
+        <ChatNavigationDrawerHeader
+          onSortClick={onSortClick}
+          sortDirection={sortDirection}
+        />
+        <StyledTabListContainer ref={tabListContainerRef}>
+          <ChatNavigationDrawerTabs
+            loading={false}
+            tabs={tabs}
+            width={tabListContainerWidth}
+          />
+          {tabs.map((tab) => {
+            const totalCount = tabTotals[tab.id];
+            if (totalCount === undefined) return null;
+
+            return (
+              <StyledAppTooltip
+                key={`tooltip-${tab.id}`}
+                content={`${totalCount} chat${totalCount !== 1 ? 's' : ''}`}
+                anchorSelect={`[data-testid="tab-${tab.id}"]`}
+                place="top"
+                positionStrategy="fixed"
+                delay={TooltipDelay.shortDelay}
+                offset={1}
+              />
+            );
+          })}
+        </StyledTabListContainer>
+        <StyledChatsContainer>
+          <TextInput
+            LeftIcon={() => <IconSearch size={14} />}
+            placeholder={t`Search chats`}
+            value={searchInput}
+            onChange={(text: string) => setSearchInput(text)}
+          />
+          {renderClientChats && renderClientChats.length > 0 ? (
+            renderClientChats
+          ) : (
+            <NoChats />
+          )}
+        </StyledChatsContainer>
+      </StyledChatNavigationDrawerContainer>
+      <StyledResizeHandle
+        onMouseDown={(e) => {
+          e.preventDefault();
+          handleResizeStart({
+            x: e.clientX,
+            y: e.clientY,
+            event: e.nativeEvent,
+          });
+        }}
+        onDoubleClick={handleDoubleClick}
       />
-      <StyledTabListContainer>
-        <ChatNavigationDrawerTabs loading={false} tabs={tabs} />
-      </StyledTabListContainer>
-      <StyledChatsContainer isScrollable={filteredClientChats.length > 5}>
-        {renderClientChats}
-      </StyledChatsContainer>
-    </StyledChatNavigationDrawerContainer>
+    </StyledChatNavigationDrawerWrapper>
   );
 };

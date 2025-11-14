@@ -40,10 +40,10 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { SectorWorkspaceEntity } from 'src/modules/sector/standard-objects/sector.workspace-entity';
-import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TelephonyWorkspaceEntity } from 'src/modules/telephony/standard-objects/telephony.workspace-entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -107,7 +107,6 @@ export const baseStandardObjectMetadataDefinitions = [
   FinancialClosingExecutionWorkspaceEntity,
   CompanyFinancialClosingExecutionWorkspaceEntity,
   IntegrationWorkspaceEntity,
-  SupportWorkspaceEntity,
   FocusNFeWorkspaceEntity,
   InvoiceWorkspaceEntity,
   WhatsappIntegrationWorkspaceEntity,
@@ -117,6 +116,9 @@ export const baseStandardObjectMetadataDefinitions = [
   AgentWorkspaceEntity,
   ClientChatWorkspaceEntity,
   ClientChatMessageWorkspaceEntity,
+  /* @kvoip-woulz proprietary:begin */
+  TicketWorkspaceEntity,
+  /* @kvoip-woulz proprietary:end */
 ];
 
 /**

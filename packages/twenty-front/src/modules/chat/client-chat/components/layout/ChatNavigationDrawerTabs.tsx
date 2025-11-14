@@ -12,16 +12,19 @@ type ChatNavigationDrawerTabsProps = {
   tabs: TabItemProps[];
   loading?: boolean;
   className?: string;
+  width?: number;
 };
 
-const StyledTabList = styled(TabList)`
-  min-width: 450px;
+const StyledTabList = styled(TabList)<{ width?: number }>`
+  width: ${({ width }) => (width ? `${width}px` : '100%')};
+  gap: 0px !important;
 `;
 
 export const ChatNavigationDrawerTabs = ({
   tabs,
   loading,
   className,
+  width,
 }: ChatNavigationDrawerTabsProps) => {
   const transformedTabs: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -36,6 +39,7 @@ export const ChatNavigationDrawerTabs = ({
       className={className}
       componentInstanceId="chat-navigation-drawer-tabs"
       behaveAsLinks={false}
+      width={width}
     />
   );
 };

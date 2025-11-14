@@ -177,9 +177,33 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`;
+    /* @kvoip-woulz proprietary:begin */
+    const searchVectorColumnMetadata =
+      entityManager.metadata.findColumnWithPropertyName(
+        SEARCH_VECTOR_FIELD.name,
+      );
 
-    const tsRankExpr = `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`;
+    if (!searchVectorColumnMetadata) {
+      return [];
+    }
+
+    const searchVectorColumnName = `"${searchVectorColumnMetadata.databaseName}"`;
+
+    const buildSimpleTsQuery = (parameterName: string) =>
+      `to_tsquery('simple', :${parameterName})`;
+
+    const buildRankExpression = (
+      rankFn: 'ts_rank' | 'ts_rank_cd',
+      query: string,
+    ) => `${rankFn}(${searchVectorColumnName}, ${query})`;
+
+    const tsQuery = buildSimpleTsQuery('searchTerms');
+    const tsQueryOr = buildSimpleTsQuery('searchTermsOr');
+
+    const tsRankCDExpr = buildRankExpression('ts_rank_cd', tsQuery);
+
+    const tsRankExpr = buildRankExpression('ts_rank', tsQueryOr);
+    /* @kvoip-woulz proprietary:end */
 
     const cursorWhereCondition = this.computeCursorWhereCondition({
       after,
@@ -196,19 +220,21 @@ export class SearchService {
     if (isNonEmptyString(searchTerms)) {
       queryBuilder.andWhere(
         new Brackets((qb) => {
-          qb.where(
-            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
-            { searchTerms },
-          ).orWhere(
-            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
-            { searchTermsOr },
-          );
+          /* @kvoip-woulz proprietary:begin */
+          qb.where(`${searchVectorColumnName} @@ ${tsQuery}`, {
+            searchTerms,
+          }).orWhere(`${searchVectorColumnName} @@ ${tsQueryOr}`, {
+            searchTermsOr,
+          });
+          /* @kvoip-woulz proprietary:end */
         }),
       );
     } else {
       queryBuilder.andWhere(
         new Brackets((qb) => {
-          qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
+          /* @kvoip-woulz proprietary:begin */
+          qb.where(`${searchVectorColumnName} IS NOT NULL`);
+          /* @kvoip-woulz proprietary:end */
         }),
       );
     }

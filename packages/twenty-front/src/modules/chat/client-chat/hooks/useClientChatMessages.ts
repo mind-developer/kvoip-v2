@@ -1,18 +1,32 @@
+/* @kvoip-woulz proprietary */
 import { useClientChatMessageSubscription } from '@/chat/client-chat/hooks/useClientChatMessageSubscription';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { differenceInHours } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { type ClientChatMessage } from 'twenty-shared/types';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyExactDateTime } from '~/utils/date-utils';
 
 export const useClientChatMessages = (chatId: string) => {
   const { locale } = useRecoilValue(dateLocaleState);
-  const { timeZone, timeFormat } = useRecoilValue(dateTimeFormatState);
+  const { timeZone, timeFormat, dateFormat } =
+    useRecoilValue(dateTimeFormatState);
   const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const formatMessageDateTime = (messageDate: Date | string): string => {
+    const date = new Date(messageDate);
+    const now = new Date();
+    const hoursDiff = Math.abs(differenceInHours(now, date));
+
+    if (hoursDiff >= 24) {
+      return formatInTimeZone(date, timeZone, `${dateFormat} ${timeFormat}`);
+    }
+
+    return formatInTimeZone(date, timeZone, timeFormat);
+  };
   useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
     objectNameSingular: 'clientChatMessage',
     filter: { clientChatId: { eq: chatId } },
@@ -22,11 +36,8 @@ export const useClientChatMessages = (chatId: string) => {
       setDbMessages(
         data.map((message) => ({
           ...message,
-          createdAt: formatInTimeZone(
-            new Date(message.createdAt ?? ''),
-            timeZone,
-            timeFormat,
-          ),
+          createdAt: formatMessageDateTime(message.createdAt ?? ''),
+          textBody: message.textBody,
         })),
       );
       setLoading(false);
@@ -41,10 +52,8 @@ export const useClientChatMessages = (chatId: string) => {
         ...prev,
         {
           ...message,
-          createdAt: beautifyExactDateTime(
-            new Date(
-              message.createdAt?.replace(' ', 'T').replace(' ', '') ?? '',
-            ),
+          createdAt: formatMessageDateTime(
+            message.createdAt?.replace(' ', 'T').replace(' ', '') ?? '',
           ),
         },
       ]);
@@ -55,11 +64,7 @@ export const useClientChatMessages = (chatId: string) => {
           msg.providerMessageId === message.providerMessageId
             ? {
                 ...message,
-                createdAt: formatInTimeZone(
-                  new Date(message.createdAt ?? ''),
-                  timeZone,
-                  timeFormat,
-                ),
+                createdAt: formatMessageDateTime(message.createdAt ?? ''),
               }
             : msg,
         ),

@@ -17,7 +17,7 @@ const StyledSelectableList = styled(SelectableList)`
   z-index: 10;
 `;
 const StyledChatbotActionMenuContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};

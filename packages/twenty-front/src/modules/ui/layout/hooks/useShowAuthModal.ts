@@ -21,7 +21,12 @@ export const useShowAuthModal = () => {
       isMatchingLocation(location, AppPath.PlanRequired) ||
       isMatchingLocation(location, AppPath.PlanRequiredSuccess) ||
       isMatchingLocation(location, AppPath.BookCallDecision) ||
-      isMatchingLocation(location, AppPath.BookCall)
+      isMatchingLocation(location, AppPath.BookCall) ||
+
+      /* @kvoip-woulz proprietary:begin */
+      isMatchingLocation(location, AppPath.Recharge)
+      /* @kvoip-woulz proprietary:end */
+      
     ) {
       return true;
     }

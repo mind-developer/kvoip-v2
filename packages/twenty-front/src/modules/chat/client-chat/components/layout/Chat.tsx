@@ -2,6 +2,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { ChatMessageInput } from '@/chat/client-chat/components/input/ChatMessageInput';
 import { ChatHeader } from '@/chat/client-chat/components/layout/ChatHeader';
 import { ChatMessageRenderer } from '@/chat/client-chat/components/message/ChatMessageRenderer';
+import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
 import { MODAL_IMAGE_POPUP } from '@/chat/client-chat/constants/modalImagePopup';
 import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useClientChatMessages } from '@/chat/client-chat/hooks/useClientChatMessages';
@@ -11,6 +12,10 @@ import { NoSelectedChat } from '@/chat/error-handler/components/NoSelectedChat';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
@@ -40,17 +45,19 @@ const StyledChatContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
   padding-top: 0;
   width: 100%;
+  min-width: 400px;
 `;
 
 const StyledMessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0)};
-  max-width: 100%;
+  gap: ${({ theme }) => theme.spacing(0.5)};
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-inline: ${({ theme }) => theme.spacing(2)};
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
   padding-right: ${({ theme }) => theme.spacing(1.5)};
@@ -136,12 +143,20 @@ const StyledModalImage = styled.img`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 `;
 
+const CHAT_FOCUS_ID = 'chat-component';
+
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB
+
 export const Chat = () => {
   const { t } = useLingui();
   const { chatId } = useParams() || '';
   const { chats: clientChats } = useClientChatsContext();
   const { messages: dbMessages } = useClientChatMessages(chatId || '');
   const [messageInput, setMessageInput] = useState<string>('');
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.ClientChat,
@@ -170,12 +185,89 @@ export const Chat = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<
+    string | null
+  >(null);
+  const { openModal } = useModal();
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const userScrolledUpRef = useRef<boolean>(false);
+  const lastMessagesLengthRef = useRef<number>(0);
 
   const [lastMessage, setLastMessage] = useState<ClientChatMessage | null>(
     null,
   );
+
+  useEffect(() => {
+    pushFocusItemToFocusStack({
+      focusId: CHAT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.SIDE_PANEL,
+        instanceId: CHAT_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+    return () => {
+      removeFocusItemFromFocusStackById({ focusId: CHAT_FOCUS_ID });
+    };
+  }, [pushFocusItemToFocusStack, removeFocusItemFromFocusStackById]);
+
+  const scrollToBottom = useCallback(
+    (behavior: 'smooth' | 'instant' = 'smooth') => {
+      if (!chatContainerRef.current) return;
+
+      const container = chatContainerRef.current;
+
+      const performScroll = () => {
+        if (!container) return;
+
+        // Use scrollTop directly for more reliable scrolling
+        container.scrollTop = container.scrollHeight;
+
+        // Double-check with requestAnimationFrame to ensure it's at the bottom
+        requestAnimationFrame(() => {
+          if (!container) return;
+          const scrollTop = container.scrollTop;
+          const scrollHeight = container.scrollHeight;
+          const clientHeight = container.clientHeight;
+          const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+          // If not fully at bottom, scroll again
+          if (distanceFromBottom > 1) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
+      };
+
+      if (behavior === 'instant') {
+        container.scrollTo({
+          top: container.scrollHeight,
+          left: 0,
+          behavior: 'smooth',
+        });
+        // Also ensure it goes all the way after smooth animation
+        setTimeout(() => {
+          performScroll();
+        }, 300);
+      } else {
+        performScroll();
+      }
+    },
+    [],
+  );
+
+  const isNearBottom = useCallback(() => {
+    if (!chatContainerRef.current) return false;
+    const container = chatContainerRef.current;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    return distanceFromBottom < 100;
+  }, []);
 
   useEffect(() => {
     if (selectedChat?.id) {
@@ -184,25 +276,93 @@ export const Chat = () => {
         updateOneRecordInput: { unreadMessagesCount: 0 },
       });
     }
-  }, [selectedChat?.id]);
+    setReplyingTo(null);
+    userScrolledUpRef.current = false;
+    lastMessagesLengthRef.current = 0;
+
+    if (chatContainerRef.current && selectedChat?.id && dbMessages.length > 0) {
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+  }, [selectedChat?.id, scrollToBottom]);
+
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+
+    const container = chatContainerRef.current;
+
+    const handleScroll = () => {
+      if (!container) return;
+
+      const isNear = isNearBottom();
+
+      if (isNear) {
+        userScrolledUpRef.current = false;
+      } else {
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        const wasAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+
+        if (!wasAtBottom && scrollTop > 0) {
+          userScrolledUpRef.current = true;
+        }
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [isNearBottom]);
+
+  useEffect(() => {
+    if (!chatContainerRef.current || dbMessages.length === 0) {
+      lastMessagesLengthRef.current = dbMessages.length;
+      return;
+    }
+
+    const hasNewMessages = dbMessages.length > lastMessagesLengthRef.current;
+    let isDifferentLastMessage = false;
+
+    if (lastMessagesLengthRef.current > 0) {
+      const lastMessageId =
+        dbMessages[dbMessages.length - 1]?.providerMessageId;
+      const previousLastMessageId =
+        dbMessages[lastMessagesLengthRef.current - 1]?.providerMessageId;
+      isDifferentLastMessage = lastMessageId !== previousLastMessageId;
+    }
+
+    lastMessagesLengthRef.current = dbMessages.length;
+
+    if (
+      (hasNewMessages || isDifferentLastMessage) &&
+      !userScrolledUpRef.current
+    ) {
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+  }, [dbMessages, scrollToBottom]);
+
+  useEffect(() => {
+    if (chatContainerRef.current && dbMessages.length > 0) {
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (dbMessages.length > 0)
       setLastMessage(dbMessages[dbMessages.length - 1]);
   }, [dbMessages.length]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (chatContainerRef.current && selectedChat?.id) {
-        chatContainerRef.current.scrollTo({
-          top: chatContainerRef.current.scrollHeight + 500,
-          left: 0,
-          behavior: 'smooth',
-        });
-      }
-    }, 1000);
-    return () => clearTimeout(timeout);
-  }, [selectedChat?.id]);
 
   const sendAudioMessage = useCallback(
     async (chunks: Blob[]) => {
@@ -211,15 +371,23 @@ export const Chat = () => {
       });
       setRecordingState('none');
       setAudioStream(null);
-      const attachment = await uploadAttachmentFile(
-        new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
-          type: 'audio/webm',
-        }),
-        {
-          targetObjectNameSingular: 'person',
-          id: selectedChat?.person!.id || '',
-        },
-      );
+      const audioFile = new File([audioBlob], `${v4()}_${Date.now()}.webm`, {
+        type: 'audio/webm',
+      });
+      if (audioFile.size > MAX_FILE_SIZE) {
+        enqueueErrorSnackBar({
+          message: t`Audio file size exceeds the maximum limit of 16MB`,
+          options: {
+            detailedMessage: t`The audio file is ${(audioFile.size / (1024 * 1024)).toFixed(2)}MB, which exceeds the 16MB limit.`,
+          },
+        });
+        return;
+      }
+      /* @kvoip-woulz proprietary:end */
+      const attachment = await uploadAttachmentFile(audioFile, {
+        targetObjectNameSingular: 'person',
+        id: selectedChat?.person!.id || '',
+      });
       sendClientChatMessage({
         clientChatId: chatId!,
         from: workspaceMemberWithAgent?.agent?.id || '',
@@ -234,7 +402,7 @@ export const Chat = () => {
         textBody: null,
       });
     },
-    [selectedChat, chatId, workspaceMemberWithAgent],
+    [selectedChat, chatId, workspaceMemberWithAgent, enqueueErrorSnackBar, t],
   );
 
   const handleStartRecording = useCallback(async () => {
@@ -272,15 +440,89 @@ export const Chat = () => {
   }, [sendAudioMessage, enqueueErrorSnackBar, t]);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight + 1000,
-        behavior: 'smooth',
+    if (!chatContainerRef.current) return;
+
+    const container = chatContainerRef.current;
+    let lastScrollHeight = container.scrollHeight;
+
+    const scrollToBottomIfNear = () => {
+      if (!container || userScrolledUpRef.current) return;
+
+      const currentScrollHeight = container.scrollHeight;
+      const scrollTop = container.scrollTop;
+      const clientHeight = container.clientHeight;
+      const scrollBottom = scrollTop + clientHeight;
+
+      // If content height increased and we were near the bottom (within 400px), scroll to bottom
+      if (
+        currentScrollHeight > lastScrollHeight &&
+        scrollBottom >= lastScrollHeight - 400
+      ) {
+        scrollToBottom('smooth');
+      }
+
+      lastScrollHeight = currentScrollHeight;
+    };
+
+    const resizeObserver = new ResizeObserver(scrollToBottomIfNear);
+    resizeObserver.observe(container);
+
+    // Also listen for media load events to catch when images and videos load
+    const handleMediaLoad = () => {
+      scrollToBottomIfNear();
+    };
+
+    const attachMediaListeners = () => {
+      const images = container.querySelectorAll('img');
+      images.forEach((img) => {
+        if (!img.complete) {
+          img.addEventListener('load', handleMediaLoad, { once: true });
+        }
       });
-    }
-  }, [dbMessages.length]);
+
+      // Listen for video load events (videos need loadedmetadata to know dimensions)
+      const videos = container.querySelectorAll('video');
+      videos.forEach((video) => {
+        if (video.readyState < 1) {
+          // Use loadedmetadata event which fires when video dimensions are available
+          video.addEventListener('loadedmetadata', handleMediaLoad, {
+            once: true,
+          });
+          video.addEventListener('loadeddata', handleMediaLoad, { once: true });
+        }
+      });
+    };
+
+    attachMediaListeners();
+
+    // Use MutationObserver to catch dynamically added media
+    const mutationObserver = new MutationObserver(() => {
+      attachMediaListeners();
+      scrollToBottomIfNear();
+    });
+
+    mutationObserver.observe(container, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      const images = container.querySelectorAll('img');
+      images.forEach((img) => {
+        img.removeEventListener('load', handleMediaLoad);
+      });
+      const videos = container.querySelectorAll('video');
+      videos.forEach((video) => {
+        video.removeEventListener('loadedmetadata', handleMediaLoad);
+        video.removeEventListener('loadeddata', handleMediaLoad);
+      });
+    };
+  }, [selectedChat?.id, scrollToBottom]);
 
   const handleSendMessage = useCallback(async () => {
+    setReplyingTo(null);
     if (!chatContainerRef.current) return;
 
     if (recordingState === 'recording' && mediaRecorder) {
@@ -351,6 +593,13 @@ export const Chat = () => {
 
   const handleInputKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (messageInput.length >= 4096) {
+        enqueueErrorSnackBar({
+          message: t`Message length exceeds the maximum limit of 4096 characters`,
+        });
+        setMessageInput(messageInput.slice(0, 4096));
+        return;
+      }
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         if (messageInput.length > 0 || recordingState !== 'none') {
@@ -363,7 +612,8 @@ export const Chat = () => {
 
   const handleInputChange = useCallback(
     (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setMessageInput(ev.target.value);
+      const value = ev.target.value.slice(0, 4096);
+      setMessageInput(value);
     },
     [],
   );
@@ -373,23 +623,79 @@ export const Chat = () => {
     setIsModalOpen(true);
   }, []);
 
+  const scrollToMessage = useCallback(
+    (messageId: string) => {
+      if (!chatContainerRef.current) return;
+
+      const messageInArray = dbMessages.find(
+        (msg) =>
+          (msg as ClientChatMessage & { id?: string }).id === messageId ||
+          msg.providerMessageId === messageId,
+      );
+
+      if (!messageInArray) {
+        return;
+      }
+
+      const targetMessageId =
+        (messageInArray as ClientChatMessage & { id?: string }).id ||
+        messageInArray.providerMessageId;
+
+      const messageElement = chatContainerRef.current.querySelector(
+        `[data-message-id="${targetMessageId}"]`,
+      );
+
+      if (messageElement) {
+        setHighlightedMessageId(targetMessageId);
+
+        messageElement.scrollIntoView({
+          behavior: 'instant',
+          block: 'center',
+        });
+
+        const timeout = setTimeout(() => {
+          setHighlightedMessageId(null);
+        }, 3000);
+        return () => clearTimeout(timeout);
+      }
+    },
+    [dbMessages, highlightedMessageId],
+  );
+
   const renderedMessages = useMemo(() => {
     return dbMessages.map((message: ClientChatMessage, index: number) => {
-      const lastOfRow = dbMessages[index + 1]?.from !== message.from;
+      const lastOfRow =
+        dbMessages[index + 1]?.from !== message.from ||
+        dbMessages[index + 1]?.type === ChatMessageType.EVENT;
+      const messageId =
+        (message as ClientChatMessage & { id?: string }).id ||
+        message.providerMessageId;
+      const isHighlighted = highlightedMessageId === messageId;
       return (
         <ChatMessageRenderer
           key={message.providerMessageId || `message-${index}`}
           message={message}
           index={index}
-          isLastOfRow={lastOfRow}
           onImageClick={handleImageClick}
           animateDelay={(index * 0.05) / (dbMessages.length * 0.5)}
-          replyingTo={replyingTo}
-          setIsReplyingTo={(messageId: string) => setReplyingTo(messageId)}
+          setReplyingTo={(messageId: string | null) => setReplyingTo(messageId)}
+          onScrollToMessage={scrollToMessage}
+          isHighlighted={isHighlighted}
+          isLastOfRow={lastOfRow}
         />
       );
     });
-  }, [dbMessages, handleImageClick, setReplyingTo]);
+  }, [
+    dbMessages,
+    handleImageClick,
+    setReplyingTo,
+    scrollToMessage,
+    highlightedMessageId,
+  ]);
+
+  useEffect(() => {
+    scrollToBottom('smooth');
+  }, [replyingTo, scrollToBottom]);
 
   if (!selectedChat) {
     return <NoSelectedChat />;
@@ -404,7 +710,7 @@ export const Chat = () => {
           accent="blue"
           size="medium"
           onClick={() => {
-            alert('not implemented');
+            openModal(CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID);
           }}
         />
       );
@@ -423,6 +729,8 @@ export const Chat = () => {
           audioStream={audioStream}
           lastMessage={lastMessage}
           onSendMessage={handleSendMessage}
+          replyingTo={replyingTo}
+          setReplyingTo={(messageId: string | null) => setReplyingTo(messageId)}
         />
       );
     }
