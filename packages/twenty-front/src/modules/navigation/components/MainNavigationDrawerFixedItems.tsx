@@ -1,10 +1,10 @@
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
+
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -21,9 +21,10 @@ import {
   IconSparkles,
 } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { getAppPath } from '~/utils/navigation/getAppPath';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();
@@ -62,7 +63,9 @@ export const MainNavigationDrawerFixedItems = () => {
     );
   };
 
+  /* @kvoip-woulz proprietary:begin */
   const traceablePath = getNavigationPath('traceable');
+  /* @kvoip-woulz proprietary:end */
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
@@ -98,6 +101,8 @@ export const MainNavigationDrawerFixedItems = () => {
           }}
           Icon={IconSettings}
         />
+
+        {/* @kvoip-woulz proprietary:begin */}
         <ChatNavigationNavItem />
         <NavigationDrawerItem
           label="Dashboard links"
@@ -113,6 +118,7 @@ export const MainNavigationDrawerFixedItems = () => {
           }}
           Icon={IconLink}
         />
+        {/* @kvoip-woulz proprietary:end */}
       </>
     )
   );

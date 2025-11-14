@@ -5,6 +5,8 @@ import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seede
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
+import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { seedWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
@@ -16,6 +18,7 @@ type SeedCoreSchemaArgs = {
   seedBilling?: boolean;
   seedFeatureFlags?: boolean;
   seedOnboarding?: boolean;
+  seedPageLayouts?: boolean;
 };
 
 export const seedCoreSchema = async ({
@@ -25,6 +28,7 @@ export const seedCoreSchema = async ({
   seedBilling = true,
   seedFeatureFlags: shouldSeedFeatureFlags = true,
   seedOnboarding = true,
+  seedPageLayouts: shouldSeedPageLayouts = true,
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
@@ -51,5 +55,10 @@ export const seedCoreSchema = async ({
 
   if (seedOnboarding) {
     await seedOnboardingPlans(dataSource, schemaName);
+  }
+  
+  if (shouldSeedPageLayouts) {
+    await seedPageLayouts(dataSource, schemaName, workspaceId);
+    await seedPageLayoutWidgets(dataSource, schemaName, workspaceId);
   }
 };

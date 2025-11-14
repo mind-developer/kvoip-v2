@@ -5,17 +5,23 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { useBillingPaymentProvidersMap } from '@/billing/hooks/useBillingPaymentProvidersMap';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { billingState } from '@/client-config/states/billingState';
+
+/* @kvoip-woulz proprietary:begin */
 import { OnboardingInterChargeDataForm } from '@/onboarding/components/OnboardingInterChargeDataForm';
 import { useInterChargeDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
 import {
   OnboardingPlanStep,
   onboardingPlanStepState,
 } from '@/onboarding/states/onboardingPlanStepState';
+/* @kvoip-woulz proprietary:end */
+
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
@@ -240,6 +246,7 @@ export const ChooseYourPlan = () => {
                   </StyledLinkGroup>
                 </>
               );
+            /* @kvoip-woulz proprietary:begin */
             case OnboardingPlanStep.InterChargeData:
               return (
                 // eslint-disable-next-line react/jsx-props-no-spreading
@@ -250,6 +257,7 @@ export const ChooseYourPlan = () => {
                   />
                 </FormProvider>
               );
+            /* @kvoip-woulz proprietary:end */
           }
         })()
       ) : (

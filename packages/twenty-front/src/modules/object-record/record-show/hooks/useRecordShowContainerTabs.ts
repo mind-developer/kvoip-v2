@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconHome,
+  IconLayoutDashboard,
   IconMail,
   IconNotes,
   IconSettings,
@@ -243,14 +244,16 @@ export const useRecordShowContainerTabs = (
           files: null,
         },
       },
-      [CoreObjectNameSingular.Chatbot]: {
+
+      [CoreObjectNameSingular.Dashboard]: {
         hideSummaryAndFields: true,
+        hideFieldsInSidePanel: true,
         tabs: {
-          workflow: {
-            title: 'Flow',
-            position: 0,
-            Icon: IconSettings,
-            cards: [{ type: CardType.ChatbotCard }],
+          dashboard: {
+            title: 'Dashboard',
+            position: 101,
+            Icon: IconLayoutDashboard,
+            cards: [{ type: CardType.DashboardCard }],
             hide: {
               ifMobile: false,
               ifDesktop: false,
@@ -261,9 +264,14 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
-          fields: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
+
+      /* @kvoip-woulz proprietary:begin */
+
       [CoreObjectNameSingular.Traceable]: {
         hideSummaryAndFields: false,
         tabs: {
@@ -287,7 +295,7 @@ export const useRecordShowContainerTabs = (
           files: null,
         },
       },
-      /* @kvoip-woulz proprietary:begin */
+
       [CoreObjectNameSingular.AccountReceivable]: {
         hideSummaryAndFields: false,
         tabs: {
@@ -311,6 +319,7 @@ export const useRecordShowContainerTabs = (
           files: null,
         },
       },
+      
       [CoreObjectNameSingular.AccountPayable]: {
         hideSummaryAndFields: false,
         tabs: {
@@ -369,7 +378,9 @@ export const useRecordShowContainerTabs = (
             title,
             Icon,
             cards,
-            hide: !(isMobile || isInRightDrawer),
+            hide:
+              !(isMobile || isInRightDrawer) ||
+              recordLayout.hideFieldsInSidePanel,
           };
         }
 
@@ -441,7 +452,10 @@ export const useRecordShowContainerTabs = (
                 id: 'home',
                 title: 'Home',
                 Icon: IconHome,
-                cards: [...tab.cards, ...array[1].cards],
+                cards: [
+                  ...(tab.hide ? [] : tab.cards),
+                  ...(array[1].hide ? [] : array[1].cards),
+                ],
                 hide: false,
               },
             ];

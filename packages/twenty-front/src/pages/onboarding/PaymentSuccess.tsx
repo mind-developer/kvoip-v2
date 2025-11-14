@@ -1,15 +1,15 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSubscriptionStatusCard } from '@/onboarding/components/OnboarindPaymentStatusCard';
-import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { subscriptionStatusState } from '@/workspace/states/subscriptionStatusState';
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 

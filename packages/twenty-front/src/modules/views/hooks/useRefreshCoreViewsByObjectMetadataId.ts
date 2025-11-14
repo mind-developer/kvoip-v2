@@ -9,9 +9,8 @@ import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterable
 
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -71,7 +70,17 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             continue;
           }
 
-          if (!isDeeplyEqual(coreView.viewFields, existingView.viewFields)) {
+          if (
+            !isDeeplyEqual(
+              coreView.viewFields.map((viewField) =>
+                removePropertiesFromRecord(viewField, [
+                  'updatedAt',
+                  'createdAt',
+                ]),
+              ),
+              existingView.viewFields,
+            )
+          ) {
             const view = convertCoreViewToView(coreView);
             set(
               currentRecordFieldsComponentState.atomFamily({
@@ -111,7 +120,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                   view.id,
                 ),
               }),
-              mapViewSortsToSorts(view.viewSorts),
+              view.viewSorts,
             );
           }
         }

@@ -5,11 +5,13 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -23,14 +25,15 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 /* @kvoip-woulz proprietary:begin */
 import { AccountPayableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-payable.workspace-entity';
 import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
-/* @kvoip-woulz proprietary:end */
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
+import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
+/* @kvoip-woulz proprietary:end */
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { TicketWorkspaceEntity } from 'src/modules/ticket/ticket.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -213,7 +216,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('ticket')
   ticketId: string | null;
-  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.invoice,
@@ -247,7 +249,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('chatbot')
   chatbotId: string | null;
 
-  /* @kvoip-woulz proprietary:begin */
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.accountReceivable,
     type: RelationType.MANY_TO_ONE,
@@ -279,7 +280,30 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('accountPayable')
   accountPayableId: string | null;
+
   /* @kvoip-woulz proprietary:end */
+  
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Dashboard`,
+    description: msg`Attachment dashboard`,
+    icon: 'IconLayout',
+    inverseSideTarget: () => DashboardWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
+  @WorkspaceIsNullable()
+  dashboard: Relation<DashboardWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('dashboard')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
+  dashboardId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

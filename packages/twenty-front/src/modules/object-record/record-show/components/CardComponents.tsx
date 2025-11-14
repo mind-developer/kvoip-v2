@@ -7,6 +7,7 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { DashboardRenderer } from '@/dashboards/components/DashboardRenderer';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
@@ -222,6 +223,12 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     );
   },
 
+  [CardType.DashboardCard]: ({ targetableObject }) => {
+    return <DashboardRenderer recordId={targetableObject.id} />;
+  },
+
+  /* @kvoip-woulz proprietary:begin */
+
   [CardType.TraceableFieldsCard]: ({ targetableObject, isInRightDrawer }) => (
     <TraceableCardContainer isInRightDrawer={isInRightDrawer}>
       <TraceableFieldsCard
@@ -231,7 +238,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     </TraceableCardContainer>
   ),
 
-  /* @kvoip-woulz proprietary:begin */
   [CardType.AccountReceivableFieldsCard]: ({
     targetableObject,
     isInRightDrawer,
@@ -256,9 +262,10 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       />
     </AccountPayableCardContainer>
   ),
-  /* @kvoip-woulz proprietary:end */
 
   [CardType.ChatbotCard]: ({ targetableObject }) => (
     <ChatbotFlow targetableObjectId={targetableObject.id} />
   ),
+
+  /* @kvoip-woulz proprietary:end */
 };

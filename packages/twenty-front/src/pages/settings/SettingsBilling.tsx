@@ -8,7 +8,6 @@ import { SettingsBillingSwitchSubscriptionModal } from '@/settings/billing/compo
 import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
 import { useHandleUpdateSubscription } from '@/settings/billing/hooks/useHandleUpdateSubscription';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -23,6 +22,8 @@ import {
   IconCreditCard,
   IconDownload,
 } from 'twenty-ui/display';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
@@ -34,7 +35,6 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 const SWITCH_SUBSCRIPTION_CONFIRMATION_MODAL_ID =
@@ -73,7 +73,7 @@ export const SettingsBilling = () => {
     useSwitchSubscriptionToYearlyIntervalMutation();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: '/settings/billing',
+      returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
     skip: !hasSubscriptions,
   });

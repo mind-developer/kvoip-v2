@@ -63,36 +63,6 @@ msgstr "{fieldType} 필드는 고유할 수 없습니다."
 msgid "{name} should be in camelCase"
 msgstr "{name}는 camelCase 방식이어야 합니다."
 
-#. js-lingui-id: rMfEDH
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NF-Com"
-msgstr ""
-
-#. js-lingui-id: 4m+uYU
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NF-e"
-msgstr ""
-
-#. js-lingui-id: UE4fAy
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NFC-e"
-msgstr ""
-
-#. js-lingui-id: ou3zj5
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "% NFS-e"
-msgstr ""
-
-#. js-lingui-id: 3GTImX
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "A charge"
-msgstr ""
-
-#. js-lingui-id: g1e0e9
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "A chatbot"
-msgstr ""
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -123,16 +93,6 @@ msgstr "즐겨찾기 폴더"
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "관련 메시지 그룹(예: 이메일 스레드, 채팅 스레드)"
 
-#. js-lingui-id: vv+//q
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "A integration"
-msgstr ""
-
-#. js-lingui-id: qRZgwf
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "A integration of Focus NFe"
-msgstr ""
-
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -153,11 +113,6 @@ msgstr "노트 대상"
 msgid "A person"
 msgstr "사람"
 
-#. js-lingui-id: 5OWXGy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "A product that can be sold"
-msgstr ""
-
 #. js-lingui-id: Q2De+v
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "A role with this label already exists."
@@ -172,21 +127,6 @@ msgstr "작업"
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "작업 대상"
-
-#. js-lingui-id: j8ME+y
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "A telephony integration"
-msgstr ""
-
-#. js-lingui-id: L31GZg
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "A traceable link"
-msgstr ""
-
-#. js-lingui-id: J2VOcy
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "A whatsapp integration"
-msgstr ""
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -214,7 +154,6 @@ msgid "A workspace member"
 msgstr "워크스페이스 멤버"
 
 #. js-lingui-id: GDKKxT
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "액세스 토큰"
@@ -277,61 +216,6 @@ msgstr "회사 주소"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "회사 주소 - 새 주소 필드를 위해 더 이상 사용되지 않음"
 
-#. js-lingui-id: mzLRn0
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 1"
-msgstr ""
-
-#. js-lingui-id: uHnmpf
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 1 Value"
-msgstr ""
-
-#. js-lingui-id: 1Thico
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 2"
-msgstr ""
-
-#. js-lingui-id: AETrVw
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 2 Value"
-msgstr ""
-
-#. js-lingui-id: pdA/L1
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 3"
-msgstr ""
-
-#. js-lingui-id: z1lq0z
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 3 Value"
-msgstr ""
-
-#. js-lingui-id: wKpBcc
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 4"
-msgstr ""
-
-#. js-lingui-id: J+dbsk
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 4 Value"
-msgstr ""
-
-#. js-lingui-id: LjH/vW
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 5"
-msgstr ""
-
-#. js-lingui-id: VTeoWz
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Advanced Fowarding 5 Value"
-msgstr ""
-
-#. js-lingui-id: UczvGu
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Agent Id"
-msgstr ""
-
 #. js-lingui-id: ZfVqbP
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -357,21 +241,6 @@ msgstr "타임라인에 표시할 집계/필터링된 이벤트"
 msgid "All {objectLabelPlural}"
 msgstr "전체 {objectLabelPlural}"
 
-#. js-lingui-id: SuCnCO
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "All invoices issued by the company"
-msgstr ""
-
-#. js-lingui-id: UwV99B
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "All Workspaces"
-msgstr ""
-
-#. js-lingui-id: 1YIepZ
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "already issued. Ignoring new attachment processing."
-msgstr ""
-
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
@@ -394,11 +263,6 @@ msgstr "오류가 발생했습니다."
 msgid "An opportunity"
 msgstr "기회"
 
-#. js-lingui-id: NwudZq
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Annual Recurring Revenue"
-msgstr ""
-
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
@@ -410,19 +274,9 @@ msgstr "연간 반복 수익: 회사의 실제 또는 예상 연간 수익"
 msgid "Any field filter value"
 msgstr "어떤 필드 필터 값"
 
-#. js-lingui-id: KHn76P
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "API Type"
-msgstr ""
-
-#. js-lingui-id: UU5sRu
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "App ID"
-msgstr ""
-
-#. js-lingui-id: nFB1iz
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "App Key"
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
 msgstr ""
 
 #. js-lingui-id: DGW5iN
@@ -436,10 +290,10 @@ msgstr "승인된 액세스 도메인이 이메일 도메인과 일치하지 않
 msgid "Approved access domain has already been validated"
 msgstr "승인된 접근 도메인은 이미 검증되었습니다"
 
-#. js-lingui-id: KnfX8Z
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Area Code"
-msgstr ""
+#. js-lingui-id: 3EiOLz
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "ARR"
+msgstr "ARR"
 
 #. js-lingui-id: Ek7xGj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -456,42 +310,10 @@ msgstr "할당됨 전체 "
 msgid "Assignee"
 msgstr "담당자"
 
-#. js-lingui-id: QNoHjb
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated Agent Id"
-msgstr ""
-
-#. js-lingui-id: iM9x1n
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Associated Billing Subscription Id"
-msgstr ""
-
-#. js-lingui-id: j1ztQ8
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated extensionNumber"
-msgstr ""
-
-#. js-lingui-id: kuHzA6
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated User Document"
-msgstr ""
-
 #. js-lingui-id: Max2GU
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "연결된 사용자 ID"
-
-#. js-lingui-id: yPq0T3
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated User Phone"
-msgstr ""
-
-#. js-lingui-id: 6Umg7s
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "At least one NF percentage must be filled for the company (percentNfcom or percentNfse)"
-msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -508,30 +330,20 @@ msgstr "첨부 파일"
 msgid "Attachment author"
 msgstr "첨부 파일 작성자"
 
-#. js-lingui-id: sFV+tl
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment charge"
-msgstr ""
-
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "첨부 회사"
 
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr ""
+
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "첨부 파일 전체 경로"
-
-#. js-lingui-id: iOQ0Hj
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment integration"
-msgstr ""
-
-#. js-lingui-id: /PBN5G
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment invoice"
-msgstr ""
 
 #. js-lingui-id: wjocwa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -542,12 +354,6 @@ msgstr "첨부 파일 이름"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
 msgstr "첨부 파일 참고"
-
-#. js-lingui-id: ImUOau
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "Attachment of the invoice"
-msgstr ""
 
 #. js-lingui-id: YASWpH
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -574,9 +380,8 @@ msgstr "첨부 파일 유형"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
@@ -586,11 +391,6 @@ msgstr "첨부 파일"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Attachments created by the workspace member"
 msgstr "워크스페이스 멤버가 만든 첨부 파일"
-
-#. js-lingui-id: zGpqit
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Attachments linked to the charge"
-msgstr ""
 
 #. js-lingui-id: iVnA89
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -602,14 +402,9 @@ msgstr "회사에 연결된 첨부 파일"
 msgid "Attachments linked to the contact."
 msgstr "연락처에 연결된 첨부 파일."
 
-#. js-lingui-id: gQGDh8
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Attachments linked to the integration"
-msgstr ""
-
-#. js-lingui-id: YeiQsd
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Attachments linked to the Invoice"
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
 msgstr ""
 
 #. js-lingui-id: kw0mLu
@@ -643,12 +438,6 @@ msgstr "작성자"
 msgid "Authored attachments"
 msgstr "작성된 첨부 파일"
 
-#. js-lingui-id: r5qX8j
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "authorized successfully"
-msgstr ""
-
 #. js-lingui-id: cvSznK
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Automated Trigger Type"
@@ -670,9 +459,7 @@ msgid "Automatically create records for people you participated with in an event
 msgstr "이벤트에 함께 참여한 사람들에 대한 기록을 자동으로 생성"
 
 #. js-lingui-id: kfcRb0
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Avatar"
 msgstr "아바타"
 
@@ -680,26 +467,6 @@ msgstr "아바타"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "아바타 URL"
-
-#. js-lingui-id: +JxRA6
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Billing Model"
-msgstr ""
-
-#. js-lingui-id: FxWwYi
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Billing Models"
-msgstr ""
-
-#. js-lingui-id: 32aQy3
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Billing models linked to this execution"
-msgstr ""
-
-#. js-lingui-id: 9bpGMC
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Billing subscription Id"
-msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -724,16 +491,6 @@ msgstr "차단 목록"
 msgid "Body"
 msgstr "본문"
 
-#. js-lingui-id: 0aOQiG
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID"
-msgstr ""
-
-#. js-lingui-id: XTXVIh
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Business Account ID"
-msgstr ""
-
 #. js-lingui-id: 6+byWT
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
@@ -749,11 +506,6 @@ msgstr "상태별"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
 msgstr "캐시된 레코드 이름"
-
-#. js-lingui-id: p8jYea
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Calculated Charge Value"
-msgstr ""
 
 #. js-lingui-id: Nh6GTX
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -813,31 +565,6 @@ msgstr "캘린더 이벤트 참가자"
 msgid "Calendar events"
 msgstr "캘린더 이벤트"
 
-#. js-lingui-id: ZFHtt6
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Caller External ID"
-msgstr ""
-
-#. js-lingui-id: sq1PHM
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Campaign associated with the traffic"
-msgstr ""
-
-#. js-lingui-id: pZ8hvx
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Content"
-msgstr ""
-
-#. js-lingui-id: QieS3l
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Name"
-msgstr ""
-
-#. js-lingui-id: NrtXDZ
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Campaign Source"
-msgstr ""
-
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
@@ -889,29 +616,6 @@ msgstr "표준 필드 속성을 업데이트할 수 없습니다: {invalidProper
 msgid "Cannot update workflow version status manually"
 msgstr "워크플로우 버전 상태를 수동으로 업데이트할 수 없습니다"
 
-#. js-lingui-id: OVDhwb
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "CDR Integration ID"
-msgstr ""
-
-#. js-lingui-id: V9PU36
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "CEP"
-msgstr ""
-
-#. js-lingui-id: X8ziyh
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CEST"
-msgstr ""
-
-#. js-lingui-id: fsRh5D
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "CFOP"
-msgstr ""
-
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -923,186 +627,20 @@ msgstr "채널 ID"
 msgid "Channel Type"
 msgstr "채널 유형"
 
-#. js-lingui-id: VcWwIy
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Charge"
-msgstr ""
-
-#. js-lingui-id: +pX1ao
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge Action"
-msgstr ""
-
-#. js-lingui-id: 4aKU9p
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge discount"
-msgstr ""
-
-#. js-lingui-id: q2c50r
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Charge ID"
-msgstr ""
-
-#. js-lingui-id: al746C
-#: src/engine/core-modules/financial-closing/financial-closing-charge.service.ts
-msgid "Charge issued for company"
-msgstr ""
-
-#. js-lingui-id: etIadK
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Charge issued successfully"
-msgstr ""
-
-#. js-lingui-id: VFasyD
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge price"
-msgstr ""
-
-#. js-lingui-id: dU6fd4
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge product"
-msgstr ""
-
-#. js-lingui-id: TWox8y
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge quantity"
-msgstr ""
-
-#. js-lingui-id: ytwNBF
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge record position"
-msgstr ""
-
-#. js-lingui-id: r/9Qb2
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge recurrence"
-msgstr ""
-
-#. js-lingui-id: ciCuby
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charge request code"
-msgstr ""
-
-#. js-lingui-id: 86UtDt
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Charge Value"
-msgstr ""
-
-#. js-lingui-id: adaGCo
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Charge was not generated - null return from charge issuance service"
-msgstr ""
-
-#. js-lingui-id: Kb+0BT
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Charges"
-msgstr ""
-
-#. js-lingui-id: hlvAAR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Charges using this product"
-msgstr ""
-
-#. js-lingui-id: p+8Mxh
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbot"
-msgstr ""
-
-#. js-lingui-id: h2J5/Q
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbot record position"
-msgstr ""
-
-#. js-lingui-id: 9MCO4/
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Chatbots"
-msgstr ""
-
-#. js-lingui-id: W+HvlL
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Cidade"
-msgstr ""
-
 #. js-lingui-id: 3wV73y
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/focus-nfe/focus-nfe.service.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "City"
 msgstr "도시"
-
-#. js-lingui-id: 65dAD6
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Classification"
-msgstr ""
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "마감일"
 
-#. js-lingui-id: oF5MXh
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-msgid "Closing execution"
-msgstr ""
-
-#. js-lingui-id: bVcWKN
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CNAE Code"
-msgstr ""
-
-#. js-lingui-id: hurL0d
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CNPJ"
-msgstr ""
-
-#. js-lingui-id: /VVu5J
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "COFINS rate (%)"
-msgstr ""
-
-#. js-lingui-id: y++qct
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "COFINS rate. Example: 7.60"
-msgstr ""
-
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "색 구성표"
-
-#. js-lingui-id: tkkkyR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Commercial Unit"
-msgstr ""
-
-#. js-lingui-id: 5AkY7d
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Commercial unit. Example: UN"
-msgstr ""
 
 #. js-lingui-id: 07OSD1
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1114,118 +652,22 @@ msgstr "컴팩트 보기"
 msgid "Companies"
 msgstr "회사"
 
-#. js-lingui-id: 4qrz42
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Companies Total"
-msgstr ""
-
-#. js-lingui-id: lQ7o8t
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Companies with Error"
-msgstr ""
-
 #. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
 msgstr "회사"
 
-#. js-lingui-id: PJjJsM
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Company Financial Closing Execution"
-msgstr ""
-
-#. js-lingui-id: 6ZKvkp
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Company Financial Closing Executions"
-msgstr ""
-
-#. js-lingui-id: IQb5LL
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Company Financial Closing Executions linked to the charge"
-msgstr ""
-
-#. js-lingui-id: /GRpVD
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Company is missing required fields"
-msgstr ""
-
-#. js-lingui-id: TQzDDQ
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Company linked to the charge"
-msgstr ""
-
-#. js-lingui-id: ZwV4n3
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Company linked to the Invoice"
-msgstr ""
-
-#. js-lingui-id: yWSIMK
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Company linked to the products"
-msgstr ""
-
-#. js-lingui-id: RA55Iu
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Company name"
-msgstr ""
-
-#. js-lingui-id: zGbOVS
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Company Name"
-msgstr ""
-
 #. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "회사 기록 위치"
-
-#. js-lingui-id: zg1M9W
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "Company state is required to define the CFOP. (Configure in the company registration)"
-msgstr ""
-
-#. js-lingui-id: +g3vD1
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Complemento"
-msgstr ""
-
-#. js-lingui-id: nZmECt
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Completed Boleto Issuance"
-msgstr ""
-
-#. js-lingui-id: G6usDl
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Completed Company Search"
-msgstr ""
-
-#. js-lingui-id: RB1Xcb
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Completed Cost Identification"
-msgstr ""
-
-#. js-lingui-id: pvmZhS
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Completed Invoice Issuance"
-msgstr ""
 
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1258,12 +700,6 @@ msgstr "연결된 계정"
 msgid "Connected Accounts"
 msgstr "연결된 계정"
 
-#. js-lingui-id: jfC/xh
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Contact"
-msgstr ""
-
 #. js-lingui-id: bA6O5B
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1271,16 +707,12 @@ msgid "Contact auto creation policy"
 msgstr "연락처 자동 생성 정책"
 
 #. js-lingui-id: RnsmQs
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s avatar"
 msgstr "연락처의 아바타"
 
 #. js-lingui-id: pL+pqi
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s city"
 msgstr "연락처의 도시"
 
@@ -1290,11 +722,7 @@ msgid "Contact’s company"
 msgstr "연락처의 회사"
 
 #. js-lingui-id: ITlFIB
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "연락처 이메일"
 
@@ -1309,24 +737,17 @@ msgid "Contact’s Linkedin account"
 msgstr "연락처의 링크드인 계정"
 
 #. js-lingui-id: 6xPSVt
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s name"
 msgstr "연락처 이름"
 
 #. js-lingui-id: Y37CZ4
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s phone number"
 msgstr "연락처의 전화번호"
 
 #. js-lingui-id: zsW3gg
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "연락처 전화번호"
 
@@ -1335,41 +756,9 @@ msgstr "연락처 전화번호"
 msgid "Contact’s X/Twitter account"
 msgstr "연락처의 X/트위터 계정"
 
-#. js-lingui-id: 6cItrN
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Core schema workspace id"
-msgstr ""
-
-#. js-lingui-id: 6cItrN
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-msgid "Core schema workspace id"
-msgstr ""
-
-#. js-lingui-id: I99Miw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Cost"
-msgstr ""
-
-#. js-lingui-id: JNCzPW
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Country"
-msgstr ""
-
-#. js-lingui-id: iBn7DY
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "CPF"
-msgstr ""
-
-#. js-lingui-id: UuEIJ+
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "CPF or CNPJ identifier for the charge"
-msgstr ""
-
-#. js-lingui-id: NTBmQE
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "CPF/CNPJ"
+#. js-lingui-id: LZf/L8
+#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+msgid "Could not find flat entity in maps"
 msgstr ""
 
 #. js-lingui-id: NCIYDF
@@ -1378,9 +767,8 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "작성자"
@@ -1409,53 +797,16 @@ msgstr "생성 날짜/시간"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "크론 패턴 '{pattern}'이(가) 유효하지 않습니다"
 
-#. js-lingui-id: TsP8cw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST COFINS"
-msgstr ""
-
-#. js-lingui-id: K2hY1Z
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST ICMS/CSOSN"
-msgstr ""
-
-#. js-lingui-id: EE2l25
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST of COFINS. Example: 01"
-msgstr ""
-
-#. js-lingui-id: Qq1RhF
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST of PIS. Example: 01"
-msgstr ""
-
-#. js-lingui-id: gUSJXx
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "CST PIS"
-msgstr ""
-
-#. js-lingui-id: JLxg3N
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "CST/CSOSN"
-msgstr ""
-
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
 msgstr "사용자 지정 연결 매개변수"
 
-#. js-lingui-id: 876pfE
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Customer"
-msgstr ""
-
-#. js-lingui-id: 8bcj0/
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Customer linked to the charge"
-msgstr ""
-
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "대시보드"
 
@@ -1463,6 +814,11 @@ msgstr "대시보드"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "대시보드 페이지 레이아웃"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr ""
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -1473,17 +829,6 @@ msgstr "대시보드 제목"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
 msgstr "대시보드"
-
-#. js-lingui-id: njkQRL
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "data. Please check all required fields."
-msgstr ""
-
-#. js-lingui-id: c7DCdF
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Date and time of execution"
-msgstr ""
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1515,11 +860,6 @@ msgstr "기본값은 인용된 문자열이어야 합니다."
 msgid "Default values must be unique"
 msgstr "기본값은 고유해야 합니다."
 
-#. js-lingui-id: ECoy6l
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Defines how the company is billed: prepaid, postpaid, etc."
-msgstr ""
-
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Deleted at"
@@ -1536,52 +876,11 @@ msgstr "뷰가 컴팩트 모드인지 설명"
 msgid "Description"
 msgstr "설명"
 
-#. js-lingui-id: UTxCV4
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Destiny Mailbox All Calls or Offline"
-msgstr ""
-
-#. js-lingui-id: c/Wm8S
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Destiny Mailbox Busy"
-msgstr ""
-
-#. js-lingui-id: gRQSno
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "Details of the errors: "
-msgstr ""
-
-#. js-lingui-id: ZWOD86
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Dialing Plan"
-msgstr ""
-
 #. js-lingui-id: MRB7nI
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "방향"
-
-#. js-lingui-id: H6Ma8Z
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Discount"
-msgstr ""
-
-#. js-lingui-id: vhAbUY
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Discount value, can be a percentage or fixed amount depending on the discount type"
-msgstr ""
-
-#. js-lingui-id: TJoAEg
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Discrimination"
-msgstr ""
-
-#. js-lingui-id: Remmc1
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Discrimination of the services provided."
-msgstr ""
 
 #. js-lingui-id: 0gS7M5
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -1601,6 +900,16 @@ msgstr "레코드를 측면 패널 또는 레코드 페이지에 표시합니다
 msgid "Display Value"
 msgstr "표시 값"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr ""
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Domain is already registered as public domain"
+msgstr ""
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -1611,35 +920,15 @@ msgstr "도메인 이름"
 msgid "Due Date"
 msgstr "마감일"
 
-#. js-lingui-id: l6/poq
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Due Day for Bank Slip"
-msgstr ""
-
-#. js-lingui-id: dNFJ+f
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Due day for the company's bank slip (boleto) payments"
-msgstr ""
-
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "중복된 옵션 {field}"
 
-#. js-lingui-id: O3oNi5
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Email"
-msgstr ""
-
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
 msgstr "이메일이 이미 인증되었습니다."
-
-#. js-lingui-id: qmZkEO
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Email for Mailbox"
-msgstr ""
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1659,28 +948,14 @@ msgid "Email verification not required."
 msgstr "이메일 인증이 필요하지 않습니다."
 
 #. js-lingui-id: BXEcos
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Emails"
 msgstr "이메일"
-
-#. js-lingui-id: 7yPBS5
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "Emitter state is required to define the CFOP. (Configure in the FocusNFE integration)"
-msgstr ""
 
 #. js-lingui-id: gqv5ZL
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Employees"
 msgstr "직원"
-
-#. js-lingui-id: NAuCKq
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Enable Mailbox"
-msgstr ""
 
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1688,110 +963,20 @@ msgstr ""
 msgid "End Date"
 msgstr "종료 날짜"
 
-#. js-lingui-id: VND5UK
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Entity Type"
-msgstr ""
-
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "CLOUDFLARE_API_KEY 환경 변수가 정의되지 않으면 이 기능을 사용할 수 없습니다."
-
-#. js-lingui-id: e17foi
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error in charge API"
-msgstr ""
-
-#. js-lingui-id: 6F1IjS
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error in charge data validation"
-msgstr ""
-
-#. js-lingui-id: YXim9c
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "Error in the authorization of the invoice"
-msgstr ""
-
-#. js-lingui-id: kg5JSp
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "Error in the city of the emitter"
-msgstr ""
-
-#. js-lingui-id: GyuW9t
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "Error in the city of the provider"
-msgstr ""
-
-#. js-lingui-id: AViLL6
-#: src/modules/focus-nfe/focus-nfe.service.ts
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "Error in the city of the recipient"
-msgstr ""
-
-#. js-lingui-id: uZzk+H
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "Error in the communication with the Banco Inter. Verify the data provided and try again."
-msgstr ""
-
-#. js-lingui-id: ognm/F
-#: src/engine/core-modules/financial-closing/financial-closing-charge.service.ts
-msgid "Error to emit charge for company"
-msgstr ""
-
-#. js-lingui-id: 0nD/IO
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error to emit invoice"
-msgstr ""
-
-#. js-lingui-id: G7zxex
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error to emit invoice for the company"
-msgstr ""
-
-#. js-lingui-id: qAFX2I
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error to generate charge"
-msgstr ""
-
-#. js-lingui-id: Qobc89
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Error to generate charge for the company"
-msgstr ""
-
-#. js-lingui-id: 6U5IgU
-#: src/modules/focus-nfe/focus-nfe.service.ts
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "Error to search the city code"
-msgstr ""
-
-#. js-lingui-id: tyWdb0
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Error, warning or info logs during execution"
-msgstr ""
-
-#. js-lingui-id: hG0LEj
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Estado"
-msgstr ""
-
-#. js-lingui-id: VYKxBB
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event charge"
-msgstr ""
-
-#. js-lingui-id: dNnjfa
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event chatbot"
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr ""
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "이벤트 회사"
+
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr ""
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1811,16 +996,6 @@ msgstr "이벤트 외부 ID"
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "이벤트 ID"
-
-#. js-lingui-id: sRHSar
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event integration"
-msgstr ""
-
-#. js-lingui-id: C0+dX6
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event invoice"
-msgstr ""
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1854,11 +1029,6 @@ msgstr "이벤트 담당자"
 msgid "Event task"
 msgstr "이벤트 작업"
 
-#. js-lingui-id: wFwltV
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event traceable"
-msgstr ""
-
 #. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
@@ -1881,44 +1051,14 @@ msgstr "이벤트 작업 공간 멤버"
 
 #. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
 msgstr "이벤트"
-
-#. js-lingui-id: iG4hTA
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Events linked to the charge"
-msgstr ""
-
-#. js-lingui-id: Pds2Ui
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Events linked to the integration"
-msgstr ""
-
-#. js-lingui-id: mU9ciB
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Events linked to the invoice"
-msgstr ""
 
 #. js-lingui-id: fHL+iH
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "사람과 연결된 이벤트"
-
-#. js-lingui-id: kZn7Yr
-#: src/modules/support/support.workspace-entity.ts
-msgid "Events linked to the support"
-msgstr ""
-
-#. js-lingui-id: iag/Jq
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Events linked to the tracable link"
-msgstr ""
 
 #. js-lingui-id: 3/O8MM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1937,78 +1077,15 @@ msgstr "그룹 이메일 제외"
 msgid "Exclude non professional emails"
 msgstr "비업무용 이메일 제외"
 
-#. js-lingui-id: oXHraT
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Executed At"
-msgstr ""
-
 #. js-lingui-id: Lo5U0b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "실행자"
 
-#. js-lingui-id: 2A9Jmz
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Execution Logs"
-msgstr ""
-
-#. js-lingui-id: n8oe77
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Execution logs for financial closings"
-msgstr ""
-
-#. js-lingui-id: b9qrat
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Execution logs for financial closings by company"
-msgstr ""
-
-#. js-lingui-id: WmAhIs
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Execution Name"
-msgstr ""
-
-#. js-lingui-id: HOxkeI
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-msgid "Execution of financial closing"
-msgstr ""
-
-#. js-lingui-id: PWXmrM
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Execution status (pending, running, success, failed)"
-msgstr ""
-
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "{connectFieldName}의 모든 작업에서 동일한 제약 필드를 일관되게 사용하는 것이 기대됩니다."
-
-#. js-lingui-id: ZyqVzo
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Extension All Calls or Offline"
-msgstr ""
-
-#. js-lingui-id: rvly2G
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Extension Busy"
-msgstr ""
-
-#. js-lingui-id: ohtVGN
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Extension Group"
-msgstr ""
-
-#. js-lingui-id: FLkqsn
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Extension name"
-msgstr ""
-
-#. js-lingui-id: Q28Cie
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "extensionNumber"
-msgstr ""
 
 #. js-lingui-id: 5KfWxA
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2016,35 +1093,20 @@ msgstr ""
 msgid "External ID"
 msgstr "외부 ID"
 
-#. js-lingui-id: D2WRx8
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "External Number All Calls or Offline"
-msgstr ""
-
-#. js-lingui-id: /MptsP
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "External Number Busy"
-msgstr ""
-
-#. js-lingui-id: ENjI/o
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-msgid "Fatal error in closing execution"
-msgstr ""
-
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "즐겨찾기"
 
-#. js-lingui-id: 8BSbVD
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite chatbot"
-msgstr ""
-
 #. js-lingui-id: aKUOPp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "즐겨찾는 회사"
+
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr ""
 
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2118,8 +1180,8 @@ msgstr "즐겨찾는 워크스페이스 멤버"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "즐겨찾기"
@@ -2128,11 +1190,6 @@ msgstr "즐겨찾기"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "이 폴더의 즐겨찾기"
-
-#. js-lingui-id: NlDM8j
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Favorites linked to the chatbot"
-msgstr ""
 
 #. js-lingui-id: zQponA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2143,6 +1200,11 @@ msgstr "회사와 연결된 즐겨찾기"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "연락처에 연결된 즐겨찾기"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2211,6 +1273,12 @@ msgstr "라벨 식별자로 선언된 필드가 발견되지 않았습니다"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Field Metadata Id"
 msgstr "필드 메타데이터 ID"
+
+#. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Field metadata not found"
+msgstr ""
 
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
@@ -2283,59 +1351,6 @@ msgstr "뷰 그룹을 생성하려면 FieldMetadataId가 필요합니다."
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "뷰 정렬을 생성하려면 FieldMetadataId가 필요합니다."
 
-#. js-lingui-id: WQJ1oD
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Financial Closing Execution"
-msgstr ""
-
-#. js-lingui-id: DSABmH
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Financial Closing Execution Name"
-msgstr ""
-
-#. js-lingui-id: n8AUfU
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Financial Closing Executions"
-msgstr ""
-
-#. js-lingui-id: T4wea/
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Financial Closing ID"
-msgstr ""
-
-#. js-lingui-id: 21dx7B
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Fiscal Operation Code. Example: 5102"
-msgstr ""
-
-#. js-lingui-id: TkUy5L
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Fixed Monthly Charge"
-msgstr ""
-
-#. js-lingui-id: jVg9c4
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Fixed monthly charge applied to the company"
-msgstr ""
-
-#. js-lingui-id: Hdl5PA
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NF-e integration status"
-msgstr ""
-
-#. js-lingui-id: kUK0H8
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NFe Integration"
-msgstr ""
-
-#. js-lingui-id: 0M5zqI
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Focus NFe Integrations"
-msgstr ""
-
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
@@ -2366,35 +1381,10 @@ msgstr "폼 작업 필드에는 고유한 이름이 있어야 합니다"
 msgid "Form action must have at least one field"
 msgstr "폼 작업에는 적어도 하나의 필드가 있어야 합니다"
 
-#. js-lingui-id: +YaNB2
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Foward All Calls"
-msgstr ""
-
-#. js-lingui-id: E1YUZ2
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Foward Busy not Available"
-msgstr ""
-
-#. js-lingui-id: 4uAgEj
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Foward Offline without Service"
-msgstr ""
-
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "전체 경로"
-
-#. js-lingui-id: Mv7bH1
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Gateway"
-msgstr ""
-
-#. js-lingui-id: XM2gXm
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Generated URL"
-msgstr ""
 
 #. js-lingui-id: UzpVUy
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -2437,18 +1427,6 @@ msgstr "헤더 메시지 ID"
 msgid "iCal UID"
 msgstr "iCal UID"
 
-#. js-lingui-id: zz+BX8
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "ICMS rate (%)"
-msgstr ""
-
-#. js-lingui-id: gDFIc7
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "ICMS rate. Example: 18.00"
-msgstr ""
-
 #. js-lingui-id: wwu18a
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Icon"
@@ -2465,129 +1443,20 @@ msgstr "ICP"
 msgid "Id"
 msgstr "Id"
 
-#. js-lingui-id: hYtWqG
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "ID of the traceable link associated with this log"
-msgstr ""
-
 #. js-lingui-id: Ebc83S
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "이상적인 고객 프로필: 회사가 귀하에게 가장 적합하고 가치 있는 고객인지 여부를 나타냅니다"
-
-#. js-lingui-id: sJGljQ
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-msgid "Identifier"
-msgstr ""
-
-#. js-lingui-id: m+vtsd
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "IE"
-msgstr ""
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "정의된 기본값은 최소한 하나의 값을 포함해야 합니다."
 
-#. js-lingui-id: RLHsle
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Indicates if the entity is an individual or a company"
-msgstr ""
-
-#. js-lingui-id: rSMcif
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Inform the municipal tax code according to the table of each city (there is no standard)."
-msgstr ""
-
-#. js-lingui-id: Lb4LfK
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Inform the service list code, usually according to Law Complement 116/2003."
-msgstr ""
-
-#. js-lingui-id: 6s1jaL
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Inform true or false if the ISS was retained"
-msgstr ""
-
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
 msgstr "입력이 너무 짧습니다: \"{name}\""
-
-#. js-lingui-id: PSIrtk
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Inscrição estadual"
-msgstr ""
-
-#. js-lingui-id: KFgYVS
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Inscrição municipal"
-msgstr ""
-
-#. js-lingui-id: bzGSrZ
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Inscrição Municipal"
-msgstr ""
-
-#. js-lingui-id: AHWM9N
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Integration"
-msgstr ""
-
-#. js-lingui-id: uhnn/8
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Integration linked to the charge"
-msgstr ""
-
-#. js-lingui-id: 5Nvgmt
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Integration linked to the Chatbot"
-msgstr ""
-
-#. js-lingui-id: nkhlp8
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration linked to the Invoices"
-msgstr ""
-
-#. js-lingui-id: u4iuBc
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration name"
-msgstr ""
-
-#. js-lingui-id: DdoWBE
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Integration record position"
-msgstr ""
-
-#. js-lingui-id: nbfdhU
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-msgid "Integrations"
-msgstr ""
-
-#. js-lingui-id: bB1YSX
-#: src/engine/core-modules/inter/services/inter.service.ts
-msgid "Inter Bilepix Billing Charge"
-msgstr ""
-
-#. js-lingui-id: dkinOS
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "Inter validation error"
-msgstr ""
-
-#. js-lingui-id: JHB/Ky
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "Invalid"
-msgstr ""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2677,82 +1546,6 @@ msgstr "잘못된 뷰 정렬 데이터입니다."
 msgid "Invalid view sort data for view sort id: {id}"
 msgstr "뷰 정렬 ID: {id}에 대한 잘못된 뷰 정렬 데이터입니다."
 
-#. js-lingui-id: IuMGvq
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Invoice"
-msgstr ""
-
-#. js-lingui-id: WAGjVi
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "Invoice configured to be issued after payment, not issued"
-msgstr ""
-
-#. js-lingui-id: 9O28QB
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "Invoice emission request"
-msgstr ""
-
-#. js-lingui-id: ACC8JC
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Invoice Emission Type"
-msgstr ""
-
-#. js-lingui-id: lw3ibE
-#: src/engine/core-modules/inter/integration/inter-integration-webhook.controller.ts
-msgid "Invoice issued successfully after payment confirmation via webhook inter"
-msgstr ""
-
-#. js-lingui-id: 0F343+
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Invoice linked to the Focus NFe Integration"
-msgstr ""
-
-#. js-lingui-id: mWiR7l
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "Invoice with id (ref)"
-msgstr ""
-
-#. js-lingui-id: F7nA5/
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Invoices"
-msgstr ""
-
-#. js-lingui-id: z23lqB
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Invoices linked to the charges"
-msgstr ""
-
-#. js-lingui-id: MgdpWN
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Invoices to the company"
-msgstr ""
-
-#. js-lingui-id: C0Fmtx
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Invoices using this charge"
-msgstr ""
-
-#. js-lingui-id: lYITjr
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Invoices using this product"
-msgstr ""
-
-#. js-lingui-id: oK4zvs
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "IP address of the user who accessed the link"
-msgstr ""
-
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2799,65 +1592,15 @@ msgstr "동기화 사용 여부"
 msgid "Is Synced"
 msgstr "동기화됨 여부"
 
-#. js-lingui-id: 3Mn8yv
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "ISS rate (%)"
-msgstr ""
-
-#. js-lingui-id: UJjJdD
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "ISS rate. Some cities allow using 4 decimal places."
-msgstr ""
-
-#. js-lingui-id: sSYppr
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "ISS Retained"
-msgstr ""
-
-#. js-lingui-id: M1cChr
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Issue Date"
-msgstr ""
-
-#. js-lingui-id: sSwbg7
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Issue date of the invoice"
-msgstr ""
-
-#. js-lingui-id: gtGLOq
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Issue name"
-msgstr ""
-
-#. js-lingui-id: lCa1OX
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "issued, waiting for processing"
-msgstr ""
-
-#. js-lingui-id: zDw3HD
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "It was not possible to generate the charge"
-msgstr ""
-
-#. js-lingui-id: IHbxPI
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "It was not possible to save the XML file of the invoice"
-msgstr ""
-
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
 msgstr "직책"
 
-#. js-lingui-id: Xy6cxh
+#. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Woulz"
-msgstr ""
+msgid "Join your team on Twenty"
+msgstr "Twenty에서 팀에 합류하세요"
 
 #. js-lingui-id: WNfJ8M
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2879,16 +1622,6 @@ msgstr "트리거를 제공하는 Json 객체"
 msgid "Json value for event details"
 msgstr "이벤트 세부 정보를 위한 Json 값"
 
-#. js-lingui-id: HDiCy+
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Justification"
-msgstr ""
-
-#. js-lingui-id: cLDhRd
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Justification of the invoice cancellation"
-msgstr ""
-
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
@@ -2898,11 +1631,6 @@ msgstr "칸반필드메타데이터아이디"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "키"
-
-#. js-lingui-id: nhxAdQ
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Keyword"
-msgstr ""
 
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
@@ -2961,16 +1689,6 @@ msgstr "마지막으로 기록이 변경된 시간"
 msgid "Last update"
 msgstr "마지막 업데이트"
 
-#. js-lingui-id: m5K33y
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Link ID"
-msgstr ""
-
-#. js-lingui-id: yg5UPw
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Link Name"
-msgstr ""
-
 #. js-lingui-id: wR9USP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2994,30 +1712,10 @@ msgstr "연결된 레코드 ID"
 msgid "Linkedin"
 msgstr "링크드인"
 
-#. js-lingui-id: H3nIla
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklog"
-msgstr ""
-
-#. js-lingui-id: fkZGo6
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklog link Name"
-msgstr ""
-
-#. js-lingui-id: XmF8WY
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Linklogs"
-msgstr ""
-
 #. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "해당 담당자가 연락 담당자인 기회 목록"
-
-#. js-lingui-id: yJT8EH
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Listen to Calls"
-msgstr ""
 
 #. js-lingui-id: wJijgU
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3035,29 +1733,9 @@ msgstr "논리 연산자"
 msgid "Logical operator for the filter group"
 msgstr "필터 그룹의 논리 연산자"
 
-#. js-lingui-id: M+5Cqd
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Logs for this company execution"
-msgstr ""
-
-#. js-lingui-id: xl8Wza
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Logs of access to traceable links"
-msgstr ""
-
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
-
-#. js-lingui-id: okbTw8
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Means of Communication"
-msgstr ""
-
-#. js-lingui-id: 9rZW6o
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Medium of the traffic (e.g., cpc, email)"
 msgstr ""
 
 #. js-lingui-id: EnfPm2
@@ -3065,17 +1743,6 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Meet Link"
 msgstr "Meet 링크"
-
-#. js-lingui-id: NRVSdy
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Member ID"
-msgstr ""
-
-#. js-lingui-id: gDBA/G
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Mercosur Common Nomenclature. Format: xxxx.xx.xx. Example: 8471.30.12"
-msgstr ""
 
 #. js-lingui-id: xDAtGP
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3224,16 +1891,6 @@ msgstr "메시징 제공업체 액세스 토큰"
 msgid "Messaging provider refresh token"
 msgstr "메시징 제공업체 새로 고침 토큰"
 
-#. js-lingui-id: 8h0iEo
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Minimum Monthly Cost"
-msgstr ""
-
-#. js-lingui-id: H8d5hS
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Minimum monthly cost for the company"
-msgstr ""
-
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
@@ -3269,43 +1926,17 @@ msgstr "멀티 선택 필드 기본값은 배열이어야 합니다."
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr ""
 
-#. js-lingui-id: VYgCB6
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Municipal Registration"
-msgstr ""
-
-#. js-lingui-id: efdlgF
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Municipal registration of the service provider"
-msgstr ""
-
-#. js-lingui-id: FMxbdG
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Municipal Tax Code"
-msgstr ""
-
 #. js-lingui-id: 6YtxFj
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -3357,11 +1988,6 @@ msgstr "이름이 너무 짧습니다"
 msgid "Name of the favorite folder"
 msgstr "즐겨찾기 폴더 이름"
 
-#. js-lingui-id: qwLr4u
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Name of the traceable access log"
-msgstr ""
-
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
@@ -3378,84 +2004,20 @@ msgstr "이름은 camelCase 방식이어야 합니다"
 msgid "Names are not synced with labels"
 msgstr "이름이 레이블과 동기화되지 않았습니다."
 
-#. js-lingui-id: 1VGoRg
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "NCM"
-msgstr ""
-
-#. js-lingui-id: jyxrtr
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Neighborhood"
-msgstr ""
-
-#. js-lingui-id: 6c2ffO
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "NF"
-msgstr ""
-
-#. js-lingui-id: GsDa9d
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "NF Type"
-msgstr ""
-
-#. js-lingui-id: NzG02o
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "NF-Com"
-msgstr ""
-
-#. js-lingui-id: 6CDvDj
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "NF-e"
-msgstr ""
-
-#. js-lingui-id: vIp1C2
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "NFC-e"
-msgstr ""
-
-#. js-lingui-id: Uq58U2
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "NFS-e"
-msgstr ""
-
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No event name provided in database event trigger"
 msgstr "데이터베이스 이벤트 트리거에 이벤트 이름이 제공되지 않았습니다"
-
-#. js-lingui-id: rSwDb8
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Nº Extentions"
-msgstr ""
-
-#. js-lingui-id: 9OpOf2
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "No Focus NFe integration found"
-msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "No input provided in form step"
 msgstr "폼 단계에 입력이 제공되지 않았습니다"
 
-#. js-lingui-id: xlBk6I
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Nº Members"
-msgstr ""
-
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
 msgstr "CUSTOM 크론 트리거에 패턴이 제공되지 않았습니다"
-
-#. js-lingui-id: ukda5t
-#: src/engine/core-modules/financial-closing/financial-closing-focusnf.service.ts
-msgid "No return"
-msgstr ""
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3476,16 +2038,6 @@ msgstr "워크플로우 버전에 단계가 제공되지 않았습니다"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No trigger type provided"
 msgstr "트리거 유형이 제공되지 않았습니다"
-
-#. js-lingui-id: PxQS6h
-#: src/modules/focus-nfe/focus-nfe.service.ts
-msgid "not found"
-msgstr ""
-
-#. js-lingui-id: bUT28z
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "not found in workspace"
-msgstr ""
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3532,7 +2084,6 @@ msgid "Note title"
 msgstr "노트 제목"
 
 #. js-lingui-id: 1DBGsz
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -3552,7 +2103,6 @@ msgid "Notes tied to the company"
 msgstr "회사에 연결된 노트"
 
 #. js-lingui-id: iQ5AH6
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "연락처에 연결된 노트"
@@ -3582,47 +2132,10 @@ msgstr "노트 대상 기회"
 msgid "NoteTarget person"
 msgstr "노트 대상자"
 
-#. js-lingui-id: XVHCAg
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget support"
-msgstr ""
-
-#. js-lingui-id: HptUxX
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Number"
-msgstr ""
-
-#. js-lingui-id: boq6uP
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Number Extension"
-msgstr ""
-
-#. js-lingui-id: fqL1og
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Number of companies with errors during execution"
-msgstr ""
-
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "회사 직원 수"
-
-#. js-lingui-id: DhTzyr
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Number of extentions in the workspace"
-msgstr ""
-
-#. js-lingui-id: 25u/c3
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Number of financial closings remaining for this discount to be applied"
-msgstr ""
-
-#. js-lingui-id: CRfF1b
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Number of members in the workspace"
-msgstr ""
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
@@ -3644,6 +2157,12 @@ msgstr "객체 레이블이 너무 짧습니다"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "객체 메타데이터 ID"
+
+#. js-lingui-id: xrblgA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Object metadata not found"
+msgstr ""
 
 #. js-lingui-id: lG0Qqm
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
@@ -3756,7 +2275,6 @@ msgid "Opportunity record position"
 msgstr "기회 레코드 위치"
 
 #. js-lingui-id: 5ugYS3
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "기회 단계"
@@ -3840,30 +2358,10 @@ msgstr "선택적 집계 작업"
 msgid "Options are required for enum fields"
 msgstr "열거형 필드에 옵션이 필요합니다."
 
-#. js-lingui-id: LtI9AS
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-msgid "Owner"
-msgstr ""
-
 #. js-lingui-id: AODALE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "페이지 레이아웃 ID"
-
-#. js-lingui-id: LtI9AS
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-msgid "Owner"
-msgstr ""
-
-#. js-lingui-id: lnFhGh
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-msgid "Owner e-mail"
-msgstr ""
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -3880,11 +2378,6 @@ msgstr "상위 뷰 필터 그룹 ID"
 msgid "Password too weak"
 msgstr "비밀번호가 너무 약합니다"
 
-#. js-lingui-id: UreNHd
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Payment Gateway"
-msgstr ""
-
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3895,46 +2388,6 @@ msgstr "사람들"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "회사에 연결된 사람들."
-
-#. js-lingui-id: hfygpx
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Percentage for Communication Invoice"
-msgstr ""
-
-#. js-lingui-id: Q+MzAR
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Communication Invoice (Communication Invoice)"
-msgstr ""
-
-#. js-lingui-id: V7bnuV
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Percentage for Electronic Consumer Invoice"
-msgstr ""
-
-#. js-lingui-id: iGNjrm
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Electronic Consumer Invoice (Electronic Consumer Invoice)"
-msgstr ""
-
-#. js-lingui-id: N3JvJ7
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Percentage for Electronic Invoice for Products"
-msgstr ""
-
-#. js-lingui-id: AoETMo
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Percentage for Electronic Service Invoice"
-msgstr ""
-
-#. js-lingui-id: AXlO8+
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Electronic Service Invoice (Electronic Service Invoice)"
-msgstr ""
-
-#. js-lingui-id: kH7uI1
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Percentage for Eletronic Invoice (Electronic Invoice for Products)"
-msgstr ""
 
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3950,65 +2403,20 @@ msgstr ""
 msgid "Person"
 msgstr "사람"
 
-#. js-lingui-id: XQ3nde
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Person linked to the charge"
-msgstr ""
-
-#. js-lingui-id: l9Z3mg
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Person linked to the support"
-msgstr ""
-
 #. js-lingui-id: c3Qq6o
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Person record Position"
 msgstr "사람 레코드 위치"
 
 #. js-lingui-id: zmwvG2
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Phone"
 msgstr "전화"
 
-#. js-lingui-id: 4lE45u
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Phone ID"
-msgstr ""
-
 #. js-lingui-id: m2ivgq
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "Phones"
 msgstr "전화번호"
-
-#. js-lingui-id: UJPDU7
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "PIS rate (%)"
-msgstr ""
-
-#. js-lingui-id: qNkfF2
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "PIS rate. Example: 1.65"
-msgstr ""
-
-#. js-lingui-id: F3bW6y
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Platform"
-msgstr ""
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4016,8 +2424,6 @@ msgid "Point of Contact"
 msgstr "담당자"
 
 #. js-lingui-id: p/78dY
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -4025,25 +2431,14 @@ msgstr "담당자"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
@@ -4075,108 +2470,10 @@ msgstr "선호하는 색상 구성"
 msgid "Preferred language"
 msgstr "선호하는 언어"
 
-#. js-lingui-id: a7u1N9
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Price"
-msgstr ""
-
 #. js-lingui-id: WJIL29
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "확률"
-
-#. js-lingui-id: K47k8R
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product"
-msgstr ""
-
-#. js-lingui-id: bt5TbG
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product charge action(issue products can be used in charges)"
-msgstr ""
-
-#. js-lingui-id: M651Mh
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Product classification"
-msgstr ""
-
-#. js-lingui-id: bodmtG
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product cost"
-msgstr ""
-
-#. js-lingui-id: vpqv+B
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Product linked to this charge"
-msgstr ""
-
-#. js-lingui-id: mZW+k8
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product name"
-msgstr ""
-
-#. js-lingui-id: Q033BY
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product Name"
-msgstr ""
-
-#. js-lingui-id: BjrEHq
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Product origin"
-msgstr ""
-
-#. js-lingui-id: 2GlMyA
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product Origin"
-msgstr ""
-
-#. js-lingui-id: jw/QtW
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Product origin (0-8). Example: 0"
-msgstr ""
-
-#. js-lingui-id: jGuXaa
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Product record position"
-msgstr ""
-
-#. js-lingui-id: rjawDw
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product sale price"
-msgstr ""
-
-#. js-lingui-id: RTFwCi
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product status (active products can be used in charges)"
-msgstr ""
-
-#. js-lingui-id: D4Ru/J
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product type"
-msgstr ""
-
-#. js-lingui-id: sJsr1h
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-msgid "Product Type"
-msgstr ""
-
-#. js-lingui-id: C74sUy
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Product unit of measure (e.g., kg, unit, liter)"
-msgstr ""
-
-#. js-lingui-id: N0qXpE
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Products"
-msgstr ""
 
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -4203,29 +2500,9 @@ msgstr "제공된 전화 번호가 유효하지 않습니다 {number}"
 msgid "provider"
 msgstr "공급자"
 
-#. js-lingui-id: K7iawJ
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Pull Calls"
-msgstr ""
-
-#. js-lingui-id: VbWX2u
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Quantity"
-msgstr ""
-
-#. js-lingui-id: 59rSLU
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Quantity of Financial Closings Remaining for Discount"
-msgstr ""
-
-#. js-lingui-id: YpQauo
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Ramal ID"
-msgstr ""
-
-#. js-lingui-id: vfIP8c
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in"
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
 msgstr ""
 
 #. js-lingui-id: YfbwOB
@@ -4233,75 +2510,16 @@ msgstr ""
 msgid "Received At"
 msgstr "수신 시간"
 
-#. js-lingui-id: 9Sj4Hv
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Record Calls"
-msgstr ""
-
-#. js-lingui-id: QBQXiF
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Recurrence"
-msgstr ""
-
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Recurring Event ID"
 msgstr "반복 이벤트 ID"
 
-#. js-lingui-id: D69yxd
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Reference to company financial closing executions"
-msgstr ""
-
-#. js-lingui-id: EjgEqN
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Reference to external financial closing"
-msgstr ""
-
-#. js-lingui-id: QCvlUz
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Reference to the charge"
-msgstr ""
-
-#. js-lingui-id: MqTUWj
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Reference to the company"
-msgstr ""
-
-#. js-lingui-id: 7DqzRe
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Reference to the company financial closing execution"
-msgstr ""
-
-#. js-lingui-id: sG85Rq
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Reference to the company Financial Closing Executions"
-msgstr ""
-
-#. js-lingui-id: HhmOYE
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Reference to the financial closing execution"
-msgstr ""
-
-#. js-lingui-id: sg8lgw
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Reference to the invoices"
-msgstr ""
-
 #. js-lingui-id: 2rvMKg
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Refresh Token"
 msgstr "새로 고침 토큰"
-
-#. js-lingui-id: B8vUgt
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Region name"
-msgstr ""
 
 #. js-lingui-id: 2LpFdR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -4338,11 +2556,6 @@ msgstr "원격 객체는 아직 지원되지 않습니다"
 msgid "Remote objects are not supported yet"
 msgstr "원격 객체는 아직 지원되지 않습니다"
 
-#. js-lingui-id: BrEm08
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Request Code"
-msgstr ""
-
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
@@ -4360,27 +2573,11 @@ msgstr "응답 상태"
 msgid "Role"
 msgstr "역할"
 
-#. js-lingui-id: LWoSmV
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "RPS number"
-msgstr ""
-
-#. js-lingui-id: joiGUi
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "RPS Number"
-msgstr ""
-
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "실행"
-
-#. js-lingui-id: lDBGnk
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-#: src/modules/focus-nfe/focus-nfe-webhook.controller.ts
-msgid "saved successfully"
-msgstr ""
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -4393,49 +2590,17 @@ msgstr "범위"
 msgid "Search vector"
 msgstr "검색 벡터"
 
-#. js-lingui-id: 0++7Gq
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "seconds. The Banco Inter allows only 5 requests per minute."
-msgstr ""
-
-#. js-lingui-id: L5P0h3
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Service Level Agreement"
-msgstr ""
-
-#. js-lingui-id: c3j3Wn
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Service Level Agreement (SLA) in minutes"
-msgstr ""
-
-#. js-lingui-id: qr+rqC
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Service List Item"
-msgstr ""
-
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "설정"
-
-#. js-lingui-id: QiWoq+
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "SIP Password"
-msgstr ""
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "크기"
 
-#. js-lingui-id: DxObh7
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "Source of the traffic (e.g., Google, Facebook)"
-msgstr ""
-
 #. js-lingui-id: 3PRxO3
-#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "단계"
@@ -4462,16 +2627,8 @@ msgstr "시작 날짜"
 msgid "Start of the week"
 msgstr "주간의 시작"
 
-#. js-lingui-id: w0RUMe
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-#: src/engine/core-modules/financial-closing/cron/jobs/run-financial-closing-processor.job.ts
-msgid "Starting closing execution"
-msgstr ""
-
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
 msgid "State"
 msgstr "상태"
 
@@ -4480,42 +2637,13 @@ msgstr "상태"
 msgid "State of the workflow run"
 msgstr "워크플로 실행 상태"
 
-#. js-lingui-id: 2S9yWS
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "State Registration"
-msgstr ""
-
-#. js-lingui-id: 47Ailm
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "State Registration number for tax purposes in Brazil"
-msgstr ""
-
 #. js-lingui-id: uAQUqI
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/nota-fiscal/standard-objects/nota-fiscal.workspace.entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
 msgid "Status"
 msgstr "상태"
 
-#. js-lingui-id: sPl2pb
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Status of the integration"
-msgstr ""
-
-#. js-lingui-id: Nd3/C6
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Status of the Invoice"
-msgstr ""
-
 #. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Statuses"
 msgstr "상태"
 
@@ -4528,13 +2656,6 @@ msgstr "상태는 수동으로 설정할 수 없습니다."
 #: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "단계는 폼이 아닙니다"
-
-#. js-lingui-id: Uv4dnT
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "Street"
-msgstr ""
 
 #. js-lingui-id: YFMPch
 #: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
@@ -4552,78 +2673,6 @@ msgstr "하위 필드 이름"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "제목"
-
-#. js-lingui-id: WVzGc2
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-msgid "Subscription"
-msgstr ""
-
-#. js-lingui-id: 05zA+u
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Subscription plan"
-msgstr ""
-
-#. js-lingui-id: sacFDm
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-msgid "Subscription record position"
-msgstr ""
-
-#. js-lingui-id: BbNdfy
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Subscription workspace"
-msgstr ""
-
-#. js-lingui-id: HK1xRp
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Subscription workspace owner"
-msgstr ""
-
-#. js-lingui-id: AYS5SS
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-msgid "SubscriptionPlan plan"
-msgstr ""
-
-#. js-lingui-id: FFXf1g
-#: src/modules/kvoip-admin/standard-objects/subscription-plan.workspace-entity.ts
-msgid "SubscriptionPlan plans"
-msgstr ""
-
-#. js-lingui-id: P6F38F
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-msgid "Subscriptions"
-msgstr ""
-
-#. js-lingui-id: /561Ja
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
-msgid "Subscriptions linked to the owner."
-msgstr ""
-
-#. js-lingui-id: lyCRLa
-#: src/modules/kvoip-admin/standard-objects/tenant.workspace-entity.ts
-msgid "Subscriptions linked to the workspace."
-msgstr ""
-
-#. js-lingui-id: XYLcNv
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/support/support.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "Support"
-msgstr ""
-
-#. js-lingui-id: Uby7zw
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Support linked to the event"
-msgstr ""
-
-#. js-lingui-id: qnIA1S
-#: src/modules/support/support.workspace-entity.ts
-msgid "Supports"
-msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -4779,31 +2828,11 @@ msgstr "작업 대상자"
 msgid "TaskTarget task"
 msgstr "작업 대상 작업"
 
-#. js-lingui-id: m+elvG
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
-msgid "Tax ID"
-msgstr ""
-
-#. js-lingui-id: be/H0B
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Telephonies"
-msgstr ""
-
-#. js-lingui-id: yEt5zR
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
-msgid "Telephony"
-msgstr ""
-
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "텍스트"
-
-#. js-lingui-id: kcAkbZ
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The Access Token obtained from Facebook Developer"
-msgstr ""
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -4814,36 +2843,6 @@ msgstr "계정 핸들(이메일, 사용자 이름, 전화번호 등)"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "계정 제공자"
-
-#. js-lingui-id: OkN2qc
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "The amount to be charged to the company"
-msgstr ""
-
-#. js-lingui-id: y4NQ7b
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The App ID obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: mD7PpP
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The App Secret Key obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: zYeB/b
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The business account ID obtained from Facebook Developer"
-msgstr ""
-
-#. js-lingui-id: ftUrkL
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "The chatbot flow name"
-msgstr ""
-
-#. js-lingui-id: AzijcN
-#: src/engine/core-modules/financial-closing/cron/jobs/run-company-financial-closing-processor.job.ts
-msgid "The company does not have invoice emission configured, not issued"
-msgstr ""
 
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -4865,53 +2864,17 @@ msgstr "회사 Twitter/X 계정"
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "회사 웹사이트 URL. 이 URL을 사용하여 회사 아이콘을 가져옵니다"
 
-#. js-lingui-id: S7s5tm
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "The company's CEP field is incorrect, it must have 8 numbers and preferably without special characters"
-msgstr ""
-
-#. js-lingui-id: SFB2rf
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "The company's NF percentages must be between 0 and 100"
-msgstr ""
-
-#. js-lingui-id: 9DYH0D
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "The company's NF percentages must be valid numbers"
-msgstr ""
-
-#. js-lingui-id: TwFgEM
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "The company's state field is incorrect, it must be a valid state of Brazil (SP, RJ, MG, etc.)"
-msgstr ""
-
-#. js-lingui-id: YxUHjE
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The content of the traceable link (e.g., bannerSale)"
-msgstr ""
-
 #. js-lingui-id: zGBDEH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "레코드 작성자"
-
-#. js-lingui-id: ZVYmSG
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "The current statuses of the chatbot flow"
-msgstr ""
-
-#. js-lingui-id: /AsNLR
-#: src/modules/support/support.workspace-entity.ts
-msgid "The current statuses of the support"
-msgstr ""
 
 #. js-lingui-id: bMyVOx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4928,11 +2891,6 @@ msgstr "메시지 수신 날짜"
 msgid "The executor of the workflow"
 msgstr "워크플로 실행자"
 
-#. js-lingui-id: ww4vYo
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The final URL with UTM parameters"
-msgstr ""
-
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
@@ -4943,60 +2901,15 @@ msgstr "이 즐겨찾기가 속한 폴더"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "워크플로우의 초기 버전은 삭제할 수 없습니다"
 
-#. js-lingui-id: 0XFpHq
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The keyword associated with the traceable link"
-msgstr ""
-
-#. js-lingui-id: Wd7tXn
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The means of communication used (e.g., email, social media)"
-msgstr ""
-
 #. js-lingui-id: YTftFF
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "The name is not available"
 msgstr "이 이름을 사용할 수 없습니다"
 
-#. js-lingui-id: yabdsW
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "The name of the company financial closing execution"
-msgstr ""
-
-#. js-lingui-id: ENKYvA
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "The name of the financial closing execution"
-msgstr ""
-
-#. js-lingui-id: dwkGHj
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The name of the traceable link"
-msgstr ""
-
-#. js-lingui-id: yoBR0I
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The name of the traceable link associated with the link"
-msgstr ""
-
-#. js-lingui-id: cgODOx
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The name of the whatsapp integration"
-msgstr ""
-
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "기회 이름"
-
-#. js-lingui-id: T63gib
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-msgid "The person who is responsible for managing the workspace and its resources."
-msgstr ""
-
-#. js-lingui-id: bDvBRk
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The phone number ID obtained from Facebook Developer"
-msgstr ""
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -5007,36 +2920,6 @@ msgstr "단수와 복수 레이블은 객체에 대해 동일할 수 없습니�
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "단수와 복수 이름은 객체에 대해 동일할 수 없습니다"
-
-#. js-lingui-id: Jiq0u3
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The source of the traceable link (e.g., Google, Facebook)"
-msgstr ""
-
-#. js-lingui-id: tZaiKE
-#: src/engine/core-modules/financial-closing/utils/company-validation.utils.ts
-msgid "The sum of the company's NF percentages cannot exceed 100%. Current: "
-msgstr ""
-
-#. js-lingui-id: wGSI5K
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "The type of invoice emission"
-msgstr ""
-
-#. js-lingui-id: ftaTVP
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The URL of the website to redirect to"
-msgstr ""
-
-#. js-lingui-id: 30jEZc
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "The URL used to track final url metadata."
-msgstr ""
-
-#. js-lingui-id: Kduucd
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "The Verify Token obtained from Facebook Developer"
-msgstr ""
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -5067,21 +2950,6 @@ msgstr "워크플로 버전 이름"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "워크플로 버전 상태"
-
-#. js-lingui-id: OJGOvt
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "The workspace id from the core schema."
-msgstr ""
-
-#. js-lingui-id: Ca8aJs
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "The workspace name"
-msgstr ""
-
-#. js-lingui-id: SUTQ8V
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "The workspace woner primary email."
-msgstr ""
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
@@ -5130,21 +2998,21 @@ msgstr "시간대"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "타임라인 활동"
-
-#. js-lingui-id: xSqX1G
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Timeline activities linked to the chatbot"
-msgstr ""
 
 #. js-lingui-id: fqKMpF
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "회사에 연결된 타임라인 활동"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -5195,127 +3063,18 @@ msgstr "타임라인 활동"
 msgid "Title"
 msgstr "제목"
 
-#. js-lingui-id: TP9/K5
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-#: src/modules/focus-nfe/standard-objects/focus-nfe.workspace-entity.ts
-msgid "Token"
-msgstr ""
-
-#. js-lingui-id: V6wYl1
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Total amount"
-msgstr ""
-
-#. js-lingui-id: NrYZ3H
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Total Amount"
-msgstr ""
-
-#. js-lingui-id: phLNBe
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Total number of companies processed"
-msgstr ""
-
-#. js-lingui-id: Vska3y
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Total Value Charged"
-msgstr ""
-
-#. js-lingui-id: Cptwd9
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Total value charged to the company, in the selected currency"
-msgstr ""
-
-#. js-lingui-id: 2jNX/d
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Traceable"
-msgstr ""
-
-#. js-lingui-id: S+jeA7
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable Link Name"
-msgstr ""
-
-#. js-lingui-id: ABScWw
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable record position"
-msgstr ""
-
-#. js-lingui-id: awZm5I
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable URL"
-msgstr ""
-
-#. js-lingui-id: PdZf5t
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceables"
-msgstr ""
-
-#. js-lingui-id: PmdF/i
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Trial End"
-msgstr ""
-
-#. js-lingui-id: zNilp2
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
-msgid "Trial Start"
-msgstr ""
-
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/telephony/standard-objects/telephony.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "유형"
-
-#. js-lingui-id: 0Pdhdk
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Type of API for WhatsApp"
-msgstr ""
-
-#. js-lingui-id: Sf/AZ8
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Type of Discount"
-msgstr ""
-
-#. js-lingui-id: 2uWPO3
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Type of discount applied to the company - Percent or Value"
-msgstr ""
-
-#. js-lingui-id: jgS4XC
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Type of Invoice Emission"
-msgstr ""
-
-#. js-lingui-id: Y+KoG1
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Type of invoice issuance, sets the time of issuance"
-msgstr ""
-
-#. js-lingui-id: xXbTBX
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Type of the Invoice"
-msgstr ""
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
 msgstr "고유 필드는 기본값을 가질 수 없습니다."
-
-#. js-lingui-id: AeRCab
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Unique identifier for CDR integration"
-msgstr ""
-
-#. js-lingui-id: aSwfbR
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Unit"
-msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -5338,21 +3097,6 @@ msgstr "업데이트 날짜/시간"
 msgid "Updated field name is not synced with label"
 msgstr "업데이트된 필드 이름이 레이블과 동기화되지 않았습니다"
 
-#. js-lingui-id: qM884L
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User Agent"
-msgstr ""
-
-#. js-lingui-id: srVp10
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User agent of the browser/device used to access the link"
-msgstr ""
-
-#. js-lingui-id: LJ3EUY
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User Document"
-msgstr ""
-
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -5365,26 +3109,14 @@ msgid "User Email"
 msgstr "사용자 이메일"
 
 #. js-lingui-id: d1BTW8
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/owner.workspace-entity.ts
 msgid "User Id"
 msgstr "사용자 ID"
-
-#. js-lingui-id: pOjO8a
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "User IP"
-msgstr ""
 
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
 msgstr "사용자가 작업 공간에 속하지 않습니다"
-
-#. js-lingui-id: nNRI18
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User phone"
-msgstr ""
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -5411,21 +3143,6 @@ msgstr "사용자가 선호하는 주간 시작일"
 msgid "User's preferred time format"
 msgstr "사용자가 선호하는 시간 형식"
 
-#. js-lingui-id: Wc3Q5/
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Campaign"
-msgstr ""
-
-#. js-lingui-id: zUH/4K
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Medium"
-msgstr ""
-
-#. js-lingui-id: XnlxVh
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UTM Source"
-msgstr ""
-
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
@@ -5433,36 +3150,13 @@ msgstr "{invalidObjects} 객체 및 {invalidFields} 필드의 유효성 검사 �
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/kvoip-admin/standard-objects/subscription.workspace-entity.ts
 msgid "Value"
 msgstr "값"
-
-#. js-lingui-id: WOUOnw
-#: src/engine/core-modules/inter/integration/inter-integration.service.ts
-msgid "Value informed"
-msgstr ""
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "값은 UPPER_CASE여야 하며 snake_case \"{sanitizedValue}\"을 따라야 합니다."
-
-#. js-lingui-id: qX8MVY
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Value or IPI rate. Example: 0.00"
-msgstr ""
-
-#. js-lingui-id: 1FvbLZ
-#: src/modules/product/standard-objects/product.workspace-entity.ts
-#: src/modules/invoice/standard-objects/invoice.workspace.entity.ts
-msgid "Value/IPI rate"
-msgstr ""
-
-#. js-lingui-id: BFDmoA
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Verify Token"
-msgstr ""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -5495,15 +3189,35 @@ msgstr "버전"
 msgid "View"
 msgstr "보기"
 
+#. js-lingui-id: HhN1Bv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View already exists"
+msgstr ""
+
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "보기 필드"
 
+#. js-lingui-id: pTvQqf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field already exists"
+msgstr ""
+
 #. js-lingui-id: Xm6R6B
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "뷰 필드가 이미 존재합니다."
+
+#. js-lingui-id: 7jUWQ+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata already exists"
+msgstr ""
+
+#. js-lingui-id: Yvf7WL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata with id {flatViewFieldId} already exists"
+msgstr ""
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -5526,10 +3240,40 @@ msgstr "보기 필드 크기"
 msgid "View Field target field"
 msgstr "보기 필드 대상 필드"
 
+#. js-lingui-id: gYT3e0
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to delete has not been soft deleted"
+msgstr ""
+
+#. js-lingui-id: XJlyZS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to delete not found"
+msgstr ""
+
+#. js-lingui-id: DXyYuh
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to destroy not found"
+msgstr ""
+
+#. js-lingui-id: Fpy/K1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+msgid "View field to update not found"
+msgstr ""
+
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "보기 필드 가시성"
+
+#. js-lingui-id: 89Wiy+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field with same fieldmetadataId and viewId already exists"
+msgstr ""
 
 #. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -5640,6 +3384,16 @@ msgstr "보기 키"
 msgid "View name"
 msgstr "보기 이름"
 
+#. js-lingui-id: F4A9mL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View not found"
+msgstr ""
+
 #. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
@@ -5687,10 +3441,21 @@ msgstr "보기 정렬"
 msgid "View target object"
 msgstr "보기 대상 개체"
 
+#. js-lingui-id: eF5yH4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View to delete has not been soft deleted"
+msgstr ""
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "보기 유형"
+
+#. js-lingui-id: ZgRtC4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View with same id is already exists"
+msgstr ""
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -5752,53 +3517,10 @@ msgstr "보임"
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
 
-#. js-lingui-id: XYcw7G
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Website URL"
-msgstr ""
-
-#. js-lingui-id: s0g27u
+#. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Woulz: Please Confirm Your Email"
-msgstr ""
-
-#. js-lingui-id: 60h12G
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-msgid "Whatsapp Integration"
-msgstr ""
-
-#. js-lingui-id: VFwGfG
-#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
-#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
-msgid "Whatsapp Integrations"
-msgstr ""
-
-#. js-lingui-id: l4lzEZ
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Whether boleto issuance step completed"
-msgstr ""
-
-#. js-lingui-id: eEIg9i
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Whether cost identification step completed"
-msgstr ""
-
-#. js-lingui-id: Y+Ontb
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Whether invoice issuance step completed"
-msgstr ""
-
-#. js-lingui-id: qbVL8p
-#: src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity.ts
-msgid "Whether the charge value was successfully calculated"
-msgstr ""
-
-#. js-lingui-id: 89i9Aa
-#: src/modules/financial-closing-execution/standard-objects/financial-closing-execution.workspace-entity.ts
-msgid "Whether the company search step completed"
-msgstr ""
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Twenty에 오신 것을 환영합니다: 이메일을 확인해 주세요"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -5993,16 +3715,6 @@ msgstr "워크스페이스 멤버 위치"
 msgid "Workspace Members"
 msgstr "워크스페이스 멤버들"
 
-#. js-lingui-id: Gu6kUh
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Workspace owner"
-msgstr ""
-
-#. js-lingui-id: wXBT2b
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-msgid "Workspace owner primary e-mail"
-msgstr ""
-
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
@@ -6043,18 +3755,6 @@ msgstr "뷰를 생성하려면 WorkspaceId가 필요합니다."
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "워크스페이스 멤버"
-
-#. js-lingui-id: pmt7u4
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/tenant.workspace-entity.ts
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-msgid "Workspaces"
-msgstr ""
-
-#. js-lingui-id: laxJ8N
-#: src/modules/workspaces/standard-objects/owner.workspace-entity.ts
-msgid "Workspaces linked to the person."
-msgstr ""
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
