@@ -26,6 +26,7 @@ type SettingsIntegrationWhatsappDatabaseConnectionFormProps = {
     __typename: string;
     icon: string;
   })[];
+  editableFields?: string[];
 };
 
 const apiTypeOptions: SelectOption<string>[] = [
@@ -126,12 +127,13 @@ const getFormFields = (
 export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
   disabled,
   sectors = [],
+  editableFields,
 }: SettingsIntegrationWhatsappDatabaseConnectionFormProps) => {
   const { getIcon } = useIcons();
   const { control, watch, setValue } =
     useFormContext<SettingsIntegrationWhatsappConnectionFormValues>();
   const selectedApiType = watch('apiType');
-  
+
   const sectorOptions: SelectOption[] =
     sectors.length > 0
       ? sectors.map((sector) => ({
@@ -147,7 +149,7 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
             disabled: true,
           },
         ];
-  
+
   const formFields = getFormFields(sectorOptions);
   useEffect(() => {
     if (selectedApiType === 'Baileys') {
@@ -178,42 +180,55 @@ export const SettingsIntegrationWhatsappDatabaseConnectionForm = ({
     return true;
   });
 
+  const isFieldEditable = (fieldName: string): boolean => {
+    if (editableFields === undefined) {
+      // If editableFields is not provided, use the disabled prop
+      return !disabled;
+    }
+    // If editableFields is provided, only allow editing if field is in the list
+    return editableFields.includes(fieldName);
+  };
+
   return (
     <StyledInputsContainer>
       {visibleFields.map(
-        ({ name, label, type, placeholder, isSelect, options }) => (
-          <Controller
-            key={name}
-            name={name}
-            control={control}
-            render={({ field: { onChange, value } }) => {
-              if (isSelect && options) {
+        ({ name, label, type, placeholder, isSelect, options }) => {
+          const fieldDisabled = !isFieldEditable(name);
+          return (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field: { onChange, value } }) => {
+                if (isSelect && options) {
+                  return (
+                    <Select
+                      label={label}
+                      value={value}
+                      onChange={onChange}
+                      options={options}
+                      dropdownId={`api-type-select-${name}`}
+                      fullWidth
+                      disabled={fieldDisabled}
+                    />
+                  );
+                }
                 return (
-                  <Select
+                  <TextInput
+                    autoComplete="new-password"
                     label={label}
                     value={value}
                     onChange={onChange}
-                    options={options}
-                    dropdownId={`api-type-select-${name}`}
                     fullWidth
+                    type={type}
+                    disabled={fieldDisabled}
+                    placeholder={placeholder}
                   />
                 );
-              }
-              return (
-                <TextInput
-                  autoComplete="new-password"
-                  label={label}
-                  value={value}
-                  onChange={onChange}
-                  fullWidth
-                  type={type}
-                  disabled={disabled}
-                  placeholder={placeholder}
-                />
-              );
-            }}
-          />
-        ),
+              }}
+            />
+          );
+        },
       )}
     </StyledInputsContainer>
   );
