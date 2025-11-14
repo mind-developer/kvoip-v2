@@ -5,18 +5,18 @@ import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/
 import { SettingsIntegrationInterDatabaseConnectionForm } from '@/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConnectionForm';
 import { useCreateInterIntegration } from '@/settings/integrations/inter/hooks/useCreateInterIntegration';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Info } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 // Validation schema with pattern validation for Inter-specific fields
 export const settingsIntegrationInterConnectionFormSchema = z.object({

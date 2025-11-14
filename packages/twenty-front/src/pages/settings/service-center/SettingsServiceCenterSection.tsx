@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 
 import { SettingsNavigationCard } from '@/settings/service-center/components/SettingsNavigationCard';
-import { SettingsPath } from '@/types/SettingsPath';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { useLingui } from '@lingui/react/macro';
 import {
-  IconIdBadge2,
-  IconPhone,
-  IconRobot,
-  IconUsers,
+    IconIdBadge2,
+    IconPhone,
+    IconRobot,
+    IconUsers,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';

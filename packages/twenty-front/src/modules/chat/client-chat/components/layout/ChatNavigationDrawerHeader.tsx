@@ -1,15 +1,15 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconMessage2Plus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar, H1Title, H1TitleFontColor, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledPaneHeaderContainer = styled.div`
   display: flex;

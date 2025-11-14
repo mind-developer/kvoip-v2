@@ -8,14 +8,14 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import {
-  agentFormSchema,
-  type AgentFormValues,
+    agentFormSchema,
+    type AgentFormValues,
 } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEffect } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useEditAgentForm = (activeWorkspaceMember?: WorkspaceMember) => {
   const navigate = useNavigate();

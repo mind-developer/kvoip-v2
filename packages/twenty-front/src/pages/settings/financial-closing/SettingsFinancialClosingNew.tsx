@@ -8,17 +8,17 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  FinancialClosingFormSchema,
-  SettingsFinancialClosingForm,
+    FinancialClosingFormSchema,
+    SettingsFinancialClosingForm,
 } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useCreateFinancialClosing } from '@/settings/financial-closing/hooks/useCreateFinancialClosing';
 import { type CreateFinancialClosingInput } from '@/settings/financial-closing/types/CreateFinancialClosingInput';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 const newFinancialClosingFormSchema = FinancialClosingFormSchema.extend({
   workspaceId: z.string(),

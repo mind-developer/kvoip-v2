@@ -2,18 +2,18 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServiceCenterCreateChatbotForm } from '@/settings/service-center/chatbots/components/SettingsServiceCenterCreateChatbotForm';
 import { useCreateChatbotForm } from '@/settings/service-center/chatbots/hooks/useCreateChatbotForm';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconArrowUpRight, IconInfoCircle } from '@tabler/icons-react';
 import { FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Chip, ChipAccent } from 'twenty-ui/components';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledChip = styled(Chip)`
   margin-bottom: ${({ theme }) => theme.spacing(4)} !important;

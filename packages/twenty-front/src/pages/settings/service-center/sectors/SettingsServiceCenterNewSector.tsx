@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsServiceCenterNewSectorForm } from '@/settings/service-center/sectors/components/SettingsServiceCenterNewSectorForm';
 import { useNewSectorForm } from '@/settings/service-center/sectors/hooks/useNewSectorForm';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { FormProvider } from 'react-hook-form';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 export const SettingsServiceCenterNewSector = () => {
   const settingsServiceCenterSectorsPagePath = getSettingsPath(

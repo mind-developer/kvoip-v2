@@ -1,6 +1,5 @@
 /* @kvoip-woulz proprietary */
 import { CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -8,9 +7,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronRight } from '@tabler/icons-react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { CompanyFinancialClosingExecutionRow } from '~/pages/settings/financial-closing/components/CompanyFinancialClosingExecutionRow';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledCard = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};

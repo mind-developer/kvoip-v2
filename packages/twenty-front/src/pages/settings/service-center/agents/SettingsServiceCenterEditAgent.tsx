@@ -7,16 +7,16 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import SettingsServiceCenterAgentAboutForm from '@/settings/service-center/agents/components/SettingsServiceCenterAgentAboutForm';
 import { useEditAgentForm } from '@/settings/service-center/agents/hooks/useEditAgentForm';
-import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type WorkspaceMember } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 

@@ -7,13 +7,13 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import {
-  newSectorFormSchema,
-  type NewSectorFormValues,
+    newSectorFormSchema,
+    type NewSectorFormValues,
 } from '@/settings/service-center/sectors/validation-schemas/newSectorFormSchema';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 export const useNewSectorForm = () => {
   const navigate = useNavigate();

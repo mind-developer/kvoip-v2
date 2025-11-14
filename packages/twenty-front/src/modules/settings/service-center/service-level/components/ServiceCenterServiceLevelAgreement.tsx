@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconEdit } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledShowServiceServiceLevel = styled.div<{ isMobile: boolean }>`
   display: flex;

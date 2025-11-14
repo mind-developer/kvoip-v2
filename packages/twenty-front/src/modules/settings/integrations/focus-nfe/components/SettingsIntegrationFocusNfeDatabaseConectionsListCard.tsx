@@ -13,10 +13,10 @@ import { useEffect } from 'react';
 import { SettingsIntegrationFocusNfeToggleStatusButton } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseToggleStatusButton';
 import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
 import { useToggleFocusNfeIntegrationStatus } from '@/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus';
-import { SettingsPath } from '@/types/SettingsPath';
-import { IconPencil, IconPlus } from '@tabler/icons-react';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { type FocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FocusNfeIntegration';
+import { IconPencil, IconPlus } from '@tabler/icons-react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 type SettingsIntegrationFocusNfeConectionsListCardProps = {
   integration: SettingsIntegration;

@@ -1,17 +1,17 @@
 /* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
+import { SettingsFinancialClosings } from '@/settings/financial-closing/components/SettingsFinancialClosings';
+import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsFinancialClosings } from '@/settings/financial-closing/components/SettingsFinancialClosings';
-import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
-import { useLingui } from '@lingui/react/macro';
 
 export const SettingsFinancialClosing = () => {
   const { t } = useLingui();

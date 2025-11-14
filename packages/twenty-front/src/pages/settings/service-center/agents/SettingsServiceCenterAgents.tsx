@@ -5,7 +5,6 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
@@ -14,19 +13,20 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar, H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Section,
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    Section,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { type WorkspaceMember } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type WorkspaceMemberWithAgent = WorkspaceMember & {
   agent: Agent | null;

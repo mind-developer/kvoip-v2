@@ -3,35 +3,35 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
-  IconEaseInOutControlPoints,
-  IconPlus,
-  IconPointFilled,
-  IconRobot,
-  IconSearch,
+    IconEaseInOutControlPoints,
+    IconPlus,
+    IconPointFilled,
+    IconRobot,
+    IconSearch,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Section,
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    Section,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type Chatbot = {
   id: string;

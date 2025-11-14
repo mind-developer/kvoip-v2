@@ -8,23 +8,23 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsServiceCenterTelephonyAboutForm,
-  SettingsServiceCenterTelephonyFormSchema,
+    SettingsServiceCenterTelephonyAboutForm,
+    SettingsServiceCenterTelephonyFormSchema,
 } from '@/settings/service-center/telephony/components/forms/SettingsServiceCenterTelephonyForm';
 import { useDeleteTelephony } from '@/settings/service-center/telephony/hooks/useDeleteTelephony';
 import { useFindAllTelephonys } from '@/settings/service-center/telephony/hooks/useFindAllTelephony';
 import { useUpdateTelephony } from '@/settings/service-center/telephony/hooks/useUpdateTelephony';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const DELETE_TELEPHONY_MODAL_ID = 'delete-telephony-modal';
 

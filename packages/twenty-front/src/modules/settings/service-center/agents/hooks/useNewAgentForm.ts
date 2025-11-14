@@ -7,13 +7,13 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type Agent } from '@/settings/service-center/agents/types/Agent';
 import {
-  agentFormSchema,
-  type AgentFormValues,
+    agentFormSchema,
+    type AgentFormValues,
 } from '@/settings/service-center/agents/validation-schemas/agentFormSchema';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 export const useNewAgentForm = () => {
   const navigate = useNavigate();

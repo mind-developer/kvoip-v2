@@ -1,4 +1,4 @@
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,19 +15,19 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus, IconSearch, useIcons } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Section,
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    Section,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { truncateList } from '~/pages/settings/service-center/utils/truncateList';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledSettingsCard = styled(SettingsCard)`
   margin-bottom: ${({ theme }) => theme.spacing(1)};

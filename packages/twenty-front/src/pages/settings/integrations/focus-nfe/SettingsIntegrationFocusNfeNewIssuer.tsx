@@ -2,15 +2,15 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeIssuerForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuerForm';
 import { useCreateIssuer } from '@/settings/integrations/focus-nfe/hooks/useCreateIssuer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { type IssuerFormValues } from '~/types/Issuer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 // Basic Zod schema for validation - can be enhanced
 const issuerFormSchema = z.object({

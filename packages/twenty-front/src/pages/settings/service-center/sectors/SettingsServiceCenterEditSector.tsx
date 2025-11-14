@@ -13,20 +13,20 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  SettingsSectorFormSchema,
-  SettingsServiceCenterSectorAboutForm,
+    SettingsSectorFormSchema,
+    SettingsServiceCenterSectorAboutForm,
 } from '@/settings/service-center/sectors/components/SettingsServiceCenterSectorAboutForm';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const DELETE_SECTOR_MODAL_ID = 'delete-sector-modal';
 

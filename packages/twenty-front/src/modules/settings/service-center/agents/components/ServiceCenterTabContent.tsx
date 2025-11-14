@@ -2,11 +2,11 @@ import { SettingsServiceCenterFieldActionDropdown } from '@/settings/service-cen
 import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/agents/components/SettingsServiceCenterItemTableRow';
 import { useToggleAgentStatus } from '@/settings/service-center/agents/hooks/useToggleAgentStatus';
 import { type Agent } from '@/settings/service-center/agents/types/Agent';
-import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {
   agents: Agent[];

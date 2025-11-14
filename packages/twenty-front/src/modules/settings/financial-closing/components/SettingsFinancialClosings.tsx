@@ -3,22 +3,22 @@ import { SettingsFinancialClosingTableRow } from '@/settings/financial-closing/c
 import { useDeleteFinancialClosing } from '@/settings/financial-closing/hooks/useDeleteFinancialClosing';
 import { type FinancialClosing } from '@/settings/financial-closing/types/FinancialClosing';
 import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sectors/components/ServiceCenterFieldActionDropdown';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconClock } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Section,
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    Section,
 } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
   display: flex;

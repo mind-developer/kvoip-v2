@@ -7,21 +7,21 @@ import { type z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsServiceCenterTelephonyAboutForm,
-  SettingsServiceCenterTelephonyFormSchema,
+    SettingsServiceCenterTelephonyAboutForm,
+    SettingsServiceCenterTelephonyFormSchema,
 } from '@/settings/service-center/telephony/components/forms/SettingsServiceCenterTelephonyForm';
 import { useCreateTelephony } from '@/settings/service-center/telephony/hooks/useCreateTelephony';
 import { type CreateTelephonyInput } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import {
-  checkPassword,
-  generatePassword,
+    checkPassword,
+    generatePassword,
 } from '@/settings/service-center/telephony/utils/password';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 // eslint-disable-next-line import/no-duplicates
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from 'twenty-ui/input';

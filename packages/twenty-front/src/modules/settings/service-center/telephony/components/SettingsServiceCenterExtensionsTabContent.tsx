@@ -5,15 +5,15 @@ import { ServiceCenterFieldActionDropdown } from '@/settings/service-center/sect
 import { ServiceCenterExternalExtensionTableRow } from '@/settings/service-center/telephony/components/ServiceCenterExternalExtensionTableRow';
 import { SettingsServiceCenterExternalExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterExternalExtension';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
-import { SettingsPath } from '@/types/SettingsPath';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { IconUser, useIcons } from 'twenty-ui/display';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconUser } from 'twenty-ui/display';
 import { AnimatedPlaceholder, AnimatedPlaceholderEmptyContainer, AnimatedPlaceholderEmptySubTitle, AnimatedPlaceholderEmptyTextContainer, AnimatedPlaceholderEmptyTitle, Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsServiceCenterExtensionsTabContentProps = {
   extensions: SettingsServiceCenterExternalExtension[];

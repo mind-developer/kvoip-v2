@@ -8,18 +8,18 @@ import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/in
 import { useCreateFocusNfeIntegration } from '@/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Info } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const createFocusNfeFormSchema = (objectMetadataItem?: ObjectMetadataItem) => {
   if (!objectMetadataItem) {

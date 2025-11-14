@@ -14,7 +14,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader } from '@/settings/service-center/telephony/components/loaders/SettingsServiceCenterLinkTelephonyExtensionSkeletonLoader';
 import { useGetExternalExtension } from '@/settings/service-center/telephony/hooks/useGetExternalExtension';
 import { useLinkMemberToExtension } from '@/settings/service-center/telephony/hooks/useLinkMemberToExtension';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
@@ -25,10 +24,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPhone } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SettingsServiceCenterLinkTelephonyExtensionFormSchema = z.object({
   memberId: z.string().min(1, 'Member is required'),

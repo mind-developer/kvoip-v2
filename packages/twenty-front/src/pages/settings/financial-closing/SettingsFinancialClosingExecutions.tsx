@@ -1,6 +1,6 @@
 /* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -15,10 +15,10 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconChevronRight } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { FinancialClosingExecutionRow } from '~/pages/settings/financial-closing/components/FinancialClosingExecutionRow';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledNoResults = styled(Section)`
   display: flex;

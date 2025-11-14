@@ -1,16 +1,16 @@
 /* eslint-disable no-restricted-imports */
 import { useGetAllIssuersByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllIssuersByWorkspace';
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration'; // Keep for integration prop if needed for logo/etc.
-import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconPencil, IconPlus } from '@tabler/icons-react'; // Using a generic store icon for issuer
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
 import { type Issuer } from '~/types/Issuer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsIntegrationFocusNfeIssuersListCardProps = {
   integration: SettingsIntegration; // May not be strictly needed if issuer list is self-contained

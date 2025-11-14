@@ -3,13 +3,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -23,15 +23,15 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { useLingui } from '@lingui/react/macro';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 import {
-  REACT_APP_META_WEBHOOK_URL,
-  REACT_APP_SERVER_BASE_URL,
+    REACT_APP_META_WEBHOOK_URL,
+    REACT_APP_SERVER_BASE_URL,
 } from '~/config';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsIntegrationWhatsappConnectionFormSchema = z
   .object({

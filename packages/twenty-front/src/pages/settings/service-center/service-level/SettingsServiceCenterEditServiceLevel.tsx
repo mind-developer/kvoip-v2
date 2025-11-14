@@ -6,10 +6,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  ServiceLevelForm,
-  SettingsServiceCenterSLAFormSchema,
+    ServiceLevelForm,
+    SettingsServiceCenterSLAFormSchema,
 } from '@/settings/service-center/service-level/components/ServiceLevelForm';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -18,11 +17,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const DELETE_SLA_MODAL_ID = 'delete-sla-modal';
 

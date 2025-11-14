@@ -3,11 +3,11 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConectionsListCard } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConectionsListCard';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useEffect } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationWhatsappDatabase = () => {
   const navigateApp = useNavigateApp();

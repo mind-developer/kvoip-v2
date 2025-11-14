@@ -5,8 +5,8 @@ import { useParams } from 'react-router-dom';
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { IconChevronRight, IconTrash } from 'twenty-ui/display';
 import { IconButton, LightIconButton } from 'twenty-ui/input';

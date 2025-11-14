@@ -10,16 +10,16 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 import {
-  FinancialClosingFormSchema,
-  SettingsFinancialClosingForm,
+    FinancialClosingFormSchema,
+    SettingsFinancialClosingForm,
 } from '@/settings/financial-closing/components/SettingsFinancialClosingForm';
 import { useFindAllFinancialClosings } from '@/settings/financial-closing/hooks/useFindAllFinancialClosings';
 import { useUpdateFinancialClosing } from '@/settings/financial-closing/hooks/useUpdateFinancialClosing';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 const editFinancialClosingFormSchema = z
   .object({})

@@ -3,11 +3,11 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationInterDatabaseConectionsListCard } from '@/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConectionsListCard';
 import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useEffect } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationInterDatabase = () => {
   const navigateApp = useNavigateApp();

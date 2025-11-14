@@ -1,10 +1,11 @@
 /* @kvoip-woulz proprietary */
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CompanyFinancialClosingExecutionDetailsCard } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionDetailsCard';
 import { CompanyFinancialClosingExecutionLogsList } from '@/settings/financial-closing/components/CompanyFinancialClosingExecutionLogsList';
@@ -14,10 +15,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 
 const StyledContentContainer = styled.div`
   display: flex;
