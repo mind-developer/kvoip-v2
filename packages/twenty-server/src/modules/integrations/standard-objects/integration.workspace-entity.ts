@@ -23,6 +23,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+/* @kvoip-woulz proprietary:begin */
+import { AccountPayableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-payable.workspace-entity';
+import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
+/* @kvoip-woulz proprietary:end */
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -75,6 +79,34 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   charge: Relation<ChargeWorkspaceEntity[]> | null;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: INTEGRATION_STANDARD_FIELD_IDS.accountsReceivable,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Contas a Receber`,
+    description: msg`Accounts receivable processed by this integration`,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => AccountReceivableWorkspaceEntity,
+    inverseSideFieldKey: 'integration',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountsReceivable: Relation<AccountReceivableWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: INTEGRATION_STANDARD_FIELD_IDS.accountsPayable,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Contas a Pagar`,
+    description: msg`Accounts payable processed by this integration`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => AccountPayableWorkspaceEntity,
+    inverseSideFieldKey: 'integration',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountsPayable: Relation<AccountPayableWorkspaceEntity[]> | null;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.timelineActivities,

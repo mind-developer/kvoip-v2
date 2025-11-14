@@ -287,6 +287,54 @@ export const useRecordShowContainerTabs = (
           files: null,
         },
       },
+      /* @kvoip-woulz proprietary:begin */
+      [CoreObjectNameSingular.AccountReceivable]: {
+        hideSummaryAndFields: false,
+        tabs: {
+          fields: {
+            title: 'Account Receivable',
+            position: 101,
+            Icon: IconSettings,
+            cards: [{ type: CardType.AccountReceivableFieldsCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
+        },
+      },
+      [CoreObjectNameSingular.AccountPayable]: {
+        hideSummaryAndFields: false,
+        tabs: {
+          fields: {
+            title: 'Account Payable',
+            position: 101,
+            Icon: IconSettings,
+            cards: [{ type: CardType.AccountPayableFieldsCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
+        },
+      },
+      /* @kvoip-woulz proprietary:end */
     }),
     [],
   );

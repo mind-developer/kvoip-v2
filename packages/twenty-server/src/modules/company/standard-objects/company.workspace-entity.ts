@@ -41,6 +41,10 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyFinancialClosingExecutionWorkspaceEntity } from 'src/modules/company-financial-closing-execution/standard-objects/company-financial-closing-execution.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+/* @kvoip-woulz proprietary:begin */
+import { AccountPayableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-payable.workspace-entity';
+import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
+/* @kvoip-woulz proprietary:end */
 import { InvoiceWorkspaceEntity } from 'src/modules/invoice/standard-objects/invoice.workspace.entity';
 import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/tenant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
@@ -596,4 +600,32 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   companyFinancialClosingExecutions: Relation<
     CompanyFinancialClosingExecutionWorkspaceEntity[]
   >;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.accountsReceivable,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Contas a Receber`,
+    description: msg`Accounts receivable from this client`,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => AccountReceivableWorkspaceEntity,
+    inverseSideFieldKey: 'company',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountsReceivable: Relation<AccountReceivableWorkspaceEntity[]> | null;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.accountsPayable,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Contas a Pagar`,
+    description: msg`Accounts payable to this supplier`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => AccountPayableWorkspaceEntity,
+    inverseSideFieldKey: 'company',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountsPayable: Relation<AccountPayableWorkspaceEntity[]> | null;
+  /* @kvoip-woulz proprietary:end */
 }

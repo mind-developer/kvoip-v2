@@ -66,6 +66,11 @@ export const STANDARD_OBJECT_IDS = {
   sector: 'a7cc30e4-6496-4939-ab62-306cca0f5ae5',
   agent: 'bcc67fab-78b3-4602-b06e-39fb4eb11c35',
   inbox: '41c5482c-7269-4a34-9ce8-7daab1100e34',
+  /* @kvoip-woulz proprietary:begin */
+  financialRegister: '20202020-8f4a-4c7b-9d3e-1a2b3c4d5e6f', // @deprecated - split into accountReceivable and accountPayable
+  accountReceivable: '20202020-9f5b-5d8c-ae4f-2b3c4d5e6f7a',
+  accountPayable: '20202020-af6c-6e9d-bf5f-3c4d5e6f7a8b',
+  /* @kvoip-woulz proprietary:end */
   inboxTarget: '3719ad4d-12dd-45fa-9625-10492b4098c2',
   clientChat: 'c60c2657-6c73-4cbe-bff9-666895c3efe1',
   clientChatMessage: 'd08e5520-6c78-4511-b03c-1589c0a11d66',

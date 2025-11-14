@@ -19,6 +19,12 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/com
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+/* @kvoip-woulz proprietary:begin */
+import { AccountPayableFieldsCard } from '@/financial-register/account-payable/record-show/AccountPayableFieldsCard';
+import { AccountPayableCardContainer } from '@/financial-register/account-payable/record-show/components/AccountPayableCardContainer';
+import { AccountReceivableFieldsCard } from '@/financial-register/account-receivable/record-show/AccountReceivableFieldsCard';
+import { AccountReceivableCardContainer } from '@/financial-register/account-receivable/record-show/components/AccountReceivableCardContainer';
+/* @kvoip-woulz proprietary:end */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense, useId } from 'react';
@@ -223,5 +229,36 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         objectRecordId={targetableObject.id}
       />
     </TraceableCardContainer>
+  ),
+
+  /* @kvoip-woulz proprietary:begin */
+  [CardType.AccountReceivableFieldsCard]: ({
+    targetableObject,
+    isInRightDrawer,
+  }) => (
+    <AccountReceivableCardContainer isInRightDrawer={isInRightDrawer}>
+      <AccountReceivableFieldsCard
+        objectNameSingular={CoreObjectNameSingular.AccountReceivable}
+        objectRecordId={targetableObject.id}
+      />
+    </AccountReceivableCardContainer>
+  ),
+
+  [CardType.AccountPayableFieldsCard]: ({
+    targetableObject,
+    isInRightDrawer,
+  }) => (
+    <AccountPayableCardContainer isInRightDrawer={isInRightDrawer}>
+      <AccountPayableFieldsCard
+        objectNameSingular={CoreObjectNameSingular.AccountPayable}
+        objectRecordId={targetableObject.id}
+        isInRightDrawer={isInRightDrawer}
+      />
+    </AccountPayableCardContainer>
+  ),
+  /* @kvoip-woulz proprietary:end */
+
+  [CardType.ChatbotCard]: ({ targetableObject }) => (
+    <ChatbotFlow targetableObjectId={targetableObject.id} />
   ),
 };

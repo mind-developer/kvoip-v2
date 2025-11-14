@@ -19,6 +19,10 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
+/* @kvoip-woulz proprietary:begin */
+import { AccountPayableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-payable.workspace-entity';
+import { AccountReceivableWorkspaceEntity } from 'src/modules/financial-register/standard-objects/account-receivable.workspace-entity';
+/* @kvoip-woulz proprietary:end */
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -209,6 +213,40 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('note')
   noteId: string;
+
+  /* @kvoip-woulz proprietary:begin */
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.accountReceivable,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Account Receivable`,
+    description: msg`Favorite account receivable`,
+    icon: 'IconCurrencyDollar',
+    inverseSideTarget: () => AccountReceivableWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  accountReceivable: Relation<AccountReceivableWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('accountReceivable')
+  accountReceivableId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.accountPayable,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Account Payable`,
+    description: msg`Favorite account payable`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => AccountPayableWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  accountPayable: Relation<AccountPayableWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('accountPayable')
+  accountPayableId: string;
+  /* @kvoip-woulz proprietary:end */
 
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,

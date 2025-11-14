@@ -127,7 +127,7 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
     type: FieldMetadataType.BOOLEAN,
     label: msg`Completed Boleto Issuance`,
     description: msg`Whether boleto issuance step completed`,
-    icon: 'IconReceipt',
+    icon: 'IconBuildingSkyscraper',
     defaultValue: false,
   })
   completedBoletoIssuance: boolean;
@@ -149,8 +149,7 @@ export class CompanyFinancialClosingExecutionWorkspaceEntity extends BaseWorkspa
   chargeId: string | null;
 
   @WorkspaceRelation({
-    standardId:
-      COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoices,
+    standardId: COMPANY_FINANCIAL_CLOSING_EXECUTION_STANDARD_FIELD_IDS.invoices,
     type: RelationType.ONE_TO_MANY,
     label: msg`Invoices`,
     description: msg`Reference to the invoices`,

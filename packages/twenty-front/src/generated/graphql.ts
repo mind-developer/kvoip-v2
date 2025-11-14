@@ -550,6 +550,7 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
+  TelephonyConfig = 'TelephonyConfig',
   TokensDuration = 'TokensDuration',
   TwoFactorAuthentication = 'TwoFactorAuthentication',
 }
@@ -1181,9 +1182,15 @@ export type EmailPasswordResetLink = {
 
 export type Encaminhamento = {
   __typename?: 'Encaminhamento';
-  encaminhamento_destino?: Maybe<Array<Scalars['String']>>;
-  encaminhamento_destinos?: Maybe<Array<Scalars['String']>>;
-  encaminhamento_tipo?: Maybe<Scalars['String']>;
+  encaminhamento_destino?: Maybe<Array<EncaminhamentoDestino>>;
+  encaminhamento_destinos?: Maybe<Array<EncaminhamentoDestino>>;
+  encaminhamento_tipo?: Maybe<Scalars['Int']>;
+};
+
+export type EncaminhamentoDestino = {
+  __typename?: 'EncaminhamentoDestino';
+  destino?: Maybe<Scalars['String']>;
+  tipo?: Maybe<Scalars['Int']>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -1816,6 +1823,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
+  linkMemberToExtension: TelephonyWorkspaceEntity;
   publishServerlessFunction: ServerlessFunction;
   removeAgentHandoff: Scalars['Boolean'];
   removeBillingPlan: Scalars['Boolean'];
@@ -2161,7 +2169,7 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 };
 
 export type MutationDeleteTelephonyIntegrationArgs = {
-  telephonyId: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
@@ -2990,7 +2998,9 @@ export type Query = {
   financialClosingsByWorkspace: Array<FinancialClosing>;
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
-  findAllTelephonyIntegration: Array<TelephonyWorkspaceEntity>;
+  findAllExternalExtensions: Array<TelephonyExtension>;
+  findAllTelephonyIntegration: Array<TelephonyData>;
+  findAllTelephonyIntegrationPaginated: TelephonyPaginatedResult;
   findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -3021,6 +3031,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
+  getExternalExtension?: Maybe<TelephonyExtension>;
   getFocusNfeIntegrationById: FocusNFeWorkspaceEntity;
   getFocusNfeIntegrationsByWorkspace: Array<FocusNFeWorkspaceEntity>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -3040,6 +3051,7 @@ export type Query = {
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getStripeIntegrationById: StripeIntegration;
   getSystemHealthStatus: SystemHealth;
+  getTelephonyByMember?: Maybe<TelephonyWorkspaceEntity>;
   getTelephonyCallFlows?: Maybe<Array<TelephonyCallFlow>>;
   getTelephonyDids?: Maybe<Array<TelephonyDids>>;
   getTelephonyPlans?: Maybe<Array<TelephonyDialingPlan>>;
@@ -3109,6 +3121,10 @@ export type QueryFindAgentHandoffTargetsArgs = {
 
 export type QueryFindAgentHandoffsArgs = {
   input: AgentIdInput;
+};
+
+export type QueryFindAllExternalExtensionsArgs = {
+  workspaceId: Scalars['ID'];
 };
 
 export type QueryFindAllTelephonyIntegrationArgs = {
@@ -3738,6 +3754,49 @@ export type TelephonyCallFlow = {
   fluxo_chamada_nome?: Maybe<Scalars['String']>;
 };
 
+export type TelephonyData = {
+  __typename?: 'TelephonyData';
+  SIPPassword?: Maybe<Scalars['String']>;
+  advancedFowarding1?: Maybe<Scalars['String']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']>;
+  advancedFowarding2?: Maybe<Scalars['String']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']>;
+  advancedFowarding3?: Maybe<Scalars['String']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']>;
+  advancedFowarding4?: Maybe<Scalars['String']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']>;
+  advancedFowarding5?: Maybe<Scalars['String']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']>;
+  areaCode?: Maybe<Scalars['String']>;
+  blockExtension?: Maybe<Scalars['Boolean']>;
+  callerExternalID?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['String']>;
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']>;
+  dialingPlan?: Maybe<Scalars['String']>;
+  emailForMailbox?: Maybe<Scalars['String']>;
+  enableMailbox?: Maybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
+  extensionBusy?: Maybe<Scalars['String']>;
+  extensionGroup?: Maybe<Scalars['String']>;
+  extensionName?: Maybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
+  externalNumberBusy?: Maybe<Scalars['String']>;
+  fowardAllCalls?: Maybe<Scalars['String']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  listenToCalls?: Maybe<Scalars['Boolean']>;
+  member?: Maybe<TelephonyMember>;
+  memberId?: Maybe<Scalars['String']>;
+  numberExtension: Scalars['String'];
+  pullCalls?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['String']>;
+  recordCalls?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['String']>;
+};
+
 export type TelephonyDialingPlan = {
   __typename?: 'TelephonyDialingPlan';
   cliente_id?: Maybe<Scalars['String']>;
@@ -3796,6 +3855,41 @@ export type TelephonyExtension = {
   usuario_autenticacao?: Maybe<Scalars['String']>;
 };
 
+export type TelephonyFullName = {
+  __typename?: 'TelephonyFullName';
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyMember = {
+  __typename?: 'TelephonyMember';
+  avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['String']>;
+  dateFormat?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: Maybe<TelephonyFullName>;
+  timeFormat?: Maybe<Scalars['String']>;
+  timeZone?: Maybe<Scalars['String']>;
+  userEmail?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyPaginatedResult = {
+  __typename?: 'TelephonyPaginatedResult';
+  data: Array<TelephonyData>;
+  pagination: TelephonyPaginationInfo;
+};
+
+export type TelephonyPaginationInfo = {
+  __typename?: 'TelephonyPaginationInfo';
+  currentPage: Scalars['Int'];
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  itemsPerPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
+};
+
 export type TelephonyWorkspaceEntity = {
   __typename?: 'TelephonyWorkspaceEntity';
   SIPPassword?: Maybe<Scalars['String']>;
@@ -3829,7 +3923,7 @@ export type TelephonyWorkspaceEntity = {
   fowardOfflineWithoutService?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   listenToCalls?: Maybe<Scalars['Boolean']>;
-  memberId: Scalars['String'];
+  memberId?: Maybe<Scalars['String']>;
   numberExtension: Scalars['String'];
   pullCalls?: Maybe<Scalars['String']>;
   ramal_id?: Maybe<Scalars['String']>;
@@ -4534,9 +4628,11 @@ export type Workspace = {
   metadataVersion: Scalars['Float'];
   onesignalApiKey?: Maybe<Scalars['String']>;
   onesignalAppId?: Maybe<Scalars['String']>;
-  pabxCompanyId?: Maybe<Scalars['Float']>;
-  pabxDialingPlanId?: Maybe<Scalars['Float']>;
-  pabxTrunkId?: Maybe<Scalars['Float']>;
+  originIpId?: Maybe<Scalars['String']>;
+  pabxCompanyId?: Maybe<Scalars['String']>;
+  pabxDialingPlanId?: Maybe<Scalars['String']>;
+  pabxTrunkId?: Maybe<Scalars['String']>;
+  softSwitchClientId?: Maybe<Scalars['String']>;
   stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];

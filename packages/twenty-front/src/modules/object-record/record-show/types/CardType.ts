@@ -11,4 +11,8 @@ export enum CardType {
   WorkflowRunCard = 'WorkflowRunCard',
   RichTextCard = 'RichTextCard',
   TraceableFieldsCard = 'TraceableFieldsCard',
+  /* @kvoip-woulz proprietary:begin */
+  AccountReceivableFieldsCard = 'AccountReceivableFieldsCard',
+  AccountPayableFieldsCard = 'AccountPayableFieldsCard',
+  /* @kvoip-woulz proprietary:end */
 }

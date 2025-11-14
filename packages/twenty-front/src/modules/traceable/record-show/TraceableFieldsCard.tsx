@@ -1,13 +1,17 @@
+/* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
-import groupBy from 'lodash.groupby';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
+import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
+import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
+import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -16,9 +20,9 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { type Traceable } from '@/traceable/types/Traceable';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement } from 'react';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import {
   TraceableFieldSection,
@@ -30,10 +34,6 @@ type TraceableFieldsCardProps = {
   objectRecordId: string;
 };
 
-type TraceableFieldsKeys = keyof Traceable;
-
-const INPUT_ID_PREFIX = 'traceable-fields-card';
-
 const StyledFieldsSectionContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,17 +41,18 @@ const StyledFieldsSectionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledSectionTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledUtmFieldsGreyBox = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  height: 'auto';
-
   padding: ${({ theme }) => theme.spacing(2)};
-
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTraceableLinksFieldsBox = styled.div`
@@ -59,43 +60,24 @@ const StyledTraceableLinksFieldsBox = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const TraceableFieldsCard = ({
   objectNameSingular,
   objectRecordId,
 }: TraceableFieldsCardProps) => {
+  const instanceId = `traceable-fields-${objectRecordId}`;
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Traceable,
   });
-
-  const fieldsToDisplay: (keyof Traceable)[] = [
-    'name',
-    'websiteUrl',
-    'campaignName',
-    'campaignSource',
-    'meansOfCommunication',
-    'keyword',
-    'campaignContent',
-    'generatedUrl',
-  ];
-
-  const fieldsByName = mapArrayToObject(
-    objectMetadataItem.fields,
-    ({ name }) => name,
-  );
 
   const { isPrefetchLoading, recordLoading } = useRecordShowContainerData({
     objectRecordId,
   });
 
-  const { t } = useLingui();
-
-  const { objectMetadataItem: objectMetadataItemTraceable } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
@@ -104,34 +86,50 @@ export const TraceableFieldsCard = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
-    objectMetadataId: objectMetadataItemTraceable.id,
+    objectMetadataId: objectMetadataItem.id,
   });
 
-  const urlFieldKey: TraceableFieldsKeys[] = ['websiteUrl'];
-  const utmFieldsKeys: TraceableFieldsKeys[] = [
+  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+    recordFieldListHoverPositionComponentState,
+    instanceId,
+  );
+
+  const handleMouseEnter = (index: number) => {
+    setRecordFieldListHoverPosition(index);
+  };
+
+  const { t } = useLingui();
+
+  // Field organization by section
+  const urlFields = ['websiteUrl'];
+  const utmFields = [
     'campaignName',
     'campaignSource',
     'meansOfCommunication',
     'keyword',
     'campaignContent',
   ];
-  const generatedFieldsKeys: TraceableFieldsKeys[] = ['generatedUrl', 'url'];
+  const generatedFields = ['generatedUrl', 'url'];
 
-  const {
-    urlInlineFieldMetadataItem,
-    utmInlineFieldsMetadataItems,
-    generatedInlineFieldsMetadataItems,
-    inlineOthersFieldMetadataItems,
-  } = groupBy(fieldsToDisplay, (fieldKey) => {
-    if (urlFieldKey.includes(fieldKey)) return 'urlInlineFieldMetadataItem';
-    if (utmFieldsKeys.includes(fieldKey)) return 'utmInlineFieldsMetadataItems';
-    if (generatedFieldsKeys.includes(fieldKey))
-      return 'generatedInlineFieldsMetadataItems';
-    else return 'inlineOthersFieldMetadataItems';
+  const fieldsByName = mapArrayToObject(
+    objectMetadataItem.fields,
+    ({ name }) => name,
+  );
+
+  const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+    objectPermissionsByObjectMetadataId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
-  const fieldsMetadataMapper = (fieldsToDisplay: TraceableFieldsKeys[]) =>
-    fieldsToDisplay.map((fieldName, index) => (
+  const renderField = (fieldName: string, globalIndex: number) => {
+    const fieldMetadataItem = fieldsByName[fieldName];
+
+    if (!fieldMetadataItem) {
+      console.warn(`[TraceableFieldsCard] Field not found: ${fieldName}`);
+      return null;
+    }
+
+    return (
       <FieldContext.Provider
         key={fieldName}
         value={{
@@ -139,76 +137,110 @@ export const TraceableFieldsCard = ({
           maxWidth: 200,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-            field: fieldsByName[fieldName],
-            position: index,
-            objectMetadataItem: objectMetadataItemTraceable,
+            field: fieldMetadataItem,
+            position: globalIndex,
+            objectMetadataItem,
             showLabel: true,
             labelWidth: 90,
           }),
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
-          isRecordFieldReadOnly: isRecordReadOnly,
+          onMouseEnter: () => handleMouseEnter(globalIndex),
+          anchorId: `${getRecordFieldInputInstanceId({
+            recordId: objectRecordId,
+            fieldName: fieldMetadataItem.name,
+            prefix: instanceId,
+          })}`,
+          isRecordFieldReadOnly: isRecordFieldReadOnly({
+            isRecordReadOnly,
+            objectPermissions,
+            fieldMetadataItem: {
+              id: fieldMetadataItem.id,
+              isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+            },
+          }),
         }}
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
             instanceId: getRecordFieldInputInstanceId({
               recordId: objectRecordId,
-              fieldName,
-              prefix: INPUT_ID_PREFIX,
+              fieldName: fieldMetadataItem.name,
+              prefix: instanceId,
             }),
           }}
         >
-          <RecordInlineCell loading={recordLoading} />
+          <RecordInlineCell
+            loading={recordLoading}
+            instanceIdPrefix={instanceId}
+          />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
-    ));
-
-  const TRACEABLE_FIELDS_METADATA_SECTIONS_RECORD: Record<
-    string,
-    ReactElement | ReactElement[]
-  > = {
-    [getTraceableFieldSectionLabel(TraceableFieldSection.Sumary)]: (
-      <>{fieldsMetadataMapper(urlInlineFieldMetadataItem)}</>
-    ),
-    [getTraceableFieldSectionLabel(TraceableFieldSection.UTM)]: (
-      <StyledUtmFieldsGreyBox>
-        {fieldsMetadataMapper(utmInlineFieldsMetadataItems)}
-      </StyledUtmFieldsGreyBox>
-    ),
-    [getTraceableFieldSectionLabel(TraceableFieldSection.TraceableLinks)]: (
-      <StyledTraceableLinksFieldsBox>
-        {t`Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign.`}
-        {fieldsMetadataMapper(generatedInlineFieldsMetadataItems)}
-      </StyledTraceableLinksFieldsBox>
-    ),
-    [getTraceableFieldSectionLabel(TraceableFieldSection.Others)]: (
-      <>{fieldsMetadataMapper(inlineOthersFieldMetadataItems ?? [])}</>
-    ),
+    );
   };
 
+  let globalIndex = 0;
+
   return (
-    <>
+    <RecordFieldListComponentInstanceContext.Provider value={{ instanceId }}>
       <PropertyBox>
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
         ) : (
           <>
-            {Object.entries(TRACEABLE_FIELDS_METADATA_SECTIONS_RECORD).map(
-              ([label, fields]) => (
-                <StyledFieldsSectionContainer>
-                  {!label.startsWith('no-label') && <>{label}</>}
-                  {fields}
-                </StyledFieldsSectionContainer>
-              ),
-            )}
+            {/* URL Section */}
+            <StyledFieldsSectionContainer>
+              {urlFields.map((fieldName) =>
+                renderField(fieldName, globalIndex++),
+              )}
+            </StyledFieldsSectionContainer>
+
+            {/* UTM Section */}
+            <StyledFieldsSectionContainer>
+              <StyledSectionTitle>
+                {getTraceableFieldSectionLabel(TraceableFieldSection.UTM)}
+              </StyledSectionTitle>
+              <StyledUtmFieldsGreyBox>
+                {utmFields.map((fieldName) =>
+                  renderField(fieldName, globalIndex++),
+                )}
+              </StyledUtmFieldsGreyBox>
+            </StyledFieldsSectionContainer>
+
+            {/* Traceable Links Section */}
+            <StyledFieldsSectionContainer>
+              <StyledSectionTitle>
+                {getTraceableFieldSectionLabel(
+                  TraceableFieldSection.TraceableLinks,
+                )}
+              </StyledSectionTitle>
+              <StyledTraceableLinksFieldsBox>
+                <div>{t`Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign.`}</div>
+                {generatedFields.map((fieldName) =>
+                  renderField(fieldName, globalIndex++),
+                )}
+              </StyledTraceableLinksFieldsBox>
+            </StyledFieldsSectionContainer>
           </>
         )}
       </PropertyBox>
-      <RecordDetailDuplicatesSection
-        objectRecordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
-    </>
+
+      {!isPrefetchLoading && (
+        <>
+          <RecordDetailDuplicatesSection
+            objectRecordId={objectRecordId}
+            objectNameSingular={objectNameSingular}
+          />
+          <RecordFieldListCellHoveredPortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={objectRecordId}
+          />
+          <RecordFieldListCellEditModePortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={objectRecordId}
+          />
+        </>
+      )}
+    </RecordFieldListComponentInstanceContext.Provider>
   );
 };

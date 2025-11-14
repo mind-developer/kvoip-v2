@@ -71,24 +71,72 @@ export const TextFieldInput = () => {
   const validationErrorMessageRaw = validationSettings?.errorMessage;
   const validationPlaceholder = validationSettings?.placeholder;
 
-  const validationErrorMessage = validationErrorMessageRaw
-    ? i18n._(validationErrorMessageRaw as any)
-    : undefined;
+  // Debug logging for field metadata
+  console.log('[TextFieldInput] Field metadata:', {
+    fieldName: fieldDefinition?.metadata?.fieldName,
+    validationSettings,
+    validationErrorMessageRaw,
+    type: typeof validationErrorMessageRaw,
+  });
 
-  const validationDynamicMask = validationDynamicMaskRaw
-    ? resolveDynamicMask(validationDynamicMaskRaw)
-    : undefined;
+  let validationErrorMessage: string | undefined;
+  try {
+    validationErrorMessage = validationErrorMessageRaw
+      ? i18n._(validationErrorMessageRaw as any)
+      : undefined;
+  } catch (error) {
+    console.error('[TextFieldInput] Error resolving validation message:', {
+      validationErrorMessageRaw,
+      error,
+      fieldName: fieldDefinition?.metadata?.fieldName,
+    });
+    validationErrorMessage = 'Invalid input format';
+  }
+
+  let validationDynamicMask;
+  try {
+    validationDynamicMask = validationDynamicMaskRaw
+      ? resolveDynamicMask(validationDynamicMaskRaw)
+      : undefined;
+  } catch (error) {
+    console.error('[TextFieldInput] Error resolving dynamic mask:', {
+      validationDynamicMaskRaw,
+      error,
+      fieldName: fieldDefinition?.metadata?.fieldName,
+    });
+    validationDynamicMask = undefined;
+  }
 
   const hasMask = !!(validationMask || validationDynamicMask);
   const hasPattern = !!validationPattern;
 
-  const validationSchema =
-    hasPattern && validationPattern
-      ? createTextValidationSchema(validationPattern, validationErrorMessage)
-      : null;
+  let validationSchema = null;
+  try {
+    validationSchema =
+      hasPattern && validationPattern
+        ? createTextValidationSchema(validationPattern, validationErrorMessage)
+        : null;
+  } catch (error) {
+    console.error('[TextFieldInput] Error creating validation schema:', {
+      validationPattern,
+      validationErrorMessage,
+      error,
+      fieldName: fieldDefinition?.metadata?.fieldName,
+    });
+  }
 
   const placeholder =
     validationPlaceholder || fieldDefinition.metadata.placeHolder;
+
+  console.log('[TextFieldInput] Validation config:', {
+    fieldName: fieldDefinition?.metadata?.fieldName,
+    hasMask,
+    hasPattern,
+    validationMask,
+    validationDynamicMask: validationDynamicMaskRaw,
+    placeholder,
+    hasValidationSchema: !!validationSchema,
+  });
 
   const validateValue = (value: string): boolean => {
     if (!validationSchema) {
@@ -102,7 +150,12 @@ export const TextFieldInput = () => {
     try {
       validationSchema.parse(value);
       return true;
-    } catch {
+    } catch (error) {
+      console.log('[TextFieldInput] Validation failed:', {
+        fieldName: fieldDefinition?.metadata?.fieldName,
+        value,
+        error,
+      });
       return false;
     }
   };

@@ -10,6 +10,7 @@ import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDraw
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { useMemo } from 'react';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -84,7 +85,12 @@ export const ShowPageSubContainer = ({
 
   const isMobile = useIsMobile();
 
-  const summaryCard = (
+  const isDraftRecord = useMemo(
+    () => targetableObject.id.startsWith('draft-'),
+    [targetableObject.id],
+  );
+
+  const summaryCard = isDraftRecord ? null : (
     <SummaryCard
       objectNameSingular={targetableObject.targetObjectNameSingular}
       objectRecordId={targetableObject.id}
@@ -99,8 +105,15 @@ export const ShowPageSubContainer = ({
     />
   );
 
+  const tabsToRender = useMemo(
+    () => (isDraftRecord ? tabs.filter((tab) => tab.id === 'fields') : tabs),
+    [isDraftRecord, tabs],
+  );
+
+  const visibleTabs = tabsToRender.filter((tab) => !tab.hide);
+
   const renderActiveTabContent = () => {
-    const activeTab = tabs.find((tab) => tab.id === activeTabId);
+    const activeTab = tabsToRender.find((tab) => tab.id === activeTabId);
     if (!activeTab?.cards?.length) return null;
 
     return activeTab.cards.map((card, index) => {
@@ -115,10 +128,12 @@ export const ShowPageSubContainer = ({
     });
   };
 
-  const visibleTabs = tabs.filter((tab) => !tab.hide);
-
   const displaySummaryAndFields =
-    layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
+    layout &&
+    !layout.hideSummaryAndFields &&
+    !isMobile &&
+    !isInRightDrawer &&
+    !isDraftRecord;
 
   return (
     <TabListComponentInstanceContext.Provider
@@ -135,7 +150,7 @@ export const ShowPageSubContainer = ({
           <StyledTabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading}
-            tabs={tabs}
+            tabs={tabsToRender}
             isInRightDrawer={isInRightDrawer}
             componentInstanceId={tabListComponentId}
           />
