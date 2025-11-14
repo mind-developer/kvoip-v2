@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { type WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationWhatsappDatabaseConnectionForm } from '@/settings/integrations/meta/whatsapp/components/SettingsIntegrationWhatsappDatabaseConnectionForm';
+import { type Sector } from '@/settings/service-center/sectors/types/Sector';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -29,6 +31,7 @@ export const settingsEditIntegrationWhatsappConnectionFormSchema = z.object({
   appId: z.string(),
   appKey: z.string(),
   apiType: z.string(),
+  sectorId: z.string().min(1, 'Select a sector'),
 });
 
 export type SettingsEditIntegrationWhatsappConnectionFormValues = z.infer<
@@ -51,13 +54,36 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
   const { connectionId } = useParams<{ connectionId?: string }>();
 
   const whatsappIntegrations = useFindManyRecords<
-    WhatsappIntegration & { __typename: string }
+    ObjectRecord & { __typename: string }
   >({
     objectNameSingular: 'whatsappIntegration',
+    recordGqlFields: {
+      id: true,
+      name: true,
+      phoneId: true,
+      businessAccountId: true,
+      accessToken: true,
+      appId: true,
+      appKey: true,
+      apiType: true,
+      defaultSectorId: true,
+      defaultSector: {
+        id: true,
+        name: true,
+        icon: true,
+      },
+    },
   }).records;
   const activeConnection = whatsappIntegrations.find(
     (wa) => wa.id === connectionId,
   );
+
+  const { records: sectors } = useFindManyRecords<
+    Sector & { __typename: string }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    recordGqlFields: { id: true, name: true, icon: true },
+  });
 
   const isIntegrationAvailable = !!integration;
 
@@ -84,6 +110,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
         appId: activeConnection?.appId,
         appKey: activeConnection?.appKey,
         apiType: activeConnection?.apiType,
+        sectorId: (activeConnection as any)?.defaultSectorId || '',
       },
     });
 
@@ -149,7 +176,11 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
               title=""
               description="Edit the information to connect your integration"
             />
-            <SettingsIntegrationWhatsappDatabaseConnectionForm />
+            <SettingsIntegrationWhatsappDatabaseConnectionForm
+              disabled={true}
+              sectors={sectors}
+              editableFields={['name', 'sectorId']}
+            />
           </Section>
         </FormProvider>
       </SettingsPageContainer>

@@ -2,8 +2,11 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useSendClientChatMessage } from '@/chat/client-chat/hooks/useSendClientChatMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
 import { type Dispatch, type SetStateAction } from 'react';
 import {
   ChatIntegrationProvider,
@@ -20,36 +23,48 @@ interface UploadMediaPopupProps {
   clientChat: ClientChat;
 }
 
-interface LabelProps {
-  isImage?: boolean;
-}
+const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB
 
-const StyledMainContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+const popupItems = [
+  {
+    icon: 'IconCamera',
+    label: 'Image',
+    accept: 'image/*',
+    type: ChatMessageType.IMAGE,
+  },
+  {
+    icon: 'IconVideo',
+    label: 'Video',
+    accept: 'video/*',
+    type: ChatMessageType.VIDEO,
+  },
+  {
+    icon: 'IconFile',
+    label: 'Document',
+    accept:
+      'application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain',
+    type: ChatMessageType.DOCUMENT,
+  },
+] as const;
+
+const StyledMainContainer = styled(motion.div)`
+  background: ${({ theme }) => theme.background.primary};
+  opacity: 0.8;
+
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  bottom: 50px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  bottom: 60px;
   display: flex;
   flex-direction: column;
   position: absolute;
-  width: 180px;
   z-index: 10;
 `;
 
-const StyledLabel = styled.label<LabelProps>`
+const StyledLabel = styled(motion.div)`
   display: flex;
   padding: 6px 12px;
   cursor: pointer;
   color: ${({ theme }) => theme.font.color.secondary};
-  border-top-right-radius: ${({ theme, isImage }) =>
-    isImage ? theme.border.radius.md : 0};
-  border-top-left-radius: ${({ theme, isImage }) =>
-    isImage ? theme.border.radius.md : 0};
-  border-bottom-right-radius: ${({ theme, isImage }) =>
-    isImage ? 0 : theme.border.radius.md};
-  border-bottom-left-radius: ${({ theme, isImage }) =>
-    isImage ? 0 : theme.border.radius.md};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.quaternary};
@@ -66,13 +81,10 @@ export const UploadMediaPopup = ({
 }: UploadMediaPopupProps) => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { sendClientChatMessage } = useSendClientChatMessage();
-
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const theme = useTheme();
-
-  const DocIcon = getIcon('IconFile');
-  const ImageIcon = getIcon('IconCamera');
-  const VideoIcon = getIcon('IconVideo');
 
   const handleSendFile = async (file: File, type: ChatMessageType) => {
     if (!clientChat.person.id) {
@@ -104,79 +116,64 @@ export const UploadMediaPopup = ({
     }
   };
 
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: ChatMessageType,
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        enqueueErrorSnackBar({
+          message: t`File size exceeds the maximum limit of 16MB`,
+        });
+        return;
+      }
+      handleSendFile(file, type);
+      setIsUploadMediaPopupOpen(false);
+    }
+  };
+
   return (
-    <StyledMainContainer>
-      <StyledLabel
-        isImage
-        style={{
-          borderBottom: `1px solid ${theme.border.color.medium}`,
-        }}
-      >
-        <ImageIcon
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.primary}
-          style={{ marginRight: theme.spacing(2) }}
-        />
-        Image
-        <StyledInput
-          type="file"
-          accept=".bmp,.csv,.odt,.doc,.docx,.htm,.html,.jpg,.jpeg,.pdf,.ppt,.pptx,.txt,.xls,.xlsx"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              handleSendFile(file, ChatMessageType.IMAGE);
-              setIsUploadMediaPopupOpen(false);
-            }
-          }}
-        />
-      </StyledLabel>
-      {clientChat && (
-        <StyledLabel
-          isImage
-          style={{
-            borderBottom: `1px solid ${theme.border.color.medium}`,
-          }}
-        >
-          <VideoIcon
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.primary}
-            style={{ marginRight: theme.spacing(2) }}
-          />
-          Video
-          <StyledInput
-            type="file"
-            accept="video/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                handleSendFile(file, ChatMessageType.VIDEO);
-                setIsUploadMediaPopupOpen(false);
-              }
+    <StyledMainContainer
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: 'fit-content', opacity: 1 }}
+      transition={{
+        duration: 0.8,
+        /* @kvoip-woulz proprietary:begin */
+        // Add spring bounce for upload popup opening animation
+        type: 'spring',
+        bounce: 0.2,
+      }}
+    >
+      {popupItems.map((item, index) => {
+        const IconComponent = getIcon(item.icon);
+
+        return (
+          <StyledLabel
+            key={item.label}
+            initial={{ scale: 0 }}
+            animate={{
+              scale: 1,
+              transition: { delay: index * 0.08, type: 'spring', bounce: 0.2 },
             }}
-          />
-        </StyledLabel>
-      )}
-      <StyledLabel>
-        <DocIcon
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.primary}
-          style={{ marginRight: theme.spacing(2) }}
-        />
-        Document
-        <StyledInput
-          type="file"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              handleSendFile(file, ChatMessageType.DOCUMENT);
-              setIsUploadMediaPopupOpen(false);
-            }
-          }}
-        />
-      </StyledLabel>
+            exit={{ scale: 0.95 }}
+            transition={{ duration: 0.5, ease: [0, 0.81, 0.27, 1] }}
+          >
+            <IconComponent
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.primary}
+              style={{ marginRight: theme.spacing(2) }}
+            />
+            {item.label}
+            <StyledInput
+              type="file"
+              accept={item.accept}
+              onChange={(e) => handleFileChange(e, item.type)}
+            />
+          </StyledLabel>
+        );
+      })}
     </StyledMainContainer>
   );
 };

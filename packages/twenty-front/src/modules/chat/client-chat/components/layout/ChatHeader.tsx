@@ -64,15 +64,12 @@ const StyledIconButton = styled(IconButton)`
 `;
 const StyledIntegrationCard = styled.div<{ isSelected?: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.font.color.primary : theme.font.color.secondary};
   display: flex;
-  padding: 3px ${({ theme }) => theme.spacing(1)};
   width: max-content;
-  margin-right: ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
 
   & img {
     height: 10px;
@@ -118,7 +115,7 @@ export const ChatHeader = ({
             <Avatar
               avatarUrl={avatarUrl}
               placeholder={name}
-              size="xl"
+              size="lg"
               type={'rounded'}
               placeholderColorSeed={name}
             />
@@ -126,17 +123,17 @@ export const ChatHeader = ({
               onClick={() => navigate(`/object/person/${personId}`)}
             >
               {name}
+              {selectedChat?.whatsappIntegration?.apiType && (
+                <StyledIntegrationCard>
+                  {selectedChat?.whatsappIntegration?.apiType === 'MetaAPI' ? (
+                    <IconBrandMeta size={10} />
+                  ) : (
+                    <IconDeviceMobileMessage size={10} />
+                  )}
+                  {selectedChat?.whatsappIntegration?.name}
+                </StyledIntegrationCard>
+              )}
             </StyledChatTitle>
-            {selectedChat?.whatsappIntegration?.apiType && (
-              <StyledIntegrationCard>
-                {selectedChat?.whatsappIntegration?.apiType === 'MetaAPI' ? (
-                  <IconBrandMeta size={10} />
-                ) : (
-                  <IconDeviceMobileMessage size={10} />
-                )}
-                WhatsApp ({selectedChat?.whatsappIntegration?.apiType})
-              </StyledIntegrationCard>
-            )}
           </StyledDiv>
           <StyledActionsContainer>
             {showCloseOptions && (

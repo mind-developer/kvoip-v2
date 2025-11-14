@@ -36,9 +36,10 @@ import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
 import {
+  IconHash,
   IconHeadset,
   IconIdBadge2,
-  IconMessageCircleCog,
+  IconMessageCircle,
   IconRobot,
   IconUserScan,
 } from '@tabler/icons-react';
@@ -142,15 +143,15 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
           subItems: [
             {
-              label: t`Agents`,
-              path: SettingsPath.ServiceCenterAgents,
-              Icon: IconUserScan,
-              indentationLevel: 2,
-            },
-            {
               label: t`Sectors`,
               path: SettingsPath.ServiceCenterSectors,
               Icon: IconIdBadge2,
+              indentationLevel: 2,
+            },
+            {
+              label: 'Chat',
+              path: SettingsPath.ClientChat,
+              Icon: IconMessageCircle,
               indentationLevel: 2,
             },
             {
@@ -166,9 +167,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               indentationLevel: 2,
             },
             {
-              label: 'Service Level',
-              path: SettingsPath.ServiceCenterServiceLevel,
-              Icon: IconMessageCircleCog,
+              label: t`Agents`,
+              path: SettingsPath.ServiceCenterAgents,
+              Icon: IconUserScan,
               indentationLevel: 2,
             },
           ],
@@ -186,17 +187,17 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
+          label: 'Internal Chat',
+          path: SettingsPath.InternalChat,
+          Icon: IconHash,
+          isHidden: !permissionMap[PermissionFlagType.INTERNAL_CHAT],
+        },
+        {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`Data model`,
-          path: SettingsPath.Objects,
-          Icon: IconHierarchy2,
-          isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
           label: t`Page Layouts`,
@@ -225,7 +226,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconCalendarEvent,
           isHidden: !isAdminEnabled,
         },
-
         {
           label: t`AI`,
           path: SettingsPath.AI,

@@ -44,9 +44,7 @@ function FileNode({
   const { updateNodeData } = useReactFlow();
   const { handleIncomingConnection } = useHandleNodeValue();
   const allNodes = useNodes();
-  const thisNode: GenericNode = allNodes.filter(
-    (filterNodes) => filterNodes.id === id,
-  )[0];
+  const thisNode = allNodes.find((node) => node.id === id) as GenericNode;
   const { getIcon } = useIcons();
   const IconFileText = getIcon('IconFileText');
 
@@ -61,10 +59,8 @@ function FileNode({
   });
 
   useEffect(() => {
-    /* @kvoip-woulz proprietary:begin */
     const currentNode = allNodes.find((n) => n.id === id);
-    const currentNodeData = currentNode?.data || thisNode?.data || {};
-    /* @kvoip-woulz proprietary:end */
+    const currentNodeData = currentNode?.data || data;
 
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
@@ -120,6 +116,8 @@ function FileNode({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetConnections, sourceConnections, allNodes, id]);
+
+  if (!thisNode) return null;
 
   return (
     <BaseNode

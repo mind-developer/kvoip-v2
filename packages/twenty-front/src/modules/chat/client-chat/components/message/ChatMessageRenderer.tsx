@@ -8,6 +8,8 @@ import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { IconBrandMeta } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import {
@@ -97,6 +99,17 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   width: 100%;
 `;
 
+const StyledTemplateName = styled.div`
+  font-size: ${({ theme }) => theme.font.size.xxs};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  // font-style: italic;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
 type ChatMessageRendererProps = {
   message: ClientChatMessage;
   index: number;
@@ -120,6 +133,7 @@ export const ChatMessageRenderer = memo(
     isLastOfRow,
   }: ChatMessageRendererProps) => {
     const theme = useTheme();
+    const { t } = useLingui();
 
     const isMessageOlderThan24Hours = (date: string) => {
       const createdAt = new Date(date);
@@ -230,7 +244,13 @@ export const ChatMessageRenderer = memo(
             key={message.providerMessageId || `text-${index}`}
             isSystemMessage={message.fromType !== ChatMessageFromType.PERSON}
           >
-            {message.fromType === ChatMessageFromType.AGENT
+            {message.templateId && (
+              <StyledTemplateName>
+                <IconBrandMeta size={10} /> {t`TEMPLATE`}
+              </StyledTemplateName>
+            )}
+            {message.fromType === ChatMessageFromType.AGENT &&
+            message.templateId === null //template messages don't have agent names
               ? (message.textBody ?? '')?.split('\n').slice(1).join('\n')
               : (message.textBody ?? '').split('\n').join('\n')}
           </StyledMessage>

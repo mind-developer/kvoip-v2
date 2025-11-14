@@ -3,6 +3,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
+import { GenericNode } from '@/chatbot/types/GenericNode';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -10,7 +11,6 @@ import {
   type NodeProps,
   Position,
   useNodeConnections,
-  useNodeId,
   useNodes,
   useReactFlow,
 } from '@xyflow/react';
@@ -29,6 +29,7 @@ const StyledImage = styled.img`
   display: flex;
   object-fit: cover;
   max-width: 270px;
+  max-height: 170px;
   width: 100%;
 `;
 
@@ -43,9 +44,8 @@ function ImageNode({
     imageUrl?: string;
   }>
 >) {
-  const nodeId = useNodeId();
   const allNodes = useNodes();
-  const node = allNodes.filter((filterNodes) => filterNodes.id === nodeId)[0];
+  const node = allNodes.find((node) => node.id === id) as GenericNode;
   const { updateNodeData } = useReactFlow();
   const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();
 
@@ -126,11 +126,13 @@ function ImageNode({
     }
   }, [targetConnections, sourceConnections, allNodes, id]);
 
+  if (!node) return null;
+
   return (
     <BaseNode
       icon={'IconPhoto'}
-      nodeId={node?.id}
-      isInitialNode={node?.data.nodeStart as boolean}
+      nodeId={node.id}
+      isInitialNode={node.data.nodeStart as boolean}
       nodeTypeDescription="Image node"
       onTitleChange={handleTitleChange}
       onTitleBlur={() => {

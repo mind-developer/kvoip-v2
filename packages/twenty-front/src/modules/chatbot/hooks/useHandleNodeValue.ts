@@ -1,4 +1,8 @@
+import { useGetChatbotFlowState } from '@/chatbot/hooks/useGetChatbotFlowState';
 import { createNode } from '@/chatbot/utils/createNode';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
 import { useReactFlow } from '@xyflow/react';
 import { v4 } from 'uuid';
 import { type GenericNode, type GenericNodeData } from '../types/GenericNode';
@@ -12,8 +16,13 @@ export const useHandleNodeValue = () => {
     getNodes,
     getEdges,
   } = useReactFlow();
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'chatbot',
+  });
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
+  const { chatbotId } = useGetChatbotFlowState();
 
-  /* @kvoip-woulz proprietary:begin */
   const handleIncomingConnection = (
     currentNodeId: string,
     sourceNodeId: string,
@@ -36,7 +45,6 @@ export const useHandleNodeValue = () => {
       );
     }
   };
-  /* @kvoip-woulz proprietary:end */
 
   const saveDataValue = (
     key: keyof GenericNodeData,
@@ -62,7 +70,6 @@ export const useHandleNodeValue = () => {
     return node;
   };
 
-  /* @kvoip-woulz proprietary:begin */
   const deleteNode = (nodeId: string) => {
     const currentNodes = getNodes();
     const currentEdges = getEdges();
@@ -109,7 +116,6 @@ export const useHandleNodeValue = () => {
 
     setEdges(updatedEdges);
   };
-  /* @kvoip-woulz proprietary:end */
 
   const addNode = (
     type: 'text' | 'image' | 'file' | 'conditional',

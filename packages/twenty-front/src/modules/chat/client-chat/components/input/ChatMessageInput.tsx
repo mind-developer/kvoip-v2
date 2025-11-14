@@ -16,9 +16,10 @@ import { IconButton } from 'twenty-ui/input';
 const StyledInputContainer = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.xl};
+  border-radius: ${({ theme }) => theme.border.radius.xxl};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInput = styled.textarea`
@@ -57,6 +58,18 @@ const StyledIconButton = styled(IconButton)`
   height: 24px;
   justify-content: center;
   padding: 0;
+  width: 24px;
+`;
+
+const StyledSendButton = styled(IconButton)`
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-width: 24px;
+  padding: 0;
+  height: 24px;
   width: 24px;
 `;
 
@@ -102,6 +115,7 @@ export const ChatMessageInput = memo(
     const [audioVisualizerWidth, setAudioVisualizerWidth] =
       useState<number>(200);
     const inputContainerRef = useRef<HTMLDivElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const { record: replyingToMessage } = useFindOneRecord({
       objectNameSingular: 'clientChatMessage',
@@ -113,6 +127,13 @@ export const ChatMessageInput = memo(
         setAudioVisualizerWidth(inputContainerRef.current.clientWidth);
       }
     }, [inputContainerRef]);
+
+    useEffect(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      }
+    }, [newMessage]);
 
     const IconMicrophone = getIcon('IconMicrophone');
     const IconArrowUp = getIcon('IconArrowUp');
@@ -214,6 +235,7 @@ export const ChatMessageInput = memo(
               </div>
             )}
             <StyledInput
+              ref={textareaRef}
               autoComplete="off"
               rows={1}
               disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
@@ -222,6 +244,7 @@ export const ChatMessageInput = memo(
               onChange={onInputChange}
               value={newMessage}
               onKeyDown={onInputKeyDown}
+              maxLength={4096}
             />
           </div>
         )}
@@ -238,7 +261,7 @@ export const ChatMessageInput = memo(
             />
           )}
           {(newMessage.length > 0 || recordingState !== 'none') && (
-            <StyledIconButton
+            <StyledSendButton
               disabled={lastMessage?.type === ChatMessageType.TEMPLATE}
               Icon={(props) => (
                 <IconArrowUp

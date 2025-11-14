@@ -1,7 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CHAT_NAVIGATION_DRAWER_HEADER_MODAL_ID } from '@/chat/client-chat/constants/chatNavigationDrawerHeaderModalId';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -43,13 +42,9 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const ChatNavigationDrawerHeader = ({
-  searchInput,
-  setSearchInput,
   onSortClick,
   sortDirection,
 }: {
-  searchInput: string;
-  setSearchInput: (input: string) => void;
   onSortClick: () => void;
   sortDirection: 'asc' | 'desc';
 }) => {
@@ -106,13 +101,6 @@ export const ChatNavigationDrawerHeader = ({
           />
         </StyledActionsContainer>
       </StyledPaneHeaderContainer>
-
-      <TextInput
-        LeftIcon={IconSearch}
-        placeholder={t`Search chats`}
-        value={searchInput}
-        onChange={(text: string) => setSearchInput(text)}
-      />
     </>
   );
 };

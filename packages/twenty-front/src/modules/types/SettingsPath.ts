@@ -1,4 +1,6 @@
 export enum SettingsPath {
+  ClientChat = 'chat/client',
+  InternalChat = 'chat/internal',
   ProfilePage = 'profile',
   TwoFactorAuthenticationStrategyConfig = 'profile/two-factor-authentication/:twoFactorAuthenticationStrategy',
   Experience = 'experience',
@@ -31,8 +33,6 @@ export enum SettingsPath {
   ServiceCenterNewTelephonyExtension = 'service-center/telephony/new',
   ServiceCenterLinkTelephonyExtension = 'service-center/telephony/link/:extensionNumber',
   EditTelephony = 'service-center/telephony/:telephonySlug/edit',
-  ServiceCenterServiceLevel = 'service-center/sla',
-  ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
   Chatbots = 'chatbots/',
   ChatbotsCreate = 'chatbots/create',
   ChatbotsEdit = 'chatbots/:chatbotSlug/edit',

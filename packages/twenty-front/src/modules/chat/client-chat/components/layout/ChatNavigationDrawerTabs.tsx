@@ -17,6 +17,7 @@ type ChatNavigationDrawerTabsProps = {
 
 const StyledTabList = styled(TabList)<{ width?: number }>`
   width: ${({ width }) => (width ? `${width}px` : '100%')};
+  gap: 0px !important;
 `;
 
 export const ChatNavigationDrawerTabs = ({

@@ -11,7 +11,8 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useClientChatMessages = (chatId: string) => {
   const { locale } = useRecoilValue(dateLocaleState);
-  const { timeZone, timeFormat, dateFormat } = useRecoilValue(dateTimeFormatState);
+  const { timeZone, timeFormat, dateFormat } =
+    useRecoilValue(dateTimeFormatState);
   const [dbMessages, setDbMessages] = useState<ClientChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,11 +20,11 @@ export const useClientChatMessages = (chatId: string) => {
     const date = new Date(messageDate);
     const now = new Date();
     const hoursDiff = Math.abs(differenceInHours(now, date));
-    
+
     if (hoursDiff >= 24) {
       return formatInTimeZone(date, timeZone, `${dateFormat} ${timeFormat}`);
     }
-    
+
     return formatInTimeZone(date, timeZone, timeFormat);
   };
   useFindManyRecords<ClientChatMessage & { __typename: string; id: string }>({
@@ -36,6 +37,7 @@ export const useClientChatMessages = (chatId: string) => {
         data.map((message) => ({
           ...message,
           createdAt: formatMessageDateTime(message.createdAt ?? ''),
+          textBody: message.textBody,
         })),
       );
       setLoading(false);

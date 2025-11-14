@@ -11,10 +11,16 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-x: visible;
+  position: relative;
 `;
 
 const StyledContent = styled.div`
   flex: 1;
+  overflow-x: visible;
+  overflow-y: visible;
+  position: relative;
+  width: 100%;
 `;
 
 export const ChatbotFlowEventContainerForm = ({

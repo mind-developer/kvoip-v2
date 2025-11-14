@@ -177,15 +177,17 @@ const TransferChatDropdownContent = () => {
 
   const filteredWorkspaceMembersWithAgent = workspaceMembersWithAgent.filter(
     (member: any) =>
-      member.agentId !== selectedChat?.agentId &&
-      member.agentId !== workspaceMemberWithAgent?.agent.id,
+      (member.agentId !== selectedChat?.agentId &&
+        member.agentId !== workspaceMemberWithAgent?.agent.id) ||
+      selectedChat?.status === ClientChatStatus.FINISHED,
   );
 
   const filteredSectors = sectors.filter(
     (sector) =>
       sector.id !== selectedChat?.sectorId ||
       selectedChat.status === ClientChatStatus.ASSIGNED ||
-      selectedChat.status === ClientChatStatus.CHATBOT,
+      selectedChat.status === ClientChatStatus.CHATBOT ||
+      selectedChat.status === ClientChatStatus.FINISHED,
   );
 
   const handleTransferToAgent = (member: any) => {

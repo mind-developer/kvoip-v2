@@ -19,11 +19,14 @@ import {
   extractMediaId,
   processBase64Media,
 } from 'src/engine/core-modules/meta/whatsapp/utils/mediaUtils';
+import { normalizePhoneNumber } from 'twenty-shared/utils';
 
+import { parseAddressingMode } from 'src/engine/core-modules/meta/whatsapp/utils/parseAddressingMode';
 import { WhatsAppService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WhatsappIntegrationWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { v4 } from 'uuid';
 
 @Controller('whatsapp')
@@ -87,6 +90,15 @@ export class WhatsappController {
     @Body() body: any,
   ) {
     try {
+      const whatsappIntegrationRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+          workspaceId,
+          'whatsappIntegration',
+          { shouldBypassPermissionChecks: true },
+        );
+      const integration = await whatsappIntegrationRepository.findOne({
+        where: { id: integrationId },
+      });
       const messages = body.entry[0]?.changes[0]?.value?.messages ?? null;
       const statuses = body.entry[0]?.changes[0]?.value?.statuses ?? null;
 
@@ -156,9 +168,18 @@ export class WhatsappController {
               })
             ).fullPath;
           }
-
+          let phoneNumber = '';
+          if (integration?.apiType === 'MetaAPI') {
+            phoneNumber =
+              '+' +
+              normalizePhoneNumber(msg.from).primaryPhoneCallingCode +
+              normalizePhoneNumber(msg.from).primaryPhoneNumber;
+          } else {
+            phoneNumber = parseAddressingMode(msg.from).phoneNumber;
+          }
           const message: FormattedWhatsAppMessage = {
             id: msg.id,
+            //remoteJid is the id as it comes from the provider
             remoteJid: msg.from,
             fromMe: !!msg.fromMe,
             senderAvatarUrl:
@@ -171,8 +192,8 @@ export class WhatsappController {
             caption: null,
             type: msg.type,
             deliveryStatus: msg.status,
-            senderPhoneNumber:
-              body.entry[0].changes[0].value?.contacts[0]?.pn ?? null,
+            //parsed phone number from the provider
+            senderPhoneNumber: phoneNumber,
             repliesTo: msg.context?.id ?? null,
           };
 
@@ -181,7 +202,6 @@ export class WhatsappController {
             integrationId,
             workspaceId,
           );
-          this.logger.log(`Successfully processed message: ${msg.id}`);
         } catch (error) {
           this.logger.error(
             `Error processing individual message ${msg.id}:`,
@@ -191,9 +211,6 @@ export class WhatsappController {
           throw error;
         }
       }
-      this.logger.log(
-        `Successfully processed all messages for workspace: ${workspaceId}, integration: ${integrationId}`,
-      );
     } catch (error) {
       this.logger.error(
         `Error handling incoming WhatsApp message for workspace: ${workspaceId}, integration: ${integrationId}`,

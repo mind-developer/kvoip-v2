@@ -1,3 +1,4 @@
+import { CachedAvatarComponent } from '@/chat/client-chat/components/message/CachedAvatarComponent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -6,6 +7,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight, IconRobot, IconZzz } from '@tabler/icons-react';
 import {
+  ChatMessageFromType,
   type ClientChatMessage,
   ClientChatMessageEvent,
 } from 'twenty-shared/types';
@@ -63,7 +65,7 @@ export default function EventMessage({
     case ClientChatMessageEvent.ABANDONED:
       return (
         <EventWrapper message={message}>
-          <AbandonedDescription />
+          <AbandonedDescription message={message} />
         </EventWrapper>
       );
   }
@@ -216,12 +218,11 @@ function TransferToSectorDescription({
         {t`Service transferred to sector:`}
       </StyledEventDescriptionText>
       <StyledEventDescriptionText>
-        <Avatar
-          avatarUrl={agentWorkspaceMember?.avatarUrl}
-          placeholder={agentWorkspaceMember?.name?.firstName}
-          placeholderColorSeed={agentWorkspaceMember?.name?.firstName}
-          size="sm"
-          type="rounded"
+        <CachedAvatarComponent
+          senderId={agentWorkspaceMember?.id}
+          senderType={ChatMessageFromType.CHATBOT}
+          animateDelay={0}
+          showName={true}
         />
         {agentWorkspaceMember?.name?.firstName}{' '}
         {agentWorkspaceMember?.name?.lastName} <IconArrowRight size={13} />{' '}
@@ -232,12 +233,21 @@ function TransferToSectorDescription({
   );
 }
 
-function AbandonedDescription() {
+function AbandonedDescription({ message }: { message: ClientChatMessage }) {
+  const { record: sector } = useFindOneRecord<Sector & { __typename: string }>({
+    objectNameSingular: CoreObjectNameSingular.Sector,
+    objectRecordId: message.from,
+    recordGqlFields: {
+      name: true,
+      icon: true,
+      abandonmentInterval: true,
+    },
+  });
   return (
     <StyledEventDescription>
       <StyledEventDescriptionText variant="bold">
         <IconZzz size={13} />{' '}
-        {t`Service moved to abandoned due to inactivity from agent`}
+        {t`After ${sector?.abandonmentInterval} ${sector?.abandonmentInterval === 1 ? t`minute` : t`minutes`} of inactivity, the service was moved to the abandoned inbox.`}
       </StyledEventDescriptionText>
     </StyledEventDescription>
   );

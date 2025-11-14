@@ -22,7 +22,7 @@ export class FileInputHandler implements NodeHandler {
       providerIntegrationId,
       provider,
       clientChat,
-      chatbotName,
+      chatbot,
       workspaceId,
     } = params;
     const file =
@@ -33,7 +33,7 @@ export class FileInputHandler implements NodeHandler {
       const message: Omit<ClientChatMessageNoBaseFields, 'providerMessageId'> =
         {
           clientChatId: clientChat.id,
-          from: chatbotName,
+          from: chatbot.id,
           fromType: ChatMessageFromType.CHATBOT,
           to: clientChat.providerContactId,
           toType: ChatMessageToType.PERSON,

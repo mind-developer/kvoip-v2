@@ -1,7 +1,4 @@
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable @nx/workspace-component-props-naming */
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
-/* eslint-disable react-hooks/exhaustive-deps */
+/* @kvoip-woulz proprietary */
 import BaseNode from '@/chatbot/components/nodes/BaseNode';
 import { useHandleNodeValue } from '@/chatbot/hooks/useHandleNodeValue';
 import { GenericNode, type GenericNodeData } from '@/chatbot/types/GenericNode';
@@ -13,17 +10,12 @@ import {
   type NodeProps,
   Position,
   useNodeConnections,
-  useNodeId,
   useNodes,
   useReactFlow,
+  useUpdateNodeInternals,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
 import { ChatbotFlowConditionalEventForm } from '../actions/ChatbotFlowConditionalEventForm';
-
-const initialState: NewConditionalState = {
-  logicNodes: [],
-  logicNodeData: [],
-};
 
 const StyledDiv = styled.div`
   display: flex;
@@ -31,6 +23,8 @@ const StyledDiv = styled.div`
   justify-content: center;
   width: 100%;
   gap: 12px;
+  overflow-x: visible;
+  position: relative;
 `;
 
 const StyledLogicNodeWrapper = styled.div`
@@ -39,6 +33,7 @@ const StyledLogicNodeWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   position: relative;
+  overflow-x: visible;
 `;
 
 function ConditionalNode({
@@ -46,18 +41,14 @@ function ConditionalNode({
   data,
   isConnectable,
 }: NodeProps<Node<GenericNodeData>>) {
-  const [logicState, setLogicState] =
-    useState<NewConditionalState>(initialState);
   const [titleInput, setTitleInput] = useState(data.title ?? '');
 
-  const thisNodeId = useNodeId();
   const allNodes = useNodes();
-  const thisNode: GenericNode = allNodes.filter(
-    (node) => node.id === thisNodeId,
-  )[0];
+  const thisNode = allNodes.find((node) => node.id === id) as GenericNode;
 
   const { updateNodeData } = useReactFlow();
-  const { saveDataValue, handleIncomingConnection } = useHandleNodeValue();
+  const { handleIncomingConnection } = useHandleNodeValue();
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const targetConnections = useNodeConnections({
     id,
@@ -69,54 +60,45 @@ function ConditionalNode({
     handleType: 'source',
   });
 
-  useEffect(() => {
-    if (data.logic) {
-      setLogicState(data.logic);
-    }
-  }, [data.logic]);
+  const baseLogic = data.logic as NewConditionalState | undefined;
+  const logicNodeDataLength = baseLogic?.logicNodeData.length ?? 0;
 
   useEffect(() => {
-    /* @kvoip-woulz proprietary:begin */
-    const currentNode = allNodes.find((n) => n.id === thisNodeId);
+    const currentNode = allNodes.find((n) => n.id === id);
     const currentNodeData = currentNode?.data || data;
-    /* @kvoip-woulz proprietary:end */
 
     if (targetConnections.length > 0) {
       const connection = targetConnections[0];
       const sourceHandle = connection.sourceHandle || '';
       const sourceNodeId = connection.source;
 
-      /* @kvoip-woulz proprietary:begin */
       const sourceNode = allNodes.find((n) => n.id === sourceNodeId);
       const sourceNodeData = sourceNode?.data || {};
 
-      // If the start node receives an incoming connection, set the previous node as the new start node
-      handleIncomingConnection(thisNodeId!, sourceNodeId, allNodes);
-      /* @kvoip-woulz proprietary:end */
+      handleIncomingConnection(id, sourceNodeId, allNodes);
 
-      // Update current node with incoming connection info
-      updateNodeData(thisNodeId!, {
+      updateNodeData(id, {
         ...currentNodeData,
         incomingEdgeId: sourceHandle,
         incomingNodeId: sourceNodeId,
       });
 
-      // Update source node with outgoing connection info
-      updateNodeData(sourceNodeId!, {
+      updateNodeData(sourceNodeId, {
         ...sourceNodeData,
         outgoingEdgeId: sourceHandle,
-        outgoingNodeId: thisNodeId,
+        outgoingNodeId: id,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetConnections, allNodes, thisNodeId, data.nodeStart]);
+  }, [targetConnections, allNodes, id]);
 
   useEffect(() => {
-    if (!logicState.logicNodeData.length) return;
+    const baseLogic = data.logic as NewConditionalState | undefined;
+    if (!baseLogic?.logicNodeData.length) return;
 
-    const updatedLogic = {
-      logicNodes: [...logicState.logicNodes],
-      logicNodeData: logicState.logicNodeData.map((nodeData) => {
+    const updatedLogic: NewConditionalState = {
+      logicNodes: [...baseLogic.logicNodes],
+      logicNodeData: baseLogic.logicNodeData.map((nodeData) => {
         const handleId = `b-${nodeData.option}`;
         const conn = sourceConnections.find((c) => c.sourceHandle === handleId);
 
@@ -128,48 +110,54 @@ function ConditionalNode({
       }),
     };
 
-    /* @kvoip-woulz proprietary:begin */
-    const currentNode = allNodes.find((n) => n.id === thisNodeId);
-    const currentNodeData = currentNode?.data || data;
-    /* @kvoip-woulz proprietary:end */
+    const currentNode = allNodes.find((n) => n.id === id);
+    if (!currentNode) return;
 
-    updateNodeData(thisNodeId!, {
-      ...currentNodeData,
+    updateNodeData(id, {
+      ...currentNode.data,
       logic: updatedLogic,
     });
+  }, [sourceConnections, id]);
 
-    setLogicState(updatedLogic);
-  }, [sourceConnections, allNodes, thisNodeId, data]);
+  useEffect(() => {
+    const baseLogic = data.logic as NewConditionalState | undefined;
+    if (baseLogic?.logicNodeData.length) {
+      updateNodeInternals(id);
+    }
+  }, [data.logic]);
 
-  if (thisNode)
-    return (
-      <BaseNode
-        icon={'IconHierarchy'}
-        isInitialNode={thisNode?.data.nodeStart as boolean}
-        nodeId={thisNode.id}
-        nodeTypeDescription="If/else node"
-        onTitleChange={(e) => setTitleInput(e)}
-        onTitleBlur={() => {
-          saveDataValue(
-            'title',
-            titleInput ? titleInput : 'Conditional Node',
-            thisNode,
-          );
-        }}
-      >
-        <Handle
-          type="target"
-          position={Position.Top}
-          isConnectable={isConnectable}
-          style={{ height: 10, width: 10 }}
-        />
-        <StyledDiv>
-          <StyledLogicNodeWrapper>
-            <ChatbotFlowConditionalEventForm selectedNode={thisNode} />
-          </StyledLogicNodeWrapper>
-        </StyledDiv>
-      </BaseNode>
-    );
+  if (!thisNode) return null;
+
+  return (
+    <BaseNode
+      icon={'IconHierarchy'}
+      isInitialNode={thisNode.data.nodeStart as boolean}
+      nodeId={thisNode.id}
+      nodeTypeDescription="If/else node"
+      onTitleChange={setTitleInput}
+      onTitleBlur={() => {
+        updateNodeData(thisNode.id, {
+          ...thisNode.data,
+          title: titleInput || 'Conditional Node',
+        });
+      }}
+    >
+      <Handle
+        type="target"
+        position={Position.Top}
+        isConnectable={isConnectable}
+        style={{ height: 10, width: 10 }}
+      />
+      <StyledDiv>
+        <StyledLogicNodeWrapper>
+          <ChatbotFlowConditionalEventForm
+            selectedNode={thisNode}
+            isConnectable={isConnectable}
+          />
+        </StyledLogicNodeWrapper>
+      </StyledDiv>
+    </BaseNode>
+  );
 }
 
 export default memo(ConditionalNode);
