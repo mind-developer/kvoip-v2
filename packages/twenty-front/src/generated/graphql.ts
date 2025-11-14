@@ -1173,7 +1173,6 @@ export type DevOnlyMutations = {
   paySubscription: BillingPaySubscriptionOutput;
 };
 
-
 export type DevOnlyMutationsPaySubscriptionArgs = {
   interChargeCode: Scalars['String'];
 };
@@ -2318,12 +2317,10 @@ export type MutationInitiateOtpProvisioningArgs = {
   origin: Scalars['String'];
 };
 
-
 export type MutationLinkMemberToExtensionArgs = {
   memberId: Scalars['ID'];
   numberExtension: Scalars['String'];
 };
-
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
@@ -2391,11 +2388,9 @@ export type MutationSaveStripeAccountIdArgs = {
   workspaceId: Scalars['String'];
 };
 
-
 export type MutationSendClientChatMessageArgs = {
   input: SendClientChatMessageInput;
 };
-
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
@@ -3169,22 +3164,15 @@ export type QueryFindAllExternalExtensionsArgs = {
   workspaceId: Scalars['ID'];
 };
 
-export type QueryFindAllExternalExtensionsArgs = {
-  workspaceId: Scalars['ID'];
-};
-
-
 export type QueryFindAllTelephonyIntegrationArgs = {
   workspaceId: Scalars['ID'];
 };
-
 
 export type QueryFindAllTelephonyIntegrationPaginatedArgs = {
   limit?: Scalars['Int'];
   page?: Scalars['Int'];
   workspaceId: Scalars['ID'];
 };
-
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
@@ -3286,12 +3274,10 @@ export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
 };
 
-
 export type QueryGetExternalExtensionArgs = {
   extNum?: InputMaybe<Scalars['String']>;
   workspaceId: Scalars['ID'];
 };
-
 
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String'];
@@ -3342,12 +3328,10 @@ export type QueryGetStripeIntegrationByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type QueryGetTelephonyByMemberArgs = {
   memberId: Scalars['ID'];
   workspaceId: Scalars['ID'];
 };
-
 
 export type QueryGetTelephonyCallFlowsArgs = {
   workspaceId: Scalars['ID'];
@@ -3406,11 +3390,9 @@ export type QueryGetUserSoftfoneArgs = {
   workspaceId: Scalars['ID'];
 };
 
-
 export type QueryGetWhatsappTemplatesArgs = {
   input: GetWhatsappTemplatesInput;
 };
-
 
 export type QueryInterIntegrationByIdArgs = {
   integrationId: Scalars['String'];
