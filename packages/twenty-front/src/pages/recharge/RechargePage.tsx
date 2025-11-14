@@ -12,9 +12,9 @@ const StyledContent = styled.div`
 `;
 
 const StyledTitle = styled.h1`
-  font-size: ${({ theme }) => theme.font.size.xl};
+  font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
@@ -28,9 +28,9 @@ export const RechargePage = () => {
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
       <StyledContent>
-        <StyledTitle>Recarga</StyledTitle>
+        <StyledTitle>Sistema de Recarga</StyledTitle>
         <StyledDescription>
-          Página de recarga - funcionalidade em desenvolvimento
+          Realize recargas de forma rápida e segura.
         </StyledDescription>
       </StyledContent>
     </Modal.Content>
