@@ -27,6 +27,7 @@ export class ChatMessageManagerSetAbandonedCronJob {
       );
       return;
     }
+    this.logger.warn(`Executing abandonment for chat ${clientChatId}`);
     this.chatMessageManagerService.executeAbandonment(
       clientChatId,
       workspaceId,

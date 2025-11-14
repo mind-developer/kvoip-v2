@@ -12,6 +12,7 @@ import { ChatMessageManagerSetAbandonedCronJobData } from 'src/engine/core-modul
 import { ClientChatMessageNoBaseFields } from 'src/engine/core-modules/chat-message-manager/types/ClientChatMessageNoBaseFields';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -53,6 +54,7 @@ export class ChatMessageManagerService {
     private readonly messageQueueService: MessageQueueService,
     private readonly redisClient: RedisClientService,
     private readonly mediaHelperService: MediaHelperService,
+    private readonly fileService: FileService,
   ) {
     this.redisClientInstance = this.redisClient.getClient();
     this.queue = new Queue(MessageQueue.cronQueue, {
@@ -75,6 +77,12 @@ export class ChatMessageManagerService {
         { shouldBypassPermissionChecks: true },
       )
     ).findOneBy({ id: clientChat.personId });
+    if (person?.avatarUrl) {
+      person.avatarUrl = this.fileService.signFileUrl({
+        url: person.avatarUrl,
+        workspaceId: event.workspaceId,
+      });
+    }
     if (!person) {
       this.logger.error('Person not found for client chat:', clientChat.id);
       return;
@@ -94,6 +102,18 @@ export class ChatMessageManagerService {
     clientChat.sector = sector;
     clientChat.sectorId = sector?.id ?? null;
     clientChat.person = person;
+    if (clientChat.whatsappIntegrationId) {
+      const whatsappIntegration = await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+          event.workspaceId,
+          'whatsappIntegration',
+          { shouldBypassPermissionChecks: true },
+        )
+      ).findOne({ where: { id: clientChat.whatsappIntegrationId } });
+      if (whatsappIntegration) {
+        clientChat.whatsappIntegration = whatsappIntegration;
+      }
+    }
     await this.clientChatMessageService.publishChatCreated(
       clientChat,
       clientChat.sectorId,
@@ -129,6 +149,12 @@ export class ChatMessageManagerService {
           )
         ).findOne({ where: { id: updatedClientChat.personId } });
         if (person) {
+          if (person?.avatarUrl) {
+            person.avatarUrl = this.fileService.signFileUrl({
+              url: person.avatarUrl,
+              workspaceId: event.workspaceId,
+            });
+          }
           updatedClientChat.person = person;
         }
       }
@@ -145,6 +171,18 @@ export class ChatMessageManagerService {
           updatedClientChat.agentId = agent.id;
         }
         updatedClientChat.agent = agent ?? null;
+      }
+      if (updatedClientChat.whatsappIntegrationId) {
+        const whatsappIntegration = await (
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappIntegrationWorkspaceEntity>(
+            event.workspaceId,
+            'whatsappIntegration',
+            { shouldBypassPermissionChecks: true },
+          )
+        ).findOne({ where: { id: updatedClientChat.whatsappIntegrationId } });
+        if (whatsappIntegration) {
+          updatedClientChat.whatsappIntegration = whatsappIntegration;
+        }
       }
       await this.clientChatMessageService.publishChatUpdated(
         updatedClientChat,
@@ -247,7 +285,7 @@ export class ChatMessageManagerService {
         );
       const clientChat = await clientChatRepository.findOne({
         where: { id: clientChatId },
-        relations: ['sector', 'agent', 'person'],
+        relations: ['sector', 'agent', 'person', 'whatsappIntegration'],
       });
       if (!clientChat) {
         this.logger.error('Client chat not found');
@@ -667,6 +705,7 @@ export class ChatMessageManagerService {
   }
 
   async executeAbandonment(chatId: string, workspaceId: string): Promise<void> {
+    this.logger.warn(`Executing abandonment for chat ${chatId}`);
     const clientChat = await this.getChatByClientChatId(chatId, workspaceId);
     if (!clientChat || !clientChat.sector || !clientChat.agent) {
       this.logger.error('Client chat or sector or agent not found');
@@ -708,6 +747,7 @@ export class ChatMessageManagerService {
     this.messageQueueService.addCron<ChatMessageManagerSetAbandonedCronJobData>(
       {
         jobName: this.JOB_NAME,
+        jobId: data.clientChatId,
         data,
         options: {
           id: data.clientChatId,
@@ -724,7 +764,7 @@ export class ChatMessageManagerService {
   }
 
   async cancelScheduledAbandonment(clientChatId: string): Promise<void> {
-    this.messageQueueService.removeCron({
+    await this.messageQueueService.removeCron({
       jobName: this.JOB_NAME,
       jobId: clientChatId,
     });
@@ -810,7 +850,7 @@ export class ChatMessageManagerService {
       )
     ).findOne({
       where: { id: clientChatId },
-      relations: ['sector', 'person', 'agent'],
+      relations: ['sector', 'person', 'agent', 'whatsappIntegration'],
     });
   }
 }

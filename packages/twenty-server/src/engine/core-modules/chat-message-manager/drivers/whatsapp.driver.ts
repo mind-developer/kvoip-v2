@@ -261,22 +261,6 @@ export class WhatsAppDriver implements ChatProviderDriver {
       providerMessageId: template.id + '-' + v4(),
     };
 
-    await (
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
-        workspaceId,
-        'clientChatMessage',
-      )
-    ).save(message);
-
-    await this.clientChatMessageManagerService.publishMessageCreated(
-      {
-        ...message,
-        createdAt: new Date().toISOString(),
-      },
-      clientChatMessage.clientChatId,
-      workspaceId,
-    );
-
     const fields: any = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -298,6 +282,21 @@ export class WhatsAppDriver implements ChatProviderDriver {
 
     try {
       const response = await axios.post(url, fields, { headers });
+      await (
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ClientChatMessageWorkspaceEntity>(
+          workspaceId,
+          'clientChatMessage',
+        )
+      ).save(message);
+
+      await this.clientChatMessageManagerService.publishMessageCreated(
+        {
+          ...message,
+          createdAt: new Date().toISOString(),
+        },
+        clientChatMessage.clientChatId,
+        workspaceId,
+      );
       return response.data.messages[0].id;
     } catch (error) {
       const axiosErr = error as AxiosError<any>;
@@ -308,7 +307,7 @@ export class WhatsAppDriver implements ChatProviderDriver {
         message: axiosErr.message,
       };
       throw new InternalServerErrorException(
-        `Failed to send template message: ${JSON.stringify(details)}`,
+        `Failed to send template message: ${JSON.stringify(details.data.error.message)}`,
       );
     }
   }
