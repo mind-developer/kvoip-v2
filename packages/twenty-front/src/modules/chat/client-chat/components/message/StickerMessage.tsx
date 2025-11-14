@@ -12,8 +12,8 @@ const StyledStickerContainer = styled.div`
 `;
 
 const StyledStickerImg = styled.img`
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   align-self: center;
 `;
 
