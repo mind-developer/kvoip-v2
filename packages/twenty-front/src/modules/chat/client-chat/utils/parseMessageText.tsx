@@ -1,4 +1,5 @@
 /* @kvoip-woulz proprietary */
+import { LinkWithConfirmation } from '@/chat/client-chat/components/message/LinkWithConfirmation';
 import React from 'react';
 
 type ParseMessageTextOptions = {
@@ -50,8 +51,15 @@ const parseFormattedTextRecursive = (
   const italicRegex = /_([^_\n]+)_/g;
   const strikethroughRegex = /~([^~\n]+)~/g;
   const monospaceRegex = /`([^`\n]+)`/g;
+  // Regex mais rigoroso para URLs:
+  // 1. URLs com protocolo (http:// ou https://) - captura até espaço ou caractere inválido
+  // 2. URLs começando com www. - captura até espaço ou caractere inválido
+  // 3. Domínios sem protocolo - captura se:
+  //    - Tiver caminho (/), query string (?), ou fragment (#) após o TLD
+  //    - OU terminar com espaço/fim de linha (e não ter parênteses, colchetes ou chaves logo após)
+  //    Isso evita capturar coisas como "console.log()" ou "object.property"
   const urlRegex =
-    /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/g;
+    /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}(?:\/[^\s<>"'()]*|\?[^\s<>"']*|#[^\s<>"']*|(?=\s|$)(?![()\[\]{}])))/g;
 
   const matches: Match[] = [];
 
@@ -189,15 +197,22 @@ const parseFormattedTextRecursive = (
     switch (matchItem.type) {
       case 'link':
         // Links não processam formatações recursivamente, apenas mostram o texto original
+        // Decodifica URL encoding (ex: %2f -> /, %20 -> espaço)
+        let decodedContent = matchItem.content;
+        try {
+          decodedContent = decodeURIComponent(matchItem.content);
+        } catch {
+          // Se falhar a decodificação, usa o conteúdo original
+          decodedContent = matchItem.content;
+        }
         parts.push(
-          <LinkComponent
+          <LinkWithConfirmation
             key={`link-${keyIndexRef.current++}`}
             href={matchItem.url!}
-            target="_blank"
-            rel="noopener noreferrer"
+            LinkComponent={LinkComponent}
           >
-            {matchItem.content}
-          </LinkComponent>,
+            {decodedContent}
+          </LinkWithConfirmation>,
         );
         break;
       case 'bold': {
