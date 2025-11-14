@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Field, InputType } from '@nestjs/graphql';
 
 import {

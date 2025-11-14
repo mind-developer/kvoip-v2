@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
@@ -38,7 +38,11 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import type { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
-import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { KVOIP_ADMIN_WORKSPACE } from 'src/engine/core-modules/kvoip-admin/standard-objects/prefill-data/kvoip-admin-workspace';
+import { PaymentMethod } from 'src/engine/core-modules/payment/enums/payment-method.enum';
+import { PaymentProvider } from 'src/engine/core-modules/payment/enums/payment-provider.enum';
+import { PaymentService } from 'src/engine/core-modules/payment/services/payment.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -62,7 +66,7 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
-    private readonly interService: InterService,
+    private readonly paymentService: PaymentService,
     @InjectRepository(BillingCharge)
     private readonly billingChargeRepository: Repository<BillingCharge>,
   ) {}
@@ -104,12 +108,8 @@ export class BillingSubscriptionService {
     const currentCharge =
       await this.getCurrentSubscriptionCharge(currentSubscription);
 
-    const currentChargeFileLink = currentCharge?.interBillingChargeFilePath
-      ? this.interService.getFileLinkFromPath(
-          currentCharge?.interBillingChargeFilePath,
-          currentSubscription.workspaceId,
-        )
-      : null;
+    const currentChargeFileLink =
+      currentCharge?.interBillingChargeFilePath ?? null;
 
     return { ...currentSubscription, currentChargeFileLink };
   }
@@ -622,14 +622,36 @@ export class BillingSubscriptionService {
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
 
-    return await this.interService.createBolepixCharge({
-      planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
-      workspaceId: subscription.workspaceId as string,
-      userEmail: user.email,
-      locale: locale || SOURCE_LOCALE,
-      customer: billingCustomer,
-      planKey: subscription.metadata.plan as BillingPlanKey,
+    const charge = await this.paymentService.createCharge({
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+      provider: PaymentProvider.INTER,
+      chargeDto: {
+        // TODO: We should use standard decimal format for the amount on our plans prices
+        amount: getPriceFromStripeDecimal(
+          billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+        ),
+        paymentMethod: PaymentMethod.BOLEPIX,
+        payerInfo: {
+          name: billingCustomer.name,
+          email: user.email,
+          taxId: billingCustomer.document,
+          address: {
+            city: billingCustomer.city,
+            state: billingCustomer.stateUnity,
+            zipCode: billingCustomer.cep,
+            street: billingCustomer.address,
+          },
+        },
+      },
     });
+
+    const { signedFileUrl } = await this.paymentService.getBankSlipFile({
+      workspaceId: KVOIP_ADMIN_WORKSPACE.id,
+      chargeId: charge.id,
+      provider: PaymentProvider.INTER,
+    });
+
+    return signedFileUrl;
   }
 
   private getTrialPeriodFreeWorkflowCredits(

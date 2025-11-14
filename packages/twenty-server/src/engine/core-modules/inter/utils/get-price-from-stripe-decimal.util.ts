@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export const getPriceFromStripeDecimal = (priceStr: string): number => {
   if (!priceStr || Number.isNaN(+priceStr)) {
     throw new Error('Invalid price string.');

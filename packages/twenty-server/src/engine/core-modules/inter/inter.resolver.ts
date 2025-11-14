@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';

@@ -26,6 +26,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
 @Injectable()
+// TODO: Remove this service and use the InterApiClientService instead
 export class InterApiService {
   private readonly logger = new Logger(InterApiService.name);
 
@@ -301,7 +302,6 @@ export class InterApiService {
       );
 
       return response?.data?.pdf;
-
     } catch (error) {
       this.logger.error(
         `Failed to retrieve charge PDF for seuNumero=${seuNumero}: ${error.response?.data || error.message}`,
@@ -359,24 +359,25 @@ export class InterApiService {
         },
       );
 
-      this.logger.log(`RESPONSE da charge: ${JSON.stringify(response.data, null, 2)}`);
+      this.logger.log(
+        `RESPONSE da charge: ${JSON.stringify(response.data, null, 2)}`,
+      );
 
       const requestCode = response?.data?.codigoSolicitacao || '';
 
-
-      this.logger.log(`requestCode: ${requestCode}`)
+      this.logger.log(`requestCode: ${requestCode}`);
 
       // Aguarda alguns segundos - SOLUÇÃO TEMPORARIA, TODO: INSERIR NUMA FILA A PARTE
       await new Promise(resolve => setTimeout(resolve, 20000));
 
-      this.logger.log(`Tempo passou`)
+      this.logger.log(`Tempo passou`);
 
       const pdfBuffer = await this.getChargePdf({
         workspaceId,
         integration,
         seuNumero: requestCode,
       });
-      
+
       const filename = `${randomUUID()}_boleto.pdf`;
       const folder = 'attachment';
 
@@ -408,28 +409,24 @@ export class InterApiService {
 
       return response.data;
 
+      // } catch (error) {
+      //   const isInterApiError = isAxiosError(error);
 
+      //   const message = isInterApiError
+      //     ? error.response?.data
+      //     : error.message || 'Unknown error';
 
-    // } catch (error) {
-    //   const isInterApiError = isAxiosError(error);
+      //   if (isInterApiError) {
+      //     throw new Error(
+      //       `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
+      //     );
+      //   }
 
-    //   const message = isInterApiError
-    //     ? error.response?.data
-    //     : error.message || 'Unknown error';
-
-    //   if (isInterApiError) {
-    //     throw new Error(
-    //       `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
-    //     );
-    //   }
-
-    //   throw new InternalServerErrorException(message, {
-    //     cause: error,
-    //     description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
-    //   });
-    // }
-
-
+      //   throw new InternalServerErrorException(message, {
+      //     cause: error,
+      //     description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
+      //   });
+      // }
     } catch (error) {
       const isInterApiError = isAxiosError(error);
 

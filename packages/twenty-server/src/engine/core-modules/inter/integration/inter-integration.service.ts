@@ -1,8 +1,10 @@
+/* @kvoip-woulz proprietary */
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { msg } from '@lingui/core/macro';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -11,11 +13,9 @@ import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integ
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { msg } from '@lingui/core/macro';
 
 @Injectable()
 export class InterIntegrationService {
-
   private readonly logger = new Logger(InterIntegrationService.name);
 
   constructor(
@@ -123,44 +123,49 @@ export class InterIntegrationService {
   private handleInterApiError(error: any, operation: string): never {
     if (error.response?.status === 429) {
       const retryAfter = error.response.headers['retry-after'] || 60;
-      const message = msg`Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in`
-        + retryAfter + 
+      const message =
+        msg`Rate limit exceeded for the Banco Inter. The operation cannot be performed at the moment. Try again in` +
+        retryAfter +
         msg`seconds. The Banco Inter allows only 5 requests per minute.`.toString();
-      
+
       this.logger.error(`Rate limit exceeded for ${operation}:`, {
         status: error.response.status,
         retryAfter,
-        message: error.response.data
+        message: error.response.data,
       });
-      
+
       throw new Error(message);
     }
 
     // Verificar se é erro de validação do Banco Inter
-    if (error.response?.data && this.isInterValidationError(error.response.data)) {
+    if (
+      error.response?.data &&
+      this.isInterValidationError(error.response.data)
+    ) {
       const interError = error.response.data;
       const message = this.formatInterValidationError(interError, operation);
-      
+
       this.logger.error(`Inter validation error for ${operation}:`, {
         status: error.response.status,
-        error: interError
+        error: interError,
       });
-      
+
       throw new Error(message);
     }
 
     // Erro genérico do Banco Inter
     if (error.response?.status >= 400 && error.response?.status < 500) {
-      const message = msg`Error in the communication with the Banco Inter. Verify the data provided and try again.`.toString();
-      
+      const message =
+        msg`Error in the communication with the Banco Inter. Verify the data provided and try again.`.toString();
+
       this.logger.error(`Inter API error for ${operation}:`, {
         status: error.response.status,
-        data: error.response.data
+        data: error.response.data,
       });
-      
+
       throw new Error(message);
     }
-    
+
     // Re-throw other errors
     throw error;
   }
@@ -176,11 +181,14 @@ export class InterIntegrationService {
     );
   }
 
-  private formatInterValidationError(interError: any, operation: string): string {
+  private formatInterValidationError(
+    interError: any,
+    operation: string,
+  ): string {
     let message = msg`Inter validation error`.toString();
-    
+
     if (interError.violacoes && interError.violacoes.length > 0) {
-      message += (' -' + msg`Details of the errors: `.toString());
+      message += ' -' + msg`Details of the errors: `.toString();
       interError.violacoes.forEach((violacao: any, index: number) => {
         message += `${violacao.propriedade}: ${violacao.razao}`;
         if (violacao.valor) {
@@ -189,10 +197,9 @@ export class InterIntegrationService {
         message += `\n    `;
       });
     }
-    
+
     return message.trim();
   }
-
 
   private async subscriptionWebhook(
     integration: InterIntegration,
@@ -200,7 +207,6 @@ export class InterIntegrationService {
     integrationId: string,
   ) {
     try {
-
       const writeAccessToken = await this.getOAuthToken(integration);
 
 
@@ -228,17 +234,19 @@ export class InterIntegrationService {
       // this.logger.log('Existing webhooks:', existingWebhooks);
 
       // --------------------------------------------------------------------------|
-
     } catch (error) {
       this.logger.error('Error in subscriptionWebhook:', error);
       throw error;
     }
   }
 
-  private async getOAuthTokenForRead(integration: InterIntegration): Promise<string | null> {
-    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+  private async getOAuthTokenForRead(
+    integration: InterIntegration,
+  ): Promise<string | null> {
+    const baseUrl =
+      process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const oauthUrl = `${baseUrl}/oauth/v2/token`;
-    
+
     const data = new URLSearchParams({
       client_id: integration.clientId,
       client_secret: integration.clientSecret,
@@ -271,18 +279,22 @@ export class InterIntegrationService {
         this.logger.error('Invalid OAuth response for read:', response.data);
         return null;
       }
-
     } catch (error) {
-      this.logger.error('OAuth token request for read failed:', error.response?.data || error.message);
+      this.logger.error(
+        'OAuth token request for read failed:',
+        error.response?.data || error.message,
+      );
       this.handleInterApiError(error, 'Get OAuth Token for Read');
     }
   }
 
-  private async getOAuthToken(integration: InterIntegration): Promise<string | null> {
-
-    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+  private async getOAuthToken(
+    integration: InterIntegration,
+  ): Promise<string | null> {
+    const baseUrl =
+      process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const oauthUrl = `${baseUrl}/oauth/v2/token`;
-    
+
     const data = new URLSearchParams({
       client_id: integration.clientId,
       client_secret: integration.clientSecret,
@@ -316,9 +328,11 @@ export class InterIntegrationService {
         this.logger.error('Invalid OAuth response:', response.data);
         return null;
       }
-
     } catch (error) {
-      this.logger.error('OAuth token request failed:', error.response?.data || error.message);
+      this.logger.error(
+        'OAuth token request failed:',
+        error.response?.data || error.message,
+      );
       this.handleInterApiError(error, 'Obter Token OAuth');
     }
   }
@@ -331,9 +345,10 @@ export class InterIntegrationService {
   ): Promise<void> {
     const webhookUrl = this.environmentService.get('WEBHOOK_URL');
 
-    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+    const baseUrl =
+      process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const interWebhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
-    
+
     const data = {
       webhookUrl: `${webhookUrl}/inter-integration/webhook/${workspaceId}/${integration.id}`,
     };
@@ -343,7 +358,7 @@ export class InterIntegrationService {
         method: 'PUT',
         url: interWebhookUrl,
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'x-conta-corrente': integration.currentAccount,
         },
@@ -359,9 +374,11 @@ export class InterIntegrationService {
       const response = await axios(config);
 
       this.logger.log('Webhook configured successfully:', response.data);
-
     } catch (error) {
-      this.logger.error('Webhook configuration failed:', error.response?.data || error.message);
+      this.logger.error(
+        'Webhook configuration failed:',
+        error.response?.data || error.message,
+      );
       this.handleInterApiError(error, 'Configurar Webhook');
     }
   }
@@ -370,7 +387,8 @@ export class InterIntegrationService {
     integration: InterIntegration,
     accessToken: string,
   ): Promise<any> {
-    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+    const baseUrl =
+      process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
 
     try {
@@ -378,7 +396,7 @@ export class InterIntegrationService {
         method: 'GET',
         url: webhookUrl,
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'x-conta-corrente': integration.currentAccount,
         },
@@ -392,11 +410,16 @@ export class InterIntegrationService {
       this.logger.log('Fetching existing webhooks...');
       const response = await axios(config);
 
-      this.logger.log('Existing webhooks retrieved successfully:', response.data);
+      this.logger.log(
+        'Existing webhooks retrieved successfully:',
+        response.data,
+      );
       return response.data;
-
     } catch (error) {
-      this.logger.error('Failed to fetch existing webhooks:', error.response?.data || error.message);
+      this.logger.error(
+        'Failed to fetch existing webhooks:',
+        error.response?.data || error.message,
+      );
       this.handleInterApiError(error, 'Buscar Webhooks Existentes');
     }
   }
@@ -405,7 +428,8 @@ export class InterIntegrationService {
     integration: InterIntegration,
     accessToken: string,
   ): Promise<void> {
-    const baseUrl = process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
+    const baseUrl =
+      process.env.INTER_BASE_URL || 'https://cdpj.partners.bancointer.com.br';
     const webhookUrl = `${baseUrl}/cobranca/v3/cobrancas/webhook`;
 
     this.logger.log(`webhookUrl: ${webhookUrl}`);
@@ -417,7 +441,7 @@ export class InterIntegrationService {
         method: 'DELETE',
         url: webhookUrl,
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'x-conta-corrente': integration.currentAccount,
         },
@@ -432,20 +456,28 @@ export class InterIntegrationService {
       const response = await axios(config);
 
       this.logger.log('Webhook deleted successfully:', response.data);
-
     } catch (error) {
-      this.logger.error('Failed to delete webhook:', error.response?.data || error.message);
+      this.logger.error(
+        'Failed to delete webhook:',
+        error.response?.data || error.message,
+      );
       this.handleInterApiError(error, 'Excluir Webhook');
     }
   }
 
   private async createHttpsAgent(integration: InterIntegration): Promise<any> {
     const https = require('https');
-    
+
     try {
       // Criar arquivos temporários para certificado e chave privada
-      const certPath = await this.createTempFile(integration.certificate!, 'cert.crt');
-      const keyPath = await this.createTempFile(integration.privateKey!, 'key.key');
+      const certPath = await this.createTempFile(
+        integration.certificate!,
+        'cert.crt',
+      );
+      const keyPath = await this.createTempFile(
+        integration.privateKey!,
+        'key.key',
+      );
 
       const agent = new https.Agent({
         cert: fs.readFileSync(certPath),
@@ -458,16 +490,18 @@ export class InterIntegrationService {
       }, 5000);
 
       return agent;
-
     } catch (error) {
       this.logger.error('Failed to create HTTPS agent:', error);
       throw error;
     }
   }
 
-  private async createTempFile(content: string, filename: string): Promise<string> {
+  private async createTempFile(
+    content: string,
+    filename: string,
+  ): Promise<string> {
     const tempDir = path.join(process.cwd(), 'temp');
-    
+
     // Criar diretório temp se não existir
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
@@ -475,12 +509,12 @@ export class InterIntegrationService {
 
     const tempPath = path.join(tempDir, `${Date.now()}_${filename}`);
     fs.writeFileSync(tempPath, content);
-    
+
     return tempPath;
   }
 
   private cleanupTempFiles(filePaths: string[]): void {
-    filePaths.forEach(filePath => {
+    filePaths.forEach((filePath) => {
       try {
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);

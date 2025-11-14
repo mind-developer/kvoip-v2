@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';

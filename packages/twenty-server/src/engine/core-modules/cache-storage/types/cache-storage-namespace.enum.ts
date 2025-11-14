@@ -6,4 +6,7 @@ export enum CacheStorageNamespace {
   EngineWorkspace = 'engine:workspace',
   EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
+  /* @kvoip-woulz proprietary:begin */
+  ModuleInter = 'module:inter',
+  /* @kvoip-woulz proprietary:end */
 }

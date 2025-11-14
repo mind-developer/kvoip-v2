@@ -177,28 +177,39 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 
 export const CHARGE_STANDARD_FIELD_IDS = {
   name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c66',
-  company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
-  contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
-  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
-  price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
-  createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
-  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
-  discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
+  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d', // ?
+  discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e', // ?
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
   entityType: '20202020-a1b2-4c3d-8e4f-5f6a7b8c9d01',
-  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
-  paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
-  activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
-  chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d',
+  chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d', // ?
   requestCode: '20202020-4a2d-4f1c-9e3b-5d8c6b2a1f7e',
-  position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
+
+  // creio que tenha que remover
+  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
+  price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
+  activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
+  paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
+  contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
+  createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
+
+  // novos
+  externalCpfCnpj: 'af533cac-1e86-42f4-b3c4-e604dd0af6fa', // ?
+  value: 'd18294d4-656a-4caa-892a-fb0bb750ea95', // rename com price
+  bankIntegrationType: 'a27e7a99-d559-45c9-a7dc-a15a6170b96c', 
+  bankIntegrationReference: '650da294-961d-475f-ac81-ce9518d6595c',
+
+  // relations
+  company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
+  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
   attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
   person: '20202020-3213-4ddf-9494-6422bcff8d7c',
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
-  searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
   invoices: 'c3a90d91-f458-4331-8d55-ff86a066191d',
   companyFinancialClosingExecutions: '8eecb7cc-889b-4192-90d9-32626d021c9e',
+  
+  position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
+  searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
 } as const;
 
 export const TICKET_STANDARD_FIELD_IDS = {

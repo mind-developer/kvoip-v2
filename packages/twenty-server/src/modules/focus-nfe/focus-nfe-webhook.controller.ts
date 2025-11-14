@@ -57,7 +57,7 @@ export class FocusNfeController {
 
     if (!invoice) {
       this.logger.warn(
-        msg`Invoice with id (ref)` + ' ' + body.ref + ' ' + msg`not found in workspace` + ' ' + workspaceId,
+        `Nota fiscal com id (ref)` + ' ' + body.ref + ' ' + `não encontrada no workspace` + ' ' + workspaceId,
       );
 
       this.logger.log(`NF NOT FOUND: ${body.ref}`);
@@ -91,7 +91,7 @@ export class FocusNfeController {
         await addCompanyFinancialClosingExecutionLog(
           invoice.companyFinancialClosingExecution,
           companyFinancialClosingExecutionsRepository,
-          msg`Error in the authorization of the invoice` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + ': ' + body.status + ' ' + (body.mensagem_sefaz && ' - ' + body.mensagem_sefaz),
+          `Erro na autorização da nota fiscal` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + ': ' + body.status + ' ' + (body.mensagem_sefaz && ' - ' + body.mensagem_sefaz),
           'error',
         );
       }
@@ -103,7 +103,7 @@ export class FocusNfeController {
 
     if (invoice.nfStatus === NfStatus.ISSUED) {
       this.logger.log(
-        msg`NF` + ' ' + invoice.id + ' ' + msg`already issued. Ignoring new attachment processing.`,
+        `NF` + ' ' + invoice.id + ' ' + `já emitida. Ignorando processamento de novos anexos.`,
       );
       return;
     }
@@ -135,7 +135,7 @@ export class FocusNfeController {
           await addCompanyFinancialClosingExecutionLog(
             invoice.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
-            msg`Invoice` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ') ' + msg`authorized successfully`,
+            `Nota fiscal` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ') ' + `autorizada com sucesso`,
             'info',
             undefined,
             invoice.company ?? undefined,
@@ -184,7 +184,7 @@ export class FocusNfeController {
               await addCompanyFinancialClosingExecutionLog(
                 invoice.companyFinancialClosingExecution,
                 companyFinancialClosingExecutionsRepository,
-                msg`It was not possible to save the XML file of the invoice` + ' ' + invoice.nfType,
+                `Não foi possível salvar o arquivo XML da nota fiscal` + ' ' + invoice.nfType,
                 'warn',
                 undefined,
                 invoice.company ?? undefined,
@@ -232,7 +232,7 @@ export class FocusNfeController {
             await addCompanyFinancialClosingExecutionLog(
               invoice.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
-              msg`Attachment of the invoice` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + msg`saved successfully`,
+              `Anexo da nota fiscal` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + `salvo com sucesso`,
               'info',
               undefined,
               invoice.company ?? undefined,
@@ -262,7 +262,7 @@ export class FocusNfeController {
           await addCompanyFinancialClosingExecutionLog(
             invoice.companyFinancialClosingExecution,
             companyFinancialClosingExecutionsRepository,
-            msg`Invoice` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ') ' + msg`authorized successfully`,
+            `Nota fiscal` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ') ' + `autorizada com sucesso`,
             'info',
             undefined,
             invoice.company ?? undefined,
@@ -317,7 +317,7 @@ export class FocusNfeController {
               await addCompanyFinancialClosingExecutionLog(
                 invoice.companyFinancialClosingExecution,
                 companyFinancialClosingExecutionsRepository,
-                msg`It was not possible to save the XML file of the invoice` + ' ' + invoice.nfType,
+                `Não foi possível salvar o arquivo XML da nota fiscal` + ' ' + invoice.nfType,
                 'warn',
                 undefined,
                 invoice.company ?? undefined,
@@ -365,7 +365,7 @@ export class FocusNfeController {
             await addCompanyFinancialClosingExecutionLog(
               invoice.companyFinancialClosingExecution,
               companyFinancialClosingExecutionsRepository,
-              msg`Attachment of the invoice` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + msg`saved successfully`,
+              `Anexo da nota fiscal` + ' (' + getNfTypeLabel(invoice.nfType as NfType) + ')' + `salvo com sucesso`,
               'info',
               undefined,
               invoice.company ?? undefined,

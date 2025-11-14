@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import {
   ArgumentsHost,
   Catch,

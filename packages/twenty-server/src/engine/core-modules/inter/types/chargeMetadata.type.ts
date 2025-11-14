@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 
 export type ChargeMetadata = {

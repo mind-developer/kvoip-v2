@@ -1,3 +1,4 @@
+/* @kvoip-woulz proprietary */
 export enum InterChargeStatus {
   RECEBIDO = 'RECEBIDO',
   A_RECEBER = 'A_RECEBER',

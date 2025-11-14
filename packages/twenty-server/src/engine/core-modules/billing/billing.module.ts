@@ -22,6 +22,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingPaymentService } from 'src/engine/core-modules/billing/services/billing-payment.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
@@ -35,8 +36,9 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
-import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
+/* @kvoip-woulz proprietary:begin */
+import { PaymentModule } from 'src/engine/core-modules/payment/payment.module';
+/* @kvoip-woulz proprietary:end */
 import { KvoipAdminService } from 'src/engine/core-modules/kvoip-admin/services/kvoip-admin.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -49,6 +51,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     StripeModule,
     FileUploadModule,
     FileModule,
+    /* @kvoip-woulz proprietary:begin */
+    PaymentModule,
+    /* @kvoip-woulz proprietary:end */
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,
@@ -84,10 +89,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
+    /* @kvoip-woulz proprietary:begin */
     CheckExpiredSubscriptionsCronCommand,
-    InterInstanceService,
-    InterService,
     KvoipAdminService,
+    BillingPaymentService,
+    /* @kvoip-woulz proprietary:end */
   ],
   exports: [
     BillingSubscriptionService,
