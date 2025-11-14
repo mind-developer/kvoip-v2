@@ -142,7 +142,7 @@ export const UploadMediaPopup = ({
         /* @kvoip-woulz proprietary:begin */
         // Add spring bounce for upload popup opening animation
         type: 'spring',
-        bounce: 0.44,
+        bounce: 0.2,
       }}
     >
       {popupItems.map((item, index) => {
@@ -154,7 +154,7 @@ export const UploadMediaPopup = ({
             initial={{ scale: 0 }}
             animate={{
               scale: 1,
-              transition: { delay: index * 0.08, type: 'spring', bounce: 0.44 },
+              transition: { delay: index * 0.08, type: 'spring', bounce: 0.2 },
             }}
             exit={{ scale: 0.95 }}
             transition={{ duration: 0.5, ease: [0, 0.81, 0.27, 1] }}
