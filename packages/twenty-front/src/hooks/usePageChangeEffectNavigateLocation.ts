@@ -31,6 +31,9 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.SignInUp,
     AppPath.VerifyEmail,
     AppPath.Verify,
+    /* @kvoip-woulz proprietary:begin */
+    AppPath.Recharge,
+    /* @kvoip-woulz proprietary:end */
   ];
   const onboardingPaths = [
     AppPath.CreateWorkspace,
