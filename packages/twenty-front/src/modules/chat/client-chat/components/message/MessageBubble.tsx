@@ -4,7 +4,9 @@ import { BUBBLE_COLOR } from '@/chat/client-chat/constants/BUBBLE_COLOR';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import {
+  IconAlertCircle,
   IconArrowBack,
   IconArrowForward,
   IconCheck,
@@ -188,8 +190,10 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
 const StyledUnsupportedMessage = styled.div`
   display: flex;
   align-items: center;
+  align-self: flex-start;
   gap: ${({ theme }) => theme.spacing(1)};
   opacity: 0.5;
+  font-size: 12px;
 `;
 
 const StyledMessageBubbleContainer = styled.div<{ fromPerson: boolean }>`
@@ -259,6 +263,7 @@ export const MessageBubble = ({
   onScrollToMessage?: (messageId: string) => void;
   isHighlighted?: boolean;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const fromMe = message.fromType !== ChatMessageFromType.PERSON;
   const isPending =
@@ -345,6 +350,12 @@ export const MessageBubble = ({
         isFailed={message.deliveryStatus === ChatMessageDeliveryStatus.FAILED}
         hasQuotePreview={!!(message.repliesTo && !isReply)}
       >
+        {message.type === ChatMessageType.UNSUPPORTED && (
+          <StyledUnsupportedMessage>
+            <IconAlertCircle size={12} />
+            <span>{t`Unsupported message`}</span>
+          </StyledUnsupportedMessage>
+        )}
         {isReply && (
           <StyledCloseButton
             variant="tertiary"
