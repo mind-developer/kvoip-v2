@@ -9,9 +9,7 @@ export type NormalizedPhoneNumber = {
 export const normalizePhoneNumber = (
   phoneNumber: string,
 ): NormalizedPhoneNumber => {
-  const normalizedInput = phoneNumber.startsWith('+')
-    ? phoneNumber
-    : `+${phoneNumber}`;
+  const normalizedInput = `+${phoneNumber.replace(/\+/g, '')}`;
 
   const parsed = parsePhoneNumberWithError(normalizedInput);
 
