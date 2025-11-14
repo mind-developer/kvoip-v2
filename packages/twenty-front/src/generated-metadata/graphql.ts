@@ -248,6 +248,16 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
+export type BillingCreateChargeDto = {
+  address: Scalars['String'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cpfCnpj: Scalars['String'];
+  legalEntity: InterCustomerType;
+  name: Scalars['String'];
+  stateUnity: InterCustomerUf;
+};
+
 export type BillingEndTrialPeriodOutput = {
   __typename?: 'BillingEndTrialPeriodOutput';
   /** Boolean that confirms if a payment method was found */
@@ -264,6 +274,11 @@ export type BillingMeteredProductUsageOutput = {
   productKey: BillingProductKey;
   unitPriceCents: Scalars['Float'];
   usedCredits: Scalars['Float'];
+};
+
+export type BillingPaySubscriptionOutput = {
+  __typename?: 'BillingPaySubscriptionOutput';
+  success: Scalars['Boolean'];
 };
 
 /** The different billing payment providers available */
@@ -492,6 +507,13 @@ export type ClientMessageEventDto = {
   event: ClientMessageEvent;
 };
 
+export type Component = {
+  __typename?: 'Component';
+  format?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
@@ -542,6 +564,7 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
+  TelephonyConfig = 'TelephonyConfig',
   TokensDuration = 'TokensDuration',
   TwoFactorAuthentication = 'TwoFactorAuthentication'
 }
@@ -1173,6 +1196,16 @@ export type DeletedWorkspaceMember = {
   userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
+export type DevOnlyMutations = {
+  __typename?: 'DevOnlyMutations';
+  paySubscription: BillingPaySubscriptionOutput;
+};
+
+
+export type DevOnlyMutationsPaySubscriptionArgs = {
+  interChargeCode: Scalars['String'];
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
@@ -1209,9 +1242,15 @@ export type EmailPasswordResetLink = {
 
 export type Encaminhamento = {
   __typename?: 'Encaminhamento';
-  encaminhamento_destino?: Maybe<Array<Scalars['String']>>;
-  encaminhamento_destinos?: Maybe<Array<Scalars['String']>>;
-  encaminhamento_tipo?: Maybe<Scalars['String']>;
+  encaminhamento_destino?: Maybe<Array<EncaminhamentoDestino>>;
+  encaminhamento_destinos?: Maybe<Array<EncaminhamentoDestino>>;
+  encaminhamento_tipo?: Maybe<Scalars['Int']>;
+};
+
+export type EncaminhamentoDestino = {
+  __typename?: 'EncaminhamentoDestino';
+  destino?: Maybe<Scalars['String']>;
+  tipo?: Maybe<Scalars['Int']>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -1477,6 +1516,10 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+export type GetWhatsappTemplatesInput = {
+  integrationId: Scalars['String'];
+};
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1607,16 +1650,6 @@ export enum IndexType {
 export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
   uri: Scalars['String'];
-};
-
-export type InterCreateChargeDto = {
-  address: Scalars['String'];
-  cep: Scalars['String'];
-  city: Scalars['String'];
-  cpfCnpj: Scalars['String'];
-  legalEntity: InterCustomerType;
-  name: Scalars['String'];
-  stateUnity: InterCustomerUf;
 };
 
 /** Tipos de pessoa para o cliente Inter */
@@ -1838,6 +1871,7 @@ export type Mutation = {
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
   destroyPageLayoutTab: Scalars['Boolean'];
+  devOnly: DevOnlyMutations;
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1855,6 +1889,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
+  linkMemberToExtension: TelephonyWorkspaceEntity;
   publishServerlessFunction: ServerlessFunction;
   removeAgentHandoff: Scalars['Boolean'];
   removeBillingPlan: Scalars['Boolean'];
@@ -1870,6 +1905,7 @@ export type Mutation = {
   saveBillingPlanId: BillingPlans;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   saveStripeAccountId: StripeIntegration;
+  sendClientChatMessage: SendClientChatMessageResponse;
   sendInvitations: SendInvitationsOutput;
   setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
@@ -1969,7 +2005,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  interChargeData?: InputMaybe<InterCreateChargeDto>;
+  interChargeData?: InputMaybe<BillingCreateChargeDto>;
   paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -2288,7 +2324,7 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 
 export type MutationDeleteTelephonyIntegrationArgs = {
-  telephonyId: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 
@@ -2435,6 +2471,12 @@ export type MutationInitiateOtpProvisioningArgs = {
 };
 
 
+export type MutationLinkMemberToExtensionArgs = {
+  memberId: Scalars['ID'];
+  numberExtension: Scalars['String'];
+};
+
+
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
 };
@@ -2513,6 +2555,11 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
 export type MutationSaveStripeAccountIdArgs = {
   accountId: Scalars['String'];
   workspaceId: Scalars['String'];
+};
+
+
+export type MutationSendClientChatMessageArgs = {
+  input: SendClientChatMessageInput;
 };
 
 
@@ -3150,7 +3197,7 @@ export enum PermissionFlagType {
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
   WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export enum PermissionsOnAllObjectRecords {
@@ -3230,7 +3277,9 @@ export type Query = {
   financialClosingsByWorkspace: Array<FinancialClosing>;
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
-  findAllTelephonyIntegration: Array<TelephonyWorkspaceEntity>;
+  findAllExternalExtensions: Array<TelephonyExtension>;
+  findAllTelephonyIntegration: Array<TelephonyData>;
+  findAllTelephonyIntegrationPaginated: TelephonyPaginatedResult;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
@@ -3264,6 +3313,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
+  getExternalExtension?: Maybe<TelephonyExtension>;
   getFocusNfeIntegrationById: FocusNFeWorkspaceEntity;
   getFocusNfeIntegrationsByWorkspace: Array<FocusNFeWorkspaceEntity>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -3283,6 +3333,7 @@ export type Query = {
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getStripeIntegrationById: StripeIntegration;
   getSystemHealthStatus: SystemHealth;
+  getTelephonyByMember?: Maybe<TelephonyWorkspaceEntity>;
   getTelephonyCallFlows?: Maybe<Array<TelephonyCallFlow>>;
   getTelephonyDids?: Maybe<Array<TelephonyDids>>;
   getTelephonyPlans?: Maybe<Array<TelephonyDialingPlan>>;
@@ -3294,6 +3345,7 @@ export type Query = {
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   getUserSoftfone?: Maybe<TelephonyExtension>;
+  getWhatsappTemplates: WhatsappTemplatesResponse;
   index: Index;
   indexMetadatas: IndexConnection;
   interIntegrationById?: Maybe<InterIntegration>;
@@ -3377,7 +3429,19 @@ export type QueryFindAgentHandoffsArgs = {
 };
 
 
+export type QueryFindAllExternalExtensionsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryFindAllTelephonyIntegrationArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryFindAllTelephonyIntegrationPaginatedArgs = {
+  limit?: Scalars['Int'];
+  page?: Scalars['Int'];
   workspaceId: Scalars['ID'];
 };
 
@@ -3521,6 +3585,12 @@ export type QueryGetDatabaseConfigVariableArgs = {
 };
 
 
+export type QueryGetExternalExtensionArgs = {
+  extNum?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryGetFocusNfeIntegrationByIdArgs = {
   focusNfeIntegrationId: Scalars['String'];
 };
@@ -3579,6 +3649,12 @@ export type QueryGetServerlessFunctionSourceCodeArgs = {
 
 export type QueryGetStripeIntegrationByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetTelephonyByMemberArgs = {
+  memberId: Scalars['ID'];
+  workspaceId: Scalars['ID'];
 };
 
 
@@ -3647,6 +3723,11 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 export type QueryGetUserSoftfoneArgs = {
   extNum?: InputMaybe<Scalars['String']>;
   workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetWhatsappTemplatesArgs = {
+  input: GetWhatsappTemplatesInput;
 };
 
 
@@ -3901,6 +3982,34 @@ export type SearchResultPageInfo = {
   hasNextPage: Scalars['Boolean'];
 };
 
+export type SendClientChatMessageInput = {
+  attachmentUrl?: InputMaybe<Scalars['String']>;
+  caption?: InputMaybe<Scalars['String']>;
+  clientChatId: Scalars['String'];
+  deliveryStatus: Scalars['String'];
+  edited?: InputMaybe<Scalars['String']>;
+  event?: InputMaybe<Scalars['String']>;
+  from: Scalars['String'];
+  fromType: Scalars['String'];
+  provider: Scalars['String'];
+  providerIntegrationId: Scalars['String'];
+  reactions?: InputMaybe<Scalars['JSON']>;
+  repliesTo?: InputMaybe<Scalars['String']>;
+  templateId?: InputMaybe<Scalars['String']>;
+  templateLanguage?: InputMaybe<Scalars['String']>;
+  templateName?: InputMaybe<Scalars['String']>;
+  textBody?: InputMaybe<Scalars['String']>;
+  to: Scalars['String'];
+  toType: Scalars['String'];
+  type: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
+export type SendClientChatMessageResponse = {
+  __typename?: 'SendClientChatMessageResponse';
+  messageId: Scalars['String'];
+};
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
@@ -4110,6 +4219,49 @@ export type TelephonyCallFlow = {
   fluxo_chamada_nome?: Maybe<Scalars['String']>;
 };
 
+export type TelephonyData = {
+  __typename?: 'TelephonyData';
+  SIPPassword?: Maybe<Scalars['String']>;
+  advancedFowarding1?: Maybe<Scalars['String']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']>;
+  advancedFowarding2?: Maybe<Scalars['String']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']>;
+  advancedFowarding3?: Maybe<Scalars['String']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']>;
+  advancedFowarding4?: Maybe<Scalars['String']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']>;
+  advancedFowarding5?: Maybe<Scalars['String']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']>;
+  areaCode?: Maybe<Scalars['String']>;
+  blockExtension?: Maybe<Scalars['Boolean']>;
+  callerExternalID?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['String']>;
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']>;
+  dialingPlan?: Maybe<Scalars['String']>;
+  emailForMailbox?: Maybe<Scalars['String']>;
+  enableMailbox?: Maybe<Scalars['Boolean']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']>;
+  extensionBusy?: Maybe<Scalars['String']>;
+  extensionGroup?: Maybe<Scalars['String']>;
+  extensionName?: Maybe<Scalars['String']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']>;
+  externalNumberBusy?: Maybe<Scalars['String']>;
+  fowardAllCalls?: Maybe<Scalars['String']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  listenToCalls?: Maybe<Scalars['Boolean']>;
+  member?: Maybe<TelephonyMember>;
+  memberId?: Maybe<Scalars['String']>;
+  numberExtension: Scalars['String'];
+  pullCalls?: Maybe<Scalars['String']>;
+  ramal_id?: Maybe<Scalars['String']>;
+  recordCalls?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['String']>;
+};
+
 export type TelephonyDialingPlan = {
   __typename?: 'TelephonyDialingPlan';
   cliente_id?: Maybe<Scalars['String']>;
@@ -4168,6 +4320,41 @@ export type TelephonyExtension = {
   usuario_autenticacao?: Maybe<Scalars['String']>;
 };
 
+export type TelephonyFullName = {
+  __typename?: 'TelephonyFullName';
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyMember = {
+  __typename?: 'TelephonyMember';
+  avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['String']>;
+  dateFormat?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: Maybe<TelephonyFullName>;
+  timeFormat?: Maybe<Scalars['String']>;
+  timeZone?: Maybe<Scalars['String']>;
+  userEmail?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+export type TelephonyPaginatedResult = {
+  __typename?: 'TelephonyPaginatedResult';
+  data: Array<TelephonyData>;
+  pagination: TelephonyPaginationInfo;
+};
+
+export type TelephonyPaginationInfo = {
+  __typename?: 'TelephonyPaginationInfo';
+  currentPage: Scalars['Int'];
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  itemsPerPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
+};
+
 export type TelephonyWorkspaceEntity = {
   __typename?: 'TelephonyWorkspaceEntity';
   SIPPassword?: Maybe<Scalars['String']>;
@@ -4201,13 +4388,24 @@ export type TelephonyWorkspaceEntity = {
   fowardOfflineWithoutService?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   listenToCalls?: Maybe<Scalars['Boolean']>;
-  memberId: Scalars['String'];
+  memberId?: Maybe<Scalars['String']>;
   numberExtension: Scalars['String'];
   pullCalls?: Maybe<Scalars['String']>;
   ramal_id?: Maybe<Scalars['String']>;
   recordCalls?: Maybe<Scalars['Boolean']>;
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+};
+
+export type Template = {
+  __typename?: 'Template';
+  category: Scalars['String'];
+  components: Array<Component>;
+  id: Scalars['String'];
+  language: Scalars['String'];
+  name: Scalars['String'];
+  parameter_format: Scalars['String'];
+  status: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -4834,6 +5032,11 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
@@ -4922,9 +5125,11 @@ export type Workspace = {
   metadataVersion: Scalars['Float'];
   onesignalApiKey?: Maybe<Scalars['String']>;
   onesignalAppId?: Maybe<Scalars['String']>;
-  pabxCompanyId?: Maybe<Scalars['Float']>;
-  pabxDialingPlanId?: Maybe<Scalars['Float']>;
-  pabxTrunkId?: Maybe<Scalars['Float']>;
+  originIpId?: Maybe<Scalars['String']>;
+  pabxCompanyId?: Maybe<Scalars['String']>;
+  pabxDialingPlanId?: Maybe<Scalars['String']>;
+  pabxTrunkId?: Maybe<Scalars['String']>;
+  softSwitchClientId?: Maybe<Scalars['String']>;
   stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -5366,7 +5571,7 @@ export type CheckoutSessionMutationVariables = Exact<{
   plan: BillingPlanKey;
   requirePaymentMethod: Scalars['Boolean'];
   paymentProvider?: InputMaybe<BillingPaymentProviders>;
-  interChargeData?: InputMaybe<InterCreateChargeDto>;
+  interChargeData?: InputMaybe<BillingCreateChargeDto>;
 }>;
 
 
@@ -6035,13 +6240,35 @@ export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
 
 export type FindOneServerlessFunctionSourceCodeQuery = { __typename?: 'Query', getServerlessFunctionSourceCode?: any | null };
 
+export type CreateTelephonyMutationVariables = Exact<{
+  createTelephonyInput: CreateTelephonyInput;
+}>;
+
+
+export type CreateTelephonyMutation = { __typename?: 'Mutation', createTelephonyIntegration: { __typename?: 'TelephonyWorkspaceEntity', id: string } };
+
+export type DeleteTelephonyMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteTelephonyMutation = { __typename?: 'Mutation', deleteTelephonyIntegration: boolean };
+
+export type LinkMemberToExtensionMutationVariables = Exact<{
+  numberExtension: Scalars['String'];
+  memberId: Scalars['ID'];
+}>;
+
+
+export type LinkMemberToExtensionMutation = { __typename?: 'Mutation', linkMemberToExtension: { __typename?: 'TelephonyWorkspaceEntity', id: string, memberId?: string | null, ramal_id?: string | null, numberExtension: string, extensionName?: string | null } };
+
 export type UpdateTelephonyMutationVariables = Exact<{
   id: Scalars['ID'];
   updateTelephonyInput: UpdateTelephonyInput;
 }>;
 
 
-export type UpdateTelephonyMutation = { __typename?: 'Mutation', updateTelephonyIntegration: { __typename?: 'TelephonyWorkspaceEntity', id: string, memberId: string, numberExtension: string } };
+export type UpdateTelephonyMutation = { __typename?: 'Mutation', updateTelephonyIntegration: { __typename?: 'TelephonyWorkspaceEntity', id: string, memberId?: string | null, numberExtension: string } };
 
 export type GetTelephonyCallFlowsQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -6064,6 +6291,13 @@ export type GetTelephonyDidsQueryVariables = Exact<{
 
 export type GetTelephonyDidsQuery = { __typename?: 'Query', getTelephonyDids?: Array<{ __typename?: 'TelephonyDids', did_id?: string | null, numero?: string | null }> | null };
 
+export type GetAllExternalExtensionsQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
+
+
+export type GetAllExternalExtensionsQuery = { __typename?: 'Query', findAllExternalExtensions: Array<{ __typename?: 'TelephonyExtension', ramal_id?: string | null, cliente_id?: string | null, nome?: string | null, tipo?: string | null, usuario_autenticacao?: string | null, numero?: string | null, senha_sip?: string | null, senha_web?: string | null, caller_id_externo?: string | null, grupo_ramais?: string | null, centro_custo?: string | null, plano_discagem_id?: string | null, grupo_musica_espera?: string | null, puxar_chamadas?: string | null, habilitar_timers?: string | null, habilitar_blf?: string | null, escutar_chamadas?: string | null, gravar_chamadas?: string | null, bloquear_ramal?: string | null, codigo_incorporacao?: string | null, codigo_area?: string | null, habilitar_dupla_autenticacao?: string | null, dupla_autenticacao_ip_permitido?: string | null, dupla_autenticacao_mascara?: string | null, encaminhar_todas_chamadas?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null, encaminhar_offline_sem_atendimento?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null, encaminhar_ocupado_indisponivel?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null }> };
+
 export type GetAllExtensionsQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
 }>;
@@ -6076,7 +6310,16 @@ export type GetAllTelephonysQueryVariables = Exact<{
 }>;
 
 
-export type GetAllTelephonysQuery = { __typename?: 'Query', findAllTelephonyIntegration: Array<{ __typename?: 'TelephonyWorkspaceEntity', id: string, memberId: string, numberExtension: string, createdAt: string, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: boolean | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null }> };
+export type GetAllTelephonysQuery = { __typename?: 'Query', findAllTelephonyIntegration: Array<{ __typename?: 'TelephonyData', id: string, memberId?: string | null, numberExtension: string, createdAt?: string | null, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: boolean | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null, member?: { __typename?: 'TelephonyMember', id: string, userEmail?: string | null, avatarUrl?: string | null, userId?: string | null, timeZone?: string | null, dateFormat?: string | null, timeFormat?: string | null, calendarStartDay?: string | null, name?: { __typename?: 'TelephonyFullName', firstName?: string | null, lastName?: string | null } | null } | null }> };
+
+export type GetAllTelephonysPaginatedQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+  page: Scalars['Int'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetAllTelephonysPaginatedQuery = { __typename?: 'Query', findAllTelephonyIntegrationPaginated: { __typename?: 'TelephonyPaginatedResult', data: Array<{ __typename?: 'TelephonyData', id: string, memberId?: string | null, numberExtension: string, createdAt?: string | null, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: boolean | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null, member?: { __typename?: 'TelephonyMember', id: string, userEmail?: string | null, avatarUrl?: string | null, userId?: string | null, timeZone?: string | null, dateFormat?: string | null, timeFormat?: string | null, calendarStartDay?: string | null, name?: { __typename?: 'TelephonyFullName', firstName?: string | null, lastName?: string | null } | null } | null }>, pagination: { __typename?: 'TelephonyPaginationInfo', currentPage: number, totalPages: number, totalItems: number, itemsPerPage: number, hasNextPage: boolean, hasPreviousPage: boolean } } };
 
 export type GetTelephonyUrAsQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -6084,6 +6327,22 @@ export type GetTelephonyUrAsQueryVariables = Exact<{
 
 
 export type GetTelephonyUrAsQuery = { __typename?: 'Query', getTelephonyURAs?: Array<{ __typename?: 'Campaign', campanha_id?: string | null, nome?: string | null }> | null };
+
+export type GetExternalExtensionQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+  extNum?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetExternalExtensionQuery = { __typename?: 'Query', getExternalExtension?: { __typename?: 'TelephonyExtension', ramal_id?: string | null, cliente_id?: string | null, nome?: string | null, tipo?: string | null, usuario_autenticacao?: string | null, numero?: string | null, senha_sip?: string | null, senha_web?: string | null, caller_id_externo?: string | null, grupo_ramais?: string | null, centro_custo?: string | null, plano_discagem_id?: string | null, grupo_musica_espera?: string | null, puxar_chamadas?: string | null, habilitar_timers?: string | null, habilitar_blf?: string | null, escutar_chamadas?: string | null, gravar_chamadas?: string | null, bloquear_ramal?: string | null, codigo_incorporacao?: string | null, codigo_area?: string | null, habilitar_dupla_autenticacao?: string | null, dupla_autenticacao_ip_permitido?: string | null, dupla_autenticacao_mascara?: string | null, encaminhar_todas_chamadas?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null, encaminhar_offline_sem_atendimento?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null, encaminhar_ocupado_indisponivel?: { __typename?: 'Encaminhamento', encaminhamento_tipo?: number | null, encaminhamento_destino?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null, encaminhamento_destinos?: Array<{ __typename?: 'EncaminhamentoDestino', tipo?: number | null, destino?: string | null }> | null } | null } | null };
+
+export type GetTelephonyByMemberQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+  memberId: Scalars['ID'];
+}>;
+
+
+export type GetTelephonyByMemberQuery = { __typename?: 'Query', getTelephonyByMember?: { __typename?: 'TelephonyWorkspaceEntity', id: string, memberId?: string | null, numberExtension: string, extensionName?: string | null, type?: string | null, SIPPassword?: string | null, callerExternalID?: string | null, dialingPlan?: string | null, areaCode?: string | null, pullCalls?: string | null, listenToCalls?: boolean | null, recordCalls?: boolean | null, blockExtension?: boolean | null, enableMailbox?: boolean | null, emailForMailbox?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, extensionAllCallsOrOffline?: string | null, externalNumberAllCallsOrOffline?: string | null, destinyMailboxAllCallsOrOffline?: string | null, extensionBusy?: string | null, externalNumberBusy?: string | null, destinyMailboxBusy?: string | null, ramal_id?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null, createdAt: string, updatedAt: string } | null };
 
 export type GetUserSoftfoneQueryVariables = Exact<{
   extNum?: InputMaybe<Scalars['String']>;
@@ -8559,7 +8818,7 @@ export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useVal
 export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
 export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!, $paymentProvider: BillingPaymentProviders, $interChargeData: InterCreateChargeDto) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!, $paymentProvider: BillingPaymentProviders, $interChargeData: BillingCreateChargeDto) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
@@ -12333,6 +12592,108 @@ export function useFindOneServerlessFunctionSourceCodeLazyQuery(baseOptions?: Ap
 export type FindOneServerlessFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeQuery>;
 export type FindOneServerlessFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeLazyQuery>;
 export type FindOneServerlessFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>;
+export const CreateTelephonyDocument = gql`
+    mutation CreateTelephony($createTelephonyInput: CreateTelephonyInput!) {
+  createTelephonyIntegration(createTelephonyInput: $createTelephonyInput) {
+    id
+  }
+}
+    `;
+export type CreateTelephonyMutationFn = Apollo.MutationFunction<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
+
+/**
+ * __useCreateTelephonyMutation__
+ *
+ * To run a mutation, you first call `useCreateTelephonyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTelephonyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTelephonyMutation, { data, loading, error }] = useCreateTelephonyMutation({
+ *   variables: {
+ *      createTelephonyInput: // value for 'createTelephonyInput'
+ *   },
+ * });
+ */
+export function useCreateTelephonyMutation(baseOptions?: Apollo.MutationHookOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTelephonyMutation, CreateTelephonyMutationVariables>(CreateTelephonyDocument, options);
+      }
+export type CreateTelephonyMutationHookResult = ReturnType<typeof useCreateTelephonyMutation>;
+export type CreateTelephonyMutationResult = Apollo.MutationResult<CreateTelephonyMutation>;
+export type CreateTelephonyMutationOptions = Apollo.BaseMutationOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
+export const DeleteTelephonyDocument = gql`
+    mutation DeleteTelephony($id: ID!) {
+  deleteTelephonyIntegration(id: $id)
+}
+    `;
+export type DeleteTelephonyMutationFn = Apollo.MutationFunction<DeleteTelephonyMutation, DeleteTelephonyMutationVariables>;
+
+/**
+ * __useDeleteTelephonyMutation__
+ *
+ * To run a mutation, you first call `useDeleteTelephonyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTelephonyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTelephonyMutation, { data, loading, error }] = useDeleteTelephonyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTelephonyMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTelephonyMutation, DeleteTelephonyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTelephonyMutation, DeleteTelephonyMutationVariables>(DeleteTelephonyDocument, options);
+      }
+export type DeleteTelephonyMutationHookResult = ReturnType<typeof useDeleteTelephonyMutation>;
+export type DeleteTelephonyMutationResult = Apollo.MutationResult<DeleteTelephonyMutation>;
+export type DeleteTelephonyMutationOptions = Apollo.BaseMutationOptions<DeleteTelephonyMutation, DeleteTelephonyMutationVariables>;
+export const LinkMemberToExtensionDocument = gql`
+    mutation LinkMemberToExtension($numberExtension: String!, $memberId: ID!) {
+  linkMemberToExtension(numberExtension: $numberExtension, memberId: $memberId) {
+    id
+    memberId
+    ramal_id
+    numberExtension
+    extensionName
+  }
+}
+    `;
+export type LinkMemberToExtensionMutationFn = Apollo.MutationFunction<LinkMemberToExtensionMutation, LinkMemberToExtensionMutationVariables>;
+
+/**
+ * __useLinkMemberToExtensionMutation__
+ *
+ * To run a mutation, you first call `useLinkMemberToExtensionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLinkMemberToExtensionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [linkMemberToExtensionMutation, { data, loading, error }] = useLinkMemberToExtensionMutation({
+ *   variables: {
+ *      numberExtension: // value for 'numberExtension'
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useLinkMemberToExtensionMutation(baseOptions?: Apollo.MutationHookOptions<LinkMemberToExtensionMutation, LinkMemberToExtensionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LinkMemberToExtensionMutation, LinkMemberToExtensionMutationVariables>(LinkMemberToExtensionDocument, options);
+      }
+export type LinkMemberToExtensionMutationHookResult = ReturnType<typeof useLinkMemberToExtensionMutation>;
+export type LinkMemberToExtensionMutationResult = Apollo.MutationResult<LinkMemberToExtensionMutation>;
+export type LinkMemberToExtensionMutationOptions = Apollo.BaseMutationOptions<LinkMemberToExtensionMutation, LinkMemberToExtensionMutationVariables>;
 export const UpdateTelephonyDocument = gql`
     mutation UpdateTelephony($id: ID!, $updateTelephonyInput: UpdateTelephonyInput!) {
   updateTelephonyIntegration(id: $id, updateTelephonyInput: $updateTelephonyInput) {
@@ -12478,6 +12839,97 @@ export function useGetTelephonyDidsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetTelephonyDidsQueryHookResult = ReturnType<typeof useGetTelephonyDidsQuery>;
 export type GetTelephonyDidsLazyQueryHookResult = ReturnType<typeof useGetTelephonyDidsLazyQuery>;
 export type GetTelephonyDidsQueryResult = Apollo.QueryResult<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>;
+export const GetAllExternalExtensionsDocument = gql`
+    query GetAllExternalExtensions($workspaceId: ID!) {
+  findAllExternalExtensions(workspaceId: $workspaceId) {
+    ramal_id
+    cliente_id
+    nome
+    tipo
+    usuario_autenticacao
+    numero
+    senha_sip
+    senha_web
+    caller_id_externo
+    grupo_ramais
+    centro_custo
+    plano_discagem_id
+    grupo_musica_espera
+    puxar_chamadas
+    habilitar_timers
+    habilitar_blf
+    escutar_chamadas
+    gravar_chamadas
+    bloquear_ramal
+    codigo_incorporacao
+    codigo_area
+    habilitar_dupla_autenticacao
+    dupla_autenticacao_ip_permitido
+    dupla_autenticacao_mascara
+    encaminhar_todas_chamadas {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+    encaminhar_offline_sem_atendimento {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+    encaminhar_ocupado_indisponivel {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllExternalExtensionsQuery__
+ *
+ * To run a query within a React component, call `useGetAllExternalExtensionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllExternalExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllExternalExtensionsQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllExternalExtensionsQuery(baseOptions: Apollo.QueryHookOptions<GetAllExternalExtensionsQuery, GetAllExternalExtensionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllExternalExtensionsQuery, GetAllExternalExtensionsQueryVariables>(GetAllExternalExtensionsDocument, options);
+      }
+export function useGetAllExternalExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllExternalExtensionsQuery, GetAllExternalExtensionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllExternalExtensionsQuery, GetAllExternalExtensionsQueryVariables>(GetAllExternalExtensionsDocument, options);
+        }
+export type GetAllExternalExtensionsQueryHookResult = ReturnType<typeof useGetAllExternalExtensionsQuery>;
+export type GetAllExternalExtensionsLazyQueryHookResult = ReturnType<typeof useGetAllExternalExtensionsLazyQuery>;
+export type GetAllExternalExtensionsQueryResult = Apollo.QueryResult<GetAllExternalExtensionsQuery, GetAllExternalExtensionsQueryVariables>;
 export const GetAllExtensionsDocument = gql`
     query getAllExtensions($workspaceId: ID!) {
   getAllExtensions(workspaceId: $workspaceId) {
@@ -12561,6 +13013,20 @@ export const GetAllTelephonysDocument = gql`
     advancedFowarding3Value
     advancedFowarding4Value
     advancedFowarding5Value
+    member {
+      id
+      name {
+        firstName
+        lastName
+      }
+      userEmail
+      avatarUrl
+      userId
+      timeZone
+      dateFormat
+      timeFormat
+      calendarStartDay
+    }
   }
 }
     `;
@@ -12592,6 +13058,106 @@ export function useGetAllTelephonysLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetAllTelephonysQueryHookResult = ReturnType<typeof useGetAllTelephonysQuery>;
 export type GetAllTelephonysLazyQueryHookResult = ReturnType<typeof useGetAllTelephonysLazyQuery>;
 export type GetAllTelephonysQueryResult = Apollo.QueryResult<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>;
+export const GetAllTelephonysPaginatedDocument = gql`
+    query GetAllTelephonysPaginated($workspaceId: ID!, $page: Int!, $limit: Int!) {
+  findAllTelephonyIntegrationPaginated(
+    workspaceId: $workspaceId
+    page: $page
+    limit: $limit
+  ) {
+    data {
+      id
+      memberId
+      numberExtension
+      createdAt
+      SIPPassword
+      areaCode
+      blockExtension
+      callerExternalID
+      destinyMailboxAllCallsOrOffline
+      destinyMailboxBusy
+      dialingPlan
+      emailForMailbox
+      enableMailbox
+      extensionAllCallsOrOffline
+      extensionBusy
+      extensionGroup
+      extensionName
+      externalNumberAllCallsOrOffline
+      externalNumberBusy
+      fowardAllCalls
+      fowardBusyNotAvailable
+      fowardOfflineWithoutService
+      listenToCalls
+      pullCalls
+      recordCalls
+      type
+      advancedFowarding1
+      advancedFowarding2
+      advancedFowarding3
+      advancedFowarding4
+      advancedFowarding5
+      advancedFowarding1Value
+      advancedFowarding2Value
+      advancedFowarding3Value
+      advancedFowarding4Value
+      advancedFowarding5Value
+      member {
+        id
+        name {
+          firstName
+          lastName
+        }
+        userEmail
+        avatarUrl
+        userId
+        timeZone
+        dateFormat
+        timeFormat
+        calendarStartDay
+      }
+    }
+    pagination {
+      currentPage
+      totalPages
+      totalItems
+      itemsPerPage
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllTelephonysPaginatedQuery__
+ *
+ * To run a query within a React component, call `useGetAllTelephonysPaginatedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTelephonysPaginatedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTelephonysPaginatedQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      page: // value for 'page'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetAllTelephonysPaginatedQuery(baseOptions: Apollo.QueryHookOptions<GetAllTelephonysPaginatedQuery, GetAllTelephonysPaginatedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllTelephonysPaginatedQuery, GetAllTelephonysPaginatedQueryVariables>(GetAllTelephonysPaginatedDocument, options);
+      }
+export function useGetAllTelephonysPaginatedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTelephonysPaginatedQuery, GetAllTelephonysPaginatedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllTelephonysPaginatedQuery, GetAllTelephonysPaginatedQueryVariables>(GetAllTelephonysPaginatedDocument, options);
+        }
+export type GetAllTelephonysPaginatedQueryHookResult = ReturnType<typeof useGetAllTelephonysPaginatedQuery>;
+export type GetAllTelephonysPaginatedLazyQueryHookResult = ReturnType<typeof useGetAllTelephonysPaginatedLazyQuery>;
+export type GetAllTelephonysPaginatedQueryResult = Apollo.QueryResult<GetAllTelephonysPaginatedQuery, GetAllTelephonysPaginatedQueryVariables>;
 export const GetTelephonyUrAsDocument = gql`
     query getTelephonyURAs($workspaceId: ID!) {
   getTelephonyURAs(workspaceId: $workspaceId) {
@@ -12628,6 +13194,170 @@ export function useGetTelephonyUrAsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetTelephonyUrAsQueryHookResult = ReturnType<typeof useGetTelephonyUrAsQuery>;
 export type GetTelephonyUrAsLazyQueryHookResult = ReturnType<typeof useGetTelephonyUrAsLazyQuery>;
 export type GetTelephonyUrAsQueryResult = Apollo.QueryResult<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>;
+export const GetExternalExtensionDocument = gql`
+    query GetExternalExtension($workspaceId: ID!, $extNum: String) {
+  getExternalExtension(workspaceId: $workspaceId, extNum: $extNum) {
+    ramal_id
+    cliente_id
+    nome
+    tipo
+    usuario_autenticacao
+    numero
+    senha_sip
+    senha_web
+    caller_id_externo
+    grupo_ramais
+    centro_custo
+    plano_discagem_id
+    grupo_musica_espera
+    puxar_chamadas
+    habilitar_timers
+    habilitar_blf
+    escutar_chamadas
+    gravar_chamadas
+    bloquear_ramal
+    codigo_incorporacao
+    codigo_area
+    habilitar_dupla_autenticacao
+    dupla_autenticacao_ip_permitido
+    dupla_autenticacao_mascara
+    encaminhar_todas_chamadas {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+    encaminhar_offline_sem_atendimento {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+    encaminhar_ocupado_indisponivel {
+      encaminhamento_tipo
+      encaminhamento_destino {
+        tipo
+        destino
+      }
+      encaminhamento_destinos {
+        tipo
+        destino
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetExternalExtensionQuery__
+ *
+ * To run a query within a React component, call `useGetExternalExtensionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExternalExtensionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExternalExtensionQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      extNum: // value for 'extNum'
+ *   },
+ * });
+ */
+export function useGetExternalExtensionQuery(baseOptions: Apollo.QueryHookOptions<GetExternalExtensionQuery, GetExternalExtensionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetExternalExtensionQuery, GetExternalExtensionQueryVariables>(GetExternalExtensionDocument, options);
+      }
+export function useGetExternalExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExternalExtensionQuery, GetExternalExtensionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetExternalExtensionQuery, GetExternalExtensionQueryVariables>(GetExternalExtensionDocument, options);
+        }
+export type GetExternalExtensionQueryHookResult = ReturnType<typeof useGetExternalExtensionQuery>;
+export type GetExternalExtensionLazyQueryHookResult = ReturnType<typeof useGetExternalExtensionLazyQuery>;
+export type GetExternalExtensionQueryResult = Apollo.QueryResult<GetExternalExtensionQuery, GetExternalExtensionQueryVariables>;
+export const GetTelephonyByMemberDocument = gql`
+    query getTelephonyByMember($workspaceId: ID!, $memberId: ID!) {
+  getTelephonyByMember(workspaceId: $workspaceId, memberId: $memberId) {
+    id
+    memberId
+    numberExtension
+    extensionName
+    type
+    SIPPassword
+    callerExternalID
+    dialingPlan
+    areaCode
+    pullCalls
+    listenToCalls
+    recordCalls
+    blockExtension
+    enableMailbox
+    emailForMailbox
+    fowardAllCalls
+    fowardBusyNotAvailable
+    fowardOfflineWithoutService
+    extensionAllCallsOrOffline
+    externalNumberAllCallsOrOffline
+    destinyMailboxAllCallsOrOffline
+    extensionBusy
+    externalNumberBusy
+    destinyMailboxBusy
+    ramal_id
+    advancedFowarding1
+    advancedFowarding2
+    advancedFowarding3
+    advancedFowarding4
+    advancedFowarding5
+    advancedFowarding1Value
+    advancedFowarding2Value
+    advancedFowarding3Value
+    advancedFowarding4Value
+    advancedFowarding5Value
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetTelephonyByMemberQuery__
+ *
+ * To run a query within a React component, call `useGetTelephonyByMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTelephonyByMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTelephonyByMemberQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useGetTelephonyByMemberQuery(baseOptions: Apollo.QueryHookOptions<GetTelephonyByMemberQuery, GetTelephonyByMemberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTelephonyByMemberQuery, GetTelephonyByMemberQueryVariables>(GetTelephonyByMemberDocument, options);
+      }
+export function useGetTelephonyByMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTelephonyByMemberQuery, GetTelephonyByMemberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTelephonyByMemberQuery, GetTelephonyByMemberQueryVariables>(GetTelephonyByMemberDocument, options);
+        }
+export type GetTelephonyByMemberQueryHookResult = ReturnType<typeof useGetTelephonyByMemberQuery>;
+export type GetTelephonyByMemberLazyQueryHookResult = ReturnType<typeof useGetTelephonyByMemberLazyQuery>;
+export type GetTelephonyByMemberQueryResult = Apollo.QueryResult<GetTelephonyByMemberQuery, GetTelephonyByMemberQueryVariables>;
 export const GetUserSoftfoneDocument = gql`
     query getUserSoftfone($extNum: String, $workspaceId: ID!) {
   getUserSoftfone(extNum: $extNum, workspaceId: $workspaceId) {
