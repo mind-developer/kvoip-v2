@@ -416,9 +416,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  telephonies: Relation<
-    TelephonyWorkspaceEntity[]
-  >;
+  telephonies: Relation<TelephonyWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,

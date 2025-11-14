@@ -43,7 +43,6 @@ import { TenantWorkspaceEntity } from 'src/modules/kvoip-admin/standard-objects/
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
-import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -224,18 +223,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   chats: Relation<ClientChatWorkspaceEntity[]> | null;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.support,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Support`,
-    description: msg`Person linked to the support`,
-    icon: 'IconHelpCircle',
-    inverseSideTarget: () => SupportWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  support: Relation<SupportWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.tenants,
