@@ -1,8 +1,9 @@
 import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
+import { IconBrandMeta } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { AvatarChip, Tag } from 'twenty-ui/components';
-import { Avatar, useIcons } from 'twenty-ui/display';
+import { AvatarChip } from 'twenty-ui/components';
+import { AppTooltip, Avatar, TooltipDelay, useIcons } from 'twenty-ui/display';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
@@ -11,10 +12,10 @@ const StyledChatCard = styled.div<{ isSelected?: boolean }>`
   align-items: center;
   background-color: ${({ isSelected, theme }) =>
     isSelected ? theme.background.transparent.light : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(2)};
   transition: background-color 0.2s;
 `;
 
@@ -89,19 +90,34 @@ const StyledContainerPills = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledTag = styled(Tag)`
-  width: 90px;
-  padding: ${({ theme }) => theme.spacing(0.3)};
-  & > div {
-    margin: 0;
-  }
-  align-items: center;
-  justify-content: center;
-`;
-
 const StyledTagsContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledAgentTooltipWrapper = styled.div`
+  display: inline-flex;
+  pointer-events: auto;
+`;
+
+const StyledSectorTooltipWrapper = styled.div`
+  display: inline-flex;
+  pointer-events: auto;
+`;
+
+const StyledAppTooltip = styled(AppTooltip)`
+  padding: ${({ theme }) => theme.spacing(1)} !important;
+  background-color: ${({ theme }) => theme.color.blue} !important;
+`;
+
+const StyledIntegrationName = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
@@ -117,6 +133,7 @@ type ChatCardProps = {
   personAvatarUrl: string;
   agentAvatarUrl?: string;
   agentName?: string;
+  integrationName?: string;
 };
 
 export const ChatCard = ({
@@ -130,10 +147,26 @@ export const ChatCard = ({
   unreadMessagesCount,
   sectorName,
   sectorIcon,
+  integrationName,
 }: ChatCardProps) => {
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const Icon = getIcon(sectorIcon);
+  const agentTooltipId = `agent-tooltip-${chatId}`;
+  const sectorTooltipId = `sector-tooltip-${chatId}`;
+  const StyledSectorIcon = styled(Icon)`
+    width: 14px;
+    height: 14px;
+    padding: 2px;
+    background-color: ${({ theme }) => theme.color.red20};
+    box-sizing: border-box;
+    border-radius: 50%;
+    color: ${({ theme }) => theme.color.red80};
+    outline: 2px solid
+      ${({ theme }) =>
+        isSelected ? theme.background.tertiary : theme.background.primary};
+    z-index: 1;
+  `;
   return (
     <StyledChatCard
       onClick={() => navigate(getAppPath(AppPath.ClientChat, { chatId }))}
@@ -149,41 +182,55 @@ export const ChatCard = ({
       <StyledContentContainer>
         <StyledContainer>
           <StyledDiv>
-            <StyledUserName>{name}</StyledUserName>
-            <StyledLastMessagePreview>
-              {lastMessagePreview}
-            </StyledLastMessagePreview>
-          </StyledDiv>
-          <StyledContainerPills>
-            <StyledTagsContainer>
-              {agentName && (
-                <StyledTag
-                  text={agentName}
-                  color="transparent"
-                  variant="solid"
-                  weight="medium"
-                  Icon={() => {
-                    return (
+            <StyledUserName>
+              {name}
+              <StyledTagsContainer>
+                {agentName && (
+                  <>
+                    <StyledAgentTooltipWrapper id={agentTooltipId}>
                       <AvatarChip
                         avatarUrl={agentAvatarUrl}
                         placeholderColorSeed={agentName}
                         placeholder={agentName}
                         avatarType="rounded"
                       />
-                    );
-                  }}
-                />
-              )}
-              {sectorName && (
-                <StyledTag
-                  Icon={Icon}
-                  text={sectorName}
-                  color="transparent"
-                  variant="solid"
-                  weight="medium"
-                />
-              )}
-            </StyledTagsContainer>
+                    </StyledAgentTooltipWrapper>
+                    <StyledAppTooltip
+                      content={agentName}
+                      anchorSelect={`#${agentTooltipId}`}
+                      place="right"
+                      positionStrategy="fixed"
+                      delay={TooltipDelay.noDelay}
+                    />
+                  </>
+                )}
+                {sectorName && (
+                  <>
+                    <StyledSectorTooltipWrapper id={sectorTooltipId}>
+                      <StyledSectorIcon size={10} />
+                    </StyledSectorTooltipWrapper>
+                    <StyledAppTooltip
+                      content={sectorName}
+                      anchorSelect={`#${sectorTooltipId}`}
+                      place="right"
+                      positionStrategy="fixed"
+                      delay={TooltipDelay.noDelay}
+                    />
+                  </>
+                )}
+              </StyledTagsContainer>
+            </StyledUserName>
+            <StyledLastMessagePreview>
+              {lastMessagePreview}
+            </StyledLastMessagePreview>
+          </StyledDiv>
+          <StyledContainerPills>
+            {integrationName && (
+              <StyledIntegrationName>
+                <IconBrandMeta size={14} />
+                {integrationName}
+              </StyledIntegrationName>
+            )}
             <StyledDateAndUnreadMessagesContainer>
               {unreadMessagesCount > 0 && (
                 <StyledUnreadMessages>

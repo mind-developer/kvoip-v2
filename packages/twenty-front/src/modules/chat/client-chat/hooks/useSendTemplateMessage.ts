@@ -65,9 +65,10 @@ export const useSendTemplateMessage = () => {
       }
       const phoneNumberString = selectedPhoneNumber.toString();
       const normalizedPhone = normalizePhoneNumber(phoneNumberString);
-      const normalizedProviderContactId =
+      const normalizedProviderContactId = (
         normalizedPhone.primaryPhoneCallingCode +
-        normalizedPhone.primaryPhoneNumber;
+        normalizedPhone.primaryPhoneNumber
+      ).replace(/\+/g, '');
 
       const filter = {
         and: [

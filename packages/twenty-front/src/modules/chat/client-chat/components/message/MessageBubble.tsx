@@ -9,6 +9,7 @@ import {
   IconArrowForward,
   IconCheck,
   IconChecks,
+  IconCircleDashedCheck,
   IconClock,
   IconX,
 } from '@tabler/icons-react';
@@ -297,6 +298,10 @@ export const MessageBubble = ({
     case ChatMessageDeliveryStatus.FAILED:
       StatusIcon = IconX;
       break;
+  }
+
+  if (message.templateId) {
+    StatusIcon = IconCircleDashedCheck;
   }
 
   return (

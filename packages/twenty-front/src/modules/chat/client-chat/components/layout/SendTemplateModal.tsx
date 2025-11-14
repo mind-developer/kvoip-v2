@@ -41,6 +41,7 @@ const StyledFooter = styled.div`
 
 const StyledFormCountryCodeSelectInput = styled(FormCountryCodeSelectInput)`
   max-width: 50px !important;
+  z-index: 1000;
 `;
 
 export const SendTemplateModal = (): React.ReactNode => {
@@ -107,6 +108,40 @@ export const SendTemplateModal = (): React.ReactNode => {
     }
   }, [selectedCountryCode]);
 
+  const callingCodeDigits = useMemo(() => {
+    if (!selectedCountryCode) {
+      return null;
+    }
+    try {
+      return getCountryCallingCode(
+        selectedCountryCode as CountryCode,
+      ).toString();
+    } catch {
+      return null;
+    }
+  }, [selectedCountryCode]);
+
+  const handlePhoneNumberChange = useCallback(
+    (phoneNumber: number | null | string) => {
+      if (!phoneNumber || !callingCodeDigits) {
+        setSelectedPhoneNumber(phoneNumber);
+        return;
+      }
+
+      const phoneNumberString = phoneNumber.toString().trim();
+      const digitsOnly = phoneNumberString.replace(/\D/g, '');
+
+      // Se o número começa com o calling code, remove-o
+      if (digitsOnly.startsWith(callingCodeDigits)) {
+        const nationalNumber = digitsOnly.slice(callingCodeDigits.length);
+        setSelectedPhoneNumber(nationalNumber);
+      } else {
+        setSelectedPhoneNumber(phoneNumber);
+      }
+    },
+    [callingCodeDigits],
+  );
+
   const formattedPhoneNumber = useMemo(
     () =>
       selectedPhoneNumber && selectedCallingCode
@@ -130,7 +165,6 @@ export const SendTemplateModal = (): React.ReactNode => {
     if (!selectedPhoneNumber || !selectedIntegrationId || !selectedTemplateId) {
       return;
     }
-    alert('formattedPhoneNumber: ' + formattedPhoneNumber);
     await sendTemplateMessage({
       selectedPhoneNumber: formattedPhoneNumber,
       selectedIntegrationId,
@@ -202,8 +236,7 @@ export const SendTemplateModal = (): React.ReactNode => {
         <FormNumberFieldInput
           label={t`Recipient's phone number`}
           defaultValue={selectedPhoneNumber ?? ''}
-          onChange={(phoneNumber) => setSelectedPhoneNumber(phoneNumber)}
-          readonly={false}
+          onChange={handlePhoneNumberChange}
         />
         <Button
           disabled={

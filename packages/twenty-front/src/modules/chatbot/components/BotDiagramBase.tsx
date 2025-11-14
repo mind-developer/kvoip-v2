@@ -450,7 +450,6 @@ export const BotDiagramBase = ({
         setEdges((eds) => addEdge(connection, eds));
         return;
       }
-      alert('Target already connected');
     },
     [edges, setEdges],
   );

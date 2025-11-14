@@ -8,7 +8,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type ClientChat, ClientChatStatus } from 'twenty-shared/types';
 import { getAppPath } from '~/utils/navigation/getAppPath';
@@ -21,10 +21,6 @@ export const useClientChats = (showNotifications: boolean = false) => {
   const navigate = useNavigate();
   const { enqueueInfoSnackBar } = useSnackBar();
 
-  const [_, setActiveTabId] = useRecoilComponentState(
-    activeTabIdComponentState,
-    'chat-navigation-drawer-tabs',
-  );
   const { records: sectors } = useFindManyRecords<
     Sector & { __typename: string }
   >({
@@ -33,6 +29,39 @@ export const useClientChats = (showNotifications: boolean = false) => {
 
   const workspaceMemberWithAgent = useCurrentWorkspaceMemberWithAgent();
   const isAdmin = workspaceMemberWithAgent?.agent?.isAdmin;
+
+  // Memoize the filter to avoid unnecessary re-renders
+  const chatFilter = useMemo(
+    () => ({
+      or: [
+        { status: { eq: ClientChatStatus.ABANDONED } },
+        ...(isAdmin
+          ? sectors?.map((sector) => ({ sectorId: { eq: sector.id } })) || []
+          : [
+              {
+                sectorId: { eq: workspaceMemberWithAgent?.agent?.sectorId },
+              },
+            ]),
+      ],
+    }),
+    [isAdmin, sectors, workspaceMemberWithAgent?.agent?.sectorId],
+  );
+
+  // Helper function to check if a chat matches the current filter
+  const chatMatchesFilter = useCallback(
+    (chat: ClientChat): boolean => {
+      // Always include abandoned chats
+      if (chat.status === ClientChatStatus.ABANDONED) {
+        return true;
+      }
+      // Check if chat belongs to admin's sectors or user's sector
+      if (isAdmin) {
+        return sectors?.some((sector) => sector.id === chat.sectorId) ?? false;
+      }
+      return chat.sectorId === workspaceMemberWithAgent?.agent?.sectorId;
+    },
+    [isAdmin, sectors, workspaceMemberWithAgent?.agent?.sectorId],
+  );
 
   useFindManyRecords<ClientChat & { __typename: string; id: string }>({
     objectNameSingular: 'clientChat',
@@ -67,19 +96,13 @@ export const useClientChats = (showNotifications: boolean = false) => {
       whatsappIntegration: {
         id: true,
         apiType: true,
+        name: true,
       },
       messengerIntegrationId: true,
       telegramIntegrationId: true,
       provider: true,
     },
-    filter: {
-      or: [
-        { status: { eq: ClientChatStatus.ABANDONED } },
-        ...(workspaceMemberWithAgent?.agent?.isAdmin
-          ? sectors?.map((sector) => ({ sectorId: { eq: sector.id } })) || []
-          : [{ sectorId: { eq: workspaceMemberWithAgent?.agent?.sectorId } }]),
-      ],
-    },
+    filter: chatFilter,
     limit: 500,
     orderBy: [{ createdAt: 'AscNullsFirst' }],
     onCompleted: (data) => {
@@ -89,30 +112,75 @@ export const useClientChats = (showNotifications: boolean = false) => {
     skip: !sectors || sectors.length === 0,
   });
 
-  useClientChatSubscription({
-    sectorId: isAdmin
-      ? 'admin'
-      : (workspaceMemberWithAgent?.agent?.sectorId ?? ''),
-    onChatCreated: (chat) => {
-      setDbChats((prev: ClientChat[]) => [
-        ...prev.filter((c: ClientChat) => c.id !== chat.id),
-        chat,
-      ]);
-    },
-    onError: (error) => {
-      console.error('Error onClientChatSubscription', error);
-    },
-    onChatUpdated: (chat) => {
-      if (showNotifications) {
-        if (chat.id === openChat) {
-          setActiveTabId(chat.status);
-        }
+  const [activeTabId, setActiveTabIdState] = useRecoilComponentState(
+    activeTabIdComponentState,
+    'chat-navigation-drawer-tabs',
+  );
+
+  const handleChatCreated = useCallback(
+    (chat: ClientChat) => {
+      // Only add if it matches the filter
+      if (chatMatchesFilter(chat)) {
+        setDbChats((prev: ClientChat[]) => {
+          // Check if chat already exists to avoid duplicates
+          if (prev.some((c) => c.id === chat.id)) {
+            return prev;
+          }
+          return [...prev, chat];
+        });
       }
-      setDbChats((prev: ClientChat[]) =>
-        prev.map((c: ClientChat) => (c.id === chat.id ? chat : c)),
-      );
     },
-    onChatDeleted: (chat) => {
+    [chatMatchesFilter],
+  );
+
+  const handleChatUpdated = useCallback(
+    (chat: ClientChat) => {
+      if (chat.id === openChat && activeTabId !== chat.status) {
+        setActiveTabIdState(chat.status);
+      }
+
+      setDbChats((prev: ClientChat[]) => {
+        const existingChatIndex = prev.findIndex((c) => c.id === chat.id);
+
+        // If chat doesn't exist in the list
+        if (existingChatIndex === -1) {
+          // Only add if it matches the filter
+          if (chatMatchesFilter(chat)) {
+            return [...prev, chat];
+          }
+          return prev;
+        }
+
+        // Chat exists, merge the update
+        const existingChat = prev[existingChatIndex];
+        const mergedChat = {
+          ...existingChat,
+          ...chat,
+          // Preserve nested objects if they're not in the update
+          agent: chat.agent ?? existingChat.agent,
+          sector: chat.sector ?? existingChat.sector,
+          person: chat.person ?? existingChat.person,
+          whatsappIntegration:
+            chat.whatsappIntegration ?? existingChat.whatsappIntegration,
+        };
+
+        // Check if chat still matches the filter after update
+        if (chatMatchesFilter(mergedChat)) {
+          // Update the chat in place
+          const updated = [...prev];
+          updated[existingChatIndex] = mergedChat;
+          return updated;
+        } else {
+          // Remove chat if it no longer matches the filter
+          return prev.filter((c) => c.id !== chat.id);
+        }
+      });
+    },
+    [openChat, activeTabId, setActiveTabIdState, chatMatchesFilter],
+  );
+
+  const handleChatDeleted = useCallback(
+    (chat: ClientChat) => {
       setDbChats((prev: ClientChat[]) =>
         prev.filter((c: ClientChat) => c.id !== chat.id),
       );
@@ -120,15 +188,36 @@ export const useClientChats = (showNotifications: boolean = false) => {
         enqueueInfoSnackBar({
           message: t`Service finished`,
         });
+        return;
       }
       if (openChat === chat.id) {
         navigate(getAppPath(AppPath.ClientChatCenter));
         enqueueInfoSnackBar({
           message: t`You no longer have access to this chat`,
         });
-        setActiveTabId(ClientChatStatus.UNASSIGNED);
+        setActiveTabIdState(ClientChatStatus.UNASSIGNED);
       }
     },
+    [
+      openChat,
+      showNotifications,
+      navigate,
+      enqueueInfoSnackBar,
+      t,
+      setActiveTabIdState,
+    ],
+  );
+
+  useClientChatSubscription({
+    sectorId: isAdmin
+      ? 'admin'
+      : (workspaceMemberWithAgent?.agent?.sectorId ?? ''),
+    onChatCreated: handleChatCreated,
+    onError: (error) => {
+      console.error('Error onClientChatSubscription', error);
+    },
+    onChatUpdated: handleChatUpdated,
+    onChatDeleted: handleChatDeleted,
   });
 
   return {

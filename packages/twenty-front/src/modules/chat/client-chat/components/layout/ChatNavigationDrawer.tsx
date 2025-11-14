@@ -4,9 +4,11 @@ import { ChatNavigationDrawerHeader } from '@/chat/client-chat/components/layout
 import { ChatNavigationDrawerTabs } from '@/chat/client-chat/components/layout/ChatNavigationDrawerTabs';
 import { useClientChatsContext } from '@/chat/client-chat/contexts/ClientChatsContext';
 import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/useCurrentWorkspaceMemberWithAgent';
+import { NoChats } from '@/chat/error-handler/components/NoChats';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -21,6 +23,7 @@ import {
   type ClientChat,
   ClientChatStatus,
 } from 'twenty-shared/types';
+import { AppTooltip, IconSearch, TooltipDelay } from 'twenty-ui/display';
 import { type WorkspaceMember } from '~/generated/graphql';
 
 const DRAWER_MIN_WIDTH = 250;
@@ -44,31 +47,30 @@ const StyledChatNavigationDrawerContainer = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(3)};
   overflow: hidden;
 `;
 
 const StyledResizeHandle = styled.div`
   bottom: 0;
   cursor: col-resize;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
   position: absolute;
-  right: -4px;
+  right: -3px;
   top: 0;
-  width: 2px;
+  width: 5px;
   z-index: 1;
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${({ theme }) => theme.background.quaternary};
     &::after {
       content: '';
       display: block;
       background-color: ${({ theme }) => theme.background.invertedPrimary};
       position: absolute;
-      right: calc(50% - 3px);
+      right: calc(50% - 1.5px);
       top: calc(50% - 18px);
-      width: 6px;
+      width: 3px;
       height: 36px;
       border-radius: ${({ theme }) => theme.border.radius.xl};
     }
@@ -81,9 +83,9 @@ const StyledResizeHandle = styled.div`
       display: block;
       background-color: ${({ theme }) => theme.background.invertedPrimary};
       position: absolute;
-      right: calc(50% - 3px);
+      right: calc(50% - 1.5px);
       top: calc(50% - 18px);
-      width: 6px;
+      width: 3px;
       height: 36px;
       border-radius: ${({ theme }) => theme.border.radius.xl};
     }
@@ -93,13 +95,12 @@ const StyledResizeHandle = styled.div`
 const StyledTabListContainer = styled.div`
   align-items: center;
   margin-top: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
+  height: 32px;
   width: 100%;
+  font-weight: ${({ theme }) => theme.font.weight.medium} !important;
 `;
 
 const StyledChatsContainer = styled.div`
@@ -107,9 +108,15 @@ const StyledChatsContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)} 0;
+  padding-top: ${({ theme }) => theme.spacing(3)};
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+`;
+
+const StyledAppTooltip = styled(AppTooltip)`
+  padding: ${({ theme }) => theme.spacing(1)} !important;
+  background-color: ${({ theme }) => theme.color.blue} !important;
 `;
 
 export const ChatNavigationDrawer = () => {
@@ -392,6 +399,35 @@ export const ChatNavigationDrawer = () => {
     });
   }
 
+  const tabTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    totals[ClientChatStatus.ASSIGNED] = clientChats.filter(
+      (chat) =>
+        chat.status === ClientChatStatus.ASSIGNED && chat.agentId === agent?.id,
+    ).length;
+
+    totals[ClientChatStatus.UNASSIGNED] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.UNASSIGNED,
+    ).length;
+
+    totals[ClientChatStatus.ABANDONED] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.ABANDONED,
+    ).length;
+
+    totals[ClientChatStatus.CHATBOT] = clientChats.filter(
+      (chat) => chat.status === ClientChatStatus.CHATBOT,
+    ).length;
+
+    if (workspaceMemberWithAgent?.agent?.isAdmin) {
+      totals[ClientChatStatus.FINISHED] = clientChats.filter(
+        (chat) => chat.status === ClientChatStatus.FINISHED,
+      ).length;
+    }
+
+    return totals;
+  }, [clientChats, agent?.id, workspaceMemberWithAgent?.agent?.isAdmin]);
+
   const renderClientChats = useMemo(() => {
     if (!workspaceMemberWithAgent) {
       return null;
@@ -453,6 +489,7 @@ export const ChatNavigationDrawer = () => {
           unreadMessagesCount={chat.unreadMessagesCount ?? 0}
           sectorName={currentUserIsAdmin ? sectorName : undefined}
           sectorIcon={currentUserIsAdmin ? sectorIcon : undefined}
+          integrationName={chat.whatsappIntegration?.name}
         />
       );
     });
@@ -462,8 +499,6 @@ export const ChatNavigationDrawer = () => {
     <StyledChatNavigationDrawerWrapper ref={wrapperRef} width={drawerWidth}>
       <StyledChatNavigationDrawerContainer>
         <ChatNavigationDrawerHeader
-          searchInput={searchInput}
-          setSearchInput={setSearchInput}
           onSortClick={onSortClick}
           sortDirection={sortDirection}
         />
@@ -473,8 +508,36 @@ export const ChatNavigationDrawer = () => {
             tabs={tabs}
             width={tabListContainerWidth}
           />
+          {tabs.map((tab) => {
+            const totalCount = tabTotals[tab.id];
+            if (totalCount === undefined) return null;
+
+            return (
+              <StyledAppTooltip
+                key={`tooltip-${tab.id}`}
+                content={`${totalCount} chat${totalCount !== 1 ? 's' : ''}`}
+                anchorSelect={`[data-testid="tab-${tab.id}"]`}
+                place="top"
+                positionStrategy="fixed"
+                delay={TooltipDelay.shortDelay}
+                offset={1}
+              />
+            );
+          })}
         </StyledTabListContainer>
-        <StyledChatsContainer>{renderClientChats}</StyledChatsContainer>
+        <StyledChatsContainer>
+          <TextInput
+            LeftIcon={() => <IconSearch size={14} />}
+            placeholder={t`Search chats`}
+            value={searchInput}
+            onChange={(text: string) => setSearchInput(text)}
+          />
+          {renderClientChats && renderClientChats.length > 0 ? (
+            renderClientChats
+          ) : (
+            <NoChats />
+          )}
+        </StyledChatsContainer>
       </StyledChatNavigationDrawerContainer>
       <StyledResizeHandle
         onMouseDown={(e) => {
