@@ -10,7 +10,6 @@ import { LessThan } from 'typeorm';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import {
   AccountPayableWorkspaceEntity,
@@ -81,7 +80,7 @@ export class FinancialRegisterService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly validationService: FinancialRegisterValidationService,
-    private readonly interApiService: InterApiService,
+    // private readonly interApiService: InterApiService,
     private readonly fileUploadService: FileUploadService,
   ) {}
 
@@ -301,25 +300,25 @@ export class FinancialRegisterService {
       },
     };
 
-    const chargeResponse =
-      await this.interApiService.issueChargeAndStoreAttachment(
-        workspaceId,
-        attachmentRepository,
-        chargeData,
-      );
+    // const chargeResponse =
+    //   await this.interApiService.issueChargeAndStoreAttachment(
+    //     workspaceId,
+    //     attachmentRepository,
+    //     chargeData,
+    //   );
 
-    await financialRegisterRepository.update(registerId, {
-      bankSlipLink: chargeResponse.bankSlipPdfUrl || '',
-      documentNumber:
-        chargeResponse.codigoSolicitacao || register.documentNumber,
-    });
+    // await financialRegisterRepository.update(registerId, {
+    //   bankSlipLink: chargeResponse.bankSlipPdfUrl || '',
+    //   documentNumber:
+    //     chargeResponse.codigoSolicitacao || register.documentNumber,
+    // });
 
     this.logger.log(`Bank slip generated for register ${registerId}`);
 
     return {
-      bankSlipLink: chargeResponse.bankSlipPdfUrl || '',
-      barcode: chargeResponse.linhaDigitavel || '',
-      documentNumber: chargeResponse.codigoSolicitacao || '',
+      bankSlipLink: '',
+      barcode: '',
+      documentNumber: '',
       dueDate: new Date(register.dueDate),
     };
   }

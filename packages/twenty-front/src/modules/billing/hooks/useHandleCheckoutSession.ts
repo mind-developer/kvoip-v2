@@ -9,16 +9,16 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
+  type BillingCreateChargeDto,
   BillingPaymentProviders,
   type BillingPlanKey,
-  type InterCreateChargeDto,
   type SubscriptionInterval,
   useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type HandleCheckoutSessionFn = (
-  interChargeData?: InterCreateChargeDto,
+  interChargeData?: BillingCreateChargeDto,
 ) => Promise<void>;
 
 export const useHandleCheckoutSession = ({
