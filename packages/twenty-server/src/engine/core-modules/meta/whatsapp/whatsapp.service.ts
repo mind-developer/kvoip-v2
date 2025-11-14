@@ -146,7 +146,7 @@ export class WhatsAppService {
         createRelatedPerson(
           message.fromMe
             ? {
-                firstName: `WhatsApp (${message.senderPhoneNumber ?? message.remoteJid})`,
+                firstName: `WhatsApp (${message.remoteJid ?? message.remoteJid})`,
                 lastName: '',
               }
             : {

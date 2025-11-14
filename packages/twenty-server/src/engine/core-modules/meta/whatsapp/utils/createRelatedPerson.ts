@@ -11,6 +11,9 @@ export function createRelatedPerson(
   integrationProvider: ChatIntegrationProvider,
   sourceName: string,
 ): Partial<PersonWorkspaceEntity> {
+  console.log(
+    `Creating related person: ${name}, ${phone}, ${ppUrl}, ${integrationProvider}, ${sourceName}`,
+  );
   const normalizedPhone = normalizePhoneNumber(phone);
 
   if (!normalizedPhone) {

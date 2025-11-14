@@ -152,7 +152,10 @@ export const UploadMediaPopup = ({
           <StyledLabel
             key={item.label}
             initial={{ scale: 0 }}
-            animate={{ scale: 1, transition: { delay: index * 0.08 } }}
+            animate={{
+              scale: 1,
+              transition: { delay: index * 0.08, type: 'spring', bounce: 0.44 },
+            }}
             exit={{ scale: 0.95 }}
             transition={{ duration: 0.5, ease: [0, 0.81, 0.27, 1] }}
           >

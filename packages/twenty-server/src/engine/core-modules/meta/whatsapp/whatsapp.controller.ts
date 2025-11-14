@@ -179,6 +179,7 @@ export class WhatsappController {
           }
           const message: FormattedWhatsAppMessage = {
             id: msg.id,
+            //remoteJid is the id as it comes from the provider
             remoteJid: msg.from,
             fromMe: !!msg.fromMe,
             senderAvatarUrl:
@@ -191,7 +192,7 @@ export class WhatsappController {
             caption: null,
             type: msg.type,
             deliveryStatus: msg.status,
-            //baileys uses a non standardized phone number format
+            //parsed phone number from the provider
             senderPhoneNumber: phoneNumber,
             repliesTo: msg.context?.id ?? null,
           };
@@ -201,7 +202,6 @@ export class WhatsappController {
             integrationId,
             workspaceId,
           );
-          this.logger.log(`Successfully processed message: ${msg.id}`);
         } catch (error) {
           this.logger.error(
             `Error processing individual message ${msg.id}:`,
@@ -211,9 +211,6 @@ export class WhatsappController {
           throw error;
         }
       }
-      this.logger.log(
-        `Successfully processed all messages for workspace: ${workspaceId}, integration: ${integrationId}`,
-      );
     } catch (error) {
       this.logger.error(
         `Error handling incoming WhatsApp message for workspace: ${workspaceId}, integration: ${integrationId}`,
