@@ -138,7 +138,7 @@ export const UploadMediaPopup = ({
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: 'fit-content', opacity: 1 }}
       transition={{
-        duration: 0.4,
+        duration: 0.8,
         /* @kvoip-woulz proprietary:begin */
         // Add spring bounce for upload popup opening animation
         type: 'spring',
