@@ -38,22 +38,22 @@ const StyledMessageBubble = styled(motion.div)<{
   hasQuotePreview: boolean;
   provider: ChatIntegrationProvider;
 }>`
-  ${({ type, isReply, hasQuotePreview }) =>
-    isReply
-      ? 'width: 100%;'
-      : hasQuotePreview
-        ? 'min-width: fit-content;'
-        : type === ChatMessageType.IMAGE
-          ? 'max-width: 240px;'
-          : 'max-width: 300px;'}
-  ${({ type, isReply, hasQuotePreview }) =>
-    isReply || hasQuotePreview
-      ? ''
-      : type === ChatMessageType.VIDEO
-        ? 'max-width: 300px;'
-        : ''}
+  ${({ type, isReply, hasQuotePreview }) => {
+    if (isReply) {
+      return 'width: 100%;';
+    }
+    if (hasQuotePreview) {
+      return 'min-width: fit-content;';
+    }
+    if (isMediaType(type)) {
+      return 'max-width: 300px;';
+    }
+    return 'max-width: 300px;';
+  }}
+
   position: relative;
-  text-overflow: '-';
+  overflow-wrap: break-word;
+  word-break: break-word;
   white-space: pre-wrap;
 
   background: ${({ fromMe, theme, type, provider }) => {
@@ -65,8 +65,6 @@ const StyledMessageBubble = styled(motion.div)<{
           theme.background.primary)
       : theme.background.quaternary;
   }};
-  ${({ type }) =>
-    type === ChatMessageType.STICKER ? 'background: transparent;' : ''}
   color: ${({ theme }) => theme.font.color.primary};
   transition: scale 1.5s ease;
   animation: ${({ isHighlighted, themeName }) =>
@@ -99,24 +97,15 @@ const StyledMessageBubble = styled(motion.div)<{
   }
 
   padding: ${({ theme, type, isFailed, hasQuotePreview }) => {
-    const isMediaType =
-      type === ChatMessageType.IMAGE ||
-      type === ChatMessageType.DOCUMENT ||
-      type === ChatMessageType.VIDEO;
-
     const horizontalPadding = hasQuotePreview
       ? theme.spacing(2.5)
-      : isMediaType || isFailed
+      : isMediaType(type) || isFailed
         ? theme.spacing(1)
         : theme.spacing(3);
 
     let topPadding = hasQuotePreview ? theme.spacing(2) : theme.spacing(1.5);
     let bottomPadding = theme.spacing(1);
-    if (
-      type === ChatMessageType.VIDEO ||
-      type === ChatMessageType.IMAGE ||
-      type === ChatMessageType.DOCUMENT
-    ) {
+    if (isMediaType(type)) {
       topPadding = theme.spacing(1);
       bottomPadding = theme.spacing(1);
     }
@@ -125,7 +114,6 @@ const StyledMessageBubble = styled(motion.div)<{
   }};
   border-radius: ${({ messageText, isReply }) =>
     messageText.length < 30 || isReply ? '15px' : '15px'};
-  word-wrap: break-word;
   display: flex;
   flex-direction: ${({ messageText, type, hasQuotePreview }) =>
     messageText.length < 30 || type === ChatMessageType.AUDIO
@@ -187,9 +175,7 @@ const StyledTime = styled.p<{ messageType: ChatMessageType }>`
   z-index: 3;
   flex-shrink: 0;
   ${(props) =>
-    props.messageType === ChatMessageType.IMAGE ||
-    props.messageType === ChatMessageType.DOCUMENT ||
-    props.messageType === ChatMessageType.VIDEO ||
+    isMediaType(props.messageType) ||
     props.messageType === ChatMessageType.STICKER
       ? `
     position: absolute;
@@ -438,5 +424,13 @@ export const MessageBubble = ({
         </StyledAvatarWrapper>
       )}
     </StyledMessageBubbleContainer>
+  );
+};
+
+const isMediaType = (messageType: ChatMessageType) => {
+  return (
+    messageType === ChatMessageType.IMAGE ||
+    messageType === ChatMessageType.DOCUMENT ||
+    messageType === ChatMessageType.VIDEO
   );
 };

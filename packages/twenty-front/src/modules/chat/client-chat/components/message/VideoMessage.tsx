@@ -1,4 +1,3 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -17,9 +16,8 @@ import { IconButton } from 'twenty-ui/input';
 import { ATTEMPTING_MESSAGE_KEYFRAMES } from '../../constants/attemptingMessageKeyframes';
 
 const StyledVideoWrapper = styled.div<{ isPending: boolean }>`
-  display: inline-block;
-  position: relative;
   ${({ isPending }) => (isPending ? ATTEMPTING_MESSAGE_KEYFRAMES : '')}
+  ${({ isPending }) => (isPending ? 'filter: blur(10px);' : '')}
 `;
 
 const StyledTime = styled.p`
@@ -58,12 +56,11 @@ const StyledScrubber = styled.input`
   }
 `;
 
-const StyledVideo = styled.video`
+const StyledVideo = styled.video<{ isFullscreen: boolean }>`
   border-radius: ${({ theme }) => theme.spacing(3)};
-  max-width: 240px;
   overflow: hidden;
-  width: 300px;
-  height: 100%;
+  width: ${({ isFullscreen }) => (isFullscreen ? '100%' : '300px')};
+  height: ${({ isFullscreen }) => (isFullscreen ? '100%' : 'auto')};
 `;
 
 const StyledOverlay = styled.div`
@@ -95,17 +92,19 @@ const StyledBottomBar = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 6px 8px;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
+  padding: 0px 8px;
+  background: ${({ theme }) =>
+    theme.name === 'dark'
+      ? 'rgba(0, 0, 0, 0.35)'
+      : 'rgba(255, 255, 255, 0.35)'};
   pointer-events: auto;
-  border-radius: ${({ theme }) => theme.spacing(3)};
   overflow: hidden;
+  color: ${({ theme }) => theme.font.color.primary} !important;
+  box-sizing: border-box;
 `;
 
 const StyledIconButton = styled(IconButton)`
   background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
   border: none;
   padding: ${({ theme }) => theme.spacing(3)};
   border-radius: 50%;
@@ -132,7 +131,6 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
   const [showControls, setShowControls] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const hideControlsTimeoutRef = useRef<number | null>(null);
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
   const [loadFailed, setLoadFailed] = useState<boolean>();
 
@@ -253,6 +251,7 @@ const VideoMessage = ({ message }: { message: ClientChatMessage }) => {
             playsInline
             muted={false}
             onError={() => setLoadFailed(true)}
+            isFullscreen={isFullscreen}
           />
           <StyledOverlay
             style={{

@@ -57,7 +57,7 @@ const StyledMessagesContainer = styled.div`
   overflow-x: hidden;
   align-self: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   padding-bottom: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(5)};
   padding-right: ${({ theme }) => theme.spacing(1.5)};

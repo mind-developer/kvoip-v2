@@ -4,6 +4,7 @@ import { MessageQuotePreview } from '@/chat/client-chat/components/message/Messa
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { AnimatePresence } from 'framer-motion';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
   ChatMessageType,
@@ -178,12 +179,15 @@ export const ChatMessageInput = memo(
             onClick={handleUploadMediaClick}
           />
         </StyledUploadMediaDiv>
-        {isUploadMediaPopupOpen && (
-          <UploadMediaPopup
-            setIsUploadMediaPopupOpen={setIsUploadMediaPopupOpen}
-            clientChat={selectedChat}
-          />
-        )}
+        <AnimatePresence>
+          {isUploadMediaPopupOpen && (
+            <UploadMediaPopup
+              key="upload-media-popup"
+              setIsUploadMediaPopupOpen={setIsUploadMediaPopupOpen}
+              clientChat={selectedChat}
+            />
+          )}
+        </AnimatePresence>
         {recordingState !== 'none' && (
           <div
             onClick={(e) => e.preventDefault()}

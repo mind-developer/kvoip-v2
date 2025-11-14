@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconMessage2Plus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { Avatar, H1Title, H1TitleFontColor, useIcons } from 'twenty-ui/display';
+import { Avatar, H2Title, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -15,7 +15,7 @@ const StyledPaneHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
 
@@ -37,7 +37,8 @@ const StyledDiv = styled.div`
   justify-content: center;
 `;
 
-const StyledH1Title = styled(H1Title)`
+const StyledH2Title = styled(H2Title)`
+  font-size: ${({ theme }) => theme.font.size.md};
   margin: 0;
 `;
 
@@ -52,10 +53,9 @@ export const ChatNavigationDrawerHeader = ({
   const IconSortDescending = getIcon('IconSortDescending');
   const IconSortAscending = getIcon('IconSortAscending');
   const { openModal } = useModal();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { t } = useLingui();
-
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const IconSearch = getIcon('IconSearch');
 
@@ -76,10 +76,13 @@ export const ChatNavigationDrawerHeader = ({
               }
             />
           </div>
-          <StyledH1Title
-            title={t`Chat`}
+          <StyledH2Title
+            title={
+              currentWorkspaceMember?.name.firstName +
+              ' ' +
+              currentWorkspaceMember?.name.lastName
+            }
             titleCentered
-            fontColor={H1TitleFontColor.Primary}
           />
         </StyledDiv>
         <StyledActionsContainer>

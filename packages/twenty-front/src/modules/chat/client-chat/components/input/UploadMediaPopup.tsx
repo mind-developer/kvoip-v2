@@ -7,7 +7,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
-import { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useRef } from 'react';
 import {
   ChatIntegrationProvider,
   ChatMessageDeliveryStatus,
@@ -54,10 +54,12 @@ const StyledMainContainer = styled(motion.div)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   bottom: 60px;
+  transform: translateX(-5px);
   display: flex;
   flex-direction: column;
   position: absolute;
   z-index: 10;
+  overflow: hidden;
 `;
 
 const StyledLabel = styled(motion.div)`
@@ -68,7 +70,12 @@ const StyledLabel = styled(motion.div)`
 
   &:hover {
     background-color: ${({ theme }) => theme.background.quaternary};
+    scale: 1.05;
   }
+  &:active {
+    scale: 1;
+  }
+  transition: all 0.1s ease-in-out;
 `;
 
 const StyledInput = styled.input`
@@ -85,6 +92,9 @@ export const UploadMediaPopup = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const theme = useTheme();
+  /* @kvoip-woulz proprietary:begin */
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  /* @kvoip-woulz proprietary:end */
 
   const handleSendFile = async (file: File, type: ChatMessageType) => {
     if (!clientChat.person.id) {
@@ -133,17 +143,25 @@ export const UploadMediaPopup = ({
     }
   };
 
+  const handleLabelClick = (index: number) => {
+    inputRefs.current[index]?.click();
+  };
+
   return (
     <StyledMainContainer
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: 'fit-content', opacity: 1 }}
       transition={{
-        duration: 0.8,
-        /* @kvoip-woulz proprietary:begin */
-        // Add spring bounce for upload popup opening animation
+        duration: 0.6,
         type: 'spring',
         bounce: 0.2,
       }}
+      /* @kvoip-woulz proprietary:begin */
+      exit={{
+        height: 0,
+        transition: { duration: 0.4, ease: [0, 0.81, 0.27, 1] },
+      }}
+      /* @kvoip-woulz proprietary:end */
     >
       {popupItems.map((item, index) => {
         const IconComponent = getIcon(item.icon);
@@ -151,13 +169,18 @@ export const UploadMediaPopup = ({
         return (
           <StyledLabel
             key={item.label}
-            initial={{ scale: 0 }}
+            initial={{ scale: 0.95 }}
             animate={{
               scale: 1,
-              transition: { delay: index * 0.08, type: 'spring', bounce: 0.2 },
+              transition: {
+                delay: index * 0.03,
+                type: 'spring',
+                bounce: 0.2,
+              },
             }}
             exit={{ scale: 0.95 }}
             transition={{ duration: 0.5, ease: [0, 0.81, 0.27, 1] }}
+            onClick={() => handleLabelClick(index)}
           >
             <IconComponent
               size={theme.icon.size.md}
@@ -170,6 +193,11 @@ export const UploadMediaPopup = ({
               type="file"
               accept={item.accept}
               onChange={(e) => handleFileChange(e, item.type)}
+              /* @kvoip-woulz proprietary:begin */
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              /* @kvoip-woulz proprietary:end */
             />
           </StyledLabel>
         );

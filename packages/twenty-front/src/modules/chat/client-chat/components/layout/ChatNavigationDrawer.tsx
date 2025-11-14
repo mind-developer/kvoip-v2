@@ -119,6 +119,10 @@ const StyledAppTooltip = styled(AppTooltip)`
   background-color: ${({ theme }) => theme.color.blue} !important;
 `;
 
+const StyledTextInput = styled(TextInput)`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const ChatNavigationDrawer = () => {
   const { chatId: openChatId } = useParams();
 
@@ -526,7 +530,7 @@ export const ChatNavigationDrawer = () => {
           })}
         </StyledTabListContainer>
         <StyledChatsContainer>
-          <TextInput
+          <StyledTextInput
             LeftIcon={() => <IconSearch size={14} />}
             placeholder={t`Search chats`}
             value={searchInput}

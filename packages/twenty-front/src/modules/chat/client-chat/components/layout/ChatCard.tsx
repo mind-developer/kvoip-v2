@@ -1,5 +1,6 @@
 import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconBrandMeta } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { AvatarChip } from 'twenty-ui/components';
@@ -150,6 +151,7 @@ export const ChatCard = ({
   integrationName,
 }: ChatCardProps) => {
   const navigate = useNavigate();
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const Icon = getIcon(sectorIcon);
   const agentTooltipId = `agent-tooltip-${chatId}`;
@@ -196,9 +198,9 @@ export const ChatCard = ({
                       />
                     </StyledAgentTooltipWrapper>
                     <StyledAppTooltip
-                      content={agentName}
+                      content={`${t`Agent:`} ${agentName}`}
                       anchorSelect={`#${agentTooltipId}`}
-                      place="right"
+                      place="bottom"
                       positionStrategy="fixed"
                       delay={TooltipDelay.noDelay}
                     />
@@ -210,9 +212,9 @@ export const ChatCard = ({
                       <StyledSectorIcon size={10} />
                     </StyledSectorTooltipWrapper>
                     <StyledAppTooltip
-                      content={sectorName}
+                      content={`${t`Sector:`} ${sectorName}`}
                       anchorSelect={`#${sectorTooltipId}`}
-                      place="right"
+                      place="bottom"
                       positionStrategy="fixed"
                       delay={TooltipDelay.noDelay}
                     />

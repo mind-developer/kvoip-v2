@@ -5,13 +5,14 @@ import ImageMessage from '@/chat/client-chat/components/message/ImageMessage';
 import { MessageBubble } from '@/chat/client-chat/components/message/MessageBubble';
 import { StickerMessage } from '@/chat/client-chat/components/message/StickerMessage';
 import VideoMessage from '@/chat/client-chat/components/message/VideoMessage';
+import { parseMessageTextWithLists } from '@/chat/client-chat/utils/parseMessageText';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconBrandMeta } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import {
   ChatMessageFromType,
   ChatMessageType,
@@ -110,6 +111,44 @@ const StyledTemplateName = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledLink = styled.a`
+  color: ${({ theme }) => theme.color.blue};
+  text-decoration: underline;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const StyledCode = styled.code`
+  background-color: ${({ theme }) => theme.background.tertiary};
+  padding: ${({ theme }) => theme.spacing(0.25)}
+    ${({ theme }) => theme.spacing(0.5)};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  font-family: monospace;
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledStrikethrough = styled.del`
+  text-decoration: line-through;
+  opacity: 0.7;
+`;
+
+const StyledUl = styled.ul`
+  margin: ${({ theme }) => theme.spacing(1)} 0;
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  list-style-type: disc;
+`;
+
+const StyledOl = styled.ol`
+  margin: ${({ theme }) => theme.spacing(1)} 0;
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  list-style-type: decimal;
+`;
+
+const StyledLi = styled.li`
+  margin: ${({ theme }) => theme.spacing(0.5)} 0;
+`;
+
 type ChatMessageRendererProps = {
   message: ClientChatMessage;
   index: number;
@@ -141,6 +180,24 @@ export const ChatMessageRenderer = memo(
       const diffInMilliseconds = now - createdAt.getTime();
       return diffInMilliseconds > 86400000;
     };
+
+    const textContent =
+      message.fromType === ChatMessageFromType.AGENT &&
+      message.templateId === null //template messages don't have agent names
+        ? (message.textBody ?? '')?.split('\n').slice(1).join('\n')
+        : (message.textBody ?? '').split('\n').join('\n');
+
+    const parsedTextContent = useMemo(() => {
+      if (!textContent) return null;
+      return parseMessageTextWithLists(textContent, {
+        LinkComponent: StyledLink,
+        CodeComponent: StyledCode,
+        StrikethroughComponent: StyledStrikethrough,
+        UlComponent: StyledUl,
+        OlComponent: StyledOl,
+        LiComponent: StyledLi,
+      });
+    }, [textContent]);
 
     if (message.event) {
       return (
@@ -249,10 +306,7 @@ export const ChatMessageRenderer = memo(
                 <IconBrandMeta size={10} /> {t`TEMPLATE`}
               </StyledTemplateName>
             )}
-            {message.fromType === ChatMessageFromType.AGENT &&
-            message.templateId === null //template messages don't have agent names
-              ? (message.textBody ?? '')?.split('\n').slice(1).join('\n')
-              : (message.textBody ?? '').split('\n').join('\n')}
+            {parsedTextContent}
           </StyledMessage>
         );
         break;
