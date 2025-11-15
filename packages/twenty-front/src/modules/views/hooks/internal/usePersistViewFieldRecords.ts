@@ -14,8 +14,6 @@ import {
 } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
-  const { triggerViewFieldOptimisticEffect } =
-    useTriggerViewFieldOptimisticEffect();
   const [createCoreViewFieldMutation] = useCreateCoreViewFieldMutation();
   const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
   const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();

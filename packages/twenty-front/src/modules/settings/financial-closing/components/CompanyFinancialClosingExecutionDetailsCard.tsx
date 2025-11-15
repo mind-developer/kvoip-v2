@@ -2,23 +2,23 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
-  getFinancialClosingExecutionStatusColor,
-  useFinancialClosingExecutionStatusTranslations,
+    getFinancialClosingExecutionStatusColor,
+    useFinancialClosingExecutionStatusTranslations,
 } from '@/settings/financial-closing/constants/FinancialClosingExecutionStatus';
 import {
-  getExecutionStatusTagColor,
-  getExecutionStatusText,
+    getExecutionStatusTagColor,
+    getExecutionStatusText,
 } from '@/settings/financial-closing/constants/LogLevelColors';
 import {
-  getTypeEmissionNFColor,
-  useTypeEmissionNFTranslations,
+    getTypeEmissionNFColor,
+    useTypeEmissionNFTranslations,
 } from '@/settings/financial-closing/constants/TypeEmissionNF';
 import { type CompanyFinancialClosingExecution } from '@/settings/financial-closing/types/financialClosingExecutions/CompanyFinancialClosingExecution';
-import { AppPath } from '@/types/AppPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { Tag } from 'twenty-ui/components';
 import { IconExternalLink } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

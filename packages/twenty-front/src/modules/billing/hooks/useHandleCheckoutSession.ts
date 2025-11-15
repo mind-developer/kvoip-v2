@@ -1,21 +1,21 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import {
-  OnboardingPlanStep,
-  onboardingPlanStepState,
+    OnboardingPlanStep,
+    onboardingPlanStepState,
 } from '@/onboarding/states/onboardingPlanStepState';
-import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import {
-  type BillingCreateChargeDto,
-  BillingPaymentProviders,
-  type BillingPlanKey,
-  type SubscriptionInterval,
-  useCheckoutSessionMutation,
+    type BillingCreateChargeDto,
+    BillingPaymentProviders,
+    type BillingPlanKey,
+    type SubscriptionInterval,
+    useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type HandleCheckoutSessionFn = (
   interChargeData?: BillingCreateChargeDto,

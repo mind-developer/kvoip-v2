@@ -21,8 +21,8 @@ import {
   IconSparkles,
 } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 

@@ -6,11 +6,11 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
-import { AppPath } from '@/types/AppPath';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 
 export const RecordIndexPage = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(

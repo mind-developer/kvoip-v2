@@ -3,15 +3,14 @@ import { useCurrentWorkspaceMemberWithAgent } from '@/chat/client-chat/hooks/use
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type Sector } from '@/settings/service-center/sectors/types/Sector';
-import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { type ClientChat, ClientChatStatus } from 'twenty-shared/types';
-import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AppPath, type ClientChat, ClientChatStatus } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 export const useClientChats = (showNotifications: boolean = false) => {
   const { t } = useLingui();

@@ -1,12 +1,12 @@
 /* @kvoip-woulz proprietary */
 import styled from '@emotion/styled';
 import {
-  Fragment,
-  useCallback,
-  /* @kvoip-woulz proprietary:begin */
-  useEffect,
-  useMemo,
-  useState,
+    Fragment,
+    useCallback,
+    /* @kvoip-woulz proprietary:begin */
+    useEffect,
+    useMemo,
+    useState,
 } from 'react';
 /* @kvoip-woulz proprietary:begin */
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -52,8 +52,8 @@ import { recordFieldListHoverPositionComponentState } from '@/object-record/reco
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 /* @kvoip-woulz proprietary:begin */
 import {
-  FieldInputEventContext,
-  type FieldInputEvent,
+    FieldInputEventContext,
+    type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 /* @kvoip-woulz proprietary:end */
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -70,7 +70,6 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 /* @kvoip-woulz proprietary:end */
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { AppPath } from '@/types/AppPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -79,6 +78,7 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { AppPath } from 'twenty-shared/types';
 /* @kvoip-woulz proprietary:begin */
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 /* @kvoip-woulz proprietary:end */
@@ -91,26 +91,26 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 /* @kvoip-woulz proprietary:end */
 import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectPermissions,
+    FieldMetadataType,
+    RelationType,
+    type ObjectPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconChevronDown,
-  IconDeviceFloppy,
-  IconFileImport,
-  IconFileText,
-  IconPaperclip,
-  type IconComponent,
+    IconChevronDown,
+    IconDeviceFloppy,
+    IconFileImport,
+    IconFileText,
+    IconPaperclip,
+    type IconComponent,
 } from 'twenty-ui/display';
 /* @kvoip-woulz proprietary:begin */
 import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconHome,
-  IconMail,
-  IconNotes,
+    IconCalendarEvent,
+    IconCheckbox,
+    IconHome,
+    IconMail,
+    IconNotes,
 } from 'twenty-ui/display';
 /* @kvoip-woulz proprietary:end */
 import { Button } from 'twenty-ui/input';
@@ -123,10 +123,10 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 import {
-  ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
-  ACCOUNT_PAYABLE_PRIMARY_FIELDS,
-  ACCOUNT_PAYABLE_RELATION_FIELDS,
-  ACCOUNT_PAYABLE_REQUIRED_FIELDS,
+    ACCOUNT_PAYABLE_EXCLUDED_SYSTEM_FIELDS,
+    ACCOUNT_PAYABLE_PRIMARY_FIELDS,
+    ACCOUNT_PAYABLE_RELATION_FIELDS,
+    ACCOUNT_PAYABLE_REQUIRED_FIELDS,
 } from '../config/accountPayableFieldGroups';
 
 type AccountPayableFieldsCardProps = {

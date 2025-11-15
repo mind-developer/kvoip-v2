@@ -1,18 +1,18 @@
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import {
-  IconBuildingSkyscraper,
-  IconList,
-  IconMoneybag,
-  IconPhone,
+    IconBuildingSkyscraper,
+    IconList,
+    IconMoneybag,
+    IconPhone,
 } from 'twenty-ui/display';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const AdminWorkspaceNavigationItems = () => {
   const navigate = useNavigate();

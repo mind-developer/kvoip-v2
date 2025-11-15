@@ -1,10 +1,10 @@
-import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { IconBrandMeta } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { AvatarChip } from 'twenty-ui/components';
 import { AppTooltip, Avatar, TooltipDelay, useIcons } from 'twenty-ui/display';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
 

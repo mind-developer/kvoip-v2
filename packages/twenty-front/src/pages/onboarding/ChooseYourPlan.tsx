@@ -10,12 +10,11 @@ import { billingState } from '@/client-config/states/billingState';
 import { OnboardingInterChargeDataForm } from '@/onboarding/components/OnboardingInterChargeDataForm';
 import { useInterChargeDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
 import {
-  OnboardingPlanStep,
-  onboardingPlanStepState,
+    OnboardingPlanStep,
+    onboardingPlanStepState,
 } from '@/onboarding/states/onboardingPlanStepState';
 /* @kvoip-woulz proprietary:end */
 
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -28,16 +27,15 @@ import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { type Entries } from 'type-fest';
 import {
-  type BillingPaymentProviders,
-  type BillingPlanKey,
-  useBillingBaseProductPricesQuery,
+    type BillingPaymentProviders,
+    type BillingPlanKey,
+    useBillingBaseProductPricesQuery,
 } from '~/generated-metadata/graphql';
 
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
 import { type PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
-import { AppPath } from '@/types/AppPath';
 
 const StyledChooseProviderContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
